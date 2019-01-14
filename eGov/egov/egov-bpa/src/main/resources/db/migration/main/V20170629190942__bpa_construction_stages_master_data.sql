@@ -1,0 +1,3 @@
+delete from egbpa_mstr_const_stages;
+INSERT INTO egbpa_mstr_const_stages (ID,CODE,DESCRIPTION,ISACTIVE,VERSION,CREATEDBY,CREATEDDATE) VALUES (nextval('SEQ_EGBPA_MSTR_CONST_STAGES'),'In Progress','In Progress',true,0,1,now());
+INSERT INTO egbpa_mstr_const_stages (ID,CODE,DESCRIPTION,ISACTIVE,VERSION,CREATEDBY,CREATEDDATE) VALUES (nextval('SEQ_EGBPA_MSTR_CONST_STAGES'),'Completed','Completed',true,0,1,now());

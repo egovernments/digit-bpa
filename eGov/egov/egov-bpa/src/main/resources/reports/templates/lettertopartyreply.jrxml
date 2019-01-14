@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reply" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="19a6b87f-b0aa-4611-908a-14a81b44cdbb">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="33"/>
+	<import value="org.egov.infra.reporting.util.ReportUtil"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/work/collections/reports/templates/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="lpReason" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.io.InputStream"/>
+	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="checkListPresent" class="java.lang.Boolean"/>
+	<parameter name="stateLogo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="lpNumber" class="java.lang.String"/>
+	<field name="letterDate" class="java.util.Date"/>
+	<field name="application" class="org.egov.bpa.transaction.entity.BpaApplication">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sentDate" class="java.util.Date"/>
+	<field name="lpDesc" class="java.lang.String"/>
+	<field name="lpReason" class="org.egov.bpa.master.entity.LpReason"/>
+	<field name="replyDate" class="java.util.Date"/>
+	<field name="acknowledgementNumber" class="java.lang.String"/>
+	<field name="lettertoPartyDocument" class="java.util.Collection"/>
+	<field name="lpReplyRemarks" class="java.lang.String"/>
+	<background>
+		<band height="100" splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="190" splitType="Stretch">
+			<staticText>
+				<reportElement x="129" y="46" width="342" height="20" uuid="58e1974e-c738-46d8-8c58-f5f6a4e1b962"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Letter to Party Reply Acknowledgement]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="129" y="27" width="342" height="18" uuid="67ea5c35-8b79-4289-9647-3815a7b81375"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Town Planning Section-Works Department]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="129" y="6" width="342" height="20" uuid="fb0fe1f0-6a41-4333-b2e3-6af102647660"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="485" y="10" width="60" height="60" uuid="91880e92-b25a-4548-b6f0-3c47ed4e3542"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="156" y="81" width="142" height="27" uuid="3ff18553-88a3-4498-9dd9-e015e00ed8da"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="SansSerif"/>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{acknowledgementNumber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="156" y="108" width="142" height="27" uuid="9cfd5e71-9d9f-4068-8591-6331a7944db6"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="SansSerif"/>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sentDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="418" y="108" width="142" height="27" uuid="d6adf61d-6c64-470c-b6cb-ebc1fe0e28d3"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="SansSerif"/>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lpNumber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="156" y="135" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="104a7d6b-303e-49a5-86ad-734af5d7d94c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$F{application}.getOwner().getName()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="156" y="162" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="5dc50064-3e71-4b95-86ba-99bcebfe8f0f"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$P{lpReason}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="14" y="81" width="142" height="27" uuid="8a96635a-65e9-48cc-974b-614b683b1bb7"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Acknowledgement No."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="14" y="108" width="142" height="27" uuid="300bb440-43c1-4638-819c-8fd046768198"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Letter to Party Date"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="14" y="135" width="142" height="27" uuid="b7e1e5be-c3dd-47b5-acde-c026d6a1750a"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Applicant Name"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="14" y="162" width="142" height="27" uuid="83a5b2ac-1351-404e-acca-5a2e1a6cc8f4"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Letter to Party Reason"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="298" y="81" width="120" height="27" uuid="fedf74d3-0f77-4d0a-8484-9f0c165bf96b"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Reply Date"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="418" y="81" width="142" height="27" uuid="cdf2efad-7dc8-4ef4-8070-e32192e730cb"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="SansSerif"/>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{replyDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="298" y="108" width="120" height="27" uuid="d8e689eb-c180-4ddf-98a8-794bb217ed14"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Letter to Party No."]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="10" y="10" width="90" height="61" uuid="7bbf7e18-e398-4525-a1f9-0740176bd691">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="38">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="156" y="9" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="168f5305-2f65-492f-8c21-4e6091aabe6f"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$F{lpDesc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="14" y="9" width="142" height="27" isPrintWhenDetailOverflows="true" uuid="c3f59be5-ff0e-4033-962c-c418e7487152"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Letter To Party Description"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="46">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="14" y="2" width="142" height="27" isPrintWhenDetailOverflows="true" uuid="4f03d287-e3ed-4bfa-8f40-24bf8fef8132"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Letter To Party Reply Remarks"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="156" y="2" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="0c31f181-3859-40ed-8805-22d5044393f8"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$F{lpReplyRemarks}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="70">
+			<printWhenExpression><![CDATA[$P{checkListPresent}]]></printWhenExpression>
+			<subreport>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="15" y="10" width="545" height="51" isRemoveLineWhenBlank="true" uuid="488747bf-e344-4532-8f25-d6e603f717ea">
+					<printWhenExpression><![CDATA[$P{checkListPresent}]]></printWhenExpression>
+				</reportElement>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lettertoPartyDocument}, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("lp_reply_checklist.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="50">
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" x="14" y="0" width="546" height="20" uuid="1e0f2bc1-2b7f-493b-b90f-87a31a9a06a5"/>
+				<box leftPadding="1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Note: This is computer generated acknowledgement. Seal & signature not necessary.]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

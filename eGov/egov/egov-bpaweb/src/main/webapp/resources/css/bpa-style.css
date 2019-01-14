@@ -1,0 +1,260 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) <2017>  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
+div.files-viewer{
+	display:inline-block;
+}
+
+div.file-viewer, a.file-add{
+  position:relative;	
+  background-position: center !important;
+  background-size: cover !important;
+}
+
+div.file-viewer > i{
+	position:absolute;
+	font-size:30px;
+	color:#9e9e9e;
+	top: 0px;
+	z-index:0;
+    margin: 10px 13px;
+}
+
+div.file-viewer > a.download{
+   width: 54px;
+    height: 54px;
+    display: block;
+    position: absolute;
+    z-index: 1;
+}
+
+a.file-add, div.file-viewer, img.file-viewer{
+	margin:0 5px 10px 5px;
+	display:inline-block;	
+	width: 54px;
+    height: 54px;
+    background: #f4f4f4;
+    border: 1px solid #d4d4d4;
+    border-radius: 2px;	
+    vertical-align:top;
+    overflow:hidden;
+    cursor:pointer;
+    float:left;
+}
+
+a.file-add i{
+	font-size: 28px;
+    padding: 12px 15px;
+    color: #949494;
+}
+
+a.file-add:hover{
+	background: #efefef;
+}
+
+div.file-viewer:hover a.delete, div.file-viewer:hover a.deleteDcrDoc{
+	margin-top:32px;
+	-webkit-transition: margin 1s;
+  -moz-transition: margin 1s;
+  transition: margin 0.5s;
+}
+
+div.file-viewer a.delete:before, div.file-viewer a.deleteDcrDoc:before{
+   font-family: FontAwesome;
+   content: "\f014";
+}
+
+div.file-viewer a.delete, div.file-viewer a.deleteDcrDoc {
+    display: block;
+    background: rgb(244, 67, 54);
+    text-align: center;
+    margin-top: 52px;
+    color: white;
+    position: absolute;
+    z-index:2;
+    width: 100%;
+}
+
+/* image popup start */
+/* Style the Image Used to Trigger the Modal */
+.file-viewer img {
+    transition: 0.3s;
+}
+
+.file-viewer img:hover {opacity: 0.7;}
+
+/* The Modal (background) */
+.image-modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1030; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: hidden; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (Image) */
+.image-modal .modal-content {
+    margin: auto;
+    display: block;
+    height: 100%;
+}
+
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+#caption {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
+}
+
+/* Add Animation - Zoom in the Modal */
+.image-modal .modal-content, #caption { 
+    -webkit-animation-name: zoom;
+    -webkit-animation-duration: 0.6s;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+    from {-webkit-transform:scale(0)} 
+    to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+    from {transform:scale(0)} 
+    to {transform:scale(1)}
+}
+
+/* The Close Button */
+.closebtn {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.closebtn:hover,
+.closebtn:focus {
+    color: #999;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px){
+    .image-modal .modal-content {
+        width: 100%;
+    }
+}
+/* image popup end */
+
+/* amenities multiple select tick box start */
+
+select.tick-indicator option:before{
+	font-family: FontAwesome;
+	content:"\f096";
+	padding-right:5px; 
+}
+
+select.tick-indicator option:checked:before{
+	font-family: FontAwesome;
+	content:"\f046";
+}
+
+
+select.tick-indicator[multiple] option:checked {
+  color:black;
+  font-weight:bold;
+  background: white linear-gradient(0deg, grey 0%, grey 100%);
+}
+
+/* amenities multiple select tick box end */
+
+/* search suggestion start */
+
+#postalAddressTypeHead .empty-message {
+  padding: 5px 10px;
+ text-align: center;
+}
+
+.padding-10{
+	padding:5px 10px;
+}
+
+.custom-list-item:hover small{
+	color:#fff;
+}
+
+
+/* search suggestion end */
+
+
+.bootstrap-tagsinput{
+	overflow:auto;
+}
+
+
+/* Upload Documents numbering Start */
+.doc-numbering {
+	 position: absolute;
+    right: 2px;
+    /* padding: 4px; */
+    border-radius: 50%;
+    background: #588fd4;
+    width: 15px;
+    height: 15px;
+    top: 2px;
+    font-size: 11px;
+    color: white;
+    text-align: center;
+}
+/* Upload Documents numbering End */

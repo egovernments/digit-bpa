@@ -1,0 +1,1 @@
+Alter table egbpa_lettertoparty_document add column isrequested boolean default false; 

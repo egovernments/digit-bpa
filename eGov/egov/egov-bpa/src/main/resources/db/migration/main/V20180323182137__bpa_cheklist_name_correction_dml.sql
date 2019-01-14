@@ -1,0 +1,2 @@
+update egbpa_mstr_chklistdetail set description ='Declaration by the Applicant - Declaration as per Appendix A, should be signed scanned and uploaded' where description ='Declaration by the Applicant';
+update egbpa_mstr_chklistdetail set description ='Certificates and Undertaking by LBE/LBS - Declaration as per Appendix A, should be signed scanned and uploaded' where description ='Certificates and Undertaking by LBE/LBS';

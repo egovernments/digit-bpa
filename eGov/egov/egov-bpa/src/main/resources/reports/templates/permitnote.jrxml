@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="permitnote" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="09d7c6a4-db38-4844-a14a-3d253535dae1">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="approverName" class="java.lang.String"/>
+	<parameter name="designation" class="java.lang.String"/>
+	<parameter name="certificateValidity" class="java.lang.String"/>
+	<parameter name="additionalNotes" class="java.lang.String"/>
+	<parameter name="qrCode" class="java.io.File"/>
+	<parameter name="qrCodeEnabled" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<title>
+		<band height="163" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="10" width="170" height="19" uuid="706d49d8-0169-4cad-9ed6-4e889fb1fcac"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date : " + $P{currentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="30" width="170" height="20" uuid="abea5f0d-6765-4187-a9c0-9d14837b8a52"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Place : " + $P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="18" width="303" height="22" uuid="467f7900-9fde-45ed-9d3b-4ce64fa4198b"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Approved By " + $P{approverName} + ", " + $P{designation}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="42" width="553" height="20" uuid="f85a477e-47d3-413f-8b1b-432144384e10"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{certificateValidity}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="81" width="59" height="14" uuid="5c9dadf5-77a5-4f66-9e42-72e317a8bed8"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Note : "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1" y="96" width="552" height="63" uuid="2e842752-abd0-4781-a97c-4325d1223eb5"/>
+				<textFieldExpression><![CDATA[$P{additionalNotes}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<pageFooter>
+		<band height="72">
+			<image>
+				<reportElement x="403" y="2" width="149" height="60" uuid="81ffb83f-0d97-4c28-9796-e64b1d989ce8">
+					<printWhenExpression><![CDATA[!$P{qrCodeEnabled}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+</jasperReport>

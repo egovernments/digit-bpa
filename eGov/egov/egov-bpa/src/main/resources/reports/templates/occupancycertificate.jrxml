@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bpa_occupancy_certificate" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="923d3ab1-1460-4218-a5fa-27826c902134">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="lawAct" class="java.lang.String"/>
+	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="applicationNumber" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="serviceType" class="java.lang.String"/>
+	<parameter name="permitNumber" class="java.lang.String"/>
+	<parameter name="approvalDate" class="java.lang.String"/>
+	<parameter name="approverName" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.io.InputStream"/>
+	<parameter name="stateLogo" class="java.lang.String"/>
+	<parameter name="noticeGenerationDate" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="approverDesignation" class="java.lang.String"/>
+	<parameter name="qrCode" class="java.io.File"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<title>
+		<band height="100" splitType="Stretch">
+			<textField>
+				<reportElement x="180" y="30" width="200" height="20" uuid="2121a076-60d8-443b-b5a1-a49d3a778e54"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["APPENDIX H"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="170" y="50" width="220" height="20" uuid="cf69cf5a-5ae2-4b8a-b3e6-9efce4782ecf"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{lawAct}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center">
+				<reportElement x="40" y="21" width="80" height="79" uuid="6d654527-5c3f-4db6-8537-52067ceec582"/>
+				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
+			</image>
+			<image hAlign="Center">
+				<reportElement isPrintRepeatedValues="false" x="457" y="21" width="83" height="79" uuid="d163ddf0-22ef-4e54-bdcb-5cab48e70f7b"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="66">
+			<textField>
+				<reportElement x="160" y="-20" width="240" height="20" uuid="78b393c4-2537-48d0-a845-740d95d5608d"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["OCCUPANCY CERTIFICATE"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="0" width="120" height="20" uuid="3d5210bf-167c-4e31-a8b0-33be8c258ea1"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["OR"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="20" width="240" height="20" uuid="ebc8f608-2cf2-4ceb-9caa-784c04bb2aef"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["USE CERTIFICATE"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="60" y="40" width="440" height="26" uuid="5167f56d-0808-4c64-8e7d-3211128bcd11"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="72">
+			<textField>
+				<reportElement x="0" y="0" width="280" height="19" uuid="466e0dec-47f1-48ea-8e2f-4e1c18fc00ae"/>
+				<textElement textAlignment="Left">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Plan Permission No : " + $P{permitNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="430" y="0" width="120" height="19" uuid="914a1569-e335-47d8-92d5-0b6c6efec1d4"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dated : " + $P{noticeGenerationDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="30" width="552" height="20" uuid="62aacb58-261b-40af-874b-07bc060e5a15"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ref :- Application number " + $P{applicationNumber} + " dated " + $P{applicationDate} + 
+" from smt/sri " + $P{applicantName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="190">
+			<textField>
+				<reportElement x="0" y="0" width="550" height="60" uuid="b6d4471d-09fe-4edc-bd99-8be325ab642e"/>
+				<textElement>
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["               Certified that the "+ $P{serviceType} + " or work under the permit No. "+ $P{permitNumber} + " dated " + $P{approvalDate} + " issued to " + $P{applicantName} + " and supervised by " + $P{approverName} + " has been inspected by me and the work executed is in accordance with the permit and the " + $P{serviceType} + " is now fit for occupation/use."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="151" width="171" height="20" uuid="030f88a1-8391-4aa5-9f31-bc100705a6c3"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Place : " + $P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="170" width="200" height="20" uuid="99cb335d-4c57-40bd-b456-9d5ecb1eb458"/>
+				<textElement>
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date : " + $P{noticeGenerationDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="259" y="151" width="291" height="29" uuid="1dcbdbef-67cb-47de-9f4a-75cbf9b89741"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Approved By " + $P{approverName} + ", " + $P{approverDesignation}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="79">
+			<image>
+				<reportElement x="403" y="2" width="149" height="60" uuid="b60cbe9c-686e-4c35-af2f-c6827bbb25fc"/>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+</jasperReport>

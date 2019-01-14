@@ -1,0 +1,4 @@
+insert into eg_roleaction values((select id from eg_role where name = 'SYSTEM'),(select id from eg_action where name = 'LetterToPartyPrint' and contextroot = 'bpa'));
+insert into eg_roleaction values((select id from eg_role where name = 'Bpa Administrator'),(select id from eg_action where name = 'LetterToPartyPrint' and contextroot = 'bpa'));
+insert into eg_roleaction values((select id from eg_role where name = 'SYSTEM'),(select id from eg_action where name = 'View Letter To Party Details' and contextroot = 'bpa'));
+insert into eg_roleaction values((select id from eg_role where name = 'Bpa Administrator'),(select id from eg_action where name = 'View Letter To Party Details' and contextroot = 'bpa'));

@@ -1,0 +1,1 @@
+alter table egbpa_slotapplication ADD COLUMN isactive boolean default false;

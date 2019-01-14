@@ -1,0 +1,1 @@
+update egbpa_mstr_chklistdetail set description = 'Copy of Govt. approved identity card with photo, with the same address as that in the licensee certificate, attested by a gazetted officer within one month from the date of application' , code = 'IDCARD' where code ='ADHRCRD' and checklist=(select id from EGBPA_MSTR_CHECKLIST where checklisttype='STAKEHOLDERDOCUMENT') ;

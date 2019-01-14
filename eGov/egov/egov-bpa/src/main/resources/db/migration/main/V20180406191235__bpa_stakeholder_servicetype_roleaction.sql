@@ -1,0 +1,2 @@
+insert into eg_action values(nextval('seq_eg_action'),'getStakeHolderById','/bpa/rest/getstakeholder','id=',(select id from eg_module where name='BPA Transanctions'),30,'Get StakeHolder By Id',false,'bpa',0,1,now(),1,now(),(select id from eg_module where name='BPA'));
+insert into eg_roleaction values((select id from eg_role where name = 'PUBLIC'),(select id from eg_action where name = 'getStakeHolderById'));

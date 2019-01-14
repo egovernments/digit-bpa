@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2018-10-04T21:04:05 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingfloordetailssubreport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="8472d445-9eb5-44cb-8b45-e8ed2f733b02">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<parameter name="occupancy" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="number" class="java.lang.Integer"/>
+	<field name="existingBuildingFloorDetails" class="java.util.List"/>
+	<group name="totalArea"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="20">
+			<staticText>
+				<reportElement x="-12" y="0" width="555" height="20" uuid="79ff31dc-330e-4068-93af-0e40d8489624"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Existing area is as follows,]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="-14" y="0" width="175" height="20" uuid="a8b6ac2b-de4f-47e6-9d47-5535cac042e8">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+					<paragraph leftIndent="5" rightIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Block No " + $F{number}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="45">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<printWhenExpression><![CDATA[new Boolean($F{existingBuildingFloorDetails}.size()!= 0)]]></printWhenExpression>
+			<subreport>
+				<reportElement x="-16" y="0" width="570" height="35" isRemoveLineWhenBlank="true" uuid="38f846b0-d52c-4657-a052-6c3ee8940934"/>
+				<subreportParameter name="occupancy">
+					<subreportParameterExpression><![CDATA[$P{occupancy}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{existingBuildingFloorDetails},false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("existingbuildingfloordetailssubreport.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

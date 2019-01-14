@@ -1,0 +1,4 @@
+update eg_wf_matrix set nextaction  ='Letter To Party Reply Pending', nextstate = 'LP Created' where nextstatus='Letter To Party Created' and objecttype='BpaApplication';
+
+INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate)
+ VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'BpaApplication', 'LP Created', NULL, NULL, null, 'CREATEBPAAPPLICATION', 'LP Reply Received', 'Forward to LP Initiator pending', 'LP Raised', 'Letter To Party Reply Received', 'Forward', NULL, NULL, '2017-01-01', '2099-04-01');

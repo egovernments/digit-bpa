@@ -1,0 +1,1 @@
+update eg_wf_matrix set nextdesignation='Section Clerk' where currentstate='LP Initiated' and additionalrule='CREATEBPAAPPLICATION' and objecttype ='BpaApplication';

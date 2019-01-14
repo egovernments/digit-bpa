@@ -1,0 +1,1 @@
+alter table egbpa_sitedetail add column unitofmeasurement bigint;

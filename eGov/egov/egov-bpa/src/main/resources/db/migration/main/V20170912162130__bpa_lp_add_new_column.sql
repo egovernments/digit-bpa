@@ -1,0 +1,1 @@
+alter table egbpa_lettertoparty add column pendingaction character varying(200);

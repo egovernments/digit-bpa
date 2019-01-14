@@ -1,0 +1,1 @@
+Alter table EGBPA_LETTERTOPARTY add column lastReplyDate date;
