@@ -39,6 +39,37 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
+import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
+import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
+import static org.egov.bpa.utils.BpaConstants.DCR_CHECKLIST;
+import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_01;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_02;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_03;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_04;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_06;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_07;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_08;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_09;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
@@ -73,36 +104,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
-import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
-import static org.egov.bpa.utils.BpaConstants.DCR_CHECKLIST;
-import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_01;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_02;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_03;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_04;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_06;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_07;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_08;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_09;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
-import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/application/citizen")
@@ -389,7 +390,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 		if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
 			applicationBpaService.buildOwnerDetails(bpaApplication);
 
-		BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction, request);
+		BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
 
 		if (citizenOrBusinessUser)
 			if (isCitizen)

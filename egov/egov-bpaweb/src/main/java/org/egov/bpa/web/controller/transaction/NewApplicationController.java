@@ -144,7 +144,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
         bpaApplication.setCitizenAccepted(true);
         bpaApplication.setArchitectAccepted(true);
 
-        BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction, request);
+        BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
         bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),
                 bpaApplicationRes.getStakeHolder().get(0).getStakeHolder()), workFlowAction);
 

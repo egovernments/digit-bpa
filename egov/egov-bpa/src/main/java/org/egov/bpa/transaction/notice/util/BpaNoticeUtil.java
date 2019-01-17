@@ -44,7 +44,43 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.service.notice;
+package org.egov.bpa.transaction.notice.util;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
+import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
+import static org.egov.bpa.utils.BpaConstants.MIXED_OCCUPANCY;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
+import static org.egov.bpa.utils.BpaConstants.getEdcrRequiredServices;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
+import static org.egov.infra.utils.PdfUtils.appendFiles;
+
+import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +104,7 @@ import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.DcrRestService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.common.entity.Occupancy;
 import org.egov.common.entity.SubOccupancy;
@@ -80,7 +117,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -98,56 +134,16 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
-import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
-import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
-import static org.egov.bpa.utils.BpaConstants.BPA_DEMAND_NOTICE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.BPA_REJECTION_NOTICE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.BUILDINGDEVELOPPERMITFILENAME;
-import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
-import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITOTHERSFILENAME;
-import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
-import static org.egov.bpa.utils.BpaConstants.MIXED_OCCUPANCY;
-import static org.egov.bpa.utils.BpaConstants.PERMIT_ORDER_NOTICE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
-import static org.egov.bpa.utils.BpaConstants.getEdcrRequiredServices;
-import static org.egov.bpa.utils.BpaConstants.getServicesForBuildPermit;
-import static org.egov.bpa.utils.BpaConstants.getServicesForDevelopPermit;
-import static org.egov.bpa.utils.BpaConstants.getServicesForOtherPermit;
-import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
-import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
-import static org.egov.infra.utils.PdfUtils.appendFiles;
-
 @Service
 @Transactional(readOnly = true)
-public class BpaNoticeService {
+public class BpaNoticeUtil {
 
+    private static final String TOTAL_CARPET_AREA = "totalCarpetArea";
+    private static final String TOTAL_FLOOR_AREA = "totalFloorArea";
+    private static final String TOTAL_BLT_UP_AREA = "totalBltUpArea";
+    private static final String EXST_TOTAL_CARPET_AREA = "exstTotalCarpetArea";
+    private static final String EXST_TOTAL_FLOOR_AREA = "exstTotalFloorArea";
+    private static final String EXST_TOTAL_BLT_UP_AREA = "exstTotalBltUpArea";
     public static final String TWO_NEW_LINE = "\n\n";
     public static final String N_A = "N/A";
     public static final String ONE_NEW_LINE = "\n";
@@ -182,19 +178,9 @@ public class BpaNoticeService {
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private CityService cityService;
-    private ReportUtil reportUtil;
 
     public BpaNotice findByApplicationAndNoticeType(final BpaApplication application, final String noticeType) {
         return bpaNoticeRepository.findByApplicationAndNoticeType(application, noticeType);
-    }
-
-    public ReportOutput generateDemandNotice(final BpaApplication bpaApplication)
-            throws IOException {
-        String fileName = "bpa_demand_notice_" + bpaApplication.getApplicationNumber();
-        BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, BPA_DEMAND_NOTICE_TYPE);
-        ReportOutput reportOutput = getReportOutput(bpaApplication, fileName, bpaNotice, DEMANDNOCFILENAME, BPA_DEMAND_NOTICE_TYPE, null);
-        reportOutput.setReportFormat(ReportFormat.PDF);
-        return reportOutput;
     }
 
     private Map<String, Object> buildParametersForDemandDetails(final BpaApplication bpaApplication) {
@@ -220,57 +206,8 @@ public class BpaNoticeService {
         return reportParams;
     }
 
-    public ReportOutput generatePermitOrder(final BpaApplication bpaApplication, HttpServletRequest request)
-            throws IOException {
-        ReportOutput reportOutput = new ReportOutput();
-        ReportRequest reportInput = null;
-        BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, PERMIT_ORDER_NOTICE_TYPE);
-        if (bpaNotice == null || bpaNotice.getNoticeFileStore() == null) {
-            String reportFileName = null;
-            if (getServicesForBuildPermit().contains(bpaApplication.getServiceType().getCode())) {
-                reportFileName = BUILDINGPERMITFILENAME;
-            } else if (getServicesForDevelopPermit().contains(bpaApplication.getServiceType().getCode())) {
-                reportFileName = BUILDINGDEVELOPPERMITFILENAME;
-            } else if (getServicesForOtherPermit().contains(bpaApplication.getServiceType().getCode())){
-                reportFileName = BUILDINGPERMITOTHERSFILENAME;
-            }
-            final Map<String, Object> reportParams = buildParametersForReport(bpaApplication);
-            reportParams.putAll(getUlbDetails());
-            reportInput = new ReportRequest(reportFileName, bpaApplication != null
-                    ? bpaApplication : new BpaApplication(), reportParams);
-            reportOutput = reportService.createReport(reportInput);
-            ReportRequest reportInputPermitNote = new ReportRequest("permitnote", bpaApplication != null
-                    ? bpaApplication : new BpaApplication(), reportParams);
-            ReportOutput reportOutputPermitNote = reportService.createReport(reportInputPermitNote);
-            saveBpaNotices(bpaApplication, reportOutput,reportOutputPermitNote, bpaApplication.getPlanPermissionNumber(),
-                    PERMIT_ORDER_NOTICE_TYPE, request);
-            List<BpaNotice> permitOrder = bpaApplication.getBpaNotice().stream()
-                    .filter(bpaNotice1 -> bpaNotice1.getNoticeType().equalsIgnoreCase("PermitOrder"))
-                    .collect(Collectors.toList());
-            if (permitOrder.size() > 0) {
-                final FileStoreMapper fmp = permitOrder.get(0).getNoticeFileStore();
-                Path path = fileStoreService.fetchAsPath(fmp.getFileStoreId(), APPLICATION_MODULE_TYPE);
-                reportOutput.setReportOutputData(Files.readAllBytes(path));
-            }
-        } else {
-            final FileStoreMapper fmp = bpaNotice.getNoticeFileStore();
-            Path path = fileStoreService.fetchAsPath(fmp.getFileStoreId(), APPLICATION_MODULE_TYPE);
-            reportOutput.setReportOutputData(Files.readAllBytes(path));
-        }
-        reportOutput.setReportFormat(ReportFormat.PDF);
-        return reportOutput;
-    }
-
-    public ReportOutput generateRejectionNotice(final BpaApplication bpaApplication, HttpServletRequest request)
-            throws IOException {
-        String fileName = "bpa_rejection_notice_" + bpaApplication.getApplicationNumber();
-        BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, BPA_REJECTION_NOTICE_TYPE);
-        ReportOutput reportOutput = getReportOutput(bpaApplication, fileName, bpaNotice, BPAREJECTIONFILENAME, BPA_REJECTION_NOTICE_TYPE, request);
-        reportOutput.setReportFormat(ReportFormat.PDF);
-        return reportOutput;
-    }
-
-    private ReportOutput getReportOutput(BpaApplication bpaApplication, String fileName, BpaNotice bpaNotice, String bparejectionfilename, String bpaRejectionNoticeType, HttpServletRequest request) throws IOException {
+    public ReportOutput getReportOutput(BpaApplication bpaApplication, String fileName, BpaNotice bpaNotice,
+            String bparejectionfilename, String bpaRejectionNoticeType, HttpServletRequest request) throws IOException {
         ReportOutput reportOutput = new ReportOutput();
         if (bpaNotice == null || bpaNotice.getNoticeFileStore() == null) {
             final Map<String, Object> reportParams = buildParametersForReport(bpaApplication);
@@ -278,7 +215,7 @@ public class BpaNoticeService {
             reportParams.putAll(buildParametersForDemandDetails(bpaApplication));
             ReportRequest reportInput = new ReportRequest(bparejectionfilename, bpaApplication, reportParams);
             reportOutput = reportService.createReport(reportInput);
-            saveBpaNotices(bpaApplication, reportOutput,null, fileName, bpaRejectionNoticeType, request);
+            saveBpaNotices(bpaApplication, reportOutput, null, fileName, bpaRejectionNoticeType, request);
         } else {
             final FileStoreMapper fmp = bpaNotice.getNoticeFileStore();
             Path path = fileStoreService.fetchAsPath(fmp.getFileStoreId(), APPLICATION_MODULE_TYPE);
@@ -287,11 +224,12 @@ public class BpaNoticeService {
         return reportOutput;
     }
 
-    private BpaNotice saveBpaNotices(final BpaApplication application, ReportOutput reportOutput, ReportOutput reportOutputForPermitNote, String fileName,
-                                     String noticeType, HttpServletRequest request) throws IOException {
+    public BpaNotice saveBpaNotices(final BpaApplication application, ReportOutput reportOutput,
+            ReportOutput reportOutputForPermitNote, String fileName,
+            String noticeType, HttpServletRequest request) throws IOException {
         BpaNotice bpaNotice = new BpaNotice();
         bpaNotice.setApplication(application);
-        Boolean qrCodeEnabled = getEdcrRequiredServices().contains(application.getServiceType().getCode()) ? true : false;
+        Boolean qrCodeEnabled = getEdcrRequiredServices().contains(application.getServiceType().getCode());
         if (Boolean.valueOf(appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 MERGE_PM_EDCR_ENABLED).get(0).getValue()) && qrCodeEnabled
                 && noticeType.equalsIgnoreCase("PERMITORDER")
@@ -307,7 +245,7 @@ public class BpaNoticeService {
                 if (dcrReport != null) {
                     pdfs.add(dcrReport);
                 }
-                if(reportOutputForPermitNote != null) {
+                if (reportOutputForPermitNote != null) {
                     pdfs.add(new ByteArrayInputStream(reportOutputForPermitNote.getReportOutputData()));
                 }
 
@@ -322,7 +260,8 @@ public class BpaNoticeService {
             updatePermitOrderReport(bpaNotice.getNoticeFileStore(), application);
         } else {
             bpaNotice.setNoticeFileStore(
-                    fileStoreService.store(new ByteArrayInputStream(reportOutput.getReportOutputData()), fileName, APPLICATION_PDF,
+                    fileStoreService.store(new ByteArrayInputStream(reportOutput.getReportOutputData()), fileName,
+                            APPLICATION_PDF,
                             APPLICATION_MODULE_TYPE));
         }
         bpaNotice.setNoticeGeneratedDate(new Date());
@@ -332,7 +271,7 @@ public class BpaNoticeService {
         return bpaNotice;
     }
 
-    private Map<String, Object> getUlbDetails() {
+    public Map<String, Object> getUlbDetails() {
         final Map<String, Object> ulbDetailsReportParams = new HashMap<>();
         ulbDetailsReportParams.put("cityName", ApplicationThreadLocals.getCityName());
         ulbDetailsReportParams.put("logoPath", cityService.getCityLogoAsStream());
@@ -340,7 +279,7 @@ public class BpaNoticeService {
         return ulbDetailsReportParams;
     }
 
-    private Map<String, Object> buildParametersForReport(final BpaApplication bpaApplication){
+    public Map<String, Object> buildParametersForReport(final BpaApplication bpaApplication) {
         StringBuilder serviceTypeDesc = new StringBuilder();
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("bpademandtitle", WordUtils.capitalize(BPADEMANDNOTICETITLE));
@@ -352,7 +291,7 @@ public class BpaNoticeService {
         reportParams.put("applicantName", bpaApplication.getOwner().getName());
         reportParams.put("applicantAddress",
                 bpaApplication.getOwner() == null ? "Not Mentioned" : bpaApplication.getOwner().getAddress());
-        Boolean serviceEnabled = getEdcrRequiredServices().contains(bpaApplication.getServiceType().getCode()) ? true : false;
+        Boolean serviceEnabled = getEdcrRequiredServices().contains(bpaApplication.getServiceType().getCode());
         Boolean mergeEnabled = Boolean.valueOf(appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 MERGE_PM_EDCR_ENABLED).get(0).getValue());
         reportParams.put("qrCodeEnabled", mergeEnabled && serviceEnabled && bpaApplication.geteDcrNumber() != null);
@@ -381,36 +320,50 @@ public class BpaNoticeService {
             reportParams.put("landExtent", bpaApplication.getSiteDetail().get(0).getExtentinsqmts().setScale(2,
                     BigDecimal.ROUND_HALF_UP));
             reportParams.put("buildingNo", bpaApplication.getSiteDetail().get(0).getPlotnumber() == null
-                    ? EMPTY : bpaApplication.getSiteDetail().get(0).getPlotnumber());
+                    ? EMPTY
+                    : bpaApplication.getSiteDetail().get(0).getPlotnumber());
             reportParams.put("nearestBuildingNo",
                     bpaApplication.getSiteDetail().get(0).getNearestbuildingnumber() == null
-                            ? EMPTY : bpaApplication.getSiteDetail().get(0).getNearestbuildingnumber());
+                            ? EMPTY
+                            : bpaApplication.getSiteDetail().get(0).getNearestbuildingnumber());
             reportParams.put("surveyNo", bpaApplication.getSiteDetail().get(0).getReSurveyNumber() == null
-                    ? EMPTY : bpaApplication.getSiteDetail().get(0).getReSurveyNumber());
+                    ? EMPTY
+                    : bpaApplication.getSiteDetail().get(0).getReSurveyNumber());
             reportParams.put("village", bpaApplication.getSiteDetail().get(0).getLocationBoundary() == null
-                    ? EMPTY : bpaApplication.getSiteDetail().get(0).getLocationBoundary().getName());
+                    ? EMPTY
+                    : bpaApplication.getSiteDetail().get(0).getLocationBoundary().getName());
             reportParams.put("taluk", bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk() == null
-                    ? EMPTY : bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk());
+                    ? EMPTY
+                    : bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk());
             reportParams.put("district", bpaApplication.getSiteDetail().get(0).getPostalAddress() == null
-                    ? EMPTY : bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict());
+                    ? EMPTY
+                    : bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict());
         }
         reportParams.put("certificateValidity",
                 getValidityDescription(bpaApplication.getServiceType().getCode(), bpaApplication.getPlanPermissionDate()));
         reportParams.put("isBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
-        reportParams.put("designation", getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()));
-        reportParams.put("approverName",getApproverName(bpaApplication));
+        reportParams.put("designation",
+                getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()));
+        reportParams.put("approverName", getApproverName(bpaApplication));
         reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(bpaApplication)));
         reportParams.put("mobileNo", bpaApplication.getOwner().getUser().getMobileNumber());
         StringBuilder totalBuiltUpArea = new StringBuilder();
-        if (bpaApplication.getOccupancy().getDescription().toString().equalsIgnoreCase(MIXED_OCCUPANCY)) {
-            for (Map.Entry<Occupancy, BigDecimal> innerMap : bpaUtils.getBlockWiseOccupancyAndBuiltupArea(bpaApplication.getBuildingDetail()).entrySet()) {
-                totalBuiltUpArea = totalBuiltUpArea.append(innerMap.getKey().getDescription()).append(" : ").append(innerMap.getValue().setScale(2,
-                        BigDecimal.ROUND_HALF_UP)).append(" Sq.Mtrs, ");
+        if (bpaApplication.getOccupancy().getDescription().equalsIgnoreCase(MIXED_OCCUPANCY)) {
+            for (Map.Entry<Occupancy, BigDecimal> innerMap : bpaUtils
+                    .getBlockWiseOccupancyAndBuiltupArea(bpaApplication.getBuildingDetail()).entrySet()) {
+                totalBuiltUpArea = totalBuiltUpArea.append(innerMap.getKey().getDescription()).append(" : ")
+                        .append(innerMap.getValue().setScale(2,
+                                BigDecimal.ROUND_HALF_UP))
+                        .append(" Sq.Mtrs, ");
             }
             reportParams.put("totalBuiltUpArea", totalBuiltUpArea.toString());
         } else {
-            reportParams.put("totalBuiltUpArea", bpaApplication.getBuildingDetail().size() > 0 ? bpaApplication.getBuildingDetail().get(0).getTotalPlintArea().setScale(2,
-                    BigDecimal.ROUND_HALF_UP).toString() + " Sq.Mtrs, " : EMPTY);
+            reportParams
+                    .put("totalBuiltUpArea",
+                            !bpaApplication.getBuildingDetail().isEmpty()
+                                    ? bpaApplication.getBuildingDetail().get(0).getTotalPlintArea().setScale(2,
+                                            BigDecimal.ROUND_HALF_UP).toString() + " Sq.Mtrs, "
+                                    : EMPTY);
         }
         if (bpaApplication.getIsOneDayPermitApplication())
             reportParams.put("permitOrderTitle", "ONE DAY BUILDING PERMIT");
@@ -420,32 +373,38 @@ public class BpaNoticeService {
             reportParams.put("permitFeeDetails", getPermitFeeDetails(bpaApplication));
 
         reportParams.put("cityName", ApplicationThreadLocals.getCityName());
-        String imageURL = reportUtil.getImageURL("/egi/resources/global/images/kerala_govt_logo.png");
+        String imageURL = ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH);
         reportParams.put("stateLogo", imageURL);
-        if (bpaApplication.getExistingBuildingDetails() != null && bpaApplication.getExistingBuildingDetails().size() > 0) {
+        if (bpaApplication.getExistingBuildingDetails() != null && !bpaApplication.getExistingBuildingDetails().isEmpty()) {
             Map<String, BigDecimal> exstArea = BpaUtils.getTotalExstArea(bpaApplication.getExistingBuildingDetails());
-            reportParams.put("exstTotalBltUpArea", exstArea.get("exstTotalBltUpArea") != null ? exstArea.get("exstTotalBltUpArea") : BigDecimal.ZERO);
-            reportParams.put("exstTotalFloorArea", exstArea.get("exstTotalFloorArea") != null ? exstArea.get("exstTotalFloorArea") : BigDecimal.ZERO);
-            reportParams.put("exstTotalCarpetArea", exstArea.get("exstTotalCarpetArea") != null ? exstArea.get("exstTotalCarpetArea") : BigDecimal.ZERO);
+            reportParams.put(EXST_TOTAL_BLT_UP_AREA,
+                    exstArea.get(EXST_TOTAL_BLT_UP_AREA) != null ? exstArea.get(EXST_TOTAL_BLT_UP_AREA) : BigDecimal.ZERO);
+            reportParams.put(EXST_TOTAL_FLOOR_AREA,
+                    exstArea.get(EXST_TOTAL_FLOOR_AREA) != null ? exstArea.get(EXST_TOTAL_FLOOR_AREA) : BigDecimal.ZERO);
+            reportParams.put(EXST_TOTAL_CARPET_AREA,
+                    exstArea.get(EXST_TOTAL_CARPET_AREA) != null ? exstArea.get(EXST_TOTAL_CARPET_AREA) : BigDecimal.ZERO);
 
         }
 
         Map<String, BigDecimal> proposedArea = BpaUtils.getTotalProposedArea(bpaApplication.getBuildingDetail());
-        reportParams.put("totalBltUpArea", proposedArea.get("totalBltUpArea") != null ? proposedArea.get("totalBltUpArea") : BigDecimal.ZERO);
-        reportParams.put("totalFloorArea", proposedArea.get("totalFloorArea") != null ? proposedArea.get("totalFloorArea") : BigDecimal.ZERO);
-        reportParams.put("totalCarpetArea", proposedArea.get("totalCarpetArea") != null ? proposedArea.get("totalCarpetArea") : BigDecimal.ZERO);
+        reportParams.put(TOTAL_BLT_UP_AREA,
+                proposedArea.get(TOTAL_BLT_UP_AREA) != null ? proposedArea.get(TOTAL_BLT_UP_AREA) : BigDecimal.ZERO);
+        reportParams.put(TOTAL_FLOOR_AREA,
+                proposedArea.get(TOTAL_FLOOR_AREA) != null ? proposedArea.get(TOTAL_FLOOR_AREA) : BigDecimal.ZERO);
+        reportParams.put(TOTAL_CARPET_AREA,
+                proposedArea.get(TOTAL_CARPET_AREA) != null ? proposedArea.get(TOTAL_CARPET_AREA) : BigDecimal.ZERO);
 
         List<BuildingSubUsage> buildingSubUsages = bpaApplication.getBuildingSubUsages();
 
         if (!buildingSubUsages.isEmpty()) {
-            StringBuffer subheader = new StringBuffer();
+            StringBuilder subheader = new StringBuilder();
 
             String mainUsage = null;
             String lastString = " and ";
             for (BuildingSubUsage buildingSubUsage : buildingSubUsages) {
                 for (BuildingSubUsageDetails buildingSubUsageDetail : buildingSubUsage.getSubUsageDetails()) {
                     mainUsage = buildingSubUsageDetail.getMainUsage().getAdditionalDescription();
-                    StringBuffer subUsage = new StringBuffer();
+                    StringBuilder subUsage = new StringBuilder();
                     for (SubOccupancy subOccupancy : buildingSubUsageDetail.getSubUsages()) {
                         subUsage = subUsage.append(subOccupancy.getDescription()).append(", ");
                     }
@@ -481,16 +440,32 @@ public class BpaNoticeService {
 
     public String buildQRCodeDetails(final BpaApplication bpaApplication) {
         StringBuilder qrCodeValue = new StringBuilder();
-        qrCodeValue = isBlank(ApplicationThreadLocals.getMunicipalityName()) ? qrCodeValue.append("") : qrCodeValue.append(ApplicationThreadLocals.getMunicipalityName()).append(ONE_NEW_LINE);
-        qrCodeValue = bpaApplication.getOwner() == null || isBlank(bpaApplication.getOwner().getName()) ? qrCodeValue.append("Applicant Name : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Applicant Name : ").append(bpaApplication.getOwner().getName()).append(ONE_NEW_LINE);
-        qrCodeValue = isBlank(bpaApplication.getApplicationNumber()) ? qrCodeValue.append("Application number : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Application number : ").append(bpaApplication.getApplicationNumber()).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(ApplicationThreadLocals.getMunicipalityName()) ? qrCodeValue.append("")
+                : qrCodeValue.append(ApplicationThreadLocals.getMunicipalityName()).append(ONE_NEW_LINE);
+        qrCodeValue = bpaApplication.getOwner() == null || isBlank(bpaApplication.getOwner().getName())
+                ? qrCodeValue.append("Applicant Name : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Applicant Name : ").append(bpaApplication.getOwner().getName()).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(bpaApplication.getApplicationNumber())
+                ? qrCodeValue.append("Application number : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Application number : ").append(bpaApplication.getApplicationNumber()).append(ONE_NEW_LINE);
         if (!isBlank(bpaApplication.geteDcrNumber())) {
             qrCodeValue = qrCodeValue.append("Edcr number : ").append(bpaApplication.geteDcrNumber()).append(ONE_NEW_LINE);
         }
-        qrCodeValue = isBlank(bpaApplication.getPlanPermissionNumber()) ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Permit number : ").append(bpaApplication.getPlanPermissionNumber()).append(ONE_NEW_LINE);
-        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication) == null ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Approved by : ").append(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue())).append(ONE_NEW_LINE);
-        qrCodeValue = bpaApplication.getPlanPermissionDate() == null ? qrCodeValue.append("Date of issue of permit : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Date of issue of permit : ").append(DateUtils.getDefaultFormattedDate(bpaApplication.getPlanPermissionDate())).append(ONE_NEW_LINE);
-        qrCodeValue = isBlank(getApproverName(bpaApplication)) ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Name of approver : ").append(getApproverName(bpaApplication)).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(bpaApplication.getPlanPermissionNumber())
+                ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Permit number : ").append(bpaApplication.getPlanPermissionNumber()).append(ONE_NEW_LINE);
+        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication) == null
+                ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Approved by : ")
+                        .append(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()))
+                        .append(ONE_NEW_LINE);
+        qrCodeValue = bpaApplication.getPlanPermissionDate() == null
+                ? qrCodeValue.append("Date of issue of permit : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Date of issue of permit : ")
+                        .append(DateUtils.getDefaultFormattedDate(bpaApplication.getPlanPermissionDate())).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(getApproverName(bpaApplication))
+                ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Name of approver : ").append(getApproverName(bpaApplication)).append(ONE_NEW_LINE);
         return qrCodeValue.toString();
     }
 
@@ -534,7 +509,7 @@ public class BpaNoticeService {
                             bpaApplication.getOwner().getName()))
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition9"))
                     .append(getMessageFromPropertyFileWithParameters("tower.pole.permit.condition10",
-                            DateUtils.getDefaultFormattedDate(bpaApplication.getPlanPermissionDate()).toString()))
+                            DateUtils.getDefaultFormattedDate(bpaApplication.getPlanPermissionDate())))
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition11"));
             int order = 12;
             buildAdditionalPermitConditionsOrRejectionReason(permitConditions, additionalPermitConditions, order);
@@ -546,14 +521,15 @@ public class BpaNoticeService {
     }
 
     private int buildAdditionalPermitConditionsOrRejectionReason(StringBuilder permitConditions,
-                                                                 List<ApplicationPermitConditions> additionalPermitConditions, int order) {
+            List<ApplicationPermitConditions> additionalPermitConditions, int order) {
         int additionalOrder = order;
         if (!additionalPermitConditions.isEmpty()
                 && isNotBlank(additionalPermitConditions.get(0).getAdditionalPermitCondition())) {
             for (ApplicationPermitConditions addnlPermitConditions : additionalPermitConditions) {
                 if (isNotBlank(addnlPermitConditions.getAdditionalPermitCondition())) {
                     permitConditions.append(
-                            String.valueOf(additionalOrder) + ") " + addnlPermitConditions.getAdditionalPermitCondition() + TWO_NEW_LINE);
+                            String.valueOf(additionalOrder) + ") " + addnlPermitConditions.getAdditionalPermitCondition()
+                                    + TWO_NEW_LINE);
                     additionalOrder++;
                 }
             }
@@ -567,17 +543,23 @@ public class BpaNoticeService {
             List<ApplicationPermitConditions> additionalPermitConditions = bpaApplicationPermitConditionsService
                     .findAllByApplicationAndPermitConditionType(bpaApplication, PermitConditionType.ADDITIONAL_PERMITCONDITION);
             int order = buildPredefinedRejectReasons(bpaApplication, rejectReasons);
-            int additionalOrder = buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions, order);
+            int additionalOrder = buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions,
+                    order);
             StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication);
-            rejectReasons.append(String.valueOf(additionalOrder) + ") " + (stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY) + TWO_NEW_LINE);
+            rejectReasons.append(String.valueOf(additionalOrder) + ") "
+                    + (stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY)
+                    + TWO_NEW_LINE);
         } else {
-            rejectReasons.append(bpaApplication.getState().getComments() != null && bpaApplication.getState().getComments().equalsIgnoreCase("Application cancelled by citizen") ? getMessageFromPropertyFile(APPLICATION_REJECTION_REASON) : getMessageFromPropertyFile(APPLICATION_AUTO_REJECTION_REASON));
+            rejectReasons.append(bpaApplication.getState().getComments() != null
+                    && bpaApplication.getState().getComments().equalsIgnoreCase("Application cancelled by citizen")
+                            ? getMessageFromPropertyFile(APPLICATION_REJECTION_REASON)
+                            : getMessageFromPropertyFile(APPLICATION_AUTO_REJECTION_REASON));
         }
         return rejectReasons.toString();
     }
 
     private int buildPredefinedRejectReasons(final BpaApplication bpaApplication,
-                                             StringBuilder permitConditions) {
+            StringBuilder permitConditions) {
         int order = 1;
         for (ApplicationPermitConditions rejectReason : bpaApplication.getRejectionReasons()) {
             if (rejectReason.isRequired()
@@ -591,7 +573,7 @@ public class BpaNoticeService {
     }
 
     private int buildApplicationPermitConditions(final BpaApplication bpaApplication,
-                                                 StringBuilder permitConditions) {
+            StringBuilder permitConditions) {
         int order = 1;
         for (ApplicationPermitConditions applnPermit : bpaApplication.getDynamicPermitConditions()) {
             if (applnPermit.isRequired()
@@ -620,7 +602,7 @@ public class BpaNoticeService {
     }
 
     private String getMessageFromPropertyFileWithParameters(String key, String value) {
-        return bpaMessageSource.getMessage(key, new String[]{value}, null);
+        return bpaMessageSource.getMessage(key, new String[] { value }, null);
     }
 
     public String calculateCertExpryDate(DateTime permissionDate, String noOfYears) {
@@ -646,25 +628,29 @@ public class BpaNoticeService {
 
     public String getApproverName(final BpaApplication application) {
         StateHistory<Position> stateHistory = application.getStateHistory().stream()
-                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())))
+                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(
+                        getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())))
                 .findAny().orElse(null);
         Assignment assignment = getAssignment(stateHistory);
         return assignment == null ? N_A : assignment.getEmployee().getName();
     }
 
     private Assignment getAssignment(StateHistory<Position> stateHistory) {
-        if(stateHistory == null)
+        if (stateHistory == null)
             return null;
         else {
-            Assignment assignment = bpaWorkFlowService.getApproverAssignmentByDate(stateHistory.getOwnerPosition(), stateHistory.getLastModifiedDate());
+            Assignment assignment = bpaWorkFlowService.getApproverAssignmentByDate(stateHistory.getOwnerPosition(),
+                    stateHistory.getLastModifiedDate());
             List<Assignment> assignments = Collections.emptyList();
             if (stateHistory.getOwnerUser() != null)
-                assignments = bpaWorkFlowService.getAssignmentByPositionAndUserAsOnDate(stateHistory.getOwnerPosition().getId(), stateHistory.getOwnerUser().getId(), stateHistory.getLastModifiedDate());
+                assignments = bpaWorkFlowService.getAssignmentByPositionAndUserAsOnDate(stateHistory.getOwnerPosition().getId(),
+                        stateHistory.getOwnerUser().getId(), stateHistory.getLastModifiedDate());
             else if (assignment == null && assignments.isEmpty())
-                assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(stateHistory.getOwnerPosition().getId(), stateHistory.getLastModifiedDate());
+                assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(stateHistory.getOwnerPosition().getId(),
+                        stateHistory.getLastModifiedDate());
             if (!assignments.isEmpty())
                 assignment = assignments.get(0);
-            if(assignment == null)
+            if (assignment == null)
                 assignment = bpaWorkFlowService.getAssignmentsForPosition(stateHistory.getOwnerPosition().getId());
             return assignment;
         }
@@ -678,34 +664,37 @@ public class BpaNoticeService {
             for (int i = 0; i < doc.getNumberOfPages(); i++) {
                 PDPage page = doc.getPage(i);
                 PDRectangle mediaBox = page.getMediaBox();
-                PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true);
+                PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND,
+                        true);
 
-                //adding qr code
+                // adding qr code
                 String pathToFile = generatePDF417Code(buildQRCodeDetails(application)).getAbsolutePath();
                 PDImageXObject pdImage = PDImageXObject.createFromFile(pathToFile, doc);
 
-                //over write the content to be replaced with a white rectangle to cover the footer from dcr report powered by
+                // over write the content to be replaced with a white rectangle to cover the footer from dcr report powered by
                 contentStream.setNonStrokingColor(Color.white);
                 contentStream.addRect((mediaBox.getWidth() / 2f) + 45, 35, mediaBox.getWidth(), 12);
                 contentStream.fill();
 
-                //over write the content to be replaced with a white rectangle for dcr report page number
+                // over write the content to be replaced with a white rectangle for dcr report page number
                 contentStream.addRect(230, 35, 50, 12);
                 contentStream.fill();
 
-                //set the color to black again as we are setting the color to white before
+                // set the color to black again as we are setting the color to white before
                 contentStream.setNonStrokingColor(Color.black);
 
-                //set the coordinates of barcode in pdf page
+                // set the coordinates of barcode in pdf page
                 float barCodeCoordinate = mediaBox.getWidth() - pdImage.getWidth() - 10;
 
                 contentStream.drawImage(pdImage, barCodeCoordinate, 5);
 
                 contentStream.beginText();
 
-                /*if bar code width is large and its x coordinate exceeds half page
-                we take bar code x coordinate minus 40 */
-                float pageNoCoordinate = mediaBox.getWidth() / 2f > barCodeCoordinate ? barCodeCoordinate - 40 : mediaBox.getWidth() / 2f - 24;
+                /*
+                 * if bar code width is large and its x coordinate exceeds half page we take bar code x coordinate minus 40
+                 */
+                float pageNoCoordinate = mediaBox.getWidth() / 2f > barCodeCoordinate ? barCodeCoordinate - 40
+                        : mediaBox.getWidth() / 2f - 24;
 
                 contentStream.newLineAtOffset(pageNoCoordinate, 37);
 
@@ -722,14 +711,15 @@ public class BpaNoticeService {
         }
     }
 
-    public LinkedList<Map<String, String>> getAllReviewersList(BpaApplication bpaApplication) {
+    public List<Map<String, String>> getAllReviewersList(BpaApplication bpaApplication) {
         bpaApplication.getStateHistory().sort(Comparator.comparing(StateHistory::getId));
-        LinkedList<Map<String, String>> reviewerNameAndDesignation = new LinkedList<>();
+        List<Map<String, String>> reviewerNameAndDesignation = new LinkedList<>();
         for (StateHistory<Position> stateHistory : bpaApplication.getStateHistory()) {
             Assignment assignment = getAssignment(stateHistory);
-            if(assignment != null && !assignment.getDesignation().getName().equals("SECTION CLERK") && !assignment.getDesignation().getName().equals("Superintendent") &&
-            !assignment.getDesignation().getName().equals(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue())))
-            {
+            if (assignment != null && !assignment.getDesignation().getName().equals(SECTION_CLERK)
+                    && !assignment.getDesignation().getName().equals("Superintendent") &&
+                    !assignment.getDesignation().getName().equals(
+                            getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()))) {
                 Map<String, String> reviewerNameAndDesignationMap = new HashMap<>();
                 reviewerNameAndDesignationMap.put("name", assignment.getEmployee().getName());
                 reviewerNameAndDesignationMap.put("designation", assignment.getDesignation().getName());

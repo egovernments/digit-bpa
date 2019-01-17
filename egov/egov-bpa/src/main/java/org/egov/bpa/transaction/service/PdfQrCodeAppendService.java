@@ -34,7 +34,7 @@ import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.service.notice.BpaNoticeService;
+import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.service.CityService;
@@ -70,7 +70,7 @@ public class PdfQrCodeAppendService {
 	private static final Logger LOG = getLogger(BpaUtils.class);
 
 	@Autowired
-	private BpaNoticeService bpaNoticeService;
+	private BpaNoticeUtil bpaNoticeUtil;
 
 	@Autowired
 	private BpaUtils bpautils;
@@ -99,7 +99,7 @@ public class PdfQrCodeAppendService {
 			PDPageContentStream contentStrm = new PDPageContentStream(document1, page,
 					PDPageContentStream.AppendMode.APPEND, true, true);
 			putImageOnPdf(document1, page, mediaBox, contentStrm, pathToStampImage.toString(), 5, 85);
-			String pathOfQrCode = generatePDF417Code(bpaNoticeService.buildQRCodeDetails(application))
+			String pathOfQrCode = generatePDF417Code(bpaNoticeUtil.buildQRCodeDetails(application))
 					.getAbsolutePath();
 			putImageOnPdf(document1, page, mediaBox, contentStrm, pathOfQrCode, 30, 23);
 			File file2 = new File(application.getApplicationNumber() + ".pdf");
@@ -188,10 +188,10 @@ public class PdfQrCodeAppendService {
 		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase3, 18, 32.5f, 0);
 		String validityExpiryDate = application.getServiceType().getCode().equals(ST_CODE_14)
 				|| application.getServiceType().getCode().equals(ST_CODE_15)
-						? bpaNoticeService.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
-								bpaNoticeService.getMessageFromPropertyFile("tower.pole.certificate.expiry"))
-						: bpaNoticeService.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
-								bpaNoticeService.getMessageFromPropertyFile("common.services.certificate.expiry"));
+						? bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
+								bpaNoticeUtil.getMessageFromPropertyFile("tower.pole.certificate.expiry"))
+						: bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
+								bpaNoticeUtil.getMessageFromPropertyFile("common.services.certificate.expiry"));
 		String pattern = "dd-MM-yyyy";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 		String date = simpleDateFormat.format(application.getPlanPermissionDate());
@@ -209,18 +209,18 @@ public class PdfQrCodeAppendService {
 		Phrase phrase6 = new Phrase(approvedBy, font2);
 		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase6, 24, 24.5f, 0);
 
-		String approverName = bpaNoticeService.getApproverName(application).toUpperCase() + "("
-				+ bpaNoticeService
+		String approverName = bpaNoticeUtil.getApproverName(application).toUpperCase() + "("
+							  + bpaNoticeUtil
 						.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())
 						.toUpperCase()
-				+ ")";
+							  + ")";
 		Phrase phrase7 = new Phrase(approverName, font);
 		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase7,
 				((pageWidth / 2f) - ((approverName.length() / 2f) * 1.25f)), 21.5f, 0);
 		String reviewedBy = "REVIEWED BY :";
 		Phrase phrase8 = new Phrase(reviewedBy, font2);
 		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase8, 24, 18.5f, 0);
-		java.util.LinkedList<Map<String, String>> reviewersNameAndDesignationMapList = bpaNoticeService
+		List<Map<String, String>> reviewersNameAndDesignationMapList = bpaNoticeUtil
 				.getAllReviewersList(application);
 		LinkedHashSet<String> reviewersList = new LinkedHashSet<>();
 		for (Map<String, String> nameAndDesignation : reviewersNameAndDesignationMapList) {
@@ -329,10 +329,10 @@ public class PdfQrCodeAppendService {
 
 			String validityExpiryDate = application.getServiceType().getCode().equals(ST_CODE_14)
 					|| application.getServiceType().getCode().equals(ST_CODE_15)
-							? bpaNoticeService.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
-									bpaNoticeService.getMessageFromPropertyFile("tower.pole.certificate.expiry"))
-							: bpaNoticeService.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
-									bpaNoticeService.getMessageFromPropertyFile("common.services.certificate.expiry"));
+							? bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
+									bpaNoticeUtil.getMessageFromPropertyFile("tower.pole.certificate.expiry"))
+							: bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
+									bpaNoticeUtil.getMessageFromPropertyFile("common.services.certificate.expiry"));
 			String pattern = "dd-MM-yyyy";
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 			String date = simpleDateFormat.format(application.getPlanPermissionDate());
@@ -351,11 +351,11 @@ public class PdfQrCodeAppendService {
 			x1=x+(140 -(approvedBy.length()/2));
 			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase6, x1, y - 75, 0);
 
-			String approverName = bpaNoticeService.getApproverName(application) + "("
-					+ bpaNoticeService
+			String approverName = bpaNoticeUtil.getApproverName(application) + "("
+								  + bpaNoticeUtil
 							.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())
-							
-					+ ")";
+
+								  + ")";
 			Phrase phrase7 = new Phrase(approverName, font1);
 			x1=x+(140 -(approverName.length()/2));
 			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase7, x1, y - 90, 0);
@@ -367,7 +367,7 @@ public class PdfQrCodeAppendService {
 			
 			
 			LinkedHashSet<String> reviewersList = new LinkedHashSet<>();
-			java.util.LinkedList<Map<String, String>> reviewersNameAndDesignationMapList = bpaNoticeService
+			List<Map<String, String>> reviewersNameAndDesignationMapList = bpaNoticeUtil
 					.getAllReviewersList(application);
 
 			
@@ -402,7 +402,7 @@ public class PdfQrCodeAppendService {
 				LOG.info("LandScape");
 			}
 			
-			String pathOfQrCode = generatePDF417Code(bpaNoticeService.buildQRCodeDetails(application),140, 50)
+			String pathOfQrCode = generatePDF417Code(bpaNoticeUtil.buildQRCodeDetails(application),140, 50)
 					.getAbsolutePath();
 
 			//File f = SecureCodeUtils.generatePDF417Code("manikanta PT", 140, 50).getAbsoluteFile();

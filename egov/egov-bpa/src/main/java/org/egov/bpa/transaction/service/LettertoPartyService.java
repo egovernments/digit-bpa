@@ -29,42 +29,24 @@
  */
 package org.egov.bpa.transaction.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.bpa.autonumber.LettertoPartyNumberGenerator;
 import org.egov.bpa.autonumber.LettertoPartyReplyAckNumberGenerator;
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.bpa.master.entity.LpReason;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.LettertoParty;
-import org.egov.bpa.transaction.entity.LettertoPartyDocument;
 import org.egov.bpa.transaction.repository.LettertoPartyRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.service.FinancialYearService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Service
 @Transactional(readOnly = true)
@@ -85,11 +67,6 @@ public class LettertoPartyService {
     private BpaStatusService bpaStatusService;
     @Autowired
     private BPASmsAndEmailService bpaSmsAndEmailService;
-    @Autowired
-    private ReportService reportService;
-    @Autowired
-    private CityService cityService;
-    private ReportUtil reportUtil;
 
     @Autowired
     public LettertoPartyService(final LettertoPartyRepository lettertoPartyRepository) {
@@ -132,7 +109,7 @@ public class LettertoPartyService {
     public Long getDocScutinyUser(BpaApplication bpaApplication) {
         Long docSrcuityUserPos = null;
         if (!bpaApplication.getStateHistory().isEmpty()) {
-            for (final StateHistory stateHistory : bpaApplication.getStateHistory()) {
+            for (final StateHistory<Position> stateHistory : bpaApplication.getStateHistory()) {
                 if (stateHistory.getValue().equals(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
                     docSrcuityUserPos = stateHistory.getOwnerPosition().getId();
                     break;
@@ -152,49 +129,6 @@ public class LettertoPartyService {
         final LettertoPartyReplyAckNumberGenerator lettertoPartyReplyAckNumberGenerator = beanResolver
                 .getAutoNumberServiceFor(LettertoPartyReplyAckNumberGenerator.class);
         return lettertoPartyReplyAckNumberGenerator.generateLettertoPartyReplyAckNumber(financialYearRange);
-    }
-
-    public ResponseEntity<byte[]> generateReport(final LettertoParty lettertoParty, String type,
-                                                 final HttpServletRequest request) {
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput;
-        if (lettertoParty != null) {
-            if (LPCHK.equals(type))
-                reportInput = new ReportRequest("lettertoparty", lettertoParty, buildReportParameters(lettertoParty, request));
-            else if (LPREPLYCHK.equals(type))
-                reportInput = new ReportRequest("lettertopartyreply", lettertoParty,
-                        buildReportParameters(lettertoParty, request));
-            reportInput.setPrintDialogOnOpenReport(true);
-        }
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        if (LPCHK.equals(type))
-            headers.add("content-disposition", "inline;filename=lettertoparty.pdf");
-        else if (LPREPLYCHK.equals(type))
-            headers.add("content-disposition", "inline;filename=lettertopartyreply.pdf");
-        reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }
-
-    public Map<String, Object> buildReportParameters(final LettertoParty lettertoParty, HttpServletRequest request) {
-        final Map<String, Object> reportParams = new HashMap<>();
-        Boolean checkListPresent = Boolean.FALSE;
-        List<CheckListDetail> chkList = new ArrayList<>();
-        for(LettertoPartyDocument document : lettertoParty.getLettertoPartyDocument()) {
-            if(!isEmpty(document.getChecklistDetail()) && document.getIsrequested() == Boolean.TRUE && document.getChecklistDetail().getDescription() != null ) {
-                chkList.add(document.getChecklistDetail());
-            }
-             checkListPresent = chkList.size() > 0 ? Boolean.TRUE : Boolean.FALSE;
-        }
-        String imageURL = reportUtil.getImageURL("/egi/resources/global/images/kerala_govt_logo.png");
-        reportParams.put("stateLogo", imageURL);
-        reportParams.put("checkListPresent", checkListPresent);
-        reportParams.put("logoPath", cityService.getCityLogoAsStream());
-        reportParams.put("cityName", request.getSession().getAttribute("cityname").toString());
-        reportParams.put("ulbName", request.getSession().getAttribute("citymunicipalityname").toString());
-        reportParams.put("lpReason",
-                lettertoParty.getLpReason().stream().map(LpReason::getDescription).collect(Collectors.joining(",")));
-        return reportParams;
     }
 
 }

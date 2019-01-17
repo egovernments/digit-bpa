@@ -39,86 +39,6 @@
  */
 package org.egov.bpa.transaction.service;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
-import org.egov.bpa.master.entity.BpaFeeDetail;
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.master.service.BpaSchemeLandUsageService;
-import org.egov.bpa.master.service.CheckListDetailService;
-import org.egov.bpa.master.service.PostalAddressService;
-import org.egov.bpa.master.service.RegistrarOfficeVillageService;
-import org.egov.bpa.service.es.BpaIndexService;
-import org.egov.bpa.transaction.entity.Applicant;
-import org.egov.bpa.transaction.entity.ApplicationDocument;
-import org.egov.bpa.transaction.entity.ApplicationNocDocument;
-import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.entity.BuildingSubUsage;
-import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
-import org.egov.bpa.transaction.entity.DCRDocument;
-import org.egov.bpa.transaction.entity.StoreDCRFiles;
-import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
-import org.egov.bpa.transaction.repository.DcrDocumentRepository;
-import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
-import org.egov.bpa.transaction.service.collection.BpaDemandService;
-import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
-import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
-import org.egov.bpa.transaction.service.notice.BpaNoticeService;
-import org.egov.bpa.utils.BpaUtils;
-import org.egov.commons.entity.Source;
-import org.egov.demand.model.EgDemand;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.persistence.entity.PermanentAddress;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.portal.entity.Citizen;
-import org.egov.portal.service.CitizenService;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DIGI_SIGNED;
@@ -143,6 +63,87 @@ import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
+import org.egov.bpa.master.entity.BpaFeeDetail;
+import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.service.BpaSchemeLandUsageService;
+import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.service.PostalAddressService;
+import org.egov.bpa.master.service.RegistrarOfficeVillageService;
+import org.egov.bpa.service.es.BpaIndexService;
+import org.egov.bpa.transaction.entity.Applicant;
+import org.egov.bpa.transaction.entity.ApplicationDocument;
+import org.egov.bpa.transaction.entity.ApplicationNocDocument;
+import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
+import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.BuildingSubUsage;
+import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
+import org.egov.bpa.transaction.entity.DCRDocument;
+import org.egov.bpa.transaction.entity.StoreDCRFiles;
+import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
+import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
+import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
+import org.egov.bpa.transaction.repository.DcrDocumentRepository;
+import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
+import org.egov.bpa.transaction.service.collection.BpaDemandService;
+import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
+import org.egov.bpa.utils.BpaUtils;
+import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.custom.CustomImplProvider;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.entity.PermanentAddress;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.portal.entity.Citizen;
+import org.egov.portal.service.CitizenService;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -217,22 +218,16 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Autowired
     private BPASmsAndEmailService bpaSmsAndEmailService;
     @Autowired
-    private BpaNoticeService bpaNoticeService;
-    @Autowired
-    private ApplicationBpaService applicationBpaService;
-    @Autowired
-    private DcrRestService dcrRestService;
-    @Autowired
     private FileStoreUtils fileStoreUtils;
     @Autowired
-    private BpaApplicationValidationService bpaApplicationValidationService;
+    private CustomImplProvider specificNoticeService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Transactional
-    public BpaApplication createNewApplication(final BpaApplication application, String workFlowAction, HttpServletRequest request) {
+    public BpaApplication createNewApplication(final BpaApplication application, String workFlowAction) {
         final Boundary boundaryObj = bpaUtils.getBoundaryById(application.getWardId() != null ? application.getWardId()
                 : getZone(application));
         buildSiteDetails(application, boundaryObj);
@@ -244,29 +239,34 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         persistBpaNocDocuments(application);
         application.setDcrDocuments(persistApplnDCRDocuments(application));
         buildBuildingSubUsage(application);
-        /*if (bpaApplicationValidationService.isEdcrInetgrationRequired(application.getServiceType().getCode(), application.getOccupancy().getDescription())) {
-            buildApplicationDcrDocs(application, request);
-        }*/
-        if(!application.getBuildingDetail().isEmpty())
-            application.setTotalBuiltUpArea(bpaUtils.getBlockWiseOccupancyAndBuiltupArea(application.getBuildingDetail()).entrySet().stream().map(Map.Entry::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
+        /*
+         * if (bpaApplicationValidationService.isEdcrInetgrationRequired(application.getServiceType().getCode(),
+         * application.getOccupancy().getDescription())) { buildApplicationDcrDocs(application, request); }
+         */
+        if (!application.getBuildingDetail().isEmpty())
+            application.setTotalBuiltUpArea(bpaUtils.getBlockWiseOccupancyAndBuiltupArea(application.getBuildingDetail())
+                    .entrySet().stream().map(Map.Entry::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
         final BpaStatus bpaStatus = getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED);
         application.setStatus(bpaStatus);
         setSource(application);
         Long approvalPosition = null;
         application.setDemand(applicationBpaBillService.createDemand(application));
         if (!bpaUtils.logedInuseCitizenOrBusinessUser()) {
-            WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(), application.getStateType(), WF_CREATED_STATE);
+            WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
+                    application.getStateType(), WF_CREATED_STATE);
             String currentState = WF_CREATED_STATE;
             if (application.getAdmissionfeeAmount() != null
-                && application.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0) {
-                wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),application.getStateType(), WF_NEW_STATE);
+                    && application.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
+                        application.getStateType(), WF_NEW_STATE);
                 currentState = WF_NEW_STATE;
             }
             if (wfMatrix != null)
                 approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
                         application.getSiteDetail().get(0) != null
-                        && application.getSiteDetail().get(0).getElectionBoundary() != null
-                        ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
+                                && application.getSiteDetail().get(0).getElectionBoundary() != null
+                                        ? application.getSiteDetail().get(0).getElectionBoundary().getId()
+                                        : null);
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, currentState, null, null,
                     null);
         }
@@ -276,7 +276,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     public void buildBuildingSubUsage(BpaApplication application) {
-        application.getBuildingSubUsages().forEach( subUsage -> {
+        application.getBuildingSubUsages().forEach(subUsage -> {
             subUsage.setApplication(application);
             subUsage.getSubUsageDetails().forEach(subUsageDtl -> {
                 subUsageDtl.setBuildingSubUsage(subUsage);
@@ -357,9 +357,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Transactional
     public void saveAndFlushApplication(final BpaApplication application, String workFlowAction) {
 
-        if(!application.getBuildingSubUsages().isEmpty())
-            for(BuildingSubUsage subUsage : application.getBuildingSubUsages())
-                for(BuildingSubUsageDetails subUsageDetails : subUsage.getSubUsageDetails()) {
+        if (!application.getBuildingSubUsages().isEmpty())
+            for (BuildingSubUsage subUsage : application.getBuildingSubUsages())
+                for (BuildingSubUsageDetails subUsageDetails : subUsage.getSubUsageDetails()) {
                     subUsageDetails.getSubUsages().clear();
                     subUsageDetails.setSubUsages(subUsageDetails.getSubUsagesTemp());
                 }
@@ -422,14 +422,14 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     @Transactional
     public BpaApplication updateApplication(final BpaApplication application, Long approvalPosition,
-                                            String workFlowAction, BigDecimal amountRule) throws IOException {
+            String workFlowAction, BigDecimal amountRule) throws IOException {
         application.setSentToPreviousOwner(false);
         application.setDcrDocuments(persistApplnDCRDocuments(application));
         persistBpaNocDocuments(application);
         buildExistingAndProposedBuildingDetails(application);
         persistPostalAddress(application);
         buildSchemeLandUsage(application);
-        //For one day permit
+        // For one day permit
         if (application.getIsOneDayPermitApplication()
                 && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())) {
             bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
@@ -444,9 +444,14 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (WF_APPROVE_BUTTON.equals(workFlowAction)) {
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
             application.setPlanPermissionDate(new Date());
-            ReportOutput reportOutput = bpaNoticeService.generateDemandNotice(
-                    applicationBpaService.findByApplicationNumber(application.getApplicationNumber()));
+
+            PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService.find(
+                    DemandDetailsFormatImpl.class,
+                    specificNoticeService.getCityDetails());
+            ReportOutput reportOutput = bpaNoticeFeature
+                    .generateNotice(findByApplicationNumber(application.getApplicationNumber()));
             bpaSmsAndEmailService.sendSmsAndEmailOnApplicationApproval(application, reportOutput);
+
         }
         if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                 || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode())
@@ -465,14 +470,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
                 || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)
                 || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
-                || (!WF_APPROVE_BUTTON.equals(workFlowAction) && APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode()))) {
+                || (!WF_APPROVE_BUTTON.equals(workFlowAction)
+                        && APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode()))) {
             buildRejectionReasons(application);
         }
-        if (FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(application.getState().getNextAction())) {
-            application.setLPRequestInitiated(true);
-        } else {
-            application.setLPRequestInitiated(false);
-        }
+        application.setLPRequestInitiated(FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(application.getState().getNextAction()));
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && updatedApplication.getCurrentState() != null
                 && !updatedApplication.getCurrentState().getValue().equals(WF_NEW_STATE)) {
@@ -486,397 +488,389 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private void appendQrCodeWithDcrDocuments(BpaApplication application) {
         List<DCRDocument> dcrDocuments = dcrDocumentRepository.findByApplication(application);
         for (DCRDocument dcrDocument : dcrDocuments) {
-            LOG.info("#### Dcr Document ####" + dcrDocument.getId());
+            if (LOG.isInfoEnabled())
+                LOG.info("#### Dcr Document ####", dcrDocument.getId());
             for (StoreDCRFiles file : dcrDocument.getDcrAttachments()) {
-                LOG.info("#### file ####" + file.getId());
+                if (LOG.isInfoEnabled())
+                    LOG.info("#### file ####", file.getId());
                 bpaUtils.addQrCodeToPdfDocuments(file.getFileStoreMapper(), application);
             }
         }
     }
 
     public void persistOrUpdateApplicationDocument(final BpaApplication bpaApplication) {
-		processAndStoreApplicationDocuments(bpaApplication);
-	}
+        processAndStoreApplicationDocuments(bpaApplication);
+    }
 
-	public BigDecimal setAdmissionFeeAmountForRegistrationWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
-		BigDecimal admissionfeeAmount;
-		if (serviceType != null)
-			admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
-					BPAFEETYPE);
-		else
-			admissionfeeAmount = BigDecimal.ZERO;
-		return admissionfeeAmount;
-	}
+    public BigDecimal setAdmissionFeeAmountForRegistrationWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
+        BigDecimal admissionfeeAmount;
+        if (serviceType != null)
+            admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
+                    BPAFEETYPE);
+        else
+            admissionfeeAmount = BigDecimal.ZERO;
+        return admissionfeeAmount;
+    }
 
-	private BigDecimal getTotalFeeAmountByPassingServiceTypeandArea(final Long serviceTypeId, List<ServiceType> amenityList,
-																	final String feeType) {
-		BigDecimal totalAmount = BigDecimal.ZERO;
-		List<Long> serviceTypeList = new ArrayList<>();
-		serviceTypeList.add(serviceTypeId);
-		for (ServiceType temp : amenityList) {
-			serviceTypeList.add(temp.getId());
-		}
-		if (serviceTypeId != null) {
-			final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeList, feeType);
-			@SuppressWarnings(UNCHECKED) final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
-			for (final BpaFeeDetail feeDetail : bpaFeeDetails)
-				totalAmount = totalAmount.add(BigDecimal.valueOf(feeDetail.getAmount()));
-		} else
-			throw new ApplicationRuntimeException("Service Type Id is mandatory.");
+    private BigDecimal getTotalFeeAmountByPassingServiceTypeandArea(final Long serviceTypeId, List<ServiceType> amenityList,
+            final String feeType) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        List<Long> serviceTypeList = new ArrayList<>();
+        serviceTypeList.add(serviceTypeId);
+        for (ServiceType temp : amenityList) {
+            serviceTypeList.add(temp.getId());
+        }
+        if (serviceTypeId != null) {
+            final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeList, feeType);
+            @SuppressWarnings(UNCHECKED)
+            final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
+            for (final BpaFeeDetail feeDetail : bpaFeeDetails)
+                totalAmount = totalAmount.add(BigDecimal.valueOf(feeDetail.getAmount()));
+        } else
+            throw new ApplicationRuntimeException("Service Type Id is mandatory.");
 
-		return totalAmount;
-	}
+        return totalAmount;
+    }
 
-	public BigDecimal getTotalFeeAmountByPassingServiceTypeAndAmenities(List<Long> serviceTypeIds) {
-		BigDecimal totalAmount = BigDecimal.ZERO;
-		if (!serviceTypeIds.isEmpty()) {
-			final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, BPAFEETYPE);
-			@SuppressWarnings(UNCHECKED) final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
-			for (final BpaFeeDetail feeDetail : bpaFeeDetails)
-				totalAmount = totalAmount.add(BigDecimal.valueOf(feeDetail.getAmount()));
-		} else
-			throw new ApplicationRuntimeException("Service Type Id is mandatory.");
+    public BigDecimal getTotalFeeAmountByPassingServiceTypeAndAmenities(List<Long> serviceTypeIds) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        if (!serviceTypeIds.isEmpty()) {
+            final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, BPAFEETYPE);
+            @SuppressWarnings(UNCHECKED)
+            final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
+            for (final BpaFeeDetail feeDetail : bpaFeeDetails)
+                totalAmount = totalAmount.add(BigDecimal.valueOf(feeDetail.getAmount()));
+        } else
+            throw new ApplicationRuntimeException("Service Type Id is mandatory.");
 
-		return totalAmount;
-	}
+        return totalAmount;
+    }
 
-	public BpaApplication getApplicationByDemand(final EgDemand demand) {
-		return applicationBpaRepository.findByDemand(demand);
-	}
+    public BpaApplication getApplicationByDemand(final EgDemand demand) {
+        return applicationBpaRepository.findByDemand(demand);
+    }
 
-	public BpaApplication findByApplicationNumber(final String applicationNumber) {
-		return applicationBpaRepository.findByApplicationNumber(applicationNumber);
-	}
+    public BpaApplication findByApplicationNumber(final String applicationNumber) {
+        return applicationBpaRepository.findByApplicationNumber(applicationNumber);
+    }
 
-	public BpaApplication findById(final Long applicationId) {
-		return applicationBpaRepository.findOne(applicationId);
-	}
+    public BpaApplication findById(final Long applicationId) {
+        return applicationBpaRepository.findOne(applicationId);
+    }
 
-	public List<BpaApplication> findApplicationByEDCRNumber(final String eDcrNumber) {
-		return applicationBpaRepository.findApplicationByEDcrNumberOrderByIdDesc(eDcrNumber);
-	}
+    public List<BpaApplication> findApplicationByEDCRNumber(final String eDcrNumber) {
+        return applicationBpaRepository.findApplicationByEDcrNumberOrderByIdDesc(eDcrNumber);
+    }
 
-	public BpaApplication findByPermitNumber(final String permitNumber) {
-		return applicationBpaRepository.findByPlanPermissionNumber(permitNumber);
-	}
+    public BpaApplication findByPermitNumber(final String permitNumber) {
+        return applicationBpaRepository.findByPlanPermissionNumber(permitNumber);
+    }
 
-	private void processAndStoreNocDocuments(final BpaApplication bpaApplication) {
-		final User user = securityUtils.getCurrentUser();
-		if (!bpaApplication.getApplicationNOCDocument().isEmpty()
-			&& null == bpaApplication.getApplicationNOCDocument().get(0).getId())
-			for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument()) {
-				nocDocument.setChecklist(
-						checkListDetailService.load(nocDocument.getChecklist().getId()));
-				nocDocument.setApplication(bpaApplication);
-				nocDocument.setCreateduser(user);
-				buildNocFiles(nocDocument);
-			}
-		else
-			for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument())
-				buildNocFiles(nocDocument);
-	}
+    private void processAndStoreNocDocuments(final BpaApplication bpaApplication) {
+        final User user = securityUtils.getCurrentUser();
+        if (!bpaApplication.getApplicationNOCDocument().isEmpty()
+                && null == bpaApplication.getApplicationNOCDocument().get(0).getId())
+            for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument()) {
+                nocDocument.setChecklist(
+                        checkListDetailService.load(nocDocument.getChecklist().getId()));
+                nocDocument.setApplication(bpaApplication);
+                nocDocument.setCreateduser(user);
+                buildNocFiles(nocDocument);
+            }
+        else
+            for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument())
+                buildNocFiles(nocDocument);
+    }
 
-	private void buildNocFiles(ApplicationNocDocument nocDocument) {
-		if (nocDocument.getFiles() != null && nocDocument.getFiles().length > 0) {
-			Set<FileStoreMapper> existingFiles = new HashSet<>();
-			existingFiles.addAll(nocDocument.getNocSupportDocs());
-			existingFiles.addAll(addToFileStore(nocDocument.getFiles()));
-			nocDocument.setNocSupportDocs(existingFiles);
-			nocDocument.setIssubmitted(true);
-		}
-	}
+    private void buildNocFiles(ApplicationNocDocument nocDocument) {
+        if (nocDocument.getFiles() != null && nocDocument.getFiles().length > 0) {
+            Set<FileStoreMapper> existingFiles = new HashSet<>();
+            existingFiles.addAll(nocDocument.getNocSupportDocs());
+            existingFiles.addAll(addToFileStore(nocDocument.getFiles()));
+            nocDocument.setNocSupportDocs(existingFiles);
+            nocDocument.setIssubmitted(true);
+        }
+    }
 
-	private void processAndStoreApplicationDocuments(final BpaApplication bpaApplication) {
-		if (!bpaApplication.getApplicationDocument().isEmpty() && null == bpaApplication.getApplicationDocument().get(0).getId())
-			for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
-				applicationDocument.setChecklistDetail(
-						checkListDetailService.load(applicationDocument.getChecklistDetail().getId()));
-				applicationDocument.setApplication(bpaApplication);
-				buildApplicationDocFiles(applicationDocument);
-			}
-		else
-			for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
-				buildApplicationDocFiles(applicationDocument);
-			}
-	}
+    private void processAndStoreApplicationDocuments(final BpaApplication bpaApplication) {
+        if (!bpaApplication.getApplicationDocument().isEmpty() && null == bpaApplication.getApplicationDocument().get(0).getId())
+            for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
+                applicationDocument.setChecklistDetail(
+                        checkListDetailService.load(applicationDocument.getChecklistDetail().getId()));
+                applicationDocument.setApplication(bpaApplication);
+                buildApplicationDocFiles(applicationDocument);
+            }
+        else
+            for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
+                buildApplicationDocFiles(applicationDocument);
+            }
+    }
 
-	private void buildApplicationDocFiles(ApplicationDocument applicationDocument) {
-		if (applicationDocument.getFiles() != null && applicationDocument.getFiles().length > 0) {
-			Set<FileStoreMapper> existingFiles = new HashSet<>();
-			existingFiles.addAll(applicationDocument.getSupportDocs());
-			existingFiles.addAll(addToFileStore(applicationDocument.getFiles()));
-			applicationDocument.setSupportDocs(existingFiles);
-			applicationDocument.setIssubmitted(true);
-		}
-	}
+    private void buildApplicationDocFiles(ApplicationDocument applicationDocument) {
+        if (applicationDocument.getFiles() != null && applicationDocument.getFiles().length > 0) {
+            Set<FileStoreMapper> existingFiles = new HashSet<>();
+            existingFiles.addAll(applicationDocument.getSupportDocs());
+            existingFiles.addAll(addToFileStore(applicationDocument.getFiles()));
+            applicationDocument.setSupportDocs(existingFiles);
+            applicationDocument.setIssubmitted(true);
+        }
+    }
 
-	private List<DCRDocument> persistApplnDCRDocuments(final BpaApplication application) {
-		List<DCRDocument> dcrDocuments = new ArrayList<>();
-		if (!application.getDcrDocuments().isEmpty() && null == application.getDcrDocuments().get(0).getId())
-			for (final DCRDocument dcrDocument : application.getDcrDocuments()) {
-				dcrDocument.setApplication(application);
-				DCRDocument dcrDocumentRes = buildAutoPopualtedDCRFiles(dcrDocument);
-				buildDCRFiles(dcrDocumentRes);
-				dcrDocuments.add(dcrDocumentRes);
-			}
-		else
-			for (final DCRDocument dcrDocument : application.getDcrDocuments()) {
-				DCRDocument dcrDocumentRes = buildAutoPopualtedDCRFiles(dcrDocument);
-				buildDCRFiles(dcrDocumentRes);
-				dcrDocuments.add(dcrDocumentRes);
-			}
-		return dcrDocuments;
-	}
+    private List<DCRDocument> persistApplnDCRDocuments(final BpaApplication application) {
+        List<DCRDocument> dcrDocuments = new ArrayList<>();
+        if (!application.getDcrDocuments().isEmpty() && null == application.getDcrDocuments().get(0).getId())
+            for (final DCRDocument dcrDocument : application.getDcrDocuments()) {
+                dcrDocument.setApplication(application);
+                DCRDocument dcrDocumentRes = buildAutoPopualtedDCRFiles(dcrDocument);
+                buildDCRFiles(dcrDocumentRes);
+                dcrDocuments.add(dcrDocumentRes);
+            }
+        else
+            for (final DCRDocument dcrDocument : application.getDcrDocuments()) {
+                DCRDocument dcrDocumentRes = buildAutoPopualtedDCRFiles(dcrDocument);
+                buildDCRFiles(dcrDocumentRes);
+                dcrDocuments.add(dcrDocumentRes);
+            }
+        return dcrDocuments;
+    }
 
-	//Will save manually uploaded dcr document pdf's
-	private DCRDocument buildDCRFiles(DCRDocument dcrDocument) {
-		Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
-		storeDCRFiles.addAll(dcrDocument.getDcrAttachments());
-		if (dcrDocument.getFiles() != null && dcrDocument.getFiles().length > 0) {
-			for (MultipartFile file : dcrDocument.getFiles()) {
-				if (!file.isEmpty()) {
-					StoreDCRFiles storeDCRFile = new StoreDCRFiles();
-					storeDCRFile.setDcrDocument(dcrDocument);
-					storeDCRFile.setFileStoreMapper(addToFileStore(file));
-					storeDCRFile.setAutoPopulated(false);
-					storeDCRFiles.add(storeDCRFile);
-				}
-			}
-		}
-		if(!storeDCRFiles.isEmpty())
-			dcrDocument.setDcrAttachments(storeDCRFiles);
-		return dcrDocument;
-	}
-
-	//Will save auto populated dcr document pdf's from dcr system
-	private DCRDocument buildAutoPopualtedDCRFiles(DCRDocument dcrDocument) {
-		Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
-		storeDCRFiles.addAll(dcrDocument.getDcrAttachments());
-		if (dcrDocument.getFileStoreIds() != null && dcrDocument.getFileStoreIds().length > 0) {
-			for (String fileStoreId : dcrDocument.getFileStoreIds()) {
-				if (!fileStoreId.isEmpty()) {
-					Path file = fileStoreService.fetchAsPath(fileStoreId, "Digit DCR");
-					Optional<FileStoreMapper> fileStoreMapper = fileStoreUtils.getFileStoreMapper(fileStoreId);
-					FileStoreMapper savedFileStoreMapper = null;
-					try {
-						savedFileStoreMapper = fileStoreService.store(new ByteArrayInputStream(Files.readAllBytes(file)), fileStoreMapper.isPresent() ? fileStoreMapper.get().getFileName() : file.toFile().getName(), "application/pdf", FILESTORE_MODULECODE);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					StoreDCRFiles storeDCRFile = new StoreDCRFiles();
-					storeDCRFile.setDcrDocument(dcrDocument);
-					storeDCRFile.setFileStoreMapper(savedFileStoreMapper);
-					storeDCRFile.setAutoPopulated(true);
-					storeDCRFiles.add(storeDCRFile);
-				}
-			}
-		}
-		if(!storeDCRFiles.isEmpty())
-			dcrDocument.setDcrAttachments(storeDCRFiles);
-		return dcrDocument;
-	}
-
-	public Set<FileStoreMapper> addToFileStore(final MultipartFile... files) {
-		if (ArrayUtils.isNotEmpty(files))
-			return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-				try {
-					return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-							file.getContentType(), FILESTORE_MODULECODE);
-				} catch (final Exception e) {
-					throw new ApplicationRuntimeException(ERROR_OCCURRED_WHILE_GETTING_INPUTSTREAM, e);
-				}
-			}).collect(Collectors.toSet());
-		else
-			return Collections.emptySet();
-	}
-
-	public FileStoreMapper addToFileStore(final MultipartFile file) {
-		FileStoreMapper fileStoreMapper = null;
-		try {
-			fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-					file.getContentType(), FILESTORE_MODULECODE);
-		} catch (final IOException e) {
-			throw new ApplicationRuntimeException(ERROR_OCCURRED_WHILE_GETTING_INPUTSTREAM, e);
-		}
-		return fileStoreMapper;
-	}
-
-	public String generatePlanPermissionNumber(final BpaApplication application) {
-		final PlanPermissionNumberGenerator planPermissionNumber = beanResolver
-				.getAutoNumberServiceFor(PlanPermissionNumberGenerator.class);
-		return planPermissionNumber.generatePlanPermissionNumber(application.getServiceType());
-	}
-
-	public Boolean checkAnyTaxIsPendingToCollect(BpaApplication bpaApplication) {
-		return bpaUtils.checkAnyTaxIsPendingToCollect(bpaApplication.getDemand());
-	}
-
-	public Boolean applicationinitiatedByNonEmployee(BpaApplication bpaApplication) {
-		return bpaUtils.applicationInitiatedByNonEmployee(bpaApplication.getCreatedBy());
-	}
-
-	public void buildOwnerDetails(final BpaApplication bpaApplication) {
-		Applicant existApplicant = applicantService.findByNameAndMobileNumberAndGenderAndType(bpaApplication.getOwner().getName(),
-				bpaApplication.getOwner().getUser().getMobileNumber(), bpaApplication.getOwner().getGender(),
-				UserType.CITIZEN);
-		if (existApplicant == null) {
-			Applicant applicant = new Applicant();
-			applicant.setName(bpaApplication.getOwner().getName());
-			applicant.setAddress(bpaApplication.getOwner().getAddress());
-			applicant.setGender(bpaApplication.getOwner().getGender());
-			applicant.setAadhaarNumber(bpaApplication.getOwner().getAadhaarNumber());
-			applicant.setEmailId(bpaApplication.getOwner().getEmailId());
-			applicant.setUser(getCitizen(bpaApplication));
-			bpaApplication.setOwner(applicant);
-		} else {
-			bpaApplication.setOwner(existApplicant);
-		}
-		if (!bpaApplication.getOwner().getUser().isActive())
-			bpaApplication.getOwner().getUser().setActive(true);
-	}
-
-	private Citizen getCitizen(BpaApplication bpaApplication) {
-		Citizen citizen;
-		List<Citizen> citizensWithMobNo = citizenService.getCitizenByMobileNumberAndType(bpaApplication.getOwner().getUser().getMobileNumber(), UserType.CITIZEN);
-		Citizen existingCitizen = null;
-		if (!citizensWithMobNo.isEmpty())
-			existingCitizen = citizensWithMobNo.get(0);
-		if (existingCitizen == null) {
-			List<User> busUsersWithAadhaar = userService.getUserByAadhaarNumberAndType(bpaApplication.getOwner().getAadhaarNumber(), UserType.BUSINESS);
-			List<User> citizensWithAadhaar = userService.getUserByAadhaarNumberAndType(bpaApplication.getOwner().getAadhaarNumber(), UserType.CITIZEN);
-			if (!busUsersWithAadhaar.isEmpty() || !citizensWithAadhaar.isEmpty()) {
-				bpaApplication.getOwner().setAadhaarNumber(StringUtils.EMPTY);
-			}
-			List<User> citizensWithEmail = userService.getUsersByTypeAndEmailId(bpaApplication.getOwner().getEmailId(), UserType.CITIZEN);
-			List<User> busUsersWithEmail = userService.getUsersByTypeAndEmailId(bpaApplication.getOwner().getEmailId(), UserType.BUSINESS);
-			if (!busUsersWithEmail.isEmpty() || !citizensWithEmail.isEmpty()) {
-				bpaApplication.getOwner().setEmailId(StringUtils.EMPTY);
-			}
-			citizen = createApplicantAsCitizen(bpaApplication);
-			bpaApplication.setMailPwdRequired(true);
-		} else {
-			citizen = existingCitizen;
-		}
-		return citizen;
-	}
-
-	/**
-	 * @param bpaApplication
-	 * @return citizen
-	 */
-	public Citizen createApplicantAsCitizen(BpaApplication bpaApplication) {
-		Citizen citizen = new Citizen();
-		citizen.setMobileNumber(bpaApplication.getOwner().getUser().getMobileNumber());
-		citizen.setEmailId(bpaApplication.getOwner().getEmailId());
-		citizen.setGender(bpaApplication.getOwner().getGender());
-		citizen.setName(bpaApplication.getOwner().getName());
-		String userName = bpaUtils.generateUserName(bpaApplication.getOwner().getName());
-		User isUserExist = userService.getUserByUsername(userName);
-		if(isUserExist == null)
-			citizen.setUsername(userName);
-		else
-			citizen.setUsername(bpaUtils.generateUserName(bpaApplication.getOwner().getName()));
-		citizen.setPassword(passwordEncoder.encode(bpaApplication.getOwner().getUser().getMobileNumber()));
-		PermanentAddress address = new PermanentAddress();
-		address.setStreetRoadLine(bpaApplication.getOwner().getAddress());
-		citizen.addAddress(address);
-		citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
-		citizen.setAadhaarNumber(bpaApplication.getOwner().getAadhaarNumber());
-		citizen.setActive(true);
-		citizen.addRole(roleService.getRoleByName(ROLE_CITIZEN));
-		return citizen;
-	}
-
-	@Transactional
-	public void saveBpaApplication(BpaApplication bpaApp) {
-		applicationBpaRepository.saveAndFlush(bpaApp);
-	}
-
-	public void saveApplicationForScheduler(BpaApplication bpaApp) {
-		applicationBpaRepository.save(bpaApp);
-	}
-
-	public List<BpaApplication> findByStatusListOrderByCreatedDate(List<BpaStatus> listOfBpaStatus) {
-		return applicationBpaRepository.findByStatusListOrderByCreatedDateAsc(listOfBpaStatus);
-	}
-
-	@SuppressWarnings(UNCHECKED)
-	public List<BpaApplication> getBpaApplicationsForScheduleAndReSchedule(List<BpaStatus> bpaStatusList,
-																		   List<Boundary> boundaryList,
-																		   Integer totalAvailableSlots) {
-		final Criteria criteria = entityManager.unwrap(Session.class)
-											   .createCriteria(BpaApplication.class, "application")
-											   .createAlias("application.siteDetail", "siteDetail")
-											   .createAlias("application.demand", "demand");
-		criteria.add(Restrictions.in(APPLICATION_STATUS, bpaStatusList));
-        criteria.createAlias("application.state", "state").add(Restrictions.not(Restrictions.in("state.nextAction", FORWARDED_TO_CLERK, FWD_TO_OVRSR_FOR_FIELD_INS)));
-		criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
-		criteria.add(Restrictions.eq("application.isOneDayPermitApplication", false));
-		criteria.add(Restrictions.eq("application.failureInScheduler", false));
-
-		criteria.add(Restrictions.leProperty("demand.baseDemand", "demand.amtCollected"));
-		criteria.addOrder(Order.desc(APPLICATION_STATUS));
-		criteria.addOrder(Order.asc("application.applicationDate"));
-		criteria.addOrder(Order.asc("application.createdDate"));
-		criteria.setMaxResults(totalAvailableSlots);
-		return criteria.list();
-
-	}
-
-	@SuppressWarnings(UNCHECKED)
-	public List<BpaApplication> getOneDayPermitAppForAppointment(BpaStatus bpaStatus, Boundary ward, List<Boundary> boundaryList,
-																 Integer totalAvailableSlots) {
-		final Criteria criteria = entityManager.unwrap(Session.class)
-											   .createCriteria(BpaApplication.class, "application")
-											   .createAlias("application.siteDetail", "siteDetail")
-											   .createAlias("application.demand", "demand");
-		criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
-		criteria.add(Restrictions.eq(APPLICATION_STATUS, bpaStatus));
-		criteria.add(Restrictions.eq("application.isOneDayPermitApplication", true));
-		criteria.add(Restrictions.eq("application.failureInScheduler", false));
-		criteria.add(Restrictions.eq("siteDetail.electionBoundary", ward));
-		criteria.add(Restrictions.leProperty("demand.baseDemand", "demand.amtCollected"));
-		criteria.addOrder(Order.desc(APPLICATION_STATUS));
-		criteria.addOrder(Order.asc("application.applicationDate"));
-		criteria.addOrder(Order.asc("application.createdDate"));
-		criteria.setMaxResults(totalAvailableSlots);
-		return criteria.list();
-
-	}
-
-
-    /*private void buildApplicationDcrDocs(BpaApplication bpaApplication, HttpServletRequest request) {
-
-        String convertedPdfs = dcrRestService.getConvertedPdfs(bpaApplication.geteDcrNumber(), request);
-        if (!isBlank(convertedPdfs)) {
-            String[] fileStoreIds = convertedPdfs.split(",");
-            DCRDocument dcrDocument = bpaApplication.getDcrDocuments().get(0);
-            Set<StoreDCRFiles> dcrAttachments = dcrDocument.getDcrAttachments();
-            Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
-            for (String fileStoreId : fileStoreIds) {
-
-                Optional<FileStoreMapper> fileStoreMapper = fileStoreUtils.getFileStoreMapper(fileStoreId);
-                File file = fileStoreService.fetch(fileStoreId, "Digit DCR");
-                if (file != null) {
-                    FileStoreMapper savedFileStoreMapper = fileStoreService.store(file, fileStoreMapper.isPresent() ? fileStoreMapper.get().getFileName() : file.getName(), "application/pdf", FILESTORE_MODULECODE);
-
-                    if (savedFileStoreMapper != null) {
-                        StoreDCRFiles storeDCRFile = new StoreDCRFiles();
-                        storeDCRFile.setDcrDocument(dcrDocument);
-                        storeDCRFile.setFileStoreMapper(savedFileStoreMapper);
-                        storeDCRFiles.add(storeDCRFile);
-                    }
+    // Will save manually uploaded dcr document pdf's
+    private DCRDocument buildDCRFiles(DCRDocument dcrDocument) {
+        Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
+        storeDCRFiles.addAll(dcrDocument.getDcrAttachments());
+        if (dcrDocument.getFiles() != null && dcrDocument.getFiles().length > 0) {
+            for (MultipartFile file : dcrDocument.getFiles()) {
+                if (!file.isEmpty()) {
+                    StoreDCRFiles storeDCRFile = new StoreDCRFiles();
+                    storeDCRFile.setDcrDocument(dcrDocument);
+                    storeDCRFile.setFileStoreMapper(addToFileStore(file));
+                    storeDCRFile.setAutoPopulated(false);
+                    storeDCRFiles.add(storeDCRFile);
                 }
             }
-
-            for (StoreDCRFiles dcrAttachment : dcrAttachments) {
-                storeDCRFiles.add(dcrAttachment);
-            }
-
-            if (!storeDCRFiles.isEmpty())
-                dcrDocument.setDcrAttachments(storeDCRFiles);
-
         }
-    }*/
+        if (!storeDCRFiles.isEmpty())
+            dcrDocument.setDcrAttachments(storeDCRFiles);
+        return dcrDocument;
+    }
+
+    // Will save auto populated dcr document pdf's from dcr system
+    private DCRDocument buildAutoPopualtedDCRFiles(DCRDocument dcrDocument) {
+        Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
+        storeDCRFiles.addAll(dcrDocument.getDcrAttachments());
+        if (dcrDocument.getFileStoreIds() != null && dcrDocument.getFileStoreIds().length > 0) {
+            for (String fileStoreId : dcrDocument.getFileStoreIds()) {
+                if (!fileStoreId.isEmpty()) {
+                    Path file = fileStoreService.fetchAsPath(fileStoreId, "Digit DCR");
+                    Optional<FileStoreMapper> fileStoreMapper = fileStoreUtils.getFileStoreMapper(fileStoreId);
+                    FileStoreMapper savedFileStoreMapper = null;
+                    try {
+                        savedFileStoreMapper = fileStoreService.store(new ByteArrayInputStream(Files.readAllBytes(file)),
+                                fileStoreMapper.isPresent() ? fileStoreMapper.get().getFileName() : file.toFile().getName(),
+                                "application/pdf", FILESTORE_MODULECODE);
+                    } catch (IOException e) {
+                        throw new ApplicationRuntimeException("Error occurred, while saving dcr documents!!!!!!", e);
+                    }
+                    StoreDCRFiles storeDCRFile = new StoreDCRFiles();
+                    storeDCRFile.setDcrDocument(dcrDocument);
+                    storeDCRFile.setFileStoreMapper(savedFileStoreMapper);
+                    storeDCRFile.setAutoPopulated(true);
+                    storeDCRFiles.add(storeDCRFile);
+                }
+            }
+        }
+        if (!storeDCRFiles.isEmpty())
+            dcrDocument.setDcrAttachments(storeDCRFiles);
+        return dcrDocument;
+    }
+
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile... files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                            file.getContentType(), FILESTORE_MODULECODE);
+                } catch (final Exception e) {
+                    throw new ApplicationRuntimeException(ERROR_OCCURRED_WHILE_GETTING_INPUTSTREAM, e);
+                }
+            }).collect(Collectors.toSet());
+        else
+            return Collections.emptySet();
+    }
+
+    public FileStoreMapper addToFileStore(final MultipartFile file) {
+        FileStoreMapper fileStoreMapper = null;
+        try {
+            fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                    file.getContentType(), FILESTORE_MODULECODE);
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException(ERROR_OCCURRED_WHILE_GETTING_INPUTSTREAM, e);
+        }
+        return fileStoreMapper;
+    }
+
+    public String generatePlanPermissionNumber(final BpaApplication application) {
+        final PlanPermissionNumberGenerator planPermissionNumber = beanResolver
+                .getAutoNumberServiceFor(PlanPermissionNumberGenerator.class);
+        return planPermissionNumber.generatePlanPermissionNumber(application.getServiceType());
+    }
+
+    public Boolean checkAnyTaxIsPendingToCollect(BpaApplication bpaApplication) {
+        return bpaUtils.checkAnyTaxIsPendingToCollect(bpaApplication.getDemand());
+    }
+
+    public Boolean applicationinitiatedByNonEmployee(BpaApplication bpaApplication) {
+        return bpaUtils.applicationInitiatedByNonEmployee(bpaApplication.getCreatedBy());
+    }
+
+    public void buildOwnerDetails(final BpaApplication bpaApplication) {
+        Applicant existApplicant = applicantService.findByNameAndMobileNumberAndGenderAndType(bpaApplication.getOwner().getName(),
+                bpaApplication.getOwner().getUser().getMobileNumber(), bpaApplication.getOwner().getGender(),
+                UserType.CITIZEN);
+        if (existApplicant == null) {
+            Applicant applicant = new Applicant();
+            applicant.setName(bpaApplication.getOwner().getName());
+            applicant.setAddress(bpaApplication.getOwner().getAddress());
+            applicant.setGender(bpaApplication.getOwner().getGender());
+            applicant.setAadhaarNumber(bpaApplication.getOwner().getAadhaarNumber());
+            applicant.setEmailId(bpaApplication.getOwner().getEmailId());
+            applicant.setUser(getCitizen(bpaApplication));
+            bpaApplication.setOwner(applicant);
+        } else {
+            bpaApplication.setOwner(existApplicant);
+        }
+        if (!bpaApplication.getOwner().getUser().isActive())
+            bpaApplication.getOwner().getUser().setActive(true);
+    }
+
+    private Citizen getCitizen(BpaApplication bpaApplication) {
+        Citizen citizen;
+        List<Citizen> citizensWithMobNo = citizenService
+                .getCitizenByMobileNumberAndType(bpaApplication.getOwner().getUser().getMobileNumber(), UserType.CITIZEN);
+        Citizen existingCitizen = null;
+        if (!citizensWithMobNo.isEmpty())
+            existingCitizen = citizensWithMobNo.get(0);
+        if (existingCitizen == null) {
+            List<User> busUsersWithAadhaar = userService
+                    .getUserByAadhaarNumberAndType(bpaApplication.getOwner().getAadhaarNumber(), UserType.BUSINESS);
+            List<User> citizensWithAadhaar = userService
+                    .getUserByAadhaarNumberAndType(bpaApplication.getOwner().getAadhaarNumber(), UserType.CITIZEN);
+            if (!busUsersWithAadhaar.isEmpty() || !citizensWithAadhaar.isEmpty()) {
+                bpaApplication.getOwner().setAadhaarNumber(StringUtils.EMPTY);
+            }
+            List<User> citizensWithEmail = userService.getUsersByTypeAndEmailId(bpaApplication.getOwner().getEmailId(),
+                    UserType.CITIZEN);
+            List<User> busUsersWithEmail = userService.getUsersByTypeAndEmailId(bpaApplication.getOwner().getEmailId(),
+                    UserType.BUSINESS);
+            if (!busUsersWithEmail.isEmpty() || !citizensWithEmail.isEmpty()) {
+                bpaApplication.getOwner().setEmailId(StringUtils.EMPTY);
+            }
+            citizen = createApplicantAsCitizen(bpaApplication);
+            bpaApplication.setMailPwdRequired(true);
+        } else {
+            citizen = existingCitizen;
+        }
+        return citizen;
+    }
+
+    /**
+     * @param bpaApplication
+     * @return citizen
+     */
+    public Citizen createApplicantAsCitizen(BpaApplication bpaApplication) {
+        Citizen citizen = new Citizen();
+        citizen.setMobileNumber(bpaApplication.getOwner().getUser().getMobileNumber());
+        citizen.setEmailId(bpaApplication.getOwner().getEmailId());
+        citizen.setGender(bpaApplication.getOwner().getGender());
+        citizen.setName(bpaApplication.getOwner().getName());
+        String userName = bpaUtils.generateUserName(bpaApplication.getOwner().getName());
+        User isUserExist = userService.getUserByUsername(userName);
+        if (isUserExist == null)
+            citizen.setUsername(userName);
+        else
+            citizen.setUsername(bpaUtils.generateUserName(bpaApplication.getOwner().getName()));
+        citizen.setPassword(passwordEncoder.encode(bpaApplication.getOwner().getUser().getMobileNumber()));
+        PermanentAddress address = new PermanentAddress();
+        address.setStreetRoadLine(bpaApplication.getOwner().getAddress());
+        citizen.addAddress(address);
+        citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
+        citizen.setAadhaarNumber(bpaApplication.getOwner().getAadhaarNumber());
+        citizen.setActive(true);
+        citizen.addRole(roleService.getRoleByName(ROLE_CITIZEN));
+        return citizen;
+    }
+
+    @Transactional
+    public void saveBpaApplication(BpaApplication bpaApp) {
+        applicationBpaRepository.saveAndFlush(bpaApp);
+    }
+
+    public void saveApplicationForScheduler(BpaApplication bpaApp) {
+        applicationBpaRepository.save(bpaApp);
+    }
+
+    public List<BpaApplication> findByStatusListOrderByCreatedDate(List<BpaStatus> listOfBpaStatus) {
+        return applicationBpaRepository.findByStatusListOrderByCreatedDateAsc(listOfBpaStatus);
+    }
+
+    @SuppressWarnings(UNCHECKED)
+    public List<BpaApplication> getBpaApplicationsForScheduleAndReSchedule(List<BpaStatus> bpaStatusList,
+            List<Boundary> boundaryList,
+            Integer totalAvailableSlots) {
+        final Criteria criteria = entityManager.unwrap(Session.class)
+                .createCriteria(BpaApplication.class, "application")
+                .createAlias("application.siteDetail", "siteDetail")
+                .createAlias("application.demand", "demand");
+        criteria.add(Restrictions.in(APPLICATION_STATUS, bpaStatusList));
+        criteria.createAlias("application.state", "state")
+                .add(Restrictions.not(Restrictions.in("state.nextAction", FORWARDED_TO_CLERK, FWD_TO_OVRSR_FOR_FIELD_INS)));
+        criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
+        criteria.add(Restrictions.eq("application.isOneDayPermitApplication", false));
+        criteria.add(Restrictions.eq("application.failureInScheduler", false));
+
+        criteria.add(Restrictions.leProperty("demand.baseDemand", "demand.amtCollected"));
+        criteria.addOrder(Order.desc(APPLICATION_STATUS));
+        criteria.addOrder(Order.asc("application.applicationDate"));
+        criteria.addOrder(Order.asc("application.createdDate"));
+        criteria.setMaxResults(totalAvailableSlots);
+        return criteria.list();
+
+    }
+
+    @SuppressWarnings(UNCHECKED)
+    public List<BpaApplication> getOneDayPermitAppForAppointment(BpaStatus bpaStatus, Boundary ward, List<Boundary> boundaryList,
+            Integer totalAvailableSlots) {
+        final Criteria criteria = entityManager.unwrap(Session.class)
+                .createCriteria(BpaApplication.class, "application")
+                .createAlias("application.siteDetail", "siteDetail")
+                .createAlias("application.demand", "demand");
+        criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
+        criteria.add(Restrictions.eq(APPLICATION_STATUS, bpaStatus));
+        criteria.add(Restrictions.eq("application.isOneDayPermitApplication", true));
+        criteria.add(Restrictions.eq("application.failureInScheduler", false));
+        criteria.add(Restrictions.eq("siteDetail.electionBoundary", ward));
+        criteria.add(Restrictions.leProperty("demand.baseDemand", "demand.amtCollected"));
+        criteria.addOrder(Order.desc(APPLICATION_STATUS));
+        criteria.addOrder(Order.asc("application.applicationDate"));
+        criteria.addOrder(Order.asc("application.createdDate"));
+        criteria.setMaxResults(totalAvailableSlots);
+        return criteria.list();
+
+    }
+
+    /*
+     * private void buildApplicationDcrDocs(BpaApplication bpaApplication, HttpServletRequest request) { String convertedPdfs =
+     * dcrRestService.getConvertedPdfs(bpaApplication.geteDcrNumber(), request); if (!isBlank(convertedPdfs)) { String[]
+     * fileStoreIds = convertedPdfs.split(","); DCRDocument dcrDocument = bpaApplication.getDcrDocuments().get(0);
+     * Set<StoreDCRFiles> dcrAttachments = dcrDocument.getDcrAttachments(); Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
+     * for (String fileStoreId : fileStoreIds) { Optional<FileStoreMapper> fileStoreMapper =
+     * fileStoreUtils.getFileStoreMapper(fileStoreId); File file = fileStoreService.fetch(fileStoreId, "Digit DCR"); if (file !=
+     * null) { FileStoreMapper savedFileStoreMapper = fileStoreService.store(file, fileStoreMapper.isPresent() ?
+     * fileStoreMapper.get().getFileName() : file.getName(), "application/pdf", FILESTORE_MODULECODE); if (savedFileStoreMapper !=
+     * null) { StoreDCRFiles storeDCRFile = new StoreDCRFiles(); storeDCRFile.setDcrDocument(dcrDocument);
+     * storeDCRFile.setFileStoreMapper(savedFileStoreMapper); storeDCRFiles.add(storeDCRFile); } } } for (StoreDCRFiles
+     * dcrAttachment : dcrAttachments) { storeDCRFiles.add(dcrAttachment); } if (!storeDCRFiles.isEmpty())
+     * dcrDocument.setDcrAttachments(storeDCRFiles); } }
+     */
 
 }

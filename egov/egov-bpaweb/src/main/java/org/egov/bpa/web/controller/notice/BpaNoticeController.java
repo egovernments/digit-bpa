@@ -47,10 +47,25 @@
 
 package org.egov.bpa.web.controller.notice;
 
+import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
+import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
+import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
+import static org.egov.infra.utils.StringUtils.append;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
+import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
+import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
+import org.egov.bpa.transaction.notice.impl.OCPermitOrderFormatImpl;
+import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
+import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
-import org.egov.bpa.transaction.service.notice.BpaNoticeService;
-import org.egov.bpa.transaction.service.notice.OcNoticeService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -62,79 +77,74 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-
-import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
-import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
-import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
-import static org.egov.infra.utils.StringUtils.append;
-import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
-
 @Controller
 public class BpaNoticeController {
 
-	private static final String PDFEXTN = ".pdf";
-	private static final String INLINE_FILENAME = "inline;filename=";
-	private static final String CONTENT_DISPOSITION = "content-disposition";
-	private static final String REPORT_FILE_NAME = "occupancycertificate";
+    private static final String PDFEXTN = ".pdf";
+    private static final String INLINE_FILENAME = "inline;filename=";
+    private static final String CONTENT_DISPOSITION = "content-disposition";
+    private static final String REPORT_FILE_NAME = "occupancycertificate";
 
-	@Autowired
-	private ApplicationBpaService applicationBpaService;
-	@Autowired
-	private BpaNoticeService bpaReportService;
-	@Autowired
-	private OcNoticeService ocNoticeService;
-	@Autowired
-	private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private ApplicationBpaService applicationBpaService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
-	@GetMapping(value = "/application/demandnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
-	@ResponseBody
-	public ResponseEntity<InputStreamResource> viewDemandNoticeReport(@PathVariable final String applicationNumber)
-			throws IOException {
-		ReportOutput reportOutput = bpaReportService
-				.generateDemandNotice(applicationBpaService.findByApplicationNumber(applicationNumber));
-		return getFileAsResponseEntity(applicationNumber, reportOutput, DEMANDNOCFILENAME);
-	}
+    @GetMapping(value = "/application/demandnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> viewDemandNoticeReport(@PathVariable final String applicationNumber)
+            throws IOException {
+        PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
+                .find(DemandDetailsFormatImpl.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = bpaNoticeFeature
+                .generateNotice(applicationBpaService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, DEMANDNOCFILENAME);
+    }
 
-	@GetMapping(value = "/application/generatepermitorder/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
-	@ResponseBody
-	public ResponseEntity<InputStreamResource> generateBuildingPermitOrder(@PathVariable final String applicationNumber,
-																		   HttpServletRequest request) throws IOException {
-		ReportOutput reportOutput = bpaReportService
-				.generatePermitOrder(applicationBpaService.findByApplicationNumber(applicationNumber), request);
-		return getFileAsResponseEntity(applicationNumber, reportOutput, BUILDINGPERMITFILENAME);
-	}
+    @GetMapping(value = "/application/generatepermitorder/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateBuildingPermitOrder(@PathVariable final String applicationNumber,
+            HttpServletRequest request) throws IOException {
+        PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
+                .find(PermitOrderFormatImpl.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = bpaNoticeFeature
+                .generateNotice(applicationBpaService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, BUILDINGPERMITFILENAME);
+    }
 
-	private ResponseEntity<InputStreamResource> getFileAsResponseEntity(String applicationNumber, ReportOutput reportOutput, String prefixFileName) {
-		return ResponseEntity
-				.ok()
-				.contentType(MediaType.APPLICATION_PDF)
-				.cacheControl(CacheControl.noCache())
-				.contentLength(reportOutput.getReportOutputData().length)
-				.header(CONTENT_DISPOSITION, String.format(INLINE_FILENAME,
-						append(prefixFileName, applicationNumber) + PDFEXTN))
-				.body(new InputStreamResource(reportOutput.asInputStream()));
-	}
+    private ResponseEntity<InputStreamResource> getFileAsResponseEntity(String applicationNumber, ReportOutput reportOutput,
+            String prefixFileName) {
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .cacheControl(CacheControl.noCache())
+                .contentLength(reportOutput.getReportOutputData().length)
+                .header(CONTENT_DISPOSITION, String.format(INLINE_FILENAME,
+                        append(prefixFileName, applicationNumber) + PDFEXTN))
+                .body(new InputStreamResource(reportOutput.asInputStream()));
+    }
 
-	@GetMapping(value = "/application/occupancy-certificate/generate-occupancy-certificate/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
-	@ResponseBody
-	public ResponseEntity<InputStreamResource> generateOccupancyCertificate(@PathVariable final String applicationNumber,
-																		   HttpServletRequest request) throws IOException {
-		ReportOutput reportOutput = ocNoticeService
-				.generateOccupancyCertificate(occupancyCertificateService.findByApplicationNumber(applicationNumber), request);
-		return getFileAsResponseEntity(applicationNumber, reportOutput, REPORT_FILE_NAME);
-	}
+    @GetMapping(value = "/application/occupancy-certificate/generate-occupancy-certificate/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateOccupancyCertificate(@PathVariable final String applicationNumber) {
+        OccupancyCertificateNoticesFormat ocNoticeFeature = (OccupancyCertificateNoticesFormat) specificNoticeService
+                .find(OCPermitOrderFormatImpl.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = ocNoticeFeature
+                .generateNotice(occupancyCertificateService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, REPORT_FILE_NAME);
+    }
 
-
-
-	@GetMapping(value = "/application/rejectionnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
-	@ResponseBody
-	public ResponseEntity<InputStreamResource> generateRejectionNotice(@PathVariable final String applicationNumber,
-																	   HttpServletRequest request) throws IOException {
-		ReportOutput reportOutput = bpaReportService
-				.generateRejectionNotice(applicationBpaService.findByApplicationNumber(applicationNumber), request);
-		return getFileAsResponseEntity(applicationNumber, reportOutput, BPAREJECTIONFILENAME);
-	}
+    @GetMapping(value = "/application/rejectionnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateRejectionNotice(@PathVariable final String applicationNumber,
+            HttpServletRequest request) throws IOException {
+        PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
+                .find(PermitRejectionFormatImpl.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = bpaNoticeFeature
+                .generateNotice(applicationBpaService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, BPAREJECTIONFILENAME);
+    }
 
 }
