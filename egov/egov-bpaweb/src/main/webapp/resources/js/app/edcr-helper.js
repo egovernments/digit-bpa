@@ -546,8 +546,10 @@ $(document).ready(
 
             $('#eDcrNumber').blur(function () {
                 if ($('#eDcrNumber').val()) {
-                    if (!checkIsEdcrNumberUsedInAnyBpaApplication())
-                        getEdcrApprovedPlanDetails();
+                    if (!checkEdcrExpiry()){
+                    	if(!checkIsEdcrNumberUsedInAnyBpaApplication())
+                    	getEdcrApprovedPlanDetails();
+                      }
                 } else {
                     resetDCRPopulatedValues();
                 }
@@ -908,4 +910,30 @@ function checkIsEdcrNumberUsedInAnyBpaApplication() {
         }
     });
     return isExist;
+}
+
+function checkEdcrExpiry() {
+    var isExpired = false;
+    $.ajax({
+        async: false,
+        url: '/bpa/validate/edcr-expiry',
+        type: "GET",
+        data : {
+            eDcrNumber : $('#eDcrNumber').val()
+        },
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            if(response.isExpired == 'true') {
+                bootbox.alert(response.message);
+                $('#eDcrNumber').val('');
+                isExpired = true;
+            } else {
+            	isExpired = false;
+            }
+        },
+        error: function (response) {
+            console.log("Error occurred, when validating dcr expiry!!!!!!!");
+        }
+    });
+    return isExpired;
 }

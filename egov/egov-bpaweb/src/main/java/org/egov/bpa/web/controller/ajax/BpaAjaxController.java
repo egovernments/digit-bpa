@@ -419,5 +419,10 @@ public class BpaAjaxController {
     public List<CheckListDetail> getDocumentsByServiceType(@RequestParam final Long serviceType, @RequestParam final String checklistType) {
         return checkListDetailService.findActiveCheckListByServiceType(serviceType, checklistType);
     }
-
+    
+    @RequestMapping(value = "/validate/edcr-expiry", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, String> validateEdcrExpiry(@RequestParam final String eDcrNumber) {
+        return applicationBpaService.checkEdcrExpiry(eDcrNumber);
+    }
 }

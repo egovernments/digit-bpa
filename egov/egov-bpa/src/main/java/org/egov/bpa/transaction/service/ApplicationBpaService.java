@@ -53,6 +53,8 @@ import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
+import static org.egov.bpa.utils.BpaConstants.MESSAGE;
+import static org.egov.bpa.utils.BpaConstants.RECENT_DCRRULE_AMENDMENTDATE;
 import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
@@ -62,16 +64,20 @@ import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -128,6 +134,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -139,6 +146,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -221,6 +230,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private FileStoreUtils fileStoreUtils;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+	@Qualifier("parentMessageSource")
+	private MessageSource bpaMessageSource;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -857,6 +869,40 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return criteria.list();
 
     }
+    
+    public Map<String, String> checkEdcrExpiry(final String eDcrNumber) {
+		Map<String, String> eDcrExpiryDetails = new HashMap<>();
+		
+		/*String expiry_date=bpaUtils.getAppconfigValueByKeyName(RECENT_DCRRULE_AMENDMENTDATE);
+		Date eDCRCreatedDate= new Date();
+		Date expirydate = new Date();
+		String sDate1="15/01/2018";  
+		
+	    //TODO: From DCR number, get DCR created date.
+	    
+	    	try {
+	    		if(isNotBlank(expiry_date)) 
+	    			 expirydate = new SimpleDateFormat("dd/MM/yyyy").parse(expiry_date);
+				eDCRCreatedDate = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	  
+	    //TODO: Compare the difference between DCR created date with current date.
+		
+	    
+		 if(DateUtils.compareDates(eDCRCreatedDate,expirydate)){
+			 eDcrExpiryDetails.put("isExpired", "false");
+			
+		 }else{
+			 String message = bpaMessageSource.getMessage("msg.dcr.expiry",new String[]{securityUtils.getCurrentUser().getName(), eDcrNumber, expiry_date},null);
+			 eDcrExpiryDetails.put("isExpired", "true");
+			 eDcrExpiryDetails.put(MESSAGE,message);
+		 }*/
+		 eDcrExpiryDetails.put("isExpired", "false");
+		return eDcrExpiryDetails;
+	}
 
     /*
      * private void buildApplicationDcrDocs(BpaApplication bpaApplication, HttpServletRequest request) { String convertedPdfs =
