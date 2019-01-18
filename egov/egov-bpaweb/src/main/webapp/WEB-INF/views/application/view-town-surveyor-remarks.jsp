@@ -88,7 +88,7 @@
             <c:if test="${!loop.last}">,</c:if>&nbsp;
         </c:if>
     </c:forEach> <c:if test="${!isDocFound}">
-        No Attachment Found
+       <spring:message code="lbl.no.attachment.found" />
     </c:if>
 
 	</div>

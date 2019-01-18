@@ -153,7 +153,7 @@ jQuery(document)
                             if (validateForm(validator) && validateOnReject(true)) {
                                 bootbox
                                     .confirm({
-                                        message: 'Please confirm, Do you really want to Reject the application ?',
+                                        message: $('#rejectAppln').val(),
                                         buttons: {
                                             'cancel': {
                                                 label: 'No',
@@ -181,7 +181,7 @@ jQuery(document)
                             if (validateForm(validator) && validateOnReject(true)) {
                                 bootbox
                                     .confirm({
-                                        message: 'Please confirm, Do you really want to initiate rejection for this the application ?',
+                                        message: $('#intiateRejectionAppln').val(),
                                         buttons: {
                                             'cancel': {
                                                 label: 'No',
@@ -209,7 +209,7 @@ jQuery(document)
                             if (validateForm(validator) && validateOnRevert()) {
                                 bootbox
                                     .confirm({
-                                        message: 'Please confirm, Do you really want to send back this application to previous approved official ?',
+                                        message: $('#sendBackApplnPreOfficial').val(),
                                         buttons: {
                                             'cancel': {
                                                 label: 'No',
@@ -237,7 +237,7 @@ jQuery(document)
                             if (validateOnApproveAndForward(validator, action)) {
                                 bootbox
                                     .confirm({
-                                        message: 'Please confirm, Do you really want to approve this application ?',
+                                        message: $('#approveAppln').val(),
                                         buttons: {
                                             'cancel': {
                                                 label: 'No',
@@ -265,7 +265,7 @@ jQuery(document)
                             if (validateOnApproveAndForward(validator, action) && validateAdditionalConditionsOnFwd()) {
                                 bootbox
                                     .confirm({
-                                        message: 'Please confirm, Do you really want to forward this application ?',
+                                        message: $('#forwardAppln').val(),
                                         buttons: {
                                             'cancel': {
                                                 label: 'No',
@@ -294,7 +294,7 @@ jQuery(document)
                             if (validateOnApproveAndForward(validator, action)) {
                                 bootbox
                                     .confirm({
-                                        message: 'Please confirm, Do you really want to Generate Occupancy Certificate.',
+                                        message: $('#generateOccpancyCerti').val(),
                                         buttons: {
                                             'cancel': {
                                                 label: 'No',
@@ -322,7 +322,7 @@ jQuery(document)
                             if (validateOnApproveAndForward(validator, action) && validateOnReject(false)) {
                                 bootbox
                                     .confirm({
-                                        message: 'Please confirm, All required rejection conditions are added and going to generate rejection notice with selected rejection conditions.',
+                                        message: $('#generateRejectNotice').val(),
                                         buttons: {
                                             'cancel': {
                                                 label: 'No',
@@ -365,14 +365,14 @@ jQuery(document)
 function validateAdditionalConditionsOnFwd() {
     var approvalComent = $('#approvalComent').val();
     if (($("#approvalDesignation option:selected").text() === 'Superintendent' && $('#townSurveyorInspectionRequire').val() === 'true')) {
-        bootbox.alert("Please make sure, Request for town surveyor field inspection is recommended but you are trying to forward the application to Superintendent, please select Town Surveyor as approver designation from below otherwise uncheck Request for town surveyor field inspection if town surveyor field inspection not require,");
+        bootbox.alert($('#townsurvFieldInspeRequest').val());
         return false;
     } else if (($("#approvalDesignation option:selected").text() === 'Town Surveyor' && $('#townSurveyorInspectionRequire').val() === 'false')) {
-        bootbox.alert("Please select checkbox Request for town surveyor field inspection if you want to forward the application to Town Surveyor");
+        bootbox.alert($('#townsurvFieldInspeRequired').val());
         return false;
     } else if (($("#approvalDesignation option:selected").text() === 'Town Surveyor' || $('#townSurveyorInspectionRequire').val() === 'true') && approvalComent === "") {
         $('#approvalComent').focus();
-        bootbox.alert("Please enter comments/reason for town surveyor inspection");
+        bootbox.alert($('#townsurvCommentsRequired').val());
         return false;
     }
     return true;
@@ -383,10 +383,10 @@ function validateOnReject(isCommentsRequire) {
     var rejectionReasonsLength = $('.rejectionReasons:checked').length;
     if (rejectionReasonsLength <= 0) {
         $('.rejectionReason').show();
-        bootbox.alert('Please select at least one rejection reason is mandatory');
+        bootbox.alert($('#rejectionReasonMandatory').val());
         return false;
     } else if (approvalComent === "" && isCommentsRequire) {
-        bootbox.alert("Please enter rejection comments/reason");
+        bootbox.alert($('#rejectionCommentsRequired').val());
         $('#approvalComent').focus();
         return false;
     }
@@ -397,7 +397,7 @@ function validateOnRevert() {
     var approvalComent = $('#approvalComent').val();
     if (approvalComent === "") {
         $('#approvalComent').focus();
-        bootbox.alert("Please enter comments/reason for sending back to previous official");
+        bootbox.alert($('#applnSendbackCommentsRequired').val());
         return false;
     }
     return true;

@@ -88,7 +88,7 @@ public class InspectionController extends BpaGenericApplicationController {
 			return COMMON_ERROR;
 		inspection.setDocket(inspectionService.buildDocDetFromUI(inspection));
 		final Inspection savedInspection = inspectionService.save(inspection, application);
-		model.addAttribute("message", "Inspection Saved Successfully");
+		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
 		return "redirect:/application/view-inspection/" + savedInspection.getId();
 	}
 

@@ -135,6 +135,11 @@
 						class="btn btn-default" onclick="window.close();"/>
 			</div>
 		</form:form>
+		<input type="hidden" id="requiredSignedDocuments" value="<spring:message code='msg.validate.license.requires.tosubmt.signed.plandocs.ondocscrutiny' />"/>
+		<input type="hidden" id="confirmRejection" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />"/>
+		<input type="hidden" id="forwardApplication" value="<spring:message code='msg.confirm.forward.application' />"/>
+		<input type="hidden" id="rejectionReason" value="<spring:message code='msg.validate.onerejection.reason.mandatory' />"/>
+		<input type="hidden" id="rejectionComments" value="<spring:message code='msg.validate.enter.rejection.comments' />"/>
 	</div>
 </div>
 

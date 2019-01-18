@@ -50,7 +50,8 @@
 													<td class=" text-center"><a href='javascript:void(0)'
 														class='btn btn-xs btn-secondary edit'
 														onclick='redirectToUpdateFeeDetail(${rec.id})'><span
-															class="glyphicon glyphicon-edit"></span> Edit</a></td>
+															class="glyphicon glyphicon-edit"></span>
+															<spring:message code="lbl.btn.edit" /></a></td>
 												</tr>
 											</c:forEach>
 										</c:when>

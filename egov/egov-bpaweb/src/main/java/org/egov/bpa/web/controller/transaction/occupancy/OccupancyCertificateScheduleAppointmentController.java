@@ -247,7 +247,7 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         if (oc.getRescheduledByEmployee() && UserType.EMPLOYEE.equals(securityUtils.getCurrentUser().getType())) {
             model.addAttribute(MESSAGE,
-                    "Reschedule appointment by employee already completed, employee can reschedule appointment only once.");
+            		messageSource.getMessage("msg.emp.reschedule.appintment.onlyonce", null, null));
             return COMMON_ERROR;
         }
         if (validateOnDocumentScrutiny(model, oc.getStatus())){

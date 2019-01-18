@@ -91,7 +91,7 @@
 									value="${applicationFee.application.serviceType.description}"
 									default="N/A"></c:out>
 							</div>
-							<div class="col-sm-3 add-margin">Amenity Type</div>
+							<div class="col-sm-3 add-margin"><spring:message code="lbl.amenity.type" /></div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out value="${applicationFee.application.amenityName}"
 									default="N/A"></c:out>

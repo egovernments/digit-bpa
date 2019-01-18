@@ -88,7 +88,7 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 			return CREATE_INSPECTION;
 		}
 		final OCInspection savedInspection = ocInspectionService.save(ocInspection);
-		model.addAttribute("message", "Inspection Saved Successfully");
+		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
 		return "redirect:/application/occupancy-certificate/success/view-inspection-details/" + applicationNumber + "/" + savedInspection.getInspection().getInspectionNumber();
 	}
 

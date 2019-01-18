@@ -96,7 +96,7 @@
 	<c:if test="${bpaApplication.isOneDayPermitApplication}">
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
-				Is One Day Permit
+				<spring:message code="lbl.is.one.permit" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<input type="hidden" id="isOneDayPermitApplication" value="${bpaApplication.isOneDayPermitApplication}">
@@ -104,7 +104,7 @@
 			</div>
 
 			<div class="col-sm-3 add-margin">
-				Type of Land
+				<spring:message code="lbl.type.land" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out value="${bpaApplication.typeOfLand}" default="N/A"></c:out>
@@ -123,7 +123,7 @@
 				default="N/A"></c:out>
 		</div>
 		<div class="amenityHideShow">
-			<div class="col-sm-3 add-margin">Amenity Type</div>
+			<div class="col-sm-3 add-margin"><spring:message code="lbl.amenity.type" /></div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out value="${bpaApplication.amenityName ne '' ?  bpaApplication.amenityName : 'N/A'}"></c:out>
 			</div>

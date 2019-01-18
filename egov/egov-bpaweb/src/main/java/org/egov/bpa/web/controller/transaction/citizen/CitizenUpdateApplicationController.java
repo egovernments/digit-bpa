@@ -191,7 +191,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 			|| APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())) {
 			if (applicationBpaService.applicationinitiatedByNonEmployee(application)
 				&& applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
-				model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
+				model.addAttribute(COLLECT_FEE_VALIDATE, messageSource.getMessage("msg.payfees.toprocess.appln", null, null));
 				String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
 				model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
 			} else
@@ -220,7 +220,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 			if (activeSlotApplication.isPresent()) {
 				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
 				model.addAttribute("appointmentTimeRes", activeSlotApplication.get().getSlotDetail().getAppointmentTime());
-				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Document Scrutiny");
+				model.addAttribute("appointmentTitle", messageSource.getMessage("msg.appointment.details.for.docscrutiny", null, null));
 			}
 		} else if (APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode()) && application.getInspections().isEmpty()) {
 			List<BpaAppointmentSchedule> appointmentScheduledList = bpaAppointmentScheduleService.findByApplication(application,
@@ -229,7 +229,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(appointmentScheduledList.get(0).getAppointmentDate()));
 				model.addAttribute("appointmentTimeRes", appointmentScheduledList.get(0).getAppointmentTime());
 				model.addAttribute("appmntInspnRemarks", appointmentScheduledList.get(0).isPostponed() ? appointmentScheduledList.get(0).getPostponementReason() : appointmentScheduledList.get(0).getRemarks());
-				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Field Inspection");
+				model.addAttribute("appointmentTitle", messageSource.getMessage("msg.appointment.details.for.fieldinspec", null, null));
 			}
 		}
 	}
@@ -322,10 +322,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 
 			redirectAttributes.addFlashAttribute(MESSAGE, message);
 		} else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON))
-			redirectAttributes.addFlashAttribute(MESSAGE, " Application is cancelled by applicant itself successfully with application number " + bpaApplication.getApplicationNumber());
+			redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.cancel.applnby.applicantitself.success", new String[]{bpaApplication.getApplicationNumber()}, null));
 		else
-			redirectAttributes.addFlashAttribute(MESSAGE,
-					"Application is successfully saved with ApplicationNumber " + bpaApplication.getApplicationNumber());
+			redirectAttributes.addFlashAttribute(MESSAGE, 
+					messageSource.getMessage("msg.appln.saved.succes", new String[]{bpaApplication.getApplicationNumber()}, null));
 
 		return "redirect:/application/citizen/success/" + bpaApplication.getApplicationNumber();
 	}

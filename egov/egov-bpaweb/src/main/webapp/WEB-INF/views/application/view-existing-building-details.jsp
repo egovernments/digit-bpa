@@ -130,7 +130,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="text-right view-content">Total</td>
+                            <td class="text-right view-content"><spring:message code="lbl.total"/></td>
                             <td class="text-right view-content"><fmt:formatNumber type="number"
                                                                                   maxFractionDigits="2"
                                                                                   value="${plinthAreaTotal}"/></td>

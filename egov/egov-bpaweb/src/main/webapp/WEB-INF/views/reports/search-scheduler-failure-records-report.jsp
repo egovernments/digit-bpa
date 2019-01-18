@@ -115,8 +115,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section" id="table_container">
-	<div class="col-md-12 table-header text-left">Applications failed
-		while scheduling search result is</div>
+	<div class="col-md-12 table-header text-left"> <spring:message code='lbl.appl.failed.scheduling.result'/> </div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			   id="recordsSchedulingFailedId">

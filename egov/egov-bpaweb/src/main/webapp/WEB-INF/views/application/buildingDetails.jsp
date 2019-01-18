@@ -235,7 +235,7 @@
 				<td></td>
 				<td></td>
 				<td></td>
-				<td class="text-right">Total</td>
+				<td class="text-right"><spring:message code="lbl.total"/></td>
 				<td class="text-right"></td>
 				<td class="text-right"></td>
 				<td class="text-right"></td>
@@ -245,7 +245,7 @@
 	</table>
 	<div class="text-right add-padding">
 		<button type="button" class="btn btn-sm btn-primary"
-			id="addBuildAreaRow">ADD ROW</button>
+			id="addBuildAreaRow"><spring:message code="lbl.btn.add.row" /></button>
 	</div>
 	<div class="form-group">
 		<div class="col-sm-12 add-margin">

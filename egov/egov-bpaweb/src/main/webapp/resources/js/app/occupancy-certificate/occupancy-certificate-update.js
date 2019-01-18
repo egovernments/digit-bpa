@@ -160,7 +160,7 @@ jQuery(document).ready(function ($) {
         var stakeHolderType = $('#stakeHolderType').val();
         var msg;
         if ('Sub-Division of plot/Land Development' === seviceTypeName && stakeHolderType !== 'Town Planner - A' && (((stakeHolderType === 'Engineer - B' || stakeHolderType === 'Building Designer - B') && extentInSqmts > 5000) || ((stakeHolderType !== 'Engineer - B' && stakeHolderType !== 'Building Designer - B') && extentInSqmts > 10000)))
-            msg = 'You are trying to submit the application more than the permissible plot area. Please present all the signed required documents mandatorily during document scrutiny. Click on YES to proceed with application or NO to re-enter the plot area.';
+            msg =  $("#submitMoreThanPermiPlotArea").val();
         else
             msg = '';
         return msg;
@@ -172,7 +172,7 @@ jQuery(document).ready(function ($) {
         if (validateFormOnSave(button, validator)) {
             bootbox
                 .confirm({
-                    message: 'Do you really want to save the application, once the application is saved you are not allowed to modify applicant details especially mobile number. Please make sure entered applicant details and mobile no. are valid before save.' + msg,
+                    message: $('#saveApplication').val() + msg,
                     buttons: {
                         'cancel': {
                             label: 'No',
@@ -206,7 +206,7 @@ jQuery(document).ready(function ($) {
         if (validateFormOnSubmit(button, validator)) {
             bootbox
                 .confirm({
-                    message: 'Do you really want to submit the application, once application is submitted you are not allowed to modify application details and please make sure entered details are valid before submit. ' + msg,
+                    message: $('#submitApplication').val() + msg,
                     buttons: {
                         'cancel': {
                             label: 'No',

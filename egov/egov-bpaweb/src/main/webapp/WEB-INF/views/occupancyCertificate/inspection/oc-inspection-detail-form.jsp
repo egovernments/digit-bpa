@@ -52,7 +52,7 @@
     <c:choose>
         <c:when test="${!docketDetailLocList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">Location of the plot</div>
+                <div class="panel-title"><spring:message code="lbl.loc.plt"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -119,7 +119,7 @@
     <c:choose>
         <c:when test="${!docketDetailMeasumentList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">Measurement of the plot</div>
+                <div class="panel-title"><spring:message code="lbl.meas.plot"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -254,7 +254,7 @@
     <c:choose>
         <c:when test="${!docketDetlSurroundingPlotList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">Required details surrounding the plot
+                <div class="panel-title"><spring:message code="lbl.surrnd.plot"/>
                 </div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
@@ -322,7 +322,7 @@
     <c:choose>
         <c:when test="${!docketDetailLandTypeList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">Type of land</div>
+                <div class="panel-title"><spring:message code="lbl.typeofland"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -388,7 +388,7 @@
     <c:choose>
         <c:when test="${!docketDetailProposedWorkList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">Stage of proposed work</div>
+                <div class="panel-title"><spring:message code="lbl.stage.propsd.work"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -455,7 +455,7 @@
     <c:choose>
         <c:when test="${!docketDetailWorkAsPerPlanList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">If work started/completed</div>
+                <div class="panel-title"><spring:message code="lbl.work.started"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -521,7 +521,7 @@
     <c:choose>
         <c:when test="${!docketDetailHgtAbuttRoadList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">General provisions regarding site & building requirements</div>
+                <div class="panel-title"><spring:message code="lbl.gen.prov.regrd.site"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -587,7 +587,7 @@
     <c:choose>
         <c:when test="${!docketDetailAreaLoc.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">Extent of plot</div>
+                <div class="panel-title"><spring:message code="lbl.extnt.plot"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -654,7 +654,7 @@
     <c:choose>
         <c:when test="${!docketDetailLengthOfCompWall.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">Length of the compound wall</div>
+                <div class="panel-title"><spring:message code="lbl.len.wall"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -720,7 +720,7 @@
     <c:choose>
         <c:when test="${!docketDetailNumberOfWell.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title">Number of wells</div>
+                <div class="panel-title"><spring:message code="lbl.no.wells"/></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>

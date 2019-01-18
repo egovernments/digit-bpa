@@ -68,7 +68,7 @@
                 <h3 class = "panel-title">Note :</h3>
             </div>
             <div class = "panel-body view-content">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All drawings shall be prepared, incorporating the details specified as per KMBR 1999 and related amendments, including specifications on paper size and scale conventions. Keep a blank space of not less than 10 cm x 10 cm, on the bottom right corner of every drawing for validation stamp.
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <spring:message code="lbl.document.scrutiny.note"/>
             </div>
         </div>
     </c:if>
@@ -82,10 +82,9 @@
         <label class="col-sm-6 ">
             <spring:message code="lbl.attachdocument"/>
             <c:if test="${dcrDocsManuallyUpload eq true || dcrDocsAutoPopulateAndManuallyUpload eq true}">
-                <span class="error-msg"> (Only Pdf files allowed)</span>
+                <span class="error-msg"> <spring:message code="lbl.pdf.files.allowed"/> </span>
                 <br>
-                <small class="error-msg"><spring:message
-                        code="lbl.mesg.document1"/></small>
+                <small class="error-msg"><spring:message code="lbl.mesg.document1"/></small>
             </c:if>
         </label>
     </div>

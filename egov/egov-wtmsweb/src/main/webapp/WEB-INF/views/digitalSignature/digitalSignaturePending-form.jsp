@@ -124,7 +124,7 @@
 											<button type="button" class="btn btn-primary" id="workOrderSubmitButton" onclick="signAllPendingDigitalSignature('SIGN_ALL')">Approve</button>
 										</c:when>
 									</c:choose>
-									<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">Close</a> 
+									<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
 								</div> 
 							</div>
 						</div>

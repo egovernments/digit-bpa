@@ -100,6 +100,8 @@
 					   class="btn btn-default" onclick="window.close();" />
 			</div>
 		</form:form>
+		<input type="hidden" id="saveAppln" value="<spring:message code='msg.confirm.save.appln'/>"/>
+		<input type="hidden" id="submitAppln" value="<spring:message code='msg.confirm.submit.appln'/>"/>
 	</div>
 </div>
 

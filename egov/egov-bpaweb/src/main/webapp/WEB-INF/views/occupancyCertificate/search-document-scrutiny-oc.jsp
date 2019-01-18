@@ -50,11 +50,11 @@
         <div class="col-md-12">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
-                    <div class="panel-title">Search Applications</div>
+                    <div class="panel-title"><spring:message code='lbl.search.applications'/></div>
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label text-right">Date</label>
+                        <label class="col-sm-2 control-label text-right"><spring:message code='lbl.date'/></label>
                         <div class="col-sm-3 add-margin">
                             <form:input path="toDate" class="form-control datepicker"
                                         data-date-end-date="0d" id="toDate"
@@ -115,8 +115,7 @@
     </div>
 </form:form>
 <div class="row display-hide report-section" id="table_container">
-    <div class="col-md-12 table-header text-left">The Search result
-        is
+    <div class="col-md-12 table-header text-left"><spring:message code='lbl.search.result'/>
     </div>
     <div class="col-md-12 form-group report-table-container">
         <table class="table table-bordered table-hover multiheadertbl"
@@ -139,6 +138,7 @@
             </tr>
             </thead>
         </table>
+        <input type="hidden" id="collectApplnFees" value="<spring:message code='msg.validate.collect.applnfees'/>"/>
     </div>
 </div>
 

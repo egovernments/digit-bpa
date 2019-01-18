@@ -82,7 +82,7 @@
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        Approver Comments
+                        <spring:message code="lbl.approver.comments"/>
                     </div>
                 </div>
                 <div class="panel-body">

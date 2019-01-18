@@ -147,7 +147,7 @@ jQuery(document).ready(function ($) {
         if (validateFormOnSave(button, validator)) {
             bootbox
                 .confirm({
-                    message: 'Do you really want to save the application, once the application is saved you are not allowed to modify applicant details especially mobile number. Please make sure entered applicant details and mobile no. are valid before save.',
+                    message: $('#saveAppln').val(),
                     buttons: {
                         'cancel': {
                             label: 'No',
@@ -180,7 +180,7 @@ jQuery(document).ready(function ($) {
         if (validateFormOnSubmit(button, validator)) {
             bootbox
                 .confirm({
-                    message: 'Do you really want to submit the application, once application is submitted you are not allowed to modify application details and please make sure entered details are valid before submit. ',
+                    message: $('#submitAppln').val(),
                     buttons: {
                         'cancel': {
                             label: 'No',

@@ -118,7 +118,7 @@
 			<div align="center">
 			
 					<form:button type="submit" id="buttonSubmit" class="btn btn-primary" 
-					value="Submit">Submit</form:button>
+					value="Submit"><spring:message code='lbl.btn.submit' /></form:button>
 					
 				<input type="button" name="button2" id="button2" value="Close"
 					class="btn btn-default" onclick="window.close();" />

@@ -62,8 +62,8 @@
             <form:radiobutton path="isOnbehalfOfOrganization" class="isOnbehalfOfOrganization" value="true"/>
             <spring:message code="lbl.yes"/>
             <form:radiobutton path="isOnbehalfOfOrganization" class="isOnbehalfOfOrganization" value="false"
-                              checked="checked"/> <spring:message code="lbl.no"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If Yes
-            please specify
+                              checked="checked"/> <spring:message code="lbl.no"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <spring:message code="lbl.please.specify"/>
         </div>
     </div>
     <div id="showhide" class="hide">

@@ -55,7 +55,7 @@
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title">Search SlotMapping</div>
+				<div class="panel-title"><spring:message code="lbl.search.slotmapping"/></div>
 			</div>
 			<div class="panel-body">
 				<div class="form-group">

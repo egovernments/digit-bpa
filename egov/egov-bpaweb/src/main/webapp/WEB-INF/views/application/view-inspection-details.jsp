@@ -76,8 +76,7 @@
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
-					<div class="col-md-12 col-xs-6  panel-title">No Inspection Details
-						Found</div>
+					<div class="col-md-12 col-xs-6  panel-title"><spring:message code="lbl.no.inspection.details.found" /></div>
 				</c:otherwise>
 			</c:choose>
 		</tbody>

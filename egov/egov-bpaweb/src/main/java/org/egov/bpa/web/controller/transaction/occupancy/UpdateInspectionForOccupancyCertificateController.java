@@ -87,7 +87,7 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(ocInspection);
 		ocInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);
 		OCInspection ocInspectionRes = ocInspectionService.save(ocInspection);
-		model.addAttribute("message", "Inspection Saved Successfully");
+		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
 		return "redirect:/application/occupancy-certificate/success/view-inspection-details/" + applicationNumber + "/" + ocInspectionRes.getInspection().getInspectionNumber();
 	}
 

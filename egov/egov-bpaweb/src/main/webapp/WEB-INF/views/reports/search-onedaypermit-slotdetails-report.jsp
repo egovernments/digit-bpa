@@ -131,8 +131,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section" id="table_container">
-	<div class="col-md-12 table-header text-left">The one day permit application slot details search result
-		is
+	<div class="col-md-12 table-header text-left"><spring:message code='lbl.oneday.permit.applslot.details.result'/>
 	</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
@@ -154,7 +153,7 @@
 					<td></td>
 					<td></td>
 					<td></td>
-					<td>Total</td>
+					<td><spring:message code="lbl.total"/></td>
 					<td></td>
 					<td></td>
 				</tr>

@@ -127,11 +127,11 @@ jQuery(document).ready(function($) {
 			var replyDateStr = $('#replyDate').val();
 			var replyDateTime = moment(replyDateStr,["DD/MM/YYYY"]);
 			if (sentdateDateTime > replyDateTime) {
-				bootbox.alert('LP Reply Date should be greater than the Letter to party sent Date');
+				bootbox.alert($('#lpReplyDateGreaterThanPartySentDate').val());
 				$('#replyDate').val('');
 			}
 		} else {
-			bootbox.alert('Please update LP sent Date before updating LP reply details.');
+			bootbox.alert($('#updateLpSentDate').val());
 			$('#replyDate').val('');
 		}
 	}	
@@ -143,7 +143,7 @@ jQuery(document).ready(function($) {
 			var letterDateStr = $('#letterDate').val();
 			var letterDateTime = moment(letterDateStr,["DD/MM/YYYY"]);
 			if (letterDateTime > sentdateDateTime) {
-				bootbox.alert('Letter to party sent Date  should be greater than the LP Date');
+				bootbox.alert($('#partSentDateGreaterThanLpDate').val());
 				$('#sentDate').val('');
 			}
 		}

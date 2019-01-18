@@ -125,15 +125,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="alert alert-warning">
-                    <strong>Please note, following details are required for new building licensee account</strong>
+                    <strong> <spring:message code="alrt.required.details.newbuilding.licenseacc"/> </strong>
                 </div>
             </div>
             <div class="modal-body">
                 <ul>
-                    <li>You need to have <span class="view-content">Mobile, Email, Aadhaar, License </span> details.</li>
-                    <li>Along with above details, You will have to submit few documents, Please check <span class="view-content">DOCUMENT DETAILS</span> tab for more details on the documents to be submitted.</li>
-                    <li>Before proceeding, Please make sure you have all the required documents.</li>
-                    <li>All mandatory details and documents are marked with <span class="view-content">Asterisk</span> <span class="error-msg">(*)</span> symbol.</li>
+                    <li><spring:message code="alrt.needto.have"/> <span class="view-content"><spring:message code="alrt.mobile.email.aadhaar"/> </span> <spring:message code="alrt.details"/></li>
+                    <li><spring:message code="alrt.haveto.submit.documents"/><span class="view-content"><spring:message code="alrt.documentdetails"/></span><spring:message code="alrt.tabfor.more.details"/> </li>
+                    <li><spring:message code="alrt.makesure.all.required.documents"/></li>
+                    <li><spring:message code="alrt.mandatory.details.marked"/> <span class="view-content">Asterisk</span> <span class="error-msg">(*)</span> symbol.</li>
                 </ul>
             </div>
             <div class="modal-footer">

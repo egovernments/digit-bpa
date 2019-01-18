@@ -66,17 +66,17 @@
 				<tr>
 					<th><spring:message code="lbl.slno"/></th>
 					<th><spring:message code="lbl.status"/></th>
-					<th>New Construction</th>
-					<th>Demolition</th>
-					<th>Reconstruction</th>
-					<th>Alteration</th>
-					<th>Sub-Division of Plot/Development of land</th>
-					<th>Adding of Extension</th>
-					<th>Change in Occupancy</th>
-					<th>Amenities</th>
-					<th>Huts and Sheds</th>
-					<th>Tower Construction</th>
-					<th>Pole Structures</th>
+					<th><spring:message code="lbl.newconstruction"/></th>
+					<th><spring:message code="lbl.demolition"/></th>
+					<th><spring:message code="lbl.reconstruction"/></th>
+					<th><spring:message code="lbl.alteration"/></th>
+					<th><spring:message code="lbl.division.development.land"/></th>
+					<th><spring:message code="lbl.addextension"/></th>
+					<th><spring:message code="lbl.change.occupancy"/></th>
+					<th><spring:message code="lbl.amenities"/></th>
+					<th><spring:message code="lbl.huts.sheds"/></th>
+					<th><spring:message code="lbl.tower.construction"/></th>
+					<th><spring:message code="lbl.pole.structures"/></th>
 					<th><spring:message code="lbl.total"/></th>
 				</tr>
 			</thead>

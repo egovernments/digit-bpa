@@ -91,8 +91,7 @@
                 </c:forEach>
             </c:when>
             <c:otherwise>
-                <div class="col-md-12 col-xs-6  panel-title">No Receipts
-                    found
+                <div class="col-md-12 col-xs-6  panel-title"><spring:message code="lbl.no.receipts.found"/>
                 </div>
             </c:otherwise>
         </c:choose>
@@ -101,7 +100,7 @@
         <tr>
             <td></td>
             <td></td>
-            <td class="text-right view-content">Total Amount</td>
+            <td class="text-right view-content"><spring:message code="lbl.total.amount"/></td>
             <td class="text-right view-content"><fmt:formatNumber type="number" maxFractionDigits="2"
                                                                   value="${totalAmount}"/></td>
         </tr>

@@ -69,10 +69,10 @@
 				<table class="table table-bordered" id="holiday">
 					<thead>
 						<tr>
-							<th class="col-sm-2 table-div-column">Holiday Date</th>
-							<th class="col-sm-2 table-div-column">Holiday Type</th>
-							<th class="col-sm-2 table-div-column">Description</th>
-							<th class="col-sm-2 table-div-column">Actions</th>
+							<th class="col-sm-2 table-div-column"><spring:message code="lbl.holidayDate" /></th>
+							<th class="col-sm-2 table-div-column"><spring:message code="lbl.holidayType" /></th>
+							<th class="col-sm-2 table-div-column"><spring:message code="lbl.description" /></th>
+							<th class="col-sm-2 table-div-column"><spring:message code="lbl.action" /></th>
 						</tr>
 					</thead>
 					<tbody>

@@ -47,6 +47,7 @@ import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,7 +70,9 @@ public class BpaCollectFeesController {
 	private OccupancyCertificateService occupancyCertificateService;
 	@Autowired
 	private BpaUtils bpaUtils;
-   
+	@Autowired
+	protected ResourceBundleMessageSource messageSource;
+	
     @GetMapping("/bpageneratebill/{applicationCode}")
     public String showCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
     	BpaApplication application=applicationBpaService.findByApplicationNumber(applicationCode);
@@ -78,7 +81,7 @@ public class BpaCollectFeesController {
     	return genericBillGeneratorService.generateBillAndRedirectToCollection(application, model);
     	}
     	else{
-    		model.addAttribute("message", "No Amount to Collect");
+    		model.addAttribute("message", messageSource.getMessage("msg.noamount.tocollect", null, null));
     		return COLLECT_ERROR_PAGE;
     	}
     }
@@ -91,7 +94,7 @@ public class BpaCollectFeesController {
 			return genericBillGeneratorService.generateBillAndRedirectToCollection(oc, model);
 		}
 		else{
-			model.addAttribute("message", "No Amount to Collect");
+			model.addAttribute("message", messageSource.getMessage("msg.noamount.tocollect", null, null));
 			return COLLECT_ERROR_PAGE;
 		}
 	}

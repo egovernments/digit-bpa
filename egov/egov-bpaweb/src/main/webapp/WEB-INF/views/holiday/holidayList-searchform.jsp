@@ -44,7 +44,7 @@
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title">Search Holiday</div>
+				<div class="panel-title"><spring:message code="lbl.tittle.search.holiday" /></div>
 			</div>
 			<div class="panel-body">
 

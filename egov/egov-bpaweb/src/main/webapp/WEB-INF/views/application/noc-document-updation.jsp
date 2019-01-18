@@ -209,8 +209,8 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary"
-					id="textarea-btnupdate" data-dismiss="modal">Update</button>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					id="textarea-btnupdate" data-dismiss="modal"><spring:message code='lbl.btn.update' /></button>
+				<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code='lbl.close' /></button>
 
 			</div>
 		</div>

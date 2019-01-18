@@ -194,6 +194,6 @@
 	</table>
 	<div class="text-right add-padding">
 		<button type="button" class="btn btn-sm btn-primary"
-				id="addAddnlRejectRow">Add Additional Reason</button>
+				id="addAddnlRejectRow"><spring:message code="lbl.btn.additional.reason"/></button>
 	</div>
 </div>

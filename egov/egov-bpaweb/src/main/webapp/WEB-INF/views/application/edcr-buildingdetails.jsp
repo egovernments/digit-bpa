@@ -182,7 +182,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="text-right">Total</td>
+                        <td class="text-right"><spring:message code="lbl.total"/></td>
                         <td class="text-right dcr-reset-values"></td>
                         <td class="text-right dcr-reset-values"></td>
                         <td class="text-right dcr-reset-values"></td>

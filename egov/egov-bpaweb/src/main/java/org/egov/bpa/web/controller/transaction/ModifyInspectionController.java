@@ -113,7 +113,7 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
 				}
 		inspection.getDocket().get(0).setDocketDetail(docketDetailTempList);
 		final Inspection savedInspection = inspectionService.save(inspection, application);
-		model.addAttribute("message", "Inspection Saved Successfully");
+		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
 		return "redirect:/application/view-inspection/" + savedInspection.getId();
 	}
 

@@ -59,7 +59,7 @@
 <div class="panel-body">
 	<div id="appDet">
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">Occupancy<span
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.occupancy"/><span
 					class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="occupancy" data-first-option="false"
@@ -85,13 +85,13 @@
 		</div>
 		<c:if test="${isOneDayPermitApplicationIntegrationRequired eq true}">
 			<div class="form-group" id="oneDayPermitSec">
-				<label class="col-sm-3 control-label text-right">Is One Day Permit</label>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.is.one.permit"/></label>
 				<div class="col-sm-3 add-margin">
 					<form:checkbox path="isOneDayPermitApplication"
 								   id="isOneDayPermitApplication" name="isOneDayPermitApplication" value="false"/>
 				</div>
 				<div id="oneDayPermitTypeOfLandSec">
-					<label class="col-sm-2 control-label text-right">Type of Land<span class="mandatory"></span></label>
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.type.land"/> <span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="typeOfLand" id="typeOfLand"
 									 cssClass="form-control" cssErrorClass="form-control error">
@@ -106,8 +106,7 @@
 			</div>
 		</c:if>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">Application
-				Type <span class="mandatory"></span>
+			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.applctn.type"/> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="serviceType" data-first-option="false"
@@ -121,8 +120,8 @@
 				</form:select>
 				<form:errors path="serviceType" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label amenityHideShow text-right">Amenity Type
-
+			<label class="col-sm-2 control-label amenityHideShow text-right">
+               <spring:message code="lbl.amenity.type"/>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<select name="applicationAmenityTemp" multiple id="applicationAmenity"
@@ -139,7 +138,7 @@
 
 		<c:if test="${mode != 'new'}">
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right">ApplicationNumber
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.number"/>
 					<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -153,8 +152,7 @@
 
 		<div class="form-group">
 
-			<label class="col-sm-3 control-label text-right">Application
-				Date <span class="mandatory"></span>
+			<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.appln.date"/> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="applicationDate" class="form-control datepicker"
@@ -240,7 +238,7 @@
 </div> --%>
 
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">Remarks</label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.remarks" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden path="applicantMode" />
 			<form:hidden path="source" />

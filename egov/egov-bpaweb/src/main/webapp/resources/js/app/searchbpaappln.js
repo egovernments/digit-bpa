@@ -45,10 +45,11 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
+
 $(document)
 		.ready(
 				function() {
-
+                    
 					$('.builtUpAreaHideShow').hide();
 					$(document).on('change', '#serviceTypeId', function() {
 						if($('#serviceTypeId option:selected').text() === 'New Construction' || $('#serviceTypeId option:selected').text() === 'Reconstruction' || $('#serviceTypeId option:selected').text() === 'Alteration'
@@ -77,7 +78,8 @@ $(document)
                         if(isValid) {
                             callAjaxSearch();
                         } else {
-                        	bootbox.alert("Please enter at least one input value to search");
+                        	var txt = messageResource.get('msg.noamount.tocollect', 'message');
+                        	bootbox.alert(txt);
                             return false;
                         }
 					});

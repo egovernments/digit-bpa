@@ -349,10 +349,10 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
 	protected boolean validateOnDocumentScrutiny(Model model, BpaStatus status) {
 		if (APPLICATION_STATUS_DOC_VERIFIED.equals(status.getCode())) {
-			model.addAttribute(MESSAGE, "Document verification of application is already completed.");
+			model.addAttribute(MESSAGE, messageSource.getMessage("msg.docverification.already.completed", null, null));
 			return true;
 		} else if (WF_REJECT_STATE.equals(status.getCode())) {
-			model.addAttribute(MESSAGE, "Application is already initiated for rejection.");
+			model.addAttribute(MESSAGE, messageSource.getMessage("msg.appln.already.intiated.rejection", null, null));
 			return true;
 		}
 		return false;

@@ -150,12 +150,12 @@
 						<td>
 							<c:if test="${isReconciliationInProgress ne true}">
 								<form:button type="submit" id="buttonSave" class="btn btn-primary"
-											 value="Save"> Save </form:button>
+											 value="Save"><spring:message code='lbl.btn.save' /></form:button>
 								<c:if test="${citizenOrBusinessUser && bpaApplication.id !=null && bpaApplication.state==null && !isCitizen && bpaApplication.status.code ne 'Cancelled'}">
 									<form:button type="submit" id="buttonSubmit" class="btn btn-primary"
-												 value="Submit">Submit</form:button>
+												 value="Submit"><spring:message code='lbl.btn.submit' /></form:button>
 									<form:button type="button" id="buttonCancel" class="btn btn-danger"
-												 value="Cancel Application"> Cancel Application </form:button>
+												 value="Cancel Application"> <spring:message code='lbl.btn.cancel.application' /> </form:button>
 								</c:if>
 							</c:if>
 							<input type="button" name="button2" id="button2" value="Close"

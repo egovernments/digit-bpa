@@ -66,10 +66,10 @@
 					<table class="table table-bordered" id="holiday">
 						<thead>
 							<tr>
-								<th class="col-sm-2 table-div-column">Holiday Date</th>
-								<th class="col-sm-2 table-div-column">Holiday Type</th>
-								<th class="col-sm-2 table-div-column">Description</th>
-								<th class="col-sm-2 table-div-column">Actions</th>
+								<th class="col-sm-2 table-div-column"><spring:message code='lbl.holidayDate' /></th>
+								<th class="col-sm-2 table-div-column"><spring:message code='lbl.holidayType' /></th>
+								<th class="col-sm-2 table-div-column"><spring:message code='lbl.description' /></th>
+								<th class="col-sm-2 table-div-column"><spring:message code='lbl.actions' /></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -132,8 +132,7 @@
 					<div class="col-md-12 panel-title text-left">
 						<button type="button" class="btn btn-secondary pull-right"
 								id="addrow">
-							<i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add
-							Row
+							<i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;<spring:message code='lbl.btn.add.row' />
 						</button>
 					</div>
 				</div>

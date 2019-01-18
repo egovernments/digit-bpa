@@ -204,7 +204,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 || APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())) {
             if (applicationBpaService.applicationinitiatedByNonEmployee(application)
                     && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
-                model.addAttribute(COLLECT_FEE_VALIDATE, "Please Collect Application Fees to Process Application");
+                model.addAttribute(COLLECT_FEE_VALIDATE, messageSource.getMessage("msg.collect.applnfees.toprocess.appln", null, null));
             } else
                 model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }

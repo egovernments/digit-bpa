@@ -216,10 +216,10 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 			message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
 			model.addAttribute(MESSAGE, message);
 		} else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON))
-			model.addAttribute(MESSAGE, "Occupancy Certificate  Application is cancelled by applicant itself successfully with application number " + ocResponse.getApplicationNumber());
+			model.addAttribute(MESSAGE, messageSource.getMessage("msg.occupancy.certificate.cancel.applnby.applicantitself.success", new String[]{ocResponse.getApplicationNumber()}, null));
 		else
 			model.addAttribute(MESSAGE,
-					"Occupancy Certificate Application is successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber());
+					messageSource.getMessage("msg.occupancy.certificate.appln.saved.succes", new String[]{ocResponse.getApplicationNumber()}, null));
 		if (workFlowAction != null
 			&& workFlowAction
 					.equals(WF_LBE_SUBMIT_BUTTON)
@@ -237,7 +237,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 			if (activeSlotApplication.isPresent()) {
 				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
 				model.addAttribute("appointmentTimeRes", activeSlotApplication.get().getSlotDetail().getAppointmentTime());
-				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Document Scrutiny");
+				model.addAttribute("appointmentTitle", messageSource.getMessage("msg.appointment.details.for.docscrutiny", null, null));
 			}
 		} else if (APPLICATION_STATUS_DOC_VERIFIED.equals(oc.getStatus().getCode()) && oc.getInspections().isEmpty()) {
 			List<OCAppointmentSchedule> appointmentScheduledList = ocAppointmentScheduleService.findByApplication(oc,
@@ -246,7 +246,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentDate()));
 				model.addAttribute("appointmentTimeRes", appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentTime());
 				model.addAttribute("appmntInspnRemarks", appointmentScheduledList.get(0).getAppointmentScheduleCommon().isPostponed() ? appointmentScheduledList.get(0).getAppointmentScheduleCommon().getPostponementReason() : appointmentScheduledList.get(0).getAppointmentScheduleCommon().getRemarks());
-				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Field Inspection");
+				model.addAttribute("appointmentTitle", messageSource.getMessage("msg.appointment.details.for.fieldinspec", null, null));
 			}
 		}
 	}

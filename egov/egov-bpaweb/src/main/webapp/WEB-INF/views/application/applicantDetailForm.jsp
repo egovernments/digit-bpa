@@ -65,8 +65,7 @@
 						data-pattern="alphabetspecialcharacters" data-role="tagsinput"
 						maxlength="100" id="name" path="owner.name" cols="5" rows="3"
 						required="required" />
-			<small class=""> (Enter multiple names by comma
-				seperated)</small>
+			<small class=""> <spring:message code="lbl.names.separated.comma" /></small>
 			<form:errors path="owner.name" cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
@@ -76,8 +75,7 @@
 						   id="address" class="form-control patternvalidation"
 						   data-pattern="alphanumericspecialcharacters" required="required"
 						   maxlength="249" cols="5" rows="4" />
-			<form:errors path="owner.address"
-						 cssClass="add-margin error-msg" />
+			<form:errors path="owner.address" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 	<div class="form-group">
@@ -87,9 +85,8 @@
 			<form:input class="form-control patternvalidation"
 						data-pattern="number" maxlength="10" id="mobileNumber"
 						path="owner.user.mobileNumber" required="required" />
-			**SMS will send to this  <span class=""></span>
-			<form:errors path="owner.user.mobileNumber"
-						 cssClass="add-margin error-msg" />
+			<spring:message code="lbl.sms.send" /> <span class=""></span>
+			<form:errors path="owner.user.mobileNumber" cssClass="add-margin error-msg" />
 		</div>
 
 		<label class="col-sm-2 control-label text-right"><spring:message
@@ -97,9 +94,8 @@
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control " maxlength="128" onblur=""
 						id="emailId" name="emailId" path="owner.emailId" />
-			**Mail will send to this  <span class=""></span>
-			<form:errors path="owner.emailId"
-						 cssClass="add-margin error-msg" />
+			<spring:message code="lbl.email.send" /> <span class=""></span>
+			<form:errors path="owner.emailId" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 	<div class="form-group">

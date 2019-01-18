@@ -161,8 +161,7 @@
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
-                                <div class="col-md-12 col-xs-6  panel-title">No documents
-                                    found</div>
+                                <div class="col-md-12 col-xs-6  panel-title"><spring:message code='lbl.no.documents.found'/></div>
                             </c:otherwise>
                         </c:choose>
                     </tbody>

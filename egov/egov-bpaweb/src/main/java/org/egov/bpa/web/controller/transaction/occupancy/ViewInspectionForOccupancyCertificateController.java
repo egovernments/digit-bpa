@@ -42,6 +42,7 @@ package org.egov.bpa.web.controller.transaction.occupancy;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,12 +58,15 @@ public class ViewInspectionForOccupancyCertificateController {
 
 	@Autowired
 	private OCInspectionService ocInspectionService;
+	
+	@Autowired
+	protected ResourceBundleMessageSource messageSource;
 
 	@GetMapping("/success/view-inspection-details/{applicationNumber}/{inspectionNumber}")
 	public String viewInspection(@PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model) {
 		OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
 		model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
-		model.addAttribute("message", "Inspection Saved Successfully");
+		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
 		ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
 		ocInspection.getInspection().setEncodedImages(ocInspectionService.prepareImagesForView(ocInspection));
 		model.addAttribute("ocInspection", ocInspection);

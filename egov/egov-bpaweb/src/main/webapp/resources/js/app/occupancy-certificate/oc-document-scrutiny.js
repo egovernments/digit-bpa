@@ -51,7 +51,7 @@ $(document).ready(function () {
         window.opener.opener.location.reload();
     };
     if ($('#authorizedToSubmitPlan').val() && $('#authorizedToSubmitPlan').val() === 'true') {
-        bootbox.alert('For this application building licensee requires to submit all signed plan documents on document scrutiny, Because building licensee submitted application more than the permissible plot area. Please verify all documents and if not submitted then application can be eligible rejection.');
+        bootbox.alert($('#requiredSignedDocuments').val());
     }
 
     var row = '<tr>' +
@@ -120,7 +120,7 @@ $(document).ready(function () {
             if (validateDocScrutinyForm(validator) && validateRejectionConditions()) {
                 bootbox
                     .confirm({
-                        message: 'Please confirm, do you really want to initiate rejection for this the application ?',
+                        message: $('#confirmRejection').val(),
                         buttons: {
                             'cancel': {
                                 label: 'No',
@@ -148,7 +148,7 @@ $(document).ready(function () {
             if (validateDocScrutinyForm(validator)) {
                 bootbox
                     .confirm({
-                        message: 'Please confirm, do you really want to forward this application ?',
+                        message: $('#forwardApplication').val(),
                         buttons: {
                             'cancel': {
                                 label: 'No',
@@ -182,10 +182,10 @@ function validateRejectionConditions() {
     var rejectionReasonsLength = $('.rejectionReasons:checked').length;
     if (rejectionReasonsLength <= 0) {
         $('.rejectionReason').show();
-        bootbox.alert('Please select at least one rejection reason is mandatory');
+        bootbox.alert($('#rejectionReason').val());
         return false;
     } else if (approvalComent == "") {
-        bootbox.alert("Please enter rejection comments/reason");
+        bootbox.alert($('#rejectionComments').val());
         $('#approvalComent').focus();
         return false;
     }

@@ -254,37 +254,36 @@
 				<c:if test="${mode eq 'captureInspection'}">
 					<a
 							target="popup" class="btn btn-primary" onclick="window.open('/bpa/application/createinspectiondetails/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;"
-							class="btn btn-primary">Capture Inspection Details </a>
+							class="btn btn-primary"><spring:message code="lbl.btn.inspection.details"/> </a>
 					<c:if test="${isInspnRescheduleEnabled eq true}">
 						<a
 								href="/bpa/application/postponeappointment/${scheduleType}/${bpaApplication.applicationNumber}"
-								class="btn btn-primary"> Reschedule Appointment </a>
+								class="btn btn-primary"><spring:message code="lbl.btn.reschedule.appointment"/> </a>
 					</c:if>
 				</c:if>
 				<c:if test="${mode eq 'modifyInspection'}">
 					<a
 							onclick="window.open('/bpa/application/modify-inspection/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;"
-							target="popup" class="btn btn-primary">Add/Edit Inspection Details </a>
+							target="popup" class="btn btn-primary"> <spring:message code="lbl.btn.add.edit.inspection.details"/> </a>
 				</c:if>
 				<c:if test="${mode eq 'newappointment'}">
 					<a
 							href="/bpa/application/scheduleappointment/${bpaApplication.applicationNumber}"
-							class="btn btn-primary"> New Appointment </a>
+							class="btn btn-primary"> <spring:message code="lbl.btn.new.appointment"/> </a>
 				</c:if>
 				<c:if test="${mode eq 'initiatedForApproval'}">
 					<a
 							href="/bpa/application/calculateFee/${bpaApplication.applicationNumber}"
-							class="btn btn-primary">Modify Fee </a>
+							class="btn btn-primary"> <spring:message code="lbl.btn.modify.fee"/> </a>
 
 				</c:if>
 				<c:if test="${bpaApplication.state.value ne 'Field Inspection completed' && bpaApplication.status.code eq 'Field Inspected'}">
-					<input type="button" name="save" id="btnSave" value="Save"
-						   class="btn btn-primary"/>
+					<input type="button" name="save" id="btnSave" value="Save" class="btn btn-primary"/>
 				</c:if>
 				<c:if test="${createlettertoparty}">
 					<a
 							href="/bpa/lettertoparty/create/${bpaApplication.applicationNumber}"
-							target="_self" class="btn btn-primary"> Create Letter to Party </a>
+							target="_self" class="btn btn-primary"> <spring:message code="lbl.btn.letter.to.party"/> </a>
 				</c:if>
 			</div>
 			<br>
@@ -298,18 +297,15 @@
 						<label class="view-content">
 							&nbsp;&nbsp;&nbsp;<form:checkbox path="townSurveyorInspectionRequire"
 															 id="townSurveyorInspectionRequire"/>
-							&nbsp;&nbsp;&nbsp;<spring:message
-								code="lbl.ts.inspn.requr"/>
+							&nbsp;&nbsp;&nbsp;<spring:message code="lbl.ts.inspn.requr"/>
 						</label>
 					</div>
 				</div>
 			</c:if>
 			<c:choose>
-				<c:when
-						test="${isFeeCollected && bpaApplication.status.code eq 'Approved'}">
+				<c:when test="${isFeeCollected && bpaApplication.status.code eq 'Approved'}">
 					<div class="buttonbottom" align="center">
-						<input type="button" name="button2" value="Close"
-							   class="btn btn-default" onclick="window.close();" />
+						<input type="button" name="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 					</div>
 				</c:when>
 				<c:otherwise>
@@ -318,7 +314,7 @@
 								test="${ (citizenOrBusinessUser && bpaApplication.id !=null) || bpaApplication.state.value eq 'LP Created' || bpaApplication.state.value eq 'LP Reply Received'}">
 							<div class="buttonbottom" align="center">
 								<form:button type="submit" id="buttonSubmit"
-											 class="btn btn-primary" value="Forward">Forward</form:button>
+											 class="btn btn-primary" value="Forward"><spring:message code="lbl.btn.forward"/></form:button>
 								<input type="button" name="button2" value="Close"
 									   class="btn btn-default" onclick="window.close();" />
 							</div>
@@ -344,13 +340,13 @@
 		<!-- Modal content-->
 		<div class="modal-content">
 			<div class="modal-header text-center">
-				<h4 class="modal-title w-100 font-weight-bold alert alert-info">Reason For Revert</h4>
+				<h4 class="modal-title w-100 font-weight-bold alert alert-info"><spring:message code="lbl.reason.for.revert"/></h4>
 			</div>
 			<div class="modal-body mx-3">
 				<div id="showCommentsModal" class="md-form mb-5"></div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-danger" data-dismiss="modal"><spring:message code="lbl.btn.close"/></button>
 			</div>
 		</div>
 	</div>

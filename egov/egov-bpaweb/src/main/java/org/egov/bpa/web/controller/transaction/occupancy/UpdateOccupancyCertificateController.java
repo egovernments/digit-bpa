@@ -304,7 +304,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 || APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())) {
             if (bpaUtils.applicationInitiatedByNonEmployee(oc.getCreatedBy())
                     && bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
-                model.addAttribute(COLLECT_FEE_VALIDATE, "Please Collect Application Fees to Process Application");
+                model.addAttribute(COLLECT_FEE_VALIDATE, messageSource.getMessage("msg.collect.applnfees.toprocess.appln", null, null));
             } else
                 model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }

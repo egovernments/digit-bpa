@@ -87,7 +87,7 @@
 								<input type="hidden" name="zoneId" id="zoneId" value="${bpaApplication.siteDetail[0].adminBoundary.parent.id}">
 								<input type="hidden" id="slotsNotAvailableMsg" value="${slotsNotAvailableMsg}">
 								<form:select path="appointmentDate" id="appointmentDate" data-first-option="false" cssClass="form-control" required="required">
-									<form:option value="">Select</form:option>
+									<form:option value=""><spring:message code="lbl.select" /></form:option>
 									<form:options items="${appointmentDates}"></form:options>
 								</form:select>
 								<form:errors path="appointmentDate" cssClass="add-margin error-msg"/>

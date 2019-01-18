@@ -63,10 +63,10 @@
 	<div class="panel-heading custom_form_panel_heading">
 		<div class="panel-title">
 			<c:if test="${appoimnt.scheduleAppointmentType eq 'SCHEDULE'}">
-				System Scheduled Appointment Details
+				<spring:message code="lbl.system.scheduled.appointment.details" />
 			</c:if>
             <c:if test="${appoimnt.scheduleAppointmentType eq 'RESCHEDULE'}">
-                ReScheduled Appointment Details ${counter.index}
+              <spring:message code="lbl.rescheduled.appointment.details" /> ${counter.index}
             </c:if>
 		</div>
 	</div>

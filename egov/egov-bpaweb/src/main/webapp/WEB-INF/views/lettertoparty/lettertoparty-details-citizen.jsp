@@ -45,7 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="panel-heading">
-	<div class="panel-title"> Letter To Party Details raised by different officials :-</div>
+	<div class="panel-title"> <spring:message code="lbl.tittle.letter.toparty.raisedby.officials"/> </div>
 </div>
 
 <div class="panel-body custom">

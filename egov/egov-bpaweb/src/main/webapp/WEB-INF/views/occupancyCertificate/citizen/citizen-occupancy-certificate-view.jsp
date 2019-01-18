@@ -130,7 +130,7 @@
 					<c:if test="${ mode eq 'showRescheduleToCitizen'}">
 						<td> <a
 								href="/bpa/application/occupancy-certificate/scrutiny/reschedule/${occupancyCertificate.applicationNumber}"
-								class="btn btn-primary"> Reschedule Appointment </a>
+								class="btn btn-primary"> <spring:message code='lbl.btn.reschedule.appointment' /> </a>
 						</td>
 					</c:if>
 					<c:if test="${ occupancyCertificate.status.code eq 'Scheduled For Document Scrutiny'
@@ -140,7 +140,7 @@
 							<a href="/bpa/application/occupancy-certificate/scrutiny/view/${occupancyCertificate.applicationNumber}"
 							   target="popup" class="btn btn-primary"
 							   onclick="window.open('/bpa/application/occupancy-certificate/scrutiny/view/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;">
-								View Scheduled Appointment Details
+								<spring:message code='title.view.schedule.appmnt' />
 							</a>
 						</td>
 					</c:if>
@@ -148,7 +148,7 @@
 						<td>
 							<a href="/bpa/occupancy-certificate/letter-to-party/reply/${occupancyCertificate.applicationNumber}/${letterToPartyList.get(0).letterToParty.lpNumber}"
 							   class="btn btn-primary">
-								Reply Letter To Party
+								<spring:message code='lbl.btn.reply.letter.to.party' />
 							</a>
 						</td>
 					</c:if>
@@ -157,7 +157,7 @@
 							<a href="/bpa/application/occupancy-certificate/generate-occupancy-certificate/${occupancyCertificate.applicationNumber}"
 							   target="popup" class="btn btn-primary"
 							   onclick="window.open('/bpa/application/occupancy-certificate/generate-occupancy-certificate/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;">
-								Print Occupancy Certificate
+								<spring:message code='lbl.print.occupancy.certificate' />
 							</a>
 						</td>
 					</c:if>
@@ -209,8 +209,10 @@
 				</c:if>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code='lbl.close'/></button>
 			</div>
+			<input type="hidden" id="feeAmount" value="<spring:message code='msg.validation.feeamount'/>"/>
+			<input type="hidden" id="incrFeeamtTopOfsysCalcFee" value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>"/>
 		</div>
 	</div>
 </div>

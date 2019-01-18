@@ -59,8 +59,7 @@
 	</div>
 </form:form>
 <div class="row display-hide report-section" id="table_container">
-	<div class="col-md-12 table-header text-left">The Search result
-		is</div>
+	<div class="col-md-12 table-header text-left"><spring:message code="lbl.search.result" /></div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="search_bpa_application_table">

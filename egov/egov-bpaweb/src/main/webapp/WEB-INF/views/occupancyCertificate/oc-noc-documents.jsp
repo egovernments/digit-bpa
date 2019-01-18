@@ -47,8 +47,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <div class="panel-heading">
-    <div class="panel-title">Status of NOC from the Following
-        Departments.
+    <div class="panel-title"><spring:message code="lbl.tittle.noc.status"/>
     </div>
 </div>
 
@@ -218,9 +217,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary"
-                        id="textarea-btnupdate" data-dismiss="modal">Update
+                        id="textarea-btnupdate" data-dismiss="modal"><spring:message code="lbl.btn.update"/>
                 </button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code='lbl.close'/></button>
 
             </div>
         </div>

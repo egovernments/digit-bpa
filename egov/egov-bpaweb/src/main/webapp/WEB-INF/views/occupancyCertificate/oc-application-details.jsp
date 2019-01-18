@@ -63,8 +63,7 @@
 			<form:input class="form-control patternvalidation" maxlength="20"
 						id="planPermissionNumber" placeholder="Enter permit number" path="" value="${occupancyCertificate.parent.planPermissionNumber}" required="required"/>
 		</div>
-		<label class="col-sm-2 control-label text-right">Application
-			Date <span class="mandatory"></span>
+		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.appln.date"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="applicationDate" class="form-control datepicker"
@@ -106,8 +105,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">Work Commence
-			Date <span class="mandatory"></span>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.workcommence.date"/> <span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="commencedDate" class="form-control datepicker"
@@ -115,8 +113,7 @@
 						data-inputmask="'mask': 'd/m/y'" required="required"/>
 			<form:errors path="commencedDate" cssClass="add-margin error-msg" />
 		</div>
-		<label class="col-sm-2 control-label text-right">Work Completion
-			Date <span class="mandatory"></span>
+		<label class="col-sm-2 control-label text-right"> <spring:message code="lbl.work.compl.date"/> <span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="completionDate" class="form-control datepicker"

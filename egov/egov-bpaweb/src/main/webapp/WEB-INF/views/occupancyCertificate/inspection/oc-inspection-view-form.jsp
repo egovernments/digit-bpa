@@ -91,20 +91,20 @@
                         </div>
                         <div class="row add-border">
                             <div class="col-sm-5 add-margin view-content">
-                                <div class="panel-title">Inspection Details CheckList</div>
+                                <div class="panel-title"><spring:message code="lbl.inspec.checklist"/></div>
                             </div>
                             <div class="col-sm-3 add-margin view-content">
-                                <div class="panel-title">Document Provided</div>
+                                <div class="panel-title"><spring:message code="lbl.doc.provided"/></div>
                             </div>
                             <div class="col-sm-3 add-margin view-content">
-                                <div class="panel-title">Remarks</div>
+                                <div class="panel-title"><spring:message code="lbl.remarks"/></div>
                             </div>
                         </div>
                     </div>
                     <c:choose>
                         <c:when test="${!docketDetailLocList.isEmpty()}">
                             <div class="panel-heading custom_form_panel_heading">
-                                <div class="panel-title">Location of the Plot</div>
+                                <div class="panel-title"><spring:message code="lbl.loc.of.plot"/></div>
                             </div>
                             <div class="panel-body">
                                 <c:forEach items="${docketDetailLocList}" var="doc"
@@ -126,7 +126,7 @@
                         </c:when>
                     </c:choose>
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Measurement of the Plot</div>
+                        <div class="panel-title"><spring:message code="lbl.meas.plot"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailMeasumentList}" var="doc"
@@ -146,7 +146,7 @@
                     </div>
 
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Access To Plot</div>
+                        <div class="panel-title"><spring:message code="lbl.access.to.plot"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailAccessList}" var="doc"
@@ -165,7 +165,7 @@
                         </c:forEach>
                     </div>
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Required details surrounding the plot
+                        <div class="panel-title"><spring:message code="lbl.surrnd.plot"/>
                         </div>
                     </div>
                     <div class="panel-body">
@@ -186,7 +186,7 @@
                     </div>
 
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Type of land</div>
+                        <div class="panel-title"><spring:message code="lbl.typeofland"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailLandTypeList}" var="doc"
@@ -206,7 +206,7 @@
                     </div>
 
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Stage of proposed work</div>
+                        <div class="panel-title"><spring:message code="lbl.stage.propsd.work"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailProposedWorkList}" var="doc"
@@ -226,7 +226,7 @@
                     </div>
 
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">If work Started/completed</div>
+                        <div class="panel-title"><spring:message code="lbl.work.started"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailWorkAsPerPlanList}" var="doc"
@@ -246,7 +246,7 @@
                     </div>
 
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">General Provisions regarding Site & Building Requirements</div>
+                        <div class="panel-title"><spring:message code="lbl.gen.prov.regrd.site"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailHgtAbuttRoadList}" var="doc"
@@ -266,7 +266,7 @@
                     </div>
 
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Extent of Plot</div>
+                        <div class="panel-title"><spring:message code="lbl.extnt.plot"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailAreaLoc}" var="doc"
@@ -286,7 +286,7 @@
                     </div>
 
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Length of the Compound Wall</div>
+                        <div class="panel-title"><spring:message code="lbl.len.wall"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailLengthOfCompWall}" var="doc"
@@ -305,7 +305,7 @@
                         </c:forEach>
                     </div>
                     <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Number of Wells</div>
+                        <div class="panel-title"><spring:message code="lbl.no.wells"/></div>
                     </div>
                     <div class="panel-body">
                         <c:forEach items="${docketDetailNumberOfWell}" var="doc"

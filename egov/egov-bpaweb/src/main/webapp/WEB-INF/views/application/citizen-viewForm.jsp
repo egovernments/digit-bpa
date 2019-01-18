@@ -191,13 +191,13 @@
 						<td>
 							<c:if test="${citizenOrBusinessUser && bpaApplication.id != null && bpaApplication.state == null && bpaApplication.status.code ne 'Cancelled'}">
 							<form:button type="button" id="buttonCancel" class="btn btn-danger"
-										 value="Cancel Application"> Cancel Application </form:button>
+										 value="Cancel Application"> <spring:message code='lbl.btn.cancel.application' /> </form:button>
 							</c:if>
 						</td>
 						<c:if test="${ mode eq 'showRescheduleToCitizen'}">
 							<td> <a
 									href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
-									class="btn btn-primary"> Reschedule Appointment </a>
+									class="btn btn-primary"> <spring:message code='lbl.btn.reschedule.appointment' /> </a>
 							</td>
 						</c:if>
 						<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny'
@@ -207,21 +207,21 @@
 								<a href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
 								   target="popup" class="btn btn-primary"
 								   onclick="window.open('/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
-									View Scheduled Appointment Details
+									<spring:message code='title.view.schedule.appmnt' />
 								</a>
 							</td>
 						</c:if>
 
 						<c:if test="${bpaApplication.status.code eq  'Letter To Party Created' && mode eq 'showLPDetails' }">
 							<td> <a	href="/bpa/lettertoparty/lettertopartyreply/${lettertopartylist.get(0).id}" class="btn btn-primary">
-										 Reply Letter To Party
+										 <spring:message code='lbl.btn.reply.letter.to.party' />
 								    </a>
 							</td>
 						</c:if>
 						<input type="hidden" id="onlinePaymentEnable" value="${onlinePaymentEnable}">
 						<c:if test="${onlinePaymentEnable && isFeeCollected && (bpaApplication.status.code eq 'Registered' || bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Approved') }">
 							<td> <a	href="/bpa/application/bpageneratebill/${bpaApplication.applicationNumber}" class="btn btn-primary">
-								Pay Fee Online
+								<spring:message code='lbl.btn.pay.fee.online' />
 							</a>
 							</td>
 						</c:if>
@@ -230,7 +230,7 @@
 								<a href="/bpa/application/demandnotice/${bpaApplication.applicationNumber}"
 								   target="popup" class="btn btn-primary"
 								   onclick="window.open('/bpa/application/demandnotice/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
-									Print Demand Notice
+									<spring:message code='lbl.btn.print.demand.notice' />
 								</a>
 							</td> 
 						</c:if>
@@ -239,7 +239,7 @@
 								<a href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}"
 								   target="popup" class="btn btn-primary"
 								   onclick="window.open('/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
-									Print Permit Order
+									<spring:message code='lbl.btn.print.permit.order' />
 								</a>
 							</td> 
 						</c:if>
@@ -249,7 +249,7 @@
 								<a href="/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}"
 								   target="popup" class="btn btn-primary"
 								   onclick="window.open('/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
-									Print Rejection Notice
+									<spring:message code='lbl.btn.print.rejection.notice' />
 								</a>
 							</td>
 						</c:if>
@@ -298,7 +298,7 @@
                 </c:if>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.btn.close"/></button>
 			</div>
 		</div>
 	</div>

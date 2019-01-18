@@ -58,7 +58,7 @@
 		varStatus="counter">
 		<div class="panel-heading custom_form_panel_heading">
 			<div class="panel-title">
-				Scheduled Appointment
+				<spring:message code='lbl.scheduled.appmt'/>
 				<c:out value="${counter.index+1}"></c:out>
 			</div>
 		</div>

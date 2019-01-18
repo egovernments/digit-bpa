@@ -46,8 +46,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <div class="panel-heading">
-	<div class="panel-title">Status of NOC from the Following
-		Departments.</div>
+	<div class="panel-title"><spring:message code="lbl.tittle.noc.status" /> </div>
 </div>
 
 <div class="panel-body custom">

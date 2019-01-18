@@ -15,7 +15,7 @@
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
 						<c:if test="${mode == 'view'}">
-							<div class="panel-title">Fees Amount Updated Successfully.
+							<div class="panel-title"><spring:message code="lbl.tittle.fees.amount.update.success" />
 							</div>
 						</c:if>
 						<div class="panel-heading">
@@ -89,7 +89,7 @@
 										</c:when>
 										<c:otherwise>
 											<div class="text-center error-msg col-sm-6"
-												style="font-size: 14px;">No Fees Detail.</div>
+												style="font-size: 14px;"><spring:message code="lbl.no.fees.detail"/></div>
 										</c:otherwise>
 									</c:choose>
 								</tbody>
@@ -103,10 +103,10 @@
 			<div class="text-center">
 				<c:if test="${mode != 'view'}">
 					<button id="buttonSubmit" class="btn btn-primary" type="submit">
-						Update</button>
+						<spring:message code="lbl.btn.update"/></button>
 				</c:if>
 				<a class="btn btn-default" onclick="self.close()"
-					href="javascript:void(0)">Close</a>
+					href="javascript:void(0)"><spring:message code="lbl.close"/></a>
 			</div>
 
 		</form:form>

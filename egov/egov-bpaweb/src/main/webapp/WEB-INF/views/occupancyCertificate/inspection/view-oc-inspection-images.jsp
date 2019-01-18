@@ -66,7 +66,7 @@
 						</c:forEach>
 					</c:when>
 					<c:otherwise>
-						No site images found
+						<spring:message code="lbl.no.site.images.found" />
 					</c:otherwise>
 				</c:choose>
 

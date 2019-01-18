@@ -87,7 +87,7 @@
             <tfoot>
             <tr>
                 <td></td>
-                <td class="text-right view-content">Total Amount</td>
+                <td class="text-right view-content"><spring:message code="lbl.total.amount"/></td>
                 <td class="text-right view-content"><fmt:formatNumber type="number" maxFractionDigits="2"
                                                                       value="${totalAmount}"/></td>
             </tr>

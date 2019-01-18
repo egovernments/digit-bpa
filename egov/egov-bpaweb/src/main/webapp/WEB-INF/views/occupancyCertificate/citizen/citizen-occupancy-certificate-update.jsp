@@ -110,6 +110,9 @@
 					   class="btn btn-default" onclick="window.close();" />
 			</div>
 		</form:form>
+		<input type="hidden" id="submitMoreThanPermiPlotArea" value="<spring:message code='msg.validate.onsubmit.morethan.permissible.plotarea'/>"/>
+		<input type="hidden" id="saveApplication" value="<spring:message code='msg.confirm.save.appln'/>"/>
+		<input type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>"/>
 	</div>
 </div>
 
