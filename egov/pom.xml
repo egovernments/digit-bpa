@@ -295,8 +295,8 @@
          <module>egov-mrs</module>
          <module>egov-mrsweb</module>-->
         <module>egov-services</module>
-     <!--    <module>egov-edcr</module>
-        <module>egov-edcrweb</module> -->
+         <module>egov-edcr</module>
+        <module>egov-edcrweb</module>  
 
     </modules>
 
@@ -1083,13 +1083,7 @@
             </dependency>
 
             <!-- GIS END -->
-
-            <!--kabeja-->
-            <dependency>
-                <groupId>org.kabeja</groupId>
-                <artifactId>kabeja</artifactId>
-                <version>0.4</version>
-            </dependency>
+     
 
         </dependencies>
 
