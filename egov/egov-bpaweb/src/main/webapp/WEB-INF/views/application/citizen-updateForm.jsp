@@ -166,6 +166,59 @@
 			</div>
 		</form:form>
 	</div>
+	<input type="hidden" id="violationMessage1" value="<spring:message code='msg.validate.violationMessage' />"/>
+	<input type="hidden" id="startingDateReq" value="<spring:message code='msg.validate.startingdate.req' />"/>
+	<input type="hidden" id="completionDateReq" value="<spring:message code='msg.validate.workcompletiondate' />"/>
+	<input type="hidden" id="extendAreaLimit" value="<spring:message code='msg.validate.extendarea.limit' />"/>
+	<input type="hidden" id="resetFloorDetails" value="<spring:message code='msg.confirm.reset.floordetails' />"/>
+	<input type="hidden" id="slotmappingValidate" value="<spring:message code='msg.validate.slotmapping' />"/>
+	<input type="hidden" id="landAreaReq" value="<spring:message code='msg.validate.landarea.req' />"/>
+	<input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
+	<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
+	<input type="hidden" id="occupancyTypeMsg" value="<spring:message code='msg.validate.occupancytype' />"/>
+	<input type="hidden" id="areaPermissibleWOAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee1 ' />"/>
+	<input type="hidden" id="areaPermissibleWOAddnlFee2" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee2' />"/>
+	<input type="hidden" id="areaPermissibleWithAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee1' />"/>
+	<input type="hidden" id="areaPermissibleWithAddnlFee2" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee2' />"/>
+	<input type="hidden" id="areaPermissibleWithAddnlFee3" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee3' />"/>
+	<input type="hidden" id="areaPermissibleWithAddnlFee4" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee4' />"/>
+	<input type="hidden" id="confirmAreaPermiWOAddnlFee" value="<spring:message code='msg.confirm.areaPermissibleWOAddnlFee' />"/>
+	<input type="hidden" id="confirmAreaPermiWOAddnlFee1" value="<spring:message code='msg.confirm.areaPermissibleWOAddnlFee1' />"/>
+	<input type="hidden" id="typeOfMsg" value="<spring:message code='msg.vlaidate.typeof' />"/>
+	<input type="hidden" id="permissibleAreaForFloor1" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />"/>
+	<input type="hidden" id="permissibleAreaForFloor2" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />"/>
+	<input type="hidden" id="floorCombination" value="<spring:message code='msg.validate.floorcombination' />" />
+	<input type="hidden" id="levelValidate" value="<spring:message code='msg.validate.level' />" />
+	<input type="hidden" id="occuptypemsg" value="<spring:message code='msg.validate.occuptypemsg' />" />
+	<input type="hidden" id="floorAlreadyExist" value="<spring:message code='msg.floordetails.already.exist' />" />
+	<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
+	<input type="hidden" id="submitMoreThanPermiPlotArea" value="<spring:message code='msg.validate.onsubmit.morethan.permissible.plotarea'/>"/>
+	<input type="hidden" id="saveApplication" value="<spring:message code='msg.confirm.save.appln'/>"/>
+	<input type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>"/>
+	<input type="hidden" id="cancelApplication" value="<spring:message code='msg.confirm.cancel.appln'/>"/>
+	<input type="hidden" id="acceptDisclaimer" value="<spring:message code='msg.validate.accept.disclaimer'/>"/>
+	<input type="hidden" id="oneAmenityReq" value="<spring:message code='msg.validate.atleast.oneamenity.req'/>"/>
+	<input type="hidden" id="onaDayPermitApplnValidate" value="<spring:message code='msg.validate.oneday.permit.appln'/>"/>
+	<input type="hidden" id="applnPaymtReconciProg" value="<spring:message code='msg.applnpayment.reconcilation.progress'/>"/>
+	<input type="hidden" id="disclaimerAcceptPending" value="<spring:message code='msg.validate.disclaimer.accept.pending'/>"/>
+    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
+    <input type="hidden" id="docNameLength" value="<spring:message code='msg.validate.docname.length' />" />
+    <input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.validate.filesize.limit' />" />
+    <input type="hidden" id="validDocFormat" value="<spring:message code='msg.validate.docformat' />" />
+    <input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
+	<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
+	<input type="hidden" id="typeOfMsg" value="<spring:message code='msg.vlaidate.typeof' />"/>
+	<input type="hidden" id="permissibleAreaForFloor1" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />"/>
+	<input type="hidden" id="permissibleAreaForFloor2" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />"/>
+	<input type="hidden" id="builtupAndCarpetDetails" value="<spring:message code='msg.tittle.builtup.carpet.details' />"/>
+	<input type="hidden" id="blockMsg" value="<spring:message code='msg.tittle.blockmsg' />"/>
+	<input type="hidden" id="buildScrutinyNumber" value="<spring:message code='msg.validate.building.scrutiny.number' />"/>
+	<input type="hidden" id="buildingPlanApplnForServiceType" value="<spring:message code='msg.validate.buildingplan.applnfor.servicetype' />"/>
+	<input type="hidden" id="buildServiceType" value="<spring:message code='msg.validate.building.servicetype' />"/>
+	<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
+	<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
+	<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>    
+	
 </div>
 
 

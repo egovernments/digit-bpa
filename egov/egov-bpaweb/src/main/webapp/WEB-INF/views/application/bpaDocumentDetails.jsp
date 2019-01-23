@@ -171,6 +171,10 @@
 </c:choose>
 </div> 	
 
+    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
+	<input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.filesize.validate' />" />
+	<input type="hidden" id="noPreviewAvailble" value="<spring:message code='msg.nopreview.availble' />" />
+
 <!-- The Modal -->
 <div id="imgModel" class="image-modal">
 	<span class="closebtn">&times;</span> <img class="modal-content"

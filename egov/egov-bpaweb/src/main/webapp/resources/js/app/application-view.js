@@ -101,7 +101,7 @@ jQuery(document)
 						var currentFee = $('#currentPermitFee').val();
 						var modifiedFee = $('.AdditionalFees').val();
 						if(modifiedFee < currentFee) {
-							bootbox.alert(' Modified fee amount should be greater than the Rs.'+currentFee+', only you can increase fee amount on top of system calculated fee amount if you have any additional charges.')
+							bootbox.alert($('#feeAmount').val()+currentFee+ $('#incrFeeamtTopOfsysCalcFee').val());
 						}
 					}
 

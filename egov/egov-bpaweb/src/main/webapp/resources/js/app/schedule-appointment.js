@@ -68,7 +68,7 @@ $(document).ready(function() {
 	$('#appointmentTime').on('change dp.change', function(e) {
 		if (!$('#appointmentDate').val() && e.date) {
 			$('#appointmentTime').datetimepicker('clear');
-			bootbox.alert('Please select appointment date');
+			bootbox.alert($('#appointmentReq').val());
 			return;
 		}
 		if (!e.date)
@@ -93,8 +93,7 @@ function validateDateAndTime() {
 		var selectedAppointmentDateTime = moment(selectedAppointmentDateStr,
 				[ "DD/MM/YYYY h:mm A" ]);
 		if (previousAppointmentDateTime >= selectedAppointmentDateTime) {
-			bootbox
-					.alert('Re-Schedule Date and Time should be greater than the previous scheduled Date and Time');
+			bootbox.alert($('#rescheduleDateValidation').val());
 			$('#appointmentTime').datetimepicker('clear');
 		}
 	}

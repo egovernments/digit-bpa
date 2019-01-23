@@ -78,7 +78,7 @@ $(document).ready(function () {
         if (validateForm(validator)) {
             bootbox
                 .confirm({
-                    message: 'Do you really to want submit the application, once application is submitted then information cannot modify. Please cross verify once before submit.',
+                    message: $('#confirmSubmitAppln').val(),
                     buttons: {
                         'cancel': {
                             label: 'No',

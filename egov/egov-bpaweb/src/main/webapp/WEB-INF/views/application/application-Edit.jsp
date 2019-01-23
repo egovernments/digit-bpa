@@ -122,6 +122,47 @@
 			</div>
 		</form:form>
 	</div>
+	<input type="hidden" id="rejectAppln" value="<spring:message code='msg.confirm.reject.appln' />" />
+	<input type="hidden" id="intiateRejectionAppln" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
+	<input type="hidden" id="sendBackApplnPreOfficial" value="<spring:message code='msg.confirm.sendback.previous.approved.official' />" />
+	<input type="hidden" id="approveAppln" value="<spring:message code='msg.confirm.approve.appln' />" />
+	<input type="hidden" id="forwardAppln" value="<spring:message code='msg.confirm.forward.application' />" />
+	<input type="hidden" id="generatePermitOrder" value="<spring:message code='msg.confirm.generate.permitorder' />" />
+	<input type="hidden" id="permitRequired" value="<spring:message code='msg.validate.permit.mandatory' />" />
+	<input type="hidden" id="generateRejectNotice" value="<spring:message code='msg.confirm.generate.rejection.notice' />" />
+	<input type="hidden" id="townsurvFieldInspeRequest" value="<spring:message code='msg.validate.townsurveyor.filedinspec.request' />" />
+	<input type="hidden" id="townsurvFieldInspeRequired" value="<spring:message code='msg.validate.townsurveyor.fieldinspec.required' />" />
+	<input type="hidden" id="townsurvCommentsRequired" value="<spring:message code='msg.validate.comments.reqfor.townsurveyor' />" />
+	<input type="hidden" id="rejectionReasonMandatory" value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
+	<input type="hidden" id="rejectionCommentsRequired" value="<spring:message code='msg.validate.enter.rejection.comments' />" />
+	<input type="hidden" id="applnSendbackCommentsRequired" value="<spring:message code='msg.validate.comments.required.toappln.sentback' />" />
+	<input type="hidden" id="violationMessage1" value="<spring:message code='msg.validate.violationMessage' />"/>
+	<input type="hidden" id="startingDateReq" value="<spring:message code='msg.validate.startingdate.req' />"/>
+	<input type="hidden" id="completionDateReq" value="<spring:message code='msg.validate.workcompletiondate' />"/>
+	<input type="hidden" id="extendAreaLimit" value="<spring:message code='msg.validate.extendarea.limit' />"/>
+	<input type="hidden" id="resetFloorDetails" value="<spring:message code='msg.confirm.reset.floordetails' />"/>
+	<input type="hidden" id="slotmappingValidate" value="<spring:message code='msg.validate.slotmapping' />"/>
+	<input type="hidden" id="landAreaReq" value="<spring:message code='msg.validate.landarea.req' />"/>
+	<input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
+	<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
+	<input type="hidden" id="occupancyTypeMsg" value="<spring:message code='msg.validate.occupancytype' />"/>
+	<input type="hidden" id="areaPermissibleWOAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee1 ' />"/>
+	<input type="hidden" id="areaPermissibleWOAddnlFee2" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee2' />"/>
+	<input type="hidden" id="areaPermissibleWithAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee1' />"/>
+	<input type="hidden" id="areaPermissibleWithAddnlFee2" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee2' />"/>
+	<input type="hidden" id="areaPermissibleWithAddnlFee3" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee3' />"/>
+	<input type="hidden" id="areaPermissibleWithAddnlFee4" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee4' />"/>
+	<input type="hidden" id="confirmAreaPermiWOAddnlFee" value="<spring:message code='msg.confirm.areaPermissibleWOAddnlFee' />"/>
+	<input type="hidden" id="confirmAreaPermiWOAddnlFee1" value="<spring:message code='msg.confirm.areaPermissibleWOAddnlFee1' />"/>
+	<input type="hidden" id="typeOfMsg" value="<spring:message code='msg.vlaidate.typeof' />"/>
+	<input type="hidden" id="permissibleAreaForFloor1" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />"/>
+	<input type="hidden" id="permissibleAreaForFloor2" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />"/>
+	<input type="hidden" id="floorCombination" value="<spring:message code='msg.validate.floorcombination' />" />
+	<input type="hidden" id="levelValidate" value="<spring:message code='msg.validate.level' />" />
+	<input type="hidden" id="occuptypemsg" value="<spring:message code='msg.validate.occuptypemsg' />" />
+	<input type="hidden" id="floorAlreadyExist" value="<spring:message code='msg.floordetails.already.exist' />" />
+	<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
+
 </div>
 
 <link rel="stylesheet"

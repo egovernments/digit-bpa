@@ -60,7 +60,7 @@ $(document).ready(function() {
         if (action == 'Auto Re-Schedule') {
             bootbox
                 .confirm({
-                    message : 'Please confirm, system will automatically re-schedule to next immediate available slot once slots open and you will notified once rescheduled through sms and email or you can check through online portal services.',
+                    message : $('#rescheduleNextAvailSlot').val(),
                     buttons : {
                         'cancel' : {
                             label : 'No',
@@ -87,7 +87,7 @@ $(document).ready(function() {
         } else if (action == 'Cancel Application') {
             bootbox
                 .confirm({
-                    message : 'Please confirm, do you really going to cancel application ?',
+                    message : $('#cancelAppln').val(),
                     buttons : {
                         'cancel' : {
                             label : 'No',
@@ -115,7 +115,7 @@ $(document).ready(function() {
             if ($('#scrutinyReScheduleForm').valid()) {
                 bootbox
                     .confirm({
-                        message: 'Please confirm, do you really going to Re-Schedule appointment ?',
+                        message: $('#rescheduleAppointment').val(),
                         buttons: {
                             'cancel': {
                                 label: 'No',
@@ -162,7 +162,7 @@ $(document).ready(function() {
                 if(response.length == 0) {
                     $('#appointmentTime').html("");
                     $('#appointmentTime').append("<option value=''>Select</option>");
-                    bootbox.alert("No slots available on selected date, please select different date.");
+                    bootbox.alert($('#slotsDate').val());
                     $('#appointmentDate').val('');
                 } else {
                     $('#appointmentTime').html("");
@@ -189,7 +189,7 @@ $(document).ready(function() {
             var selectedAppointmentTime = getAppointmentTime($(this).val());
             if(previousAppointmentDate >= selectedAppointmentDate && previousAppointmentTime >= selectedAppointmentTime) {
                 $(this).val('');
-                bootbox.alert('Re-Schedule Date and Time should be greater than the earlier scheduled Date and Time');
+                bootbox.alert($('#rescheduleDate').val());
             }
         }
     });

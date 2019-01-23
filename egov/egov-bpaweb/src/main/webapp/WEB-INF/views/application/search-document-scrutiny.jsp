@@ -155,6 +155,7 @@
 			</thead>
 		</table>
 	</div>
+	<input type="hidden" id="collectApplnFees" value="<spring:message code='msg.validate.collect.applnfees'/>"/>
 </div>
 
 <script

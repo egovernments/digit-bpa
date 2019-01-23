@@ -150,6 +150,9 @@
 </div>
 </c:if>
 
+<input type="hidden" id="appointmentReq" value="<spring:message code='msg.validate.appointment.req' />"/>
+<input type="hidden" id="rescheduleDateValidation" value="<spring:message code='msg.validate.reschesuledate' />"/>
+
 <script
 		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <link rel="stylesheet"

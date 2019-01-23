@@ -80,6 +80,7 @@
 			</thead>
 		</table>
 	</div>
+	<input type="hidden" id="atleastOneInputReq" values="<spring:message code='msg.validate.atleast.oneinput.required' />" />
 </div>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	

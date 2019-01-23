@@ -100,6 +100,7 @@
 				</tfoot>
 		</table>
 	</div>
+	<input type="hidden" id="atleastOneInputReq" value="<spring:message code='msg.validate.atleast.oneinput.required'/>"/>
 </div>
 <link rel="stylesheet"
 	  href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>

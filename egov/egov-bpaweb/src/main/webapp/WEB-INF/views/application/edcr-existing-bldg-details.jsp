@@ -174,5 +174,14 @@
 
 </div>
 
+    <input type="hidden" id="floorCombination" value="<spring:message code='msg.validate.floorcombination' />" />
+	<input type="hidden" id="levelValidate" value="<spring:message code='msg.validate.level' />" />
+	<input type="hidden" id="occuptypemsg" value="<spring:message code='msg.validate.occuptypemsg' />" />
+	<input type="hidden" id="floorAlreadyExist" value="<spring:message code='msg.floordetails.already.exist' />" />
+	<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
+	<input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
+	<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
+    <input type="hidden" id="mainOccupancyReq" value="<spring:message code='msg.validate.mainoccupancy.typereq' />"/>
+
 <script
 	src="<cdn:url value='/resources/js/app/existing-buildingarea-details.js?rnd=${app_release_no}'/>"></script>

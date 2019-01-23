@@ -72,14 +72,12 @@ $(document)
 													.split('/').pop().split(
 															'\\').pop()).length;
 											if (charlen > 50) {
-												bootbox
-														.alert('Document name should not exceed 50 characters!');
+												bootbox.alert($('#docNameLength').val());
 												fileInput.replaceWith(fileInput
 														.val('').clone(true));
 												return false;
 											} else if (fileSize > maxSize) {
-												bootbox
-														.alert('File size should not exceed 2 MB!');
+												bootbox.alert($('#fileSizeLimit').val());
 												fileInput.replaceWith(fileInput
 														.val('').clone(true));
 												return false;
@@ -89,8 +87,7 @@ $(document)
 
 					function validate_file(fileformat, ext, obj) {
 						if (jQuery.inArray(ext.toLowerCase(), fileformat) == -1) {
-							bootbox.alert("Please upload " + fileformat
-									+ " format documents only");
+							bootbox.alert($('#uploadMsg').val() + fileformat + $('#validDocFormat').val());
 							obj.val('');
 							return false;
 						}

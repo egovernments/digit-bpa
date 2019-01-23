@@ -130,6 +130,12 @@
 	</div>
 </form:form>
 
+			<input type="hidden" id="rescheduleNextAvailSlot" value="<spring:message code='msg.confirm.reschedule.nextavail.slot'/>"/>
+			<input type="hidden" id="cancelAppln" value="<spring:message code='msg.confirm.cancel.appln'/>"/>
+			<input type="hidden" id="rescheduleAppointment" value="<spring:message code='msg.confirm.reschedule.appointment'/>"/>
+			<input type="hidden" id="slotsDate" value="<spring:message code='msg.validate.slotsdate'/>"/>
+			<input type="hidden" id="rescheduleDate" value="<spring:message code='msg.validate.reschedule.date'/>"/>
+
 <script
 		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script

@@ -218,7 +218,7 @@ $(document)
 					$(document).on('click','.documentScrutiny',function(){
 					    var url = $(this).val();
 					    if(url=='feePending') {
-					    	bootbox.alert("Please Collect Application Fees to Process Application.");
+					    	bootbox.alert($('#collectApplnFees').val());
 					    } else {
 					    	openPopup(url);
 					    }

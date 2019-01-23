@@ -119,6 +119,13 @@
            onclick='self.close()'><spring:message code='lbl.close'/></a>
     </div>
 </form:form>
+		<input id="enterMsg" type="hidden" value="<spring:message code='msg.validate.entermsg'/>"/>
+		<input id="commentsMsg" type="hidden" value="<spring:message code='msg.validate.comments'/>"/>
+		<input id="licenseExpired" type="hidden" value="<spring:message code='msg.alert.buildinglicense.expired'/>"/>
+		<input id="confirmApproveAppln" type="hidden" value="<spring:message code='msg.confirm.approve.appln.beforeapprove'/>"/>
+		<input id="rejectAppln" type="hidden" value="<spring:message code='msg.confirm.reject.appln'/>"/>
+		<input id="confirmBlockLicense" type="hidden" value="<spring:message code='msg.confirm.block.licensee'/>"/>
+		
 <link rel="stylesheet"
       href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"

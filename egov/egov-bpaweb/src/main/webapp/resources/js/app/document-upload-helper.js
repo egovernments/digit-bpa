@@ -84,12 +84,12 @@ $(document).on('change','.files-upload-container input:file',function(e) {
 		}
 		
 		if(allowedExtenstion && allowedExtenstion.toUpperCase().split(',').indexOf(extension.toUpperCase()) < 0){
-			bootbox.alert('Please upload '+allowedExtenstion.toUpperCase());
+			bootbox.alert($('#uploadMsg').val() +allowedExtenstion.toUpperCase());
 			$(this).val('');
 			return;
 		}
 		else if(isMaxLimitReached){
-			bootbox.alert('File size should not exceed '+maxFileSize+' MB!');
+			bootbox.alert($('#fileSizeLimit').val()+maxFileSize+' MB!');
 			$(this).val('');
 			return;
 		}
@@ -216,7 +216,7 @@ $(document).on('click','div.file-viewer',function(e){
 	    showImage(url);
     }
     else{
-      bootbox.alert('No preview available');
+      bootbox.alert($('#noPreviewAvailble').val());
     }
     
 });

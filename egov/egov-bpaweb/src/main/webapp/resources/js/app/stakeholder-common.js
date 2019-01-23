@@ -80,10 +80,10 @@ $(document).ready( function () {
             var licenseExpiryDateTime = moment($('#buildingLicenceExpiryDate').val(),["DD/MM/YYYY"]);
             var licenseIssueDateTime = moment($('#buildingLicenceIssueDate').val(),["DD/MM/YYYY"]);
             if(licenseExpiryDateTime <= moment(new Date(),[ "DD/MM/YYYY" ])) {
-                bootbox.alert("Please enter valid date, license expiry date should be greater than the today date.");
+                bootbox.alert($('#liceExpiryDateGrterthanTodayDate').val());
                 $('#buildingLicenceExpiryDate').val('');
             } else if(licenseExpiryDateTime <= licenseIssueDateTime) {
-                bootbox.alert("Please enter valid date, license expiry date should be greater than the license issued date.");
+                bootbox.alert($('#liceExpiryDateGrterthanIssueDate').val());
                 $('#buildingLicenceExpiryDate').val('');
             }
         }
@@ -95,7 +95,7 @@ $(document).ready( function () {
 			if (mobileno && mobileno.length < 10) {
                 var span = $(this).siblings('span');
                 $(span).addClass('error-msg');
-                $(span).text('Please enter 10 digit mobile number');
+                $(span).text($('#validMobileNumber').val());
                 $(this).focus();
                 $(this).show();
                 $(this).val("");
@@ -160,7 +160,7 @@ $(document).ready( function () {
 		if (email && !pattern.test(email) && $(this).val().length > 0) {
 			var span = $(this).siblings('span');
 	    	$(span).addClass('error-msg');
-	    	$(span).text('Please enter valid email..!');
+	    	$(span).text($('#validEmail').val());
             $(this).focus();
 			$(this).show();
 			$(this).val("");
@@ -178,7 +178,7 @@ $(document).ready( function () {
         if (aadhaar && aadhaar.length < 12) {
             var span = $(this).siblings('span');
             $(span).addClass('error-msg');
-            $(span).text('Aadhaar should be 12 digit number');
+            $(span).text($('#validAadhaar').val());
             $(this).focus();
             $(this).show();
             $(this).val("");
@@ -196,7 +196,7 @@ $(document).ready( function () {
         if (aadhaar && aadhaar.length < 10) {
             var span = $(this).siblings('span');
             $(span).addClass('error-msg');
-            $(span).text('PAN should be 10 digit number');
+            $(span).text($('#validPan').val());
             $(this).focus();
             $(this).show();
             $(this).val("");
@@ -244,7 +244,7 @@ $(document).ready( function () {
                     if(true == response) {
                         var span = $('#mobileNumber1').siblings('span');
                         $(span).addClass('error-msg');
-                        $(span).text('Mobile number is already exists');
+                        $(span).text($('#mobileNumberAlreadyExist').val());
                         $('#mobileNumber1').show();
                         $('#mobileNumber1').val('');
                         $('#mobileNumber1').focus();
@@ -276,7 +276,7 @@ $(document).ready( function () {
                     if(true == response) {
                         var span = $('#emailId1').siblings('span');
                         $(span).addClass('error-msg');
-                        $(span).text('Email is already exists');
+                        $(span).text($('#emailAlreadyExist').val());
                         $('#emailId1').show();
                         $('#emailId1').val('');
                         $('#emailId1').focus();

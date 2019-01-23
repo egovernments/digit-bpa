@@ -147,7 +147,9 @@
 											   id="previewImg">
 	<div id="caption"></div>
 </div>
-
+    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
+	<input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.filesize.validate' />" />
+	<input type="hidden" id="noPreviewAvailble" value="<spring:message code='msg.nopreview.availble' />" />
 <script
 		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script

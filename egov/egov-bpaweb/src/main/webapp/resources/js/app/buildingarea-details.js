@@ -304,16 +304,16 @@ function validateUniqueDetails(idx,floorDesc,level,occupancy){
 												+ idx + ')').find(
 										'.duplicate-clear').val('');
 								bootbox
-										.alert('With combination of Floor Description : '
+										.alert($("#floorCombination").val()
 												+ floorDesc
-												+ ', Level : '
+												+ $("#levelValidate").val()
 												+ Number(level)
-												+ ' and Occupancy Type : '
+												+ $("#occuptypemsg").val()
 												+ $(this)
 														.find(
 																'*[name$="occupancy"] option:selected')
 														.text()
-												+ ' floor details are already present, please check and enter valid details.');
+												+ $("#floorAlreadyExist").val());
 								return false;
 							}
 		});
@@ -372,7 +372,7 @@ function validateAndCalculateTotalOfFloorDetails() {
         if(rowFloorArea > rowPlinthArea) {
             $(this).closest('tr').find('.floorArea').val('');
             $(this).closest('tr').find('.carpetArea').val('');
-            bootbox.alert("Floor Area should be less than or equal to the Builtup Area.");
+            bootbox.alert($("#floorareaValidate").val());
             return false;
         }
         if(rowFloorArea)
@@ -385,7 +385,7 @@ function validateAndCalculateTotalOfFloorDetails() {
             $(this).find('td:eq(6) input.carpetArea').val(0.0);
         if(rowCarpetArea > rowFloorArea) {
             $(this).closest('tr').find('.carpetArea').val('');
-            bootbox.alert("Carpet Area should be less than or equal to the Floor Area.");
+            bootbox.alert($("#carpetareaValidate").val());
             return false;
         }
         if(rowCarpetArea)
@@ -425,7 +425,7 @@ function validateBuildAreaOnAdd(){
 	    var carpetArea = $(this).find('*[name$="carpetArea"]').val();
 	    var occupancy  = $(this).find('*[name$="occupancy"]').val();
 	    if(!floorName || !floorNumber || !plinthArea || !carpetArea || !floorArea || !occupancy) { 
-	    	bootbox.alert("Please enter or select all values of existing rows before adding. Values cannot empty.");
+	    	bootbox.alert($('#valuesCannotEmpty').val());
 	    	isValid=false;
 	    	return false;
 	    } 

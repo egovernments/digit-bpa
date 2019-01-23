@@ -68,7 +68,7 @@ $(document).ready(function() {
 
     // showing server side validation message in building details section as well as showing same in alert also.
     if($('#violationMessage').val()) {
-        bootbox.alert($('#violationMessage').val()+' Please check and update building floor details to proceed further.');
+        bootbox.alert($('#violationMessage').val()+$('#violationMessage1').val());
         $('.showViolationMessage').focus();
         $('.showViolationMessage').html($('#violationMessage').val());
         $('.showViolationMessage').closest('div.panel-body').show();
@@ -406,10 +406,10 @@ $(document).ready(function() {
     $('#workCompletionDate').on('changeDate', function() {
 
         if (!$('#workCommencementDate').val()) {
-            bootbox.alert("Please enter work starting date");
+            bootbox.alert($('#startingDateReq').val());
             $('#workCompletionDate').val('').datepicker("refresh");
         } else if ($('#workCommencementDate').val() && moment($('#workCompletionDate').val(),'DD/MM/YYYY').isSameOrBefore(moment($('#workCommencementDate').val(),'DD/MM/YYYY'))) {
-            bootbox.alert("Work completion date should be greater than the work starting date");
+            bootbox.alert($('#completionDateReq').val());
             $('#workCompletionDate').val('').datepicker("refresh");
         }
     });
@@ -437,7 +437,7 @@ $(document).ready(function() {
         if(extentOfLand && uom && convertExtendOfLandToSqmts(extentOfLand, uom) > 1000000) {
             $('#extentOfLand').val('');
             $('#extentinsqmts').val('');
-            bootbox.alert("Maximum allowed area of extend land upto 10 lakhs Sq.Mtrs only.");
+            bootbox.alert($('#extendAreaLimit').val());
         }
     });
 
@@ -463,7 +463,7 @@ $(document).ready(function() {
 
             bootbox
                 .confirm({
-                    message : 'If you change occupancy type, filled floor wise details will be reset. Do you want continue ? ',
+                    message : $('#resetFloorDetails').val(),
                     buttons : {
                         'cancel' : {
                             label : 'No',
@@ -547,7 +547,7 @@ $(document).ready(function() {
                 totalFloorArea = parseFloat($("#sumOfFloorArea").val()).toFixed(2);
                 if(areaPermissibleWithAddnlFee == 0) {
                     if(parseFloat(totalFloorArea) > areaPermissibleWOAddnlFee.toFixed(2)){
-                        bootbox.alert("For the occupancy type of " +occpancyObj[0].description+", maximum permissible area is "+areaPermissibleWOAddnlFee.toFixed(2)+" Sq.Mtrs, beyond of permissible area you are not allowed construct construction.");
+                        bootbox.alert($("#occupancyTypeMsg").val() +occpancyObj[0].description+$("#areaPermissibleWOAddnlFee1").val()+areaPermissibleWOAddnlFee.toFixed(2)+$("#areaPermissibleWOAddnlFee2").val());
                         $(rowObj).find('.floorArea').val('');
                         $( ".floorArea" ).trigger( "change" );
                         $( ".plinthArea" ).trigger( "change" );
@@ -557,7 +557,7 @@ $(document).ready(function() {
                         return true;
                     }
                 } else if(parseFloat(totalFloorArea) > areaPermissibleWithAddnlFee.toFixed(2) && isCitizenAcceptedForAdditionalFee) {
-                    bootbox.alert("For the occupancy type of " +occpancyObj[0].description+", maximum permissible area allowed with out addtional fee is "+areaPermissibleWOAddnlFee.toFixed(2)+" Sq.Mtrs and with addtional fee is "+areaPermissibleWithAddnlFee.toFixed(2)+" Sq.Mtrs, beyond of maximum permissible area of "+areaPermissibleWithAddnlFee.toFixed(2)+" Sq.Mtrs, you are not allowed construct construction.");
+                    bootbox.alert($("#occupancyTypeMsg").val() +occpancyObj[0].description+$("#areaPermissibleWithAddnlFee1").val()+areaPermissibleWOAddnlFee.toFixed(2)+$("#areaPermissibleWithAddnlFee2").val()+areaPermissibleWithAddnlFee.toFixed(2)+$("#areaPermissibleWithAddnlFee3").val()+areaPermissibleWithAddnlFee.toFixed(2)+$("#areaPermissibleWithAddnlFee4").val());
                     $(rowObj).find('.floorArea').val('');
                     $( ".floorArea" ).trigger( "change" );
                     $( ".plinthArea" ).trigger( "change" );
@@ -566,7 +566,7 @@ $(document).ready(function() {
                 } else if(parseFloat(totalFloorArea) > areaPermissibleWOAddnlFee.toFixed(2) && !isCitizenAcceptedForAdditionalFee) {
                     bootbox
                         .confirm({
-                            message : 'For the occupancy type of ' +occpancyObj[0].description+', maximum permissible area allowed with out addtional fee is '+areaPermissibleWOAddnlFee.toFixed(2)+' Sq.Mtrs, Do you want continue construction in additional area with addtional cost of Rs.5000 per Sq.Mtr.Are you ready pay additional amount ? , please select Yes / No ',
+                            message : $("#occupancyTypeMsg").val() +occpancyObj[0].description+$("#confirmAreaPermiWOAddnlFee").val()+areaPermissibleWOAddnlFee.toFixed(2)+$("#confirmAreaPermiWOAddnlFee1").val(),
                             buttons : {
                                 'cancel' : {
                                     label : 'No',
@@ -825,7 +825,7 @@ function validateSlotMappingForOneDayPermit(zoneId, electionWardId){
         success: function (response) {
             if(response==false){
                 $('#electionBoundary').val('');
-                bootbox.alert("Slot Mapping Master Data not defined for selected Election Ward. Please Define the Mapping.");
+                bootbox.alert($('#slotmappingValidate').val());
                 return false;
             } else
                 return true;
@@ -884,7 +884,7 @@ function validateFloorDetails(plinthArea) {
         var rowObj = $('#buildingAreaDetails tbody tr');
         if(occpancyObj && $("#occupancyapplnlevel option:selected" ).text() != 'Mixed'){
             if(!extentOfLand){
-                bootbox.alert("Please enter extend of land area value");
+                bootbox.alert($("#landAreaReq").val());
                 $(rowObj).find('.floorArea').val('');
                 $(rowObj).find('.plinthArea').val('');
                 $( ".floorArea" ).trigger( "change" );
@@ -896,7 +896,7 @@ function validateFloorDetails(plinthArea) {
             var permissibleAreaForFloor = parseFloat(extentInSqmts * permissibleAreaInPercentage / 100).toFixed(2);
             if(parseFloat(inputPlinthArea) > parseFloat(permissibleAreaForFloor)){
                 $(plinthArea).val('');
-                bootbox.alert("For type of " +occpancyObj[0].description+", each floor wise maximum permissable coverage area is " +permissibleAreaForFloor+" Sq.Mtrs, so beyond of maximum coverage area permission are not allowed.");
+                bootbox.alert($("#typeOfMsg").val() +occpancyObj[0].description+$("#permissibleAreaForFloor1").val()+permissibleAreaForFloor+$("#permissibleAreaForFloor2").val());
                 validateAndCalculateTotalOfFloorDetails();
                 $(rowObj).find('.plinthArea').focus();
                 return false;
@@ -931,7 +931,7 @@ function validateAndCalculateTotalOfFloorDetails() {
             $(this).closest('tr').find('.floorArea').val('');
             $(this).closest('tr').find('.carpetArea').val('');
             //validateAndCalculateTotalOfFloorDetails();
-            bootbox.alert("Floor Area should be less than or equal to the Builtup Area.");
+            bootbox.alert($('#floorareaValidate').val());
             return false;
         }
         if(rowFloorArea)
@@ -945,7 +945,7 @@ function validateAndCalculateTotalOfFloorDetails() {
         if(rowCarpetArea > rowFloorArea) {
             $(this).closest('tr').find('.carpetArea').val('');
             //validateAndCalculateTotalOfFloorDetails();
-            bootbox.alert("Carpet Area should be less than or equal to the Floor Area.");
+            bootbox.alert($('#carpetareaValidate').val());
             return false;
         }
         if(rowCarpetArea)

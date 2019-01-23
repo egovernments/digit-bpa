@@ -45,7 +45,7 @@ $(document).ready(function($) {
 	 if ($('#citizenViewApplicationForm').valid()) {
 			bootbox
 			.confirm({
-				message : 'Do you really want to Cancel the application ?',
+				message : $('#cancelAppln').val(),
 				buttons : {
 					'cancel' : {
 						label : 'No',

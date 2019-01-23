@@ -123,6 +123,17 @@
 			</div>
 		</form:form>
 	</div>
+	 <input id="unblockLicense" type="hidden" value="<spring:message code='msg.confirm.unblock.licensee' />"/>
+     <input id="blockLicense" type="hidden" value="<spring:message code='msg.confirm.block.licensee' />"/>
+     <input id="updateLicenseInfo" type="hidden" value="<spring:message code='msg.confirm.updateinfo.license'/>"/>
+	 <input type="hidden" id="liceExpiryDateGrterthanTodayDate" value="<spring:message code='msg.validate.license.expirydate.greaterthan.todaydate' />"/>
+	 <input type="hidden" id="liceExpiryDateGrterthanIssueDate" value="<spring:message code='msg.validate.license.expirydate.greaterthan.licenseissue.date' />"/>
+	 <input type="hidden" id="validMobileNumber" value="<spring:message code='msg.validate.mobilenumber' />"/>
+	 <input type="hidden" id="validEmail" value="<spring:message code='msg.validate.email' />"/>
+	 <input type="hidden" id="validAadhaar" value="<spring:message code='msg.validate.aadhaar' />"/>
+	 <input type="hidden" id="validPan" value="<spring:message code='msg.validate.pan' />"/>
+	 <input type="hidden" id="mobileNumberAlreadyExist" value="<spring:message code='msg.validate.mobilenumber.already.exist' />"/>
+	 <input type="hidden" id="emailAlreadyExist" value="<spring:message code='msg.validate.email.already.exist' />"/>    
 </div>
 
 <script

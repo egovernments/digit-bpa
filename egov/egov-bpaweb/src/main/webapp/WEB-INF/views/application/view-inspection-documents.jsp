@@ -79,6 +79,10 @@
 	<div id="caption"></div>
 </div>
 
+    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
+	<input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.filesize.validate' />" />
+	<input type="hidden" id="noPreviewAvailble" value="<spring:message code='msg.nopreview.availble' />" />
+
 <link rel="stylesheet" href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
 <script
 	src="<cdn:url value='/resources/js/app/document-upload-helper.js?rnd=${app_release_no}'/>"></script>

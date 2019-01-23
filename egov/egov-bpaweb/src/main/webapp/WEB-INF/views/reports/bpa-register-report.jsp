@@ -126,6 +126,7 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="atleastOneInputReq" value="<spring:message code='msg.validate.atleast.oneinput.required'/>" />
 </div>
 
 <link rel="stylesheet"

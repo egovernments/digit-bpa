@@ -42,7 +42,7 @@
 $(document).ready(function ($) {
 
     if($('#isReconciliationInProgress').val() === 'true')
-        bootbox.alert("For this application payment reconciliation is in progress, please wait for sometime!!!!!!")
+        bootbox.alert($('#applnPaymtReconciProg').val())
 
     if ($('#isEDCRIntegrationRequire').val() === 'true') {
         $("#occupancyapplnlevel").attr("disabled", "true");
@@ -112,7 +112,7 @@ $(document).ready(function ($) {
             var msg = getValidationMessageOnUpdate();
             bootbox
                 .confirm({
-                    message: 'Do you want to save the application ?. ' + msg,
+                    message: $('#saveApplication').val() + msg,
                     buttons: {
                         'cancel': {
                             label: 'No',
@@ -145,7 +145,7 @@ $(document).ready(function ($) {
         if (validateEditFormOnSubmit(button, validator)) {
             bootbox
                 .confirm({
-                    message: 'Do you really want to submit the application, once application is submitted you are not allowed to modify application details and please make sure entered details are valid before submit. ' + msg,
+                    message: $('#submitApplication').val() + msg,
                     buttons: {
                         'cancel': {
                             label: 'No',
@@ -177,7 +177,7 @@ $(document).ready(function ($) {
         if ($('#editCitizenApplicationform').valid()) {
             bootbox
                 .confirm({
-                    message: 'Do you really want to Cancel the application ?',
+                    message: $('#cancelApplication').val(),
                     buttons: {
                         'cancel': {
                             label: 'No',
@@ -278,7 +278,7 @@ function validateAdditionalConditionsOnUpdate(button) {
         // for citizen login
         if ($('#validateCitizenAcceptance').val() == 'true' && $('#isCitizen').val() == 'true') {
             if (!$('#citizenAccepted').prop('checked')) {
-                bootbox.alert("Please accept disclaimer to continue...");
+                bootbox.alert($("#acceptDisclaimer").val());
                 return false;
             }
         } else if ($('#isCitizen').val() != 'true') {  //for business user login
@@ -287,11 +287,11 @@ function validateAdditionalConditionsOnUpdate(button) {
             }
             $('#architectAccepted').closest('div.panel-body').show();
             if (!$('#architectAccepted').prop('checked')) {
-                bootbox.alert("Please accept disclaimer to continue...");
+                bootbox.alert($("#acceptDisclaimer").val());
                 return false;
             }
             if (button == 'Submit' && $('#validateCitizenAcceptance').val() == 'true' && $('#citizenDisclaimerAccepted').val() != 'true') {
-                bootbox.alert("Citizen Disclaimer Acceptance Pending. Cannot Submit Application.");
+                bootbox.alert($("#disclaimerAcceptPending").val());
                 return false;
             }
 
@@ -299,7 +299,7 @@ function validateAdditionalConditionsOnUpdate(button) {
     }
     var seviceTypeName = $("#serviceType option:selected").text();
     if ('Amenities' == seviceTypeName && !$("#applicationAmenity option:selected").val()) {
-        bootbox.alert("Please select at least one amenity.");
+        bootbox.alert($("#oneAmenityReq").val());
         return false;
     }
     if ($('#isOneDayPermitApplication').is(':checked')) {
@@ -327,7 +327,7 @@ function validateAdditionalConditionsOnUpdate(button) {
             }
         }
         if (parseFloat(inputArea) > 300) {
-            bootbox.alert("For one day permit application maximum permissible area allowed is less than or equal to 300 Sq.Mtrs. Beyond of maximum permissible area not allowed to submit application.");
+            bootbox.alert($('#onaDayPermitApplnValidate').val());
             return false;
         }
     }
@@ -360,7 +360,7 @@ function getValidationMessageOnUpdate() {
     var seviceTypeName = $("#serviceType option:selected").text();
     var msg;
     if ('Sub-Division of plot/Land Development' === seviceTypeName && stakeHolderType !== 'Town Planner - A' && (((stakeHolderType === 'Engineer - B' || stakeHolderType === 'Building Designer - B') && extentInSqmts > 5000) || ((stakeHolderType !== 'Engineer - B' && stakeHolderType !== 'Building Designer - B') && extentInSqmts > 10000)))
-        msg = 'You are trying to submit the application more than the permissible plot area. Please present all the signed required documents mandatorily during document scrutiny. Click on YES to proceed with application or NO to re-enter the plot area.';
+        msg = $("#submitMoreThanPermiPlotArea").val();
     else
         msg = '';
     return msg;

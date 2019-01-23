@@ -141,6 +141,19 @@
             </div>
         </div>
     </div>
+        <input type="hidden" id="confirmSubmitAppln" value="<spring:message code='msg.confirm.submit.appln'/>"/>
+	    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
+        <input type="hidden" id="docNameLength" value="<spring:message code='msg.validate.docname.length' />" />
+	    <input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.validate.filesize.limit' />" />
+	    <input type="hidden" id="validDocFormat" value="<spring:message code='msg.validate.docformat' />" />
+	    <input type="hidden" id="liceExpiryDateGrterthanTodayDate" value="<spring:message code='msg.validate.license.expirydate.greaterthan.todaydate' />"/>
+		  <input type="hidden" id="liceExpiryDateGrterthanIssueDate" value="<spring:message code='msg.validate.license.expirydate.greaterthan.licenseissue.date' />"/>
+		  <input type="hidden" id="validMobileNumber" value="<spring:message code='msg.validate.mobilenumber' />"/>
+		  <input type="hidden" id="validEmail" value="<spring:message code='msg.validate.email' />"/>
+		  <input type="hidden" id="validAadhaar" value="<spring:message code='msg.validate.aadhaar' />"/>
+		  <input type="hidden" id="validPan" value="<spring:message code='msg.validate.pan' />"/>
+		  <input type="hidden" id="mobileNumberAlreadyExist" value="<spring:message code='msg.validate.mobilenumber.already.exist' />"/>
+		  <input type="hidden" id="emailAlreadyExist" value="<spring:message code='msg.validate.email.already.exist' />"/> 
 </div>
 
 <script src='https://www.google.com/recaptcha/api.js' async defer></script>

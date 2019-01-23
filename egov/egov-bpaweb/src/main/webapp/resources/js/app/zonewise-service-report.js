@@ -55,7 +55,7 @@ $(document)
                         if(isValid) {
                             callAjaxSearch();
                         } else {
-                            bootbox.alert("Please enter at least one input value to search");
+                            bootbox.alert($('#atleastOneInputReq').val());
                             return false;
                         }
 					});

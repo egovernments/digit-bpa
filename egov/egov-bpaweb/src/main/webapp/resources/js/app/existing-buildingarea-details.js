@@ -125,7 +125,7 @@ jQuery(document).ready(function() {
 	$(document).on('blur','.existFloorDescription', function() {
 		if(!$("#occupancyapplnlevel").val()) {
 			$('#existingBuildingAreaDetails').find('select').val('');
-			bootbox.alert('Please select main occupancy type.');
+			bootbox.alert($("#mainOccupancyReq").val());
 			return false;
 		}
 		if($(rowObj).find('.existFloorDescription').val() && $(rowObj).find('.existFloorDescription').val() == 'Cellar Floor') {
@@ -159,7 +159,7 @@ function validateUniqueDetailsForExistBuild(idx,floorDesc,level,occupancy){
 		    var occupancy1 = $(this).find('*[name$="occupancy"]').val().trim();
 		    if(floorDesc === floorName && level === floorNumber && occupancy ===occupancy1) {
 		    	$('#existingBuildingAreaDetails tbody tr:eq('+idx+')').find('.clear-details').val('');
-		    	bootbox.alert('With combination of Floor Description : '+floorDesc+', Level : '+level+' and Occupancy Type : '+$(this).find('*[name$="occupancy"] option:selected').text()+' floor details are already present, please check and enter valid details.');
+		    	bootbox.alert($("#floorCombination").val()+floorDesc+$("#levelValidate").val()+level+$("#occuptypemsg").val()+$(this).find('*[name$="occupancy"] option:selected').text()+$("#floorAlreadyExist").val());
 			    return false;
 		    }
 		});
@@ -193,7 +193,7 @@ $(document).on('change', '.existFloorArea', function() {
    		 $( ".existPlinthArea" ).trigger( "change" );
    		 $( ".existFloorArea" ).trigger( "change" );
    		 $( ".existCarpetArea" ).trigger( "change" );
-   		 bootbox.alert("Floor Area should be less than or equal to the Builtup Area.");
+   		 bootbox.alert($("#floorareaValidate").val());
    		 return false;
    	 }
     	if(rowFloorArea)
@@ -213,7 +213,7 @@ $(document).on('change', '.existCarpetArea', function() {
     		 $( ".existPlinthArea" ).trigger( "change" );
     		 $( ".existFloorArea" ).trigger( "change" );
     		 $( ".existCarpetArea" ).trigger( "change" );
-    		 bootbox.alert("Carpet Area should be less than or equal to the Floor Area.");
+    		 bootbox.alert($("#carpetareaValidate").val());
     		 return false;
     	 }
     	 if($(this).find('td:eq(6) input.existCarpetArea').val())
@@ -247,7 +247,7 @@ function validateExistBuildFloorOnAdd(){
 	    var carpetArea = $(this).find('*[name$="carpetArea"]').val();
 	    var occupancy  = $(this).find('*[name$="occupancy"]').val();
 	    if(!floorName || !floorNumber || !plinthArea || !carpetArea || !floorArea || !occupancy) { 
-	    	bootbox.alert("Please enter or select all values of existing rows before adding. Values cannot empty.");
+	    	bootbox.alert($('#valuesCannotEmpty').val());
 	    	isValid=false;
 	    	return false;
 	    } 

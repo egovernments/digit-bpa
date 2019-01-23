@@ -211,12 +211,12 @@ $(document).ready(
             var blockTitle;
             var toggleIcon;
             if(noOfBlocks > 1) {
-                blockTitle = 'Block '+name+' Builtup and Carpet Area Details';
+                blockTitle = $('#blockMsg').val()+name+$('#builtupAndCarpetDetails').val();
                 toggleIcon = '<div class="history-icon toggle-icon'+bldgIdx+'">'+
                     '      <i class="fa fa-angle-up fa-2x"></i></div>';
             } else {
                 toggleIcon = '';
-                blockTitle = 'Builtup and Carpet Area Details:';
+                blockTitle = $('#builtupAndCarpetDetails').val();
             }
             var header = '<div class="panel-heading custom_form_panel_heading toggle-bldg-header toggle-head'+bldgIdx+'"' +
                 '                 data-bldg-idx="'+bldgIdx+'">'+'<div class="panel-title"> '+blockTitle+' </div> '+toggleIcon+' </div>'
@@ -399,12 +399,12 @@ $(document).ready(
             var blockTitle;
             var toggleIcon;
             if(noOfBlocks > 1) {
-                blockTitle = 'Block '+name+' Builtup and Carpet Area Details';
+                blockTitle =  $('#blockMsg').val()+name+ $('#builtupAndCarpetDetails').val();
                 toggleIcon = '<div class="history-icon toggle-icon'+bldgIdx+'">'+
                     '      <i class="fa fa-angle-up fa-2x"></i></div>';
             } else {
                 toggleIcon = '';
-                blockTitle = 'Builtup and Carpet Area Details:';
+                blockTitle = $('#builtupAndCarpetDetails').val();
             }
             var header = '<div class="panel-heading custom_form_panel_heading toggle-bldg-header toggle-head'+bldgIdx+'"' +
                 '                 data-bldg-idx="'+bldgIdx+'">'+'<div class="panel-title"> '+blockTitle+' </div> '+toggleIcon+' </div>'
@@ -569,7 +569,7 @@ $(document).ready(
                             $('#eDcrNumber').val('');
                             resetDCRPopulatedValues();
                         } else if ($("#serviceType option:selected").text()&& response.serviceType && response.serviceType !== $("#serviceType option:selected").text()) {
-                            bootbox.alert('Entered building plan scrutiny number is for the service type ' + response.serviceType + ', but you are trying to submit building plan application for the service type ' + $("#serviceType option:selected").text() + '. Please make sure, Service type of building plan scrutiny and building plan application must be same.');
+                            bootbox.alert($('#buildScrutinyNumber').val() + response.serviceType + $('#buildingPlanApplnForServiceType').val() + $("#serviceType option:selected").text() + $('#buildServiceType').val());
                             $('#eDcrNumber').val('');
                             resetDCRPopulatedValues();
                         } else {
@@ -589,7 +589,7 @@ $(document).ready(
                                     }
                                 if (response.planDetail.blocks.length <= 0) {
                                     // Validate proposed building details if not present
-                                    bootbox.alert("For entered building plan scrutiny number : " + $('#eDcrNumber').val() + " building floor details are not extracted from submitted building plan scrutiny, so you are not allowed to submit application using that. Please use approved plan which have valid details.");
+                                    bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + $('#floorDetailsNotExtracted').val());
                                     $('#eDcrNumber').val('');
                                     resetDCRPopulatedValues();
                                     return false;
@@ -599,7 +599,7 @@ $(document).ready(
                                         || $("#serviceType option:selected").text() === 'Change in occupancy')
                                     && jQuery.inArray(true, existingBldgPresent) < 0) {
                                     // Validate existing building details if not present for required service
-                                    bootbox.alert("For entered building plan scrutiny number : " + $('#eDcrNumber').val() + " existing building details are not present from submitted building plan scrutiny, so you are not allowed to submit application using that. Please use approved plan which have existing and proposed building details.");
+                                    bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + $('#existingBuildDetailsNotPresent').val());
                                     $('#eDcrNumber').val('');
                                     resetDCRPopulatedValues();
                                     return false;
@@ -752,7 +752,7 @@ $(document).ready(
                 if(rowFloorArea > rowPlinthArea) {
                     $(rowObj).find('.dcrFloorArea0').val('');
                     validateAndCalculateSumForDCRFloorDetails('.edcrBuildingAreaDetails0', 0);
-                    bootbox.alert("Floor Area should be less than or equal to the Builtup Area.");
+                    bootbox.alert($('#floorareaValidate').val());
                     return false;
                 }
 
@@ -776,7 +776,7 @@ $(document).ready(
                 if(rowCarpetArea > rowFloorArea) {
                     $(rowObj).find('.dcrCarpetArea0').val('');
                     validateAndCalculateSumForDCRFloorDetails('.edcrBuildingAreaDetails0', 0);
-                    bootbox.alert("Carpet Area should be less than or equal to the Floor Area.");
+                    bootbox.alert($("#carpetareaValidate").val());
                     return false;
                 }
                 if(rowCarpetArea)
@@ -800,7 +800,7 @@ function validateDCRFloorDetails(plinthArea) {
         var permissibleAreaForFloor = parseFloat(extentInSqmts * permissibleAreaInPercentage / 100).toFixed(2);
         if(parseFloat(inputPlinthArea) > parseFloat(permissibleAreaForFloor)){
             $(plinthArea).val('');
-            bootbox.alert("For type of " +occpancyObj[0].description+", each floor wise maximum permissable coverage area is " +permissibleAreaForFloor+" Sq.Mtrs, so beyond of maximum coverage area permission are not allowed.");
+            bootbox.alert($('#typeOfMsg').val() +occpancyObj[0].description+$('#permissibleAreaForFloor1').val()+permissibleAreaForFloor+$('#permissibleAreaForFloor2').val());
             validateAndCalculateSumForDCRFloorDetails('.edcrBuildingAreaDetails0', 0);
             $(rowObj).find('.dcrPlinthArea0').focus();
             return false;
@@ -829,7 +829,7 @@ function validateAndCalculateSumForDCRFloorDetails(tableId, bldgIdx) {
             $(this).closest('tr').find('.dcrFloorArea0').val('');
             $(this).closest('tr').find('.dcrCarpetArea0').val('');
             validateAndCalculateSumForDCRFloorDetails();
-            bootbox.alert("Floor Area should be less than or equal to the Builtup Area.");
+            bootbox.alert($('#floorareaValidate').val());
             return false;
         }
         if(rowFloorArea)
@@ -843,7 +843,7 @@ function validateAndCalculateSumForDCRFloorDetails(tableId, bldgIdx) {
         if(rowCarpetArea > rowFloorArea) {
             $(this).closest('tr').find('.dcrCarpetArea0').val('');
             validateAndCalculateSumForDCRFloorDetails();
-            bootbox.alert("Carpet Area should be less than or equal to the Floor Area.");
+            bootbox.alert($('#carpetareaValidate').val());
             return false;
         }
         if(rowCarpetArea)

@@ -3,7 +3,7 @@ $(document)
         function () {
 
             if($('#approvalNotRequire').val() === 'true') {
-                bootbox.alert('The license is expired during the approval process. Please reject the application and ask user to resubmit with valid building license.');
+                bootbox.alert($('#licenseExpired').val());
             }
             $('.currentOwner').hide();
 
@@ -11,7 +11,7 @@ $(document)
                 if ($('#stakeHolder').valid()) {
                     bootbox
                         .confirm({
-                            message: 'Please confirm, do you really want to approve the application?. Please make sure submitted details are correct before approval.',
+                            message: $('#confirmApproveAppln').val(),
                             buttons: {
                                 'cancel': {
                                     label: 'No',
@@ -42,7 +42,7 @@ $(document)
                 if ($('#stakeHolder').valid() && validateComments('rejection')) {
                     bootbox
                         .confirm({
-                            message: 'Please confirm, do you really want to reject this application ?',
+                            message: $('#rejectAppln').val(),
                             buttons: {
                                 'cancel': {
                                     label: 'No',
@@ -81,7 +81,7 @@ $(document)
                 if ($('#stakeHolder').valid() && validateComments('block')) {
                     bootbox
                         .confirm({
-                            message: 'Please confirm, are you want to block the building licensee ?',
+                            message: $('#confirmBlockLicense').val(),
                             buttons: {
                                 'cancel': {
                                     label: 'No',
@@ -109,7 +109,7 @@ $(document)
 
             function validateComments(type) {
                 if (!$('#comments').val()) {
-                    bootbox.alert('Please enter '+type+ ' comments.');
+                    bootbox.alert($('#enterMsg').val()+type+ $('#commentsMsg').val());
                     return false;
                 } else {
                     return true;

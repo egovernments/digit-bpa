@@ -78,8 +78,7 @@ $(document)
                         if(isValid) {
                             callAjaxSearch();
                         } else {
-                        	var txt = messageResource.get('msg.noamount.tocollect', 'message');
-                        	bootbox.alert(txt);
+                        	bootbox.alert($('#atleastOneInputReq').val());
                             return false;
                         }
 					});

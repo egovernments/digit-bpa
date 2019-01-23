@@ -112,11 +112,9 @@ $(document)
                             var letterSentOn = moment(letterSent,'DD/MM/YYYY');
                             var replyReceivedOn = moment(replyReceived,'DD/MM/YYYY');
                             if(!letterSentOn) {
-                                bootbox
-                                    .alert("Please enter Letter sent on date");
+                                bootbox.alert($('#letterSentDateReq').val());
                             } else if (replyReceivedOn.isBefore(letterSentOn)) {
-                                bootbox
-                                    .alert("Reply Received date should be greater than letter sent date");
+                                bootbox.alert($('#replyReceivedDateValidate').val());
                                 $(rowObj).find('.replyReceivedOn').val('').datepicker("refresh");
                             }
                         });

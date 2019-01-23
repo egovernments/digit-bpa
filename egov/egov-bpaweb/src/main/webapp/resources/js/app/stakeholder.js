@@ -102,7 +102,7 @@ $(document).ready( function () {
         if (validateUpdateStakeholderForm(validator) && validateComments('unblock')) {
             bootbox
                 .confirm({
-                    message: 'Please confirm, are you want to unblock the building licensee ?',
+                    message: $('#unblockLicense').val(),
                     buttons: {
                         'cancel': {
                             label: 'No',
@@ -133,7 +133,7 @@ $(document).ready( function () {
         if (validateUpdateStakeholderForm(validator) && validateComments('block')) {
             bootbox
                 .confirm({
-                    message: 'Please confirm, are you want to block the building licensee ?',
+                    message: $('#blockLicense').val(),
                     buttons: {
                         'cancel': {
                             label: 'No',
@@ -164,7 +164,7 @@ $(document).ready( function () {
         if (validateUpdateStakeholderForm(validator)) {
             bootbox
                 .confirm({
-                    message: 'Please confirm, are you want to update information of the building licensee.',
+                    message: $('#updateLicenseInfo').val(),
                     buttons: {
                         'cancel': {
                             label: 'No',

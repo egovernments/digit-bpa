@@ -175,6 +175,10 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="lpReplyDateGreaterThanPartySentDate" value="<spring:message code='msg.validate.lpreplydate.greaterthan.party.sentdate'/>"/>
+<input type="hidden" id="updateLpSentDate" value="<spring:message code='msg.validate.update.lpsent.date'/>"/>
+<input type="hidden" id="partSentDateGreaterThanLpDate" value="<spring:message code='msg.validate.party.sentdate.greaterthan.lpdate'/>"/>
+    
 </div>
 <div class="buttonbottom" align="center">
     <a href='javascript:void(0)' class='btn btn-default'

@@ -133,7 +133,8 @@
                                    name="approvalComent"/>
                 </div>
             </div>
-
+   			<input type="hidden" id="approveDepReq" value="<spring:message code='msg.validate.approverdepart.req'/>"/>
+			<input type="hidden" id="approveDesignReq" value="<spring:message code='msg.validate.approverdesign.req'/>"/>
         </div>
     </div>
 </c:if>
