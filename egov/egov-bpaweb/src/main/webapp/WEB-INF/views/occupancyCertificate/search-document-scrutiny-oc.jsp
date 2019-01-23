@@ -138,7 +138,7 @@
             </tr>
             </thead>
         </table>
-        <input type="hidden" id="collectApplnFees" value="<spring:message code='msg.validate.collect.applnfees'/>"/>
+        <input type="hidden" id="collectApplnFees" value="<spring:message code='msg.collect.applnfees.toprocess.appln'/>"/>
     </div>
 </div>
 

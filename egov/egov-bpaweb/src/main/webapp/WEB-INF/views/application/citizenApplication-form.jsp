@@ -164,7 +164,7 @@
 	<input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
 	<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
 	<input type="hidden" id="occupancyTypeMsg" value="<spring:message code='msg.validate.occupancytype' />"/>
-	<input type="hidden" id="areaPermissibleWOAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee1 ' />"/>
+	<input type="hidden" id="areaPermissibleWOAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee1' />"/>
 	<input type="hidden" id="areaPermissibleWOAddnlFee2" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee2' />"/>
 	<input type="hidden" id="areaPermissibleWithAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee1' />"/>
 	<input type="hidden" id="areaPermissibleWithAddnlFee2" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee2' />"/>
@@ -184,7 +184,7 @@
 	<input type="hidden" id="saveApplication" value="<spring:message code='msg.confirm.save.appln'/>"/>
 	<input type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>"/>
 	<input type="hidden" id="acceptDisclaimer" value="<spring:message code='msg.validate.accept.disclaimer'/>"/>
-	<input type="hidden" id="oneAmenityReq" value="<spring:message code='msg.validate.atleast.oneamenity.req '/>"/>
+	<input type="hidden" id="oneAmenityReq" value="<spring:message code='msg.validate.atleast.oneamenity.req'/>"/>
 	<input type="hidden" id="onaDayPermitApplnValidate" value="<spring:message code='msg.validate.oneday.permit.appln'/>"/>
     <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
     <input type="hidden" id="docNameLength" value="<spring:message code='msg.validate.docname.length' />" />
