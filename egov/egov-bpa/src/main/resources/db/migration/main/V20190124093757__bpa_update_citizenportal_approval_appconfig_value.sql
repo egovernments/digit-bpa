@@ -1,0 +1,1 @@
+update eg_appconfig_values set value='YES' where key_id=(select id from eg_appconfig where key_name='BPA_CITIZENACCEPTANCE_CHECK');

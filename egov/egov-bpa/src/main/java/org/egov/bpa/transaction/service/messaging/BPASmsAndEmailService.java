@@ -318,6 +318,12 @@ public class BPASmsAndEmailService {
 			body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_CANCELL_APPLN, applicantName,
 					bpaApplication, APPLICATION_STATUS_CANCELLED, EMPTY, EMPTY);
 			subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_CANCELL_APPLN, bpaApplication.getApplicationNumber());
+		} else if ((BpaConstants.APPLICATION_STATUS_CREATED).equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
+        	smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_BPA_APPLN_NEW, applicantName, bpaApplication,
+                    SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
+            body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD, applicantName,
+                    bpaApplication, SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
+            subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_NEW, bpaApplication.getApplicationNumber());
 		}
 
 		if (mobileNo != null && smsMsg != null)

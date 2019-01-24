@@ -39,8 +39,10 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
 import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
+import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
 import static org.egov.bpa.utils.BpaConstants.DCR_CHECKLIST;
@@ -70,6 +72,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
@@ -87,9 +90,11 @@ import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -391,6 +396,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 			applicationBpaService.buildOwnerDetails(bpaApplication);
 
 		BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
+		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+				APPLICATION_MODULE_TYPE, BPA_CITIZENACCEPTANCE_CHECK);
+		String validateCitizenAcceptance = appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
 
 		if (citizenOrBusinessUser)
 			if (isCitizen)
@@ -437,6 +445,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 		} else
 			redirectAttributes.addFlashAttribute(MESSAGE,
 					"Successfully saved with application number " + bpaApplicationRes.getApplicationNumber() + ".");
+            if(StringUtils.isNotBlank(validateCitizenAcceptance) && validateCitizenAcceptance.equalsIgnoreCase(BpaConstants.YES))
+            	bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes,null,null);
 
 		return "redirect:/application/citizen/success/" + bpaApplicationRes.getApplicationNumber();
 	}

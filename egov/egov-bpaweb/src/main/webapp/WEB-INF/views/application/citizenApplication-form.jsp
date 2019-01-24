@@ -145,10 +145,26 @@
 			</div>
 
 			<div align="center">
-				<form:button type="submit" id="bpaSave" class="btn btn-primary"
+			<c:choose>
+			<c:when test="${validateCitizenAcceptance}">
+			<c:choose>
+				<c:when test="${citizenDisclaimerAccepted }">
+			    	<form:button type="submit" id="bpaCreate" class="btn btn-primary"
+							 value="Submit"><spring:message code="lbl.submit"/></form:button>
+				</c:when>
+				<c:otherwise>
+			    	<form:button type="submit" id="bpaSave" class="btn btn-primary"
+							 value="Save"><spring:message code="lbl.save"/> </form:button>
+				</c:otherwise>
+			</c:choose>
+			</c:when>
+			<c:otherwise>
+			    <form:button type="submit" id="bpaSave" class="btn btn-primary"
 							 value="Save"><spring:message code="lbl.save"/> </form:button>
 				<form:button type="submit" id="bpaCreate" class="btn btn-primary"
 							 value="Submit"><spring:message code="lbl.submit"/></form:button>
+			</c:otherwise>
+			</c:choose>
 				<input type="button" name="button2" id="button2" value="Close"
 					   class="btn btn-default" onclick="window.close();" />
 			</div>
