@@ -96,6 +96,7 @@ import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
 import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 
 @Controller
@@ -184,7 +185,6 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 			model.addAttribute("mode", "showLPDetails");
 		buildAppointmentDetailsOfScutinyAndInspection(model, application);
 		Boolean isCitizen = (Boolean) model.asMap().get(IS_CITIZEN);
-		Boolean validateCitizenAcceptance = (Boolean) model.asMap().get("validateCitizenAcceptance");
 		if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
 			|| APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
 			|| APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())
@@ -199,8 +199,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 		}
 
 		if (application.getStatus() != null
-			&& application.getStatus().getCode().equals(APPLICATION_STATUS_CREATED) &&
-			(!isCitizen || (isCitizen && (validateCitizenAcceptance && !application.isCitizenAccepted())))) {
+			&& application.getStatus().getCode().equals(APPLICATION_STATUS_CREATED) && !isCitizen ) {
 			getDcrDocumentsUploadMode(model);
 			return BPAAPP_CITIZEN_FORM;
 		} else
@@ -244,6 +243,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 			prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
 			return loadViewdata(model, bpaApplication);
 		}
+		
 		String workFlowAction = request.getParameter("workFlowAction");
 		Long approvalPosition = 0l;
 		final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(), bpaApplication.getStateType(), WF_NEW_STATE);
@@ -323,6 +323,11 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 			redirectAttributes.addFlashAttribute(MESSAGE, message);
 		} else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON))
 			redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.cancel.applnby.applicantitself.success", new String[]{bpaApplication.getApplicationNumber()}, null));
+		else if ( workFlowAction != null && workFlowAction.equals(WF_SAVE_BUTTON) && bpaUtils.isCitizenAcceptanceRequired() && bpaApplication.isCitizenAccepted() && bpaUtils.logedInuserIsCitizen())
+		{
+			String successMessage = messageSource.getMessage("msg.appln.accepted.succes", new String[]{bpaApplication.getApplicationNumber()}, null);
+			redirectAttributes.addFlashAttribute(MESSAGE, successMessage.concat(DISCLIMER_MESSAGE_ONSAVE));
+		}
 		else
 			redirectAttributes.addFlashAttribute(MESSAGE, 
 					messageSource.getMessage("msg.appln.saved.succes", new String[]{bpaApplication.getApplicationNumber()}, null));

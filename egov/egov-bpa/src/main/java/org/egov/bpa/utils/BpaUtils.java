@@ -72,6 +72,7 @@ import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
 import static org.egov.bpa.utils.BpaConstants.DOC_SCRUTINY_INTEGRATION_REQUIRED;
+import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
 import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
 import static org.egov.bpa.utils.BpaConstants.LETTERTOPARTYINITIATE;
 import static org.egov.bpa.utils.BpaConstants.LPCREATED;
@@ -578,6 +579,10 @@ public class BpaUtils {
 
 	public boolean isOneDayPermitApplicationIntegrationRequired() {
 		return getAppconfigValueByKeyName(ONE_DAY_PERMIT_APPLN_INTEGRATION_REQUIRED).equalsIgnoreCase(YES);
+	}
+	
+	public boolean isCitizenAcceptanceRequired() {
+		return getAppconfigValueByKeyName(BPA_CITIZENACCEPTANCE_CHECK).equalsIgnoreCase(YES);
 	}
 
 }

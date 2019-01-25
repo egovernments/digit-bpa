@@ -76,6 +76,51 @@ $(document).ready(function($) {
 			}
 	});
  
+ $('#buttonAccept').click(function (e) {
+	 if ($('#citizenViewApplicationForm').valid() && validateAdditionalConditions()) { 
+         bootbox
+             .confirm({
+                 message: $('#acceptAppln').val() ,
+                 buttons: {
+                     'cancel': {
+                         label: 'No',
+                         className: 'btn-danger'
+                     },
+                     'confirm': {
+                         label: 'Yes',
+                         className: 'btn-primary'
+                     }
+                 },
+                 callback: function (result) {
+                     if (result) {
+                    	 var button=$('#buttonAccept').val();
+                    	 document.getElementById("workFlowAction").value=button;
+ 						$('.loader-class').modal('show', {
+ 							backdrop : 'static'
+ 						});
+ 						document.forms[0].submit();
+                     } else {
+                         e.stopPropagation();
+                         e.preventDefault();
+                     }
+                 }
+             });
+     } else {
+         e.preventDefault();
+     }
+     return false;
+ });
+ 
 });
+
+function validateAdditionalConditions()
+{
+   if ($('#validateCitizenAcceptance').val() == 'true' && $('#isCitizen').val() == 'true' && !$('#citizenAccepted').prop('checked')) {
+		bootbox.alert($("#acceptDisclaimer").val());
+        return false;
+   }
+   return true;
+}
+
 
 	

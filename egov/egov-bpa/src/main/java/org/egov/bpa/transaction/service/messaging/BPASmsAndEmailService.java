@@ -318,7 +318,7 @@ public class BPASmsAndEmailService {
 			body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_CANCELL_APPLN, applicantName,
 					bpaApplication, APPLICATION_STATUS_CANCELLED, EMPTY, EMPTY);
 			subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_CANCELL_APPLN, bpaApplication.getApplicationNumber());
-		} else if ((BpaConstants.APPLICATION_STATUS_CREATED).equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
+		} else if ((BpaConstants.APPLICATION_STATUS_CREATED).equalsIgnoreCase(bpaApplication.getStatus().getCode()) && bpaUtils.isCitizenAcceptanceRequired() && !bpaApplication.isCitizenAccepted()) {
         	smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_BPA_APPLN_NEW, applicantName, bpaApplication,
                     SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
             body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD, applicantName,

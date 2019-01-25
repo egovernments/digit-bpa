@@ -134,6 +134,11 @@
 					<div class="panel panel-primary buildingdetails" data-collapsed="0">
 						<jsp:include page="view-building-details.jsp" />
 					</div>
+					<c:if test="${(isCitizen && validateCitizenAcceptance && !citizenDisclaimerAccepted)}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="disclaimer.jsp" />
+						</div>
+					</c:if>
 					<c:if test="${not empty  bpaApplication.receipts}">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="view-bpa-receipt-details.jsp"></jsp:include>
@@ -188,6 +193,12 @@
 			<div class="buttonbottom" align="center">
 				<table>
 					<tr>
+					    <td>
+							<c:if test="${isCitizen && validateCitizenAcceptance && !citizenDisclaimerAccepted}">
+								<form:button type="button" id="buttonAccept" class="btn btn-primary"
+											 value="Save"><spring:message code='lbl.btn.accpt' /></form:button>&nbsp;
+							</c:if>
+						</td>
 						<td>
 							<c:if test="${citizenOrBusinessUser && bpaApplication.id != null && bpaApplication.state == null && bpaApplication.status.code ne 'Cancelled'}">
 							<form:button type="button" id="buttonCancel" class="btn btn-danger"
@@ -302,6 +313,7 @@
 			</div>
 		<input type="hidden" id="feeAmount" value="<spring:message code='msg.validation.feeamount'/>"/>
 		<input type="hidden" id="incrFeeamtTopOfsysCalcFee" value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>"/>
+		<input type="hidden" id="acceptAppln" value="<spring:message code='msg.confirm.accept.appln'/>"/>
 		<input type="hidden" id="cancelAppln" value="<spring:message code='msg.confirm.cancel.appln'/>"/>
 	    <input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
 		<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
@@ -316,6 +328,10 @@
 		<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
 		<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
 		<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>		
+		<input type="hidden" id="acceptDisclaimer" value="<spring:message code='msg.validate.accept.disclaimer'/>"/>
+		<input type="hidden" id="validateCitizenAcceptance" name="validateCitizenAcceptance" value="${validateCitizenAcceptance}"/>
+		<input type="hidden" id="citizenDisclaimerAccepted" name="citizenDisclaimerAccepted" value="${citizenDisclaimerAccepted}"/>
+		<input type="hidden" id="isCitizen" name="isCitizen" value="${isCitizen}"/>
 		</div>
 	</div>
 </div>

@@ -396,10 +396,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 			applicationBpaService.buildOwnerDetails(bpaApplication);
 
 		BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				APPLICATION_MODULE_TYPE, BPA_CITIZENACCEPTANCE_CHECK);
-		String validateCitizenAcceptance = appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-
+		
 		if (citizenOrBusinessUser)
 			if (isCitizen)
 				bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),
@@ -445,7 +442,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 		} else
 			redirectAttributes.addFlashAttribute(MESSAGE,
 					"Successfully saved with application number " + bpaApplicationRes.getApplicationNumber() + ".");
-            if(StringUtils.isNotBlank(validateCitizenAcceptance) && validateCitizenAcceptance.equalsIgnoreCase(BpaConstants.YES))
+            if(bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted())
             	bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes,null,null);
 
 		return "redirect:/application/citizen/success/" + bpaApplicationRes.getApplicationNumber();
