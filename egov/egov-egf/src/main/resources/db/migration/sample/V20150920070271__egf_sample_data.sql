@@ -24,7 +24,7 @@ INSERT INTO eg_bill_subtype (id, name, expenditure_type) VALUES (47, 'Privatizat
 ------------------END---------------------
 
 ----------------------------START------------------------------------
-INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (3, 'billvoucher.nextDesg', 'python', NULL, NULL, NULL, NULL, 'result=['' '','' '' ]  
+INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (nextval('seq_eg_script'), 'billvoucher.nextDesg', 'python', NULL, NULL, NULL, NULL, 'result=['' '','' '' ]  
 employee = eisCommonService.getEmployeeByUserId(userId)  
 assignment  = eisCommonService.getLatestAssignmentForEmployeeByToDate(DATE,employee.getIdPersonalInformation())  
 tempassignment  = eisCommonService.getEmpTempAssignment(str(employee.getEmployeeCode()),DATE,0)
@@ -65,7 +65,7 @@ if result[0] =='' '':
 else:
 	print "------------------------------------------no teporary assignment"
 print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+result[0]', '1900-01-01 00:00:00', '2100-01-01 00:00:00', 0);
-INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (4, 'voucherheader.vouchernumber', 'python', NULL, NULL, NULL, NULL, 'from org.egov.infstr import ValidationError
+INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (nextval('seq_eg_script'), 'voucherheader.vouchernumber', 'python', NULL, NULL, NULL, NULL, 'from org.egov.infstr import ValidationError
 from java.lang import Long
 from java.lang import Integer
 from java.lang import String
@@ -130,11 +130,11 @@ def getVoucherNum():
 result,validationErrors=getVoucherNum()' where name = 'voucherheader.vouchernumber';
 
 
-INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (5, 'autobillnumber', 'python', NULL, NULL, NULL, NULL, 'financialYear = commonsService.getFinancialYearByDate(bill.getBilldate())
+INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (nextval('seq_eg_script'), 'autobillnumber', 'python', NULL, NULL, NULL, NULL, 'financialYear = commonsService.getFinancialYearByDate(bill.getBilldate())
 year=financialYear.getFinYearRange()
 result=bill.getEgBillregistermis().getEgDepartment().getCode()+"/"+"MN"+"/"+sequenceGenerator.getNextNumber("MN",1).getFormattedNumber().zfill(4)+"/"+year', '1900-01-01 00:00:00', '2100-01-01 00:00:00', 0);
 
-INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (7, 'egf.bill.budgetcheck', 'python', NULL, NULL, NULL, NULL, 'from  org.egov.infstr import ValidationException
+INSERT INTO eg_script (id, name, type, createdby, createddate, lastmodifiedby, lastmodifieddate, script, startdate, enddate, version) VALUES (nextval('seq_eg_script'), 'egf.bill.budgetcheck', 'python', NULL, NULL, NULL, NULL, 'from  org.egov.infstr import ValidationException
 from org.egov.infstr import ValidationError
 try:
 	result=voucherService.budgetaryCheck(bill)

@@ -3,9 +3,6 @@ createdby, createddate, lastmodifiedby, lastmodifieddate, application) values (N
 'Create Voucher Rest','/vouchers/_create',null,(select id from EG_MODULE where name = 'Journal Vouchers'),null,
 'Create Voucher Rest','false','EGF',0,1,'now()',1,'now()',(select id from eg_module  where name = 'EGF'));
 
-INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) VALUES ((SELECT id FROM eg_role WHERE name='Asset Administrator'),
-(select id from eg_action where name='Create Voucher Rest'));
-
 INSERT INTO EG_ROLEACTION (ROLEID, ACTIONID) VALUES ((SELECT id FROM eg_role WHERE name='SYSTEM'),
 (select id from eg_action where name='Create Voucher Rest'));
 
