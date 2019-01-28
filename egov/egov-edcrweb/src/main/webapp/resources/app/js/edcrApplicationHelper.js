@@ -63,7 +63,7 @@ $(document)
             $(document).on('change',"#serviceType",function (){
                 $('#planInfoServiceType').val($( "#serviceType option:selected" ).text());
             });*/
-
+        	
             function validateNewPlanScrutiny() {
                 if (!$('#myfile').val()) {
                     bootbox.alert('Please upload plan file');
@@ -174,9 +174,10 @@ $(document)
 
             $('#applicationNumber').blur(function() {
                 $.ajax({
-                    url : '/edcr/edcrapplication/get-information/'+$('#applicationNumber').val(),
+                    url : '/edcr/edcrapplication/get-information/'+$('#applicationNumber').val()+'/'+$('#applnType').val(),
                     type: "GET",
                     cache: false,
+                    async: false,
                     dataType: "json",
                     success: function (response) {
                         if(response) {
@@ -191,6 +192,7 @@ $(document)
                                 $('#applicantName').val(response.applicantName);
                                 $('#serviceType').val(response.serviceType);
                                 $('#amenities').val(response.amenities);
+                                $('#planPermitNumber').val(response.planPermitNumber);
                             }
                         } else {
                             $('.resetValues').val('');
@@ -203,8 +205,67 @@ $(document)
                     }
                 });
             });
+            
+            $('#planPermitNumber').blur(function() {
+                getPermitApplicationByPermitNo($('#planPermitNumber').val());
+            });
 
      });
+
+function getPermitApplicationByPermitNo(permitNumber) {
+	$.ajax({
+        url : '/bpa/application/findby-permit-number?permitNumber='+permitNumber,
+        type: "GET",
+        cache: false,
+        async: false,
+        dataType: "json",
+        success: function (response) {
+            if(Object.keys(response).length > 0) {
+            	if($('#isCitizen').val() === 'true' && !response.isSingleFamily) {
+            		bootbox.alert("Dear Citizen, you are not allowed to submit plan, as per permit application do not comply these conditions such as a single family residential and floor area is less then or equal to 150 m2 and Maximum Ground+1 floors can be submitted");
+            		$('.resetValues').val('');
+            		return false;
+            	}
+                $('#occupancy').val(response.occupancy);
+                $('#applicantName').val(response.applicantName);
+                $('#permitApplicationDate').val(response.applicationDate);
+                $('#serviceType').val(response.serviceTypeDesc);
+                $('#stakeholderId').val(response.stakeholderId);
+                
+                // If entered permit number is valid, then need to validate is using permit number
+                // any other dcr plan application is submitted.
+                //validatePermitNoIsUsedWithOtherDcrAppln(permitNumber);
+            } else {
+                $('.resetValues').val('');
+                bootbox.alert("Please check plan permission number is valid, with entered plan permission number data is not found.");
+            }
+        },
+        error: function (response) {
+            $('.resetValues').val('');
+            console.log("Error occurred, when retrieving information for given details."+permitNumber);
+        }
+    });
+}
+
+function validatePermitNoIsUsedWithOtherDcrAppln(permitNo) {
+	$.ajax({
+        url : '/edcr/scrutinized-plan/findby-permitnumber/'+permitNo,
+        type: "GET",
+        cache: false,
+        async: false,
+        dataType: "json",
+        success: function (response) {
+            if(Object.keys(response).length > 0) {
+            	$('.resetValues').val('');
+                bootbox.alert("With entered plan permission number "+permitNo+" a plan is already submiited, please by using application number "+response.applicationNumber+" resubmit plan.");
+            } 
+        },
+        error: function (response) {
+        	$('.resetValues').val('');
+            console.log("Error occurred, when retrieving information for given details.");
+        }
+    });
+}
 
     // multi-select without pressing ctrl key
     $("select.tick-indicator").mousedown(function(e){

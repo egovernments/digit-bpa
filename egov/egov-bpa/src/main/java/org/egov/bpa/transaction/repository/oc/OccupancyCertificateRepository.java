@@ -39,6 +39,8 @@
  */
 package org.egov.bpa.transaction.repository.oc;
 
+import java.util.List;
+
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.demand.model.EgDemand;
@@ -48,17 +50,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface OccupancyCertificateRepository extends JpaRepository<OccupancyCertificate, Long>, JpaSpecificationExecutor<OccupancyCertificate> {
+public interface OccupancyCertificateRepository
+		extends JpaRepository<OccupancyCertificate, Long>, JpaSpecificationExecutor<OccupancyCertificate> {
 
-    OccupancyCertificate findByDemand(EgDemand demand);
+	OccupancyCertificate findByDemand(EgDemand demand);
 
-    OccupancyCertificate findByApplicationNumber(String applicationNumber);
+	OccupancyCertificate findByApplicationNumber(String applicationNumber);
 
-    @Query("select occupancycertificate from OccupancyCertificate occupancycertificate where occupancycertificate.status in :status order by createddate asc")
-    List<OccupancyCertificate> findByStatusListOrderByCreatedDateAsc(@Param("status") List<BpaStatus> listOfBpaStatus);
+	List<OccupancyCertificate> findByEDcrNumber(String edcrNumber);
 
+	@Query("select occupancycertificate from OccupancyCertificate occupancycertificate where occupancycertificate.status in :status order by createddate asc")
+	List<OccupancyCertificate> findByStatusListOrderByCreatedDateAsc(@Param("status") List<BpaStatus> listOfBpaStatus);
 
 }

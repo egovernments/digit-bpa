@@ -46,11 +46,6 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-		<div class="text-left error-msg col-sm-12" style="font-size: 14px;">
-			<span class="applicantname"> <spring:message
-					code="lbl.applicant.name" /> : <span id="applicantName"></span>
-			</span>
-		</div>
 		<form:form role="form" action="../update-submit" method="post"
 				   modelAttribute="occupancyCertificate" id="occupancyCertificateUpdateForm"
 				   cssClass="form-horizontal form-groups-bordered"
@@ -88,9 +83,35 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="../oc-application-details.jsp"></jsp:include>
 					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="../../application/edcr-application-details-form.jsp"></jsp:include>
+					</div>
+					<c:choose>
+						<c:when test="${isEDCRIntegrationRequire && loadingFloorDetailsFromEdcrRequire}">
+							<c:if test="${not empty occupancyCertificate.existingBuildings}">
+								<div class="panel panel-primary" data-collapsed="0">
+									<jsp:include page="../oc-edcr-existing-bldg-details.jsp" />
+								</div>
+							</c:if>
+							<div class="panel panel-primary" data-collapsed="0">
+								<jsp:include page="../oc-edcr-building-details.jsp"></jsp:include>
+							</div>
+						</c:when>
+						<c:otherwise>
+							<c:if test="${not empty occupancyCertificate.existingBuildings}">
+								<div class="panel panel-primary" data-collapsed="0">
+									<jsp:include page="../oc-edcr-existing-bldg-details.jsp" />
+								</div>
+							</c:if>
+							<div class="panel panel-primary buildingdetails" data-collapsed="0">
+						<jsp:include page="../oc-building-details.jsp"></jsp:include>
+					</div>
+						</c:otherwise>
+					</c:choose>
 				</div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="../oc-dcr-documents.jsp"></jsp:include>
 						<jsp:include page="../oc-general-documents.jsp"></jsp:include>
 					</div>
 				</div>
@@ -110,6 +131,8 @@
 					   class="btn btn-default" onclick="window.close();" />
 			</div>
 		</form:form>
+		
+		<!-- Start --- For javascript messages localization purpose following hidden input tags used -->
 		<input type="hidden" id="submitMoreThanPermiPlotArea" value="<spring:message code='msg.validate.onsubmit.morethan.permissible.plotarea'/>"/>
 		<input type="hidden" id="saveApplication" value="<spring:message code='msg.confirm.save.appln'/>"/>
 		<input type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>"/>
@@ -155,7 +178,8 @@
 		<input type="hidden" id="buildServiceType" value="<spring:message code='msg.validate.building.servicetype' />"/>
 		<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
 		<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
-		<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>	    	
+		<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>
+		<!-- End --- For javascript messages localization purpose following hidden input tags used -->
 	</div>
 </div>
 
@@ -172,10 +196,8 @@
 <script
 		src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/buildingarea-details.js?rnd=${app_release_no}'/>"></script>
+		src="<cdn:url value='/resources/js/app/occupancy-certificate/bpa-oc-validations.js?rnd=${app_release_no}'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/bpa-application-validations.js?rnd=${app_release_no}'/>"></script>
-<script
-		src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
+		src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-edcr-helper.js?rnd=${app_release_no}'/>"></script>
 <script
 		src="<cdn:url value='/resources/js/app/occupancy-certificate/occupancy-certificate-update.js?rnd=${app_release_no}'/>"></script>

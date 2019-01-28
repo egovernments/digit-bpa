@@ -52,219 +52,227 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 
 public class EdcrApplicationInfo implements Serializable {
 
-	private static final long serialVersionUID = 1235517727309489685L;
-	// E-Dcr Application related
-	private Long eDcrApplicationId;
-	private String applicationNumber;
-	private String dcrNumber;
-	private String applicationDate;
-	private String createdDate;
-	private Long planDetailFileStore;
-	private Long planDetailId;
-	private String projectType;
-	// E-Dcr Document related
-	private Long eDcrDocId;
-	private FileStoreMapper reportOutput;
-	private FileStoreMapper dxfFile;
-	private String eDcrPlanFilestatus;
-	// E-Dcr Plan Info related
-	private Long planInformationId;
-	private BigDecimal plotArea;
-	private String ownerName;
-	private String occupancy;
-	private String serviceType;
-	private String amenities;
-	private String architectInformation;
-	private Boolean crzZoneArea;
-	// To handle error
-	private ErrorDetail errorDetail;
+    private static final long serialVersionUID = 1235517727309489685L;
+    // E-Dcr Application related
+    private Long eDcrApplicationId;
+    private String applicationNumber;
+    private String dcrNumber;
+    private String planPermitNumber;
+    private String applicationDate;
+    private String createdDate;
+    private Long planDetailFileStore;
+    private Long planDetailId;
+    private String projectType;
+    // E-Dcr Document related
+    private Long eDcrDocId;
+    private FileStoreMapper reportOutput;
+    private FileStoreMapper dxfFile;
+    private String eDcrPlanFilestatus;
+    // E-Dcr Plan Info related
+    private Long planInformationId;
+    private BigDecimal plotArea;
+    private String ownerName;
+    private String occupancy;
+    private String serviceType;
+    private String amenities;
+    private String architectInformation;
+    private Boolean crzZoneArea;
+    // To handle error
+    private ErrorDetail errorDetail;
 
-	private Plan plan;
+    private Plan plan;
 
-	private Map<String, List<FileStoreMapper>> planScrutinyPdfs = new LinkedHashMap<>();
+    private Map<String, List<FileStoreMapper>> planScrutinyPdfs = new LinkedHashMap<>();
 
-	public Long geteDcrApplicationId() {
-		return eDcrApplicationId;
-	}
+    public Long geteDcrApplicationId() {
+        return eDcrApplicationId;
+    }
 
-	public void seteDcrApplicationId(Long eDcrApplicationId) {
-		this.eDcrApplicationId = eDcrApplicationId;
-	}
+    public void seteDcrApplicationId(Long eDcrApplicationId) {
+        this.eDcrApplicationId = eDcrApplicationId;
+    }
 
-	public String getApplicationNumber() {
-		return applicationNumber;
-	}
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
 
-	public void setApplicationNumber(String applicationNumber) {
-		this.applicationNumber = applicationNumber;
-	}
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
-	public String getDcrNumber() {
-		return dcrNumber;
-	}
+    public String getDcrNumber() {
+        return dcrNumber;
+    }
 
-	public void setDcrNumber(String dcrNumber) {
-		this.dcrNumber = dcrNumber;
-	}
+    public void setDcrNumber(String dcrNumber) {
+        this.dcrNumber = dcrNumber;
+    }
 
-	public String getApplicationDate() {
-		return applicationDate;
-	}
+    public String getPlanPermitNumber() {
+        return planPermitNumber;
+    }
 
-	public void setApplicationDate(String applicationDate) {
-		this.applicationDate = applicationDate;
-	}
+    public void setPlanPermitNumber(String planPermitNumber) {
+        this.planPermitNumber = planPermitNumber;
+    }
 
-	public String getCreatedDate() {
-		return createdDate;
-	}
+    public String getApplicationDate() {
+        return applicationDate;
+    }
 
-	public void setCreatedDate(String createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setApplicationDate(String applicationDate) {
+        this.applicationDate = applicationDate;
+    }
 
-	public Long getPlanDetailFileStore() {
-		return planDetailFileStore;
-	}
+    public String getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setPlanDetailFileStore(Long planDetailFileStore) {
-		this.planDetailFileStore = planDetailFileStore;
-	}
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public Long getPlanDetailId() {
-		return planDetailId;
-	}
+    public Long getPlanDetailFileStore() {
+        return planDetailFileStore;
+    }
 
-	public void setPlanDetailId(Long planDetailId) {
-		this.planDetailId = planDetailId;
-	}
+    public void setPlanDetailFileStore(Long planDetailFileStore) {
+        this.planDetailFileStore = planDetailFileStore;
+    }
 
-	public String getProjectType() {
-		return projectType;
-	}
+    public Long getPlanDetailId() {
+        return planDetailId;
+    }
 
-	public void setProjectType(String projectType) {
-		this.projectType = projectType;
-	}
+    public void setPlanDetailId(Long planDetailId) {
+        this.planDetailId = planDetailId;
+    }
 
-	public Long geteDcrDocId() {
-		return eDcrDocId;
-	}
+    public String getProjectType() {
+        return projectType;
+    }
 
-	public void seteDcrDocId(Long eDcrDocId) {
-		this.eDcrDocId = eDcrDocId;
-	}
+    public void setProjectType(String projectType) {
+        this.projectType = projectType;
+    }
 
-	public FileStoreMapper getReportOutput() {
-		return reportOutput;
-	}
+    public Long geteDcrDocId() {
+        return eDcrDocId;
+    }
 
-	public void setReportOutput(FileStoreMapper reportOutput) {
-		this.reportOutput = reportOutput;
-	}
+    public void seteDcrDocId(Long eDcrDocId) {
+        this.eDcrDocId = eDcrDocId;
+    }
 
-	public FileStoreMapper getDxfFile() {
-		return dxfFile;
-	}
+    public FileStoreMapper getReportOutput() {
+        return reportOutput;
+    }
 
-	public void setDxfFile(FileStoreMapper dxfFile) {
-		this.dxfFile = dxfFile;
-	}
+    public void setReportOutput(FileStoreMapper reportOutput) {
+        this.reportOutput = reportOutput;
+    }
 
-	public String geteDcrPlanFilestatus() {
-		return eDcrPlanFilestatus;
-	}
+    public FileStoreMapper getDxfFile() {
+        return dxfFile;
+    }
 
-	public void seteDcrPlanFilestatus(String eDcrPlanFilestatus) {
-		this.eDcrPlanFilestatus = eDcrPlanFilestatus;
-	}
+    public void setDxfFile(FileStoreMapper dxfFile) {
+        this.dxfFile = dxfFile;
+    }
 
-	public Long getPlanInformationId() {
-		return planInformationId;
-	}
+    public String geteDcrPlanFilestatus() {
+        return eDcrPlanFilestatus;
+    }
 
-	public void setPlanInformationId(Long planInformationId) {
-		this.planInformationId = planInformationId;
-	}
+    public void seteDcrPlanFilestatus(String eDcrPlanFilestatus) {
+        this.eDcrPlanFilestatus = eDcrPlanFilestatus;
+    }
 
-	public BigDecimal getPlotArea() {
-		return plotArea;
-	}
+    public Long getPlanInformationId() {
+        return planInformationId;
+    }
 
-	public void setPlotArea(BigDecimal plotArea) {
-		this.plotArea = plotArea;
-	}
+    public void setPlanInformationId(Long planInformationId) {
+        this.planInformationId = planInformationId;
+    }
 
-	public String getOwnerName() {
-		return ownerName;
-	}
+    public BigDecimal getPlotArea() {
+        return plotArea;
+    }
 
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
+    public void setPlotArea(BigDecimal plotArea) {
+        this.plotArea = plotArea;
+    }
 
-	public String getOccupancy() {
-		return occupancy;
-	}
+    public String getOwnerName() {
+        return ownerName;
+    }
 
-	public void setOccupancy(String occupancy) {
-		this.occupancy = occupancy;
-	}
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public String getOccupancy() {
+        return occupancy;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setOccupancy(String occupancy) {
+        this.occupancy = occupancy;
+    }
 
-	public String getAmenities() {
-		return amenities;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public void setAmenities(String amenities) {
-		this.amenities = amenities;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public String getArchitectInformation() {
-		return architectInformation;
-	}
+    public String getAmenities() {
+        return amenities;
+    }
 
-	public void setArchitectInformation(String architectInformation) {
-		this.architectInformation = architectInformation;
-	}
+    public void setAmenities(String amenities) {
+        this.amenities = amenities;
+    }
 
-	public Boolean getCrzZoneArea() {
-		return crzZoneArea;
-	}
+    public String getArchitectInformation() {
+        return architectInformation;
+    }
 
-	public void setCrzZoneArea(Boolean crzZoneArea) {
-		this.crzZoneArea = crzZoneArea;
-	}
+    public void setArchitectInformation(String architectInformation) {
+        this.architectInformation = architectInformation;
+    }
 
-	public ErrorDetail getErrorDetail() {
-		return errorDetail;
-	}
+    public Boolean getCrzZoneArea() {
+        return crzZoneArea;
+    }
 
-	public void setErrorDetail(ErrorDetail errorDetail) {
-		this.errorDetail = errorDetail;
-	}
+    public void setCrzZoneArea(Boolean crzZoneArea) {
+        this.crzZoneArea = crzZoneArea;
+    }
 
-	 
-	public Map<String, List<FileStoreMapper>> getPlanScrutinyPdfs() {
-		return planScrutinyPdfs;
-	}
+    public ErrorDetail getErrorDetail() {
+        return errorDetail;
+    }
 
-	public void setPlanScrutinyPdfs(Map<String, List<FileStoreMapper>> planScrutinyPdfs) {
-		this.planScrutinyPdfs = planScrutinyPdfs;
-	}
+    public void setErrorDetail(ErrorDetail errorDetail) {
+        this.errorDetail = errorDetail;
+    }
 
-	public Plan getPlan() {
+    public Plan getPlan() {
 		return plan;
 	}
 
 	public void setPlan(Plan plan) {
 		this.plan = plan;
 	}
+
+	public Map<String, List<FileStoreMapper>> getPlanScrutinyPdfs() {
+        return planScrutinyPdfs;
+    }
+
+    public void setPlanScrutinyPdfs(Map<String, List<FileStoreMapper>> planScrutinyPdfs) {
+        this.planScrutinyPdfs = planScrutinyPdfs;
+    }
 }

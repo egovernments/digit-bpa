@@ -47,42 +47,75 @@
 
 package org.egov.bpa.utils;
 
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.YES;
 import static org.egov.bpa.utils.OcConstants.APPLN_FEE_COLLECTION_REQUIRED;
 import static org.egov.bpa.utils.OcConstants.OC_DOC_SCRUTINY_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 @Transactional(readOnly = true)
 public class OccupancyCertificateUtils {
 
-	@Autowired
-	private AppConfigValueService appConfigValueService;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource bpaMessageSource;
+    @Autowired
+    private SecurityUtils securityUtils;
 
-	public String getAppConfigValueByKeyName(String code) {
-		List<AppConfigValues> appConfigValueList = appConfigValueService
-				.getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, code);
-		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-	}
+    public String getAppConfigValueByKeyName(String code) {
+        List<AppConfigValues> appConfigValueList = appConfigValueService
+                .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, code);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+    }
 
-	public Boolean isApplicationFeeCollectionRequired() {
-		return getAppConfigValueByKeyName(APPLN_FEE_COLLECTION_REQUIRED).equals(YES);
-	}
+    public Boolean isApplicationFeeCollectionRequired() {
+        return getAppConfigValueByKeyName(APPLN_FEE_COLLECTION_REQUIRED).equals(YES);
+    }
 
-	public boolean isDocScrutinyIntegrationRequiredForOc() {
-		return getAppConfigValueByKeyName(OC_DOC_SCRUTINY_INTEGRATION_REQUIRED).equals(YES);
-	}
+    public boolean isDocScrutinyIntegrationRequiredForOc() {
+        return getAppConfigValueByKeyName(OC_DOC_SCRUTINY_INTEGRATION_REQUIRED).equals(YES);
+    }
 
-	public boolean isOCInspectionSchedulingIntegrationRequired() {
-		return getAppConfigValueByKeyName(OC_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED).equalsIgnoreCase(YES);
-	}
+    public boolean isOCInspectionSchedulingIntegrationRequired() {
+        return getAppConfigValueByKeyName(OC_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED).equalsIgnoreCase(YES);
+    }
+
+    public Map<String, String> checkIsEdcrUsedWithAnyOCApplication(final String eDcrNumber) {
+        Map<String, String> eDcrApplicationDetails = new HashMap<>();
+        List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByEdcrNumber(eDcrNumber);
+        if (occupancyCertificates.isEmpty() || !occupancyCertificates.isEmpty() && null == occupancyCertificates.get(0).getState()
+                && BpaConstants.APPLICATION_STATUS_CANCELLED.equals(occupancyCertificates.get(0).getStatus().getCode())) {
+            eDcrApplicationDetails.put("isExists", "false");
+            eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
+        } else {
+            String message = bpaMessageSource.getMessage("msg.dcr.exist.with.appln",
+                    new String[] { securityUtils.getCurrentUser().getName(), occupancyCertificates.get(0).geteDcrNumber(),
+                            occupancyCertificates.get(0).getApplicationNumber() },
+                    null);
+            eDcrApplicationDetails.put("isExists", "true");
+            eDcrApplicationDetails.put("applnNoUsedEdcr", occupancyCertificates.get(0).getApplicationNumber());
+            eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
+        }
+        return eDcrApplicationDetails;
+    }
 }

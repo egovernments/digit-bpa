@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +20,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.bpa.entity.es.BpaIndex;
 import org.egov.bpa.entity.es.StakeHolderIndex;
+import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.entity.Plan;
@@ -110,7 +110,8 @@ public class EdcrApplicationService {
 		edcrApplicationRepository.save(edcrApplication);
 
 		edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
-		//portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
+		// portalInetgrationService.createPortalUserinbox(edcrApplication,
+		// Arrays.asList(securityUtils.getCurrentUser()));
 
 		Plan planDetail = callDcrProcess(edcrApplication, NEW_SCRTNY);
 		portalInetgrationService.updatePortalUserinbox(edcrApplication, securityUtils.getCurrentUser());
@@ -180,6 +181,14 @@ public class EdcrApplicationService {
 
 	public EdcrApplication findByApplicationNo(String appNo) {
 		return edcrApplicationRepository.findByApplicationNumber(appNo);
+	}
+
+	public EdcrApplication findByApplicationNoAndType(String applnNo, ApplicationType type) {
+		return edcrApplicationRepository.findByApplicationNumberAndApplicationType(applnNo, type);
+	}
+
+	public EdcrApplication findByPlanPermitNumber(String permitNo) {
+		return edcrApplicationRepository.findByPlanPermitNumber(permitNo);
 	}
 
 	public List<EdcrApplication> search(EdcrApplication edcrApplication) {

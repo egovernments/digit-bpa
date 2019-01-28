@@ -1,28 +1,32 @@
 package org.egov.edcr.entity;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "EDCR_APPLICATION")
@@ -37,6 +41,9 @@ public class EdcrApplication extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EDCR_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
+    @Enumerated(EnumType.STRING)
+    private ApplicationType applicationType;
 
     @NotNull
     @Length(min = 1, max = 128)
@@ -51,9 +58,18 @@ public class EdcrApplication extends AbstractAuditable {
     @OrderBy("id DESC ")
     private List<EdcrApplicationDetail> edcrApplicationDetails;
 
-    @Transient
-    private PlanInformation planInformation;
- 
+    private transient PlanInformation planInformation;
+    
+    @Length(min = 1, max = 128)
+    private String planPermitNumber;
+    
+    @Temporal(value = TemporalType.DATE)
+    private Date permitApplicationDate;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "buildingLicensee")
+    private User buildingLicensee;
+
     private transient MultipartFile dxfFile; // File to be process.
 
     private transient File savedDxfFile;
@@ -71,6 +87,8 @@ public class EdcrApplication extends AbstractAuditable {
     private String architectInformation;
 
     private String projectType;
+    
+    private transient String permitDateTemp;
 
     @Override
     public Long getId() {
@@ -80,6 +98,14 @@ public class EdcrApplication extends AbstractAuditable {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public ApplicationType getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(ApplicationType applicationType) {
+        this.applicationType = applicationType;
     }
 
     public String getApplicationNumber() {
@@ -120,6 +146,30 @@ public class EdcrApplication extends AbstractAuditable {
 
     public void setPlanInformation(PlanInformation planInformation) {
         this.planInformation = planInformation;
+    }
+
+    public String getPlanPermitNumber() {
+        return planPermitNumber;
+    }
+
+    public void setPlanPermitNumber(String planPermitNumber) {
+        this.planPermitNumber = planPermitNumber;
+    }
+
+    public Date getPermitApplicationDate() {
+        return permitApplicationDate;
+    }
+
+    public void setPermitApplicationDate(Date permitApplicationDate) {
+        this.permitApplicationDate = permitApplicationDate;
+    }
+
+    public User getBuildingLicensee() {
+        return buildingLicensee;
+    }
+
+    public void setBuildingLicensee(User buildingLicensee) {
+        this.buildingLicensee = buildingLicensee;
     }
 
     public File getSavedDxfFile() {
@@ -193,4 +243,13 @@ public class EdcrApplication extends AbstractAuditable {
     public void setProjectType(String projectType) {
         this.projectType = projectType;
     }
+
+    public String getPermitDateTemp() {
+        return permitDateTemp;
+    }
+
+    public void setPermitDateTemp(String permitDateTemp) {
+        this.permitDateTemp = permitDateTemp;
+    }
+    
 }

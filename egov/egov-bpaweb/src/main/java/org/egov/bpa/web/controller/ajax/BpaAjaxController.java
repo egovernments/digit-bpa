@@ -39,10 +39,19 @@
  */
 package org.egov.bpa.web.controller.ajax;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.bpa.master.entity.BpaScheme;
 import org.egov.bpa.master.entity.BpaSchemeLandUsage;
@@ -60,10 +69,12 @@ import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
+import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaApplicationValidationService;
 import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.common.entity.Occupancy;
 import org.egov.common.entity.SubOccupancy;
 import org.egov.commons.service.OccupancyService;
@@ -77,352 +88,365 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 @Controller
 public class BpaAjaxController {
 
-    private static final String BLOCK_NAME = "blockName";
+	private static final String BLOCK_NAME = "blockName";
 
-    private static final String BLOCK_ID = "blockId";
+	private static final String BLOCK_ID = "blockId";
 
-    @Autowired
-    private DesignationService designationService;
+	@Autowired
+	private DesignationService designationService;
+	@Autowired
+	private AssignmentService assignmentService;
+	@Autowired
+	private CustomizedWorkFlowService customizedWorkFlowService;
+	@Autowired
+	private ApplicationBpaService applicationBpaService;
+	@Autowired
+	private StakeHolderService stakeHolderService;
+	@Autowired
+	private OccupancyService occupancyService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private PostalAddressService postalAddressService;
+	@Autowired
+	private CrossHierarchyService crossHierarchyService;
+	@Autowired
+	private BpaSchemeService bpaSchemeService;
+	@Autowired
+	private RegistrarOfficeVillageService registrarOfficeService;
+	@Autowired
+	private BoundaryService boundaryService;
+	@Autowired
+	private SlotMappingService slotMappingService;
+	@Autowired
+	private WorkflowHistoryService workflowHistoryService;
+	@Autowired
+	private BpaApplicationValidationService bpaApplicationValidationService;
+	@Autowired
+	private ApplicationBpaFeeCalculationService permitFeeCalculationService;
+	@Autowired
+	private CheckListDetailService checkListDetailService;
+	@Autowired
+	private OccupancyCertificateUtils occupancyCertificateUtils;
 
-    @Autowired
-    private AssignmentService assignmentService;
+	@GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public BigDecimal isConnectionPresentForProperty(@RequestParam final Long[] serviceTypeIds) {
+		if (serviceTypeIds.length > 0) {
+			return applicationBpaService
+					.getTotalFeeAmountByPassingServiceTypeAndAmenities(Arrays.asList(serviceTypeIds));
+		} else {
+			return BigDecimal.ZERO;
+		}
+	}
 
-    @Autowired
-    private CustomizedWorkFlowService customizedWorkFlowService;
+	@GetMapping(value = "/bpaajaxWorkFlow-getDesignationsByObjectTypeAndDesignation", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<Designation> getDesignationsByObjectTypeAndDesignation(
+			@ModelAttribute("designations") @RequestParam final String departmentRule,
+			@RequestParam final String currentState, @RequestParam final String type,
+			@RequestParam final BigDecimal amountRule, @RequestParam final String additionalRule,
+			@RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
+		List<Designation> designationList = designationService
+				.getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type, departmentRule, amountRule,
+						additionalRule, currentState, pendingAction, new Date()));
+		if (designationList.isEmpty())
+			designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+		return designationList;
+	}
 
-    @Autowired
-    private ApplicationBpaService applicationBpaService;
-    @Autowired
-    private StakeHolderService stakeHolderService;
-    @Autowired
-    private OccupancyService occupancyService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private PostalAddressService postalAddressService;
-    @Autowired
-    private CrossHierarchyService crossHierarchyService;
-    @Autowired
-    private BpaSchemeService bpaSchemeService;
-    @Autowired
-    private RegistrarOfficeVillageService registrarOfficeService;
-    @Autowired
-    private BoundaryService boundaryService;
-    @Autowired
-    private SlotMappingService slotMappingService;
-    @Autowired
-    private WorkflowHistoryService workflowHistoryService;
-    @Autowired
-    private BpaApplicationValidationService bpaApplicationValidationService;
+	@GetMapping(value = "/ajax-designationsByDepartment", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<Designation> getDesignationsByDepartmentId(
+			@ModelAttribute("designations") @RequestParam final Long approvalDepartment) {
+		List<Designation> designations = new ArrayList<>();
+		if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1)
+			designations = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
+		designations.forEach(designation -> designation.toString());
+		return designations;
+	}
 
-    @Autowired
-    protected CheckListDetailService checkListDetailService;
+	@GetMapping(value = "/bpaajaxWorkFlow-positionsByDepartmentAndDesignationAndBoundary", produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String getPositionByDepartmentAndDesignationAndBoundary(@RequestParam final Long approvalDepartment,
+			@RequestParam final Long approvalDesignation, @RequestParam final Long boundaryId,
+			final HttpServletResponse response) {
+		if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
+				&& approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
+			List<Assignment> assignmentList = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(
+					approvalDepartment, approvalDesignation, boundaryId);
+			final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(Assignment.class, new AssignmentAdaptor())
+					.create();
+			return jsonCreator.toJson(assignmentList, new TypeToken<Collection<Assignment>>() {
+			}.getType());
+		}
+		return "[]";
+	}
 
+	@GetMapping(value = "/ajax/stakeholdersbytype", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<StakeHolder> getStakeHolderByType(@RequestParam final String name,
+			@RequestParam final StakeHolderType stakeHolderType) {
+		return stakeHolderService.getStakeHolderListByType(stakeHolderType, name);
+	}
 
-    @RequestMapping(value = "/ajax/getAdmissionFees", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public BigDecimal isConnectionPresentForProperty(@RequestParam final Long[] serviceTypeIds) {
-        if (serviceTypeIds.length > 0) {
-            return applicationBpaService.getTotalFeeAmountByPassingServiceTypeAndAmenities(Arrays.asList(serviceTypeIds));
-        } else {
-            return BigDecimal.ZERO;
-        }
-    }
+	@GetMapping(value = "/application/getoccupancydetails", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<Occupancy> getOccupancyDetails() {
+		return occupancyService.findAll();
+	}
 
-    @RequestMapping(value = "/bpaajaxWorkFlow-getDesignationsByObjectTypeAndDesignation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Designation> getDesignationsByObjectTypeAndDesignation(
-            @ModelAttribute("designations") @RequestParam final String departmentRule,
-            @RequestParam final String currentState, @RequestParam final String type,
-            @RequestParam final BigDecimal amountRule, @RequestParam final String additionalRule,
-            @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
-        List<Designation> designationList = designationService
-                .getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
-                        departmentRule, amountRule, additionalRule, currentState,
-                        pendingAction, new Date()));
-        if (designationList.isEmpty())
-            designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
-        return designationList;
-    }
+	@GetMapping(value = "/getApplicantDetails", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String, String> getApplicantDetailsForMobileNumber(@RequestParam final String mobileNumber) {
+		Map<String, String> user = new HashMap<>();
+		List<User> userList = userService.getUserByMobileNumberAndType(mobileNumber, UserType.CITIZEN);
+		if (!userList.isEmpty()) {
+			User dbUser = userList.get(0);
+			user.put("name", dbUser.getName());
+			user.put("address", dbUser.getAddress().get(0).getStreetRoadLine());
+			user.put("emailId", dbUser.getEmailId());
+			user.put("gender", dbUser.getGender().name());
+			user.put("id", dbUser.getId().toString());
 
-    @RequestMapping(value = "/ajax-designationsByDepartment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Designation> getDesignationsByDepartmentId(
-            @ModelAttribute("designations") @RequestParam final Long approvalDepartment) {
-        List<Designation> designations = new ArrayList<>();
-        if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1)
-            designations = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
-        designations.forEach(designation -> designation.toString());
-        return designations;
-    }
+		}
+		return user;
+	}
 
-    @RequestMapping(value = "/bpaajaxWorkFlow-positionsByDepartmentAndDesignationAndBoundary", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String getPositionByDepartmentAndDesignationAndBoundary(@RequestParam final Long approvalDepartment,
-            @RequestParam final Long approvalDesignation, @RequestParam final Long boundaryId,
-            final HttpServletResponse response) {
-        if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
-                && approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
-            List<Assignment> assignmentList = assignmentService
-                    .findAssignmentByDepartmentDesignationAndBoundary(approvalDepartment, approvalDesignation, boundaryId);
-            final Gson jsonCreator = new GsonBuilder().registerTypeAdapter(Assignment.class, new AssignmentAdaptor())
-                    .create();
-            return jsonCreator.toJson(assignmentList, new TypeToken<Collection<Assignment>>() {
-            }.getType());
-        }
-        return "[]";
-    }
+	@GetMapping(value = "/getApplicantDetailsForEmailId", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public User getApplicantDetailsForEmailId(@RequestParam final String emailId) {
+		return userService.getUserByUsername(emailId);
+	}
 
-    @RequestMapping(value = "/ajax/stakeholdersbytype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<StakeHolder> getStakeHolderByType(@RequestParam final String name,
-            @RequestParam final StakeHolderType stakeHolderType) {
-        return stakeHolderService.getStakeHolderListByType(stakeHolderType, name);
-    }
+	@GetMapping(value = "/ajax/postaladdress", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<PostalAddress> getPostalAddress(@RequestParam final String pincode) {
+		return postalAddressService.getPostalAddressList(pincode);
+	}
 
-    @RequestMapping(value = "/application/getoccupancydetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<Occupancy> getOccupancyDetails() {
-        return occupancyService.findAll();
-    }
+	@GetMapping(value = "/ajax/getpostaladdressbyid", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public PostalAddress getPostalAddressObj(@RequestParam final Long id) {
+		return postalAddressService.findById(id);
+	}
 
-    @RequestMapping(value = "/getApplicantDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Map<String, String> getApplicantDetailsForMobileNumber(@RequestParam final String mobileNumber) {
-        Map<String, String> user = new HashMap<>();
-        List<User> userList = userService.getUserByMobileNumberAndType(mobileNumber, UserType.CITIZEN);
-        if (!userList.isEmpty()) {
-            User dbUser = userList.get(0);
-            user.put("name", dbUser.getName());
-            user.put("address", dbUser.getAddress().get(0).getStreetRoadLine());
-            user.put("emailId", dbUser.getEmailId());
-            user.put("gender", dbUser.getGender().name());
-            user.put("id", dbUser.getId().toString());
+	@GetMapping(value = "/boundary/ajaxBoundary-localityByWard", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void localityByWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
 
-        }
-        return user;
-    }
+		final List<Boundary> blocks = crossHierarchyService
+				.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(BpaConstants.WARD,
+						BpaConstants.REVENUE_HIERARCHY_TYPE, BpaConstants.LOCALITY_BNDRY_TYPE, wardId);
+		final List<JSONObject> jsonObjects = new ArrayList<>();
+		for (final Boundary block : blocks) {
+			final JSONObject jsonObj = new JSONObject();
+			jsonObj.put("localityId", block.getId());
+			jsonObj.put("localityName", block.getName());
+			jsonObjects.add(jsonObj);
+		}
+		IOUtils.write(jsonObjects.toString(), response.getWriter());
+	}
 
-    @RequestMapping(value = "/getApplicantDetailsForEmailId", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public User getApplicantDetailsForEmailId(@RequestParam final String emailId) {
-        return userService.getUserByUsername(emailId);
-    }
+	@GetMapping(value = "/boundary/ajaxBoundary-electionwardbyrevenueward", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void electionWardByRevenueWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
 
-    @RequestMapping(value = "/ajax/postaladdress", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<PostalAddress> getPostalAddress(@RequestParam final String pincode) {
-        return postalAddressService.getPostalAddressList(pincode);
-    }
+		final List<Boundary> blocks = crossHierarchyService
+				.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(BpaConstants.WARD,
+						BpaConstants.REVENUE_HIERARCHY_TYPE, BpaConstants.WARD, wardId);
+		sortBoundaryByBndryNumberAsc(blocks);
+		final List<JSONObject> jsonObjects = new ArrayList<>();
+		for (final Boundary block : blocks) {
+			final JSONObject jsonObj = new JSONObject();
+			jsonObj.put("electionwardId", block.getId());
+			jsonObj.put("electionwardName", block.getName());
+			jsonObjects.add(jsonObj);
+		}
+		IOUtils.write(jsonObjects.toString(), response.getWriter());
+	}
 
-    @RequestMapping(value = "/ajax/getpostaladdressbyid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public PostalAddress getPostalAddressObj(@RequestParam final Long id) {
-        return postalAddressService.findById(id);
-    }
+	@GetMapping(value = "/ajax/getlandusagebyscheme", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void landUsageByScheme(@RequestParam Long schemeId, HttpServletResponse response) throws IOException {
 
-    @RequestMapping(value = {
-            "/boundary/ajaxBoundary-localityByWard" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void localityByWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
+		if (schemeId != null) {
+			final BpaScheme scheme = bpaSchemeService.findById(schemeId);
 
-        final List<Boundary> blocks = crossHierarchyService
-                .findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(BpaConstants.WARD,
-                        BpaConstants.REVENUE_HIERARCHY_TYPE,
-                        BpaConstants.LOCALITY_BNDRY_TYPE,
-                        wardId);
-        final List<JSONObject> jsonObjects = new ArrayList<>();
-        for (final Boundary block : blocks) {
-            final JSONObject jsonObj = new JSONObject();
-            jsonObj.put("localityId", block.getId());
-            jsonObj.put("localityName", block.getName());
-            jsonObjects.add(jsonObj);
-        }
-        IOUtils.write(jsonObjects.toString(), response.getWriter());
-    }
+			final List<JSONObject> jsonObjects = new ArrayList<>();
+			if (scheme != null) {
+				for (final BpaSchemeLandUsage landUsage : scheme.getSchemeLandUsage()) {
+					final JSONObject jsonObj = new JSONObject();
+					jsonObj.put("usageId", landUsage.getId());
+					jsonObj.put("usageDesc", landUsage.getDescription());
+					jsonObjects.add(jsonObj);
+				}
+			}
+			IOUtils.write(jsonObjects.toString(), response.getWriter());
+		}
+	}
 
-    @RequestMapping(value = {
-            "/boundary/ajaxBoundary-electionwardbyrevenueward" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void electionWardByRevenueWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
+	@GetMapping(value = "/ajax/registraroffice", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void registrarOfficeVillageMapping(@RequestParam Long villageId, HttpServletResponse response)
+			throws IOException {
 
-        final List<Boundary> blocks = crossHierarchyService
-                .findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(BpaConstants.WARD,
-                        BpaConstants.REVENUE_HIERARCHY_TYPE,
-                        BpaConstants.WARD,
-                        wardId);
-        sortBoundaryByBndryNumberAsc(blocks);
-        final List<JSONObject> jsonObjects = new ArrayList<>();
-        for (final Boundary block : blocks) {
-            final JSONObject jsonObj = new JSONObject();
-            jsonObj.put("electionwardId", block.getId());
-            jsonObj.put("electionwardName", block.getName());
-            jsonObjects.add(jsonObj);
-        }
-        IOUtils.write(jsonObjects.toString(), response.getWriter());
-    }
+		if (villageId != null) {
+			final List<RegistrarOfficeVillage> registrarOfficeList = registrarOfficeService
+					.getRegistrarOfficeByVillage(villageId);
 
-    @RequestMapping(value = {
-            "/ajax/getlandusagebyscheme" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void landUsageByScheme(@RequestParam Long schemeId, HttpServletResponse response) throws IOException {
+			final List<JSONObject> jsonObjects = new ArrayList<>();
+			if (!registrarOfficeList.isEmpty()) {
+				for (final RegistrarOfficeVillage office : registrarOfficeList) {
+					final JSONObject jsonObj = new JSONObject();
+					jsonObj.put("registrarVillageId", office.getId());
+					jsonObj.put("registrarOfficeName", office.getRegistrarOffice().getName());
+					jsonObjects.add(jsonObj);
+				}
+			}
+			IOUtils.write(jsonObjects.toString(), response.getWriter());
+		}
+	}
 
-        if (schemeId != null) {
-            final BpaScheme scheme = bpaSchemeService
-                    .findById(schemeId);
+	@GetMapping("/boundary/ajaxBoundary-blockByWard")
+	public void blockByWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
+		List<Boundary> revenueWards = boundaryService.getActiveChildBoundariesByBoundaryId(wardId);
+		sortBoundaryByBndryNumberAsc(revenueWards);
+		final List<JsonObject> jsonObjects = new ArrayList<>();
+		revenueWards.stream().forEach(block -> {
+			final JsonObject jsonObj = new JsonObject();
+			jsonObj.addProperty(BLOCK_ID, block.getId());
+			jsonObj.addProperty(BLOCK_NAME, block.getName());
+			jsonObjects.add(jsonObj);
+		});
+		IOUtils.write(jsonObjects.toString(), response.getWriter());
+	}
 
-            final List<JSONObject> jsonObjects = new ArrayList<>();
-            if (scheme != null) {
-                for (final BpaSchemeLandUsage landUsage : scheme.getSchemeLandUsage()) {
-                    final JSONObject jsonObj = new JSONObject();
-                    jsonObj.put("usageId", landUsage.getId());
-                    jsonObj.put("usageDesc", landUsage.getDescription());
-                    jsonObjects.add(jsonObj);
-                }
-            }
-            IOUtils.write(jsonObjects.toString(), response.getWriter());
-        }
-    }
+	private void sortBoundaryByBndryNumberAsc(List<Boundary> boundaries) {
+		boundaries.sort(Comparator.comparing(Boundary::getBoundaryNum));
+	}
 
-    @RequestMapping(value = { "/ajax/registraroffice" }, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void registrarOfficeVillageMapping(@RequestParam Long villageId, HttpServletResponse response) throws IOException {
+	@GetMapping(value = "/ajax/getOneDayPermitSlotByBoundary", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Boolean getOneDayPermitSlotByBoundary(@RequestParam Long zoneId, @RequestParam Long electionWardId) {
+		SlotMapping slotMapping = new SlotMapping();
+		Boundary zone = boundaryService.getBoundaryById(zoneId);
+		Boundary electionWard = boundaryService.getBoundaryById(electionWardId);
+		slotMapping.setZone(zone);
+		slotMapping.setElectionWard(electionWard);
+		slotMapping.setApplType(SlotMappingApplType.ONE_DAY_PERMIT);
+		List<SlotMapping> slotMappings = slotMappingService.searchSlotMapping(slotMapping);
+		return !slotMappings.isEmpty();
+	}
 
-        if (villageId != null) {
-            final List<RegistrarOfficeVillage> registrarOfficeList = registrarOfficeService
-                    .getRegistrarOfficeByVillage(villageId);
+	@GetMapping(value = "/validate/edcr-usedinbpa", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String, String> validateEdcrIsUsedInBpaApplication(@RequestParam final String eDcrNumber) {
+		return workflowHistoryService.checkIsEdcrUsedInBpaApplication(eDcrNumber);
+	}
 
-            final List<JSONObject> jsonObjects = new ArrayList<>();
-            if (!registrarOfficeList.isEmpty()) {
-                for (final RegistrarOfficeVillage office : registrarOfficeList) {
-                    final JSONObject jsonObj = new JSONObject();
-                    jsonObj.put("registrarVillageId", office.getId());
-                    jsonObj.put("registrarOfficeName", office.getRegistrarOffice().getName());
-                    jsonObjects.add(jsonObj);
-                }
-            }
-            IOUtils.write(jsonObjects.toString(), response.getWriter());
-        }
-    }
+	@GetMapping(value = "/validate/emailandmobile", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Boolean validateEmailAndMobileNumber(@RequestParam final String inputType,
+			@RequestParam final String inputValue) {
+		if ("email".equalsIgnoreCase(inputType)
+				&& stakeHolderService.validateStakeHolderIsRejected("", inputValue, "", "", "") == null)
+			return userService.getUserByEmailId(inputValue) == null;
+		else if ("mobile".equalsIgnoreCase(inputType)
+				&& stakeHolderService.validateStakeHolderIsRejected(inputValue, "", "", "", "") == null)
+			return userService.getUserByMobileNumberAndType(inputValue, UserType.BUSINESS).isEmpty();
+		else if ("aadhaar".equalsIgnoreCase(inputType)
+				&& stakeHolderService.validateStakeHolderIsRejected("", "", inputValue, "", "") == null)
+			return userService.getUserByAadhaarNumber(inputValue) == null;
+		else if ("pan".equalsIgnoreCase(inputType)
+				&& stakeHolderService.validateStakeHolderIsRejected("", "", "", inputValue, "") == null)
+			return userService.getUserByPan(inputValue) == null;
+		else if ("licenseNo".equalsIgnoreCase(inputType)
+				&& stakeHolderService.validateStakeHolderIsRejected("", "", "", "", inputValue) == null)
+			return stakeHolderService.findByLicenseNumber(inputValue) == null;
+		return false;
+	}
 
-    @RequestMapping(value = { "/boundary/ajaxBoundary-blockByWard" }, method = RequestMethod.GET)
-    public void blockByWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
-        List<Boundary> revenueWards = boundaryService.getActiveChildBoundariesByBoundaryId(wardId);
-        sortBoundaryByBndryNumberAsc(revenueWards);
-        final List<JsonObject> jsonObjects = new ArrayList<>();
-        revenueWards.stream().forEach(block -> {
-            final JsonObject jsonObj = new JsonObject();
-            jsonObj.addProperty(BLOCK_ID, block.getId());
-            jsonObj.addProperty(BLOCK_NAME, block.getName());
-            jsonObjects.add(jsonObj);
-        });
-        IOUtils.write(jsonObjects.toString(), response.getWriter());
-    }
+	@GetMapping(value = "/application/edcr-require", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Boolean checkEDCRIsRequire(@RequestParam final String serviceType, @RequestParam final String occupancy) {
+		return bpaApplicationValidationService.isEdcrInetgrationRequired(serviceType, occupancy);
+	}
 
-    private void sortBoundaryByBndryNumberAsc(List<Boundary> boundaries) {
-        boundaries.sort(Comparator.comparing(Boundary::getBoundaryNum));
-    }
-    
-    @RequestMapping(value = "/ajax/getOneDayPermitSlotByBoundary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Boolean getOneDayPermitSlotByBoundary(@RequestParam Long zoneId, @RequestParam Long electionWardId) {
-    	SlotMapping slotMapping = new SlotMapping();
-    	Boundary zone = boundaryService.getBoundaryById(zoneId);
-    	Boundary electionWard = boundaryService.getBoundaryById(electionWardId);
-    	slotMapping.setZone(zone);
-    	slotMapping.setElectionWard(electionWard);
-    	slotMapping.setApplType(SlotMappingApplType.ONE_DAY_PERMIT);
-        List<SlotMapping> slotMappings = slotMappingService.searchSlotMapping(slotMapping);
-        if(!slotMappings.isEmpty() && slotMappings.size()>0)
-        	return true;
-        else
-        	return false;
-    }
+	@GetMapping(value = "/occupancy/sub-usages", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<SubOccupancy> getSubUsagesByOccupancy(@RequestParam String occupancy) {
+		return occupancyService.findSubUsagesByOccupancy(occupancy);
+	}
 
-    @RequestMapping(value = "/validate/edcr-usedinbpa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Map<String, String> validateEdcrIsUsedInBpaApplication(@RequestParam final String eDcrNumber) {
-        return workflowHistoryService.checkIsEdcrUsedInBpaApplication(eDcrNumber);
-    }
+	@GetMapping(value = "/application/findby-permit-number", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public void getApplicationDetailsByPlanPermissionNumber(@RequestParam final String permitNumber,
+			final HttpServletResponse response) throws IOException {
+		BpaApplication application = applicationBpaService.findByPermitNumber(permitNumber);
+		final JsonObject jsonObj = new JsonObject();
+		if (application != null) {
+			jsonObj.addProperty("id", application.getId());
+			jsonObj.addProperty("stakeholderId", application.getStakeHolder().get(0).getId());
+			jsonObj.addProperty("occupancy", application.getOccupancy().getDescription());
+			jsonObj.addProperty("zone", application.getSiteDetail().get(0).getAdminBoundary().getParent().getName());
+			jsonObj.addProperty("revenueWard", application.getSiteDetail().get(0).getAdminBoundary().getName());
+			jsonObj.addProperty("reSurveyNumber", application.getSiteDetail().get(0).getReSurveyNumber());
+			jsonObj.addProperty("village", application.getSiteDetail().get(0).getLocationBoundary().getName());
+			jsonObj.addProperty("plotArea", application.getSiteDetail().get(0).getExtentinsqmts());
+			jsonObj.addProperty("serviceTypeId", application.getServiceType().getId());
+			jsonObj.addProperty("serviceTypeDesc", application.getServiceType().getDescription());
+			jsonObj.addProperty("serviceTypeCode", application.getServiceType().getCode());
+			jsonObj.addProperty("applicationDate", DateUtils.toDefaultDateFormat(application.getApplicationDate()));
+			jsonObj.addProperty("applicationType", application.getIsOneDayPermitApplication() ? "YES" : "NO");
+			jsonObj.addProperty("dcrNumber", application.geteDcrNumber());
+			jsonObj.addProperty("applicantName", application.getOwner().getName());
+			jsonObj.addProperty("applicationNumber", application.getApplicationNumber());
+			jsonObj.addProperty("planPermissionNumber", application.getPlanPermissionNumber());
+			if (!application.getBuildingDetail().isEmpty()) {
+				BigDecimal floorArea = permitFeeCalculationService.getTotalFloorArea(application);
+				jsonObj.addProperty("isSingleFamily",
+						application.getOccupancy().getDescription().equals(BpaConstants.RESIDENTIAL)
+								&& application.getBuildingDetail().get(0).getFloorCount().intValue() <= 2
+								&& floorArea.doubleValue() <= 150);
+			}
+		}
+		IOUtils.write(jsonObj.toString(), response.getWriter());
+	}
 
-    @RequestMapping(value = "/validate/emailandmobile", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Boolean validateEmailAndMobileNumber(@RequestParam final String inputType, @RequestParam final String inputValue) {
-        if ("email".equalsIgnoreCase(inputType) && stakeHolderService.validateStakeHolderIsRejected("",inputValue,"","", "") == null) {
-            return userService.getUserByEmailId(inputValue) == null ? false : true;
-        } else if ("mobile".equalsIgnoreCase(inputType) && stakeHolderService.validateStakeHolderIsRejected(inputValue,"","","", "") == null) {
-            return userService.getUserByMobileNumberAndType(inputValue, UserType.BUSINESS).isEmpty() ? false : true;
-        } else if ("aadhaar".equalsIgnoreCase(inputType) && stakeHolderService.validateStakeHolderIsRejected("","",inputValue,"", "") == null) {
-            return userService.getUserByAadhaarNumber(inputValue) == null ? false : true;
-        } else if ("pan".equalsIgnoreCase(inputType) && stakeHolderService.validateStakeHolderIsRejected("","","",inputValue, "") == null) {
-            return userService.getUserByPan(inputValue) == null ? false : true;
-        } else if ("licenseNo".equalsIgnoreCase(inputType) && stakeHolderService.validateStakeHolderIsRejected("","","", "", inputValue) == null) {
-            return stakeHolderService.findByLicenseNumber(inputValue) == null ? false : true;
-        }
-        return false;
-    }
+	@GetMapping(value = "/application/getdocumentlistbyservicetype", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<CheckListDetail> getDocumentsByServiceType(@RequestParam final Long serviceType,
+			@RequestParam final String checklistType) {
+		return checkListDetailService.findActiveCheckListByServiceType(serviceType, checklistType);
+	}
 
-    @RequestMapping(value = "/application/edcr-require", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Boolean checkEDCRIsRequire(@RequestParam final String serviceType, @RequestParam final String occupancy) {
-        return bpaApplicationValidationService.isEdcrInetgrationRequired(serviceType, occupancy);
-    }
-
-    @RequestMapping(value = "/occupancy/sub-usages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<SubOccupancy> getSubUsagesByOccupancy(@RequestParam String occupancy) {
-        return occupancyService.findSubUsagesByOccupancy(occupancy);
-    }
-
-    @RequestMapping(value = "/application/findby-permit-number", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public void getApplicationDetailsByPlanPermissionNumber(@RequestParam final String permitNumber, final HttpServletResponse response) throws IOException {
-        BpaApplication application = applicationBpaService.findByPermitNumber(permitNumber);
-        final JsonObject jsonObj = new JsonObject();
-        jsonObj.addProperty("id", application.getId());
-        jsonObj.addProperty("occupancy", application.getOccupancy().getDescription());
-        jsonObj.addProperty("serviceTypeId",application.getServiceType().getId());
-        jsonObj.addProperty("serviceTypeDesc",application.getServiceType().getDescription());
-        jsonObj.addProperty("applicationType", application.getIsOneDayPermitApplication() ? "YES" : "NO");
-        jsonObj.addProperty("dcrNumber", application.geteDcrNumber());
-        jsonObj.addProperty("applicantName", application.getOwner().getName());
-        jsonObj.addProperty("applicationNumber", application.getApplicationNumber());
-        jsonObj.addProperty("planPermissionNumber", application.getPlanPermissionNumber());
-        IOUtils.write(jsonObj.toString(), response.getWriter());
-    }
-
-    @RequestMapping(value = "/application/getdocumentlistbyservicetype", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<CheckListDetail> getDocumentsByServiceType(@RequestParam final Long serviceType, @RequestParam final String checklistType) {
-        return checkListDetailService.findActiveCheckListByServiceType(serviceType, checklistType);
-    }
-    
-    @RequestMapping(value = "/validate/edcr-expiry", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/validate/occupancy-certificate/edcrno-used", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String, String> checkDCRIsUsedWithAnyOccupancyCertificateAppln(@RequestParam final String eDcrNumber) {
+		return occupancyCertificateUtils.checkIsEdcrUsedWithAnyOCApplication(eDcrNumber);
+	}
+	
+	@GetMapping(value = "/validate/edcr-expiry", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, String> validateEdcrExpiry(@RequestParam final String eDcrNumber) {
         return applicationBpaService.checkEdcrExpiry(eDcrNumber);
     }
+
 }

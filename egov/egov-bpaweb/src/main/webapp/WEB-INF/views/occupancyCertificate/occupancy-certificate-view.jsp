@@ -38,158 +38,200 @@
   ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
-    <div class="col-md-12">
-        <form:form role="form" action="../update-submit" method="post"
-                   modelAttribute="occupancyCertificate" id="occupancyCertificateUpdateForm"
-                   cssClass="form-horizontal form-groups-bordered"
-                   enctype="multipart/form-data">
+	<div class="col-md-12">
+		<form:form role="form" action="../update-submit" method="post"
+			modelAttribute="occupancyCertificate"
+			id="occupancyCertificateUpdateForm"
+			cssClass="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data">
 
-            <c:if
-                    test="${isFeeCollected && occupancyCertificate.status.code eq 'Approved'}">
-                <div data-collapsed="0">
-                    <div class="panel-heading">
-                        <div style="color: red; font-size: 16px;" align="center">
-                            <spring:message code="lbl.collect.bpaFee"/>
-                        </div>
-                    </div>
-                </div>
-            </c:if>
+			<c:if
+				test="${isFeeCollected && occupancyCertificate.status.code eq 'Approved'}">
+				<div data-collapsed="0">
+					<div class="panel-heading">
+						<div style="color: red; font-size: 16px;" align="center">
+							<spring:message code="lbl.collect.bpaFee" />
+						</div>
+					</div>
+				</div>
+			</c:if>
 
-            <input type="hidden" id="workFlowAction" name="workFlowAction"/>
-            <input type="hidden" id="wfstateDesc" value="${occupancyCertificate.state.value}"/>
-            <input type="hidden" id="occupancyCertificateId" name="occupancyCertificate" value="${occupancyCertificate.id}">
-            <form:hidden path="id" value="${occupancyCertificate.id}"/>
-            <input type="hidden" id="isFeeCollectionPending" value="${isFeeCollected}">
-            <input type="hidden" id="status" value="${occupancyCertificate.status.code}">
-            <input type="hidden" id="wfstate" value="${occupancyCertificate.state.id}"/>
-            <input type="hidden" id="workFlowAction" name="workFlowAction"/>
-            <input type="hidden" id="serviceTypeCode" value="${occupancyCertificate.parent.serviceType.code}"/>
-            <input type="hidden" id="wfstateDesc" value="${occupancyCertificate.state.value}"/>
-            <input type="hidden" id="collectFeeValidate" value="${collectFeeValidate}"/>
-            <input type="hidden" id="mode" name="mode" value="${mode}"/>
-            <input type="hidden" id="amountRule" name="amountRule" value="${amountRule}"/>
-            <input type="hidden" id="scheduleType" name="scheduleType" value="${scheduleType}"/>
-            <input type="hidden" id="showPermitConditions" value="${showPermitConditions}"/>
-            <form:hidden path="sentToPreviousOwner" id="sentToPreviousOwner"/>
-            <form:hidden path="LPRequestInitiated" id="lpRequestInitiated"
-                         value="${occupancyCertificate.LPRequestInitiated}"/>
-            <input type="hidden" id="approveComments" value="${occupancyCertificate.state.comments}"/>
-            <input type="hidden" id="captureTSRemarks" value="${captureTSRemarks}">
-            <ul class="nav nav-tabs" id="settingstab">
-                <li class="active"><a data-toggle="tab"
-                                      href="#application-info" data-tabidx=0><spring:message
-                        code='lbl.appln.details'/></a></li>
-                <li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
-                        code='title.documentdetail'/></a></li>
-                <c:if test="${showUpdateNoc}">
-                    <li><a data-toggle="tab" href="#noc-document-info" data-tabidx=2><spring:message
-                            code='lbl.noc.doc.details'/></a></li>
-                </c:if>
-                <c:if test="${!showUpdateNoc && not empty occupancyCertificate.nocDocuments}">
-                    <li><a data-toggle="tab" href="#noc-info" data-tabidx=3><spring:message
-                            code='lbl.noc.details'/></a></li>
-                </c:if>
-                <c:if test="${not empty occupancyCertificate.documentScrutinies}">
-                    <li><a data-toggle="tab" href="#doc-scrnty" data-tabidx=4><spring:message
-                            code='lbl.document.scrutiny'/></a></li>
-                </c:if>
-                <c:if test="${not empty occupancyCertificate.inspections}">
-                    <li><a data-toggle="tab" href="#view-inspection" data-tabidx=5><spring:message
-                            code='lbl.inspection.appln'/></a></li>
-                </c:if>
-                <c:if test="${captureTSRemarks}">
-                    <li><a data-toggle="tab" href="#ts-remarks"
-                           data-tabidx=6><spring:message code='lbl.town.surveyor.remarks' /></a></li>
-                </c:if>
-                <c:if test="${not empty letterToPartyList}">
-                    <li><a data-toggle="tab" href="#view-lp" data-tabidx=7><spring:message
-                            code='lbl.lp.details'/></a></li>
-                </c:if>
-            </ul>
-            <div class="tab-content">
-                <div id="application-info" class="tab-pane fade in active">
-                    <div class="panel panel-primary" data-collapsed="0">
-                        <jsp:include page="view-oc-application-details.jsp"></jsp:include>
-                    </div>
-                    <div class="panel panel-primary" data-collapsed="0">
-                        <jsp:include page="view-bpa-basic-application-details.jsp"></jsp:include>
-                    </div>
-                    <c:if test="${not empty  occupancyCertificate.receipts}">
-                        <div class="panel panel-primary" data-collapsed="0">
-                            <jsp:include page="../application/view-bpa-receipt-details.jsp"></jsp:include>
-                        </div>
-                    </c:if>
-                    <div class="panel panel-primary" data-collapsed="0">
-                        <jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
-                    </div>
-                </div>
-                <div id="document-info" class="tab-pane fade">
-                    <div class="panel panel-primary" data-collapsed="0">
-                        <jsp:include page="view-oc-documents.jsp"></jsp:include>
-                    </div>
-                </div>
-                <c:if test="${showUpdateNoc}">
-                    <input type="hidden" id="showUpdateNoc" value="${showUpdateNoc}">
-                    <div id="noc-document-info" class="tab-pane fade">
-                        <div class="panel panel-primary" data-collapsed="0">
-                            <jsp:include page="oc-noc-documents.jsp"></jsp:include>
-                        </div>
-                    </div>
-                </c:if>
-                <c:if test="${!showUpdateNoc && not empty occupancyCertificate.nocDocuments}">
-                    <div id="noc-info" class="tab-pane fade">
-                        <div class="panel panel-primary" data-collapsed="0">
-                            <jsp:include page="view-oc-noc-documents.jsp"></jsp:include>
-                        </div>
-                    </div>
-                </c:if>
-                <c:if test="${not empty occupancyCertificate.documentScrutinies}">
-                    <div id="doc-scrnty" class="tab-pane fade">
-                        <div class="panel panel-primary" data-collapsed="0">
-                            <jsp:include page="view-oc-document-scrutiny.jsp"></jsp:include>
-                        </div>
-                    </div>
-                </c:if>
-                <c:if test="${not empty occupancyCertificate.inspections}">
-                    <div id="view-inspection" class="tab-pane fade">
-                        <div class="panel panel-primary" data-collapsed="0">
-                            <jsp:include
-                                    page="../occupancyCertificate/inspection/oc-view-inspection-details.jsp"></jsp:include>
-                        </div>
-                        <c:if test="${null ne occupancyCertificate.townSurveyorRemarks}">
-                            <c:if test="${'Town Surveyor Inspected' eq occupancyCertificate.status.code}">
-                                <input type="hidden" id="viewTsRemarks" value="true">
-                            </c:if>
-                            <div class="panel panel-primary" data-collapsed="0">
-                                <jsp:include page="../occupancyCertificate/inspection/oc-view-town-surveyor-remarks.jsp"></jsp:include>
-                            </div>
-                        </c:if>
-                    </div>
-                </c:if>
-                <c:if test="${captureTSRemarks}">
-                    <div id="ts-remarks" class="tab-pane fade">
-                        <div class="panel panel-primary" data-collapsed="0">
-                            <jsp:include page="../occupancyCertificate/inspection/oc-town-surveyor-remarks.jsp"></jsp:include>
-                        </div>
-                    </div>
-                </c:if>
-                <c:if test="${not empty letterToPartyList}">
-                    <div id="view-lp" class="tab-pane fade">
-                        <div class="panel panel-primary" data-collapsed="0">
-                            <jsp:include page="../occupancyCertificate/letterToParty/oc-ltp-details.jsp"></jsp:include>
-                        </div>
-                    </div>
-                </c:if>
-            </div>
+			<input type="hidden" id="workFlowAction" name="workFlowAction" />
+			<input type="hidden" id="wfstateDesc"
+				value="${occupancyCertificate.state.value}" />
+			<input type="hidden" id="occupancyCertificateId"
+				name="occupancyCertificate" value="${occupancyCertificate.id}">
+			<form:hidden path="id" value="${occupancyCertificate.id}" />
+			<input type="hidden" id="isFeeCollectionPending"
+				value="${isFeeCollected}">
+			<input type="hidden" id="status"
+				value="${occupancyCertificate.status.code}">
+			<input type="hidden" id="wfstate"
+				value="${occupancyCertificate.state.id}" />
+			<input type="hidden" id="workFlowAction" name="workFlowAction" />
+			<input type="hidden" id="serviceTypeCode"
+				value="${occupancyCertificate.parent.serviceType.code}" />
+			<input type="hidden" id="wfstateDesc"
+				value="${occupancyCertificate.state.value}" />
+			<input type="hidden" id="collectFeeValidate"
+				value="${collectFeeValidate}" />
+			<input type="hidden" id="mode" name="mode" value="${mode}" />
+			<input type="hidden" id="amountRule" name="amountRule"
+				value="${amountRule}" />
+			<input type="hidden" id="scheduleType" name="scheduleType"
+				value="${scheduleType}" />
+			<input type="hidden" id="showPermitConditions"
+				value="${showPermitConditions}" />
+			<form:hidden path="sentToPreviousOwner" id="sentToPreviousOwner" />
+			<form:hidden path="LPRequestInitiated" id="lpRequestInitiated"
+				value="${occupancyCertificate.LPRequestInitiated}" />
+			<input type="hidden" id="approveComments"
+				value="${occupancyCertificate.state.comments}" />
+			<input type="hidden" id="captureTSRemarks"
+				value="${captureTSRemarks}">
+			<ul class="nav nav-tabs" id="settingstab">
+				<li class="active"><a data-toggle="tab"
+					href="#application-info" data-tabidx=0><spring:message
+							code='lbl.appln.details' /></a></li>
+				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
+							code='title.documentdetail' /></a></li>
+				<c:if test="${showUpdateNoc}">
+					<li><a data-toggle="tab" href="#noc-document-info"
+						data-tabidx=2><spring:message code='lbl.noc.doc.details' /></a></li>
+				</c:if>
+				<c:if
+					test="${!showUpdateNoc && not empty occupancyCertificate.nocDocuments}">
+					<li><a data-toggle="tab" href="#noc-info" data-tabidx=3><spring:message
+								code='lbl.noc.details' /></a></li>
+				</c:if>
+				<c:if test="${not empty occupancyCertificate.documentScrutinies}">
+					<li><a data-toggle="tab" href="#doc-scrnty" data-tabidx=4><spring:message
+								code='lbl.document.scrutiny' /></a></li>
+				</c:if>
+				<c:if test="${not empty occupancyCertificate.inspections}">
+					<li><a data-toggle="tab" href="#view-inspection" data-tabidx=5><spring:message
+								code='lbl.inspection.appln' /></a></li>
+				</c:if>
+				<c:if test="${captureTSRemarks}">
+					<li><a data-toggle="tab" href="#ts-remarks" data-tabidx=6><spring:message
+								code='lbl.town.surveyor.remarks' /></a></li>
+				</c:if>
+				<c:if test="${not empty letterToPartyList}">
+					<li><a data-toggle="tab" href="#view-lp" data-tabidx=7><spring:message
+								code='lbl.lp.details' /></a></li>
+				</c:if>
+			</ul>
+			<div class="tab-content">
+				<div id="application-info" class="tab-pane fade in active">
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="view-oc-application-details.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include
+							page="../application/edcr-application-details-form.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="view-bpa-basic-application-details.jsp"></jsp:include>
+					</div>
+					<c:if test="${not empty occupancyCertificate.existingBuildings}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-oc-existing-building-details.jsp"></jsp:include>
+						</div>
+					</c:if>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="view-oc-building-details.jsp"></jsp:include>
+					</div>
+					<c:if test="${not empty  occupancyCertificate.receipts}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="../application/view-bpa-receipt-details.jsp"></jsp:include>
+						</div>
+					</c:if>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
+					</div>
+					<c:if test="${showRejectionReasons}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="oc-rejection-reasons.jsp"></jsp:include>
+						</div>
+					</c:if>
+				</div>
+				<div id="document-info" class="tab-pane fade">
+					<c:if test="${not empty  occupancyCertificate.getDcrDocuments()}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-oc-dcr-documents.jsp"></jsp:include>
+						</div>
+					</c:if>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="view-oc-documents.jsp"></jsp:include>
+					</div>
+				</div>
+				<c:if test="${showUpdateNoc}">
+					<input type="hidden" id="showUpdateNoc" value="${showUpdateNoc}">
+					<div id="noc-document-info" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="oc-noc-documents.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
+				<c:if
+					test="${!showUpdateNoc && not empty occupancyCertificate.nocDocuments}">
+					<div id="noc-info" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-oc-noc-documents.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
+				<c:if test="${not empty occupancyCertificate.documentScrutinies}">
+					<div id="doc-scrnty" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-oc-document-scrutiny.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
+				<c:if test="${not empty occupancyCertificate.inspections}">
+					<div id="view-inspection" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include
+								page="../occupancyCertificate/inspection/oc-view-inspection-details.jsp"></jsp:include>
+						</div>
+						<c:if test="${null ne occupancyCertificate.townSurveyorRemarks}">
+							<c:if
+								test="${'Town Surveyor Inspected' eq occupancyCertificate.status.code}">
+								<input type="hidden" id="viewTsRemarks" value="true">
+							</c:if>
+							<div class="panel panel-primary" data-collapsed="0">
+								<jsp:include
+									page="../occupancyCertificate/inspection/oc-view-town-surveyor-remarks.jsp"></jsp:include>
+							</div>
+						</c:if>
+					</div>
+				</c:if>
+				<c:if test="${captureTSRemarks}">
+					<div id="ts-remarks" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include
+								page="../occupancyCertificate/inspection/oc-town-surveyor-remarks.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
+				<c:if test="${not empty letterToPartyList}">
+					<div id="view-lp" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include
+								page="../occupancyCertificate/letterToParty/oc-ltp-details.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
+			</div>
 
-            <div class="text-center">
+			<div class="text-center">
 
                 <c:if test="${mode eq 'newappointment'}">
                     <a
@@ -216,10 +258,11 @@
                             class="btn btn-primary"> <spring:message code='lbl.btn.inspection.details'/> </a>
                 </c:if>
 
-                <c:if test="${occupancyCertificate.state.value ne 'Field Inspection completed' && occupancyCertificate.status.code eq 'Field Inspected'}">
-                    <input type="button" name="save" id="btnSave" value="Save"
-                           class="btn btn-primary"/>
-                </c:if>
+				<c:if
+					test="${occupancyCertificate.state.value ne 'Field Inspection completed' && occupancyCertificate.status.code eq 'Field Inspected'}">
+					<input type="button" name="save" id="btnSave" value="Save"
+						class="btn btn-primary" />
+				</c:if>
 
                 <c:if test="${createlettertoparty}">
                     <a
@@ -327,10 +370,10 @@
 </div>
 
 <script
-        src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/js/app/occupancy-certificate/occupancy-certificate-edit.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/occupancy-certificate/occupancy-certificate-edit.js?rnd=${app_release_no}'/>"></script>
 <script
-        src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-edcr-helper.js?rnd=${app_release_no}'/>"></script>
 <script
-        src="<cdn:url value='/resources/js/app/occupancy-certificate/occupancy-certificate-view.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/occupancy-certificate/occupancy-certificate-view.js?rnd=${app_release_no}'/>"></script>

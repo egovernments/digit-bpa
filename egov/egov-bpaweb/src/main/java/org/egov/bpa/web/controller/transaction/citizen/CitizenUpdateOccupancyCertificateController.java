@@ -47,6 +47,24 @@
 
 package org.egov.bpa.web.controller.transaction.citizen;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_HISTORY;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
+import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.oc.OCAppointmentSchedule;
@@ -75,179 +93,177 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_HISTORY;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
-import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-
 @Controller
 @RequestMapping(value = "/application/citizen")
 public class CitizenUpdateOccupancyCertificateController extends BpaGenericApplicationController {
 
-	public static final String OCCUPANCY_CERTIFICATE_UPDATE = "citizen-occupancy-certificate-update";
-	public static final String CITIZEN_OCCUPANCY_CERTIFICATE_VIEW = "citizen-occupancy-certificate-view";
-	private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
-	private static final String WORK_FLOW_ACTION = "workFlowAction";
-	private static final String TRUE = "TRUE";
-	private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
-	private static final String IS_CITIZEN = "isCitizen";
-	private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
-	private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
-	private static final String MESSAGE = "message";
-	private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
-	private static final String COMMON_ERROR = "common-error";
-	private static final String ADDITIONALRULE = "additionalRule";
-	@Autowired
-	private GenericBillGeneratorService genericBillGeneratorService;
-	@Autowired
-	private PositionMasterService positionMasterService;
-	@Autowired
-	private OccupancyCertificateService occupancyCertificateService;
-	@Autowired
-	private OCAppointmentScheduleService ocAppointmentScheduleService;
-	@Autowired
-	private OCLetterToPartyService ocLetterToPartyService;
-	@Autowired
-	private OCInspectionService ocInspectionService;
+    public static final String OCCUPANCY_CERTIFICATE_UPDATE = "citizen-occupancy-certificate-update";
+    public static final String CITIZEN_OCCUPANCY_CERTIFICATE_VIEW = "citizen-occupancy-certificate-view";
+    private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
+    private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String TRUE = "TRUE";
+    private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
+    private static final String IS_CITIZEN = "isCitizen";
+    private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
+    private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
+    private static final String MESSAGE = "message";
+    private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
+    private static final String COMMON_ERROR = "common-error";
+    private static final String ADDITIONALRULE = "additionalRule";
+    @Autowired
+    private GenericBillGeneratorService genericBillGeneratorService;
+    @Autowired
+    private PositionMasterService positionMasterService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private OCAppointmentScheduleService ocAppointmentScheduleService;
+    @Autowired
+    private OCLetterToPartyService ocLetterToPartyService;
+    @Autowired
+    private OCInspectionService ocInspectionService;
 
+    @GetMapping("/occupancy-certificate/update/{applicationNumber}")
+    public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
+            final HttpServletRequest request) {
+        OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
+        prepareFormData(model);
+        setCityName(model, request);
+        prepareFormData(oc, model);
+        prepareCommonModelAttribute(model, oc.isCitizenAccepted());
+        loadData(oc, model);
+        model.addAttribute("occupancyCertificate", oc);
+        if (APPLICATION_STATUS_CREATED.equals(oc.getStatus().getCode()))
+            return OCCUPANCY_CERTIFICATE_UPDATE;
+        else {
+            model.addAttribute("bpaApplication", oc.getParent());
+            return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
+        }
+    }
 
-	@GetMapping("/occupancy-certificate/update/{applicationNumber}")
-	public String showNewApplicationForm(@PathVariable final String applicationNumber, final Model model, final HttpServletRequest request) {
-		OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
-		setCityName(model, request);
-		prepareFormData(oc, model);
-		prepareCommonModelAttribute(model, oc.isCitizenAccepted());
-		loadData(oc, model);
-		model.addAttribute("occupancyCertificate", oc);
-		if (APPLICATION_STATUS_CREATED.equals(oc.getStatus().getCode()))
-			return OCCUPANCY_CERTIFICATE_UPDATE;
-		else {
-			model.addAttribute("bpaApplication", oc.getParent());
-			return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
-		}
-	}
+    private void loadData(OccupancyCertificate oc, Model model) {
+        List<OCLetterToParty> ocLetterToParties = ocLetterToPartyService.findAllByOC(oc);
+        if (!ocLetterToParties.isEmpty() && ocLetterToParties.get(0).getLetterToParty().getSentDate() != null)
+            model.addAttribute("mode", "showLPDetails");
+        model.addAttribute("letterToPartyList", ocLetterToParties);
+        if (APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
+                || APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())
+                        && !oc.getRescheduledByCitizen()) {
+            model.addAttribute("mode", "showRescheduleToCitizen");
+        }
+        model.addAttribute("inspectionList", ocInspectionService.findByOcOrderByIdAsc(oc));
+        buildAppointmentDetailsOfScrutinyAndInspection(model, oc);
+        buildReceiptDetails(oc.getDemand().getEgDemandDetails(), new HashSet<>());
+        model.addAttribute(APPLICATION_HISTORY,
+                workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
+    }
 
-	private void loadData(OccupancyCertificate oc, Model model) {
-		List<OCLetterToParty> ocLetterToParties = ocLetterToPartyService.findAllByOC(oc);
-		if (!ocLetterToParties.isEmpty() && ocLetterToParties.get(0).getLetterToParty().getSentDate() != null)
-			model.addAttribute("mode", "showLPDetails");
-		model.addAttribute("letterToPartyList", ocLetterToParties);
-		if (APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
-			|| APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())
-			   && !oc.getRescheduledByCitizen()) {
-			model.addAttribute("mode", "showRescheduleToCitizen");
-		}
-		model.addAttribute("inspectionList", ocInspectionService.findByOcOrderByIdAsc(oc));
-		buildAppointmentDetailsOfScrutinyAndInspection(model, oc);
-		buildReceiptDetails(oc.getDemand().getEgDemandDetails(), new HashSet<>());
-		model.addAttribute(APPLICATION_HISTORY,
-				workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
-	}
+    private void prepareFormData(final OccupancyCertificate oc, final Model model) {
+        model.addAttribute("isEDCRIntegrationRequire",
+                bpaApplicationValidationService.isEdcrInetgrationRequired(oc.getParent().getServiceType().getCode(),
+                        oc.getParent().getOccupancy().getDescription()));
+        model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
+        model.addAttribute("stateType", oc.getClass().getSimpleName());
+        model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
+        getDcrDocumentsUploadMode(model);
+        model.addAttribute("currentState", oc.getCurrentState() == null ? "" : oc.getCurrentState().getValue());
+    }
 
-	private void prepareFormData(final OccupancyCertificate oc, final Model model) {
-		model.addAttribute("stateType", oc.getClass().getSimpleName());
-		model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
-		model.addAttribute("currentState", oc.getCurrentState() == null ? "" : oc.getCurrentState().getValue());
-	}
+    private void setCityName(final Model model, final HttpServletRequest request) {
+        if (request.getSession().getAttribute("cityname") != null)
+            model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
+    }
 
-	private void setCityName(final Model model, final HttpServletRequest request) {
-		if (request.getSession().getAttribute("cityname") != null)
-			model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
-	}
+    @PostMapping("/occupancy-certificate/update-submit")
+    public String updateOCDetails(@Valid @ModelAttribute("occupancyCertificate") final OccupancyCertificate occupancyCertificate,
+            final HttpServletRequest request, final Model model,
+            final BindingResult errors) {
+        if (errors.hasErrors())
+            return OCCUPANCY_CERTIFICATE_UPDATE;
+        occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
+        WorkflowBean wfBean = new WorkflowBean();
+        Long userPosition = null;
+        String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
+        Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
+                && request.getParameter(CITIZEN_OR_BUSINESS_USER)
+                        .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
+                && request.getParameter(ONLINE_PAYMENT_ENABLE)
+                        .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
+        if (wfMatrix != null)
+            userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    occupancyCertificate.getParent().getSiteDetail().get(0) != null
+                            && occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary() != null
+                                    ? occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
+                                    : null);
+        if (citizenOrBusinessUser && workFlowAction != null
+                && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && (userPosition == 0 || userPosition == null)) {
+            model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
+            return OCCUPANCY_CERTIFICATE_UPDATE;
+        }
 
-	@PostMapping("/occupancy-certificate/update-submit")
-	public String createNewConnection(@Valid @ModelAttribute("occupancyCertificate") final OccupancyCertificate occupancyCertificate,
-									  final HttpServletRequest request, final Model model,
-									  final BindingResult errors) {
-		if (errors.hasErrors())
-			return OCCUPANCY_CERTIFICATE_UPDATE;
+        wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
+        OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
+        bpaUtils.updatePortalUserinbox(ocResponse, null);
+        if (workFlowAction != null
+                && workFlowAction
+                        .equals(WF_LBE_SUBMIT_BUTTON)
+                && !bpaUtils.logedInuserIsCitizen()) {
+            Position pos = positionMasterService.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
+            User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
+            String message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION, new String[] {
+                    wfUser == null ? ""
+                            : wfUser.getUsername().concat("~")
+                                    .concat(getDesinationNameByPosition(pos)),
+                    ocResponse.getApplicationNumber() }, LocaleContextHolder.getLocale());
 
-		WorkflowBean wfBean = new WorkflowBean();
-		Long userPosition = null;
-		String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-		Boolean isCitizen = request.getParameter(IS_CITIZEN) != null
-							&& request.getParameter(IS_CITIZEN)
-									  .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
-										&& request.getParameter(CITIZEN_OR_BUSINESS_USER)
-												  .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
-									  && request.getParameter(ONLINE_PAYMENT_ENABLE)
-												.equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
-		if (wfMatrix != null)
-			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					occupancyCertificate.getParent().getSiteDetail().get(0) != null
-					&& occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-					? occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary().getId() : null);
-		if (citizenOrBusinessUser && workFlowAction != null
-			&& workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-			&& (userPosition == 0 || userPosition == null)) {
-			model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
-			return OCCUPANCY_CERTIFICATE_UPDATE;
-		}
+            message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
+            model.addAttribute(MESSAGE, message);
+        } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
+            model.addAttribute(MESSAGE,
+                    "Occupancy Certificate  Application is cancelled by applicant itself successfully with application number "
+                            + ocResponse.getApplicationNumber());
+        } else {
+            model.addAttribute(MESSAGE,
+                    "Occupancy Certificate Application is successfully saved with ApplicationNumber "
+                            + ocResponse.getApplicationNumber());
+        }
+        if (workFlowAction != null
+                && workFlowAction
+                        .equals(WF_LBE_SUBMIT_BUTTON)
+                && onlinePaymentEnable && bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            return genericBillGeneratorService
+                    .generateBillAndRedirectToCollection(occupancyCertificate, model);
+        }
+        return BPAAPPLICATION_CITIZEN;
+    }
 
-		wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
-		OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
-		bpaUtils.updatePortalUserinbox(ocResponse, null);
-		if (workFlowAction != null
-			&& workFlowAction
-					.equals(WF_LBE_SUBMIT_BUTTON)
-			&& !bpaUtils.logedInuserIsCitizen()) {
-			Position pos = positionMasterService.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
-			User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
-			String message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION, new String[]{
-					wfUser == null ? "" : wfUser.getUsername().concat("~")
-												.concat(getDesinationNameByPosition(pos)),
-					ocResponse.getApplicationNumber()}, LocaleContextHolder.getLocale());
-
-			message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
-			model.addAttribute(MESSAGE, message);
-		} else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON))
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.occupancy.certificate.cancel.applnby.applicantitself.success", new String[]{ocResponse.getApplicationNumber()}, null));
-		else
-			model.addAttribute(MESSAGE,
-					messageSource.getMessage("msg.occupancy.certificate.appln.saved.succes", new String[]{ocResponse.getApplicationNumber()}, null));
-		if (workFlowAction != null
-			&& workFlowAction
-					.equals(WF_LBE_SUBMIT_BUTTON)
-			&& onlinePaymentEnable && bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
-			return genericBillGeneratorService
-					.generateBillAndRedirectToCollection(occupancyCertificate, model);
-		}
-		return BPAAPPLICATION_CITIZEN;
-	}
-
-	private void buildAppointmentDetailsOfScrutinyAndInspection(Model model, OccupancyCertificate oc) {
-		if (APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
-			|| APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())) {
-			Optional<OCSlot> activeSlotApplication = oc.getOcSlots().stream().reduce((slotAppln1, slotAppln2) -> slotAppln2);
-			if (activeSlotApplication.isPresent()) {
-				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
-				model.addAttribute("appointmentTimeRes", activeSlotApplication.get().getSlotDetail().getAppointmentTime());
-				model.addAttribute("appointmentTitle", messageSource.getMessage("msg.appointment.details.for.docscrutiny", null, null));
-			}
-		} else if (APPLICATION_STATUS_DOC_VERIFIED.equals(oc.getStatus().getCode()) && oc.getInspections().isEmpty()) {
-			List<OCAppointmentSchedule> appointmentScheduledList = ocAppointmentScheduleService.findByApplication(oc,
-					AppointmentSchedulePurpose.INSPECTION);
-			if (!appointmentScheduledList.isEmpty()) {
-				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentDate()));
-				model.addAttribute("appointmentTimeRes", appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentTime());
-				model.addAttribute("appmntInspnRemarks", appointmentScheduledList.get(0).getAppointmentScheduleCommon().isPostponed() ? appointmentScheduledList.get(0).getAppointmentScheduleCommon().getPostponementReason() : appointmentScheduledList.get(0).getAppointmentScheduleCommon().getRemarks());
-				model.addAttribute("appointmentTitle", messageSource.getMessage("msg.appointment.details.for.fieldinspec", null, null));
-			}
-		}
-	}
+    private void buildAppointmentDetailsOfScrutinyAndInspection(Model model, OccupancyCertificate oc) {
+        if (APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
+                || APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())) {
+            Optional<OCSlot> activeSlotApplication = oc.getOcSlots().stream().reduce((slotAppln1, slotAppln2) -> slotAppln2);
+            if (activeSlotApplication.isPresent()) {
+                model.addAttribute("appointmentDateRes", DateUtils
+                        .toDefaultDateFormat(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
+                model.addAttribute("appointmentTimeRes", activeSlotApplication.get().getSlotDetail().getAppointmentTime());
+                model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Document Scrutiny");
+            }
+        } else if (APPLICATION_STATUS_DOC_VERIFIED.equals(oc.getStatus().getCode()) && oc.getInspections().isEmpty()) {
+            List<OCAppointmentSchedule> appointmentScheduledList = ocAppointmentScheduleService.findByApplication(oc,
+                    AppointmentSchedulePurpose.INSPECTION);
+            if (!appointmentScheduledList.isEmpty()) {
+                model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(
+                        appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentDate()));
+                model.addAttribute("appointmentTimeRes",
+                        appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentTime());
+                model.addAttribute("appmntInspnRemarks",
+                        appointmentScheduledList.get(0).getAppointmentScheduleCommon().isPostponed()
+                                ? appointmentScheduledList.get(0).getAppointmentScheduleCommon().getPostponementReason()
+                                : appointmentScheduledList.get(0).getAppointmentScheduleCommon().getRemarks());
+                model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Field Inspection");
+            }
+        }
+    }
 }

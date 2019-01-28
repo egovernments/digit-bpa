@@ -47,6 +47,7 @@
 
 package org.egov.edcr.repository;
 
+import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -54,5 +55,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EdcrApplicationRepository extends JpaRepository<EdcrApplication, Long> {
 
-    public EdcrApplication findByApplicationNumber(String applicationNumber);
+	public EdcrApplication findByApplicationNumber(String applicationNumber);
+
+	EdcrApplication findByApplicationNumberAndApplicationType(String applicationNumber, ApplicationType type);
+
+	EdcrApplication findByPlanPermitNumber(String permitNumber);
 }

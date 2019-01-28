@@ -65,21 +65,26 @@
 			<form:hidden path="" value="${isApproveValid}" id="isApproveValid"
 				name="isApproveValid" />
 			<form:hidden path="" id="wfstateDesc"
-						 value="${occupancyCertificate.state.value}" />
-			<input type="hidden" id="authorizedToSubmitPlan" value="${occupancyCertificate.authorizedToSubmitPlan}"/>
+				value="${occupancyCertificate.state.value}" />
+			<input type="hidden" id="authorizedToSubmitPlan"
+				value="${occupancyCertificate.authorizedToSubmitPlan}" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
-									  href="#application-info" data-tabidx=0><spring:message
-						code='lbl.appln.details' /></a></li>
+					href="#application-info" data-tabidx=0><spring:message
+							code='lbl.appln.details' /></a></li>
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
-						code='title.documentdetail' /></a></li>
-				<li><a data-toggle="tab" href="#noc-document-info" data-tabidx=2><spring:message
-						code='lbl.noc.doc.details' /></a></li>
+							code='title.documentdetail' /></a></li>
+				<li><a data-toggle="tab" href="#noc-document-info"
+					data-tabidx=2><spring:message code='lbl.noc.doc.details' /></a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="application-info" class="tab-pane fade in active">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-oc-application-details.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include
+							page="../application/edcr-application-details-form.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-bpa-basic-application-details.jsp"></jsp:include>
@@ -95,6 +100,7 @@
 				</div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="view-oc-dcr-documents.jsp"></jsp:include>
 						<jsp:include page="view-oc-documents.jsp"></jsp:include>
 					</div>
 				</div>
@@ -105,7 +111,7 @@
 				</div>
 			</div>
 			<div align="center">
-					<%--<c:if test="${ occupancyCertificate.status.code eq 'Scheduled For Document Scrutiny'
+				<%--<c:if test="${ occupancyCertificate.status.code eq 'Scheduled For Document Scrutiny'
                                     || occupancyCertificate.status.code eq 'Pending For Rescheduling For Document Scrutiny'
                                     || occupancyCertificate.status.code eq 'Rescheduled For Document Scrutiny'}">
                         <a
@@ -130,9 +136,8 @@
                                     class="btn btn-primary"> Document Scrutiny </a>
                         </c:if>
                     </c:if>--%>
-				<input
-						type="button" name="button2" id="button2" value="Close"
-						class="btn btn-default" onclick="window.close();"/>
+				<input type="button" name="button2" id="button2" value="Close"
+					class="btn btn-default" onclick="window.close();" />
 			</div>
 		</form:form>
 		<input type="hidden" id="requiredSignedDocuments" value="<spring:message code='msg.validate.license.requires.tosubmt.signed.plandocs.ondocscrutiny' />"/>
@@ -158,7 +163,8 @@
 	</div>
 </div>
 
-<link rel="stylesheet" href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-tagsinput.css?rnd=${app_release_no}' context='/egi'/>">
 <script
@@ -170,5 +176,5 @@
 <script
 	src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-document-scrutiny.js?rnd=${app_release_no}'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
-	
+	src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-edcr-helper.js?rnd=${app_release_no}'/>"></script>
+

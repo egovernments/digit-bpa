@@ -95,4 +95,17 @@
         <put-attribute name="body"
                        value="/WEB-INF/views/common/dcr-acknowledgement.jsp" />
     </definition>
+    <definition name="oc-plan-scrutiny-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.edr.oc.scrutiny.submit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/edcrapplication/oc-plan-scrutiny-new.jsp"/>
+    </definition>
+    <definition name="oc-resubmit-plan-scrutiny-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.edr.oc.scrutiny.resubmit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/edcrapplication/oc-resubmit-plan-scrutiny.jsp"/>
+    </definition>
+    <definition name="oc-plan-scrutiny-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.edr.oc.scrutiny.resubmit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/edcrapplication/oc-plan-scrutiny-result.jsp"/>
+    </definition>
+    
 </tiles-definitions>

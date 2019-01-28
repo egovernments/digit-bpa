@@ -47,6 +47,16 @@
 
 package org.egov.bpa.web.controller.transaction.citizen;
 
+import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+
+import java.util.Arrays;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
@@ -62,134 +72,131 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Date;
-
-import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/application/citizen")
 public class CitizenNewOccupancyCertificateController extends BpaGenericApplicationController {
 
-	private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
+    private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
 
-	private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String WORK_FLOW_ACTION = "workFlowAction";
 
-	private static final String TRUE = "TRUE";
+    private static final String TRUE = "TRUE";
 
-	private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
+    private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
 
-	private static final String IS_CITIZEN = "isCitizen";
+    private static final String IS_CITIZEN = "isCitizen";
 
-	private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
+    private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
 
-	private static final String MESSAGE = "message";
+    private static final String MESSAGE = "message";
 
-	private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
+    private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
 
-	public static final String CITIZEN_OCCUPANCY_CERTIFICATE_NEW = "citizen-occupancy-certificate-new";
+    public static final String CITIZEN_OCCUPANCY_CERTIFICATE_NEW = "citizen-occupancy-certificate-new";
 
-	@Autowired
-	private GenericBillGeneratorService genericBillGeneratorService;
-	@Autowired
-	private PositionMasterService positionMasterService;
-	@Autowired
-	private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private GenericBillGeneratorService genericBillGeneratorService;
+    @Autowired
+    private PositionMasterService positionMasterService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
 
+    @GetMapping("/occupancy-certificate/apply")
+    public String newOCForm(final Model model, final HttpServletRequest request) {
+        OccupancyCertificate occupancyCertificate = new OccupancyCertificate();
+        occupancyCertificate.setApplicationDate(new Date());
+        occupancyCertificate.setSource(Source.CITIZENPORTAL);
+        occupancyCertificate.setApplicationType("Occupancy Certificate");
+        model.addAttribute("mode", "new");
+        model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
+        setCityName(model, request);
+        getDcrDocumentsUploadMode(model);
+        prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
+        model.addAttribute("occupancyCertificate", occupancyCertificate);
+        return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+    }
 
-	@RequestMapping(value = "/occupancy-certificate/apply", method = GET)
-	public String showNewApplicationForm(final Model model, final HttpServletRequest request) {
-		OccupancyCertificate occupancyCertificate = new OccupancyCertificate();
-		occupancyCertificate.setApplicationDate(new Date());
-		occupancyCertificate.setSource(Source.CITIZENPORTAL);
-		occupancyCertificate.setApplicationType("Occupancy Certificate");
-		setCityName(model, request);
-		prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
-		model.addAttribute("occupancyCertificate", occupancyCertificate);
-		return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-	}
+    private void setCityName(final Model model, final HttpServletRequest request) {
+        if (request.getSession().getAttribute("cityname") != null)
+            model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
+    }
 
-	private void setCityName(final Model model, final HttpServletRequest request) {
-		if (request.getSession().getAttribute("cityname") != null)
-			model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
-	}
+    @PostMapping("/occupancy-certificate/submit")
+    public String submitOCDetails(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
+            final HttpServletRequest request, final Model model,
+            final BindingResult errors) {
+        if (errors.hasErrors()) {
+            return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+        }
 
-	@RequestMapping(value = "/occupancy-certificate/submit", method = POST)
-	public String createNewConnection(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
-									  final HttpServletRequest request, final Model model,
-									  final BindingResult errors) {
-		if (errors.hasErrors()) {
-			return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-		}
+        occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
+        WorkflowBean wfBean = new WorkflowBean();
+        Long userPosition = null;
+        String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
+        Boolean isCitizen = request.getParameter(IS_CITIZEN) != null
+                && request.getParameter(IS_CITIZEN)
+                        .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
+                && request.getParameter(CITIZEN_OR_BUSINESS_USER)
+                        .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
+                && request.getParameter(ONLINE_PAYMENT_ENABLE)
+                        .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
+        if (wfMatrix != null)
+            userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    occupancyCertificate.getParent().getSiteDetail().get(0) != null
+                            && occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary() != null
+                                    ? occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
+                                    : null);
+        if (citizenOrBusinessUser && workFlowAction != null
+                && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && (userPosition == 0 || userPosition == null)) {
+            model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
+            return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+        }
 
-		WorkflowBean wfBean = new WorkflowBean();
-		Long userPosition = null;
-		String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-		Boolean isCitizen = request.getParameter(IS_CITIZEN) != null
-							&& request.getParameter(IS_CITIZEN)
-									  .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
-										&& request.getParameter(CITIZEN_OR_BUSINESS_USER)
-												  .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
-									  && request.getParameter(ONLINE_PAYMENT_ENABLE)
-												.equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
-		if (wfMatrix != null)
-			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					occupancyCertificate.getParent().getSiteDetail().get(0) != null
-					&& occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-					? occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary().getId() : null);
-		if (citizenOrBusinessUser && workFlowAction != null
-			&& workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-			&& (userPosition == 0 || userPosition == null)) {
-			model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
-			return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-		}
+        wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
+        OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
+        if (citizenOrBusinessUser) {
+            if (isCitizen)
+                bpaUtils.createPortalUserinbox(ocResponse, Arrays.asList(ocResponse.getParent().getOwner().getUser(),
+                        ocResponse.getParent().getStakeHolder().get(0).getStakeHolder()), workFlowAction);
+            else
+                bpaUtils.createPortalUserinbox(ocResponse,
+                        Arrays.asList(ocResponse.getParent().getOwner().getUser(), securityUtils.getCurrentUser()),
+                        workFlowAction);
+        }
+        if (workFlowAction != null
+                && workFlowAction
+                        .equals(WF_LBE_SUBMIT_BUTTON)
+                && !bpaUtils.logedInuserIsCitizen()) {
+            Position pos = positionMasterService.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
+            User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
+            String message = messageSource.getMessage("msg.portal.forward.registration", new String[] {
+                    wfUser == null ? ""
+                            : wfUser.getUsername().concat("~")
+                                    .concat(getDesinationNameByPosition(pos)),
+                    ocResponse.getApplicationNumber() }, LocaleContextHolder.getLocale());
 
-		wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
-		OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
-		if (citizenOrBusinessUser) {
-			if (isCitizen)
-				bpaUtils.createPortalUserinbox(ocResponse, Arrays.asList(ocResponse.getParent().getOwner().getUser(),
-						ocResponse.getParent().getStakeHolder().get(0).getStakeHolder()), workFlowAction);
-			else
-				bpaUtils.createPortalUserinbox(ocResponse,
-						Arrays.asList(ocResponse.getParent().getOwner().getUser(), securityUtils.getCurrentUser()), workFlowAction);
-		}
-		if (workFlowAction != null
-			&& workFlowAction
-					.equals(WF_LBE_SUBMIT_BUTTON)
-			&& !bpaUtils.logedInuserIsCitizen()) {
-			Position pos = positionMasterService.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
-			User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
-			String message = messageSource.getMessage("msg.portal.forward.registration", new String[]{
-					wfUser == null ? "" : wfUser.getUsername().concat("~")
-												.concat(getDesinationNameByPosition(pos)),
-					ocResponse.getApplicationNumber()}, LocaleContextHolder.getLocale());
-
-			message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
-			model.addAttribute(MESSAGE, message);
-		} else
-			model.addAttribute(MESSAGE,
-					"Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".");
-
-		if (workFlowAction != null
-			&& workFlowAction
-					.equals(WF_LBE_SUBMIT_BUTTON)
-			&& onlinePaymentEnable && bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
-			return genericBillGeneratorService
-					.generateBillAndRedirectToCollection(occupancyCertificate, model);
-		}
-		return BPAAPPLICATION_CITIZEN;
-	}
+            message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
+            model.addAttribute(MESSAGE, message);
+        } else {
+            model.addAttribute(MESSAGE,
+                    "Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".");
+        }
+        if (workFlowAction != null
+                && workFlowAction
+                        .equals(WF_LBE_SUBMIT_BUTTON)
+                && onlinePaymentEnable && bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            return genericBillGeneratorService
+                    .generateBillAndRedirectToCollection(occupancyCertificate, model);
+        }
+        return BPAAPPLICATION_CITIZEN;
+    }
 }

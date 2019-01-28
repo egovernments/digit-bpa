@@ -55,8 +55,8 @@ $(document).ready(function () {
     }
 
     var row = '<tr>' +
-        '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].application" value="{{applicationId}}" /><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitConditionType" value="ADDITIONAL_PERMITCONDITION"/><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitCondition" value="{{permitConditionId}}"/><input type="hidden" class="serialNo" data-sno name="additionalPermitConditionsTemp[{{idx}}].orderNumber"/></td>' +
-        '<td><textarea class="form-control patternvalidation additionalPermitCondition" rows="2" maxlength="500" name="additionalPermitConditionsTemp[{{idx}}].additionalPermitCondition"/></td>';
+        '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalRejectReasonsTemp[{{idx}}].oc" value="{{applicationId}}" /><input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].type" value="ADDITIONAL_PERMITCONDITION"/><input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition" value="{{permitConditionId}}"/><input type="hidden" class="serialNo" data-sno name="additionalRejectReasonsTemp[{{idx}}].orderNumber"/></td>' +
+        '<td><textarea class="form-control patternvalidation additionalPermitCondition" rows="2" maxlength="500" name="additionalRejectReasonsTemp[{{idx}}].additionalCondition"/></td>';
 
     var tbody1 = $('#bpaAdditionalRejectionReasons').children('tbody');
     var table1 = tbody1.length ? tbody1 : $('#bpaAdditionalRejectionReasons');
@@ -85,7 +85,7 @@ $(document).ready(function () {
             });
         }
     }());
-
+    
     roundOfDecimalPlaces();
 
     function roundOfDecimalPlaces() {

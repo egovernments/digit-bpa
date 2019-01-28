@@ -5,6 +5,7 @@ import static org.egov.edcr.utility.DcrConstants.APPLICATION_MODULE_TYPE;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.Plan;
 import org.egov.infra.admin.master.entity.Module;
@@ -41,8 +42,13 @@ public class PortalInetgrationService {
         Plan plan  = application.getEdcrApplicationDetails().get(lastObjectIndex).getPlan();
         Module module = moduleService.getModuleByName(APPLICATION_MODULE_TYPE);
         String url = "/edcr/edcrapplication/view/" + application.getApplicationNumber();
+        String serviceName;
+        if(ApplicationType.OCCUPANCY_CERTIFICATE.equals(application.getApplicationType()))
+            serviceName = ApplicationType.OCCUPANCY_CERTIFICATE.getApplicationTypeVal();
+        else
+            serviceName = plan.getPlanInformation().getServiceType();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,application.getApplicantName(),
-                plan.getPlanInformation().getServiceType(), application.getApplicationNumber(),
+        		serviceName, application.getApplicationNumber(),
                 application.getEdcrApplicationDetails().get(0).getDcrNumber(), application.getId(), "Sucess", "Sucess", url, true,
                 application.getStatus(), new Date(), null, portalInboxUser);
 

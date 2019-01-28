@@ -130,9 +130,8 @@ $(document).ready(
 					}
 				});
 
-				/* Auto populate mapped election wards is disabled.
-				   When Mapped election wards auto population require need to be enable below code.*/
-				//populateElectionWardByRevenueWard();
+				
+				populateElectionWardByRevenueWard();
 				
 			});
 			
@@ -323,153 +322,7 @@ $(document).ready(
 							});
 
 
-            function loadDocumentsByServiceTypeAndChecklistType(serviceType, checklistType) {
-                $
-                    .ajax({
-                        url : "/bpa/application/getdocumentlistbyservicetype",
-                        type : "GET",
-                        data : {
-                            serviceType : serviceType,
-                            checklistType : checklistType
-                        },
-                        dataType : "json",
-                        success : function(response) {
-                        	if('OCGENERALDOCUMENTS' === checklistType)
-                            	appendOCGeneralDocuments(response);
-                        	else if('OCNOC' === checklistType)
-                                appendOCNOCDocuments(response);
-                        },
-                        error : function(response) {
-
-                        }
-                    });
-            }
-
-            function appendOCGeneralDocuments(response) {
-                $('#ocDocumentsBody').empty();
-                $
-                    .each(
-                        response,
-                        function(index, checklist) {
-                            $('#ocDocumentsBody')
-                                .append(
-                                    '<div class="form-group">'
-                                    + '<div class="col-sm-3 add-margin check-text"> <input type="hidden"'
-                                    + index
-                                    + 'checklistDetail" name="documents['
-                                    + index
-                                    + '].document.checklistDetail" value="'
-                                    + checklist.id
-                                    + '">'
-                                    + '<input type="hidden"'
-                                    + index
-                                    + 'checklistDetail" name="documents['
-                                    + index
-                                    + '].document.checklistDetail.isMandatory" value="'
-                                    + checklist.isMandatory
-                                    + '">'
-                                    + '<input type="hidden"'
-                                    + index
-                                    + 'checklistDetail.description" name="documents['
-                                    + index
-                                    + '].document.checklistDetail.description" value="'
-                                    + checklist.description
-                                    + '">'
-                                    + checklist.description
-                                    + (checklist.isMandatory ? '<span class="mandatory"></span>'
-                                    : '')
-                                    + '</div>'
-                                    + '<div class="col-sm-3 add-margin "><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="256" name="documents['
-                                    + index
-                                    + '].document.remarks" /></div>'
-                                    + '<div class="col-sm-6 add-margin "><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
-                                    + (checklist.isMandatory ? "required"
-                                    : '')
-                                    + '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="documents['
-                                    + index
-                                    + '].document.files"> <i class="fa fa-plus" aria-hidden="true"></i></a></div></div>'
-                                    + '</div>'
-                                    + '</div>');
-                        });
-            }
-
-            function appendOCNOCDocuments(response) {
-                $('#ocNOCDocumentsBody').empty();
-                $
-                    .each(
-                        response,
-                        function(index, checklist) {
-                            $('#ocNOCDocumentsBody')
-                                .append(
-                                    '<tr>'
-                                    + '<td>'
-									+ parseInt(index + 1)
-                                    + '</td>'
-                                    + '<td> <input type="hidden"'
-                                    + 'checklistDetail" name="nocDocuments['
-                                    + index
-                                    + '].nocDocument.checklist" value="'
-                                    + checklist.id
-                                    + '">'
-                                    + '<input type="hidden"'
-                                    + index
-                                    + 'checklistDetail" name="nocDocuments['
-                                    + index
-                                    + '].nocDocument.checklist.isMandatory" value="'
-                                    +  checklist.isMandatory
-                                    + '">'
-                                    + checklist.description
-                                    + (checklist.isMandatory ? '<span class="mandatory"></span>'
-                                    : '')
-                                    + '</td>'
-                                    + '<td><div class="input-group"><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="1000"'
-									+ 'id="nocDocuments'
-                                    + index
-									+ 'natureOfRequest" name="nocDocuments['
-                                    + index
-                                    + '].nocDocument.natureOfRequest" /><span class="input-group-addon showModal"'
-                                    + ' data-assign-to="nocDocuments'
-									+ index
-									+ 'natureOfRequest" data-header="Nature Of NOC Request"><span class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span></div></td>'
-                                    + '<td class="hide"><input class="form-control datepicker letterSentOn"'
-							        + 'data-date-end-date="0d"'
-                            		+ 'name="nocDocuments['
-									+ index
-									+ '].nocDocument.letterSentOn"/>'
-                                    + '</td>'
-                                    + '<td class="hide"><input class="form-control datepicker replyReceivedOn"'
-                                    + 'data-date-end-date="0d"'
-                                    + 'name="nocDocuments['
-									+ index
-									+ '].nocDocument.replyReceivedOn"/>'
-                                    + '</td>'
-                                    + '<td class="hide"><select name="nocDocuments['
-									+ index
-									+ '].nocDocument.nocStatus"'
-                           		 	+ 'class="form-control nocStatus">'
-                                	+ '<option value="">Select</option>'
-                                	+ '</select>'
-                                	+ '</td>'
-                                    + '<td><div class="input-group"><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="1000"'
-									+ ' id="nocDocuments'
-                                    + index
-									+ 'remarks" name="nocDocuments['
-                                    + index
-                                    + '].nocDocument.remarks" /><span class="input-group-addon showModal"'
-                                    + ' data-assign-to="nocDocuments'
-                                    + index
-                                    + 'remarks" data-header="Remarks"><span'
-                                    + ' class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span></div></td>'
-                                    + '<td><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
-                                    + (checklist.isMandatory ? "required"
-                                    : '')
-                                    + '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="nocDocuments['
-                                    + index
-                                    + '].nocDocument.files"> <i class="fa fa-plus" aria-hidden="true"></i></a></div></div>'
-                                    + '</td>'
-                                    + '</tr>');
-                        });
-            }
+            
 
 			// toggle between multiple tab
 			$('form').validate({
@@ -643,36 +496,265 @@ $(document).ready(
             	}
             });
 
-            $('#planPermissionNumber').change(function(){
-                $.ajax({
-                    url: "/bpa/application/findby-permit-number",
-                    type: "GET",
-                    data: {
-                        permitNumber : $('#planPermissionNumber').val()
-                    },
-                    cache : false,
-                    dataType: "json",
-                    success: function (response) {
-                        if(response){
-                        	loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCGENERALDOCUMENTS');
-                            loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCNOC');
-                            $('#serviceType').html(response.serviceTypeDesc);
-                            $('#occupancy').html(response.occupancy);
-                            $('#dcrNumber').html(response.dcrNumber);
-                            $('#applicationType').html(response.applicationType);
-                            $('.applicantName').html(response.applicantName);
-                            $('#bpaApplicationId').val(response.id);
-                            $('#applicationNumber').val(response.applicationNumber);
-                            $('#planPermissionNumber').val(response.planPermissionNumber);
-                        }else{
-                           console.log("No application details available");
-                        }
-                    },
-                    error: function (response) {
-                        console.log("Error occurred while retrieving application details!!!!!!!");
-                    }
-                });
-            });
-
-
 	});
+
+
+	function loadDocumentsByServiceTypeAndChecklistType(serviceType, checklistType) {
+	    $
+	        .ajax({
+	            url : "/bpa/application/getdocumentlistbyservicetype",
+	            type : "GET",
+	            async: false,
+	            data : {
+	                serviceType : serviceType,
+	                checklistType : checklistType
+	            },
+	            dataType : "json",
+	            success : function(response) {
+	            	if('OCGENERALDOCUMENTS' === checklistType)
+	                	appendOCGeneralDocuments(response);
+	            	else if('OCDCRDOCUMENTS' === checklistType)
+	                	appendOCDCRDocuments(response);
+	            	else if('OCNOC' === checklistType)
+	                    appendOCNOCDocuments(response);
+	            },
+	            error : function(response) {
+	
+	            }
+	        });
+	}
+	
+	function appendOCGeneralDocuments(response) {
+	    $('#ocDocumentsBody').empty();
+	    $
+	        .each(
+	            response,
+	            function(index, checklist) {
+	                $('#ocDocumentsBody')
+	                    .append(
+	                        '<div class="form-group">'
+	                        + '<div class="col-sm-3 add-margin check-text"> <input type="hidden" class="checklistDetail'
+	                        + index
+	                        + '" name="documents['
+	                        + index
+	                        + '].document.checklistDetail" value="'
+	                        + checklist.id
+	                        + '">'
+	                        + '<input type="hidden" name="documents['
+	                        + index
+	                        + '].document.checklistDetail.isMandatory" value="'
+	                        + checklist.isMandatory
+	                        + '">'
+	                        + '<input type="hidden" name="documents['
+	                        + index
+	                        + '].document.checklistDetail.description" value="'
+	                        + checklist.description
+	                        + '">'
+	                        + checklist.description
+	                        + (checklist.isMandatory ? '<span class="mandatory"></span>'
+	                        : '')
+	                        + '</div>'
+	                        + '<div class="col-sm-3 add-margin "><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="256" name="documents['
+	                        + index
+	                        + '].document.remarks" /></div>'
+	                        + '<div class="col-sm-6 add-margin "><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
+	                        + (checklist.isMandatory ? "required"
+	                        : '')
+	                        + '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="documents['
+	                        + index
+	                        + '].document.files"> <i class="fa fa-plus" aria-hidden="true"></i></a></div></div>'
+	                        + '</div>'
+	                        + '</div>');
+	            });
+	}
+	
+	function appendOCDCRDocuments(response) {
+	    $('#ocDCRDocumentsBody').empty();
+	    $
+	        .each(
+	            response,
+	            function(index, checklist) {
+	            	var auto = $('#dcrDocsAutoPopulate').val();
+	            	var manual = $('#dcrDocsManuallyUpload').val();
+	            	var override = $('#dcrDocsAutoPopulateAndManuallyUpload').val();
+	            	var splittedChklistDesc = checklist.description.split(" ");
+	            	var checklistName = splittedChklistDesc.join("_");
+	            	console.log(checklistName);
+	            	
+	            	var whenAuto = '<div class="col-sm-6 add-margin autoPopulateDcrDocs"><div class="files-viewer '
+	            		+checklistName
+	            		+'"><input type="hidden" name="dcrDocuments['
+	            		+ index
+	            		+'].dcrDocument.fileStoreIds" id="fileStoreIds" class="'
+	            		+checklistName
+	            		+'_fileStoreIds" > </div> </div>';
+	            	var whenManualOrOverride = '<div class="col-sm-6 add-margin "><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
+                        + (checklist.isMandatory ? "required"
+    	                        : '')
+    	                        + '> <div class="files-viewer '
+    	                        +checklistName
+    	                        +'"><input type="hidden" name="dcrDocuments['
+    	                        +index
+    	                        +'].dcrDocument.fileStoreIds" id="fileStoreIds" class="'
+    	                        +checklistName
+    	                        +'_fileStoreIds dcrFileStoreIds" > <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="dcrDocuments['
+    	                        + index
+    	                        + '].dcrDocument.files"> <i class="fa fa-plus" aria-hidden="true"></i></a></div></div>';
+	            	var appendFileAdd;
+	            	if(auto === 'true' && manual === 'false' && override === 'false') {
+	            		appendFileAdd = whenAuto;
+	            	} else {
+	            		appendFileAdd = whenManualOrOverride;
+	            	}
+	            		
+	                $('#ocDCRDocumentsBody')
+	                    .append(
+	                        '<div class="form-group">'
+	                        + '<div class="col-sm-3 add-margin check-text"> <input type="hidden" name="dcrDocuments['
+	                        + index
+	                        + '].dcrDocument.checklistDtl" value="'
+	                        + checklist.id
+	                        + '">'
+	                        + '<input type="hidden" name="dcrDocuments['
+	                        + index
+	                        + '].dcrDocument.checklistDtl.isMandatory" value="'
+	                        + checklist.isMandatory
+	                        + '">'
+	                        + '<input type="hidden" name="dcrDocuments['
+	                        + index
+	                        + '].dcrDocument.checklistDtl.description" value="'
+	                        + checklist.description
+	                        + '">'
+	                        + checklist.description
+	                        + (checklist.isMandatory ? '<span class="mandatory"></span>'
+	                        : '')
+	                        + '</div>'
+	                        + '<div class="col-sm-3 add-margin "><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="256" name="dcrDocuments['
+	                        + index
+	                        + '].dcrDocument.remarks" /></div>'
+	                        + appendFileAdd
+	                        + '</div>'
+	                        + '</div>');
+	            });
+	}
+	
+	function appendOCNOCDocuments(response) {
+	    $('#ocNOCDocumentsBody').empty();
+	    $
+	        .each(
+	            response,
+	            function(index, checklist) {
+	                $('#ocNOCDocumentsBody')
+	                    .append(
+	                        '<tr>'
+	                        + '<td>'
+							+ parseInt(index + 1)
+	                        + '</td>'
+	                        + '<td> <input type="hidden"'
+	                        + 'checklistDetail" name="nocDocuments['
+	                        + index
+	                        + '].nocDocument.checklist" value="'
+	                        + checklist.id
+	                        + '">'
+	                        + '<input type="hidden"'
+	                        + index
+	                        + 'checklistDetail" name="nocDocuments['
+	                        + index
+	                        + '].nocDocument.checklist.isMandatory" value="'
+	                        +  checklist.isMandatory
+	                        + '">'
+	                        + checklist.description
+	                        + (checklist.isMandatory ? '<span class="mandatory"></span>'
+	                        : '')
+	                        + '</td>'
+	                        + '<td><div class="input-group"><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="1000"'
+							+ 'id="nocDocuments'
+	                        + index
+							+ 'natureOfRequest" name="nocDocuments['
+	                        + index
+	                        + '].nocDocument.natureOfRequest" /><span class="input-group-addon showModal"'
+	                        + ' data-assign-to="nocDocuments'
+							+ index
+							+ 'natureOfRequest" data-header="Nature Of NOC Request"><span class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span></div></td>'
+	                        + '<td class="hide"><input class="form-control datepicker letterSentOn"'
+					        + 'data-date-end-date="0d"'
+	                		+ 'name="nocDocuments['
+							+ index
+							+ '].nocDocument.letterSentOn"/>'
+	                        + '</td>'
+	                        + '<td class="hide"><input class="form-control datepicker replyReceivedOn"'
+	                        + 'data-date-end-date="0d"'
+	                        + 'name="nocDocuments['
+							+ index
+							+ '].nocDocument.replyReceivedOn"/>'
+	                        + '</td>'
+	                        + '<td class="hide"><select name="nocDocuments['
+							+ index
+							+ '].nocDocument.nocStatus"'
+	               		 	+ 'class="form-control nocStatus">'
+	                    	+ '<option value="">Select</option>'
+	                    	+ '</select>'
+	                    	+ '</td>'
+	                        + '<td><div class="input-group"><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="1000"'
+							+ ' id="nocDocuments'
+	                        + index
+							+ 'remarks" name="nocDocuments['
+	                        + index
+	                        + '].nocDocument.remarks" /><span class="input-group-addon showModal"'
+	                        + ' data-assign-to="nocDocuments'
+	                        + index
+	                        + 'remarks" data-header="Remarks"><span'
+	                        + ' class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span></div></td>'
+	                        + '<td><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
+	                        + (checklist.isMandatory ? "required"
+	                        : '')
+	                        + '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="nocDocuments['
+	                        + index
+	                        + '].nocDocument.files"> <i class="fa fa-plus" aria-hidden="true"></i></a></div></div>'
+	                        + '</td>'
+	                        + '</tr>');
+	            });
+	}
+
+	function getApplicationByPermitNo(permitNo) {
+		var isExist = false;
+		$.ajax({
+	        url: "/bpa/application/findby-permit-number",
+	        type: "GET",
+	        data: {
+	            permitNumber : permitNo
+	        },
+	        cache : false,
+	        async: false,
+	        dataType: "json",
+	        success: function (response) {
+	            if(response) {
+	            	isExist = true;
+	            	loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCDCRDOCUMENTS');
+	            	loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCGENERALDOCUMENTS');
+	                loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCNOC');
+	                $('#serviceTypeDesc').val(response.serviceTypeDesc);
+	                $('#serviceType').val(response.serviceTypeId);
+	                $('#serviceTypeCode').val(response.serviceTypeCode);
+	                $('#occupancy').val(response.occupancy);
+	                $('#applicationType').val(response.applicationType);
+	                $('.applicantName').val(response.applicantName);
+	                $('#bpaApplicationId').val(response.id);
+	                $('#applicationNumber').val(response.applicationNumber);
+	                $('#planPermissionNumber').val(response.planPermissionNumber);
+	                $('#zone').val(response.zone);
+	                $('#revenueWard').val(response.revenueWard);
+	                $('#resurveyNumber').val(response.reSurveyNumber);
+	                $('#village').val(response.village);
+	                $('#plotArea').val(response.plotArea);
+	            } else {
+	            	$('.resetValues').val('');
+	               console.log("No application details available");
+	            }
+	        },
+	        error: function (response) {
+	            console.log("Error occurred while retrieving application details!!!!!!!");
+	        }
+	    });
+		return isExist;
+	}

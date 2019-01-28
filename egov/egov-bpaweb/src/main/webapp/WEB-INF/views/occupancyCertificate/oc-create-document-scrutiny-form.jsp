@@ -257,13 +257,28 @@
 							</div>
 						</div>
 					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="oc-rejection-reasons.jsp"></jsp:include>
+					</div>
 				</div>
 				<div id="applicant-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-oc-application-details.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include
+							page="../application/edcr-application-details-form.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-bpa-basic-application-details.jsp"></jsp:include>
+					</div>
+					<c:if test="${not empty occupancyCertificate.existingBuildings}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-oc-existing-building-details.jsp"></jsp:include>
+						</div>
+					</c:if>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="view-oc-building-details.jsp"></jsp:include>
 					</div>
 					<c:if test="${not empty  occupancyCertificate.receipts}">
 						<div class="panel panel-primary" data-collapsed="0">
@@ -278,7 +293,7 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<c:if test="${showDcrDocuments}">
 							<div class="dcrDocuments">
-								<jsp:include page=""></jsp:include>
+								<jsp:include page="oc-dcr-documents.jsp"></jsp:include>
 							</div>
 						</c:if>
 						<jsp:include page="oc-general-documents.jsp"></jsp:include>
@@ -327,9 +342,9 @@
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/js/app/application-view.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/occupancy-certificate/occupancy-certificate-view.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-document-scrutiny.js?rnd=${app_release_no}'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-edcr-helper.js?rnd=${app_release_no}'/>"></script>
 	
