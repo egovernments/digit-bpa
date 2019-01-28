@@ -52,7 +52,7 @@
     <parent>
         <groupId>org.egov</groupId>
         <artifactId>egov-erp</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>BPA-3.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -63,23 +63,23 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>BPA-3.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-eis</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>BPA-3.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-config</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>BPA-3.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>BPA-3.0.0-SNAPSHOT</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
@@ -87,7 +87,7 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-config</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>BPA-3.0.0-SNAPSHOT</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-eis</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>BPA-3.0.0-SNAPSHOT</version>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>

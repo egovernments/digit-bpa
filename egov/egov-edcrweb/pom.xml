@@ -5,32 +5,32 @@
 	 <parent>
         <artifactId>egov-erp</artifactId>
         <groupId>org.egov</groupId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>BPA-3.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 	
 	<name>e-governments edcrweb</name>
 	<groupId>org.egov</groupId>
 	<artifactId>egov-edcrweb</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>BPA-3.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egi</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>BPA-3.0.0-SNAPSHOT</version>
 		</dependency>
 	 
 			<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-bpa</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>BPA-3.0.0-SNAPSHOT</version>
 		</dependency>
 			<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-edcr</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
+			<version>BPA-3.0.0-SNAPSHOT</version>
 		</dependency>
 	
 		<!-- VIEWS RELATED END -->
