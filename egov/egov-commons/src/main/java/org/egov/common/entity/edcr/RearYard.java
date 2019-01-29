@@ -49,7 +49,7 @@ package org.egov.common.entity.edcr;
 
 public class RearYard extends Measurement {
 
-	private static final long serialVersionUID = 43L;
+    private static final long serialVersionUID = 43L;
 
-	public static final Object NAME = "REAR_YARD";
+    public static final Object NAME = "REAR_YARD";
 }

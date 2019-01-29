@@ -48,14 +48,14 @@
 package org.egov.common.entity.edcr;
 
 public class WellUtility extends Measurement {
-	private static final long serialVersionUID = 46L;
-	private String type;
+    private static final long serialVersionUID = 46L;
+    private String type;
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 }

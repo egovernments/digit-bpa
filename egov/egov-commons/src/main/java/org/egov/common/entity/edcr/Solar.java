@@ -48,5 +48,5 @@
 package org.egov.common.entity.edcr;
 
 public class Solar extends Measurement {
-	private static final long serialVersionUID = 50L;
+    private static final long serialVersionUID = 50L;
 }

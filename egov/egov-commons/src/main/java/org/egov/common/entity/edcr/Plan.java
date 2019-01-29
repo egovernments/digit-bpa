@@ -65,7 +65,7 @@ public class Plan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private ReportOutput reportOutput=new ReportOutput();
+    private ReportOutput reportOutput = new ReportOutput();
     private Utility utility = new Utility();
     private PlanInformation planInformation;
     private Plot plot;
@@ -100,7 +100,7 @@ public class Plan implements Serializable {
     private Boolean lengthFactor = true;
     @Transient
     private Double parkingRequired;
-    
+
     @Transient
     private String dxfFileName;
     @Transient
@@ -139,6 +139,7 @@ public class Plan implements Serializable {
     public void setAccessoryBlocks(List<AccessoryBlock> accessoryBlocks) {
         this.accessoryBlocks = accessoryBlocks;
     }
+
     public List<Occupancy> getOccupancies() {
         return occupancies;
     }
@@ -186,7 +187,6 @@ public class Plan implements Serializable {
     public void setLaneRoads(List<Lane> laneRoads) {
         this.laneRoads = laneRoads;
     }
-
 
     public List<ElectricLine> getElectricLine() {
         return electricLine;
@@ -237,8 +237,6 @@ public class Plan implements Serializable {
         if (errors != null)
             getErrors().putAll(errors);
     }
-    
-   
 
     public void addNocs(Map<String, String> nocs) {
         if (noObjectionCertificates != null)
@@ -264,8 +262,6 @@ public class Plan implements Serializable {
     public void setErrors(HashMap<String, String> errors) {
         this.errors = errors;
     }
-
-    
 
     public PlanInformation getPlanInformation() {
         return planInformation;
@@ -393,13 +389,13 @@ public class Plan implements Serializable {
         this.additionsToDxf = additionsToDxf;
     }
 
-	public BigDecimal getCoverageArea() {
-		return coverageArea;
-	}
+    public BigDecimal getCoverageArea() {
+        return coverageArea;
+    }
 
-	public void setCoverageArea(BigDecimal coverageArea) {
-		this.coverageArea = coverageArea;
-	}
+    public void setCoverageArea(BigDecimal coverageArea) {
+        this.coverageArea = coverageArea;
+    }
 
     public Double getParkingRequired() {
         return parkingRequired;
@@ -408,8 +404,6 @@ public class Plan implements Serializable {
     public void setParkingRequired(Double parkingRequired) {
         this.parkingRequired = parkingRequired;
     }
-
-    
 
     public String getDxfFileName() {
         return dxfFileName;
@@ -427,11 +421,11 @@ public class Plan implements Serializable {
         this.edcrPdfDetails = edcrPdfDetails;
     }
 
-	public ReportOutput getReportOutput() {
-		return reportOutput;
-	}
+    public ReportOutput getReportOutput() {
+        return reportOutput;
+    }
 
-	public void setReportOutput(ReportOutput reportOutput) {
-		this.reportOutput = reportOutput;
-	}
+    public void setReportOutput(ReportOutput reportOutput) {
+        this.reportOutput = reportOutput;
+    }
 }

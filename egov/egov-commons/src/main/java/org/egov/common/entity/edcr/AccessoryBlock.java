@@ -49,26 +49,26 @@ package org.egov.common.entity.edcr;
 
 public class AccessoryBlock extends Measurement {
 
-	private static final long serialVersionUID = 18L;
+    private static final long serialVersionUID = 18L;
 
-	private String number;
+    private String number;
 
-	private AccessoryBuilding accessoryBuilding = new AccessoryBuilding();
+    private AccessoryBuilding accessoryBuilding = new AccessoryBuilding();
 
-	public String getNumber() {
-		return number;
-	}
+    public String getNumber() {
+        return number;
+    }
 
-	public AccessoryBuilding getAccessoryBuilding() {
-		return accessoryBuilding;
-	}
+    public AccessoryBuilding getAccessoryBuilding() {
+        return accessoryBuilding;
+    }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
-	public void setAccessoryBuilding(AccessoryBuilding accessoryBuilding) {
-		this.accessoryBuilding = accessoryBuilding;
-	}
+    public void setAccessoryBuilding(AccessoryBuilding accessoryBuilding) {
+        this.accessoryBuilding = accessoryBuilding;
+    }
 
 }

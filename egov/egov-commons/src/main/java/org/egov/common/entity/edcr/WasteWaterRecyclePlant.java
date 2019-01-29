@@ -49,5 +49,5 @@ package org.egov.common.entity.edcr;
 
 public class WasteWaterRecyclePlant extends Measurement {
 
-	private static final long serialVersionUID = 51L;
+    private static final long serialVersionUID = 51L;
 }

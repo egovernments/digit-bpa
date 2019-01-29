@@ -55,40 +55,40 @@ import javax.persistence.Transient;
 
 public class EdcrPdfDetail implements Serializable {
 
-	private static final long serialVersionUID = 63L;
+    private static final long serialVersionUID = 63L;
 
-	private String layer;
+    private String layer;
 
-	private File convertedPdf;
+    private File convertedPdf;
 
-	private String failureReasons;
+    private String failureReasons;
 
-	private String standardViolations;
+    private String standardViolations;
 
-	@Transient
-	private List<String> violations;
+    @Transient
+    private List<String> violations;
 
-	public String getFailureReasons() {
-		return failureReasons;
-	}
+    public String getFailureReasons() {
+        return failureReasons;
+    }
 
-	public void setFailureReasons(String failureReasons) {
-		this.failureReasons = failureReasons;
-	}
+    public void setFailureReasons(String failureReasons) {
+        this.failureReasons = failureReasons;
+    }
 
-	public String getStandardViolations() {
-		return standardViolations;
-	}
+    public String getStandardViolations() {
+        return standardViolations;
+    }
 
-	public void setStandardViolations(String standardViolations) {
-		this.standardViolations = standardViolations;
-	}
+    public void setStandardViolations(String standardViolations) {
+        this.standardViolations = standardViolations;
+    }
 
-	public List<String> getViolations() {
-		return violations;
-	}
+    public List<String> getViolations() {
+        return violations;
+    }
 
-	public void setViolations(List<String> violations) {
-		this.violations = violations;
-	}
+    public void setViolations(List<String> violations) {
+        this.violations = violations;
+    }
 }

@@ -54,244 +54,244 @@ import java.util.List;
 
 public class Building extends Measurement {
 
-	private static final long serialVersionUID = 13L;
+    private static final long serialVersionUID = 13L;
 
-	private BigDecimal buildingHeight;
+    private BigDecimal buildingHeight;
 
-	private BigDecimal buildingTopMostHeight;
+    private BigDecimal buildingTopMostHeight;
 
-	private BigDecimal totalFloorArea;
+    private BigDecimal totalFloorArea;
 
-	private BigDecimal totalExistingFloorArea;
+    private BigDecimal totalExistingFloorArea;
 
-	private Measurement exteriorWall;
+    private Measurement exteriorWall;
 
-	private Measurement shade;
+    private Measurement shade;
 
-	private BigDecimal far;
+    private BigDecimal far;
 
-	private BigDecimal coverage;
+    private BigDecimal coverage;
 
-	private BigDecimal coverageArea;
-	/*
-	 * Maximum number of floors
-	 */
-	private BigDecimal maxFloor;
-	/*
-	 * Total number of floors including celler
-	 */
-	private BigDecimal totalFloors;
+    private BigDecimal coverageArea;
+    /*
+     * Maximum number of floors
+     */
+    private BigDecimal maxFloor;
+    /*
+     * Total number of floors including celler
+     */
+    private BigDecimal totalFloors;
 
-	private List<Floor> floors = new ArrayList<>();
+    private List<Floor> floors = new ArrayList<>();
 
-	private BigDecimal floorsAboveGround;
+    private BigDecimal floorsAboveGround;
 
-	private List<BigDecimal> distanceFromBuildingFootPrintToRoadEnd = new ArrayList<>();
-	private List<BigDecimal> distanceFromSetBackToBuildingLine = new ArrayList<>();
+    private List<BigDecimal> distanceFromBuildingFootPrintToRoadEnd = new ArrayList<>();
+    private List<BigDecimal> distanceFromSetBackToBuildingLine = new ArrayList<>();
 
-	private BigDecimal totalBuitUpArea;
+    private BigDecimal totalBuitUpArea;
 
-	private BigDecimal totalExistingBuiltUpArea;
+    private BigDecimal totalExistingBuiltUpArea;
 
-	private OccupancyType mostRestrictiveOccupancy;
-	// this is converted Occupancies to base type
-	private List<Occupancy> occupancies = new ArrayList<>();
+    private OccupancyType mostRestrictiveOccupancy;
+    // this is converted Occupancies to base type
+    private List<Occupancy> occupancies = new ArrayList<>();
 
-	// This would be plain sum of occupancies without converting
-	private List<Occupancy> totalArea = new ArrayList<>();
+    // This would be plain sum of occupancies without converting
+    private List<Occupancy> totalArea = new ArrayList<>();
 
-	public List<Occupancy> getOccupancies() {
-		return occupancies;
-	}
+    public List<Occupancy> getOccupancies() {
+        return occupancies;
+    }
 
-	public void setOccupancies(List<Occupancy> occupancies) {
-		this.occupancies = occupancies;
-	}
+    public void setOccupancies(List<Occupancy> occupancies) {
+        this.occupancies = occupancies;
+    }
 
-	public OccupancyType getMostRestrictiveOccupancy() {
-		return mostRestrictiveOccupancy;
-	}
+    public OccupancyType getMostRestrictiveOccupancy() {
+        return mostRestrictiveOccupancy;
+    }
 
-	public void setMostRestrictiveOccupancy(OccupancyType mostRestrictiveOccupancy) {
-		this.mostRestrictiveOccupancy = mostRestrictiveOccupancy;
-	}
+    public void setMostRestrictiveOccupancy(OccupancyType mostRestrictiveOccupancy) {
+        this.mostRestrictiveOccupancy = mostRestrictiveOccupancy;
+    }
 
-	public BigDecimal getTotalExistingFloorArea() {
-		return totalExistingFloorArea;
-	}
+    public BigDecimal getTotalExistingFloorArea() {
+        return totalExistingFloorArea;
+    }
 
-	public BigDecimal getTotalExistingBuiltUpArea() {
-		return totalExistingBuiltUpArea;
-	}
+    public BigDecimal getTotalExistingBuiltUpArea() {
+        return totalExistingBuiltUpArea;
+    }
 
-	public void setTotalExistingFloorArea(BigDecimal totalExistingFloorArea) {
-		this.totalExistingFloorArea = totalExistingFloorArea;
-	}
+    public void setTotalExistingFloorArea(BigDecimal totalExistingFloorArea) {
+        this.totalExistingFloorArea = totalExistingFloorArea;
+    }
 
-	public void setTotalExistingBuiltUpArea(BigDecimal totalExistingBuiltUpArea) {
-		this.totalExistingBuiltUpArea = totalExistingBuiltUpArea;
-	}
+    public void setTotalExistingBuiltUpArea(BigDecimal totalExistingBuiltUpArea) {
+        this.totalExistingBuiltUpArea = totalExistingBuiltUpArea;
+    }
 
-	public BigDecimal getBuildingHeight() {
-		return buildingHeight;
-	}
+    public BigDecimal getBuildingHeight() {
+        return buildingHeight;
+    }
 
-	public void setBuildingHeight(BigDecimal buildingHeight) {
-		this.buildingHeight = buildingHeight;
-	}
+    public void setBuildingHeight(BigDecimal buildingHeight) {
+        this.buildingHeight = buildingHeight;
+    }
 
-	public List<Floor> getFloors() {
-		return floors;
-	}
+    public List<Floor> getFloors() {
+        return floors;
+    }
 
-	public void sortFloorByName() {
-		if (!floors.isEmpty())
-			Collections.sort(floors, (c1, c2) -> c1.getNumber().compareTo(c2.getNumber()));
+    public void sortFloorByName() {
+        if (!floors.isEmpty())
+            Collections.sort(floors, (c1, c2) -> c1.getNumber().compareTo(c2.getNumber()));
 
-	}
+    }
 
-	public Floor getFloorNumber(int floorNo) {
-		for (Floor f : floors) {
-			if (f.getNumber() != null && f.getNumber().intValue() == floorNo) {
-				return f;
-			}
-		}
-		return null;
-	}
+    public Floor getFloorNumber(int floorNo) {
+        for (Floor f : floors) {
+            if (f.getNumber() != null && f.getNumber().intValue() == floorNo) {
+                return f;
+            }
+        }
+        return null;
+    }
 
-	public BigDecimal getCoverageArea() {
-		return coverageArea;
-	}
+    public BigDecimal getCoverageArea() {
+        return coverageArea;
+    }
 
-	public void setCoverageArea(BigDecimal coverageArea) {
-		this.coverageArea = coverageArea;
-	}
+    public void setCoverageArea(BigDecimal coverageArea) {
+        this.coverageArea = coverageArea;
+    }
 
-	public void setFloors(List<Floor> floors) {
-		this.floors = floors;
-	}
+    public void setFloors(List<Floor> floors) {
+        this.floors = floors;
+    }
 
-	public BigDecimal getTotalFloors() {
-		return totalFloors;
-	}
+    public BigDecimal getTotalFloors() {
+        return totalFloors;
+    }
 
-	public void setTotalFloors(BigDecimal totalFloors) {
-		this.totalFloors = totalFloors;
-	}
+    public void setTotalFloors(BigDecimal totalFloors) {
+        this.totalFloors = totalFloors;
+    }
 
-	public BigDecimal getMaxFloor() {
-		return maxFloor;
-	}
+    public BigDecimal getMaxFloor() {
+        return maxFloor;
+    }
 
-	public void setMaxFloor(BigDecimal maxFloor) {
-		this.maxFloor = maxFloor;
-	}
+    public void setMaxFloor(BigDecimal maxFloor) {
+        this.maxFloor = maxFloor;
+    }
 
-	public BigDecimal getBuildingTopMostHeight() {
-		return buildingTopMostHeight;
-	}
+    public BigDecimal getBuildingTopMostHeight() {
+        return buildingTopMostHeight;
+    }
 
-	public void setBuildingTopMostHeight(BigDecimal buildingHeightTopMost) {
-		buildingTopMostHeight = buildingHeightTopMost;
-	}
+    public void setBuildingTopMostHeight(BigDecimal buildingHeightTopMost) {
+        buildingTopMostHeight = buildingHeightTopMost;
+    }
 
-	public BigDecimal getTotalFloorArea() {
-		return totalFloorArea;
-	}
+    public BigDecimal getTotalFloorArea() {
+        return totalFloorArea;
+    }
 
-	public void setTotalFloorArea(BigDecimal totalFloorArea) {
-		this.totalFloorArea = totalFloorArea;
-	}
+    public void setTotalFloorArea(BigDecimal totalFloorArea) {
+        this.totalFloorArea = totalFloorArea;
+    }
 
-	public BigDecimal getFar() {
-		return far;
-	}
+    public BigDecimal getFar() {
+        return far;
+    }
 
-	public void setFar(BigDecimal far) {
-		this.far = far;
-	}
+    public void setFar(BigDecimal far) {
+        this.far = far;
+    }
 
-	public BigDecimal getCoverage() {
-		return coverage;
-	}
+    public BigDecimal getCoverage() {
+        return coverage;
+    }
 
-	public void setCoverage(BigDecimal coverage) {
-		this.coverage = coverage;
-	}
+    public void setCoverage(BigDecimal coverage) {
+        this.coverage = coverage;
+    }
 
-	public Measurement getExteriorWall() {
-		return exteriorWall;
-	}
+    public Measurement getExteriorWall() {
+        return exteriorWall;
+    }
 
-	public void setExteriorWall(Measurement exteriorWall) {
-		this.exteriorWall = exteriorWall;
-	}
+    public void setExteriorWall(Measurement exteriorWall) {
+        this.exteriorWall = exteriorWall;
+    }
 
-	public BigDecimal getFloorsAboveGround() {
-		return floorsAboveGround;
-	}
+    public BigDecimal getFloorsAboveGround() {
+        return floorsAboveGround;
+    }
 
-	public void setFloorsAboveGround(BigDecimal floorsAboveGround) {
-		this.floorsAboveGround = floorsAboveGround;
-	}
+    public void setFloorsAboveGround(BigDecimal floorsAboveGround) {
+        this.floorsAboveGround = floorsAboveGround;
+    }
 
-	public Measurement getShade() {
-		return shade;
-	}
+    public Measurement getShade() {
+        return shade;
+    }
 
-	public void setShade(Measurement shade) {
-		this.shade = shade;
-	}
+    public void setShade(Measurement shade) {
+        this.shade = shade;
+    }
 
-	public BigDecimal getTotalBuitUpArea() {
-		return totalBuitUpArea;
-	}
+    public BigDecimal getTotalBuitUpArea() {
+        return totalBuitUpArea;
+    }
 
-	public void setTotalBuitUpArea(BigDecimal totalBuitUpArea) {
-		this.totalBuitUpArea = totalBuitUpArea;
-	}
+    public void setTotalBuitUpArea(BigDecimal totalBuitUpArea) {
+        this.totalBuitUpArea = totalBuitUpArea;
+    }
 
-	@Override
-	public String toString() {
-		String newLine = "\n";
-		StringBuilder str = new StringBuilder();
-		str.append("Building :").append(newLine).append("buildingHeight:").append(this.buildingHeight).append(newLine)
-				.append("totalFloorArea:").append(this.totalFloorArea).append(newLine).append("far:").append(this.far)
-				.append(newLine).append("Coverage:").append(this.coverage).append(newLine).append("totalFloors:")
-				.append(this.totalFloors).append(newLine).append("floorsAboveGround:").append(this.floorsAboveGround)
-				.append(newLine).append("maxFloor:").append(this.maxFloor).append(newLine).append("area:")
-				.append(this.area).append(newLine).append("Floors Count:").append(this.floors.size()).append(newLine)
-				.append("Exterior wall:").append(this.exteriorWall).append(newLine).append("Floors:")
-				.append(this.floors).append(newLine);
-		return str.toString();
-	}
+    @Override
+    public String toString() {
+        String newLine = "\n";
+        StringBuilder str = new StringBuilder();
+        str.append("Building :").append(newLine).append("buildingHeight:").append(this.buildingHeight).append(newLine)
+                .append("totalFloorArea:").append(this.totalFloorArea).append(newLine).append("far:").append(this.far)
+                .append(newLine).append("Coverage:").append(this.coverage).append(newLine).append("totalFloors:")
+                .append(this.totalFloors).append(newLine).append("floorsAboveGround:").append(this.floorsAboveGround)
+                .append(newLine).append("maxFloor:").append(this.maxFloor).append(newLine).append("area:")
+                .append(this.area).append(newLine).append("Floors Count:").append(this.floors.size()).append(newLine)
+                .append("Exterior wall:").append(this.exteriorWall).append(newLine).append("Floors:")
+                .append(this.floors).append(newLine);
+        return str.toString();
+    }
 
-	public List<BigDecimal> getDistanceFromBuildingFootPrintToRoadEnd() {
-		return distanceFromBuildingFootPrintToRoadEnd;
-	}
+    public List<BigDecimal> getDistanceFromBuildingFootPrintToRoadEnd() {
+        return distanceFromBuildingFootPrintToRoadEnd;
+    }
 
-	public void setDistanceFromBuildingFootPrintToRoadEnd(List<BigDecimal> distanceFromBuildingFootPrintToRoadEnd) {
-		this.distanceFromBuildingFootPrintToRoadEnd = distanceFromBuildingFootPrintToRoadEnd;
-	}
+    public void setDistanceFromBuildingFootPrintToRoadEnd(List<BigDecimal> distanceFromBuildingFootPrintToRoadEnd) {
+        this.distanceFromBuildingFootPrintToRoadEnd = distanceFromBuildingFootPrintToRoadEnd;
+    }
 
-	public List<BigDecimal> getDistanceFromSetBackToBuildingLine() {
-		return distanceFromSetBackToBuildingLine;
-	}
+    public List<BigDecimal> getDistanceFromSetBackToBuildingLine() {
+        return distanceFromSetBackToBuildingLine;
+    }
 
-	public void setDistanceFromSetBackToBuildingLine(List<BigDecimal> distanceFromSetBackToBuildingLine) {
-		this.distanceFromSetBackToBuildingLine = distanceFromSetBackToBuildingLine;
-	}
+    public void setDistanceFromSetBackToBuildingLine(List<BigDecimal> distanceFromSetBackToBuildingLine) {
+        this.distanceFromSetBackToBuildingLine = distanceFromSetBackToBuildingLine;
+    }
 
-	public void addDistanceFromBuildingFootPrintToRoadEnd(BigDecimal distanceFromBuildingFootPrintToRoadEnd) {
-		getDistanceFromBuildingFootPrintToRoadEnd().add(distanceFromBuildingFootPrintToRoadEnd);
-	}
+    public void addDistanceFromBuildingFootPrintToRoadEnd(BigDecimal distanceFromBuildingFootPrintToRoadEnd) {
+        getDistanceFromBuildingFootPrintToRoadEnd().add(distanceFromBuildingFootPrintToRoadEnd);
+    }
 
-	public List<Occupancy> getTotalArea() {
-		return totalArea;
-	}
+    public List<Occupancy> getTotalArea() {
+        return totalArea;
+    }
 
-	public void setTotalArea(List<Occupancy> totalArea) {
-		this.totalArea = totalArea;
-	}
+    public void setTotalArea(List<Occupancy> totalArea) {
+        this.totalArea = totalArea;
+    }
 
 }

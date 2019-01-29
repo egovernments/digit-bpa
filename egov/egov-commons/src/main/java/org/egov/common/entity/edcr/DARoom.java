@@ -49,5 +49,5 @@ package org.egov.common.entity.edcr;
 
 public class DARoom extends Measurement {
 
-	private static final long serialVersionUID = 29L;
+    private static final long serialVersionUID = 29L;
 }

@@ -51,35 +51,35 @@ import java.util.List;
 
 public class Lift extends Measurement {
 
-	private static final long serialVersionUID = 31L;
+    private static final long serialVersionUID = 31L;
 
-	private Integer number;
+    private Integer number;
 
-	private transient List<Measurement> liftPolyLines;
+    private transient List<Measurement> liftPolyLines;
 
-	private Boolean liftPolyLineClosed = false;
+    private Boolean liftPolyLineClosed = false;
 
-	public Integer getNumber() {
-		return number;
-	}
+    public Integer getNumber() {
+        return number;
+    }
 
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
 
-	public List<Measurement> getLiftPolyLines() {
-		return liftPolyLines;
-	}
+    public List<Measurement> getLiftPolyLines() {
+        return liftPolyLines;
+    }
 
-	public void setLiftPolyLines(List<Measurement> liftPolyLines) {
-		this.liftPolyLines = liftPolyLines;
-	}
+    public void setLiftPolyLines(List<Measurement> liftPolyLines) {
+        this.liftPolyLines = liftPolyLines;
+    }
 
-	public Boolean getLiftPolyLineClosed() {
-		return liftPolyLineClosed;
-	}
+    public Boolean getLiftPolyLineClosed() {
+        return liftPolyLineClosed;
+    }
 
-	public void setLiftPolyLineClosed(Boolean rampPolyLineClosed) {
-		this.liftPolyLineClosed = rampPolyLineClosed;
-	}
+    public void setLiftPolyLineClosed(Boolean rampPolyLineClosed) {
+        this.liftPolyLineClosed = rampPolyLineClosed;
+    }
 }

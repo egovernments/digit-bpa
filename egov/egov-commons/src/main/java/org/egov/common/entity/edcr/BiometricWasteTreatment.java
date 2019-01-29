@@ -49,5 +49,5 @@ package org.egov.common.entity.edcr;
 
 public class BiometricWasteTreatment extends Measurement {
 
-	private static final long serialVersionUID = 40L;
+    private static final long serialVersionUID = 40L;
 }

@@ -48,5 +48,5 @@
 package org.egov.common.entity.edcr;
 
 public class RainWaterHarvesting extends Measurement {
-	private static final long serialVersionUID = 48L;
+    private static final long serialVersionUID = 48L;
 }

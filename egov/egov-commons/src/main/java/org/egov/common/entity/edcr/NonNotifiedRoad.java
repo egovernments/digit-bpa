@@ -49,6 +49,6 @@ package org.egov.common.entity.edcr;
 
 public class NonNotifiedRoad extends Road {
 
-	private static final long serialVersionUID = 20L;
+    private static final long serialVersionUID = 20L;
 
 }

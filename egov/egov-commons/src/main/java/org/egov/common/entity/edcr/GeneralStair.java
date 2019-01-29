@@ -49,6 +49,6 @@ package org.egov.common.entity.edcr;
 
 public class GeneralStair extends Stair {
 
-	private static final long serialVersionUID = 36L;
+    private static final long serialVersionUID = 36L;
 
 }

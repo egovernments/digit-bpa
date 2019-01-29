@@ -52,56 +52,56 @@ import java.util.List;
 
 public class Ramp extends Measurement {
 
-	private static final long serialVersionUID = 30L;
+    private static final long serialVersionUID = 30L;
 
-	private Integer number;
+    private Integer number;
 
-	private BigDecimal slope;
+    private BigDecimal slope;
 
-	private transient List<Measurement> rampPolyLines;
+    private transient List<Measurement> rampPolyLines;
 
-	private Boolean rampPolyLineClosed = false;
+    private Boolean rampPolyLineClosed = false;
 
-	private BigDecimal floorHeight;
+    private BigDecimal floorHeight;
 
-	public BigDecimal getFloorHeight() {
-		return floorHeight;
-	}
+    public BigDecimal getFloorHeight() {
+        return floorHeight;
+    }
 
-	public void setFloorHeight(BigDecimal floorHeight) {
-		this.floorHeight = floorHeight;
-	}
+    public void setFloorHeight(BigDecimal floorHeight) {
+        this.floorHeight = floorHeight;
+    }
 
-	public List<Measurement> getRampPolyLines() {
-		return rampPolyLines;
-	}
+    public List<Measurement> getRampPolyLines() {
+        return rampPolyLines;
+    }
 
-	public Boolean getRampPolyLineClosed() {
-		return rampPolyLineClosed;
-	}
+    public Boolean getRampPolyLineClosed() {
+        return rampPolyLineClosed;
+    }
 
-	public void setRampPolyLines(List<Measurement> rampPolyLines) {
-		this.rampPolyLines = rampPolyLines;
-	}
+    public void setRampPolyLines(List<Measurement> rampPolyLines) {
+        this.rampPolyLines = rampPolyLines;
+    }
 
-	public void setRampPolyLineClosed(Boolean rampPolyLineClosed) {
-		this.rampPolyLineClosed = rampPolyLineClosed;
-	}
+    public void setRampPolyLineClosed(Boolean rampPolyLineClosed) {
+        this.rampPolyLineClosed = rampPolyLineClosed;
+    }
 
-	public BigDecimal getSlope() {
-		return slope;
-	}
+    public BigDecimal getSlope() {
+        return slope;
+    }
 
-	public void setSlope(BigDecimal slope) {
-		this.slope = slope;
-	}
+    public void setSlope(BigDecimal slope) {
+        this.slope = slope;
+    }
 
-	public Integer getNumber() {
-		return number;
-	}
+    public Integer getNumber() {
+        return number;
+    }
 
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
 
 }

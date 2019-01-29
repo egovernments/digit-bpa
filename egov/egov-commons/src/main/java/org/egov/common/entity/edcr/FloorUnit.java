@@ -53,34 +53,34 @@ import java.util.List;
 
 public class FloorUnit extends Measurement {
 
-	private static final long serialVersionUID = 27L;
+    private static final long serialVersionUID = 27L;
 
-	private Occupancy occupancy;
-	private List<Measurement> deductions = new ArrayList<>();
-	private BigDecimal totalUnitDeduction;
+    private Occupancy occupancy;
+    private List<Measurement> deductions = new ArrayList<>();
+    private BigDecimal totalUnitDeduction;
 
-	public Occupancy getOccupancy() {
-		return occupancy;
-	}
+    public Occupancy getOccupancy() {
+        return occupancy;
+    }
 
-	public void setOccupancy(Occupancy occupancy) {
-		this.occupancy = occupancy;
-	}
+    public void setOccupancy(Occupancy occupancy) {
+        this.occupancy = occupancy;
+    }
 
-	public BigDecimal getTotalUnitDeduction() {
-		return totalUnitDeduction;
-	}
+    public BigDecimal getTotalUnitDeduction() {
+        return totalUnitDeduction;
+    }
 
-	public void setTotalUnitDeduction(BigDecimal totalDeduction) {
-		this.totalUnitDeduction = totalDeduction;
-	}
+    public void setTotalUnitDeduction(BigDecimal totalDeduction) {
+        this.totalUnitDeduction = totalDeduction;
+    }
 
-	public List<Measurement> getDeductions() {
-		return deductions;
-	}
+    public List<Measurement> getDeductions() {
+        return deductions;
+    }
 
-	public void setDeductions(List<Measurement> deductions) {
-		this.deductions = deductions;
-	}
+    public void setDeductions(List<Measurement> deductions) {
+        this.deductions = deductions;
+    }
 
 }

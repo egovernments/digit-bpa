@@ -52,45 +52,45 @@ import java.util.List;
 
 public class Stair extends Measurement {
 
-	private static final long serialVersionUID = 34L;
+    private static final long serialVersionUID = 34L;
 
-	private String number;
+    private String number;
 
-	private transient List<Measurement> flightPolyLines;
+    private transient List<Measurement> flightPolyLines;
 
-	private BigDecimal noOfRises;
+    private BigDecimal noOfRises;
 
-	private Boolean flightPolyLineClosed = false;
+    private Boolean flightPolyLineClosed = false;
 
-	public String getNumber() {
-		return number;
-	}
+    public String getNumber() {
+        return number;
+    }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
-	public List<Measurement> getFlightPolyLines() {
-		return flightPolyLines;
-	}
+    public List<Measurement> getFlightPolyLines() {
+        return flightPolyLines;
+    }
 
-	public void setFlightPolyLines(List<Measurement> flightPolyLines) {
-		this.flightPolyLines = flightPolyLines;
-	}
+    public void setFlightPolyLines(List<Measurement> flightPolyLines) {
+        this.flightPolyLines = flightPolyLines;
+    }
 
-	public BigDecimal getNoOfRises() {
-		return noOfRises;
-	}
+    public BigDecimal getNoOfRises() {
+        return noOfRises;
+    }
 
-	public void setNoOfRises(BigDecimal noOfRises) {
-		this.noOfRises = noOfRises;
-	}
+    public void setNoOfRises(BigDecimal noOfRises) {
+        this.noOfRises = noOfRises;
+    }
 
-	public Boolean getFlightPolyLineClosed() {
-		return flightPolyLineClosed;
-	}
+    public Boolean getFlightPolyLineClosed() {
+        return flightPolyLineClosed;
+    }
 
-	public void setFlightPolyLineClosed(Boolean flightPolyLineClosed) {
-		this.flightPolyLineClosed = flightPolyLineClosed;
-	}
+    public void setFlightPolyLineClosed(Boolean flightPolyLineClosed) {
+        this.flightPolyLineClosed = flightPolyLineClosed;
+    }
 }

@@ -49,6 +49,6 @@ package org.egov.common.entity.edcr;
 
 public class Lane extends Road {
 
-	private static final long serialVersionUID = 24L;
+    private static final long serialVersionUID = 24L;
 
 }

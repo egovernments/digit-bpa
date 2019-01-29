@@ -51,25 +51,25 @@ import java.math.BigDecimal;
 
 public class DARamp extends Measurement {
 
-	private static final long serialVersionUID = 38L;
+    private static final long serialVersionUID = 38L;
 
-	private Integer number;
+    private Integer number;
 
-	private BigDecimal slope;
+    private BigDecimal slope;
 
-	public Integer getNumber() {
-		return number;
-	}
+    public Integer getNumber() {
+        return number;
+    }
 
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
 
-	public BigDecimal getSlope() {
-		return slope;
-	}
+    public BigDecimal getSlope() {
+        return slope;
+    }
 
-	public void setSlope(BigDecimal slope) {
-		this.slope = slope;
-	}
+    public void setSlope(BigDecimal slope) {
+        this.slope = slope;
+    }
 }

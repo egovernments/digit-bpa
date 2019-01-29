@@ -52,43 +52,43 @@ import java.util.List;
 
 public class DcrReportBlockDetail {
 
-	private String blockNo;
+    private String blockNo;
 
-	private BigDecimal coverageArea;
+    private BigDecimal coverageArea;
 
-	private BigDecimal buildingHeight;
+    private BigDecimal buildingHeight;
 
-	private List<DcrReportFloorDetail> dcrReportFloorDetails;
+    private List<DcrReportFloorDetail> dcrReportFloorDetails;
 
-	public String getBlockNo() {
-		return blockNo;
-	}
+    public String getBlockNo() {
+        return blockNo;
+    }
 
-	public void setBlockNo(String blockNo) {
-		this.blockNo = blockNo;
-	}
+    public void setBlockNo(String blockNo) {
+        this.blockNo = blockNo;
+    }
 
-	public BigDecimal getCoverageArea() {
-		return coverageArea;
-	}
+    public BigDecimal getCoverageArea() {
+        return coverageArea;
+    }
 
-	public BigDecimal getBuildingHeight() {
-		return buildingHeight;
-	}
+    public BigDecimal getBuildingHeight() {
+        return buildingHeight;
+    }
 
-	public void setBuildingHeight(BigDecimal buildingHeight) {
-		this.buildingHeight = buildingHeight;
-	}
+    public void setBuildingHeight(BigDecimal buildingHeight) {
+        this.buildingHeight = buildingHeight;
+    }
 
-	public void setCoverageArea(BigDecimal coverageArea) {
-		this.coverageArea = coverageArea;
-	}
+    public void setCoverageArea(BigDecimal coverageArea) {
+        this.coverageArea = coverageArea;
+    }
 
-	public List<DcrReportFloorDetail> getDcrReportFloorDetails() {
-		return dcrReportFloorDetails;
-	}
+    public List<DcrReportFloorDetail> getDcrReportFloorDetails() {
+        return dcrReportFloorDetails;
+    }
 
-	public void setDcrReportFloorDetails(List<DcrReportFloorDetail> dcrReportFloorDetails) {
-		this.dcrReportFloorDetails = dcrReportFloorDetails;
-	}
+    public void setDcrReportFloorDetails(List<DcrReportFloorDetail> dcrReportFloorDetails) {
+        this.dcrReportFloorDetails = dcrReportFloorDetails;
+    }
 }

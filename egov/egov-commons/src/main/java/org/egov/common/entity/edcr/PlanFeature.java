@@ -50,33 +50,33 @@ package org.egov.common.entity.edcr;
 import java.io.Serializable;
 
 public class PlanFeature implements Serializable {
-	private static final long serialVersionUID = 53L;
-	private String name;
-	private Class ruleClass;
+    private static final long serialVersionUID = 53L;
+    private String name;
+    private Class ruleClass;
 
-	public PlanFeature(String string) {
-		this.name = string;
-	}
+    public PlanFeature(String string) {
+        this.name = string;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Class getRuleClass() {
-		return ruleClass;
-	}
+    public Class getRuleClass() {
+        return ruleClass;
+    }
 
-	public void setRuleClass(Class ruleClass) {
-		this.ruleClass = ruleClass;
-	}
+    public void setRuleClass(Class ruleClass) {
+        this.ruleClass = ruleClass;
+    }
 
-	public PlanFeature(Class ruleClass) {
-		super();
-		this.ruleClass = ruleClass;
-	}
+    public PlanFeature(Class ruleClass) {
+        super();
+        this.ruleClass = ruleClass;
+    }
 
 }

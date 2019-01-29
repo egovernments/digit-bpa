@@ -48,5 +48,5 @@
 package org.egov.common.entity.edcr;
 
 public class CompoundWallUtility extends Utility {
-	private static final long serialVersionUID = 52L;
+    private static final long serialVersionUID = 52L;
 }

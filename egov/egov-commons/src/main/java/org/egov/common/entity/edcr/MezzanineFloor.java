@@ -51,35 +51,35 @@ import java.math.BigDecimal;
 
 public class MezzanineFloor extends Measurement {
 
-	private static final long serialVersionUID = 32L;
+    private static final long serialVersionUID = 32L;
 
-	private String number;
+    private String number;
 
-	private BigDecimal builtUpArea;
+    private BigDecimal builtUpArea;
 
-	private BigDecimal deductions;
+    private BigDecimal deductions;
 
-	public String getNumber() {
-		return number;
-	}
+    public String getNumber() {
+        return number;
+    }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
-	public BigDecimal getBuiltUpArea() {
-		return builtUpArea;
-	}
+    public BigDecimal getBuiltUpArea() {
+        return builtUpArea;
+    }
 
-	public BigDecimal getDeductions() {
-		return deductions;
-	}
+    public BigDecimal getDeductions() {
+        return deductions;
+    }
 
-	public void setBuiltUpArea(BigDecimal builtUpArea) {
-		this.builtUpArea = builtUpArea;
-	}
+    public void setBuiltUpArea(BigDecimal builtUpArea) {
+        this.builtUpArea = builtUpArea;
+    }
 
-	public void setDeductions(BigDecimal deductions) {
-		this.deductions = deductions;
-	}
+    public void setDeductions(BigDecimal deductions) {
+        this.deductions = deductions;
+    }
 }

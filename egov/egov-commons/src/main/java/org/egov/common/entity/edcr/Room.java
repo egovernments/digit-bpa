@@ -49,6 +49,6 @@ package org.egov.common.entity.edcr;
 
 public class Room extends Measurement {
 
-	private static final long serialVersionUID = 28L;
+    private static final long serialVersionUID = 28L;
 
 }

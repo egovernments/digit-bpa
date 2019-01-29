@@ -52,16 +52,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportOutput implements Serializable {
-	private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 2L;
 
-	public List<ScrutinyDetail> scrutinyDetails = new ArrayList<>();
+    public List<ScrutinyDetail> scrutinyDetails = new ArrayList<>();
 
-	public List<ScrutinyDetail> getScrutinyDetails() {
-		return scrutinyDetails;
-	}
+    public List<ScrutinyDetail> getScrutinyDetails() {
+        return scrutinyDetails;
+    }
 
-	public void setScrutinyDetails(List<ScrutinyDetail> scrutinyDetails) {
-		this.scrutinyDetails = scrutinyDetails;
-	}
+    public void setScrutinyDetails(List<ScrutinyDetail> scrutinyDetails) {
+        this.scrutinyDetails = scrutinyDetails;
+    }
 
 }

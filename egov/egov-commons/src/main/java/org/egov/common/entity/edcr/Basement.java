@@ -49,6 +49,6 @@ package org.egov.common.entity.edcr;
 
 public class Basement extends Measurement {
 
-	private static final long serialVersionUID = 25L;
+    private static final long serialVersionUID = 25L;
 
 }

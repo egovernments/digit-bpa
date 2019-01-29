@@ -48,21 +48,21 @@
 package org.egov.common.entity.edcr;
 
 public enum Result {
-	Accepted("Accepted"), NA("N/A"), Not_Accepted("Not Accepted"), Verify("Verify");
+    Accepted("Accepted"), NA("N/A"), Not_Accepted("Not Accepted"), Verify("Verify");
 
-	private final String resultVal;
+    private final String resultVal;
 
-	Result(String result) {
-		this.resultVal = result;
-	}
+    Result(String result) {
+        this.resultVal = result;
+    }
 
-	public String getResultVal() {
-		return resultVal;
-	}
+    public String getResultVal() {
+        return resultVal;
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		return name().replace("_", "");
-	}
+        return name().replace("_", "");
+    }
 }

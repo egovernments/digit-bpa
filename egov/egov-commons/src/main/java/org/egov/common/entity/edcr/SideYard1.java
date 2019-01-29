@@ -49,7 +49,7 @@ package org.egov.common.entity.edcr;
 
 public class SideYard1 extends Measurement {
 
-	private static final long serialVersionUID = 44L;
+    private static final long serialVersionUID = 44L;
 
-	public static final Object NAME = "SIDE_YARD_1";
+    public static final Object NAME = "SIDE_YARD_1";
 }

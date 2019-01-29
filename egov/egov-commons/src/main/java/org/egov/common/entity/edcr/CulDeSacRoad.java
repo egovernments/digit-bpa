@@ -49,6 +49,6 @@ package org.egov.common.entity.edcr;
 
 public class CulDeSacRoad extends Road {
 
-	private static final long serialVersionUID = 23L;
+    private static final long serialVersionUID = 23L;
 
 }

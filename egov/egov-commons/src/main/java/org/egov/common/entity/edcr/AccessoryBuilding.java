@@ -53,15 +53,15 @@ import java.util.List;
 
 public class AccessoryBuilding extends Measurement {
 
-	private static final long serialVersionUID = 41L;
+    private static final long serialVersionUID = 41L;
 
-	private List<BigDecimal> distanceFromPlotBoundary = new ArrayList<>();
+    private List<BigDecimal> distanceFromPlotBoundary = new ArrayList<>();
 
-	public List<BigDecimal> getDistanceFromPlotBoundary() {
-		return distanceFromPlotBoundary;
-	}
+    public List<BigDecimal> getDistanceFromPlotBoundary() {
+        return distanceFromPlotBoundary;
+    }
 
-	public void setDistanceFromPlotBoundary(List<BigDecimal> distanceFromPlotBoundary) {
-		this.distanceFromPlotBoundary = distanceFromPlotBoundary;
-	}
+    public void setDistanceFromPlotBoundary(List<BigDecimal> distanceFromPlotBoundary) {
+        this.distanceFromPlotBoundary = distanceFromPlotBoundary;
+    }
 }

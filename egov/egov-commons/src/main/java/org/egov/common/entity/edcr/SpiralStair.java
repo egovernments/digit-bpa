@@ -49,6 +49,6 @@ package org.egov.common.entity.edcr;
 
 public class SpiralStair extends Stair {
 
-	private static final long serialVersionUID = 37L;
+    private static final long serialVersionUID = 37L;
 
 }

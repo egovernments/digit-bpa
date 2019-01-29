@@ -51,144 +51,144 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class Measurement implements Cloneable, Serializable {
-	private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 3L;
 
-	protected Boolean presentInDxf = false;
+    protected Boolean presentInDxf = false;
 
-	protected BigDecimal minimumDistance = BigDecimal.ZERO;
+    protected BigDecimal minimumDistance = BigDecimal.ZERO;
 
-	protected BigDecimal minimumSide = BigDecimal.ZERO;
+    protected BigDecimal minimumSide = BigDecimal.ZERO;
 
-	protected BigDecimal length = BigDecimal.ZERO;
+    protected BigDecimal length = BigDecimal.ZERO;
 
-	protected BigDecimal width = BigDecimal.ZERO;
+    protected BigDecimal width = BigDecimal.ZERO;
 
-	protected BigDecimal height = BigDecimal.ZERO;
+    protected BigDecimal height = BigDecimal.ZERO;
 
-	protected BigDecimal mean = BigDecimal.ZERO;
+    protected BigDecimal mean = BigDecimal.ZERO;
 
-	protected BigDecimal area = BigDecimal.ZERO;
+    protected BigDecimal area = BigDecimal.ZERO;
 
-	protected Boolean isValid;
+    protected Boolean isValid;
 
-	protected StringBuffer invalidReason;
+    protected StringBuffer invalidReason;
 
-	protected int colorCode;
+    protected int colorCode;
 
-	public void setMinimumDistance(BigDecimal minimumDistance) {
-		this.minimumDistance = minimumDistance;
-	}
+    public void setMinimumDistance(BigDecimal minimumDistance) {
+        this.minimumDistance = minimumDistance;
+    }
 
-	public Boolean getPresentInDxf() {
-		return presentInDxf;
-	}
+    public Boolean getPresentInDxf() {
+        return presentInDxf;
+    }
 
-	public void setPresentInDxf(Boolean present) {
-		presentInDxf = present;
-	}
+    public void setPresentInDxf(Boolean present) {
+        presentInDxf = present;
+    }
 
-	public BigDecimal getLength() {
-		return length;
-	}
+    public BigDecimal getLength() {
+        return length;
+    }
 
-	public void setLength(BigDecimal length) {
-		this.length = length;
-	}
+    public void setLength(BigDecimal length) {
+        this.length = length;
+    }
 
-	public BigDecimal getMean() {
-		return mean;
-	}
+    public BigDecimal getMean() {
+        return mean;
+    }
 
-	public void setMean(BigDecimal mean) {
-		this.mean = mean;
-	}
+    public void setMean(BigDecimal mean) {
+        this.mean = mean;
+    }
 
-	public BigDecimal getArea() {
-		return area;
-	}
+    public BigDecimal getArea() {
+        return area;
+    }
 
-	public void setArea(BigDecimal area) {
-		this.area = area;
-	}
+    public void setArea(BigDecimal area) {
+        this.area = area;
+    }
 
-	public BigDecimal getWidth() {
-		return width;
-	}
+    public BigDecimal getWidth() {
+        return width;
+    }
 
-	public void setWidth(BigDecimal width) {
-		this.width = width;
-	}
+    public void setWidth(BigDecimal width) {
+        this.width = width;
+    }
 
-	public BigDecimal getHeight() {
-		return height;
-	}
+    public BigDecimal getHeight() {
+        return height;
+    }
 
-	public void setHeight(BigDecimal height) {
-		this.height = height;
-	}
+    public void setHeight(BigDecimal height) {
+        this.height = height;
+    }
 
-	public BigDecimal getMinimumDistance() {
-		return minimumDistance;
-	}
+    public BigDecimal getMinimumDistance() {
+        return minimumDistance;
+    }
 
-	@Override
-	public String toString() {
-		return "Measurement : presentInDxf=" + presentInDxf + "]";
-	}
+    @Override
+    public String toString() {
+        return "Measurement : presentInDxf=" + presentInDxf + "]";
+    }
 
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
-	public Measurement() {
-		// invariant
-	}
+    public Measurement() {
+        // invariant
+    }
 
-	public BigDecimal getMinimumSide() {
-		return minimumSide;
-	}
+    public BigDecimal getMinimumSide() {
+        return minimumSide;
+    }
 
-	public void setMinimumSide(BigDecimal minimumSide) {
-		this.minimumSide = minimumSide;
-	}
+    public void setMinimumSide(BigDecimal minimumSide) {
+        this.minimumSide = minimumSide;
+    }
 
-	public Boolean getIsValid() {
-		return isValid;
-	}
+    public Boolean getIsValid() {
+        return isValid;
+    }
 
-	public int getColorCode() {
-		return colorCode;
-	}
+    public int getColorCode() {
+        return colorCode;
+    }
 
-	public void setIsValid(Boolean isValid) {
-		this.isValid = isValid;
-	}
+    public void setIsValid(Boolean isValid) {
+        this.isValid = isValid;
+    }
 
-	public void setColorCode(int colorCode) {
-		this.colorCode = colorCode;
-	}
+    public void setColorCode(int colorCode) {
+        this.colorCode = colorCode;
+    }
 
-	public StringBuffer getInvalidReason() {
-		return invalidReason;
-	}
+    public StringBuffer getInvalidReason() {
+        return invalidReason;
+    }
 
-	public void setInvalidReason(StringBuffer invalidReason) {
-		this.invalidReason = invalidReason;
-	}
+    public void setInvalidReason(StringBuffer invalidReason) {
+        this.invalidReason = invalidReason;
+    }
 
-	public void setInvalidReason(String invalidReason) {
-		this.invalidReason = new StringBuffer(invalidReason);
-	}
+    public void setInvalidReason(String invalidReason) {
+        this.invalidReason = new StringBuffer(invalidReason);
+    }
 
-	public void appendInvalidReason(String reason) {
-		if (this.invalidReason == null)
-			invalidReason = new StringBuffer();
+    public void appendInvalidReason(String reason) {
+        if (this.invalidReason == null)
+            invalidReason = new StringBuffer();
 
-		if (this.invalidReason.length() != 0) {
-			this.invalidReason.append(", ");
-		}
-		this.invalidReason.append(reason);
-	}
+        if (this.invalidReason.length() != 0) {
+            this.invalidReason.append(", ");
+        }
+        this.invalidReason.append(reason);
+    }
 
 }
