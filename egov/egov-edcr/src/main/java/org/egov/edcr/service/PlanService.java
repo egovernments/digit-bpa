@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlanFeature;
+import org.egov.common.entity.edcr.PlanInformation;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.egov.edcr.entity.Plan;
-import org.egov.edcr.entity.PlanFeature;
-import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.feature.FeatureProcess;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.custom.CustomImplProvider;
@@ -30,173 +30,157 @@ import org.egov.infra.custom.CustomImplProvider;
 
 @Service
 public class PlanService {
-	private Logger LOG = Logger.getLogger(PlanService.class);
-	@Autowired
-	private ApplicationContext applicationContext;
-	@Autowired
-	private PlanFeatureService featureService;
-	@Autowired
-	private FileStoreService fileStoreService;
-	@Autowired
-	private CustomImplProvider specificRuleService;
-	@Autowired
-	private EdcrApplicationDetailService edcrApplicationDetailService;
-	 
-	@Autowired
-	private ExtractService extractService;
+    private Logger LOG = Logger.getLogger(PlanService.class);
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private PlanFeatureService featureService;
+    @Autowired
+    private FileStoreService fileStoreService;
+    @Autowired
+    private CustomImplProvider specificRuleService;
+    @Autowired
+    private EdcrApplicationDetailService edcrApplicationDetailService;
 
-	public Plan process(EdcrApplication dcrApplication, String applicationType) {
-		
-		
-	
-		Plan plan=extractService.extract(dcrApplication.getSavedDxfFile(),featureService.getFeatures());
-		
-		Map<String, String> cityDetails = specificRuleService.getCityDetails();
-		plan=applyRules(plan,cityDetails);
-		
-		InputStream reportStream = generateReport(plan, dcrApplication);
-		
-		saveOutputReport(dcrApplication, reportStream, plan);
-	
-		return plan;
-	}
+    @Autowired
+    private ExtractService extractService;
 
-	public void savePlanDetail(Plan plan, EdcrApplicationDetail detail) {
-		/*if (LOG.isInfoEnabled())
-			LOG.info("*************Before serialization******************");
-		 
-		File f = new File("plandetail.txt");
-		try (FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-			oos.writeObject(plan);
-			detail.setPlanDetailFileStore(
-					fileStoreService.store(f, f.getName(), "text/plain", DcrConstants.APPLICATION_MODULE_TYPE));
-			oos.flush();
-		} catch (IOException e) {
-			LOG.error("Unable to serialize!!!!!!", e);
-		}
-		if (LOG.isInfoEnabled())
-			LOG.info("*************Completed serialization******************");*/
-	}
+    public Plan process(EdcrApplication dcrApplication, String applicationType) {
 
- 
+        Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), featureService.getFeatures());
 
-	private Plan applyRules(Plan  plan, Map<String, String> cityDetails) {
-		for (PlanFeature ruleClass : featureService.getFeatures()) {
-			FeatureProcess rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass(), cityDetails);
-			rule.process(plan);
-		}
-		return plan;
-	}
+        Map<String, String> cityDetails = specificRuleService.getCityDetails();
+        plan = applyRules(plan, cityDetails);
 
-	private InputStream generateReport(Plan plan, EdcrApplication dcrApplication) {
+        InputStream reportStream = generateReport(plan, dcrApplication);
 
-		PlanReportService service = getReportService();
-		InputStream reportStream = service.generateReport(plan,dcrApplication);
+        saveOutputReport(dcrApplication, reportStream, plan);
 
-		return reportStream;
+        return plan;
+    }
 
-	}
+    public void savePlanDetail(Plan plan, EdcrApplicationDetail detail) {
+        /*
+         * if (LOG.isInfoEnabled()) LOG.info("*************Before serialization******************"); File f = new
+         * File("plandetail.txt"); try (FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new
+         * ObjectOutputStream(fos)) { oos.writeObject(plan); detail.setPlanDetailFileStore( fileStoreService.store(f, f.getName(),
+         * "text/plain", DcrConstants.APPLICATION_MODULE_TYPE)); oos.flush(); } catch (IOException e) {
+         * LOG.error("Unable to serialize!!!!!!", e); } if (LOG.isInfoEnabled())
+         * LOG.info("*************Completed serialization******************");
+         */
+    }
 
-	
-	private PlanReportService getReportService() {
-		Object bean = null;
-		String beanName = "PlanReportService";
-		PlanReportService service = null;
-		try {
-			beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
-			applicationContext.getBean(beanName);
-			bean = applicationContext.getBean(beanName);
-			service = (PlanReportService) bean;
-			if (service == null) {
-				LOG.error("No Service Found for " + beanName);
-			}
-		} catch (BeansException e) {
-			LOG.error("No Bean Defined for the Rule " + beanName);
-		}
-		return service;
-	}
+    private Plan applyRules(Plan plan, Map<String, String> cityDetails) {
+        for (PlanFeature ruleClass : featureService.getFeatures()) {
+            FeatureProcess rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass(), cityDetails);
+            rule.process(plan);
+        }
+        return plan;
+    }
 
-	private FeatureProcess getRuleBean(String beanName) {
-		Object bean = null;
-		FeatureProcess rule = null;
-		try {
-			beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
-			// applicationContext.getBean(beanName);
-			bean = applicationContext.getBean(beanName);
+    private InputStream generateReport(Plan plan, EdcrApplication dcrApplication) {
 
-			rule = (FeatureProcess) bean;
-			if (bean == null) {
-				LOG.error("No Service Found for " + beanName);
-			}
-		} catch (BeansException e) {
-			LOG.error("No Bean Defined for the Rule " + beanName);
-		}
-		return rule;
-	}
+        PlanReportService service = getReportService();
+        InputStream reportStream = service.generateReport(plan, dcrApplication);
+        return reportStream;
+    }
 
-	@Transactional
-	public void saveOutputReport(EdcrApplication edcrApplication, InputStream reportOutputStream,
-			Plan plan) {
+    private PlanReportService getReportService() {
+        Object bean = null;
+        String beanName = "PlanReportService";
+        PlanReportService service = null;
+        try {
+            beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
+            applicationContext.getBean(beanName);
+            bean = applicationContext.getBean(beanName);
+            service = (PlanReportService) bean;
+            if (service == null) {
+                LOG.error("No Service Found for " + beanName);
+            }
+        } catch (BeansException e) {
+            LOG.error("No Bean Defined for the Rule " + beanName);
+        }
+        return service;
+    }
 
-		List<EdcrApplicationDetail> edcrApplicationDetails = edcrApplicationDetailService
-				.fingByDcrApplicationId(edcrApplication.getId());
-		final String fileName = edcrApplication.getApplicationNumber() + "-v" + edcrApplicationDetails.size() + ".pdf";
+    private FeatureProcess getRuleBean(String beanName) {
+        Object bean = null;
+        FeatureProcess rule = null;
+        try {
+            beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
+            // applicationContext.getBean(beanName);
+            bean = applicationContext.getBean(beanName);
 
-		final FileStoreMapper fileStoreMapper = fileStoreService.store(reportOutputStream, fileName, "application/pdf",
-				DcrConstants.FILESTORE_MODULECODE);
+            rule = (FeatureProcess) bean;
+            if (bean == null) {
+                LOG.error("No Service Found for " + beanName);
+            }
+        } catch (BeansException e) {
+            LOG.error("No Bean Defined for the Rule " + beanName);
+        }
+        return rule;
+    }
 
-		buildDocuments(edcrApplication, null, fileStoreMapper, plan);
+    @Transactional
+    public void saveOutputReport(EdcrApplication edcrApplication, InputStream reportOutputStream,
+            Plan plan) {
 
-		PlanInformation planInformation = plan.getPlanInformation();
+        List<EdcrApplicationDetail> edcrApplicationDetails = edcrApplicationDetailService
+                .fingByDcrApplicationId(edcrApplication.getId());
+        final String fileName = edcrApplication.getApplicationNumber() + "-v" + edcrApplicationDetails.size() + ".pdf";
 
-	//	planinfoService.save(planInformation);
-		edcrApplication.getEdcrApplicationDetails().get(0).setPlanInformation(planInformation);
-		edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
-	}
+        final FileStoreMapper fileStoreMapper = fileStoreService.store(reportOutputStream, fileName, "application/pdf",
+                DcrConstants.FILESTORE_MODULECODE);
 
-	public void buildDocuments(EdcrApplication edcrApplication, FileStoreMapper dxfFile, FileStoreMapper reportOutput,
-			Plan plan) {
+        buildDocuments(edcrApplication, null, fileStoreMapper, plan);
 
-		if (dxfFile != null) {
-			EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
+        PlanInformation planInformation = plan.getPlanInformation();
 
-			edcrApplicationDetail.setDxfFileId(dxfFile);
-			edcrApplicationDetail.setApplication(edcrApplication);
-			for (EdcrApplicationDetail edcrApplicationDetail1 : edcrApplication.getEdcrApplicationDetails()) {
-				edcrApplicationDetail.setPlan(edcrApplicationDetail1.getPlan());
-			}
-			List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
-			edcrApplicationDetails.add(edcrApplicationDetail);
-			edcrApplication.setSavedEdcrApplicationDetail(edcrApplicationDetail);
-			edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
-		}
+        // planinfoService.save(planInformation);
+        edcrApplication.getEdcrApplicationDetails().get(0).setPlanInformation(planInformation);
+        edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
+    }
 
-		if (reportOutput != null) {
-			EdcrApplicationDetail edcrApplicationDetail = edcrApplication.getEdcrApplicationDetails().get(0);
+    public void buildDocuments(EdcrApplication edcrApplication, FileStoreMapper dxfFile, FileStoreMapper reportOutput,
+            Plan plan) {
 
-			if (plan.getEdcrPassed()) {
-				edcrApplicationDetail.setStatus("Accepted");
-				edcrApplication.setStatus("Accepted");
-			} else {
-				edcrApplicationDetail.setStatus("Not Accepted");
-				edcrApplication.setStatus("Not Accepted");
-			}
-			edcrApplicationDetail.setCreatedDate(new Date());
-			edcrApplicationDetail.setReportOutputId(reportOutput);
-			List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
-			edcrApplicationDetails.add(edcrApplicationDetail);
-			savePlanDetail(plan, edcrApplicationDetail);
+        if (dxfFile != null) {
+            EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
 
-		/*	if (plan.getEdcrPdfDetails() != null && plan.getEdcrPdfDetails().size() > 0) {
-				for (EdcrPdfDetail edcrPdfDetail : plan.getEdcrPdfDetails()) {
-					edcrPdfDetail.setEdcrApplicationDetail(edcrApplicationDetail);
-				}
+            edcrApplicationDetail.setDxfFileId(dxfFile);
+            edcrApplicationDetail.setApplication(edcrApplication);
+            for (EdcrApplicationDetail edcrApplicationDetail1 : edcrApplication.getEdcrApplicationDetails()) {
+                edcrApplicationDetail.setPlan(edcrApplicationDetail1.getPlan());
+            }
+            List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+            edcrApplicationDetails.add(edcrApplicationDetail);
+            edcrApplication.setSavedEdcrApplicationDetail(edcrApplicationDetail);
+            edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
+        }
 
-				edcrPdfDetailService.saveAll(plan.getEdcrPdfDetails());
-			}
-*/
-			edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
-		}
-	}
+        if (reportOutput != null) {
+            EdcrApplicationDetail edcrApplicationDetail = edcrApplication.getEdcrApplicationDetails().get(0);
+
+            if (plan.getEdcrPassed()) {
+                edcrApplicationDetail.setStatus("Accepted");
+                edcrApplication.setStatus("Accepted");
+            } else {
+                edcrApplicationDetail.setStatus("Not Accepted");
+                edcrApplication.setStatus("Not Accepted");
+            }
+            edcrApplicationDetail.setCreatedDate(new Date());
+            edcrApplicationDetail.setReportOutputId(reportOutput);
+            List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+            edcrApplicationDetails.add(edcrApplicationDetail);
+            savePlanDetail(plan, edcrApplicationDetail);
+
+            /*
+             * if (plan.getEdcrPdfDetails() != null && plan.getEdcrPdfDetails().size() > 0) { for (EdcrPdfDetail edcrPdfDetail :
+             * plan.getEdcrPdfDetails()) { edcrPdfDetail.setEdcrApplicationDetail(edcrApplicationDetail); }
+             * edcrPdfDetailService.saveAll(plan.getEdcrPdfDetails()); }
+             */
+            edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
+        }
+    }
 
 }

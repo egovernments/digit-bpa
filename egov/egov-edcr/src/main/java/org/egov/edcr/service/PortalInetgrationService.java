@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
-import org.egov.edcr.entity.Plan;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -38,17 +37,15 @@ public class PortalInetgrationService {
 
     @Transactional
     public void createPortalUserinbox(final EdcrApplication application, final List<User> portalInboxUser) {
-        int lastObjectIndex = application.getEdcrApplicationDetails().size() - 1;
-        Plan plan  = application.getEdcrApplicationDetails().get(lastObjectIndex).getPlan();
         Module module = moduleService.getModuleByName(APPLICATION_MODULE_TYPE);
         String url = "/edcr/edcrapplication/view/" + application.getApplicationNumber();
         String serviceName;
-        if(ApplicationType.OCCUPANCY_CERTIFICATE.equals(application.getApplicationType()))
+        if (ApplicationType.OCCUPANCY_CERTIFICATE.equals(application.getApplicationType()))
             serviceName = ApplicationType.OCCUPANCY_CERTIFICATE.getApplicationTypeVal();
         else
-            serviceName = plan.getPlanInformation().getServiceType();
-        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,application.getApplicantName(),
-        		serviceName, application.getApplicationNumber(),
+            serviceName = application.getServiceType();
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, application.getApplicantName(),
+                serviceName, application.getApplicationNumber(),
                 application.getEdcrApplicationDetails().get(0).getDcrNumber(), application.getId(), "Sucess", "Sucess", url, true,
                 application.getStatus(), new Date(), null, portalInboxUser);
 

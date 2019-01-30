@@ -10,15 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.egov.edcr.entity.Block;
-import org.egov.edcr.entity.Measurement;
-import org.egov.edcr.entity.Occupancy;
-import org.egov.edcr.entity.OccupancyType;
-import org.egov.edcr.entity.Plan;
-import org.egov.edcr.entity.Result;
-import org.egov.edcr.entity.ScrutinyDetail;
+import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.Measurement;
+import org.egov.common.entity.edcr.Occupancy;
+import org.egov.common.entity.edcr.OccupancyType;
+import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.utility.DcrConstants;
-import org.egov.edcr.utility.Util;
 import org.springframework.stereotype.Service;
 
 @Service

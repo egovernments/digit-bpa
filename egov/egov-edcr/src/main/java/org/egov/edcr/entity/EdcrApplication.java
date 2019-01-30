@@ -1,5 +1,6 @@
 package org.egov.edcr.entity;
 
+import org.egov.common.entity.edcr.PlanInformation;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;

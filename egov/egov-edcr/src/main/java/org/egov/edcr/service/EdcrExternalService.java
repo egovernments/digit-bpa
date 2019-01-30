@@ -40,237 +40,224 @@
 
 package org.egov.edcr.service;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.egov.edcr.entity.Block;
-import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.egov.edcr.entity.Floor;
-import org.egov.edcr.entity.FloorDescription;
-import org.egov.edcr.entity.Occupancy;
-import org.egov.edcr.entity.Plan;
-import org.egov.edcr.entity.dto.EdcrApplicationInfo;
-import org.egov.edcr.utility.DcrConstants;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.FloorDescription;
+import org.egov.common.entity.edcr.Occupancy;
+import org.egov.common.entity.edcr.Plan;
+import org.egov.edcr.entity.EdcrApplicationDetail;
+import org.egov.edcr.entity.dto.EdcrApplicationInfo;
+import org.egov.edcr.utility.DcrConstants;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class EdcrExternalService {
 
-	private Logger LOG = Logger.getLogger(EdcrExternalService.class);
+    private Logger LOG = Logger.getLogger(EdcrExternalService.class);
 
-	/*
-	* Names should same as DCR checklist name in application with underscore concatenation for each space
-	* */
-	private static final String SITE_PLAN = "Site_Plan";
-	private static final String SERVICE_PLAN = "Service_Plan";
-	private static final String PARKING_PLAN = "Parking_Plan";
-	private static final String BUILDING_PLAN = "Building_Plan";
-	private static final String TERRACE_PLAN = "Terrace_Plan";
-	private static final String ROOF_PLAN = "Roof_Plan";
-	private static final String ELEVATION_PLAN = "Elevation_Plans";
-	private static final String SECTION_PLAN = "Section_Plans";
-	private static final String DETAILS_PLAN = "Details_Plan";
-	private static final String FLOOR_PLAN = "Floor_Plans";
-	private static final String FLOOR_PLAN_ELEVTN_SECTN = "Floor_Plans,_Elevations,_Sections";
+    /*
+     * Names should same as DCR checklist name in application with underscore concatenation for each space
+     */
+    private static final String SITE_PLAN = "Site_Plan";
+    private static final String SERVICE_PLAN = "Service_Plan";
+    private static final String PARKING_PLAN = "Parking_Plan";
+    private static final String BUILDING_PLAN = "Building_Plan";
+    private static final String TERRACE_PLAN = "Terrace_Plan";
+    private static final String ROOF_PLAN = "Roof_Plan";
+    private static final String ELEVATION_PLAN = "Elevation_Plans";
+    private static final String SECTION_PLAN = "Section_Plans";
+    private static final String DETAILS_PLAN = "Details_Plan";
+    private static final String FLOOR_PLAN = "Floor_Plans";
+    private static final String FLOOR_PLAN_ELEVTN_SECTN = "Floor_Plans,_Elevations,_Sections";
 
-	@Autowired
-	private EdcrApplicationDetailService edcrApplicationDetailService;
-	@Autowired
-	private FileStoreService fileStoreService;
+    @Autowired
+    private EdcrApplicationDetailService edcrApplicationDetailService;
+    @Autowired
+    private FileStoreService fileStoreService;
 
-	public EdcrApplicationInfo loadEdcrApplicationDetails(String eDcrNumber) {
-		EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(eDcrNumber);
-		return buildDcrApplicationDetails(applicationDetail);
-	}
+    public EdcrApplicationInfo loadEdcrApplicationDetails(String eDcrNumber) {
+        EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(eDcrNumber);
+        return buildDcrApplicationDetails(applicationDetail);
+    }
 
-	public EdcrApplicationInfo buildDcrApplicationDetails(EdcrApplicationDetail applicationDetail) {
-		EdcrApplicationInfo applicationInfo = new EdcrApplicationInfo();
-		applicationInfo.seteDcrApplicationId(applicationDetail.getApplication().getId());
-		applicationInfo.setApplicationDate(DateUtils.toDefaultDateFormat(applicationDetail.getApplication().getApplicationDate()));
-		applicationInfo.setCreatedDate(DateUtils.toDefaultDateTimeFormat(applicationDetail.getApplication().getCreatedDate()));
-		applicationInfo.setApplicationNumber(applicationDetail.getApplication().getApplicationNumber());
-		applicationInfo.setDcrNumber(applicationDetail.getDcrNumber());
-		applicationInfo.seteDcrApplicationId(applicationDetail.getApplication().getId());
-		applicationInfo.setDxfFile(applicationDetail.getDxfFileId());
-		applicationInfo.setReportOutput(applicationDetail.getReportOutputId());
-		applicationInfo.setProjectType(applicationDetail.getApplication().getProjectType());
-		applicationInfo.setPlanPermitNumber(applicationDetail.getApplication().getPlanPermitNumber());
-		if(applicationDetail.getPlanDetailFileStore() != null)
-			applicationInfo.setPlanDetailFileStore(applicationDetail.getPlanDetailFileStore().getId());
-/*
-		if (!applicationDetail.getEdcrPdfDetails().isEmpty()) {
-			Map<String, List<FileStoreMapper>> planScrutinyPdfs = new LinkedHashMap<>();
-			Collections.reverse(applicationDetail.getEdcrPdfDetails());*/
-			/*
-			 * Here we are building system generated plan pdf's and
-			 * then those need to auto populate into application to corresponding DCR checklist document
-			 */
-			/*applicationDetail.getEdcrPdfDetails().forEach(scrutinyPdf -> {
-				if(scrutinyPdf != null && scrutinyPdf.getConvertedPdf() != null) {
-					List<FileStoreMapper> fileStoreMappers = new ArrayList<>();
-					fileStoreMappers.add(scrutinyPdf.getConvertedPdf());
-					if (scrutinyPdf.getLayer().contains(SITE_PLAN.toUpperCase())) {
-						if (planScrutinyPdfs.containsKey(SITE_PLAN))
-							planScrutinyPdfs.get(SITE_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(SITE_PLAN, fileStoreMappers);
-					} else if (scrutinyPdf.getLayer().equalsIgnoreCase(SERVICE_PLAN)) {
-						if (planScrutinyPdfs.containsKey(SERVICE_PLAN))
-							planScrutinyPdfs.get(SERVICE_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(SERVICE_PLAN, fileStoreMappers);
-					} else if (scrutinyPdf.getLayer().equalsIgnoreCase(PARKING_PLAN)) {
-						if (planScrutinyPdfs.containsKey(PARKING_PLAN))
-							planScrutinyPdfs.get(PARKING_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(PARKING_PLAN, fileStoreMappers);
-					} else if (scrutinyPdf.getLayer().equalsIgnoreCase(BUILDING_PLAN)) {
-						if (planScrutinyPdfs.containsKey(BUILDING_PLAN))
-							planScrutinyPdfs.get(BUILDING_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(BUILDING_PLAN, fileStoreMappers);
-					} else if (scrutinyPdf.getLayer().equalsIgnoreCase(TERRACE_PLAN)) {
-						if (planScrutinyPdfs.containsKey(TERRACE_PLAN))
-							planScrutinyPdfs.get(TERRACE_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(TERRACE_PLAN, fileStoreMappers);
-					} else if (scrutinyPdf.getLayer().contains("DETAILS_")) {
-						if (planScrutinyPdfs.containsKey(DETAILS_PLAN))
-							planScrutinyPdfs.get(DETAILS_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(DETAILS_PLAN, fileStoreMappers);
-					} else if (scrutinyPdf.getLayer().contains("ROOF_PLAN_")) {
-						if (planScrutinyPdfs.containsKey(ROOF_PLAN))
-							planScrutinyPdfs.get(ROOF_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(ROOF_PLAN, fileStoreMappers);
-					} else if (scrutinyPdf.getLayer().contains("FLOOR_PLAN_") || scrutinyPdf.getLayer().contains("SECTION_") || scrutinyPdf.getLayer().contains("ELEVATION_")) {
-						if (planScrutinyPdfs.containsKey(FLOOR_PLAN_ELEVTN_SECTN))
-							planScrutinyPdfs.get(FLOOR_PLAN_ELEVTN_SECTN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(FLOOR_PLAN_ELEVTN_SECTN, fileStoreMappers);
-					}
-					 else if (scrutinyPdf.getLayer().contains("SECTION_")) {
-						if (planScrutinyPdfs.containsKey(SECTION_PLAN))
-							planScrutinyPdfs.get(SECTION_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(SECTION_PLAN, fileStoreMappers);
-					} else if (scrutinyPdf.getLayer().contains("ELEVATION_")) {
-						if (planScrutinyPdfs.containsKey(ELEVATION_PLAN))
-							planScrutinyPdfs.get(ELEVATION_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(ELEVATION_PLAN, fileStoreMappers);
+    public EdcrApplicationInfo buildDcrApplicationDetails(EdcrApplicationDetail applicationDetail) {
+        EdcrApplicationInfo applicationInfo = new EdcrApplicationInfo();
+        applicationInfo.seteDcrApplicationId(applicationDetail.getApplication().getId());
+        applicationInfo
+                .setApplicationDate(DateUtils.toDefaultDateFormat(applicationDetail.getApplication().getApplicationDate()));
+        applicationInfo.setCreatedDate(DateUtils.toDefaultDateTimeFormat(applicationDetail.getApplication().getCreatedDate()));
+        applicationInfo.setApplicationNumber(applicationDetail.getApplication().getApplicationNumber());
+        applicationInfo.setDcrNumber(applicationDetail.getDcrNumber());
+        applicationInfo.seteDcrApplicationId(applicationDetail.getApplication().getId());
+        applicationInfo.setDxfFile(applicationDetail.getDxfFileId());
+        applicationInfo.setReportOutput(applicationDetail.getReportOutputId());
+        applicationInfo.setProjectType(applicationDetail.getApplication().getProjectType());
+        applicationInfo.setPlanPermitNumber(applicationDetail.getApplication().getPlanPermitNumber());
+        if (applicationDetail.getPlanDetailFileStore() != null)
+            applicationInfo.setPlanDetailFileStore(applicationDetail.getPlanDetailFileStore().getId());
+        /*
+         * if (!applicationDetail.getEdcrPdfDetails().isEmpty()) { Map<String, List<FileStoreMapper>> planScrutinyPdfs = new
+         * LinkedHashMap<>(); Collections.reverse(applicationDetail.getEdcrPdfDetails());
+         */
+        /*
+         * Here we are building system generated plan pdf's and then those need to auto populate into application to corresponding
+         * DCR checklist document
+         */
+        /*
+         * applicationDetail.getEdcrPdfDetails().forEach(scrutinyPdf -> { if(scrutinyPdf != null && scrutinyPdf.getConvertedPdf()
+         * != null) { List<FileStoreMapper> fileStoreMappers = new ArrayList<>();
+         * fileStoreMappers.add(scrutinyPdf.getConvertedPdf()); if (scrutinyPdf.getLayer().contains(SITE_PLAN.toUpperCase())) { if
+         * (planScrutinyPdfs.containsKey(SITE_PLAN)) planScrutinyPdfs.get(SITE_PLAN).add(scrutinyPdf.getConvertedPdf()); else
+         * planScrutinyPdfs.put(SITE_PLAN, fileStoreMappers); } else if (scrutinyPdf.getLayer().equalsIgnoreCase(SERVICE_PLAN)) {
+         * if (planScrutinyPdfs.containsKey(SERVICE_PLAN)) planScrutinyPdfs.get(SERVICE_PLAN).add(scrutinyPdf.getConvertedPdf());
+         * else planScrutinyPdfs.put(SERVICE_PLAN, fileStoreMappers); } else if
+         * (scrutinyPdf.getLayer().equalsIgnoreCase(PARKING_PLAN)) { if (planScrutinyPdfs.containsKey(PARKING_PLAN))
+         * planScrutinyPdfs.get(PARKING_PLAN).add(scrutinyPdf.getConvertedPdf()); else planScrutinyPdfs.put(PARKING_PLAN,
+         * fileStoreMappers); } else if (scrutinyPdf.getLayer().equalsIgnoreCase(BUILDING_PLAN)) { if
+         * (planScrutinyPdfs.containsKey(BUILDING_PLAN)) planScrutinyPdfs.get(BUILDING_PLAN).add(scrutinyPdf.getConvertedPdf());
+         * else planScrutinyPdfs.put(BUILDING_PLAN, fileStoreMappers); } else if
+         * (scrutinyPdf.getLayer().equalsIgnoreCase(TERRACE_PLAN)) { if (planScrutinyPdfs.containsKey(TERRACE_PLAN))
+         * planScrutinyPdfs.get(TERRACE_PLAN).add(scrutinyPdf.getConvertedPdf()); else planScrutinyPdfs.put(TERRACE_PLAN,
+         * fileStoreMappers); } else if (scrutinyPdf.getLayer().contains("DETAILS_")) { if
+         * (planScrutinyPdfs.containsKey(DETAILS_PLAN)) planScrutinyPdfs.get(DETAILS_PLAN).add(scrutinyPdf.getConvertedPdf());
+         * else planScrutinyPdfs.put(DETAILS_PLAN, fileStoreMappers); } else if (scrutinyPdf.getLayer().contains("ROOF_PLAN_")) {
+         * if (planScrutinyPdfs.containsKey(ROOF_PLAN)) planScrutinyPdfs.get(ROOF_PLAN).add(scrutinyPdf.getConvertedPdf()); else
+         * planScrutinyPdfs.put(ROOF_PLAN, fileStoreMappers); } else if (scrutinyPdf.getLayer().contains("FLOOR_PLAN_") ||
+         * scrutinyPdf.getLayer().contains("SECTION_") || scrutinyPdf.getLayer().contains("ELEVATION_")) { if
+         * (planScrutinyPdfs.containsKey(FLOOR_PLAN_ELEVTN_SECTN))
+         * planScrutinyPdfs.get(FLOOR_PLAN_ELEVTN_SECTN).add(scrutinyPdf.getConvertedPdf()); else
+         * planScrutinyPdfs.put(FLOOR_PLAN_ELEVTN_SECTN, fileStoreMappers); } else if
+         * (scrutinyPdf.getLayer().contains("SECTION_")) { if (planScrutinyPdfs.containsKey(SECTION_PLAN))
+         * planScrutinyPdfs.get(SECTION_PLAN).add(scrutinyPdf.getConvertedPdf()); else planScrutinyPdfs.put(SECTION_PLAN,
+         * fileStoreMappers); } else if (scrutinyPdf.getLayer().contains("ELEVATION_")) { if
+         * (planScrutinyPdfs.containsKey(ELEVATION_PLAN)) planScrutinyPdfs.get(ELEVATION_PLAN).add(scrutinyPdf.getConvertedPdf());
+         * else planScrutinyPdfs.put(ELEVATION_PLAN, fileStoreMappers); } else if (scrutinyPdf.getLayer().contains("FLOOR_PLAN_"))
+         * { if (planScrutinyPdfs.containsKey(FLOOR_PLAN)) planScrutinyPdfs.get(FLOOR_PLAN).add(scrutinyPdf.getConvertedPdf());
+         * else planScrutinyPdfs.put(FLOOR_PLAN, fileStoreMappers); } } }); applicationInfo.setPlanScrutinyPdfs(planScrutinyPdfs);
+         * }
+         */
 
-					} else if (scrutinyPdf.getLayer().contains("FLOOR_PLAN_")) {
-						if (planScrutinyPdfs.containsKey(FLOOR_PLAN))
-							planScrutinyPdfs.get(FLOOR_PLAN).add(scrutinyPdf.getConvertedPdf());
-						else
-							planScrutinyPdfs.put(FLOOR_PLAN, fileStoreMappers);
-					}
-				}
-			});
+        if (applicationDetail.getPlanDetailFileStore() == null) {
+            /*
+             * It is used to support approved dcr plans which are in phase 1, using approved plans should able to submit bpa
+             * application.
+             */
+            edcrApplicationDetailService.buildBuildingDetailForApprovedPlans(applicationDetail, applicationInfo);
+        } else {
+            LOG.info("Before de-serialization....................");
+            if (LOG.isInfoEnabled())
+                LOG.info("**************** Start - Reading Plan detail file **************");
+            File file = fileStoreService.fetch(applicationDetail.getPlanDetailFileStore().getFileStoreId(),
+                    DcrConstants.APPLICATION_MODULE_TYPE);
+            if (LOG.isInfoEnabled())
+                LOG.info("**************** End - Reading Plan detail file **************" + file);
+            try (FileInputStream fis = new FileInputStream(file);
+                    ObjectInputStream ois = new ObjectInputStream(fis)) {
+                Plan pl = (Plan) ois.readObject();
+                if (LOG.isInfoEnabled())
+                    LOG.info("**************** Plan detail object **************" + pl);
+                applicationInfo.setPlan(pl);
+            } catch (IOException | ClassNotFoundException e) {
+                LOG.log(Level.ERROR, e);
+            }
+            LOG.debug("Completed de-serialization");
+            if (applicationInfo.getPlan() != null)
+                for (Block b : applicationInfo.getPlan().getBlocks()) {
+                    for (Floor f : b.getBuilding().getFloors()) {
+                        f.setName(getFloorDescription(f));
+                        /*
+                         * Need to be subtract existing building area from proposed building area to get actual proposed area
+                         */
+                        for (Occupancy occupancy : f.getOccupancies()) {
+                            occupancy.setBuiltUpArea(occupancy.getBuiltUpArea().subtract(occupancy.getExistingBuiltUpArea()));
+                            occupancy.setFloorArea(occupancy.getFloorArea().subtract(occupancy.getExistingFloorArea()));
+                            occupancy.setCarpetArea(occupancy.getCarpetArea().subtract(occupancy.getExistingCarpetArea()));
+                        }
+                    }
 
-			applicationInfo.setPlanScrutinyPdfs(planScrutinyPdfs);
-		}*/
+                    /*
+                     * This was used to get actual occupancies of proposed buildings, when auto populate sub occupancies, we need
+                     * to consider only proposed building occupancies. We should not consider existing building occupancies.
+                     */
+                    for (Occupancy actualOccupancy : b.getBuilding().getTotalArea()) {
+                        actualOccupancy.setBuiltUpArea(
+                                actualOccupancy.getBuiltUpArea().subtract(actualOccupancy.getExistingBuiltUpArea()));
+                        actualOccupancy
+                                .setFloorArea(actualOccupancy.getFloorArea().subtract(actualOccupancy.getExistingFloorArea()));
+                        actualOccupancy
+                                .setCarpetArea(actualOccupancy.getCarpetArea().subtract(actualOccupancy.getExistingCarpetArea()));
+                    }
+                    b.getBuilding().setTotalBuitUpArea(
+                            b.getBuilding().getTotalBuitUpArea().subtract(b.getBuilding().getTotalExistingBuiltUpArea()));
+                    b.getBuilding().setTotalFloorArea(
+                            b.getBuilding().getTotalBuitUpArea().subtract(b.getBuilding().getTotalExistingBuiltUpArea()));
+                }
+        }
 
-		if(applicationDetail.getPlanDetailFileStore() == null) {
-			/*
-			 * It is used to support approved dcr plans which are in phase 1,
-			 * using approved plans should able to submit bpa application.
-			 */
-			edcrApplicationDetailService.buildBuildingDetailForApprovedPlans(applicationDetail, applicationInfo);
-		} else {
-			LOG.info("Before de-serialization....................");
-			if (LOG.isInfoEnabled())
-				LOG.info("**************** Start - Reading Plan detail file **************");
-			File file = fileStoreService.fetch(applicationDetail.getPlanDetailFileStore().getFileStoreId(), DcrConstants.APPLICATION_MODULE_TYPE);
-			if (LOG.isInfoEnabled())
-				LOG.info("**************** End - Reading Plan detail file **************" + file);
-			try (FileInputStream fis = new FileInputStream(file);
-					ObjectInputStream ois = new ObjectInputStream(fis)) {
-				Plan pl = (Plan) ois.readObject();
-				if (LOG.isInfoEnabled())
-					LOG.info("**************** Plan detail object **************" + pl);
-				applicationInfo.setPlan(pl);
-			} catch (IOException | ClassNotFoundException e) {
-				LOG.log(Level.ERROR, e);
-			}
-			LOG.debug("Completed de-serialization");
-			if(applicationInfo.getPlan() != null)
-				for (Block b : applicationInfo.getPlan().getBlocks()) {
-					for (Floor f : b.getBuilding().getFloors()) {
-						f.setName(getFloorDescription(f));
-						/*
-						 * Need to be subtract existing building area from proposed building area to get actual proposed area
-						 */
-						for (Occupancy occupancy : f.getOccupancies()) {
-							occupancy.setBuiltUpArea(occupancy.getBuiltUpArea().subtract(occupancy.getExistingBuiltUpArea()));
-							occupancy.setFloorArea(occupancy.getFloorArea().subtract(occupancy.getExistingFloorArea()));
-							occupancy.setCarpetArea(occupancy.getCarpetArea().subtract(occupancy.getExistingCarpetArea()));
-						}
-					}
+        if (applicationInfo.getPlan() != null && applicationInfo.getPlan().getPlanInformation() != null) {
+            applicationInfo.setAmenities(applicationInfo.getPlan().getPlanInformation().getAmenities() == null ? "N/A"
+                    : applicationInfo.getPlan().getPlanInformation().getAmenities());
+            applicationInfo.setServiceType(applicationInfo.getPlan().getPlanInformation().getServiceType() == null ? "N/A"
+                    : applicationInfo.getPlan().getPlanInformation().getServiceType());
+            applicationInfo.setOccupancy(applicationInfo.getPlan().getPlanInformation().getOccupancy() == null ? "N/A"
+                    : applicationInfo.getPlan().getPlanInformation().getOccupancy());
+            applicationInfo.setArchitectInformation(
+                    applicationInfo.getPlan().getPlanInformation().getArchitectInformation() == null ? "N/A"
+                            : applicationInfo.getPlan().getPlanInformation().getArchitectInformation());
+            applicationInfo.setPlotArea(applicationInfo.getPlan().getPlanInformation().getPlotArea() == null ? BigDecimal.ZERO
+                    : applicationInfo.getPlan().getPlanInformation().getPlotArea());
+            applicationInfo.setOwnerName(applicationInfo.getPlan().getPlanInformation().getOwnerName() == null ? "N/A"
+                    : applicationInfo.getPlan().getPlanInformation().getOwnerName());
+        } else {
+            if (LOG.isInfoEnabled())
+                LOG.info("**************** Error Occurred while de-serialization **************"
+                        + applicationDetail.getDcrNumber());
+            if (applicationDetail.getApplication().getPlanInformation() != null) {
+                applicationInfo
+                        .setAmenities(applicationDetail.getApplication().getPlanInformation().getAmenities() == null ? "N/A"
+                                : applicationDetail.getApplication().getPlanInformation().getAmenities());
+                applicationInfo
+                        .setServiceType(applicationDetail.getApplication().getPlanInformation().getServiceType() == null ? "N/A"
+                                : applicationDetail.getApplication().getPlanInformation().getServiceType());
+                applicationInfo
+                        .setOccupancy(applicationDetail.getApplication().getPlanInformation().getOccupancy() == null ? "N/A"
+                                : applicationInfo.getPlan().getPlanInformation().getOccupancy());
+                applicationInfo.setArchitectInformation(
+                        applicationDetail.getApplication().getPlanInformation().getArchitectInformation() == null ? "N/A"
+                                : applicationDetail.getApplication().getPlanInformation().getArchitectInformation());
+                applicationInfo.setPlotArea(
+                        applicationDetail.getApplication().getPlanInformation().getPlotArea() == null ? BigDecimal.ZERO
+                                : applicationDetail.getApplication().getPlanInformation().getPlotArea());
+                applicationInfo
+                        .setOwnerName(applicationDetail.getApplication().getPlanInformation().getOwnerName() == null ? "N/A"
+                                : applicationDetail.getApplication().getPlanInformation().getOwnerName());
+            }
+        }
 
-					/* This was used to get actual occupancies of proposed buildings,
-					 * when auto populate sub occupancies, we need to consider only proposed building occupancies.
-					 * We should not consider existing building occupancies.
-					 */
-					for(Occupancy actualOccupancy : b.getBuilding().getTotalArea()) {
-						actualOccupancy.setBuiltUpArea(actualOccupancy.getBuiltUpArea().subtract(actualOccupancy.getExistingBuiltUpArea()));
-						actualOccupancy.setFloorArea(actualOccupancy.getFloorArea().subtract(actualOccupancy.getExistingFloorArea()));
-						actualOccupancy.setCarpetArea(actualOccupancy.getCarpetArea().subtract(actualOccupancy.getExistingCarpetArea()));
-					}
-					b.getBuilding().setTotalBuitUpArea(b.getBuilding().getTotalBuitUpArea().subtract(b.getBuilding().getTotalExistingBuiltUpArea()));
-					b.getBuilding().setTotalFloorArea(b.getBuilding().getTotalBuitUpArea().subtract(b.getBuilding().getTotalExistingBuiltUpArea()));
-				}
-		}
+        return applicationInfo;
+    }
 
-		if (applicationInfo.getPlan() != null && applicationInfo.getPlan().getPlanInformation() != null) {
-			applicationInfo.setAmenities(applicationInfo.getPlan().getPlanInformation().getAmenities() == null ? "N/A" : applicationInfo.getPlan().getPlanInformation().getAmenities());
-			applicationInfo.setServiceType(applicationInfo.getPlan().getPlanInformation().getServiceType() == null ? "N/A" : applicationInfo.getPlan().getPlanInformation().getServiceType());
-			applicationInfo.setOccupancy(applicationInfo.getPlan().getPlanInformation().getOccupancy() == null ? "N/A" : applicationInfo.getPlan().getPlanInformation().getOccupancy());
-			applicationInfo.setArchitectInformation(applicationInfo.getPlan().getPlanInformation().getArchitectInformation() == null ? "N/A" : applicationInfo.getPlan().getPlanInformation().getArchitectInformation());
-			applicationInfo.setPlotArea(applicationInfo.getPlan().getPlanInformation().getPlotArea() == null ? BigDecimal.ZERO : applicationInfo.getPlan().getPlanInformation().getPlotArea());
-			applicationInfo.setOwnerName(applicationInfo.getPlan().getPlanInformation().getOwnerName() == null ? "N/A" : applicationInfo.getPlan().getPlanInformation().getOwnerName());
-		} else {
-			if (LOG.isInfoEnabled())
-				LOG.info("**************** Error Occurred while de-serialization **************"+applicationDetail.getDcrNumber());
-			if(applicationDetail.getApplication().getPlanInformation() != null) {
-				applicationInfo.setAmenities(applicationDetail.getApplication().getPlanInformation().getAmenities() == null ? "N/A" : applicationDetail.getApplication().getPlanInformation().getAmenities());
-				applicationInfo.setServiceType(applicationDetail.getApplication().getPlanInformation().getServiceType() == null ? "N/A" : applicationDetail.getApplication().getPlanInformation().getServiceType());
-				applicationInfo.setOccupancy(applicationDetail.getApplication().getPlanInformation().getOccupancy() == null ? "N/A" : applicationInfo.getPlan().getPlanInformation().getOccupancy());
-				applicationInfo.setArchitectInformation(applicationDetail.getApplication().getPlanInformation().getArchitectInformation() == null ? "N/A" : applicationDetail.getApplication().getPlanInformation().getArchitectInformation());
-				applicationInfo.setPlotArea(applicationDetail.getApplication().getPlanInformation().getPlotArea() == null ? BigDecimal.ZERO : applicationDetail.getApplication().getPlanInformation().getPlotArea());
-				applicationInfo.setOwnerName(applicationDetail.getApplication().getPlanInformation().getOwnerName() == null ? "N/A" : applicationDetail.getApplication().getPlanInformation().getOwnerName());
-			}
-		}
-
-		return applicationInfo;
-	}
-
-	private String getFloorDescription(Floor floor) {
-		String name;
-		if (floor.getNumber() < 0)
-			name = FloorDescription.CELLAR_FLOOR.getFloorDescriptionVal();
-		else if (floor.getNumber() > 0 && floor.getTerrace())
-			name = FloorDescription.TERRACE_FLOOR.getFloorDescriptionVal();
-		else if (floor.getNumber() > 0)
-			name = FloorDescription.UPPER_FLOOR.getFloorDescriptionVal();
-		else
-			name = FloorDescription.GROUND_FLOOR.getFloorDescriptionVal();
-		return name;
-	}
+    private String getFloorDescription(Floor floor) {
+        String name;
+        if (floor.getNumber() < 0)
+            name = FloorDescription.CELLAR_FLOOR.getFloorDescriptionVal();
+        else if (floor.getNumber() > 0 && floor.getTerrace())
+            name = FloorDescription.TERRACE_FLOOR.getFloorDescriptionVal();
+        else if (floor.getNumber() > 0)
+            name = FloorDescription.UPPER_FLOOR.getFloorDescriptionVal();
+        else
+            name = FloorDescription.GROUND_FLOOR.getFloorDescriptionVal();
+        return name;
+    }
 }

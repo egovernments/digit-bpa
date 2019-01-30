@@ -46,7 +46,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.edcr.entity.Plan;
+import org.egov.common.entity.edcr.Plan;
 import org.egov.eis.contract.ErrorDetail;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 

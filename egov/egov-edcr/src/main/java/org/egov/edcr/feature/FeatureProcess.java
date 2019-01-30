@@ -1,7 +1,7 @@
 package org.egov.edcr.feature;
 
-import org.egov.edcr.entity.Plan;
-import org.egov.edcr.entity.ScrutinyDetail;
+import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
