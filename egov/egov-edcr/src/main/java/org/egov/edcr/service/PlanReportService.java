@@ -519,10 +519,10 @@ public class PlanReportService {
 
         if (dcrApplication.getPlanInformation() != null
                 && dcrApplication.getPlanInformation().getApplicantName() != null)
-            plan.getPlanInformation().setApplicantName(dcrApplication.getPlanInformation().getApplicantName());
+            plan.getPlanInformation().setApplicantName(dcrApplication.getApplicantName());
 
         if (plan.getVirtualBuilding() != null && plan.getVirtualBuilding().getOccupancies() != null
-                && plan.getVirtualBuilding().getOccupancies().size() > 0) {
+                && !plan.getVirtualBuilding().getOccupancies().isEmpty()) {
             EnumSet<OccupancyType> occupancies = plan.getVirtualBuilding().getOccupancies();
 
             StringBuffer occupancyList = new StringBuffer();
