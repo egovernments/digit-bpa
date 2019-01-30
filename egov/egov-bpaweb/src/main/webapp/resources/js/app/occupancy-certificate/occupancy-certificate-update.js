@@ -59,7 +59,13 @@ jQuery(document).ready(function ($) {
         }
     });
 
-
+    if ($('#isEDCRIntegrationRequire').val() === 'true') {
+        $("#ocEDcrNumber").attr("disabled", "true");
+        $('#demolitionArea').attr('readOnly',true);
+    } else {
+        $("#ocEDcrNumber").removeAttr("disabled");
+    }
+    
     var validator = $("#occupancyCertificateUpdateForm").validate({
         highlight: function (element, errorClass) {
             $(element).fadeOut(function () {

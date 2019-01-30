@@ -41,9 +41,7 @@
 package org.egov.edcr.service;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.math.BigDecimal;
 
 import org.apache.log4j.Level;
@@ -60,6 +58,9 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EdcrExternalService {
@@ -104,6 +105,10 @@ public class EdcrExternalService {
         applicationInfo.setReportOutput(applicationDetail.getReportOutputId());
         applicationInfo.setProjectType(applicationDetail.getApplication().getProjectType());
         applicationInfo.setPlanPermitNumber(applicationDetail.getApplication().getPlanPermitNumber());
+        applicationInfo.setServiceType(applicationDetail.getApplication().getServiceType() == null ? "N/A"
+                : applicationDetail.getApplication().getServiceType());
+        applicationInfo.setOwnerName(applicationDetail.getApplication().getApplicantName() == null ? "N/A"
+                : applicationDetail.getApplication().getApplicantName());
         if (applicationDetail.getPlanDetailFileStore() != null)
             applicationInfo.setPlanDetailFileStore(applicationDetail.getPlanDetailFileStore().getId());
         /*
@@ -162,13 +167,15 @@ public class EdcrExternalService {
                     DcrConstants.APPLICATION_MODULE_TYPE);
             if (LOG.isInfoEnabled())
                 LOG.info("**************** End - Reading Plan detail file **************" + file);
-            try (FileInputStream fis = new FileInputStream(file);
-                    ObjectInputStream ois = new ObjectInputStream(fis)) {
-                Plan pl = (Plan) ois.readObject();
+            try {
+
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                Plan pl1 = mapper.readValue(file, Plan.class);
                 if (LOG.isInfoEnabled())
-                    LOG.info("**************** Plan detail object **************" + pl);
-                applicationInfo.setPlan(pl);
-            } catch (IOException | ClassNotFoundException e) {
+                    LOG.info("**************** Plan detail object **************" + pl1);
+                applicationInfo.setPlan(pl1);
+            } catch (IOException e) {
                 LOG.log(Level.ERROR, e);
             }
             LOG.debug("Completed de-serialization");
@@ -208,8 +215,6 @@ public class EdcrExternalService {
         if (applicationInfo.getPlan() != null && applicationInfo.getPlan().getPlanInformation() != null) {
             applicationInfo.setAmenities(applicationInfo.getPlan().getPlanInformation().getAmenities() == null ? "N/A"
                     : applicationInfo.getPlan().getPlanInformation().getAmenities());
-            applicationInfo.setServiceType(applicationInfo.getPlan().getPlanInformation().getServiceType() == null ? "N/A"
-                    : applicationInfo.getPlan().getPlanInformation().getServiceType());
             applicationInfo.setOccupancy(applicationInfo.getPlan().getPlanInformation().getOccupancy() == null ? "N/A"
                     : applicationInfo.getPlan().getPlanInformation().getOccupancy());
             applicationInfo.setArchitectInformation(
@@ -217,8 +222,6 @@ public class EdcrExternalService {
                             : applicationInfo.getPlan().getPlanInformation().getArchitectInformation());
             applicationInfo.setPlotArea(applicationInfo.getPlan().getPlanInformation().getPlotArea() == null ? BigDecimal.ZERO
                     : applicationInfo.getPlan().getPlanInformation().getPlotArea());
-            applicationInfo.setOwnerName(applicationInfo.getPlan().getPlanInformation().getOwnerName() == null ? "N/A"
-                    : applicationInfo.getPlan().getPlanInformation().getOwnerName());
         } else {
             if (LOG.isInfoEnabled())
                 LOG.info("**************** Error Occurred while de-serialization **************"

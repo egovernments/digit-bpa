@@ -579,21 +579,21 @@ $(document).ready(
                             $('#edcrUploadedDate').html(response.applicationDate);
                             $('#edcrDxfFile').html('<a href="/egi/downloadfile?fileStoreId=' + response.dxfFile.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.dxfFile.fileName + '</a>');
                             $('#edcrPlanReportOutput').html('<a href="/egi/downloadfile?fileStoreId=' + response.reportOutput.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.reportOutput.fileName + '</a>');
-                            if ($('#loadingFloorDetailsFromEdcrRequire').val() === 'true' && $('#mode').val() && $('#mode').val() === 'new' && response.planDetail) {
+                            if ($('#loadingFloorDetailsFromEdcrRequire').val() === 'true' && $('#mode').val() && $('#mode').val() === 'new' && response.plan) {
 
                                 var existingBldgPresent = [];
-                                if (response.planDetail.blocks.length > 0)
-                                    for (var i = 0; i < response.planDetail.blocks.length; i++) {
-                                        var block = response.planDetail.blocks[i];
+                                if (response.plan.blocks.length > 0)
+                                    for (var i = 0; i < response.plan.blocks.length; i++) {
+                                        var block = response.plan.blocks[i];
                                         existingBldgPresent.push(isExistingBuildingDetailsPresent(block));
                                     }
-                                if (response.planDetail.blocks.length <= 0) {
+                                if (response.plan.blocks.length <= 0) {
                                     // Validate proposed building details if not present
                                     bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + $('#floorDetailsNotExtracted').val());
                                     $('#eDcrNumber').val('');
                                     resetDCRPopulatedValues();
                                     return false;
-                                } else if (response.planDetail.blocks.length > 0 && existingBldgPresent.length > 0
+                                } else if (response.plan.blocks.length > 0 && existingBldgPresent.length > 0
                                     && ($("#serviceType option:selected").text() === 'Alteration'
                                         || $("#serviceType option:selected").text() === 'Addition or Extension'
                                         || $("#serviceType option:selected").text() === 'Change in occupancy')
@@ -604,35 +604,39 @@ $(document).ready(
                                     resetDCRPopulatedValues();
                                     return false;
                                 } else {
-                                    if (response.planDetail.occupancies.length > 1) {
+                                    if (response.plan.occupancies.length > 1) {
                                         $('[name=occupancy] option').filter(function () {
                                             return ($(this).text() == 'Mixed');
                                         }).prop('selected', true);
                                     } else {
                                         $('[name=occupancy] option').filter(function () {
-                                            return ($(this).text() == response.planDetail.occupancies[0].type);
+                                            return ($(this).text() == response.plan.occupancies[0].type);
                                         }).prop('selected', true);
 
                                     }
                                     $('#occupancyapplnlevel').trigger('change');
                                     $('#occupancyapplnlevel').attr("disabled", "disabled");
 
-                                    if('New Construction' !== $("#serviceType option:selected").text())
-                                        setExistingBuildingDetailFromEdcrs(response.planDetail);
+                                    if(isExistingBuildingDetailsPresent(block)) {
+                                    	$('.existingbuildingdetails').show();
+                                    	setExistingBuildingDetailFromEdcrs(response.plan);
+                                    } else {
+                                    	$('.existingbuildingdetails').hide();
+                                    }
 
-                                    setProposedBuildingDetailFromEdcrs(response.planDetail);
+                                    setProposedBuildingDetailFromEdcrs(response.plan);
                                     if($('#dcrDocsAutoPopulate').val() === 'true' || $('#dcrDocsAutoPopulateAndManuallyUpload').val() === 'true')
                                         autoPopulatePlanScrutinyGeneratedPdfFiles(response.planScrutinyPdfs);
 
-                                    if (response.planDetailFileStore === null)
+                                    if (response.planFileStore === null)
                                         $('.editable').removeAttr("disabled");
                                     else
                                         $('.editable').attr("disabled", "disabled");
                                 }
 
-                                if (response.planDetail.planInformation.demolitionArea >= 0) {
+                                if (response.plan.planInformation.demolitionArea >= 0) {
                                     $('.demolitionDetails').show();
-                                    $('#demolitionArea').val(response.planDetail.planInformation.demolitionArea);
+                                    $('#demolitionArea').val(response.plan.planInformation.demolitionArea);
                                     $('#demolitionArea').attr('readOnly', true);
                                 }
                                 if (response.projectType) {
@@ -642,7 +646,7 @@ $(document).ready(
                                     $('#projectName').val('');
                                     $('#projectName').removeAttr('readOnly');
                                 }
-                            } else if(!response.planDetail) {
+                            } else if(!response.plan) {
                                 console.log("Error occurred when de-serialize, please check!!!!!!!");
                             }
                             if(response.plotArea) {

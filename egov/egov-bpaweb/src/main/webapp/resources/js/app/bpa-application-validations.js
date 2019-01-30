@@ -181,7 +181,7 @@ $(document).ready(function() {
             showDemolitionDetails();
         } else {
             removeMandatoryForExistingBuildingDetails();
-            $('.existingbuildingdetails').hide();
+            //$('.existingbuildingdetails').hide();
             if('New Construction'.localeCompare(seviceTypeName) == 0 ){
                 //$('.buildingdetails').show();
                 $('.totalPlintArea').show();

@@ -50,6 +50,9 @@ package org.egov.common.entity.edcr;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Block extends Measurement {
 
     private static final String SIDE_YARD1_DESC = "Side Yard1";

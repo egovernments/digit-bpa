@@ -60,11 +60,16 @@ import java.util.Map.Entry;
 
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /*All the details extracted from the plan are referred in this object*/
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Plan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     private ReportOutput reportOutput = new ReportOutput();
     private Utility utility = new Utility();
     private PlanInformation planInformation;
@@ -79,22 +84,24 @@ public class Plan implements Serializable {
     private BigDecimal totalBuiltUpArea;
     private BigDecimal totalFloorArea;
     private Boolean edcrPassed = false;
-    private List<ElectricLine> electricLine = new ArrayList<>();
-    private List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
-    private List<NotifiedRoad> notifiedRoads = new ArrayList<>();
+    private transient List<ElectricLine> electricLine = new ArrayList<>();
+    private transient List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
+    private transient List<NotifiedRoad> notifiedRoads = new ArrayList<>();
     private List<Occupancy> occupancies = new ArrayList<>();
-    private List<CulDeSacRoad> culdeSacRoads = new ArrayList<>();
-    private List<Lane> laneRoads = new ArrayList<>();
-    private HashMap<String, String> errors = new LinkedHashMap<>();
-    private HashMap<String, String> noObjectionCertificates = new HashMap<>();
-    private List<BigDecimal> travelDistancesToExit = new ArrayList<>();
-    private HashMap<String, String> generalInformation = new HashMap<>();
-    private Basement basement;
-    private ParkingDetails parkingDetails = new ParkingDetails();
-    private List<BigDecimal> canopyDistanceFromPlotBoundary;
+    private transient List<CulDeSacRoad> culdeSacRoads = new ArrayList<>();
+    private transient List<Lane> laneRoads = new ArrayList<>();
+    private transient HashMap<String, String> errors = new LinkedHashMap<>();
+    private transient HashMap<String, String> noObjectionCertificates = new HashMap<>();
+    private transient List<BigDecimal> travelDistancesToExit = new ArrayList<>();
+    private transient HashMap<String, String> generalInformation = new HashMap<>();
+    private transient Basement basement;
+    private transient ParkingDetails parkingDetails = new ParkingDetails();
+    private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
     @Transient
+    @JsonIgnore
     private Boolean inMeters = true;
     @Transient
+    @JsonIgnore
     public StringBuffer additionsToDxf = new StringBuffer();
     @Transient
     private Boolean lengthFactor = true;
@@ -104,6 +111,7 @@ public class Plan implements Serializable {
     @Transient
     private String dxfFileName;
     @Transient
+    @JsonIgnore
     private List<EdcrPdfDetail> edcrPdfDetails;
 
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {

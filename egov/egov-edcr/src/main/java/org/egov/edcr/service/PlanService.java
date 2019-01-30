@@ -26,7 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.egov.infra.custom.CustomImplProvider;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Service
 public class PlanService {
@@ -60,14 +62,40 @@ public class PlanService {
     }
 
     public void savePlanDetail(Plan plan, EdcrApplicationDetail detail) {
+
+        
+        
         /*
          * if (LOG.isInfoEnabled()) LOG.info("*************Before serialization******************"); File f = new
          * File("plandetail.txt"); try (FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new
-         * ObjectOutputStream(fos)) { oos.writeObject(plan); detail.setPlanDetailFileStore( fileStoreService.store(f, f.getName(),
+         * ObjectOutputStream(fos)) { oos.writeObject(plan); detail.setPlanDetailFileStore(fileStoreService.store(f, f.getName(),
          * "text/plain", DcrConstants.APPLICATION_MODULE_TYPE)); oos.flush(); } catch (IOException e) {
          * LOG.error("Unable to serialize!!!!!!", e); } if (LOG.isInfoEnabled())
          * LOG.info("*************Completed serialization******************");
          */
+        
+        
+        
+        if (LOG.isInfoEnabled())
+            LOG.info("*************Before serialization******************");
+        File f = new File("plandetail.txt");
+        try (FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            //oos.writeObject(plan);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            mapper.writeValue(f,
+                    plan);
+            detail.setPlanDetailFileStore(fileStoreService.store(f, f.getName(), "text/plain",
+                    DcrConstants.APPLICATION_MODULE_TYPE));
+            oos.flush();
+        } catch (IOException e) {
+            LOG.error("Unable to serialize!!!!!!",
+                    e);
+        }
+        if (LOG.isInfoEnabled())
+            LOG.info("*************Completed serialization******************");
+         
+         
     }
 
     private Plan applyRules(Plan plan, Map<String, String> cityDetails) {

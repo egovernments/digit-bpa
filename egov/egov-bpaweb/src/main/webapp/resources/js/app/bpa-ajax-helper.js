@@ -579,7 +579,6 @@ $(document).ready(
 	            	var override = $('#dcrDocsAutoPopulateAndManuallyUpload').val();
 	            	var splittedChklistDesc = checklist.description.split(" ");
 	            	var checklistName = splittedChklistDesc.join("_");
-	            	console.log(checklistName);
 	            	
 	            	var whenAuto = '<div class="col-sm-6 add-margin autoPopulateDcrDocs"><div class="files-viewer '
 	            		+checklistName

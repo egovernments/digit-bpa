@@ -47,6 +47,8 @@
 
 package org.egov.common.entity.edcr;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum OccupancyType {
 
     OCCUPANCY_A1("Residential"), // singlefamily,
@@ -65,6 +67,7 @@ public enum OccupancyType {
                                                                                                     "Hazardous (I1)"), OCCUPANCY_I2(
                                                                                                             "Hazardous (I2)");
 
+    @JsonValue
     private final String occupancyTypeVal;
 
     OccupancyType(String aTypeVal) {

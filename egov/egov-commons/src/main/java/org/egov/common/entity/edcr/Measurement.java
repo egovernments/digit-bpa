@@ -50,6 +50,10 @@ package org.egov.common.entity.edcr;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Measurement implements Cloneable, Serializable {
     private static final long serialVersionUID = 3L;
 
@@ -71,6 +75,7 @@ public class Measurement implements Cloneable, Serializable {
 
     protected Boolean isValid;
 
+    @JsonIgnore
     protected StringBuffer invalidReason;
 
     protected int colorCode;
