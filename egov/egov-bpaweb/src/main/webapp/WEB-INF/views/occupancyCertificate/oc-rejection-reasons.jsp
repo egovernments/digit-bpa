@@ -82,7 +82,7 @@
 								path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition"
 								value="${staticPermitCondition.noticeCondition.id}" /> <form:hidden
 								path="rejectionReasonsTemp[${rejectPCStatus.index}].type"
-								value="OC_REJECTION_REASON" /> <form:hidden
+								value="REJECTION_REASON" /> <form:hidden
 								path="rejectionReasonsTemp[${rejectPCStatus.index}].orderNumber"
 								value="${rejectPCStatus.index+1}" /> <c:out
 								value="${rejectPCStatus.index+1}"></c:out></td>
