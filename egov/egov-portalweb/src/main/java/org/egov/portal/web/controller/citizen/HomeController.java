@@ -120,6 +120,9 @@ public class HomeController {
         modelData.addAttribute("cityLogo", cityService.getCityLogoURL());
         modelData.addAttribute("cityName", cityService.getMunicipalityName());
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
+        //modelData.addAttribute("userType", user.getType());
+
+
 
         if (!devMode) {
             modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPasswordResetRequired(user));

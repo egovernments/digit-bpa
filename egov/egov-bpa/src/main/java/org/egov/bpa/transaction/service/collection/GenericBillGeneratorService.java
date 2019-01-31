@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.transaction.service.collection;
 
+import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;
@@ -66,6 +67,8 @@ public class GenericBillGeneratorService {
     private ApplicationBpaBillService applicationBpaBillService;
     @Autowired
     private OccupancyCertificateBillService occupancyCertificateBillService;
+    @Autowired
+    private StakeHolderBpaBillService stakeHolderBpaBillService;
 
     @Transactional
     public String generateBillAndRedirectToCollection(final BpaApplication application, final Model model) {
@@ -105,6 +108,11 @@ public class GenericBillGeneratorService {
         } else
             citizenrole = Boolean.TRUE;
         return citizenrole;
+    }
+    
+    @Transactional
+    public String generateBillAndRedirectToCollection(final StakeHolder stakeHolder, final Model model) {
+        return buildAndRedirectToCollection(model, stakeHolderBpaBillService.generateBill(stakeHolder));
     }
 
 }

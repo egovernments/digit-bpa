@@ -26,14 +26,18 @@ import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.service.EdcrApplicationService;
+import org.egov.edcr.service.EdcrBpaRestService;
 import org.egov.edcr.web.adaptor.EdcrApplicationJsonAdaptor;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.persistence.entity.enums.UserType;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -43,8 +47,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -82,6 +84,9 @@ public class EdcrApplicationController {
 	private SecurityUtils securityUtils;
 	@Autowired
 	private StakeHolderService stakeHolderService;
+	@Autowired
+	private EdcrBpaRestService edcrBpaRestService;
+
 
 	/*
 	 * @Autowired private EdcrPdfDetailService edcrPdfDetailService;
@@ -89,7 +94,7 @@ public class EdcrApplicationController {
 	/*
 	 * @Autowired // private PlanInformationService planInformationService;
 	 */
-	private void prepareNewForm(Model model) {
+	private void prepareNewForm(Model model, HttpServletRequest request) {
 		// model.addAttribute("planInformations", planInformationService.findAll());
 		List<ServiceType> dcrRequireServices = new ArrayList<>();
 		for (ServiceType serviceType : serviceTypeService.getAllActiveMainServiceTypes()) {
@@ -102,12 +107,12 @@ public class EdcrApplicationController {
 		model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
 		model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
 	}
-
+	
 	@GetMapping("/edcrapplication/new")
-	public String newForm(final Model model) {
-		prepareNewForm(model);
+	public String newForm(final Model model, HttpServletRequest request) {
+		prepareNewForm(model,request);
 		StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
-		if (validateStakeholder(model, stakeHolder))
+		if (validateStakeholder(model, stakeHolder,request))
 			return DCR_ACKNOWLEDGEMENT;
 		Address permanentAddress = stakeHolder.getAddress().stream()
 				.filter(permtAddress -> permtAddress.getType().equals(AddressType.PERMANENT)).findAny().orElse(null);
@@ -125,7 +130,7 @@ public class EdcrApplicationController {
 		return EDCRAPPLICATION_NEW;
 	}
 
-	private boolean validateStakeholder(Model model, StakeHolder stakeHolder) {
+	private boolean validateStakeholder(Model model, StakeHolder stakeHolder, HttpServletRequest request) {
 		if (stakeHolder != null && StakeHolderStatus.BLOCKED.equals(stakeHolder.getStatus())) {
 			model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.license.blocked",
 					new String[] { ApplicationThreadLocals.getMunicipalityName() }, null));
@@ -137,14 +142,24 @@ public class EdcrApplicationController {
 					new String[] { securityUtils.getCurrentUser().getName() }, null));
 			return true;
 		}
+		
+        User user = securityUtils.getCurrentUser();
+		
+		if (user.getType().equals(BUSINESS) && stakeHolder.getDemand() != null) {
+			if (edcrBpaRestService.checkAnyTaxIsPendingToCollectForStakeHolder(user.getId(),request)) {
+		     model.addAttribute("userId", user.getId());
+		     return true;
+			}
+			}
+			
 		return false;
 	}
 
 	@PostMapping("/edcrapplication/create")
 	public String create(@ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs) {
+			final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		if (errors.hasErrors()) {
-			prepareNewForm(model);
+			prepareNewForm(model,request);
 			return EDCRAPPLICATION_NEW;
 		}
 
@@ -173,28 +188,28 @@ public class EdcrApplicationController {
 	}
 
 	@GetMapping("/edcrapplication/edit/{applicationNumber}")
-	public String edit(@PathVariable("id") final String applicationNumber, Model model) {
+	public String edit(@PathVariable("id") final String applicationNumber, Model model, HttpServletRequest request) {
 		EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
-		prepareNewForm(model);
+		  prepareNewForm(model,request);
 		model.addAttribute(EDCR_APPLICATION, edcrApplication);
 		return EDCRAPPLICATION_EDIT;
 	}
 
 	@GetMapping("/edcrapplication/resubmit")
-	public String uploadAgain(Model model) {
+	public String uploadAgain(Model model, HttpServletRequest request) {
 		StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
-		if (validateStakeholder(model, stakeHolder))
+		if (validateStakeholder(model, stakeHolder,request))
 			return DCR_ACKNOWLEDGEMENT;
-		prepareNewForm(model);
+		  prepareNewForm(model,request);
 		model.addAttribute(EDCR_APPLICATION, new EdcrApplication());
 		return EDCRAPPLICATION_RE_UPLOAD;
 	}
 
 	@PostMapping("/edcrapplication/update")
 	public String update(@ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs) {
+			final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		if (errors.hasErrors()) {
-			prepareNewForm(model);
+			prepareNewForm(model,request);
 			return EDCRAPPLICATION_EDIT;
 		}
 
@@ -224,9 +239,9 @@ public class EdcrApplicationController {
 	}
 
 	@GetMapping("/edcrapplication/view/{applicationNumber}")
-	public String view(@PathVariable final String applicationNumber, Model model) {
+	public String view(@PathVariable final String applicationNumber, Model model, HttpServletRequest request) {
 		EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
-		prepareNewForm(model);
+		  prepareNewForm(model,request);
 		setFailedLayersCount(edcrApplication);
 		model.addAttribute(EDCR_APPLICATION, edcrApplication);
 		return EDCRAPPLICATION_VIEW;
@@ -242,9 +257,9 @@ public class EdcrApplicationController {
 
 	@GetMapping("/occupancy-certificate/plan/submit")
 	public String ocNewPlanScrutinyForm(final Model model, final HttpServletRequest request) {
-		prepareNewForm(model);
+		 prepareNewForm(model,request);
 		StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
-		if (validateStakeholder(model, stakeHolder))
+		if (validateStakeholder(model, stakeHolder,request))
 			return DCR_ACKNOWLEDGEMENT;
 		EdcrApplication edcrApplication = new EdcrApplication();
 		edcrApplication.setApplicationType(ApplicationType.OCCUPANCY_CERTIFICATE);
@@ -258,9 +273,9 @@ public class EdcrApplicationController {
 
 	@PostMapping("/occupancy-certificate/plan/submit")
 	public String submitPlanForOccupancyCertificate(@ModelAttribute final EdcrApplication edcrApplication,
-			final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
+			final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		if (errors.hasErrors()) {
-			prepareNewForm(model);
+			 prepareNewForm(model,request);
 			return OC_PLAN_SCRUTINY_NEW;
 		}
 		/*
@@ -290,11 +305,11 @@ public class EdcrApplicationController {
 	}
 
 	@GetMapping("/occupancy-certificate/plan/resubmit")
-	public String resubmitPlanForOccupancyCertificate(Model model) {
+	public String resubmitPlanForOccupancyCertificate(Model model, HttpServletRequest request) {
 		StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
-		if (validateStakeholder(model, stakeHolder))
+		if (validateStakeholder(model, stakeHolder,request))
 			return DCR_ACKNOWLEDGEMENT;
-		prepareNewForm(model);
+		 prepareNewForm(model,request);
 		EdcrApplication edcrApplication = new EdcrApplication();
 		edcrApplication.setApplicationType(ApplicationType.OCCUPANCY_CERTIFICATE);
 		model.addAttribute(EDCR_APPLICATION, edcrApplication);
@@ -303,9 +318,9 @@ public class EdcrApplicationController {
 
 	@PostMapping("/occupancy-certificate/plan/resubmit")
 	public String resubmitPlanForOccupancyCertificate(@ModelAttribute final EdcrApplication edcrApplication,
-			final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
+			final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		if (errors.hasErrors()) {
-			prepareNewForm(model);
+			 prepareNewForm(model,request);
 			return OC_PLAN_SCRUTINY_RESUBMIT;
 		}
 		/*
@@ -341,9 +356,9 @@ public class EdcrApplicationController {
 	}
 
 	@GetMapping("/edcrapplication/search/{mode}")
-	public String search(@PathVariable("mode") final String mode, Model model) {
+	public String search(@PathVariable("mode") final String mode, Model model, HttpServletRequest request) {
 		EdcrApplication edcrApplication = new EdcrApplication();
-		prepareNewForm(model);
+		 prepareNewForm(model,request);
 		model.addAttribute(EDCR_APPLICATION, edcrApplication);
 		return EDCRAPPLICATION_SEARCH;
 

@@ -1,0 +1,3 @@
+Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Check is any demand pending for registered building licensee','/rest/stakeholder/check/demand-pending',(select id from eg_module where name='Stake Holder Master' and parentmodule=(select id from eg_module where name='BPA Master')),1,'Check is any demand pending for registered building licensee',false,'bpa',(select id from eg_module where name='BPA' and parentmodule is null));
+
+Insert into eg_roleaction values((select id from eg_role where name='CITIZEN'),(select id from eg_action where name='Check is any demand pending for registered building licensee'));

@@ -74,4 +74,13 @@
 		</div>
 	</div>
 </div>				
-
+ <input type="hidden" id="userId" name="userId" value="${userId}">
+<script type="text/javascript">
+function redirectingToCollection(){
+	console.log("isDemandPending()");
+	if($("#userId").val() != ''){
+		document.location.href="/bpa/application/stakeholder/generate-bill/"+$("#userId").val();
+	}
+}
+redirectingToCollection();
+</script>

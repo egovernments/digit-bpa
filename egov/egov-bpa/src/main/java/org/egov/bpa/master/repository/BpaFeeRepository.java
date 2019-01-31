@@ -54,6 +54,10 @@ public interface BpaFeeRepository extends JpaRepository<BpaFee, Long> {
 	List<BpaFee> getAllActiveBpaFeesbyFeeTypeAndServiceTypeId(
 			@Param("serviceTypeId") Long serviceTypeId,
 			@Param("feeTypee") String feeTypee);
+	
+	@Query("select A from BpaFee A where A.feeType=:feeTypee and A.isActive=true  order by A.feeType asc ")
+	List<BpaFee> getAllActiveRegistrationFeebyFeeType(
+			@Param("feeTypee") String feeTypee);
 
 	List<BpaFee> findAllByIsActiveOrderByServiceType_IdAsc(Boolean isActive);
 }

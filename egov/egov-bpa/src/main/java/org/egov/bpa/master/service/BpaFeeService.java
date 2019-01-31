@@ -75,6 +75,10 @@ public class BpaFeeService {
 		return bpaFeeRepository.getAllActiveBpaFeesbyFeeTypeAndServiceTypeId(serviceTypeId,
 				feeType);
 	}
+	
+	public List<BpaFee> getAllActiveRegistrationFeebyFeeType(String feeType) {
+		return bpaFeeRepository.getAllActiveRegistrationFeebyFeeType(feeType);
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<BpaFee> getActiveSanctionFeeForListOfServices(Long serviceType) {

@@ -54,6 +54,10 @@
        default-lazy-init="true">
 
     <context:component-scan base-package="org.egov.bpa"/>
+    
+    <bean id="stakeHolderBillable"
+          class="org.egov.bpa.transaction.service.collection.StakeHolderBillable"
+          scope="prototype"/>
 
     <bean id="bpaApplicationBillable"
           class="org.egov.bpa.transaction.service.collection.BpaApplicationBillable"

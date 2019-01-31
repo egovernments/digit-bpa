@@ -44,6 +44,7 @@ import java.util.List;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
+import org.egov.demand.model.EgDemand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -64,4 +65,5 @@ public interface StakeHolderRepository extends JpaRepository<StakeHolder, Long>,
 	List<String> findNameByType(StakeHolderType type);
     @Query("select stakeholder from StakeHolder stakeholder where stakeholder.stakeHolderType=:type and stakeholder.isActive=true")
 	List<StakeHolder> findActiveByType(@Param("type")StakeHolderType type);
+    StakeHolder findByDemand(EgDemand demand);
 }

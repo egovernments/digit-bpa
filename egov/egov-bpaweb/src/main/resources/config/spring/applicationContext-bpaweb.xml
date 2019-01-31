@@ -66,5 +66,6 @@
         <property name="maxUploadSize" value="209715200"/>
         <property name="maxInMemorySize" value="1048576"/>
     </bean>
+    <bean name="genericBillGeneratorService" class="org.egov.bpa.transaction.service.collection.GenericBillGeneratorService"></bean>
 
 </beans>

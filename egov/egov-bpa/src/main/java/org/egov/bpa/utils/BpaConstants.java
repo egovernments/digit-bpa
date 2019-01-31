@@ -146,6 +146,9 @@ public class BpaConstants {
     // application status constants
     public static final String APPROVED = "Approved";
     public static final String APPLICATION_STATUS_APPROVED = APPROVED;
+    public static final String PAYMENT_PENDING = "PAYMENT_PENDING";
+    public static final String APPLICATION_STATUS_PENDNING = PAYMENT_PENDING;
+
     public static final String APPLICATION_STATUS_FIELD_INS = "Field Inspected";
     public static final String APPLICATION_STATUS_ORDER_ISSUED = "Order Issued to Applicant";
     public static final String APPLICATION_STATUS_DIGI_SIGNED = "Digitally signed";
@@ -209,6 +212,7 @@ public class BpaConstants {
     public static final String BPAFEECOLLECT = "BPA Application fees collected";
     public static final String APPLICATIONFEEREASON = "APPLICATIONFEES";
     public static final String BPAFEETYPE = "ApplicationFee";
+    public static final String BPAREGISTRATIONFEETYPE = "registrationfee";
     public static final String BPASTATUS_APPLICATIONFEE_MODULE = "APPLICATIONFEE";
     public static final String BPASTATUS_APPLICATIONFEE_APPROVED = APPROVED;
     public static final String FEETYPE_SANCTIONFEE = "SanctionFee";

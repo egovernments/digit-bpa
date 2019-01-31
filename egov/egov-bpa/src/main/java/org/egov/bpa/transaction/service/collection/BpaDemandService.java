@@ -56,6 +56,7 @@ import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
@@ -86,6 +87,9 @@ public class BpaDemandService {
 
     @Autowired
     private InstallmentDao installmentDao;
+    
+    @Autowired
+    private BpaUtils bpaUtills;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -264,15 +268,19 @@ public class BpaDemandService {
                 }
         return pendingTaxCollection;
     }
+    
+    public Boolean checkIsReconciliationInProgressInOnline(final String applicationNumber) {
+    	return bpaUtills.checkIsReconciliationInProgress(applicationNumber);
+	}
 
-    public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason,
-            final Installment installment) {
-        final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
-        demandQuery.setParameter(0, demandReason);
-        demandQuery.setParameter(1, installment.getId());
-        return (EgDemandReason) demandQuery.uniqueResult();
-    }
-
+	public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason,
+			final Installment installment) {
+		final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
+		demandQuery.setString(0, demandReason);
+		demandQuery.setInteger(1, installment.getId());
+		return (EgDemandReason) demandQuery.uniqueResult();
+	}
+    
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
         final StringBuilder queryStringBuilder = new StringBuilder();
         queryStringBuilder
@@ -290,6 +298,19 @@ public class BpaDemandService {
         final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeDetail.class, "bpafeeDtl")
                 .createAlias("bpafeeDtl.bpafee", "bpaFeeObj").createAlias("bpaFeeObj.serviceType", "servicetypeObj");
         feeCrit.add(Restrictions.in("servicetypeObj.id", serviceTypeList));
+        feeCrit.add(Restrictions.eq("bpaFeeObj.isActive", Boolean.TRUE));
+        if (feeType != null)
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.feeType", feeType));
+
+        feeCrit.add(Restrictions.le("startDate", new Date()))
+                .add(Restrictions.or(Restrictions.isNull("endDate"), Restrictions.ge("endDate", new Date())));
+        return feeCrit;
+    }
+    
+    public Criteria createCriteriaforRegistrationFeeAmount(final String feeType) {
+
+        final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeDetail.class, "bpafeeDtl")
+                .createAlias("bpafeeDtl.bpafee", "bpaFeeObj").createAlias("bpaFeeObj.serviceType", "servicetypeObj");
         feeCrit.add(Restrictions.eq("bpaFeeObj.isActive", Boolean.TRUE));
         if (feeType != null)
             feeCrit.add(Restrictions.ilike("bpaFeeObj.feeType", feeType));

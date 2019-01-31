@@ -48,13 +48,12 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
 import static org.egov.bpa.utils.BpaConstants.BPAFEETYPE;
+import static org.egov.bpa.utils.BpaConstants.BPAREGISTRATIONFEETYPE;
 import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
-import static org.egov.bpa.utils.BpaConstants.MESSAGE;
-import static org.egov.bpa.utils.BpaConstants.RECENT_DCRRULE_AMENDMENTDATE;
 import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
@@ -64,15 +63,12 @@ import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -134,7 +130,6 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -519,6 +514,16 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (serviceType != null)
             admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
                     BPAFEETYPE);
+        else
+            admissionfeeAmount = BigDecimal.ZERO;
+        return admissionfeeAmount;
+    }
+    
+    public BigDecimal setRegistrationAmountForRegistrationWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
+        BigDecimal admissionfeeAmount;
+        if (serviceType != null)
+            admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
+            		BPAREGISTRATIONFEETYPE);
         else
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;

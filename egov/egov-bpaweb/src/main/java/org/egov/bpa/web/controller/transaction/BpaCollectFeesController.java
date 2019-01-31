@@ -39,12 +39,15 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
+import org.egov.bpa.master.entity.StakeHolder;
+import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -72,10 +75,17 @@ public class BpaCollectFeesController {
 	private BpaUtils bpaUtils;
 	@Autowired
 	protected ResourceBundleMessageSource messageSource;
+	@Autowired
+    private StakeHolderService stakeHolderService;
 	
     @GetMapping("/bpageneratebill/{applicationCode}")
     public String showCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
     	BpaApplication application=applicationBpaService.findByApplicationNumber(applicationCode);
+    	Boolean isBpaOnlineReConcilationPending = bpaDemandService.checkIsReconciliationInProgressInOnline(applicationCode);
+    	if(isBpaOnlineReConcilationPending){
+    		model.addAttribute("message", "For this application payment reconciliation is in progress, please wait for reconciliation process to end!!!!!!");
+    		return COLLECT_ERROR_PAGE;
+    	}
     	Boolean bpaDuePresent=bpaDemandService.checkAnyTaxIsPendingToCollect(application);
     	if(bpaDuePresent){
     	return genericBillGeneratorService.generateBillAndRedirectToCollection(application, model);
@@ -97,6 +107,17 @@ public class BpaCollectFeesController {
 			model.addAttribute("message", messageSource.getMessage("msg.noamount.tocollect", null, null));
 			return COLLECT_ERROR_PAGE;
 		}
+	}
+	
+	@GetMapping("/stakeholder/generate-bill/{userId}")
+	public String showStakeholderCollectFeeForm(final Model model,@PathVariable("userId") final Long  userId) {
+		StakeHolder stkHldr = stakeHolderService.findById(userId);
+		if(stkHldr != null){
+		if(stkHldr.getStatus().PAYMENT_PENDING.toString().equals(BpaConstants.APPLICATION_STATUS_PENDNING)){
+	        return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr,model);
+		}
+		}
+		return null;
 	}
 
 }

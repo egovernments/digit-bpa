@@ -45,6 +45,7 @@ import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.PermanentAddress;
@@ -143,6 +144,9 @@ public class StakeHolder extends User {
 	private Date lastUpdatedDate;
 	private Integer noOfTimesRejected;
 	private Integer noOfTimesBlocked;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "demand")
+	private EgDemand demand;
 
 
 	public Boolean getIsAddressSame() {
@@ -405,6 +409,14 @@ public class StakeHolder extends User {
 		this.noOfTimesBlocked = noOfTimesBlocked;
 	}
 
+	public EgDemand getDemand() {
+		return demand;
+	}
+
+	public void setDemand(final EgDemand demand) {
+		this.demand = demand;
+	}
+	
 	public String showAadhaarNumber() {
 		return StringUtils.isBlank(getAadhaarNumber()) ? getAadhaarNumber() : getAadhaarNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
 	}

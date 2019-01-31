@@ -50,8 +50,13 @@ import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.dto.SearchStakeHolderForm;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
+import org.egov.bpa.transaction.service.collection.StakeHolderBpaBillService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -76,6 +81,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -115,6 +122,12 @@ public class StakeHolderService {
     private RoleService roleService;
     @Autowired
     private SearchBpaApplicationService searchBpaApplicationService;
+    @Autowired
+    private BpaUtils bpaUtils;
+	@Autowired
+	private StakeHolderBpaBillService stakeHolderBpaBillService;
+	@Autowired
+	private AppConfigValueService appConfigValueService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -293,6 +306,10 @@ public class StakeHolderService {
     public StakeHolder findById(final Long id) {
         return stakeHolderRepository.findOne(id);
     }
+    
+    public StakeHolder findByDemand(final EgDemand demand) {
+        return stakeHolderRepository.findByDemand(demand);
+    }
 
     public StakeHolder findByMobileNumberAndStatus(final String mobileNo, final StakeHolderStatus status) {
         return stakeHolderRepository.findByMobileNumberAndStatus(mobileNo, status);
@@ -422,6 +439,11 @@ public class StakeHolderService {
     public boolean checkIsStakeholderCodeAlreadyExists(final StakeHolder stakeHolder) {
         return stakeHolderRepository.findByCode(stakeHolder.getCode()) == null ? false : true;
     }
+    
+    public boolean checkIsStakeholderDemandPending(final String stakeHolderCode) {
+        StakeHolder stakeHolder= stakeHolderRepository.findByCode(stakeHolderCode);
+       return bpaUtils.checkAnyTaxIsPendingToCollect(stakeHolder.getDemand());
+    }
 
     public List<SearchStakeHolderForm> searchForApproval(SearchStakeHolderForm srchStkHldrFrm) {
         return buildResponseAsPerForm(buildSearchCriteriaForApproval(srchStkHldrFrm));
@@ -469,7 +491,16 @@ public class StakeHolderService {
 			stakeHolder.setUsername(stakeHolder.getEmailId());
 			stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
             setActiveToStakeholder(stakeHolder);
+            
+    		stakeHolder.setDemand(stakeHolderBpaBillService.createDemand(stakeHolder));
+    		
+    		List<AppConfigValues> appConfigValueList=appConfigValueService.getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
+            if((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")){
+                stakeHolder.setStatus(StakeHolderStatus.PAYMENT_PENDING);
+            }else{
             stakeHolder.setStatus(StakeHolderStatus.APPROVED);
+            }
+
         } else if ("Reject".equals(stkHldrStatus)) {
             stakeHolder.setIsActive(false);
             stakeHolder.setActive(false);

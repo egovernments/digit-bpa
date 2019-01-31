@@ -61,6 +61,7 @@ import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -156,6 +157,16 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 		User user = securityUtils.getCurrentUser();
 		StakeHolder stkHldr = stakeHolderService.findById(user.getId());
 		if (validateStakeholderIsEligibleSubmitAppln(model, serviceCode, stkHldr)) return COMMON_ERROR;
+		if (user.getType().equals(BUSINESS) && stkHldr.getDemand() != null) {
+			List<AppConfigValues> appConfigValueList = appConfigValueService
+					.getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
+			if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
+				StakeHolderStatus status=stkHldr.getStatus();
+				if(BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().PAYMENT_PENDING.toString())){
+					return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr,model);
+				}
+			}
+		}
 		model.addAttribute("stakeHolderType", stkHldr.getStakeHolderType().getStakeHolderTypeVal());
 		prepareFormData(model);
 		bpaApplication.setApplicationDate(new Date());

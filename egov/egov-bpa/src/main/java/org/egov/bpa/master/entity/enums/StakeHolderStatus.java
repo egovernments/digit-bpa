@@ -42,7 +42,7 @@ package org.egov.bpa.master.entity.enums;
 
 public enum StakeHolderStatus {
 
-	SUBMITTED("Submitted"), RE_SUBMITTED("Resubmitted"), APPROVED("Approved"), REJECTED("Rejected"), BLOCKED("Blocked"), UNBLOCKED("Unblocked");
+	SUBMITTED("Submitted"), RE_SUBMITTED("Resubmitted"), APPROVED("Approved"), REJECTED("Rejected"), BLOCKED("Blocked"), UNBLOCKED("Unblocked"), PAYMENT_PENDING("Payment Pending");
 
 	private final String stakeHolderStatusVal;
 

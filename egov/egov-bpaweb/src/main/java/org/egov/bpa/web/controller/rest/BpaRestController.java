@@ -47,6 +47,8 @@
  */
 package org.egov.bpa.web.controller.rest;
 
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.ArrayList;
@@ -56,6 +58,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.service.ServiceTypeService;
@@ -63,10 +67,18 @@ import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -81,6 +93,12 @@ public class BpaRestController {
     
     @Autowired
     private ApplicationBpaService applicationBpaService;
+
+    @Autowired
+    private AppConfigValueService appConfigValueService;
+    
+    @Autowired
+    private UserService userService;
 
     @GetMapping(value = "/getstakeholder/{id}", produces = APPLICATION_JSON_VALUE)
     public StakeHolder getStakeHolderById(@PathVariable final String id) {
@@ -150,5 +168,28 @@ public class BpaRestController {
 		}
 		return stkHldrDataList;
 	}
+	
+	@RequestMapping(value = "/stakeholder/check/demand-pending/{userId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String, Boolean> isDemandPending(@PathVariable final Long userId , HttpServletResponse response) {
+		User user = userService.getUserById(userId);
+		Map<String, Boolean> isDemandPending = new HashMap<String, Boolean>(); 
+		isDemandPending.put("pending",false);
+		StakeHolder stkHldr = stakeHolderService.findById(userId);
+
+		
+		if (user.getType().equals(BUSINESS) && stkHldr.getDemand() != null) {
+			List<AppConfigValues> appConfigValueList = appConfigValueService
+					.getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
+			if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
+					if(BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().PAYMENT_PENDING.toString())){
+					 isDemandPending.put("pending",true);
+					 return isDemandPending;
+			}
+		}
+	}
+		return isDemandPending;
+	
+}
 }
 
