@@ -60,7 +60,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
-import org.egov.bpa.transaction.notice.impl.OCPermitOrderFormatImpl;
+import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -130,7 +130,7 @@ public class BpaNoticeController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> generateOccupancyCertificate(@PathVariable final String applicationNumber) {
         OccupancyCertificateNoticesFormat ocNoticeFeature = (OccupancyCertificateNoticesFormat) specificNoticeService
-                .find(OCPermitOrderFormatImpl.class, specificNoticeService.getCityDetails());
+                .find(OccupancyCertificateFormatImpl.class, specificNoticeService.getCityDetails());
         ReportOutput reportOutput = ocNoticeFeature
                 .generateNotice(occupancyCertificateService.findByApplicationNumber(applicationNumber));
         return getFileAsResponseEntity(applicationNumber, reportOutput, REPORT_FILE_NAME);

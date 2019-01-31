@@ -82,7 +82,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(readOnly = true)
-public class OCPermitOrderFormatImpl implements OccupancyCertificateNoticesFormat {
+public class OccupancyCertificateFormatImpl implements OccupancyCertificateNoticesFormat {
 
     private static final String REPORT_FILE_NAME = "occupancycertificate";
 

@@ -68,6 +68,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
@@ -118,7 +119,7 @@ public class OCNoticeUtil {
         Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("cityName", ApplicationThreadLocals.getCityName());
         reportParams.put("logoPath", cityService.getCityLogoAsStream());
-        reportParams.put("stateLogo", BpaConstants.STATE_LOGO_PATH);
+        reportParams.put("stateLogo", ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH));
         reportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         reportParams.put("permitNumber", oc.getParent().getPlanPermissionNumber() == null ? EMPTY : oc.getParent().getPlanPermissionNumber());
         reportParams.put("approvalDate", DateUtils.getDefaultFormattedDate(oc.getApprovalDate()));

@@ -205,7 +205,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 		model.addAttribute("uomList", BpaUom.values());
 		List<SlotMappingApplType> slotMappingApplTypes = new ArrayList<>();
 		for(SlotMappingApplType applType : SlotMappingApplType.values())
-			if(applType.equals(SlotMappingApplType.OCCUPANCY_CERTIFICATE) || (!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && applType.equals(SlotMappingApplType.ONE_DAY_PERMIT)))
+			if(!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && applType.equals(SlotMappingApplType.ONE_DAY_PERMIT))
 				break;
 			else
 				slotMappingApplTypes.add(applType);

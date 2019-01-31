@@ -103,7 +103,7 @@ import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
-import org.egov.bpa.transaction.notice.impl.OCPermitOrderFormatImpl;
+import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
@@ -519,7 +519,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         if (isNotBlank(wfBean.getWorkFlowAction())
                 && GENERATE_OCCUPANCY_CERTIFICATE.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             OccupancyCertificateNoticesFormat ocNoticeFeature = (OccupancyCertificateNoticesFormat) specificNoticeService
-                    .find(OCPermitOrderFormatImpl.class, specificNoticeService.getCityDetails());
+                    .find(OccupancyCertificateFormatImpl.class, specificNoticeService.getCityDetails());
             ocNoticeFeature
                     .generateNotice(
                             occupancyCertificateService.findByApplicationNumber(occupancyCertificate.getApplicationNumber()));
