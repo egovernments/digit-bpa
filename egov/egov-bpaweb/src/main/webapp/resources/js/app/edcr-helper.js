@@ -476,7 +476,7 @@ $(document).ready(
                             },
                             contentType: 'application/json; charset=utf-8',
                             success: function (response) {
-                                addSubUsages(idx, occupancyIdx, response, block.name, block.number, response[0].occupancy.additionalDescription, response[0].occupancy.id);
+                                addSubUsages(idx, occupancyIdx, response, block.name, block.number, response[0].subOccupancy.occupancy.description, response[0].subOccupancy.occupancy.id);
                             }
                         });
                         occupancyIdx++;

@@ -66,7 +66,7 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
-import org.egov.common.entity.Occupancy;
+import org.egov.common.entity.bpa.Occupancy;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.custom.CustomImplProvider;
@@ -330,13 +330,13 @@ public class BpaApplicationValidationService {
             if (floorMap
                     .containsKey(floorDesc)) {
                 BigDecimal permissableFloorCoveredArea = floorMap.get(floorDesc)[0]
-                        .add(new BigDecimal(floorDetail.getOccupancy().getPermissibleAreaInPercentage())
+                        .add(floorDetail.getOccupancy().getMaxCoverage()
                                 .multiply(floorDetail.getPlinthArea()));
                 BigDecimal floorWiseArea = floorMap.get(floorDesc)[1].add(floorDetail.getPlinthArea());
                 floorMap.put(floorDesc, new BigDecimal[] { permissableFloorCoveredArea, floorWiseArea });
             } else {
-                BigDecimal permissableFloorCoveredArea = new BigDecimal(
-                        floorDetail.getOccupancy().getPermissibleAreaInPercentage()).multiply(floorDetail.getPlinthArea());
+                BigDecimal permissableFloorCoveredArea = 
+                        floorDetail.getOccupancy().getMaxCoverage().multiply(floorDetail.getPlinthArea());
                 floorMap.put(floorDesc, new BigDecimal[] { permissableFloorCoveredArea, floorDetail.getPlinthArea() });
             }
         }

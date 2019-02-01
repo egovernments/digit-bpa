@@ -37,10 +37,10 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.commons.repository;
+package org.egov.commons.repository.bpa;
 
-import org.egov.common.entity.Occupancy;
-import org.egov.common.entity.SubOccupancy;
+import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -52,7 +52,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.common.entity.Occupancy;
+import org.egov.common.entity.bpa.Occupancy;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity

@@ -46,10 +46,11 @@
  *
  */
 
-package org.egov.common.entity;
+package org.egov.common.entity.bpa;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,48 +58,50 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.math.BigDecimal;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "EG_SUB_OCCUPANCY")
-@SequenceGenerator(name = SubOccupancy.SEQ_OCCUPANCY, sequenceName = SubOccupancy.SEQ_OCCUPANCY, allocationSize = 1)
-public class SubOccupancy extends AbstractAuditable {
+@Table(name = "EGBPA_OCCUPANCY")
+@SequenceGenerator(name = Occupancy.SEQ_OCCUPANCY, sequenceName = Occupancy.SEQ_OCCUPANCY, allocationSize = 1)
+public class Occupancy extends AbstractAuditable {
 
-	public static final String SEQ_OCCUPANCY = "SEQ_EG_SUB_OCCUPANCY";
-	private static final long serialVersionUID = -3811124517745056627L;
+	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_OCCUPANCY";
+	private static final long serialVersionUID = -1928622582218032380L;
 
 	@Id
 	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "occupancy", nullable = false)
-	private Occupancy occupancy;
+	@OneToMany(mappedBy = "occupancy", cascade = CascadeType.ALL)
+	private List<SubOccupancy> subOccupancies = new ArrayList<>();
 
+	@NotNull
 	@Length(min = 1, max = 128)
 	@Column(name = "code", unique = true)
 	private String code;
 
-	@Length(min = 1, max = 512)
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String name;
+
+	@Length(min = 1, max = 1024)
 	private String description;
 
-	private Boolean isActive;
+	private Boolean isactive;
+
+	private BigDecimal maxCoverage;
+
+	private BigDecimal minFar;
+
+	private BigDecimal maxFar;
 
 	private Integer orderNumber;
-
-	private BigDecimal fromArea;
-
-	private BigDecimal toArea;
-
-	@Length(min = 1, max = 256)
-	private String condition;
-
-	@Length(min = 1, max = 256)
-	private String additionalCondition;
 
 	@Override
 	public Long getId() {
@@ -108,14 +111,6 @@ public class SubOccupancy extends AbstractAuditable {
 	@Override
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Occupancy getOccupancy() {
-		return occupancy;
-	}
-
-	public void setOccupancy(Occupancy occupancy) {
-		this.occupancy = occupancy;
 	}
 
 	public String getCode() {
@@ -134,51 +129,59 @@ public class SubOccupancy extends AbstractAuditable {
 		this.description = description;
 	}
 
-	public Boolean getActive() {
-		return isActive;
+	public Boolean getIsactive() {
+		return isactive;
 	}
 
-	public void setActive(Boolean active) {
-		isActive = active;
+	public void setIsactive(Boolean isactive) {
+		this.isactive = isactive;
 	}
 
 	public Integer getOrderNumber() {
 		return orderNumber;
 	}
 
+	public List<SubOccupancy> getSubOccupancies() {
+		return subOccupancies;
+	}
+
+	public void setSubOccupancies(List<SubOccupancy> subOccupancies) {
+		this.subOccupancies = subOccupancies;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public BigDecimal getMaxCoverage() {
+		return maxCoverage;
+	}
+
+	public void setMaxCoverage(BigDecimal maxCoverage) {
+		this.maxCoverage = maxCoverage;
+	}
+
+	public BigDecimal getMinFar() {
+		return minFar;
+	}
+
+	public void setMinFar(BigDecimal minFar) {
+		this.minFar = minFar;
+	}
+
+	public BigDecimal getMaxFar() {
+		return maxFar;
+	}
+
+	public void setMaxFar(BigDecimal maxFar) {
+		this.maxFar = maxFar;
+	}
+
 	public void setOrderNumber(Integer orderNumber) {
 		this.orderNumber = orderNumber;
-	}
-
-	public BigDecimal getFromArea() {
-		return fromArea;
-	}
-
-	public void setFromArea(BigDecimal fromArea) {
-		this.fromArea = fromArea;
-	}
-
-	public BigDecimal getToArea() {
-		return toArea;
-	}
-
-	public void setToArea(BigDecimal toArea) {
-		this.toArea = toArea;
-	}
-
-	public String getCondition() {
-		return condition;
-	}
-
-	public void setCondition(String condition) {
-		this.condition = condition;
-	}
-
-	public String getAdditionalCondition() {
-		return additionalCondition;
-	}
-
-	public void setAdditionalCondition(String additionalCondition) {
-		this.additionalCondition = additionalCondition;
 	}
 }

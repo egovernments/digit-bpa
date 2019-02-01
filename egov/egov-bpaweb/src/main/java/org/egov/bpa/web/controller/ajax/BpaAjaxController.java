@@ -75,8 +75,8 @@ import org.egov.bpa.transaction.service.BpaApplicationValidationService;
 import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
-import org.egov.common.entity.Occupancy;
-import org.egov.common.entity.SubOccupancy;
+import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.service.OccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
@@ -392,7 +392,7 @@ public class BpaAjaxController {
 
     @GetMapping(value = "/occupancy/sub-usages", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<SubOccupancy> getSubUsagesByOccupancy(@RequestParam String occupancy) {
+    public List<Usage> getSubUsagesByOccupancy(@RequestParam String occupancy) {
         return occupancyService.findSubUsagesByOccupancy(occupancy);
     }
 

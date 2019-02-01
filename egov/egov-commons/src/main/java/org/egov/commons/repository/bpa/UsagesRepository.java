@@ -37,13 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.commons.repository;
+package org.egov.commons.repository.bpa;
 
-import org.egov.common.entity.Occupancy;
+import java.util.List;
+
+import org.egov.common.entity.bpa.SubOccupancy;
+import org.egov.common.entity.bpa.Usage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OccupancyRepository extends JpaRepository<Occupancy, Long> {
-	Occupancy findByDescription(String description);
+public interface UsagesRepository extends JpaRepository<Usage, Long> {
+
+	List<Usage> findBySubOccupancyAndIsActiveTrueOrderByOrderNumberAsc(SubOccupancy subOccupancy);
 }

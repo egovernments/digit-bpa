@@ -245,11 +245,35 @@ public class BpaConstants {
     public static final String DESIGNATION_TOWN_SURVEYOR = "Town Surveyor";
     public static final String DESIGNATION_OVERSEER = "Town Planning Building Overseer";
     // occupancy type constants
-    public static final String THATCHED_TILED_HOUSE = "Thatched / Tiled House";
+   /* public static final String THATCHED_TILED_HOUSE = "Thatched / Tiled House";
     public static final String MERCANTILE_COMMERCIAL = "Mercantile / Commercial";
     public static final String INDUSTRIAL = "Industrial";
     public static final String RESIDENTIAL = "Residential";
-    public static final String MIXED_OCCUPANCY = "Mixed";
+    public static final String MIXED_OCCUPANCY = "Mixed";*/
+    
+    //Occupancy Constants
+    public static final String MIXED_OCCUPANCY ="15"; 
+    public static final String INDUSTRIAL = "G1";
+    public static final String MERCANTILE_COMMERCIAL = "F";
+    public static final String RESIDENTIAL = "A1";
+    public static final String THATCHED_TILED_HOUSE = "14";
+    public static final String SPECIAL_RESIDENTIAL = "A2";
+    public static final String PROFESSIONAL_OFFICE = "A5";
+    public static final String EDUCATIONAL = "B1";
+    public static final String EDUCATIONAL_HIGHSCHOOL = "B2";
+    public static final String HIGHER_EDUCATIONAL_INSTITUTE= "B3";
+    public static final String MEDIACL_HOSPITAL = "C";
+    public static final String MEDIACL_IP = "C1";
+    public static final String MEDIACL_OP = "C2";
+    public static final String MEDICAL_ADMIN = "C3";
+    public static final String ASSEMBLY ="D";
+    public static final String ASSEMBLY_WORSHIP = "D1";
+    public static final String BUS_TERMINAL = "D2";
+    public static final String OFFICE_BUSINESS = "E";
+    public static final String STORAGE = "H";
+    public static final String APARTMENT_FLAT = "A4";
+    
+    
     // notices file name and type
     public static final String BUILDINGPERMITFILENAME = "buildingpermit";
     public static final String BUILDINGPERMITOTHERSFILENAME = "buildingpermitothers";

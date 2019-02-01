@@ -15,7 +15,7 @@ import org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl
 import org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
-import org.egov.common.entity.Occupancy;
+import org.egov.common.entity.bpa.Occupancy;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;

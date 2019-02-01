@@ -67,10 +67,13 @@
                         <td class="view-content text-center" style="font-size: 97%;"><c:out
                                 value="${subUsage.blockNumber}" default="N/A"/></td>
                         <td class="view-content" style="font-size: 97%;"><c:out
-                                value="${subUsageDtl.mainUsage.additionalDescription}"
+                                value="${subUsageDtl.mainUsage.description}"
                                 default="N/A"/></td>
-                        <td class="view-content" style="font-size: 97%;"><c:out value="${subUsageDtl.subUsageNames}"
-                                                                                default="N/A"/></td>
+                         <td class="view-content" style="font-size: 97%;">
+                         <c:forEach items="${subUsageDtl.subUsages}" var="usage">
+                         <c:out value="${usage.name}" default="N/A"/>,
+                         </c:forEach>
+                         </td> 
                     </tr>
                 </c:forEach>
             </c:forEach>

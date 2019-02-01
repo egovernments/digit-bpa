@@ -51,7 +51,7 @@ import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.GovernmentType;
 import org.egov.bpa.transaction.entity.enums.OneDayPermitLandType;
-import org.egov.common.entity.Occupancy;
+import org.egov.common.entity.bpa.Occupancy;
 import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;

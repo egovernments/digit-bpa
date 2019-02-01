@@ -39,6 +39,33 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
+import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -72,32 +99,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
-import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
-import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -207,9 +208,11 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 	}
 
 	private void buildBuildingSubUsages(final BpaApplication application) {
-		for(BuildingSubUsage subUsage : application.getBuildingSubUsages())
-			for(BuildingSubUsageDetails subUsageDetails : subUsage.getSubUsageDetails())
-				subUsageDetails.setSubUsagesTemp(occupancyService.findSubUsagesByOccupancy(subUsageDetails.getMainUsage().getDescription()));
+		for (BuildingSubUsage subUsage : application.getBuildingSubUsages())
+			for (BuildingSubUsageDetails subUsageDetails : subUsage.getSubUsageDetails()) {
+				subUsageDetails.setSubUsagesTemp(
+						occupancyService.findSubUsagesByOccupancy(subUsageDetails.getMainUsage().getName()));
+			}
 	}
 
 	private void buildAppointmentDetailsOfScutinyAndInspection(Model model, BpaApplication application) {

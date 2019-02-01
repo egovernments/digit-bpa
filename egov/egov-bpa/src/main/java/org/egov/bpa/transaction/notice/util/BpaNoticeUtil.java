@@ -53,7 +53,6 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
-import static org.egov.bpa.utils.BpaConstants.MIXED_OCCUPANCY;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
 import static org.egov.bpa.utils.BpaConstants.getEdcrRequiredServices;
@@ -106,8 +105,8 @@ import org.egov.bpa.transaction.service.DcrRestService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
-import org.egov.common.entity.Occupancy;
-import org.egov.common.entity.SubOccupancy;
+import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
@@ -348,7 +347,7 @@ public class BpaNoticeUtil {
         reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(bpaApplication)));
         reportParams.put("mobileNo", bpaApplication.getOwner().getUser().getMobileNumber());
         StringBuilder totalBuiltUpArea = new StringBuilder();
-        if (bpaApplication.getOccupancy().getDescription().equalsIgnoreCase(MIXED_OCCUPANCY)) {
+        if (bpaApplication.getOccupancy().getCode().equals(BpaConstants.MIXED_OCCUPANCY)) {
             for (Map.Entry<Occupancy, BigDecimal> innerMap : bpaUtils
                     .getBlockWiseOccupancyAndBuiltupArea(bpaApplication.getBuildingDetail()).entrySet()) {
                 totalBuiltUpArea = totalBuiltUpArea.append(innerMap.getKey().getDescription()).append(" : ")
@@ -403,9 +402,9 @@ public class BpaNoticeUtil {
             String lastString = " and ";
             for (BuildingSubUsage buildingSubUsage : buildingSubUsages) {
                 for (BuildingSubUsageDetails buildingSubUsageDetail : buildingSubUsage.getSubUsageDetails()) {
-                    mainUsage = buildingSubUsageDetail.getMainUsage().getAdditionalDescription();
+                    mainUsage = buildingSubUsageDetail.getMainUsage().getDescription();
                     StringBuilder subUsage = new StringBuilder();
-                    for (SubOccupancy subOccupancy : buildingSubUsageDetail.getSubUsages()) {
+                    for (Usage subOccupancy : buildingSubUsageDetail.getSubUsages()) {
                         subUsage = subUsage.append(subOccupancy.getDescription()).append(", ");
                     }
                     subheader = subheader.append("Block ").append(buildingSubUsage.getBlockNumber())

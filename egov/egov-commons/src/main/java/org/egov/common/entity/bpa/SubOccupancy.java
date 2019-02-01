@@ -46,10 +46,11 @@
  *
  */
 
-package org.egov.common.entity;
+package org.egov.common.entity.bpa;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,54 +60,54 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "EG_OCCUPANCY")
-@SequenceGenerator(name = Occupancy.SEQ_OCCUPANCY, sequenceName = Occupancy.SEQ_OCCUPANCY, allocationSize = 1)
-public class Occupancy extends AbstractAuditable {
+@Table(name = "EGBPA_SUB_OCCUPANCY")
+@SequenceGenerator(name = SubOccupancy.SEQ_OCCUPANCY, sequenceName = SubOccupancy.SEQ_OCCUPANCY, allocationSize = 1)
+public class SubOccupancy extends AbstractAuditable {
 
-    public static final String SEQ_OCCUPANCY = "SEQ_EG_OCCUPANCY";
+	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_SUB_OCCUPANCY";
 	private static final long serialVersionUID = -1928622582218032380L;
 
 	@Id
-    @GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "parent")
-    private Occupancy parent;
+	@OneToMany(mappedBy = "subOccupancy", cascade = CascadeType.ALL)
+	private List<Usage> usages = new ArrayList<>();
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "occupancy")
+	private Occupancy occupancy;
 
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
 
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String description;
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String name;
 
 	@Length(min = 1, max = 1024)
-	private String additionalDescription;
+	private String description;
 
-    private Boolean isactive;
-  
-    private BigDecimal occupantDoors;
-    
-    private BigDecimal noofOccupancy;
-    
-    private BigDecimal occupantLoad;
-    
-    private Double permissibleAreaInPercentage;
+	private Boolean isActive;
 
-    private Double numOfTimesAreaPermissible;
+	private BigDecimal maxCoverage;
 
-    private Double numOfTimesAreaPermWitAddnlFee;
+	private BigDecimal minFar;
 
-    private Integer orderNumber;
+	private BigDecimal maxFar;
+
+	private Integer orderNumber;
 
 	@Override
 	public Long getId() {
@@ -118,20 +119,32 @@ public class Occupancy extends AbstractAuditable {
 		this.id = id;
 	}
 
-	public Occupancy getParent() {
-		return parent;
-	}
-
-	public void setParent(Occupancy parent) {
-		this.parent = parent;
-	}
-
 	public String getCode() {
 		return code;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public Boolean getIsactive() {
+		return isActive;
+	}
+
+	public void setIsactive(Boolean isactive) {
+		this.isActive = isactive;
+	}
+
+	public Integer getOrderNumber() {
+		return orderNumber;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {
@@ -142,75 +155,47 @@ public class Occupancy extends AbstractAuditable {
 		this.description = description;
 	}
 
-	public String getAdditionalDescription() {
-		return additionalDescription;
+	public BigDecimal getMaxCoverage() {
+		return maxCoverage;
 	}
 
-	public void setAdditionalDescription(String additionalDescription) {
-		this.additionalDescription = additionalDescription;
+	public void setMaxCoverage(BigDecimal maxCoverage) {
+		this.maxCoverage = maxCoverage;
 	}
 
-	public Boolean getIsactive() {
-		return isactive;
+	public BigDecimal getMinFar() {
+		return minFar;
 	}
 
-	public void setIsactive(Boolean isactive) {
-		this.isactive = isactive;
+	public void setMinFar(BigDecimal minFar) {
+		this.minFar = minFar;
 	}
 
-	public BigDecimal getOccupantDoors() {
-		return occupantDoors;
+	public BigDecimal getMaxFar() {
+		return maxFar;
 	}
 
-	public void setOccupantDoors(BigDecimal occupantDoors) {
-		this.occupantDoors = occupantDoors;
-	}
-
-	public BigDecimal getNoofOccupancy() {
-		return noofOccupancy;
-	}
-
-	public void setNoofOccupancy(BigDecimal noofOccupancy) {
-		this.noofOccupancy = noofOccupancy;
-	}
-
-	public BigDecimal getOccupantLoad() {
-		return occupantLoad;
-	}
-
-	public void setOccupantLoad(BigDecimal occupantLoad) {
-		this.occupantLoad = occupantLoad;
-	}
-
-	public Double getPermissibleAreaInPercentage() {
-		return permissibleAreaInPercentage;
-	}
-
-	public void setPermissibleAreaInPercentage(Double permissibleAreaInPercentage) {
-		this.permissibleAreaInPercentage = permissibleAreaInPercentage;
-	}
-
-	public Double getNumOfTimesAreaPermissible() {
-		return numOfTimesAreaPermissible;
-	}
-
-	public void setNumOfTimesAreaPermissible(Double numOfTimesAreaPermissible) {
-		this.numOfTimesAreaPermissible = numOfTimesAreaPermissible;
-	}
-
-	public Double getNumOfTimesAreaPermWitAddnlFee() {
-		return numOfTimesAreaPermWitAddnlFee;
-	}
-
-	public void setNumOfTimesAreaPermWitAddnlFee(Double numOfTimesAreaPermWitAddnlFee) {
-		this.numOfTimesAreaPermWitAddnlFee = numOfTimesAreaPermWitAddnlFee;
-	}
-
-	public Integer getOrderNumber() {
-		return orderNumber;
+	public void setMaxFar(BigDecimal maxFar) {
+		this.maxFar = maxFar;
 	}
 
 	public void setOrderNumber(Integer orderNumber) {
 		this.orderNumber = orderNumber;
+	}
+
+	public Occupancy getOccupancy() {
+		return occupancy;
+	}
+
+	public void setOccupancy(Occupancy occupancy) {
+		this.occupancy = occupancy;
+	}
+
+	public List<Usage> getUsages() {
+		return usages;
+	}
+
+	public void setUsages(List<Usage> usages) {
+		this.usages = usages;
 	}
 }

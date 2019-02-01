@@ -11,7 +11,7 @@
 	<field name="floorDescription" class="java.lang.String"/>
 	<field name="plinthArea" class="java.math.BigDecimal"/>
 	<field name="floorNumber" class="java.lang.Integer"/>
-	<field name="occupancy" class="org.egov.common.entity.Occupancy"/>
+	<field name="occupancy" class="org.egov.common.entity.bpa.Occupancy"/>
 	<field name="floorArea" class="java.math.BigDecimal"/>
 	<field name="carpetArea" class="java.math.BigDecimal"/>
 	<variable name="totalPlintArea" class="java.math.BigDecimal" calculation="Sum">

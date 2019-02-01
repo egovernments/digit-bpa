@@ -46,56 +46,54 @@
  *
  */
 
-package org.egov.bpa.transaction.entity;
-
-import java.util.List;
+package org.egov.common.entity.bpa;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-import org.egov.common.entity.bpa.Occupancy;
-import org.egov.common.entity.bpa.Usage;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "egbpa_building_sub_usage_details")
-@SequenceGenerator(name = BuildingSubUsageDetails.SEQ_SUB_USAGE, sequenceName = BuildingSubUsageDetails.SEQ_SUB_USAGE, allocationSize = 1)
-public class BuildingSubUsageDetails extends AbstractAuditable {
+@Table(name = "EGBPA_USAGE")
+@SequenceGenerator(name = Usage.SEQ_OCCUPANCY, sequenceName = Usage.SEQ_OCCUPANCY, allocationSize = 1)
+public class Usage extends AbstractAuditable {
 
-	public static final String SEQ_SUB_USAGE = "seq_egbpa_building_sub_usage_details";
-	private static final long serialVersionUID = -5785039918517422291L;
+	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_USAGE";
+	private static final long serialVersionUID = -3811124517745056627L;
 
 	@Id
-	@GeneratedValue(generator = SEQ_SUB_USAGE, strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
 	private Long id;
-
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "mainUsage")
-	private Occupancy mainUsage;
-
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "buildingSubUsage")
-	private BuildingSubUsage buildingSubUsage;
-
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "egbpa_builing_usage", joinColumns = @JoinColumn(name = "subUsageDetails"), inverseJoinColumns = @JoinColumn(name = "usage"))
-	private List<Usage> subUsages;
 	
-/*	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "egbpa_sub_usage", joinColumns = @JoinColumn(name = "subUsageDetails"), inverseJoinColumns = @JoinColumn(name = "suboccupancy"))
-	private List<SubOccupancy> subUsages;*/
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "subOccupancy")
+	private SubOccupancy subOccupancy;
 
-	private transient List<Usage> subUsagesTemp;
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
+	
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String name;
+
+	@Length(min = 1, max = 512)
+	private String description;
+
+	
+	private Boolean isActive;
+
+	private Integer orderNumber;
 
 	@Override
 	public Long getId() {
@@ -107,36 +105,51 @@ public class BuildingSubUsageDetails extends AbstractAuditable {
 		this.id = id;
 	}
 
-	public Occupancy getMainUsage() {
-		return mainUsage;
+	public String getCode() {
+		return code;
 	}
 
-	public void setMainUsage(Occupancy mainUsage) {
-		this.mainUsage = mainUsage;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public BuildingSubUsage getBuildingSubUsage() {
-		return buildingSubUsage;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setBuildingSubUsage(BuildingSubUsage buildingSubUsage) {
-		this.buildingSubUsage = buildingSubUsage;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public List<Usage> getSubUsagesTemp() {
-		return subUsagesTemp;
+	public Boolean getActive() {
+		return isActive;
 	}
 
-	public List<Usage> getSubUsages() {
-		return subUsages;
+	public void setActive(Boolean active) {
+		isActive = active;
 	}
 
-	public void setSubUsages(List<Usage> subUsages) {
-		this.subUsages = subUsages;
+	public Integer getOrderNumber() {
+		return orderNumber;
 	}
 
-	public void setSubUsagesTemp(List<Usage> subUsagesTemp) {
-		this.subUsagesTemp = subUsagesTemp;
+	public void setOrderNumber(Integer orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public SubOccupancy getSubOccupancy() {
+		return subOccupancy;
+	}
+
+	public void setSubOccupancy(SubOccupancy subOccupancy) {
+		this.subOccupancy = subOccupancy;
+	}
 }

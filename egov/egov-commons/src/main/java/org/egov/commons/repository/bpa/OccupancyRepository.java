@@ -37,51 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.commons.service;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.egov.commons.repository.bpa;
 
 import org.egov.common.entity.bpa.Occupancy;
-import org.egov.common.entity.bpa.SubOccupancy;
-import org.egov.common.entity.bpa.Usage;
-import org.egov.commons.repository.bpa.OccupancyRepository;
-import org.egov.commons.repository.bpa.SubOccupancyRepository;
-import org.egov.commons.repository.bpa.UsagesRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Service
-@Transactional(readOnly = true)
-public class OccupancyService {
-
-    @Autowired
-    private OccupancyRepository occupancyRepository;
-    @Autowired
-    private SubOccupancyRepository subOccupancyRepository;
-    
-    @Autowired
-    private UsagesRepository usagesRepository;
-
-    public List<Occupancy> findAll() {
-        return occupancyRepository.findAll();
-    }
-    
-    public List<Occupancy> findAllOrderByOrderNumber() {
-        return occupancyRepository.findAll(new Sort(Sort.Direction.ASC, "orderNumber"));
-    }
-
-	public List<Usage> findSubUsagesByOccupancy(final String occupancyName) {
-		Occupancy occupancy = occupancyRepository.findByName(occupancyName);
-		List<SubOccupancy> list = subOccupancyRepository.findByOccupancyAndIsActiveTrueOrderByOrderNumberAsc(occupancy);
-		List<Usage> usagesList = new ArrayList<>();
-
-		for (SubOccupancy subOccupancy : list) {
-			List<Usage> usages = usagesRepository.findBySubOccupancyAndIsActiveTrueOrderByOrderNumberAsc(subOccupancy);
-			usagesList.addAll(usages);
-		}
-		return usagesList;
-	}
+@Repository
+public interface OccupancyRepository extends JpaRepository<Occupancy, Long> {
+	Occupancy findByDescription(String description);
+	Occupancy findByName(String name);
+	
 }

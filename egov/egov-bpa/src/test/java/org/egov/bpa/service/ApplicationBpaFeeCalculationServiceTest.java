@@ -50,7 +50,7 @@ import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
-import org.egov.common.entity.Occupancy;
+import org.egov.common.entity.bpa.Occupancy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -99,16 +99,15 @@ public class ApplicationBpaFeeCalculationServiceTest {
         buildingDetail.setName("1");
         buildingDetail.setNumber(1);
 
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), Double.valueOf(65),
-                Double.valueOf(2.5),
-                Double.valueOf(4)));
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(1500),
-                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), Double.valueOf(40), Double.valueOf(1.5),
-                Double.valueOf(2.5)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3000),
+				BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), BigDecimal.valueOf(65),
+				BigDecimal.valueOf(2.5), BigDecimal.valueOf(4)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(1500),
+				BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65),
+				BigDecimal.valueOf(3), BigDecimal.valueOf(4)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(2000),
+				BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), BigDecimal.valueOf(40),
+				BigDecimal.valueOf(1.5), BigDecimal.valueOf(2.5)));
 
         siteDetail.setExtentinsqmts(BigDecimal.valueOf(5000));
         siteDetailList.add(siteDetail);
@@ -141,16 +140,15 @@ public class ApplicationBpaFeeCalculationServiceTest {
         buildingDetail.setName("1");
         buildingDetail.setNumber(1);
 
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4500),
-                BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), Double.valueOf(65),
-                Double.valueOf(2.5),
-                Double.valueOf(4)));
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(5500),
-                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), Double.valueOf(40), Double.valueOf(1.5),
-                Double.valueOf(2.5)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4500),
+				BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), BigDecimal.valueOf(65),
+				BigDecimal.valueOf(2.5), BigDecimal.valueOf(4)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(5500),
+				BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65),
+				BigDecimal.valueOf(3), BigDecimal.valueOf(4)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(2000),
+				BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), BigDecimal.valueOf(40),
+				BigDecimal.valueOf(1.5), BigDecimal.valueOf(2.5)));
 
         siteDetail.setExtentinsqmts(BigDecimal.valueOf(5000));
         siteDetailList.add(siteDetail);
@@ -187,17 +185,16 @@ public class ApplicationBpaFeeCalculationServiceTest {
         siteDetail.setExtentinsqmts(BigDecimal.valueOf(5001));
         siteDetailList.add(siteDetail);
 
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(6500),
-                BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), Double.valueOf(65),
-                Double.valueOf(2.5),
-                Double.valueOf(4)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(6500),
+				BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), BigDecimal.valueOf(65),
+				BigDecimal.valueOf(2.5), BigDecimal.valueOf(4)));
 
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), Double.valueOf(40), Double.valueOf(1.5),
-                Double.valueOf(2.5)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
+				BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65),
+				BigDecimal.valueOf(3), BigDecimal.valueOf(4)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3000),
+				BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), BigDecimal.valueOf(40),
+				BigDecimal.valueOf(1.5), BigDecimal.valueOf(2.5)));
 
         buildingDetail.setApplicationFloorDetails(applicationFloorDetails);
 
@@ -232,17 +229,16 @@ public class ApplicationBpaFeeCalculationServiceTest {
         siteDetail.setExtentinsqmts(BigDecimal.valueOf(5001));
         siteDetailList.add(siteDetail);
 
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(5500),
-                BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), Double.valueOf(65),
-                Double.valueOf(2.5),
-                Double.valueOf(4)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(5500),
+				BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), BigDecimal.valueOf(65),
+				BigDecimal.valueOf(2.5), BigDecimal.valueOf(4)));
 
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
-        applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3500),
-                BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), Double.valueOf(40), Double.valueOf(1.5),
-                Double.valueOf(2.5)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
+				BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65),
+				BigDecimal.valueOf(3), BigDecimal.valueOf(4)));
+		applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3500),
+				BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), BigDecimal.valueOf(40),
+				BigDecimal.valueOf(1.5), BigDecimal.valueOf(2.5)));
 
         buildingDetail.setApplicationFloorDetails(applicationFloorDetails);
 
@@ -278,16 +274,16 @@ public class ApplicationBpaFeeCalculationServiceTest {
         siteDetailList.add(siteDetail);
 
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3500),
-                BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), Double.valueOf(65),
-                Double.valueOf(2.5),
-                Double.valueOf(4)));
+                BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), BigDecimal.valueOf(65),
+                BigDecimal.valueOf(2.5),
+                BigDecimal.valueOf(4)));
 
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
+                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65), BigDecimal.valueOf(3),
+                BigDecimal.valueOf(4)));
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), Double.valueOf(40), Double.valueOf(1.5),
-                Double.valueOf(2.5)));
+                BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), BigDecimal.valueOf(40), BigDecimal.valueOf(1.5),
+                BigDecimal.valueOf(2.5)));
 
         buildingDetail.setApplicationFloorDetails(applicationFloorDetails);
 
@@ -323,16 +319,16 @@ public class ApplicationBpaFeeCalculationServiceTest {
         siteDetailList.add(siteDetail);
 
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(10500),
-                BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), Double.valueOf(65),
-                Double.valueOf(2.5),
-                Double.valueOf(4)));
+                BigDecimal.valueOf(1000), "F", "Mercantile / Commercial", Long.valueOf(2), BigDecimal.valueOf(65),
+                BigDecimal.valueOf(2.5),
+                BigDecimal.valueOf(4)));
 
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
+                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65), BigDecimal.valueOf(3),
+                BigDecimal.valueOf(4)));
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), Double.valueOf(40), Double.valueOf(1.5),
-                Double.valueOf(2.5)));
+                BigDecimal.valueOf(1000), "D", "Assembly", Long.valueOf(3), BigDecimal.valueOf(40), BigDecimal.valueOf(1.5),
+                BigDecimal.valueOf(2.5)));
 
         buildingDetail.setApplicationFloorDetails(applicationFloorDetails);
 
@@ -371,8 +367,8 @@ public class ApplicationBpaFeeCalculationServiceTest {
         siteDetailList.add(siteDetail);
 
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
+                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65), BigDecimal.valueOf(3),
+                BigDecimal.valueOf(4)));
 
         buildingDetail.setApplicationFloorDetails(applicationFloorDetails);
 
@@ -381,8 +377,8 @@ public class ApplicationBpaFeeCalculationServiceTest {
         application.setBuildingDetail(buildingDetailList);
         application.setSiteDetail(siteDetailList);
 
-        application.setOccupancy(getOccupancy("01", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
+        application.setOccupancy(getOccupancy("01", "Residential", Long.valueOf(1), BigDecimal.valueOf(65), BigDecimal.valueOf(3),
+        		BigDecimal.valueOf(4)));
         application.setIsEconomicallyWeakerSection(false);
 
         Map<String, Double> feeDetails = new HashMap<String, Double>();
@@ -432,8 +428,8 @@ public class ApplicationBpaFeeCalculationServiceTest {
         siteDetailList.add(siteDetail);
 
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(1000), "01", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
+                BigDecimal.valueOf(1000), "01", "Residential", Long.valueOf(1), BigDecimal.valueOf(65), BigDecimal.valueOf(3),
+                BigDecimal.valueOf(4)));
 
         buildingDetail.setApplicationFloorDetails(applicationFloorDetails);
 
@@ -442,8 +438,8 @@ public class ApplicationBpaFeeCalculationServiceTest {
         application.setBuildingDetail(buildingDetailList);
         application.setSiteDetail(siteDetailList);
 
-        application.setOccupancy(getOccupancy("A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
+        application.setOccupancy(getOccupancy("A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65), BigDecimal.valueOf(3),
+        		BigDecimal.valueOf(4)));
         application.setIsEconomicallyWeakerSection(false);
 
         Map<String, Double> feeDetails = new HashMap<String, Double>();
@@ -493,8 +489,8 @@ public class ApplicationBpaFeeCalculationServiceTest {
         siteDetailList.add(siteDetail);
 
         applicationFloorDetails.add(getApplicationFloorDetail(buildingDetail, BigDecimal.valueOf(3500),
-                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
+                BigDecimal.valueOf(1000), "A4", "Residential", Long.valueOf(1), BigDecimal.valueOf(65), BigDecimal.valueOf(3),
+                BigDecimal.valueOf(4)));
 
         buildingDetail.setApplicationFloorDetails(applicationFloorDetails);
 
@@ -503,8 +499,8 @@ public class ApplicationBpaFeeCalculationServiceTest {
         application.setBuildingDetail(buildingDetailList);
         application.setSiteDetail(siteDetailList);
 
-        application.setOccupancy(getOccupancy("01", "Residential", Long.valueOf(1), Double.valueOf(65), Double.valueOf(3),
-                Double.valueOf(4)));
+        application.setOccupancy(getOccupancy("01", "Residential", Long.valueOf(1), BigDecimal.valueOf(65), BigDecimal.valueOf(3),
+        		BigDecimal.valueOf(4)));
         application.setIsEconomicallyWeakerSection(false);
 
         Map<String, Double> feeDetails = new HashMap<String, Double>();
@@ -692,8 +688,8 @@ public class ApplicationBpaFeeCalculationServiceTest {
 
     private ApplicationFloorDetail getApplicationFloorDetail(BuildingDetail buildingDetail, BigDecimal floorArea,
             BigDecimal plinthArea,
-            String occupancycode, String occupancydesc, Long occupancyid, Double areapermissibleinpercentage,
-            Double arewithaddnfee, Double areawithoutaddnfee) {
+            String occupancycode, String occupancydesc, Long occupancyid, BigDecimal areapermissibleinpercentage,
+            BigDecimal arewithaddnfee, BigDecimal areawithoutaddnfee) {
         ApplicationFloorDetail applicationFloorDetail = new ApplicationFloorDetail();
         applicationFloorDetail.setFloorArea(floorArea);
         applicationFloorDetail.setBuildingDetail(buildingDetail);
@@ -703,16 +699,16 @@ public class ApplicationBpaFeeCalculationServiceTest {
         return applicationFloorDetail;
     }
 
-    private Occupancy getOccupancy(String code, String desc, Long id, Double areapermissibleinpercentage,
-            Double areawithoutaddnfee, Double arewithaddnfee) {
+    private Occupancy getOccupancy(String code, String desc, Long id, BigDecimal areapermissibleinpercentage,
+    		BigDecimal areawithoutaddnfee, BigDecimal arewithaddnfee) {
         Occupancy occupancy = new Occupancy();
         occupancy.setCode(code);
         occupancy.setDescription(desc);
         occupancy.setId(id);
         occupancy.setIsactive(true);
-        occupancy.setNumOfTimesAreaPermWitAddnlFee(arewithaddnfee);
-        occupancy.setNumOfTimesAreaPermissible(areawithoutaddnfee);
-        occupancy.setPermissibleAreaInPercentage(areapermissibleinpercentage);
+        occupancy.setMaxFar(arewithaddnfee);
+        occupancy.setMinFar(areawithoutaddnfee);
+        occupancy.setMaxCoverage(areapermissibleinpercentage);
         return occupancy;
     }
 

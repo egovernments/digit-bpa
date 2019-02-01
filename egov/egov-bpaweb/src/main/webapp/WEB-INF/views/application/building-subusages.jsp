@@ -59,7 +59,7 @@
                         <div class=form-group" id="block${subUsage.blockNumber}">
                             <c:forEach items="${subUsage.subUsageDetails}" var="subUsageDtl" varStatus="counter1">
                                 <div class="col-sm-3 col-md-3">
-                                    <h5 class="view-content">${subUsageDtl.mainUsage.additionalDescription}<span class="mandatory"></span></h5>
+                                    <h5 class="view-content">${subUsageDtl.mainUsage.description}<span class="mandatory"></span></h5>
                                     <select name="buildingSubUsages[${counter.index}].subUsageDetails[${counter1.index}].subUsagesTemp"
                                             multiple
                                             class="form-control occupancySubUsages${subUsage.blockNumber} tick-indicator"
