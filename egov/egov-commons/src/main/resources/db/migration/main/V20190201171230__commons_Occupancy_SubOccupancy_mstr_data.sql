@@ -156,7 +156,7 @@ INSERT INTO egbpa_usage(id, code, name, description, isactive, ordernumber, vers
 VALUES (nextval('SEQ_EGBPA_USAGE'), 'A2-11', 'Hotel with assembly room','Hotel with assembly room', 't', 11, 0, 1, now(), 1, now(), (select id from egbpa_sub_occupancy where code='A2'));
 
 INSERT INTO egbpa_usage(id, code, name, description, isactive, ordernumber, version,createdby, createddate, lastmodifiedby, lastmodifieddate, suboccupancy)
-VALUES (nextval('SEQ_EGBPA_USAGE'), 'A2-12', 'Creches','Creches', 't', 12, 0, 1, now(), 1, now(), (select id from eg_sub_occupancy where code='A2'));
+VALUES (nextval('SEQ_EGBPA_USAGE'), 'A2-12', 'Creches','Creches', 't', 12, 0, 1, now(), 1, now(), (select id from egbpa_sub_occupancy where code='A2'));
 
 INSERT INTO egbpa_usage(id, code, name, description, isactive, ordernumber, version,createdby, createddate, lastmodifiedby, lastmodifieddate, suboccupancy)
 VALUES (nextval('SEQ_EGBPA_USAGE'), 'A2-13', 'Day care centres', 'Day care centres', 't', 13, 0, 1, now(), 1, now(), (select id from egbpa_sub_occupancy where code='A2'));
