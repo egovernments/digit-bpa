@@ -90,7 +90,11 @@
     </bean>
 
     <bean id="BPACollectionsInterface"
-          class="org.egov.bpa.transaction.service.collection.BpaTaxCollection"/>
+	class="org.egov.bpa.transaction.service.collection.BpaTaxCollection" />
+
+	<bean id="BPASHCollectionsInterface"
+		class="org.egov.bpa.transaction.service.collection.StakeHolderTaxCollection" />
+
 
     <bean id="OCCollectionsInterface"
           class="org.egov.bpa.transaction.service.collection.OccupancyCertificateTaxCollection"/>

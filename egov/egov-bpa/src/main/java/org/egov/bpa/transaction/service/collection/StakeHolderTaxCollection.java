@@ -39,8 +39,6 @@ package org.egov.bpa.transaction.service.collection;
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -58,11 +56,8 @@ import org.apache.log4j.Logger;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.StakeHolderService;
-import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.CollectionApportioner;
-import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.utils.BpaUtils;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
@@ -83,7 +78,6 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,15 +91,6 @@ public class StakeHolderTaxCollection extends TaxCollection {
     private EgBillDao egBillDAO;
     @Autowired
     private ModuleService moduleService;
-
-    @Autowired
-    private BpaUtils bpaUtils;
-
-    @Autowired
-    private ApplicationBpaService applicationBpaService;
-
-    @Autowired
-    private ApplicationBpaBillService applicationBpaBillService;
 
     @Autowired
     private CollectionIntegrationService collectionService;
@@ -130,6 +115,8 @@ public class StakeHolderTaxCollection extends TaxCollection {
     
     @Autowired
 	private StakeHolderService stakeHolderService;
+    @Autowired
+    private StakeHolderBpaBillService stakeHolderBpaBillService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -156,7 +143,6 @@ public class StakeHolderTaxCollection extends TaxCollection {
                 updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
                 if (LOGGER.isInfoEnabled())
                     LOGGER.info(" *************After Receipt creation**************");
-                updateBpaApplication(demand);
 
             } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
                 updateCollectionForRcptCancel(demand, billRcptInfo);
@@ -217,27 +203,15 @@ public class StakeHolderTaxCollection extends TaxCollection {
     }
 
     /**
-     * @param demand Updates bpaApplication Object once Collection Is done. send Record move to Commissioner and Send SMS
+     * @param demand Updates Stakeholder application Object once Collection Is done. send Record move to Commissioner and Send SMS
      * and Email after Collection
      * @throws IOException 
      */
     @Transactional
-    public void updateBpaApplication(final EgDemand demand) {
-        final BpaApplication application = applicationBpaService
-                .getApplicationByDemand(demand);
-        if (application.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CREATED)) {
-            Long approvalPosition = 0l;
-            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(), application.getStateType(), WF_NEW_STATE);
-            if (wfMatrix != null)
-                approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                        application.getSiteDetail().get(0) != null
-                        && application.getSiteDetail().get(0).getElectionBoundary() != null
-                        ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
-            bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, BpaConstants.WF_NEW_STATE, BpaConstants.BPAFEECOLLECT, null, null);
-        }
-        bpaUtils.sendSmsEmailOnCitizenSubmit(application);
-        bpaUtils.updatePortalUserinbox(application,null);
-        applicationBpaService.saveAndFlushApplication(application);
+    public void updateStakeholder(final EgDemand demand) {
+        final StakeHolder stakeHolder = stakeHolderService.findByDemand(demand);
+        stakeHolder.setStatus(StakeHolderStatus.APPROVED);
+        stakeHolderService.update(stakeHolder, "Fee Collected");
     }
 
     @Transactional
@@ -300,13 +274,9 @@ public class StakeHolderTaxCollection extends TaxCollection {
                             billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
                 }
         
-        // here i have to set status of stakeholder and call the update url of stakeholder controller to save all the updates
-        
-        stakeHolder.setStatus(StakeHolderStatus.APPROVED);
-        
-        stakeHolderService.update(stakeHolder, "Update");
-
-//		bpaSmsAndEmailService.sendSmsForCollection(totalAmount, stakeHolder, billRcptInfo);
+        updateStakeholder(demand);
+        //TODO:Need to send sms regard payment success to citizen
+       //bpaSmsAndEmailService.sendSmsForCollection(totalAmount, stakeHolder, billRcptInfo);
     }
 
     public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
@@ -395,7 +365,7 @@ public class StakeHolderTaxCollection extends TaxCollection {
             final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         final Long billID = Long.valueOf(billReferenceNumber);
         final List<EgBillDetails> billDetails = new ArrayList<>(0);
-        final EgBill bill = applicationBpaBillService.updateBillWithLatest(billID);
+        final EgBill bill = stakeHolderBpaBillService.updateBillWithLatest(billID);
         LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
                 + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
         final CollectionApportioner apportioner = new CollectionApportioner();
@@ -447,8 +417,7 @@ public class StakeHolderTaxCollection extends TaxCollection {
         BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
         final BigDecimal advanceInstallmentAmount = BigDecimal.ZERO;
         final BigDecimal arrearAmount = BigDecimal.ZERO;
-        applicationBpaService
-                .getApplicationByDemand(egBill.getEgDemand());
+        stakeHolderService.findByDemand(egBill.getEgDemand());
         final List<ReceiptDetail> reciptDetailList = collectionService
                 .getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
         for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())

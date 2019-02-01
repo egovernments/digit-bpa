@@ -230,7 +230,7 @@ public class StakeHolderService {
         stakeHolder.setLastUpdatedDate(stakeHolder.getLastModifiedDate());
         stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
         processAndStoreApplicationDocuments(stakeHolder);
-        if ("Update".equals(workFlowAction)) {
+        if ("Update".equals(workFlowAction) || "Fee Collected".equals(workFlowAction)) {
             stakeHolder.setActive(stakeHolder.getIsActive());
         } else if (BLOCK.equals(workFlowAction)) {
             stakeHolder.setStatus(StakeHolderStatus.BLOCKED);
@@ -491,11 +491,10 @@ public class StakeHolderService {
 			stakeHolder.setUsername(stakeHolder.getEmailId());
 			stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
             setActiveToStakeholder(stakeHolder);
-            
-    		stakeHolder.setDemand(stakeHolderBpaBillService.createDemand(stakeHolder));
     		
     		List<AppConfigValues> appConfigValueList=appConfigValueService.getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
             if((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")){
+        		stakeHolder.setDemand(stakeHolderBpaBillService.createDemand(stakeHolder));
                 stakeHolder.setStatus(StakeHolderStatus.PAYMENT_PENDING);
             }else{
             stakeHolder.setStatus(StakeHolderStatus.APPROVED);

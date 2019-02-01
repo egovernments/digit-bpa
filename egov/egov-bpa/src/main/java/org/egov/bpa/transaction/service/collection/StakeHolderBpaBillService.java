@@ -58,9 +58,8 @@ import java.util.TreeSet;
 import org.egov.bpa.autonumber.BpaBillReferenceNumberGenerator;
 import org.egov.bpa.master.entity.BpaFeeDetail;
 import org.egov.bpa.master.entity.StakeHolder;
+import org.egov.bpa.master.repository.StakeHolderRepository;
 import org.egov.bpa.master.service.BpaFeeService;
-import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
-import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.CFinancialYear;
@@ -99,9 +98,6 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
     private InstallmentDao installmentDao;
 
     @Autowired
-    private ApplicationBpaRepository applicationBpaRepository;
-
-    @Autowired
     private FinancialYearDAO financialYearDAO;
     @Autowired
     private ModuleService moduleService;
@@ -115,6 +111,8 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
     protected BpaFeeService bpaFeeService;
     @Autowired
     private BpaDemandService bpaDemandService;
+    @Autowired
+    private StakeHolderRepository stakeHolderRepository;
 
     @Transactional
     public String generateBill(final StakeHolder stakeHolder) {
@@ -306,12 +304,12 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
         if (bill == null)
             throw new ApplicationRuntimeException("No bill found with bill reference no :" + billId);
         bill.getEgBillDetails().clear();
-        final BpaApplicationBillable bpaApplicationBillable = (BpaApplicationBillable) context
-                .getBean("bpaApplicationBillable");
+        final StakeHolderBillable stakeHolderBillable = (StakeHolderBillable) context
+                .getBean("stakeHolderBillable");
 
-        bpaApplicationBillable.setApplication(
-                applicationBpaRepository.findByApplicationNumber(bill.getConsumerId().trim().toUpperCase()));
-        final List<EgBillDetails> egBillDetails = getBilldetails(bpaApplicationBillable);
+        stakeHolderBillable.setStakeHolder(
+        		stakeHolderRepository.findByCode(bill.getConsumerId().trim().toUpperCase()));
+        final List<EgBillDetails> egBillDetails = getBilldetails(stakeHolderBillable);
         for (final EgBillDetails billDetail : egBillDetails) {
             bill.addEgBillDetails(billDetail);
             billDetail.setEgBill(bill);

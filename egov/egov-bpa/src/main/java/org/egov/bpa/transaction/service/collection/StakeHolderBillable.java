@@ -206,7 +206,7 @@ public class StakeHolderBillable extends AbstractBillable implements Billable {
 
 	@Override
 	public String getServiceCode() {
-		return "BPA";
+		return "BPASH";
 	}
 
 	@Override
