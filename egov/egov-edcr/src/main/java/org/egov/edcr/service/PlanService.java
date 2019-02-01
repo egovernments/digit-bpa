@@ -50,7 +50,7 @@ public class PlanService {
     public Plan process(EdcrApplication dcrApplication, String applicationType) {
 
         Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), featureService.getFeatures());
-        plan.setApplicationDate(new Date());
+        plan.setApplicationDate(dcrApplication.getApplicationDate());
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
         plan = applyRules(plan, cityDetails);
 
