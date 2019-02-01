@@ -52,6 +52,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,10 +65,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /*All the details extracted from the plan are referred in this object*/
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Plan implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7276648029097296311L;
 
     @JsonIgnore
     private ReportOutput reportOutput = new ReportOutput();
@@ -84,6 +85,7 @@ public class Plan implements Serializable {
     private BigDecimal totalBuiltUpArea;
     private BigDecimal totalFloorArea;
     private Boolean edcrPassed = false;
+    private Date applicationDate;
     private transient List<ElectricLine> electricLine = new ArrayList<>();
     private transient List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
     private transient List<NotifiedRoad> notifiedRoads = new ArrayList<>();
@@ -210,6 +212,14 @@ public class Plan implements Serializable {
 
     public void setEdcrPassed(Boolean edcrPassed) {
         this.edcrPassed = edcrPassed;
+    }
+
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
     }
 
     public List<NonNotifiedRoad> getNonNotifiedRoads() {
