@@ -258,6 +258,9 @@ public class BpaConstants {
     public static final String PERMIT_ORDER_NOTICE_TYPE = "PermitOrder";
     public static final String BPA_DEMAND_NOTICE_TYPE = "DemandNotice";
     public static final String BPA_REJECTION_NOTICE_TYPE = "RejectionNotice";
+    public static final String OCREJECTIONFILENAME = "ocrejectionnotice";
+    public static final String OCDEMANDFILENAME = "ocdemandnotice";
+
     // button name constants
     public static final String WF_APPROVE_BUTTON = "Approve";
     public static final String WF_REJECT_BUTTON = "REJECT";

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2019-01-31T21:42:59 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bparejectionnotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b1715f8d-a189-45c5-a759-a3f04bc5d6b4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.utils.DateUtils"/>
+	<parameter name="rejectionReasons" class="java.lang.String"/>
+	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="isBusinessUser" class="java.lang.Boolean"/>
+	<parameter name="duplicateWatermarkPath" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.io.InputStream"/>
+	<field name="applicationNumber" class="java.lang.String"/>
+	<field name="applicationDate" class="java.util.Date"/>
+	<field name="parent" class="org.egov.bpa.transaction.entity.BpaApplication"/>
+	<background>
+		<band height="802" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{isBusinessUser}]]></printWhenExpression>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="20" y="60" width="534" height="570" uuid="a4848347-f954-4c89-bfed-68d5a3660798">
+					<printWhenExpression><![CDATA[$P{isBusinessUser}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{duplicateWatermarkPath}]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="96" splitType="Stretch">
+			<textField>
+				<reportElement x="88" y="40" width="428" height="20" uuid="643ee47d-a84c-4e17-a758-85b3d2fe1503"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(See Rule 9(1))"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="88" y="0" width="428" height="20" uuid="ba5c4563-d93c-483f-86e2-5aae2755cd2f"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="88" y="20" width="428" height="20" uuid="9f0f3469-57ed-48f6-83ad-1dfab7d6e41e"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Kerala Building Rule-1984"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="76" width="122" height="20" uuid="097ffb17-4a3c-4452-a196-f15126c79e61"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Application Number : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="121" y="76" width="150" height="20" uuid="f67b0c82-e005-4c8b-a4d9-5e0fd37a5c79"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{applicationNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="474" y="76" width="81" height="20" uuid="0efe26f4-820a-4afc-8419-4365102a1ead"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="362" y="76" width="113" height="20" uuid="33008aec-63f0-4e44-b68a-a692784df0a7"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dated : ]]></text>
+			</staticText>
+			<image>
+				<reportElement x="12" y="0" width="60" height="60" uuid="81d01a85-baca-4d87-a163-f1f059c78074"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="6" width="555" height="20" uuid="417140e2-f7b0-44c4-ad3d-650024f6f95a"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ORDER OF REJECTION FOR OCCUPANCY CERTIFICATE APLLICATION]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="39" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="20" uuid="97a7b5ad-99a3-4915-8420-916a97403840"/>
+				<textFieldExpression><![CDATA["To,"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="23" y="19" width="532" height="20" uuid="d7b21c92-04d4-4c38-8a61-56d9052898a3"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{parent}.getOwner().getName() +",\n"+$F{parent}.getOwner().getAddress()+"."]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="78">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["       Your application, dated "+DateUtils.toDefaultDateFormat($F{parent}.getApplicationDate())+" for permit /Regularization for "+$F{parent}.getServiceType().getDescription()+"  in Kozhikode Corporation falling in "+$F{parent}.getSiteDetail().get(0).getLocationBoundary().getName()+" Village,Revenue Ward "+$F{parent}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum()+",Electoral Ward "+$F{parent}.getSiteDetail().get(0).getElectionBoundary().getBoundaryNum()+",Re-Survey No."+$F{parent}.getSiteDetail().get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>
+				<textFieldExpression><![CDATA["Sir/Madam,"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="50">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="555" height="50" uuid="15bc4bc2-b4f7-4bdf-af6b-6eaab0e1dfe2">
+					<printWhenExpression><![CDATA[$P{rejectionReasons} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$P{rejectionReasons}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="20">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="20" uuid="76dcc689-70ea-4e10-8583-860fe1a32de9"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Note: No construction work is to be commenced before obtaining Permission in writing."]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="50">
+			<textField>
+				<reportElement x="65" y="31" width="133" height="19" uuid="b04d8a39-92ff-4b97-b634-e1ee6fb8c76c"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="65" y="11" width="133" height="20" uuid="6620f73b-8541-4efd-abaa-2b560f0ea7e8"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="10" width="64" height="20" uuid="6ec2e595-557a-4348-bb73-b09b70f7a45e"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Place        : ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="343" y="30" width="212" height="20" uuid="a67f4588-9df1-44f8-9ea5-f4dd4c5d9514"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["For Secretary"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="65" height="20" uuid="4e4eb8e9-5fa0-4156-895b-3214d47f3736"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date        : ]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

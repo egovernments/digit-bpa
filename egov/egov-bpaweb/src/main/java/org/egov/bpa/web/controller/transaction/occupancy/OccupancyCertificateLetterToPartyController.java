@@ -39,6 +39,17 @@
  */
 package org.egov.bpa.web.controller.transaction.occupancy;
 
+import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
+import static org.egov.bpa.utils.OcConstants.OCCUPANCY_CERTIFICATE;
+import static org.egov.bpa.utils.OcConstants.OC_LTP_CHECKLIST;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.LpReason;
 import org.egov.bpa.master.service.CheckListDetailService;
@@ -46,6 +57,9 @@ import org.egov.bpa.master.service.LpReasonService;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.notice.OccupancyLetterToPartyFormat;
+import org.egov.bpa.transaction.notice.impl.OccupancyLetterToPartyFormatImpl;
+import org.egov.bpa.transaction.notice.impl.OccupancyLetterToPartyReplyFormatImpl;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
@@ -53,7 +67,9 @@ import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
@@ -61,6 +77,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,19 +92,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
-import static org.egov.bpa.utils.OcConstants.OCCUPANCY_CERTIFICATE;
-import static org.egov.bpa.utils.OcConstants.OC_LTP_CHECKLIST;
-
 @Controller
 @RequestMapping(value = "/occupancy-certificate/letter-to-party")
 public class OccupancyCertificateLetterToPartyController {
+	private static final String PDFEXTN = ".pdf";
+	private static final String INLINE_FILENAME = "inline;filename=";
+	private static final String CONTENT_DISPOSITION = "content-disposition";
 	static final String LPCHK = "lp";
 	static final String LPREPLYCHK = "lpreply";
 	private static final String MSG_LP_REPLY_SUCCESS = "msg.lettertoparty.reply.success";
@@ -126,6 +138,8 @@ public class OccupancyCertificateLetterToPartyController {
 	private OCLetterToPartyService ocLetterToPartyService;
 	@Autowired
 	private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
 	@ModelAttribute(name = "lpReasonList")
 	public List<LpReason> getLpReasonList() {
@@ -253,14 +267,26 @@ public class OccupancyCertificateLetterToPartyController {
 			}
 	}
 
-	@GetMapping("/print/{type}/{applicationNumber}/{lpNumber}")
-	@ResponseBody
-	public ResponseEntity<byte[]> generateLetterToParty(@PathVariable final String type, @PathVariable final String applicationNumber,
-														@PathVariable final String lpNumber, final HttpServletRequest request) {
-		OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber, lpNumber);
-		return ocLetterToPartyService.generateReport(ocLetterToParty, type, request);
-	}
+    @GetMapping("/print/lp/{applicationNumber}/{lpNumber}")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateLettertoPartyCreate(@PathVariable final String applicationNumber,
+			                                            @PathVariable final String lpNumber, final HttpServletRequest request) {
+    	final OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber, lpNumber);
+        OccupancyLetterToPartyFormat ocLetterToPartyFormat = (OccupancyLetterToPartyFormat) specificNoticeService
+                .find(OccupancyLetterToPartyFormatImpl.class, specificNoticeService.getCityDetails());
+    return getFileAsResponseEntity(ocLetterToPartyFormat.generateNotice(ocLetterToParty), "oclettertoparty");
+   }
 
+    @GetMapping("/print/lpreply/{applicationNumber}/{lpNumber}")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateLettertoPartyReply(@PathVariable final String applicationNumber,
+			                                            @PathVariable final String lpNumber, final HttpServletRequest request) {
+    	final OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber, lpNumber);
+        OccupancyLetterToPartyFormat ocLetterToPartyFormat = (OccupancyLetterToPartyFormat) specificNoticeService
+                .find(OccupancyLetterToPartyReplyFormatImpl.class, specificNoticeService.getCityDetails());
+        return getFileAsResponseEntity(ocLetterToPartyFormat.generateNotice(ocLetterToParty), "oclettertopartyreply");
+    }
+    
 	@GetMapping("/view-details/{type}/{applicationNumber}/{lpNumber}")
 	public String viewChecklist(@PathVariable final String applicationNumber, @PathVariable final String lpNumber, @PathVariable final String type, final Model model) {
 		OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber, lpNumber);
@@ -298,5 +324,15 @@ public class OccupancyCertificateLetterToPartyController {
 		redirectAttributes.addFlashAttribute(MESSAGE,
 				messageSource.getMessage(MSG_LP_REPLY_SUCCESS, null, null));
 		return REDIRECT_LETTER_TO_PARTY_RESULT + applicationNumber + "/" + lpNumber;
-	}
+   }
+	
+    private ResponseEntity<InputStreamResource> getFileAsResponseEntity(final ReportOutput reportOutput, final String prefixFileName) {
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .cacheControl(CacheControl.noCache())
+                .contentLength(reportOutput.getReportOutputData().length)
+                .header(CONTENT_DISPOSITION, String.format(INLINE_FILENAME,prefixFileName + PDFEXTN))
+                .body(new InputStreamResource(reportOutput.asInputStream()));
+    }	
 }

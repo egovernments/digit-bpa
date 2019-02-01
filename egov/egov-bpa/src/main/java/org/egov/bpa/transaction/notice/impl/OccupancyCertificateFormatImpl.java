@@ -105,7 +105,7 @@ public class OccupancyCertificateFormatImpl implements OccupancyCertificateNotic
                     ? new OccupancyCertificate()
                     : oc, reportParams);
             reportOutput = reportService.createReport(reportInput);
-            ocNoticeService.saveOcNotice(oc, reportOutput, OCCUPANCY_CERTIFICATE_NOTICE_TYPE);
+            ocNoticeService.saveOcNotice(oc, oc.getApplicationNumber(), reportOutput, OCCUPANCY_CERTIFICATE_NOTICE_TYPE);
             List<OCNotice> occCertificate = oc.getOcNotices().stream()
                     .filter(ocNotice1 -> ocNotice1.getNoticeCommon().getNoticeType()
                             .equalsIgnoreCase(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))

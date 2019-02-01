@@ -50,6 +50,8 @@ package org.egov.bpa.web.controller.notice;
 import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
 import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
+import static org.egov.bpa.utils.BpaConstants.OCREJECTIONFILENAME;
+import static org.egov.bpa.utils.BpaConstants.OCDEMANDFILENAME;
 import static org.egov.infra.utils.StringUtils.append;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
@@ -60,7 +62,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
+import org.egov.bpa.transaction.notice.impl.OccupancyCertificateDemandFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
+import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -146,5 +150,27 @@ public class BpaNoticeController {
                 .generateNotice(applicationBpaService.findByApplicationNumber(applicationNumber));
         return getFileAsResponseEntity(applicationNumber, reportOutput, BPAREJECTIONFILENAME);
     }
+    
+    @GetMapping(value = "/application/occupancy-certificate/rejectionnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateOccupancyCertificateRejectionNotice(@PathVariable final String applicationNumber) throws IOException {
+        OccupancyCertificateNoticesFormat ocNoticeFeature = (OccupancyCertificateNoticesFormat) specificNoticeService
+                .find(OccupancyRejectionFormatImpl.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = ocNoticeFeature
+                .generateNotice(occupancyCertificateService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, OCREJECTIONFILENAME);
+    }
+    
+    @GetMapping(value = "/application/occupancy-certificate/demandnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateOccupancyCertificateDemandNotice(@PathVariable final String applicationNumber)
+            throws IOException {
+    	OccupancyCertificateNoticesFormat ocNoticeFeature  = (OccupancyCertificateNoticesFormat) specificNoticeService
+                .find(OccupancyCertificateDemandFormatImpl.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = ocNoticeFeature
+                .generateNotice(occupancyCertificateService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, OCDEMANDFILENAME);
+    }
+
 
 }

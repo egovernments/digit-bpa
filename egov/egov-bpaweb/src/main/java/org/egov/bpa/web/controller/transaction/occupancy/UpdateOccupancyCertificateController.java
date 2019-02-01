@@ -525,7 +525,9 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                             occupancyCertificateService.findByApplicationNumber(occupancyCertificate.getApplicationNumber()));
             return "redirect:/application/occupancy-certificate/generate-occupancy-certificate/"
                     + occupancyCertificate.getApplicationNumber();
-        }
+        }else if (isNotBlank(wfBean.getWorkFlowAction()) && GENERATEREJECTNOTICE.equalsIgnoreCase(wfBean.getWorkFlowAction()))
+            return "redirect:/application/occupancy-certificate/demandnotice/" + occupancyCertificate.getApplicationNumber();
+        
         return REDIRECT_APPLICATION_OC_SUCCESS + ocResponse.getApplicationNumber();
     }
 
