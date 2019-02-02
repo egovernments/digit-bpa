@@ -191,7 +191,7 @@ public class Far extends  FeatureProcess {
                     occupancy.setType(occupancyType);
                     building.getTotalArea().add(occupancy);
                     
-                    
+                    // this util access not valid move this  inside edcr
                     OccupancyType occupancyTypeAsPerFloorArea = Util.getOccupancyAsPerFloorArea(occupancyType,
                             blockWiseFloorArea);
                   
