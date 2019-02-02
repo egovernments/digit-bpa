@@ -56,36 +56,59 @@
             <input type="hidden" id="ocId" name="oc" value="${ocInspection.oc.id}"/>
             <input type="hidden" name="applicationNumber" id="applicationNumber" value="${applicationNumber}">
             <input type="hidden" name="inspectionDate" id="inspectionDate" value="${inspectionDate}">
+            
+            <ul class="nav nav-tabs" id="settingstab">
+				<li class="active"><a data-toggle="tab"
+									  href="#ocinspn-details" data-tabidx=0><spring:message
+						code='lbl.inspn.details' /></a></li>
+				<li><a data-toggle="tab" href="#ocplan-scrutiny-chklist" data-tabidx=1><spring:message
+						code='lbl.plan.scrutiny' /></a></li>
+			</ul>
+			<div class="tab-content">
+				<div id="ocinspn-details" class="tab-pane fade in active">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							<jsp:include page="../view-oc-application-details.jsp"></jsp:include>
+						</div>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							<jsp:include page="../view-bpa-basic-application-details.jsp"></jsp:include>
+						</div>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							<jsp:include page="oc-inspection-detail-form.jsp"></jsp:include>
+						</div>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							<jsp:include page="oc-upload-inspection-images.jsp"></jsp:include>
+						</div>
+					</div>
+				</div>
 
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-body custom-form ">
-                    <jsp:include page="../view-oc-application-details.jsp"></jsp:include>
-                </div>
-            </div>
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-body custom-form ">
-                    <jsp:include page="../view-bpa-basic-application-details.jsp"></jsp:include>
-                </div>
-            </div>
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-body custom-form ">
-                    <jsp:include page="oc-inspection-detail-form.jsp"></jsp:include>
-                </div>
-            </div>
+				<div id="ocplan-scrutiny-chklist" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							 <jsp:include page="oc-plan-scrutiny-checklist-rule.jsp"></jsp:include> 
+						</div>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+						     <jsp:include page="oc-plan-scrutiny-checklist-drawing.jsp"></jsp:include> 
+						</div>
+					</div>
+				</div>
+			</div>
 
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-body custom-form ">
-                    <jsp:include page="oc-upload-inspection-images.jsp"></jsp:include>
-                </div>
-            </div>
-
-            <div align="center">
-                <form:button type="submit" id="buttonSubmit" class="btn btn-primary"
-                             value="createinspectiondetails"> <spring:message code="lbl.btn.submit"/></form:button>
-                <input type="button" name="button2" id="button2" value="Close"
-                       class="btn btn-default" onclick="window.close();"/>
-            </div>
-        </form:form>
+			<div align="center">
+				<form:button type="submit" id="buttonSubmit" class="btn btn-primary" value="createinspectiondetails">
+					<spring:message code="lbl.btn.submit" />
+				</form:button>
+				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
+			</div>
+		</form:form>
     </div>
 </div>
 

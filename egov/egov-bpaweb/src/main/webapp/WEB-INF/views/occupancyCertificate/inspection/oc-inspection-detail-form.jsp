@@ -52,7 +52,7 @@
     <c:choose>
         <c:when test="${!docketDetailLocList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title"><spring:message code="lbl.loc.plt"/></div>
+                <div class="panel-title"><%-- <spring:message code="lbl.loc.plt"/> --%></div>
             </div>
             <div class="form-group view-content header-color hidden-xs">
                 <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
@@ -116,7 +116,7 @@
         </c:when>
     </c:choose>
 
-    <c:choose>
+<%--     <c:choose>
         <c:when test="${!docketDetailMeasumentList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
                 <div class="panel-title"><spring:message code="lbl.meas.plot"/></div>
@@ -181,7 +181,7 @@
                 </div>
             </c:forEach>
         </c:when>
-    </c:choose>
+    </c:choose> --%>
 
     <%--<c:choose>
         <c:when test="${!docketDetailAccessList.isEmpty()}">
@@ -251,7 +251,7 @@
     </c:choose>--%>
 
 
-    <c:choose>
+    <%-- <c:choose>
         <c:when test="${!docketDetlSurroundingPlotList.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
                 <div class="panel-title"><spring:message code="lbl.surrnd.plot"/>
@@ -650,8 +650,8 @@
             </c:forEach>
         </c:when>
     </c:choose>
-
-    <c:choose>
+ --%>
+<%--     <c:choose>
         <c:when test="${!docketDetailLengthOfCompWall.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
                 <div class="panel-title"><spring:message code="lbl.len.wall"/></div>
@@ -715,8 +715,8 @@
                 </div>
             </c:forEach>
         </c:when>
-    </c:choose>
-
+    </c:choose> --%>
+<%-- 
     <c:choose>
         <c:when test="${!docketDetailNumberOfWell.isEmpty()}">
             <div class="panel-heading custom_form_panel_heading">
@@ -781,10 +781,10 @@
                 </div>
             </c:forEach>
         </c:when>
-    </c:choose>
+    </c:choose> --%>
 
-    <div class="form-group">
-        <%--<label class="col-sm-3 control-label text-right"><spring:message
+<%--     <div class="form-group">
+        <label class="col-sm-3 control-label text-right"><spring:message
                 code="lbl.dimensionofplot" /></label>
         <div class="col-sm-3 add-margin">
             <form:radiobutton path="boundaryDrawingSubmitted" value="true" checked="checked"/>
@@ -793,7 +793,7 @@
             <spring:message code="lbl.no" />
             <form:errors path="boundaryDrawingSubmitted"
                 cssClass="add-margin error-msg" />
-        </div>--%>
+        </div>
         <label class="col-sm-3 control-label text-right"><spring:message
                 code="lbl.righttomake.construction"/></label>
         <div class="col-sm-3 add-margin">
@@ -801,11 +801,11 @@
                               checked="checked"/>
             <spring:message code="lbl.yes"/>
             <form:radiobutton path="inspection.rightToMakeConstruction" value="false"/>
-            <spring:message code="lbl.no"/>
+            <spring:message code="lbl.no"/> 	
             <form:errors path="inspection.rightToMakeConstruction"
                          cssClass="add-margin error-msg"/>
-        </div>
-    </div>
+        </div> 
+    </div> --%>
 
     <div class="form-group">
         <%-- <label class="col-sm-3 control-label text-right"><spring:message

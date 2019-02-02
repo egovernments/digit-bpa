@@ -57,7 +57,8 @@ public class OcConstants {
     public static final String OC_LTP_CHECKLIST = "OCLTPDOCUMENTS";
 
     // inspection related constants
-    public static final String OC_INSPECTION_LOCATION = "OCINSPECTIONLOCATION";
+    public static final String OC_INSPECTION = "OCINSPECTION";
+/*    public static final String OC_INSPECTION_LOCATION = "OCINSPECTIONLOCATION";
     public static final String OC_INSPECTION_MEASUREMENT = "OCINSPECTIONMEASUREMENT";
     public static final String OC_INSPECTION_ACCESS = "OCINSPECTIONACCESS";
     public static final String OC_INSPECTION_SURROUNDING = "OCINSPECTIONSURROUNDING";
@@ -70,7 +71,7 @@ public class OcConstants {
     public static final String OC_INSPECTION_ERECTION_OF_TOWER = "OCINSPECTIONERECTIONOFTOWER";
     public static final String OC_INSPECTION_SHUTTER = "OCINSPECTIONSHUTTER";
     public static final String OC_INSPECTION_ROOF_CONVERSION = "OCINSPECTIONROOFCONVERSION";
-    public static final String OC_INSPECTION_HGT_BUILD_ABUT_ROAD = "OCINSPECTIONHGTBUILDABUTROAD";
+    public static final String OC_INSPECTION_HGT_BUILD_ABUT_ROAD = "OCINSPECTIONHGTBUILDABUTROAD";*/
 
     //App config key name constants
     public static final String OC_DOC_SCRUTINY_INTEGRATION_REQUIRED = "OC_DOCUMENT_SCRUTINY_INTEGRATION_REQUIRED";

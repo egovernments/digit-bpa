@@ -39,11 +39,17 @@
  */
 package org.egov.bpa.web.controller.transaction.occupancy;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
+import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
+import org.egov.bpa.transaction.service.oc.OCPlanScrutinyChecklistService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OcConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
@@ -57,16 +63,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/application/occupancy-certificate")
 public class UpdateInspectionForOccupancyCertificateController extends BpaGenericApplicationController {
 
 	@Autowired
 	private OCInspectionService ocInspectionService;
+	
+	@Autowired
+	private OCPlanScrutinyChecklistService OCPlanScrutinyChecklistService;
 
 	@GetMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
 	public String editInspectionAppointment(
@@ -107,11 +112,11 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 	private void loadApplication(final Model model, final OCInspection ocInspection) {
 		final OccupancyCertificate oc = ocInspection.getOc();
 		if (oc != null && oc.getState() != null
-			&& oc.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
+				&& oc.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
 			prepareWorkflowDataForInspection(model, oc);
 			model.addAttribute("loginUser", securityUtils.getCurrentUser());
-			model.addAttribute(BpaConstants.APPLICATION_HISTORY,
-					workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
+			model.addAttribute(BpaConstants.APPLICATION_HISTORY, workflowHistoryService
+					.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
 		}
 		if (ocInspection != null)
 			ocInspection.getInspection().setInspectionDate(new Date());
@@ -121,6 +126,15 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
 		model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
 		model.addAttribute("planScrutinyValues", ChecklistValues.values());
+
+		ocInspection.setPlanScrutinyChecklistTemp(OCPlanScrutinyChecklistService
+				.findByInspectionAndScrutinyChecklistType(ocInspection, ScrutinyChecklistType.RULE_VALIDATION));
+		if (ocInspection.getPlanScrutinyChecklistTemp().isEmpty())
+			ocInspection.setPlanScrutinyChecklist(OCPlanScrutinyChecklistService
+					.findByInspectionAndScrutinyChecklistType(ocInspection, ScrutinyChecklistType.COMBINED));
+		ocInspection.setPlanScrutinyChecklistForDrawingTemp(OCPlanScrutinyChecklistService
+				.findByInspectionAndScrutinyChecklistType(ocInspection, ScrutinyChecklistType.DRAWING_DETAILS));
+
 	}
 
 

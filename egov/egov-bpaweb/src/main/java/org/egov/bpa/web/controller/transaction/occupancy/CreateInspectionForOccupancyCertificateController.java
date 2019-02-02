@@ -115,7 +115,7 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 		ocInspection.setOc(oc);
 		model.addAttribute("ocInspection", ocInspection);
 		model.addAttribute("docketDetailLocList", inspectionCommon.getDocketDetailLocList());
-		model.addAttribute("docketDetailMeasumentList", inspectionCommon.getDocketDetailMeasurementList());
+		/*model.addAttribute("docketDetailMeasumentList", inspectionCommon.getDocketDetailMeasurementList());
 		model.addAttribute("docketDetailAccessList", inspectionCommon.getDocketDetailAccessList());
 		model.addAttribute("docketDetlSurroundingPlotList", inspectionCommon.getDocketDetailSurroundingPlotList());
 		model.addAttribute("docketDetailLandTypeList", inspectionCommon.getDocketDetailLandTypeList());
@@ -127,9 +127,10 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 		model.addAttribute("docketDetailNumberOfWell", inspectionCommon.getDocketDetailNumberOfWell());
 		model.addAttribute("docketDetailErectionTower", inspectionCommon.getDocketDetailErectionTower());
 		model.addAttribute("docketDetailShutter", inspectionCommon.getDocketDetailShutter());
-		model.addAttribute("docketDetailRoofConversion", inspectionCommon.getDocketDetailRoofConversion());
-		model.addAttribute("planScrutinyCheckList", checkListDetailService.findActiveCheckListByChecklistTypeAndOrderById("PLANSCRUTINY"));
+		model.addAttribute("docketDetailRoofConversion", inspectionCommon.getDocketDetailRoofConversion());*/
+		model.addAttribute("planScrutinyCheckList", checkListDetailService.findActiveCheckListByChecklistTypeAndOrderById("OCPLANSCRUTINYRULE"));
 		model.addAttribute("planScrutinyValues", ChecklistValues.values());
+		model.addAttribute("planScrutinyChecklistForDrawing", checkListDetailService.findActiveCheckListByChecklistTypeAndOrderById("OCPLANSCRUTINYDRAWING"));
 		model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
 		model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
 	}

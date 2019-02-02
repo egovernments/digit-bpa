@@ -47,11 +47,14 @@
 <div class="row">
     <div class="col-md-12">
         <ul class="nav nav-tabs" id="settingstab">
-            <li class="active"><a data-toggle="tab" href="#inspection-details"
+            <li class="active"><a data-toggle="tab" href="#oc-inspection-details"
                                   data-tabidx=0><spring:message code='lbl.inspn.details'/></a></li>
+            <li><a data-toggle="tab" href="#oc-plan-scrutiny" data-tabidx=1><spring:message
+                    code='lbl.plan.scrutiny'/></a></li>                      
         </ul>
+
         <div class="tab-content">
-            <div id="inspection-details" class="tab-pane fade in active">
+            <div id="oc-inspection-details" class="tab-pane fade in active">
                 <div class="panel panel-primary" data-collapsed="0">
                     <div class="panel-heading custom_form_panel_heading">
                         <div class="panel-title"><spring:message code="lbl.inspn.details"/></div>
@@ -71,21 +74,14 @@
                             <div class="col-sm-5 add-margin view-content">
                                 <fmt:formatDate value="${ocInspection.inspection.inspectionDate}" pattern="dd/MM/yyyy"
                                                 var="inspectionDate"/>
-                                <c:out value="${inspectionDate}" default="N/A"/></td>
+                                <c:out value="${inspectionDate}" default="N/A"/>
                             </div>
                         </div>
                         <div class="row add-border">
                             <div class="col-sm-3 add-margin">
-                                <spring:message code="lbl.righttomake.construction"/>
-                            </div>
-                            <div class="col-sm-2 add-margin view-content">
-                                <c:out value="${ocInspection.inspection.rightToMakeConstruction ? 'Yes' : 'No'}"
-                                       default="N/A"></c:out>
-                            </div>
-                            <div class="col-sm-2 add-margin">
                                 <spring:message code="lbl.ins.remarks"/>
                             </div>
-                            <div class="col-sm-5 add-margin view-content">
+                            <div class="col-sm-2 add-margin view-content">
                                 <c:out value="${ocInspection.inspection.inspectionRemarks}" default="N/A"></c:out>
                             </div>
                         </div>
@@ -104,7 +100,7 @@
                     <c:choose>
                         <c:when test="${!docketDetailLocList.isEmpty()}">
                             <div class="panel-heading custom_form_panel_heading">
-                                <div class="panel-title"><spring:message code="lbl.loc.of.plot"/></div>
+                                <div class="panel-title"><%-- <spring:message code="lbl.loc.of.plot"/> --%></div>
                             </div>
                             <div class="panel-body">
                                 <c:forEach items="${docketDetailLocList}" var="doc"
@@ -125,213 +121,22 @@
                             </div>
                         </c:when>
                     </c:choose>
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.meas.plot"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailMeasumentList}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.access.to.plot"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailAccessList}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.surrnd.plot"/>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetlSurroundingPlotList}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.typeofland"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailLandTypeList}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.stage.propsd.work"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailProposedWorkList}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.work.started"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailWorkAsPerPlanList}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.gen.prov.regrd.site"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailHgtAbuttRoadList}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.extnt.plot"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailAreaLoc}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.len.wall"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailLengthOfCompWall}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title"><spring:message code="lbl.no.wells"/></div>
-                    </div>
-                    <div class="panel-body">
-                        <c:forEach items="${docketDetailNumberOfWell}" var="doc"
-                                   varStatus="counter">
-                            <div class="row add-border">
-                                <div class="col-sm-5 add-margin view-content">
-                                    <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-                                </div>
-                                <div class="col-sm-3 add-margin view-content">
-                                    <c:out value="${doc.remarks}" default="N/A"></c:out>
-                                </div>
-                            </div>
-                        </c:forEach>
-                    </div>
-                </div>
+				</div>
                 <div class="panel panel-primary" data-collapsed="0">
                     <div class="panel-body custom-form ">
                         <jsp:include page="view-oc-inspection-images.jsp"></jsp:include>
                     </div>
                 </div>
             </div>
-
-        </div>
+			<div id="oc-plan-scrutiny" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="oc-view-plan-scrutiny-checklist-rule.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="oc-view-plan-scrutiny-checklist-drawing.jsp"></jsp:include>
+					</div>
+			</div>
+		</div>
     </div>
 </div>
 <div align="center">
