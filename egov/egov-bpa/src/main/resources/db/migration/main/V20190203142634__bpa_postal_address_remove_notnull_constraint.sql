@@ -1,0 +1,1 @@
+alter table egbpa_sitedetail  alter column postaladdress drop not null;

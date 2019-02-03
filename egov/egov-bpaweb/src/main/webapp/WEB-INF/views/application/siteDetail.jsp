@@ -127,9 +127,9 @@
 		</form:select>
 	</div> --%>
 		<label for="field-1" class="col-sm-3 control-label"><spring:message
-				code="lbl.locality" /> <span class="mandatory"></span></label>
+				code="lbl.locality" /></label>
 		<div class="col-sm-3 add-margin">
-			<form:select name="localitys" id="localitys" required="required"
+			<form:select name="localitys" id="localitys"
 				path="siteDetail[0].locationBoundary" cssClass="form-control"
 				cssErrorClass="form-control error">
 				<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -189,7 +189,7 @@
 				cssClass="add-margin error-msg" />
 		</div> --%>
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.registrar.office" /> <span class="mandatory"></span> </label>
+				code="lbl.registrar.office" /> </label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden path="siteDetail[0].registrarVillageId" id="registrarVillageIdHdn"/>
 			<form:hidden path="siteDetail[0].registrarOffice"
@@ -197,7 +197,7 @@
 				value="${bpaApplication.siteDetail[0].registrarOffice.id}" />
 			<select class="form-control patternvalidation registrarOffice"
 				name="registrarOffice" id="registrarOffice"
-				required="required" class="form-control ">
+				class="form-control ">
 				<option value="">Selected</option>
 			</select>
 			<form:errors path="siteDetail[0].registrarOffice"
@@ -260,7 +260,7 @@
 			<form:errors path="siteDetail[0].citytown"
 				cssClass="add-margin error-msg" />
 		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
+		<%-- <label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.site.pincode" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" id="postalAddressTypeHead" required="required"
@@ -268,10 +268,10 @@
 					value="${bpaApplication.siteDetail[0].postalAddress.pincode}" />
 			<form:hidden path="siteDetail[0].postalAddress" value="${bpaApplication.siteDetail[0].postalAddress.id}" />
 			<form:hidden path="siteDetail[0].postalId" id="postalAddress" value="" />
-		</div>
+		</div> --%>
 	</div>
 
-	<div class="form-group">
+	<%-- <div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.taluk" /> <span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
@@ -282,7 +282,7 @@
 		<div class="col-sm-3 add-margin">
 			<input class="form-control patternvalidation" maxlength="128"
 				data-pattern="alphanumericwithspace" id="postOffices"
-				value="${bpaApplication.siteDetail[0].postalAddress.postOffice}" disabled="disabled" />
+				value="${bpaApplication.siteDetail[0].postalAddress.postOffice}" />
 		</div>
 	</div>
 	
@@ -292,21 +292,21 @@
 		<div class="col-sm-3 add-margin">
 			<input class="form-control patternvalidation" maxlength="128"
 				data-pattern="alphanumericwithspace" id="district"
-				value="${bpaApplication.siteDetail[0].postalAddress.district}" disabled="disabled" />
+				value="${bpaApplication.siteDetail[0].postalAddress.district}"/>
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.state" /> <span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
 			<input class="form-control patternvalidation" maxlength="128"
 				data-pattern="alphanumericwithspace" id="state"
-				value="${bpaApplication.siteDetail[0].postalAddress.state}" disabled="disabled" />
-			<%-- <form:input class="form-control patternvalidation" maxlength="32"
+				value="${bpaApplication.siteDetail[0].postalAddress.state}"/>
+			<form:input class="form-control patternvalidation" maxlength="32"
 				data-pattern="alphanumericwithspace" id="state"
 				path="siteDetail[0].state" required="required" />
 			<form:errors path="siteDetail[0].state"
-				cssClass="add-margin error-msg" /> --%>
+				cssClass="add-margin error-msg" />
 		</div>
-	</div>
+	</div> --%>
 
 	<%-- <div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message

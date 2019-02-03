@@ -242,7 +242,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.getApplicationAmenity().clear();
         application.setApplicationAmenity(application.getApplicationAmenityTemp());
         application.setApplicationNumber(applicationNumberGenerator.generate());
-        buildRegistrarOfficeForVillage(application);
+        //buildRegistrarOfficeForVillage(application);
         persistBpaNocDocuments(application);
         application.setDcrDocuments(persistApplnDCRDocuments(application));
         buildBuildingSubUsage(application);
@@ -297,8 +297,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (application.getSiteDetail().get(0).getLandUsageId() != null)
             application.getSiteDetail().get(0)
                     .setLandUsage((bpaSchemeLandUsageService.findById(application.getSiteDetail().get(0).getLandUsageId())));
-        application.getSiteDetail().get(0)
-                .setPostalAddress(postalAddressService.findById(application.getSiteDetail().get(0).getPostalId()));
+        /*
+         * application.getSiteDetail().get(0)
+         * .setPostalAddress(postalAddressService.findById(application.getSiteDetail().get(0).getPostalId()));
+         */
     }
 
     private void setSource(final BpaApplication application) {
@@ -375,8 +377,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
         application.setDcrDocuments(persistApplnDCRDocuments(application));
-        persistPostalAddress(application);
-        buildRegistrarOfficeForVillage(application);
+        //persistPostalAddress(application);
+        //buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
         applicationBpaRepository.saveAndFlush(application);
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
@@ -394,8 +396,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         }
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
-        persistPostalAddress(application);
-        buildRegistrarOfficeForVillage(application);
+        //persistPostalAddress(application);
+        //buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
         applicationBpaRepository.saveAndFlush(application);
     }
@@ -434,7 +436,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.setDcrDocuments(persistApplnDCRDocuments(application));
         persistBpaNocDocuments(application);
         buildExistingAndProposedBuildingDetails(application);
-        persistPostalAddress(application);
+        //persistPostalAddress(application);
         buildSchemeLandUsage(application);
         // For one day permit
         if (application.getIsOneDayPermitApplication()

@@ -122,7 +122,6 @@ public class SiteDetail extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "village")
     private VillageName village;
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postalAddress")
     private PostalAddress postalAddress;

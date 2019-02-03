@@ -268,16 +268,18 @@ public class BpaIndexService {
 				: bpaApplication.getSiteDetail().get(0).getStreetaddress2());
 		bpaIndex.setCityTown(bpaApplication.getSiteDetail().get(0).getCitytown() == null ? EMPTY
 				: bpaApplication.getSiteDetail().get(0).getCitytown());
-		bpaIndex.setPinCode(bpaApplication.getSiteDetail().get(0).getPostalAddress().getPincode() == null ? EMPTY
-				: bpaApplication.getSiteDetail().get(0).getPostalAddress().getPincode());
-		bpaIndex.setPlotTaluk(bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk() == null ? EMPTY
-				: bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk());
-		bpaIndex.setPostOffice(bpaApplication.getSiteDetail().get(0).getPostalAddress().getPostOffice() == null ? EMPTY
-				: bpaApplication.getSiteDetail().get(0).getPostalAddress().getPostOffice());
-		bpaIndex.setDistrict(bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict() == null ? EMPTY
-				: bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict());
-		bpaIndex.setState(bpaApplication.getSiteDetail().get(0).getPostalAddress().getState() == null ? EMPTY
-				: bpaApplication.getSiteDetail().get(0).getPostalAddress().getState());
+        /*
+         * bpaIndex.setPinCode(bpaApplication.getSiteDetail().get(0).getPostalAddress().getPincode() == null ? EMPTY :
+         * bpaApplication.getSiteDetail().get(0).getPostalAddress().getPincode());
+         * bpaIndex.setPlotTaluk(bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk() == null ? EMPTY :
+         * bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk());
+         * bpaIndex.setPostOffice(bpaApplication.getSiteDetail().get(0).getPostalAddress().getPostOffice() == null ? EMPTY :
+         * bpaApplication.getSiteDetail().get(0).getPostalAddress().getPostOffice());
+         * bpaIndex.setDistrict(bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict() == null ? EMPTY :
+         * bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict());
+         * bpaIndex.setState(bpaApplication.getSiteDetail().get(0).getPostalAddress().getState() == null ? EMPTY :
+         * bpaApplication.getSiteDetail().get(0).getPostalAddress().getState());
+         */
 	}
 
 	private void buildRegularizationDetails(BpaApplication bpaApplication, BpaIndex bpaIndex) {

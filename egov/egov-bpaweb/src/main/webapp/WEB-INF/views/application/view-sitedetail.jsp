@@ -175,15 +175,15 @@
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.siteDetail[0].citytown}" default="N/A"></c:out>
 		</div>
-		<div class="col-sm-3 add-margin">
+		<%-- <div class="col-sm-3 add-margin">
 			<spring:message code="lbl.site.pincode" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.siteDetail[0].postalAddress.pincode}"
 				default="N/A"></c:out>
-		</div>
+		</div> --%>
 	</div>
-	<div class="row add-border">
+	<%-- <div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.taluk" />
 		</div>
@@ -214,7 +214,7 @@
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.siteDetail[0].postalAddress.state}" default="N/A"></c:out>
 		</div>
-	</div>
+	</div> --%>
 
 	<%-- <div class="row add-border">
 		<div class="col-sm-3 add-margin">
