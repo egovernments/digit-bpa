@@ -45,66 +45,22 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.common.entity.edcr;
+package org.egov.edcr.feature;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.List;
+import org.apache.log4j.Logger;
+import org.egov.common.entity.edcr.Plan;
 
-import javax.persistence.Transient;
+public class InteriorOpenSpaceService extends FeatureProcess {
+    private static Logger LOG = Logger.getLogger(InteriorOpenSpaceService.class);
 
-public class EdcrPdfDetail implements Serializable {
-
-    private static final long serialVersionUID = 63L;
-
-    private String layer;
-
-    private File convertedPdf;
-
-    private String failureReasons;
-
-    private String standardViolations;
-
-    @Transient
-    private List<String> violations;
-
-    public String getLayer() {
-        return layer;
+    @Override
+    public Plan validate(Plan pl) {
+        return pl;
     }
 
-    public void setLayer(String layer) {
-        this.layer = layer;
+    @Override
+    public Plan process(Plan pl) {
+        return pl;
     }
 
-    public File getConvertedPdf() {
-        return convertedPdf;
-    }
-
-    public void setConvertedPdf(File convertedPdf) {
-        this.convertedPdf = convertedPdf;
-    }
-
-    public String getFailureReasons() {
-        return failureReasons;
-    }
-
-    public void setFailureReasons(String failureReasons) {
-        this.failureReasons = failureReasons;
-    }
-
-    public String getStandardViolations() {
-        return standardViolations;
-    }
-
-    public void setStandardViolations(String standardViolations) {
-        this.standardViolations = standardViolations;
-    }
-
-    public List<String> getViolations() {
-        return violations;
-    }
-
-    public void setViolations(List<String> violations) {
-        this.violations = violations;
-    }
 }
