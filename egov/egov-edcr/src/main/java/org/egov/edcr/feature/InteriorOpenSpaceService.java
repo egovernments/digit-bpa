@@ -47,6 +47,10 @@
 
 package org.egov.edcr.feature;
 
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Plan;
 
@@ -63,4 +67,8 @@ public class InteriorOpenSpaceService extends FeatureProcess {
         return pl;
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

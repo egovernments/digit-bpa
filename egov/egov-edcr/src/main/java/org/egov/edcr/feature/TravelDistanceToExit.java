@@ -48,7 +48,9 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.Block;
@@ -143,4 +145,8 @@ public class TravelDistanceToExit extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

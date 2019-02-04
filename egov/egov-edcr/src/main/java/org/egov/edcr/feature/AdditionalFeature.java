@@ -48,7 +48,9 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -142,6 +144,11 @@ public class AdditionalFeature extends FeatureProcess {
         scrutinyDetail.addColumnHeading(5, STATUS);
         scrutinyDetail.setKey(key);
         return scrutinyDetail;
+    }
+
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
     }
 
 }

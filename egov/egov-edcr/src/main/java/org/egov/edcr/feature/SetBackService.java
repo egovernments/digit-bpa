@@ -52,7 +52,10 @@ import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.WRONGHEIGHTDEFINED;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
@@ -157,4 +160,8 @@ public class SetBackService extends FeatureProcess {
         return pl;
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

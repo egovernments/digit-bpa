@@ -52,7 +52,9 @@ import static org.egov.edcr.utility.DcrConstants.OBJECTDEFINED_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED_DESC;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.OccupancyType;
@@ -130,5 +132,10 @@ public class BiometricWasteManagement extends FeatureProcess {
         details.put(STATUS, status);
         scrutinyDetail.getDetail().add(details);
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    }
+    
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
     }
 }

@@ -52,7 +52,9 @@ import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -520,5 +522,10 @@ public class BlockDistancesService extends FeatureProcess {
             valid = true;
         }
         return valid;
+    }
+
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
     }
 }

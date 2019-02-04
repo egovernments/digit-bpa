@@ -57,7 +57,9 @@ import static org.egov.edcr.utility.DcrConstants.WASTE_DISPOSAL_DISTANCE_FROMBOU
 import static org.egov.edcr.utility.DcrConstants.WASTE_DISPOSAL_ERROR_COLOUR_CODE_DISTANCE_FROMBOUNDARY;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.Plan;
@@ -182,4 +184,8 @@ public class WasteDisposal extends FeatureProcess {
         return Integer.valueOf(roadOutput.colourCode) == COLOUR_CODE_LEACHPIT_TO_PLOT_BNDRY;
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

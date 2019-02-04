@@ -55,7 +55,9 @@ import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -777,4 +779,8 @@ public class Parking extends FeatureProcess {
         return totalArea;
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

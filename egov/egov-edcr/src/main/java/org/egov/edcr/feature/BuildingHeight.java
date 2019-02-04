@@ -57,7 +57,9 @@ import static org.egov.edcr.utility.DcrConstants.SHORTESTDISTINACETOBUILDINGFOOT
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.Block;
@@ -305,6 +307,11 @@ public class BuildingHeight extends FeatureProcess {
                         maximumDistanceToRoad = shortDistance;
                     }
         return maximumDistanceToRoad;
+    }
+
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
     }
 
 }

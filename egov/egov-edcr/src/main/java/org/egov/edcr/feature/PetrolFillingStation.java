@@ -51,7 +51,9 @@ import static org.egov.edcr.utility.DcrConstants.CANOPY_DISTANCE;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.OccupancyType;
@@ -130,4 +132,8 @@ public class PetrolFillingStation extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

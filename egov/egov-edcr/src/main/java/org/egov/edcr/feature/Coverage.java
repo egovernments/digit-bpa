@@ -52,8 +52,10 @@ import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -337,4 +339,8 @@ public class Coverage extends FeatureProcess {
             return null;
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

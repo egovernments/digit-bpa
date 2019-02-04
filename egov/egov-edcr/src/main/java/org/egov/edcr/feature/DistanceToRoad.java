@@ -62,7 +62,9 @@ import static org.egov.edcr.utility.DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -358,4 +360,8 @@ public class DistanceToRoad extends FeatureProcess {
         }
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }

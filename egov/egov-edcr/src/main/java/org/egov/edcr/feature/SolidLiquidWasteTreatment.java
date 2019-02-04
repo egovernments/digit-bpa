@@ -47,7 +47,9 @@
 
 package org.egov.edcr.feature;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.Block;
@@ -124,4 +126,8 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
         }
     }
 
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }
