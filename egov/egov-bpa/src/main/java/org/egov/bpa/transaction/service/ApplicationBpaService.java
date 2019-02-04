@@ -62,6 +62,8 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.MESSAGE;
+import static org.egov.bpa.utils.BpaConstants.RECENT_DCRRULE_AMENDMENTDAYS;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayInputStream;
@@ -69,6 +71,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -83,6 +86,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -130,6 +134,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -148,6 +153,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+//import org.egov.edcr.service.EdcrApplicationDetailService;
 
 @Service
 @Transactional(readOnly = true)
@@ -228,7 +234,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Autowired
 	@Qualifier("parentMessageSource")
 	private MessageSource bpaMessageSource;
-
+    @Autowired
+    private DcrRestService dcrRestService;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -877,37 +885,21 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     }
     
-    public Map<String, String> checkEdcrExpiry(final String eDcrNumber) {
-		Map<String, String> eDcrExpiryDetails = new HashMap<>();
-		
-		/*String expiry_date=bpaUtils.getAppconfigValueByKeyName(RECENT_DCRRULE_AMENDMENTDATE);
-		Date eDCRCreatedDate= new Date();
-		Date expirydate = new Date();
-		String sDate1="15/01/2018";  
-		
-	    //TODO: From DCR number, get DCR created date.
-	    
-	    	try {
-	    		if(isNotBlank(expiry_date)) 
-	    			 expirydate = new SimpleDateFormat("dd/MM/yyyy").parse(expiry_date);
-				eDCRCreatedDate = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	  
-	    //TODO: Compare the difference between DCR created date with current date.
-		
-	    
-		 if(DateUtils.compareDates(eDCRCreatedDate,expirydate)){
-			 eDcrExpiryDetails.put("isExpired", "false");
+    public Map<String, String> checkEdcrExpiry(final String eDcrNumber, HttpServletRequest request) {
+    	Map<String, String> eDcrExpiryDetails = new HashMap<>();
+		int expirydays = Integer.parseInt(bpaUtils.getAppconfigValueByKeyName(RECENT_DCRRULE_AMENDMENTDAYS));
+	    Date eDCRCreatedDate = dcrRestService.getDcrCreatedDate(eDcrNumber,request);
 			
+		 int diffInDays = DateUtils.daysBetween(eDCRCreatedDate,new Date());
+		 if(diffInDays<=expirydays){
+			 eDcrExpiryDetails.put("isExpired", "false");
+			 eDcrExpiryDetails.put(MESSAGE, "Not expired");
 		 }else{
-			 String message = bpaMessageSource.getMessage("msg.dcr.expiry",new String[]{securityUtils.getCurrentUser().getName(), eDcrNumber, expiry_date},null);
+			 String message = bpaMessageSource.getMessage("msg.dcr.expiry",new String[]{securityUtils.getCurrentUser().getName(), eDcrNumber, Integer.toString(expirydays)},null);
 			 eDcrExpiryDetails.put("isExpired", "true");
 			 eDcrExpiryDetails.put(MESSAGE,message);
-		 }*/
-		 eDcrExpiryDetails.put("isExpired", "false");
+		 }
+
 		return eDcrExpiryDetails;
 	}
 

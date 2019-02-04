@@ -50,6 +50,8 @@ package org.egov.edcr.web.controller.rest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import java.util.Date;
+
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.entity.dto.EdcrApplicationInfo;
 import org.egov.edcr.service.EdcrApplicationDetailService;
@@ -109,5 +111,12 @@ public class EdcrRestController {
             return StringUtils.EMPTY;
         }*/
     	return null;
+    }
+    
+    @GetMapping(value = "/rest/created-date/of-edcr-number/{dcrNumber}")
+    @ResponseBody
+    public Date getCreatedDateOfDCR(@PathVariable final String dcrNumber) {
+        EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
+        return applicationDetail.getCreatedDate();
     }
 }

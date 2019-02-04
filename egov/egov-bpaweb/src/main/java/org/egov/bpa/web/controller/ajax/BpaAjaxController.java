@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -99,6 +100,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -447,7 +450,7 @@ public class BpaAjaxController {
     @GetMapping(value = "/validate/edcr-expiry", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, String> validateEdcrExpiry(@RequestParam final String eDcrNumber) {
-        return applicationBpaService.checkEdcrExpiry(eDcrNumber);
+        return applicationBpaService.checkEdcrExpiry(eDcrNumber,((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
     }
 
 }
