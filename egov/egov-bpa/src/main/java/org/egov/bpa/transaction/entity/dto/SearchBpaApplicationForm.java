@@ -93,43 +93,45 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private BigDecimal toBuiltUpArea;
 
     public SearchBpaApplicationForm() {
-		// for form binding
-	}
+        // for form binding
+    }
 
-	public SearchBpaApplicationForm(BpaApplication application, String currentOwner, String pendingAction, Boolean isFeeCollected) {
-		setId(application.getId());
-		setApplicationNumber(application.getApplicationNumber());
-		setOnePermitApplication(application.getIsOneDayPermitApplication());
-		setApplicantName(application.getOwner().getName());
-		setApplicationDate(application.getApplicationDate());
-		if (!application.getSlotApplications().isEmpty()) {
-			SlotDetail slotDetail = application.getSlotApplications().get(0).getSlotDetail();
-			setAppointmentTime(slotDetail.getAppointmentTime());
-			setAppointmentDate(slotDetail.getSlot().getAppointmentDate());
-		}
-		setAddress(application.getOwner().getAddress());
-		setRescheduledByEmployee(application.getIsRescheduledByEmployee());
-		setApplicationType(application.getApplicantType());
-		setOccupancy(application.getOccupancy().getDescription());
-		setServiceType(application.getServiceType().getDescription());
-		setServiceCode(application.getServiceType().getCode());
-		setPlanPermissionNumber(application.getPlanPermissionNumber());
-		setStakeHolderName(application.getStakeHolder().get(0).getStakeHolder().getName());
-		if (!application.getSiteDetail().isEmpty()) {
-			SiteDetail site = application.getSiteDetail().get(0);
-			setReSurveyNumber(site.getReSurveyNumber());
-			setZone(site.getAdminBoundary().getParent().getName());
-			setWard(site.getAdminBoundary().getName());
-			setElectionWard(site.getElectionBoundary().getName());
-			setLocality(site.getLocationBoundary().getName());
-		}
-		setStatus(application.getStatus().getCode());
-		setCurrentOwner(currentOwner);
-		setPendingAction(pendingAction);
-		setFeeCollected(isFeeCollected);
-	}
+    public SearchBpaApplicationForm(BpaApplication application, String currentOwner, String pendingAction,
+            Boolean isFeeCollected) {
+        setId(application.getId());
+        setApplicationNumber(application.getApplicationNumber());
+        setOnePermitApplication(application.getIsOneDayPermitApplication());
+        setApplicantName(application.getOwner().getName());
+        setApplicationDate(application.getApplicationDate());
+        if (!application.getSlotApplications().isEmpty()) {
+            SlotDetail slotDetail = application.getSlotApplications().get(0).getSlotDetail();
+            setAppointmentTime(slotDetail.getAppointmentTime());
+            setAppointmentDate(slotDetail.getSlot().getAppointmentDate());
+        }
+        setAddress(application.getOwner().getAddress());
+        setRescheduledByEmployee(application.getIsRescheduledByEmployee());
+        setApplicationType(application.getApplicantType());
+        setOccupancy(application.getOccupancy().getDescription());
+        setServiceType(application.getServiceType().getDescription());
+        setServiceCode(application.getServiceType().getCode());
+        setPlanPermissionNumber(application.getPlanPermissionNumber());
+        setStakeHolderName(application.getStakeHolder().get(0).getStakeHolder().getName());
+        if (!application.getSiteDetail().isEmpty()) {
+            SiteDetail site = application.getSiteDetail().get(0);
+            setReSurveyNumber(site.getReSurveyNumber());
+            setZone(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getParent().getName());
+            setWard(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getName());
+            setElectionWard(site.getElectionBoundary() == null ? "" : site.getElectionBoundary().getName());
+            setLocality(site.getLocationBoundary() == null ? "" : site.getLocationBoundary().getName());
+        }
+        setStatus(application.getStatus().getCode());
+        setCurrentOwner(currentOwner);
+        setPendingAction(pendingAction);
+        setFeeCollected(isFeeCollected);
+    }
 
-    public SearchBpaApplicationForm(OccupancyCertificate occupancyCertificate, String currentOwner, String pendingAction, Boolean isFeeCollected) {
+    public SearchBpaApplicationForm(OccupancyCertificate occupancyCertificate, String currentOwner, String pendingAction,
+            Boolean isFeeCollected) {
         setId(occupancyCertificate.getId());
         setApplicationNumber(occupancyCertificate.getApplicationNumber());
         setApplicantName(occupancyCertificate.getParent().getOwner().getName());
@@ -150,10 +152,10 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         if (!occupancyCertificate.getParent().getSiteDetail().isEmpty()) {
             SiteDetail site = occupancyCertificate.getParent().getSiteDetail().get(0);
             setReSurveyNumber(site.getReSurveyNumber());
-            setZone(site.getAdminBoundary().getParent().getName());
-            setWard(site.getAdminBoundary().getName());
-            setElectionWard(site.getElectionBoundary().getName());
-            setLocality(site.getLocationBoundary().getName());
+            setZone(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getParent().getName());
+            setWard(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getName());
+            setElectionWard(site.getElectionBoundary() == null ? "" : site.getElectionBoundary().getName());
+            setLocality(site.getLocationBoundary() == null ? "" : site.getLocationBoundary().getName());
         }
         setStatus(occupancyCertificate.getStatus().getCode());
         setCurrentOwner(currentOwner);
@@ -161,7 +163,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setFeeCollected(isFeeCollected);
     }
 
-	public Boolean getIsRescheduledByEmployee() {
+    public Boolean getIsRescheduledByEmployee() {
         return isRescheduledByEmployee;
     }
 
@@ -186,14 +188,14 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     }
 
     public String getServiceTypeEnum() {
-		return serviceTypeEnum;
-	}
+        return serviceTypeEnum;
+    }
 
-	public void setServiceTypeEnum(String serviceTypeEnum) {
-		this.serviceTypeEnum = serviceTypeEnum;
-	}
+    public void setServiceTypeEnum(String serviceTypeEnum) {
+        this.serviceTypeEnum = serviceTypeEnum;
+    }
 
-	public Long getId() {
+    public Long getId() {
         return id;
     }
 

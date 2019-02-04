@@ -83,7 +83,7 @@ $(document).ready(
                     $(span1).text('');
                 }
 			});
-			/*$('#zone').change(
+			$('#zone').change(
 					function() {
 						$.ajax({
 							url : "/bpa/boundary/ajaxBoundary-blockByWard",
@@ -133,7 +133,7 @@ $(document).ready(
 				
 				populateElectionWardByRevenueWard();
 				
-			});*/
+			});
 			
 			function populateElectionWardByRevenueWard(){
 			
