@@ -202,21 +202,21 @@ public class StakeHolderController extends GenericWorkFlowController {
 			final Model model, final BindingResult errors, final RedirectAttributes redirectAttributes,
 			HttpServletRequest request) {
 
-		/*if (!captchaUtils.captchaIsValid(request))
-			errors.reject("captcha.not.valid");*/
+		if (!captchaUtils.captchaIsValid(request))
+			errors.reject("captcha.not.valid");
 		StakeHolder existingStakeholder = stakeHolderService.validateStakeHolderIsRejected(
 				stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), stakeHolder.getAadhaarNumber(),
 				stakeHolder.getPan(), stakeHolder.getLicenceNumber());
-	/*	if (existingStakeholder == null)
-			validateStakeholder(stakeHolder, errors);*/
+		if (existingStakeholder == null)
+			validateStakeholder(stakeHolder, errors);
 		if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM)
 				&& !citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber()))
 			errors.rejectValue("activationCode", "error.otp.verification.failed");
 
-	/*	if (errors.hasErrors()) {
+		if (errors.hasErrors()) {
 			prepareModel(model, stakeHolder);
 			return STAKEHOLDER_NEW_BY_CITIZEN;
-		}*/
+		}
 		stakeHolder.setStatus(StakeHolderStatus.SUBMITTED);
 		StakeHolder stakeHolderRes;
 		if (existingStakeholder == null)
