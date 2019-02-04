@@ -202,8 +202,8 @@ public class StakeHolderController extends GenericWorkFlowController {
 			final Model model, final BindingResult errors, final RedirectAttributes redirectAttributes,
 			HttpServletRequest request) {
 
-		if (!captchaUtils.captchaIsValid(request))
-			errors.reject("captcha.not.valid");
+	/*	if (!captchaUtils.captchaIsValid(request))
+			errors.reject("captcha.not.valid");*/
 		StakeHolder existingStakeholder = stakeHolderService.validateStakeHolderIsRejected(
 				stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), stakeHolder.getAadhaarNumber(),
 				stakeHolder.getPan(), stakeHolder.getLicenceNumber());
@@ -265,8 +265,15 @@ public class StakeHolderController extends GenericWorkFlowController {
 
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
 	public String editStakeholder(@PathVariable final Long id, final Model model) {
-		final StakeHolderState stakeHolderstate = stakeHolderStateService.findById(id);
-		final StakeHolder stakeHolder = stakeHolderstate.getStakeHolder();
+		final StakeHolder stakeHolder;
+		StakeHolderState stakeHolderstate = stakeHolderStateService.findByStakeHolderId(id);
+		if(stakeHolderstate!=null)
+		{
+		  stakeHolder = stakeHolderstate.getStakeHolder();
+		}else
+		{
+			stakeHolder=stakeHolderService.findById(id);
+		}
 		preapreUpdateModel(stakeHolder, model);
 		model.addAttribute("stateType", stakeHolderstate.getStateType());
 		model.addAttribute("stakeHolderDocumentList", stakeHolder.getStakeHolderDocument());

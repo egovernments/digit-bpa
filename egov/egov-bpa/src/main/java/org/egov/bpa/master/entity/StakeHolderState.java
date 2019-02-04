@@ -41,6 +41,10 @@ public class StakeHolderState extends StateAware<Position>{
 				stakeHolder.getCreateDate() == null ? DateUtils.toDefaultDateFormat(new Date()) : DateUtils.toDefaultDateFormat(stakeHolder.getCreateDate()));
 
 	}
+	@Override
+	 public String myLinkId() {
+	        return stakeHolder.getId().toString();
+	    }
 
 	@Override
     public Long getId() {
