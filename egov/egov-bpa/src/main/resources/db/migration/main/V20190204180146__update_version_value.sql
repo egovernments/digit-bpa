@@ -8,6 +8,4 @@ update eg_messagetemplate set version =0;
 
 update eg_wf_states set version =0; 
 
-update egpgr_complaintstatus_mapping set version=0;
-
 update eg_role set version=0;
