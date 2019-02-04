@@ -58,8 +58,7 @@
 <body>
 	<div class="logo-container"  style="background-color:#F8F9F9;">
 				
-				<img src="<cdn:url value='/resources/guide/assets/kozikode_corp.png'/>"
-						 height="70" style="padding-left:30px;">
+				<img src="https://www.egovernments.org/wp-content/uploads/2018/11/Logo-2.png" style="background-color:#3b73af" height="90">
 				
 				<a href="http://www.egovernments.org" style="padding-top:8px;padding-right:30px;" 
 						data-strwindname="egovsite" class="open-popup"> <img

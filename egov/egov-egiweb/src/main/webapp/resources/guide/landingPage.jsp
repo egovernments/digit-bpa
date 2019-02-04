@@ -255,9 +255,7 @@
   <div class="item-list training-ttutorial">
     <p class="subheader">Training & Tutorials</p>
     <ul class="tutorial-list">
-      <li class="tutorial-item">
-        <a href="/egi/resources/guide/bpaHelpDocument.jsp" target="_blank">Suvega phase 2 videos</a>
-      </li>
+     
       <li class="tutorial-item">
         <a href="/egi/resources/guide/assets/docs/Business Licensee User.pdf" target="_blank">Registered building licensee user manual</a>
       </li>

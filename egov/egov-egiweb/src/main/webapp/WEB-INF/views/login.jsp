@@ -96,8 +96,8 @@
 		<div class="main-content" >
 			<div class="navbar-header col-md-8 col-xs-8">
 				<a class="navbar-brand" href="javascript:void(0);">
-					<img src="<cdn:url value='/resources/guide/assets/kozikode_corp.png'/>"
-						 height="90">
+					<img src="https://www.egovernments.org/wp-content/uploads/2018/11/Logo-2.png" style="background-color:#3b73af" height="90">
+						 
 					<%--<div>
 						<span class="title2" style="color: black; font-family: OpenSans; font-size:20px "><b>${sessionScope.citymunicipalityname}</b></span>
 					</div>--%>
@@ -136,8 +136,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3 "><img src="<cdn:url value='/resources/guide/assets/suvega.png'/>"
-												height="225" style="position: relative;/* left: 8px;*/ bottom :77px"></div>
+					<div class="col-md-3 "></div>
 				</div>
 
 				<div class="col-md-6 side-space login-form-licensee" style="position: relative ; left: 63px ; top:60px">
