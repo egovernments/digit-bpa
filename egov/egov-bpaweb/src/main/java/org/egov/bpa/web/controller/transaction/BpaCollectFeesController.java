@@ -113,7 +113,7 @@ public class BpaCollectFeesController {
 	public String showStakeholderCollectFeeForm(final Model model,@PathVariable("userId") final Long  userId) {
 		StakeHolder stkHldr = stakeHolderService.findById(userId);
 		if(stkHldr != null){
-		if(stkHldr.getStatus().PAYMENT_PENDING.toString().equals(BpaConstants.APPLICATION_STATUS_PENDNING)){
+		if(stkHldr.getStatus().toString().equals(BpaConstants.APPLICATION_STATUS_PENDNING)){
 	        return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr,model);
 		}
 		}

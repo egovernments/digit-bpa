@@ -182,7 +182,7 @@ public class BpaRestController {
 			List<AppConfigValues> appConfigValueList = appConfigValueService
 					.getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
 			if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
-					if(BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().PAYMENT_PENDING.toString())){
+					if(BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().toString())){
 					 isDemandPending.put("pending",true);
 					 return isDemandPending;
 			}

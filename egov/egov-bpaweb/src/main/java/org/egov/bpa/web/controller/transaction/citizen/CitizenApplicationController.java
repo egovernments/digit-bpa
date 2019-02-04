@@ -161,7 +161,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 			List<AppConfigValues> appConfigValueList = appConfigValueService
 					.getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
 			if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
-				if(stkHldr.getStatus()!=null && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().PAYMENT_PENDING.toString())){
+				if(stkHldr.getStatus()!=null && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().toString())){
 					return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr,model);
 				}
 			}
