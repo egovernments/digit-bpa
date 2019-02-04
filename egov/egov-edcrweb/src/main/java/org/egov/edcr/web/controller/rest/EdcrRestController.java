@@ -115,8 +115,10 @@ public class EdcrRestController {
     
     @GetMapping(value = "/rest/created-date/of-edcr-number/{dcrNumber}")
     @ResponseBody
-    public Date getCreatedDateOfDCR(@PathVariable final String dcrNumber) {
-        EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
-        return applicationDetail.getCreatedDate();
-    }
+	public Date getCreatedDateOfDCR(@PathVariable final String dcrNumber) {
+		EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
+		if (applicationDetail != null && applicationDetail.getCreatedDate()!=null)
+			return applicationDetail.getCreatedDate();
+		return null;
+	}
 }

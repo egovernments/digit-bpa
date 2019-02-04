@@ -54,6 +54,8 @@ import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
+import static org.egov.bpa.utils.BpaConstants.MESSAGE;
+import static org.egov.bpa.utils.BpaConstants.RECENT_DCRRULE_AMENDMENTDAYS;
 import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
@@ -62,8 +64,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.MESSAGE;
-import static org.egov.bpa.utils.BpaConstants.RECENT_DCRRULE_AMENDMENTDAYS;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayInputStream;
@@ -71,7 +71,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -153,7 +152,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
-//import org.egov.edcr.service.EdcrApplicationDetailService;
 
 @Service
 @Transactional(readOnly = true)
@@ -884,38 +882,34 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return criteria.list();
 
     }
-    
+    /***
+     * Validate the dcr number within the specified date range.Configuration value used to decide the validity.
+     * Based on number of days configured, DCR plan will be compared.
+     * @param eDcrNumber
+     * @param request
+     * @return
+     */
     public Map<String, String> checkEdcrExpiry(final String eDcrNumber, HttpServletRequest request) {
     	Map<String, String> eDcrExpiryDetails = new HashMap<>();
 		int expirydays = Integer.parseInt(bpaUtils.getAppconfigValueByKeyName(RECENT_DCRRULE_AMENDMENTDAYS));
-	    Date eDCRCreatedDate = dcrRestService.getDcrCreatedDate(eDcrNumber,request);
-			
-		 int diffInDays = DateUtils.daysBetween(eDCRCreatedDate,new Date());
-		 if(diffInDays<=expirydays){
-			 eDcrExpiryDetails.put("isExpired", "false");
-			 eDcrExpiryDetails.put(MESSAGE, "Not expired");
-		 }else{
-			 String message = bpaMessageSource.getMessage("msg.dcr.expiry",new String[]{securityUtils.getCurrentUser().getName(), eDcrNumber, Integer.toString(expirydays)},null);
-			 eDcrExpiryDetails.put("isExpired", "true");
-			 eDcrExpiryDetails.put(MESSAGE,message);
-		 }
-
+	    Date dcrCreatedDate = dcrRestService.getDcrCreatedDate(eDcrNumber,request);
+	    
+	    eDcrExpiryDetails.put("isExpired", "false");
+		eDcrExpiryDetails.put(MESSAGE, "Not expired");
+		
+		if (dcrCreatedDate != null) {
+			int diffInDays = DateUtils.daysBetween(dcrCreatedDate, new Date());
+			if (diffInDays <= expirydays) {
+				eDcrExpiryDetails.put("isExpired", "false");
+				eDcrExpiryDetails.put(MESSAGE, "Not expired");
+			} else {
+				String message = bpaMessageSource.getMessage("msg.dcr.expiry", new String[] {
+						securityUtils.getCurrentUser().getName(), eDcrNumber, Integer.toString(expirydays) }, null);
+				eDcrExpiryDetails.put("isExpired", "true");
+				eDcrExpiryDetails.put(MESSAGE, message);
+			}
+		}
 		return eDcrExpiryDetails;
 	}
-
-    /*
-     * private void buildApplicationDcrDocs(BpaApplication bpaApplication, HttpServletRequest request) { String convertedPdfs =
-     * dcrRestService.getConvertedPdfs(bpaApplication.geteDcrNumber(), request); if (!isBlank(convertedPdfs)) { String[]
-     * fileStoreIds = convertedPdfs.split(","); DCRDocument dcrDocument = bpaApplication.getDcrDocuments().get(0);
-     * Set<StoreDCRFiles> dcrAttachments = dcrDocument.getDcrAttachments(); Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
-     * for (String fileStoreId : fileStoreIds) { Optional<FileStoreMapper> fileStoreMapper =
-     * fileStoreUtils.getFileStoreMapper(fileStoreId); File file = fileStoreService.fetch(fileStoreId, "Digit DCR"); if (file !=
-     * null) { FileStoreMapper savedFileStoreMapper = fileStoreService.store(file, fileStoreMapper.isPresent() ?
-     * fileStoreMapper.get().getFileName() : file.getName(), "application/pdf", FILESTORE_MODULECODE); if (savedFileStoreMapper !=
-     * null) { StoreDCRFiles storeDCRFile = new StoreDCRFiles(); storeDCRFile.setDcrDocument(dcrDocument);
-     * storeDCRFile.setFileStoreMapper(savedFileStoreMapper); storeDCRFiles.add(storeDCRFile); } } } for (StoreDCRFiles
-     * dcrAttachment : dcrAttachments) { storeDCRFiles.add(dcrAttachment); } if (!storeDCRFiles.isEmpty())
-     * dcrDocument.setDcrAttachments(storeDCRFiles); } }
-     */
 
 }
