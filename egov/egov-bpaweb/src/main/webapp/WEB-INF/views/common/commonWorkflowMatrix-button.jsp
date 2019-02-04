@@ -52,6 +52,8 @@
 <script>
 	function validateWorkFlowApprover(name) {
 		document.getElementById("workFlowAction").value = name;
+		//alert(name);
+		console.log(document.getElementById("workFlowAction").value );
 		var approverPosId = document.getElementById("approvalPosition");
 		/* if(approverPosId && approverPosId.value != -1) {
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 

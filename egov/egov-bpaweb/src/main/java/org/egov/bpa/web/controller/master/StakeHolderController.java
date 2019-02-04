@@ -40,6 +40,7 @@
 
 package org.egov.bpa.web.controller.master;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.Arrays;
@@ -49,9 +50,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.master.entity.StakeHolder;
+import org.egov.bpa.master.entity.StakeHolderState;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.StakeHolderAuditService;
 import org.egov.bpa.master.service.StakeHolderService;
+import org.egov.bpa.master.service.StakeHolderStateService;
 import org.egov.bpa.service.es.StakeHolderIndexService;
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.dto.SearchStakeHolderForm;
@@ -61,6 +64,8 @@ import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.web.controller.adaptor.SearchStakeHolderJsonAdaptor;
 import org.egov.bpa.web.controller.adaptor.StakeHolderJsonAdaptor;
 import org.egov.commons.entity.Source;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
@@ -71,6 +76,7 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.security.utils.captcha.CaptchaUtils;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -88,7 +94,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/stakeholder")
-public class StakeHolderController {
+public class StakeHolderController extends GenericWorkFlowController {
 	private static final String RDRCT_STKHLDR_RSLT = "redirect:/stakeholder/result/";
 	private static final String MESSAGE = "message";
 	private static final String STAKEHOLDER_RESULT = "stakeholder-result";
@@ -106,6 +112,7 @@ public class StakeHolderController {
 	public static final String STAKE_HOLDER_TYPES = "stakeHolderTypes";
 	public static final String STAKE_HOLDER_STATUS_LIST = "stakeHolderStatusList";
 	public static final String COMMON_ERROR = "common-error";
+	private static final String STAKEHOLDERSTATE_VIEW = "stakeholderstate-view";
 	@Autowired
 	private StakeHolderService stakeHolderService;
 	@Autowired
@@ -126,6 +133,8 @@ public class StakeHolderController {
 	private StakeHolderAuditService stakeHolderAuditService;
 	@Autowired
 	private StakeHolderIndexService stakeHolderIndexService;
+	@Autowired
+	private StakeHolderStateService stakeHolderStateService;
 
 	@ModelAttribute("stakeHolderDocumentList")
 	public List<StakeHolderDocument> getStakeHolderDocuments() {
@@ -135,25 +144,34 @@ public class StakeHolderController {
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String showStakeHolder(final Model model) {
 		StakeHolder stakeHolder = new StakeHolder();
-		stakeHolder.setIsActive(true);
 		prepareModel(model, stakeHolder);
 		return STAKEHOLDER_NEW;
 	}
 
 	private void prepareModel(final Model model, final StakeHolder stakeHolder) {
-		model.addAttribute(STAKE_HOLDER, stakeHolder);
-		model.addAttribute("isEmployee", securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE) || "egovernments".equals(securityUtils.getCurrentUser().getUsername()) ? Boolean.TRUE : Boolean.FALSE);
-		model.addAttribute("isBusinessUser", securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) ? Boolean.TRUE : Boolean.FALSE);
+
+		StakeHolderState stakeHolderState = new StakeHolderState();
+		stakeHolder.setIsActive(true);
+		stakeHolderState.setStakeHolder(stakeHolder);
+		model.addAttribute(STAKE_HOLDER, stakeHolderState.getStakeHolder());
+		// check why is this required
+		model.addAttribute("isEmployee",
+				securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE)
+						|| "egovernments".equals(securityUtils.getCurrentUser().getUsername()) ? Boolean.TRUE
+								: Boolean.FALSE);
+		// is this correct?
+		model.addAttribute("isBusinessUser",
+				securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) ? Boolean.TRUE : Boolean.FALSE);
 		model.addAttribute("genderList", Arrays.asList(Gender.values()));
 		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
 		model.addAttribute("isOnbehalfOfOrganization", false);
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String createStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder,
-									final Model model,
-									final HttpServletRequest request,
-									final BindingResult errors, final RedirectAttributes redirectAttributes) {
+	public String createStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder, final Model model,
+			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+		StakeHolderState stakeHolderState = new StakeHolderState();
+		stakeHolderState.setStakeHolder(stakeHolder);
 		validateStakeholder(stakeHolder, errors);
 		if (errors.hasErrors() || checkIsUserExists(stakeHolder, model)) {
 			prepareModel(model, stakeHolder);
@@ -164,7 +182,8 @@ public class StakeHolderController {
 		stakeHolderIndexService.updateIndexes(stakeHolderRes);
 		bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);
 		bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, false);
-		redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.approve.stakeholder.success", new String[]{stakeHolder.getStakeHolderType().getStakeHolderTypeVal()}, null));
+		redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.approve.stakeholder.success",
+				new String[] { stakeHolder.getStakeHolderType().getStakeHolderTypeVal() }, null));
 		return RDRCT_STKHLDR_RSLT + stakeHolderRes.getId();
 	}
 
@@ -173,48 +192,60 @@ public class StakeHolderController {
 		StakeHolder stakeHolder = new StakeHolder();
 		stakeHolder.setSource(Source.ONLINE);
 		stakeHolder.setIsActive(false);
-		model.addAttribute("showNotification",true);
+		model.addAttribute("showNotification", true);
 		prepareModel(model, stakeHolder);
 		return STAKEHOLDER_NEW_BY_CITIZEN;
 	}
 
 	@RequestMapping(value = "/createbycitizen", method = RequestMethod.POST)
 	public String createOnlineStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder,
-										  final Model model,
-										  final BindingResult errors, final RedirectAttributes redirectAttributes,HttpServletRequest request) {
+			final Model model, final BindingResult errors, final RedirectAttributes redirectAttributes,
+			HttpServletRequest request) {
 
-		if (!captchaUtils.captchaIsValid(request))
-			errors.reject("captcha.not.valid");
-		StakeHolder existingStakeholder =  stakeHolderService.validateStakeHolderIsRejected(stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), stakeHolder.getAadhaarNumber(), stakeHolder.getPan(), stakeHolder.getLicenceNumber());
-		if(existingStakeholder == null)
-			validateStakeholder(stakeHolder, errors);
-		if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) &&
-				!citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber()))
+		/*if (!captchaUtils.captchaIsValid(request))
+			errors.reject("captcha.not.valid");*/
+		StakeHolder existingStakeholder = stakeHolderService.validateStakeHolderIsRejected(
+				stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), stakeHolder.getAadhaarNumber(),
+				stakeHolder.getPan(), stakeHolder.getLicenceNumber());
+	/*	if (existingStakeholder == null)
+			validateStakeholder(stakeHolder, errors);*/
+		if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM)
+				&& !citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber()))
 			errors.rejectValue("activationCode", "error.otp.verification.failed");
 
-		if (errors.hasErrors()) {
+	/*	if (errors.hasErrors()) {
 			prepareModel(model, stakeHolder);
 			return STAKEHOLDER_NEW_BY_CITIZEN;
-		}
+		}*/
 		stakeHolder.setStatus(StakeHolderStatus.SUBMITTED);
 		StakeHolder stakeHolderRes;
-		if(existingStakeholder == null)
+		if (existingStakeholder == null)
 			stakeHolderRes = stakeHolderService.save(stakeHolder);
 		else
 			stakeHolderRes = stakeHolderService.updateOnResubmit(stakeHolder, existingStakeholder);
 		stakeHolderIndexService.updateIndexes(stakeHolderRes);
 		bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, true);
 		bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, true);
-		redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.create.stakeholder.ctizen.request", new String[]{stakeHolderRes.getStakeHolderType().getStakeHolderTypeVal(), stakeHolderRes.getCode()}, null));
+		if (stakeHolder.getStatus().getStakeHolderStatusVal().equalsIgnoreCase("Approved")) {
+			redirectAttributes.addFlashAttribute(MESSAGE,
+					messageSource.getMessage("msg.update.stakeholder.success", null, null));
+		} else {
+			redirectAttributes.addFlashAttribute(MESSAGE,
+					messageSource.getMessage("msg.create.stakeholder.ctizen.request", new String[] {
+							stakeHolderRes.getStakeHolderType().getStakeHolderTypeVal(), stakeHolderRes.getCode() },
+							null));
+		}
 		return RDRCT_STKHLDR_RSLT + stakeHolderRes.getId();
 	}
 
 	private boolean checkIsUserExists(@ModelAttribute(STAKE_HOLDER) StakeHolder stakeHolder, Model model) {
 		List<User> users = userService.getUserByMobileNumberAndType(stakeHolder.getMobileNumber(), UserType.BUSINESS);
 		if (!users.isEmpty()) {
-			String message = messageSource.getMessage("msg.name.mobile.exists",
-					new String[]{users.get(0).getName(), users.get(0).getMobileNumber(), users.get(0).getGender().name()},
-					LocaleContextHolder.getLocale());
+			String message = messageSource
+					.getMessage(
+							"msg.name.mobile.exists", new String[] { users.get(0).getName(),
+									users.get(0).getMobileNumber(), users.get(0).getGender().name() },
+							LocaleContextHolder.getLocale());
 			model.addAttribute("invalidBuildingLicensee", message);
 			prepareModel(model, stakeHolder);
 			return true;
@@ -222,8 +253,8 @@ public class StakeHolderController {
 		return false;
 	}
 
-
 	private void validateStakeholder(final StakeHolder stakeHolder, final BindingResult errors) {
+		// this suppose to be license number
 		if (stakeHolderService.checkIsStakeholderCodeAlreadyExists(stakeHolder)) {
 			errors.rejectValue("code", "msg.code.exists");
 		}
@@ -234,10 +265,19 @@ public class StakeHolderController {
 
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
 	public String editStakeholder(@PathVariable final Long id, final Model model) {
-		final StakeHolder stakeHolder = stakeHolderService.findById(id);
+		final StakeHolderState stakeHolderstate = stakeHolderStateService.findById(id);
+		final StakeHolder stakeHolder = stakeHolderstate.getStakeHolder();
 		preapreUpdateModel(stakeHolder, model);
+		model.addAttribute("stateType", stakeHolderstate.getStateType());
 		model.addAttribute("stakeHolderDocumentList", stakeHolder.getStakeHolderDocument());
-		model.addAttribute("applicationHistory", stakeHolderAuditService.getStakeholderUpdateHistory(id));
+		model.addAttribute("applicationHistory",
+				stakeHolderAuditService.getStakeholderUpdateHistory(stakeHolder.getId()));
+		if (stakeHolderstate != null && !stakeHolderstate.getState().getValue().equalsIgnoreCase("Closed")) {
+			final WorkflowContainer workflowContainer = new WorkflowContainer();
+			workflowContainer.setPendingActions(stakeHolderstate.getCurrentState().getNextAction());
+			prepareWorkflow(model, stakeHolderstate, workflowContainer);
+			return STAKEHOLDERSTATE_VIEW;
+		}
 		return STAKEHOLDER_UPDATE;
 	}
 
@@ -247,15 +287,14 @@ public class StakeHolderController {
 				stakeHolder.setCorrespondenceAddress((CorrespondenceAddress) address);
 			else
 				stakeHolder.setPermanentAddress((PermanentAddress) address);
-		model.addAttribute("isEmployee", securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE) ? Boolean.TRUE : Boolean.FALSE);
+		model.addAttribute("isEmployee",
+				securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE) ? Boolean.TRUE : Boolean.FALSE);
 		model.addAttribute(STAKE_HOLDER, stakeHolder);
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String updateStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder,
-									final Model model,
-									final HttpServletRequest request,
-									final BindingResult errors, final RedirectAttributes redirectAttributes) {
+	public String updateStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder, final Model model,
+			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
 
 		if (errors.hasErrors()) {
 			preapreUpdateModel(stakeHolder, model);
@@ -265,10 +304,10 @@ public class StakeHolderController {
 		StakeHolder stakeHolderRes = stakeHolderService.update(stakeHolder, workFlowAction);
 		stakeHolderIndexService.updateIndexes(stakeHolderRes);
 		String message;
-		if("Block".equals(workFlowAction)) {
+		if ("Block".equals(workFlowAction)) {
 			message = messageSource.getMessage("msg.block.stakeholder", null, null);
 			bpaSmsAndEmailService.sendSmsAndEmailOnBlockAndUnblock(stakeHolderRes);
-		} else if("Unblock".equals(workFlowAction)) {
+		} else if ("Unblock".equals(workFlowAction)) {
 			message = messageSource.getMessage("msg.unblock.stakeholder", null, null);
 			bpaSmsAndEmailService.sendSmsAndEmailOnBlockAndUnblock(stakeHolderRes);
 		} else {
@@ -306,8 +345,7 @@ public class StakeHolderController {
 	public String getStakeHolderResultForEdit(@ModelAttribute final StakeHolder stakeHolder, final Model model) {
 		final List<StakeHolder> searchResultList = stakeHolderService.search(stakeHolder);
 		return new StringBuilder(DATA).append(toJSON(searchResultList, StakeHolder.class, StakeHolderJsonAdaptor.class))
-				.append("}")
-				.toString();
+				.append("}").toString();
 	}
 
 	@RequestMapping(value = "/search/view", method = RequestMethod.GET)
@@ -323,8 +361,7 @@ public class StakeHolderController {
 	public String getStakeHolderForView(@ModelAttribute final StakeHolder stakeHolder, final Model model) {
 		final List<StakeHolder> searchResultList = stakeHolderService.search(stakeHolder);
 		return new StringBuilder(DATA).append(toJSON(searchResultList, StakeHolder.class, StakeHolderJsonAdaptor.class))
-				.append("}")
-				.toString();
+				.append("}").toString();
 	}
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -336,26 +373,26 @@ public class StakeHolderController {
 
 	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String searchStakeHolderForApproval(@ModelAttribute final SearchStakeHolderForm srchStkeHldrFrm, final Model model) {
+	public String searchStakeHolderForApproval(@ModelAttribute final SearchStakeHolderForm srchStkeHldrFrm,
+			final Model model) {
 		List<SearchStakeHolderForm> srchStkeHldrFrmLst = stakeHolderService.searchForApproval(srchStkeHldrFrm);
 		return new StringBuilder(DATA)
 				.append(toJSON(srchStkeHldrFrmLst, SearchStakeHolderForm.class, SearchStakeHolderJsonAdaptor.class))
-				.append("}")
-				.toString();
+				.append("}").toString();
 	}
 
 	@RequestMapping(value = "/search/citizen/{id}", method = RequestMethod.GET)
 	public String searchStakeHolderForApproval(@PathVariable final Long id, Model model) {
 		StakeHolder stakeHolder = stakeHolderService.findById(id);
-		if(stakeHolder != null && stakeHolder.getBuildingLicenceExpiryDate().before(new Date())){
+		if (stakeHolder != null && stakeHolder.getBuildingLicenceExpiryDate().before(new Date())) {
 			model.addAttribute("approvalNotRequire", true);
 		} else {
 			model.addAttribute("approvalNotRequire", false);
 		}
-		if(StakeHolderStatus.APPROVED.equals(stakeHolder.getStatus()) ||
-		   StakeHolderStatus.REJECTED.equals(stakeHolder.getStatus()) ||
-		   StakeHolderStatus.BLOCKED.equals(stakeHolder.getStatus())) {
-			model.addAttribute("message", messageSource.getMessage("msg.stakeholder.processed", new String[]{}, null));
+		if (StakeHolderStatus.APPROVED.equals(stakeHolder.getStatus())
+				|| StakeHolderStatus.REJECTED.equals(stakeHolder.getStatus())
+				|| StakeHolderStatus.BLOCKED.equals(stakeHolder.getStatus())) {
+			model.addAttribute("message", messageSource.getMessage("msg.stakeholder.processed", new String[] {}, null));
 			return COMMON_ERROR;
 		}
 		model.addAttribute(STAKE_HOLDER, stakeHolder);
@@ -365,27 +402,73 @@ public class StakeHolderController {
 		model.addAttribute("applicationHistory", stakeHolderAuditService.getStakeholderUpdateHistory(id));
 		return STKHLDR_APPROVE;
 	}
+	
+	@RequestMapping(value = "/stake/update", method = RequestMethod.GET)
+	public String approveStakeHolder() {
+	 
+		return  STAKEHOLDER_UPDATE;	
+	}
 
 	@RequestMapping(value = "/citizen/update", method = RequestMethod.POST)
 	public String approveStakeHolder(@ModelAttribute final StakeHolder stakeHolder, final Model model,
-									 final RedirectAttributes redirectAttributes, final HttpServletRequest request) {
-		String workFlowAction = request.getParameter("workFlowAction");
-		StakeHolder stakeHolderResponse = stakeHolderService.updateForApproval(stakeHolder, workFlowAction);
+			 final HttpServletRequest request,final BindingResult errors,final RedirectAttributes redirectAttributes) {
+		if(errors.hasErrors())
+		{
+			return  STAKEHOLDER_UPDATE;
+		}
+	//	String workFlowAction = request.getParameter("workFlowAction");
+		String nextPosition = request.getParameter("approvalPosition");
+	//	stakeHolder.setWorkFlowAction(workFlowAction);
+		if (nextPosition != null)
+			stakeHolder.setNextPosition(Long.valueOf(nextPosition));
+		
+		StakeHolderState stakeHolderState = stakeHolderStateService.findByStakeHolderId(stakeHolder.getId());
+		stakeHolderState.setStakeHolder(stakeHolder);
+
+		StakeHolder stakeHolderResponse = stakeHolderService.updateForApproval(stakeHolderState,stakeHolderState.getStakeHolder().getWorkFlowAction());
 		stakeHolderIndexService.updateIndexes(stakeHolderResponse);
-		if ("Approve".equals(workFlowAction)) {
+		if ("Forward".equals(stakeHolder.getWorkFlowAction())) {
+			redirectAttributes
+					.addFlashAttribute(MESSAGE,
+							messageSource.getMessage("msg.forward.stakeholder",
+									new String[] { (isNotBlank(stakeHolderState.getCurrentState().getComments())
+											? stakeHolderResponse.getComments() : stakeHolderState.getCurrentState().getComments()) },
+									null));
+		} else if ("Approve".equals(stakeHolder.getWorkFlowAction())) {
 			bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderResponse, false);
 			bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderResponse, false);
-			redirectAttributes.addFlashAttribute(MESSAGE,
-					messageSource.getMessage("msg.approve.stakeholder.success", new String[]{stakeHolder.getStakeHolderType().getStakeHolderTypeVal()}, null));
-		} else if ("Reject".equals(workFlowAction)) {
+			redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.approve.stakeholder.success",
+					new String[] { stakeHolder.getStakeHolderType().getStakeHolderTypeVal() }, null));
+		} else if ("Reject".equals(stakeHolder.getWorkFlowAction())) {
 			bpaSmsAndEmailService.sendSMSToStkHldrForRejection(stakeHolderResponse);
 			bpaSmsAndEmailService.sendEmailToStkHldrForRejection(stakeHolderResponse);
-			redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.reject.stakeholder", new String[]{stakeHolderResponse.getComments()}, null));
-		} else if ("Block".equals(workFlowAction)) {
+			redirectAttributes
+					.addFlashAttribute(MESSAGE,
+							messageSource.getMessage("msg.reject.stakeholder",
+									new String[] { (isNotBlank(stakeHolderState.getCurrentState().getComments())
+											? stakeHolderState.getCurrentState().getComments() : stakeHolderState.getCurrentState().getComments()) },
+									null));
+		} else if ("Block".equals(stakeHolder.getWorkFlowAction())) {
 			bpaSmsAndEmailService.sendSmsAndEmailOnBlockAndUnblock(stakeHolderResponse);
-			redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.block.stakeholder", new String[]{stakeHolderResponse.getComments()}, null));
+			redirectAttributes
+					.addFlashAttribute(MESSAGE,
+							messageSource.getMessage("msg.block.stakeholder",
+									new String[] { (isNotBlank(stakeHolderState.getCurrentState().getComments())
+											? stakeHolderState.getCurrentState().getComments() : stakeHolderState.getCurrentState().getComments()) },
+									null));
 		}
 		return RDRCT_STKHLDR_RSLT + stakeHolder.getId();
+	}
+
+	//this api is present in generic workflow class
+	@Override
+	protected void prepareWorkflow(final Model prepareModel, final StateAware model,
+			final WorkflowContainer container) {
+		prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
+		prepareModel.addAttribute("validActionList", getValidActions(model, container));
+		prepareModel.addAttribute("nextAction", getNextAction(model, container));
+		prepareModel.addAttribute("pendingActions", container.getPendingActions());
+
 	}
 
 }

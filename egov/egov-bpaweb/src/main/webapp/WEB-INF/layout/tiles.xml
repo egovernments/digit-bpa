@@ -612,4 +612,8 @@
 		<put-attribute name="body"
 					   value="/WEB-INF/views/occupancyCertificate/oc-scheduled-appointment-result.jsp" />
 	</definition>
+	<definition name="stakeholderstate-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.approve.stakeholder" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/stakeholder/stakeholderstate-view.jsp"/>
+	</definition>
 </tiles-definitions>

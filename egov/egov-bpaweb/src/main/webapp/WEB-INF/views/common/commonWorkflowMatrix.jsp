@@ -50,7 +50,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<c:if test="${nextAction !='END'}">
+
     <div class="panel panel-primary" id="approverDetailBody" data-collapsed="0">
         <div class="panel-heading">
             <div class="panel-title">
@@ -73,7 +73,6 @@
             <form:hidden path="" id="workFlowDepartment" name="workFlowDepartment" value="${workFlowDepartment}"/>
             <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
                 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
-            <form:hidden path="" name="workFlowAction" id="workFlowAction"/>
             <form:hidden path="" id="electionBoundary" value="${electionBoundary}"/>
             <form:hidden path="" id="revenueBoundaryName" value="${revenueBoundaryName}"/>
             <form:hidden path="" id="electionBoundaryName" value="${electionBoundaryName}"/>
@@ -81,6 +80,7 @@
 
             <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>
             <form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+    	 <c:if test="${nextAction !='END'}">       
             <div class="row show-row" id="approverDetailHeading">
                 <div class="show-row form-group">
                     <label class="col-sm-3 control-label text-right"><spring:message
@@ -88,7 +88,7 @@
                     <div class="col-sm-3 add-margin">
                         <form:select path="approvalDepartment" data-first-option="false" name="approvalDepartment"
                                      id="approvalDepartment" cssClass="form-control"
-                                     cssErrorClass="form-control error" disabled="true" required="required">
+                                     cssErrorClass="form-control error"  required="required">
                             <form:option value="">
                                 <spring:message code="lbl.select"/>
                             </form:option>
@@ -125,7 +125,7 @@
                     </div>
                 </div>
             </div>
-
+</c:if>
             <div class="row">
                 <label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
                 <div class="col-sm-8 add-margin">
@@ -137,5 +137,5 @@
 			<input type="hidden" id="approveDesignReq" value="<spring:message code='msg.validate.approverdesign.req'/>"/>
         </div>
     </div>
-</c:if>
+
 <script src="<cdn:url value='/resources/js/app/commonworkflow.js?rnd=${app_release_no}'/>"></script>

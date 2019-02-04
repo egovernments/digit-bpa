@@ -84,8 +84,16 @@ $(document).ready(function()
 	});
 	
 	$('#approvalDesignation').change(function(){
+		
+		var url="";
+		
+		if($('#stateType').val()=='StakeHolderState')
+			 url= "/eis/ajaxWorkFlow-positionsByDepartmentAndDesignation";
+			else
+				url= "/bpa/bpaajaxWorkFlow-positionsByDepartmentAndDesignationAndBoundary";	
 		$.ajax({
-			url: "/bpa/bpaajaxWorkFlow-positionsByDepartmentAndDesignationAndBoundary",     
+			
+			url: url,     
 			type: "GET",
 			data: {
 				approvalDesignation : $('#approvalDesignation option:selected').val(),

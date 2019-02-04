@@ -40,20 +40,9 @@
 
 package org.egov.bpa.master.entity;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.master.entity.enums.StakeHolderStatus;
-import org.egov.bpa.transaction.entity.StakeHolderDocument;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
-import org.egov.commons.entity.Source;
-import org.egov.demand.model.EgDemand;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.CorrespondenceAddress;
-import org.egov.infra.persistence.entity.PermanentAddress;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.validator.constraints.Length;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,9 +57,21 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.bpa.master.entity.enums.StakeHolderStatus;
+import org.egov.bpa.transaction.entity.StakeHolderDocument;
+import org.egov.bpa.transaction.entity.enums.StakeHolderType;
+import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.CorrespondenceAddress;
+import org.egov.infra.persistence.entity.PermanentAddress;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_MSTR_STAKEHOLDER")
@@ -147,7 +148,41 @@ public class StakeHolder extends User {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "demand")
 	private EgDemand demand;
+	private transient Long approvalDepartment;
+	private transient Long approvalDesignation;
+	private transient String workFlowAction;
+	private transient Long nextPosition;
+	private transient String approvalComent;
 
+
+
+	
+
+	public String getApprovalComent() {
+		return approvalComent;
+	}
+
+	public void setApprovalComent(String approvalComent) {
+		this.approvalComent = approvalComent;
+	}
+
+	public String getWorkFlowAction() {
+		return workFlowAction;
+	}
+
+	public void setWorkFlowAction(String wfAction) {
+		this.workFlowAction = wfAction;
+	}
+
+	
+
+	public Long getNextPosition() {
+		return nextPosition;
+	}
+
+	public void setNextPosition(Long nextPosition) {
+		this.nextPosition = nextPosition;
+	}
 
 	public Boolean getIsAddressSame() {
 		return isAddressSame;
@@ -409,6 +444,7 @@ public class StakeHolder extends User {
 		this.noOfTimesBlocked = noOfTimesBlocked;
 	}
 
+
 	public EgDemand getDemand() {
 		return demand;
 	}
@@ -428,4 +464,22 @@ public class StakeHolder extends User {
 	public String showPanNumber() {
 		return StringUtils.isBlank(getPan()) ? getPan() : getPan().substring(0, getPan().length()-6) + "*******";
 	}
+	
+	public Long getApprovalDepartment() {
+		return approvalDepartment;
+	}
+
+	public void setApprovalDepartment(final Long approvalDepartment) {
+		this.approvalDepartment = approvalDepartment;
+	}
+	
+	public Long getApprovalDesignation() {
+		return approvalDesignation;
+	}
+
+	public void setApprovalDesignation(final Long approvalDesignation) {
+		this.approvalDesignation = approvalDesignation;
+	}
+	
+	
 }

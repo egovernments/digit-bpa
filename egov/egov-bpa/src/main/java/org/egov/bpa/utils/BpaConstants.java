@@ -343,6 +343,7 @@ public class BpaConstants {
 
     //Occupancy certificate notice types
     public static final String OCCUPANCY_CERTIFICATE_NOTICE_TYPE = "Occupancy Certificate";
+    public static final String NATURE_OF_WORK_STAKEHOLDER = "Stake Holder Registration";
 
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();

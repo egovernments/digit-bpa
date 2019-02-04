@@ -83,6 +83,16 @@
         <constructor-arg name="type"
                          value="org.egov.bpa.transaction.entity.BpaApplication"/>
     </bean>
+     <bean id="StakeHolderStateInboxRenderService"
+          class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+        <constructor-arg index="0"
+                         ref="StakeHolderStatePersistenceService"/>
+    </bean>
+    
+    <bean id="StakeHolderStatePersistenceService" parent="abstractPersistenceService">
+    <constructor-arg name="type" value="org.egov.bpa.master.entity.StakeHolderState"/>
+    </bean>
+    
 
     <bean id="OccupancyCertificatePersistenceService" parent="abstractPersistenceService">
         <constructor-arg name="type"
