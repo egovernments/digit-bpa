@@ -76,7 +76,7 @@ import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.ProcessHelper;
-import org.jfree.util.Log;
+import org.egov.edcr.service.ProcessPrintHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -475,10 +475,6 @@ public class Far extends FeatureProcess {
                 pl.getVirtualBuilding().setResidentialOrCommercialBuilding(false);
             }
         }
-        if (Log.isInfoEnabled())
-            for (Block b : pl.getBlocks()) {
-                // PrintUtil.print(b.getBuilding().getFloors());
-            }
         OccupancyType mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFar();
         BigDecimal far = BigDecimal.ZERO;
         if (pl.getPlot().getArea().doubleValue() > 0)
@@ -489,7 +485,7 @@ public class Far extends FeatureProcess {
         if (!ProcessHelper.isSmallPlot(pl)) {
             calculateFar(pl, mostRestrictiveOccupancy, far);
         }
-        // PrintUtil.print(pl, "Block");
+        ProcessPrintHelper.print(pl);
         return pl;
     }
 

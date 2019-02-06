@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.entity.edcr.PlanFeature;
+import org.egov.edcr.feature.AdditionalFeature;
 import org.egov.edcr.feature.BiometricWasteManagement;
 import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.BuildingHeight;
@@ -58,6 +59,7 @@ import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.DistanceToRoad;
 import org.egov.edcr.feature.ExitWidth;
 import org.egov.edcr.feature.Far;
+import org.egov.edcr.feature.HeightOfRoom;
 import org.egov.edcr.feature.MeanOfAccess;
 import org.egov.edcr.feature.Parking;
 import org.egov.edcr.feature.PetrolFillingStation;
@@ -126,13 +128,21 @@ public class PlanFeatureRepository {
         features.add(pf);
         pf = new PlanFeature(TravelDistanceToExit.class);
         features.add(pf);
+
+        pf = new PlanFeature(AdditionalFeature.class);
+        features.add(pf);
+        
         /*
-         * pf = new PlanFeature(AdditionalFeature.class); features.add(pf); pf = new PlanFeature(OverHangs.class);
-         * features.add(pf); pf = new PlanFeature(FireStairService.class); features.add(pf); pf = new
-         * PlanFeature(GeneralStairService.class); features.add(pf); pf = new PlanFeature(SpiralStairService.class);
-         * features.add(pf); pf = new PlanFeature(RampService.class); features.add(pf); pf = new PlanFeature(LiftService.class);
-         * features.add(pf); pf = new PlanFeature(HeightOfRoom.class); features.add(pf); pf = new
-         * PlanFeature(AccessoryBuildingService.class); features.add(pf); pf = new PlanFeature(DepthCutting.class);
+         * pf = new PlanFeature(OverHangs.class); features.add(pf); pf = new PlanFeature(FireStairService.class);
+         * features.add(pf); pf = new PlanFeature(GeneralStairService.class); features.add(pf); pf = new
+         * PlanFeature(SpiralStairService.class); features.add(pf); pf = new PlanFeature(RampService.class); features.add(pf); pf
+         * = new PlanFeature(LiftService.class); features.add(pf);
+         */
+        
+        pf = new PlanFeature(HeightOfRoom.class);
+        features.add(pf);
+        /*
+         * pf = new PlanFeature(AccessoryBuildingService.class); features.add(pf); pf = new PlanFeature(DepthCutting.class);
          * features.add(pf);
          */
 

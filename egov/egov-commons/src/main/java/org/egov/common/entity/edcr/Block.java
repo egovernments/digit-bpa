@@ -52,7 +52,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Block extends Measurement {
 
     private static final String SIDE_YARD1_DESC = "Side Yard1";
@@ -68,9 +68,9 @@ public class Block extends Measurement {
     private List<Measurement> coverageDeductions = new ArrayList<>();
     private List<TypicalFloor> typicalFloor = new ArrayList<>();
     private List<BlockDistances> disBetweenBlocks = new ArrayList<>();
-    private List<Measurement> hallAreas = new ArrayList<>();
+    private List<Hall> hallAreas = new ArrayList<>();
     private List<Measurement> diningSpaces = new ArrayList<>();
-    private List<Measurement> balconyAreas = new ArrayList<>();
+    private List<Balcony> balconyAreas = new ArrayList<>();
     private SanityDetails sanityDetails = new SanityDetails();
     private transient Boolean singleFamilyBuilding = false;
     private transient Boolean residentialBuilding = false;
@@ -211,11 +211,11 @@ public class Block extends Measurement {
         this.typicalFloor = typicalFloor;
     }
 
-    public List<Measurement> getHallAreas() {
+    public List<Hall> getHallAreas() {
         return hallAreas;
     }
 
-    public void setHallAreas(List<Measurement> hallAreas) {
+    public void setHallAreas(List<Hall> hallAreas) {
         this.hallAreas = hallAreas;
     }
 
@@ -227,11 +227,11 @@ public class Block extends Measurement {
         this.diningSpaces = diningSpaces;
     }
 
-    public List<Measurement> getBalconyAreas() {
+    public List<Balcony> getBalconyAreas() {
         return balconyAreas;
     }
 
-    public void setBalconyAreas(List<Measurement> balconyAreas) {
+    public void setBalconyAreas(List<Balcony> balconyAreas) {
         this.balconyAreas = balconyAreas;
     }
 
