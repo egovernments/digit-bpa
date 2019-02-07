@@ -47,22 +47,22 @@
 
 package org.egov.common.entity.edcr;
 
-import java.util.List;
+import java.math.BigDecimal;
 
-public class SpiralStair extends Stair {
-
-    private static final long serialVersionUID = 37L;
-    
-    List<Circle> circles;
-
-	public List<Circle> getCircles() {
-		return circles;
+public class Line {
+	
+	private BigDecimal length;
+	
+	public Line(BigDecimal length) {
+		this.length =  length;
 	}
 
-	public void setCircles(List<Circle> circles) {
-		this.circles = circles;
+	public BigDecimal getLength() {
+		return length;
 	}
-    
-    
 
+	public void setLength(BigDecimal length) {
+		this.length = length;
+	}
+	
 }

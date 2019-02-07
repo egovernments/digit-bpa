@@ -73,33 +73,33 @@ public class Floor extends Measurement {
     private List<BigDecimal> exitWidthStair = new ArrayList<>();
     private List<MezzanineFloor> mezzanineFloor = new ArrayList<>();
     private List<Hall> halls = new ArrayList();
-    private List<Stair> fireStairs = new ArrayList<>();
-    private List<Stair> generalStairs = new ArrayList<>();
-    private List<Stair> spiralStairs = new ArrayList<>();
+    private List<FireStair> fireStairs = new ArrayList<>();
+    private List<GeneralStair> generalStairs = new ArrayList<>();
+    private List<SpiralStair> spiralStairs = new ArrayList<>();
 
     private List<BigDecimal> floorHeights;
 
-    public List<Stair> getFireStairs() {
+    public List<FireStair> getFireStairs() {
         return fireStairs;
     }
 
-    public void setFireStairs(List<Stair> fireStairs) {
+    public void setFireStairs(List<FireStair> fireStairs) {
         this.fireStairs = fireStairs;
     }
 
-    public List<Stair> getGeneralStairs() {
+    public List<GeneralStair> getGeneralStairs() {
         return generalStairs;
     }
 
-    public void setGeneralStairs(List<Stair> generalStairs) {
+    public void setGeneralStairs(List<GeneralStair> generalStairs) {
         this.generalStairs = generalStairs;
     }
 
-    public List<Stair> getSpiralStairs() {
+    public List<SpiralStair> getSpiralStairs() {
         return spiralStairs;
     }
 
-    public void setSpiralStairs(List<Stair> spiralStairs) {
+    public void setSpiralStairs(List<SpiralStair> spiralStairs) {
         this.spiralStairs = spiralStairs;
     }
 
@@ -306,10 +306,18 @@ public class Floor extends Measurement {
         this.daRooms = daRooms;
     }
 
-    public void addFireStair(Stair fireStair) {
+    public void addFireStair(FireStair fireStair) {
         this.fireStairs.add(fireStair);
     }
 
+    public void addFireStair(GeneralStair generalStair) {
+        this.generalStairs.add(generalStair);
+    }
+    
+    public void addFireStair(SpiralStair spiralStair) {
+        this.spiralStairs.add(spiralStair);
+    }
+    
     public List<BigDecimal> getFloorHeights() {
         return floorHeights;
     }
@@ -318,7 +326,7 @@ public class Floor extends Measurement {
         this.floorHeights = floorHeights;
     }
 
-    public void addGeneralStair(Stair generalStair) {
+    public void addGeneralStair(GeneralStair generalStair) {
         this.generalStairs.add(generalStair);
     }
 

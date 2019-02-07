@@ -45,24 +45,72 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.common.entity.edcr;
+package org.egov.edcr.feature;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class SpiralStair extends Stair {
+import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.utility.DcrConstants;
+import org.springframework.stereotype.Service;
 
-    private static final long serialVersionUID = 37L;
-    
-    List<Circle> circles;
+@Service
+public class DepthCuttingService extends FeatureProcess {
+	private static final String SUBRULE_11_A_DESC = "Maximum depth of cutting from ground level";
+	private static final String SUBRULE_11_A = "11(A)";
 
-	public List<Circle> getCircles() {
-		return circles;
+	@Override
+	public Plan validate(Plan pl) {
+		return pl;
 	}
 
-	public void setCircles(List<Circle> circles) {
-		this.circles = circles;
-	}
-    
-    
+	@Override
+	public Plan process(Plan pl) {
+		boolean valid = false;
+		scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey("Common_Depth Cutting");
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
+		if (pl.getPlanInformation() != null && pl.getPlanInformation().getDepthCutting() != null) {
+			if (!pl.getPlanInformation().getDepthCutting()) {
+				valid = true;
+			}
+			if (valid) {
+				setReportOutputDetails(pl, SUBRULE_11_A, SUBRULE_11_A_DESC,
+						BigDecimal.valueOf(1.5).toString() + DcrConstants.IN_METER,
+						"Less Than Or Equal To 1.5" + DcrConstants.IN_METER, Result.Accepted.getResultVal());
+			} else {
+				setReportOutputDetails(pl, SUBRULE_11_A, SUBRULE_11_A_DESC,
+						BigDecimal.valueOf(1.5).toString() + DcrConstants.IN_METER,
+						"More Than 1.5" + DcrConstants.IN_METER, Result.Verify.getResultVal());
+			}
+		}
 
+		return pl;
+	}
+
+	private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDescription, String expected, String actual,
+			String status) {
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, ruleNo);
+		details.put(DESCRIPTION, ruleDescription);
+		details.put(REQUIRED, expected);
+		details.put(PROVIDED, actual);
+		details.put(STATUS, status);
+		scrutinyDetail.getDetail().add(details);
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+	}
+
+	@Override
+	public Map<String, Date> getAmendments() {
+		 return new LinkedHashMap<>();
+	}
 }

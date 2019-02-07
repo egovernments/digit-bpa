@@ -103,6 +103,8 @@ public class Building extends Measurement {
     // This would be plain sum of occupancies without converting
     private List<Occupancy> totalArea = new ArrayList<>();
 
+    private Passage passage;
+    
     public List<Occupancy> getOccupancies() {
         return occupancies;
     }
@@ -296,5 +298,15 @@ public class Building extends Measurement {
     public void setTotalArea(List<Occupancy> totalArea) {
         this.totalArea = totalArea;
     }
+
+	public Passage getPassage() {
+		return passage;
+	}
+
+	public void setPassage(Passage passage) {
+		this.passage = passage;
+	}
+    
+    
 
 }

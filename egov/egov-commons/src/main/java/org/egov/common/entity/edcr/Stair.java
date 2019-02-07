@@ -62,6 +62,12 @@ public class Stair extends Measurement {
 
     private Boolean flightPolyLineClosed = false;
 
+    private List<BigDecimal> lengthOfFlights;
+    
+    private List<BigDecimal> widthOfFlights;
+    
+    private List<Line> linesInFlightLayer;
+    
     public String getNumber() {
         return number;
     }
@@ -93,4 +99,29 @@ public class Stair extends Measurement {
     public void setFlightPolyLineClosed(Boolean flightPolyLineClosed) {
         this.flightPolyLineClosed = flightPolyLineClosed;
     }
+
+	public List<BigDecimal> getLengthOfFlights() {
+		return lengthOfFlights;
+	}
+
+	public void setLengthOfFlights(List<BigDecimal> lengthOfFlights) {
+		this.lengthOfFlights = lengthOfFlights;
+	}
+
+	public List<BigDecimal> getWidthOfFlights() {
+		return widthOfFlights;
+	}
+
+	public void setWidthOfFlights(List<BigDecimal> widthOfFlights) {
+		this.widthOfFlights = widthOfFlights;
+	}
+
+	public List<Line> getLinesInFlightLayer() {
+		return linesInFlightLayer;
+	}
+
+	public void setLinesInFlightLayer(List<Line> linesInFlightLayer) {
+		this.linesInFlightLayer = linesInFlightLayer;
+	}
+    
 }
