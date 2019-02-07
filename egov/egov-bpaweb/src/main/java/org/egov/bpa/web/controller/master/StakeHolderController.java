@@ -288,7 +288,7 @@ public class StakeHolderController extends GenericWorkFlowController {
 		model.addAttribute("stakeHolderDocumentList", stakeHolder.getStakeHolderDocument());
 		model.addAttribute("applicationHistory",
 				stakeHolderAuditService.getStakeholderUpdateHistory(stakeHolder.getId()));
-		if (stakeHolderstate != null && !stakeHolderstate.getState().getValue().equalsIgnoreCase("Closed")) {
+		if (stakeHolderstate != null && stakeHolderstate.getState()!=null && !stakeHolderstate.getState().getValue().equalsIgnoreCase("Closed")) {
 			final WorkflowContainer workflowContainer = new WorkflowContainer();
 			workflowContainer.setPendingActions(stakeHolderstate.getCurrentState().getNextAction());
 			prepareWorkflow(model, stakeHolderstate, workflowContainer);

@@ -331,7 +331,7 @@ public class BpaNoticeUtil {
             reportParams.put("village", bpaApplication.getSiteDetail().get(0).getLocationBoundary() == null
                     ? EMPTY
                     : bpaApplication.getSiteDetail().get(0).getLocationBoundary().getName());
-            reportParams.put("taluk", bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk() == null
+            reportParams.put("taluk", (bpaApplication.getSiteDetail().get(0).getPostalAddress()==null ||bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk() == null)
                     ? EMPTY
                     : bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk());
             reportParams.put("district", bpaApplication.getSiteDetail().get(0).getPostalAddress() == null

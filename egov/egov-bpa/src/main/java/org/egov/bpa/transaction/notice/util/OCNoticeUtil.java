@@ -202,7 +202,7 @@ public class OCNoticeUtil {
             reportParams.put("village", oc.getParent().getSiteDetail().get(0).getLocationBoundary() == null
                     ? EMPTY
                     : oc.getParent().getSiteDetail().get(0).getLocationBoundary().getName());
-            reportParams.put("taluk", oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk() == null
+            reportParams.put("taluk",(oc.getParent().getSiteDetail().get(0).getPostalAddress() == null || oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk() == null)
                     ? EMPTY
                     : oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk());
             reportParams.put("district", oc.getParent().getSiteDetail().get(0).getPostalAddress() == null
