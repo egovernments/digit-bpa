@@ -132,6 +132,9 @@ public class BPASmsAndEmailService {
 	private static final String APP_PDF = "application/pdf";
 	private static final String PDFEXTN = ".pdf";
 	private static final String SMS_KEY_CLCTN = "msg.collection.sms";
+	private static final String MSG_KEY_SMS_STAKEHOLDER_NEW_PP = "msg.newstakeholder.paymentpending.sms";
+	private static final String SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_PP = "msg.newstakeholder.email.paymentpending.subject";
+	private static final String BODY_KEY_EMAIL_STAKEHOLDER_NEW_PP = "msg.newstakeholder.email.paymentpending.body";
 
 
 	@Autowired
@@ -150,11 +153,19 @@ public class BPASmsAndEmailService {
 
 	public void sendSMSForStakeHolder(final StakeHolder stakeHolder, Boolean isCitizenCrtn) {
 		String message;
+
 		if (isCitizenCrtn) {
-			message = bpaMessageSource.getMessage(SMS_STK_CTZ, new String[]{stakeHolder.getCode()}, null);
+			message = bpaMessageSource.getMessage(SMS_STK_CTZ, new String[] { stakeHolder.getCode() }, null);
 		} else {
-			message = bpaMessageSource.getMessage(MSG_KEY_SMS_STAKEHOLDER_NEW, new String[]{stakeHolder.getStakeHolderType().getStakeHolderTypeVal(),
-					stakeHolder.getUsername(), "demo"}, null);
+			if (stakeHolder.getStatus().equals(StakeHolderStatus.PAYMENT_PENDING)) {
+				message = bpaMessageSource.getMessage(MSG_KEY_SMS_STAKEHOLDER_NEW_PP,
+						new String[] { stakeHolder.getCode() }, null);
+
+			} else {
+				message = bpaMessageSource.getMessage(MSG_KEY_SMS_STAKEHOLDER_NEW, new String[] {
+						stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getUsername(), "demo" },
+						null);
+			}
 		}
 		if (isSmsEnabled() && stakeHolder.getMobileNumber() != null) {
 			notificationService.sendSMS(stakeHolder.getMobileNumber(), message);
@@ -183,17 +194,33 @@ public class BPASmsAndEmailService {
 	}
 
 	public void sendEmailForStakeHolder(final StakeHolder stakeHolder, Boolean isCitizen) {
-		String msgKeyMailSubject;
+		String msgKeyMailSubject = "";
 		String message;
+
 		if (isCitizen) {
 			msgKeyMailSubject = EMLS_STK_CTZ;
-			message = bpaMessageSource.getMessage(EMLB_STK_CTZ, new String[]{stakeHolder.getName(),
-							stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getCode(), getMunicipalityName()},
-					null);
+			message = bpaMessageSource
+					.getMessage(EMLB_STK_CTZ,
+							new String[] { stakeHolder.getName(),
+									stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getCode(),
+									getMunicipalityName() },
+							null);
 		} else {
-			msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW;
-			message = bpaMessageSource.getMessage(BODY_KEY_EMAIL_STAKEHOLDER_NEW, new String[]{stakeHolder.getName(), stakeHolder.getStakeHolderType().getStakeHolderTypeVal(),
-					stakeHolder.getUsername(), "demo", ApplicationThreadLocals.getDomainURL(), getMunicipalityName()}, null);
+			if (stakeHolder.getStatus().equals(StakeHolderStatus.PAYMENT_PENDING)) {
+				msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_PP;
+				message = bpaMessageSource.getMessage(BODY_KEY_EMAIL_STAKEHOLDER_NEW_PP,
+						new String[] { stakeHolder.getName(), stakeHolder.getStakeHolderType().getStakeHolderTypeVal(),
+								stakeHolder.getUsername(), "demo", ApplicationThreadLocals.getDomainURL(),
+								getMunicipalityName() },
+						null);
+			} else {
+				msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW;
+				message = bpaMessageSource.getMessage(BODY_KEY_EMAIL_STAKEHOLDER_NEW,
+						new String[] { stakeHolder.getName(), stakeHolder.getStakeHolderType().getStakeHolderTypeVal(),
+								stakeHolder.getUsername(), "demo", ApplicationThreadLocals.getDomainURL(),
+								getMunicipalityName() },
+						null);
+			}
 		}
 		if (isEmailEnabled() && stakeHolder.getEmailId() != null) {
 			final String subject = bpaMessageSource.getMessage(msgKeyMailSubject, null, null);
@@ -471,7 +498,7 @@ public class BPASmsAndEmailService {
 	public Boolean isEmailEnabled() {
 		return getAppConfigValueByPassingModuleAndType(EGMODULE_NAME, SENDEMAILFORBPA);
 	}
-
+//for scrunity submitted
 	public void sendSMSAndEmailForDocumentScrutiny(SlotApplication slotApplication) {
 		if (isSmsEnabled() || isEmailEnabled()) {
 			ApplicationStakeHolder applnStakeHolder = slotApplication.getApplication().getStakeHolder().get(0);
