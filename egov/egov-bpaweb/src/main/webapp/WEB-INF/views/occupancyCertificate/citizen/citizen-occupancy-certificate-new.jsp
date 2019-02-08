@@ -46,6 +46,14 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
+		<div class="panel-heading">
+			<div class="panel-title text-center no-float">
+				<c:if test="${not empty OcComparisonValidation}">
+					<strong class="error-msg">${OcComparisonValidation}</strong>
+				</c:if>
+			</div>
+		</div>
+
 		<form:form role="form" action="submit" method="post"
 			modelAttribute="occupancyCertificate" id="occupancyCertificateForm"
 			cssClass="form-horizontal form-groups-bordered"

@@ -58,16 +58,23 @@ import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
+import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.oc.OCAppointmentSchedule;
+import org.egov.bpa.transaction.entity.oc.OCBuilding;
+import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
@@ -92,6 +99,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/application/citizen")
@@ -140,6 +148,41 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
             return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
         }
     }
+    
+	@RequestMapping(value = "/occupancy-certificate/comparison-report/{applicationNumber}", method = RequestMethod.GET)
+	public String viewApplicationByPermitNumber(final Model model, @PathVariable final String applicationNumber) {
+		OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
+		List<OCBuilding>  ocBuildings= oc.getBuildings();
+		List<BuildingDetail> bpaBuildingDetails = oc.getParent().getBuildingDetail();
+	//	List<OCComparisonReport> list = OccupancyCertificateUtils.getOcComparisonReport(ocBuildings,bpaBuildingDetails);
+		Map<Integer,HashMap<Integer,OCFloor>> ocMap= new HashMap<>();
+		Map<Integer,HashMap<Integer,ApplicationFloorDetail>> bpaMap= new HashMap<>();
+	    for(OCBuilding ocBuilding : ocBuildings){
+	    	HashMap<Integer, OCFloor> map = new HashMap<Integer,OCFloor>();
+	    	for(OCFloor ocFloor : ocBuilding.getFloorDetails())
+	    		map.put(ocFloor.getFloorNumber(), ocFloor);
+	    	ocMap.put(ocBuilding.getBuildingNumber(), map);
+	    }
+	    for(BuildingDetail bpaBuilding : bpaBuildingDetails){
+	    	HashMap<Integer, ApplicationFloorDetail> map = new HashMap<Integer,ApplicationFloorDetail>();
+	    	for(ApplicationFloorDetail bpaFloor : bpaBuilding.getApplicationFloorDetails())
+	    		map.put(bpaFloor.getFloorNumber(), bpaFloor);
+	    	bpaMap.put(bpaBuilding.getNumber(), map);
+	    }
+	    Map<Integer,BigDecimal> ocBuildHeightMap= new HashMap<>();
+	    Map<Integer,BigDecimal> bpaBuildHeightMap= new HashMap<>();
+	    for(OCBuilding ocBuilding : ocBuildings)
+	    	ocBuildHeightMap.put(ocBuilding.getBuildingNumber(), ocBuilding.getHeightFromGroundWithOutStairRoom());
+	    
+	    for(BuildingDetail bpaBuilding : bpaBuildingDetails)
+	    	bpaBuildHeightMap.put(bpaBuilding.getNumber(), bpaBuilding.getHeightFromGroundWithOutStairRoom());	
+	    
+		model.addAttribute("ocMap",ocMap);
+		model.addAttribute("bpaMap",bpaMap);
+		model.addAttribute("ocBuildingHeightMap",ocBuildHeightMap);
+		model.addAttribute("bpaBuildingHeightMap",bpaBuildHeightMap);
+		return "view-oc-comparison-report";
+	}
 
     private void loadData(OccupancyCertificate oc, Model model) {
         List<OCLetterToParty> ocLetterToParties = ocLetterToPartyService.findAllByOC(oc);

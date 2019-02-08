@@ -87,6 +87,12 @@
 			<fmt:formatDate value="${occupancyCertificate.completionDate}" pattern="dd/MM/yyyy" var="completionDate" />
 			<c:out value="${completionDate}" default="N/A"></c:out>
 		</div>
+		<div class="col-sm-6 add-margin view-content">
+			<a
+					target="popup" class="btn btn-primary" onclick="window.open('/bpa/application/citizen/occupancy-certificate/comparison-report/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
+					class="btn btn-primary"><spring:message code="lbl.oc.comparison.report"/></a>
+		</div>
+		
 	</div>
 </div>
 

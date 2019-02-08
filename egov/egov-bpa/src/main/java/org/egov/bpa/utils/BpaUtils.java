@@ -1,5 +1,45 @@
 package org.egov.bpa.utils;
 
+import static java.io.File.separator;
+import static org.apache.commons.io.FileUtils.getUserDirectoryPath;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECT_CLERK;
+import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
+import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
+import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.DOC_SCRUTINY_INTEGRATION_REQUIRED;
+import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
+import static org.egov.bpa.utils.BpaConstants.LETTERTOPARTYINITIATE;
+import static org.egov.bpa.utils.BpaConstants.LPCREATED;
+import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
+import static org.egov.bpa.utils.BpaConstants.LPREPLYRECEIVED;
+import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_APPLN_INTEGRATION_REQUIRED;
+import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
+import static org.egov.bpa.utils.BpaConstants.REGULAR_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_PERMIT_FEE_COLL_PENDING;
+import static org.egov.bpa.utils.BpaConstants.YES;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.slf4j.LoggerFactory.getLogger;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
@@ -8,6 +48,8 @@ import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
+import org.egov.bpa.transaction.entity.oc.OCBuilding;
+import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
@@ -46,46 +88,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static java.io.File.separator;
-import static org.apache.commons.io.FileUtils.getUserDirectoryPath;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECT_CLERK;
-import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
-import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
-import static org.egov.bpa.utils.BpaConstants.DOC_SCRUTINY_INTEGRATION_REQUIRED;
-import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
-import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
-import static org.egov.bpa.utils.BpaConstants.LETTERTOPARTYINITIATE;
-import static org.egov.bpa.utils.BpaConstants.LPCREATED;
-import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
-import static org.egov.bpa.utils.BpaConstants.LPREPLYRECEIVED;
-import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_APPLN_INTEGRATION_REQUIRED;
-import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
-import static org.egov.bpa.utils.BpaConstants.REGULAR_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
-import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_PERMIT_FEE_COLL_PENDING;
-import static org.egov.bpa.utils.BpaConstants.YES;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 @Transactional(readOnly = true)
@@ -510,7 +512,32 @@ public class BpaUtils {
 		}
 		return occupancyWiseBuiltupArea;
 	}
-
+	
+	public Map<Occupancy, BigDecimal> getOccupancyWiseFloorArea(List<BuildingDetail> buildingDetails) {
+		Map<Occupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
+		for (BuildingDetail building : buildingDetails) {
+			for (ApplicationFloorDetail floor : building.getApplicationFloorDetails()) {
+				if (occupancyWiseBuiltupArea.containsKey(floor.getOccupancy()))
+						occupancyWiseBuiltupArea.put(floor.getOccupancy(), occupancyWiseBuiltupArea.get(floor.getOccupancy()).add(floor.getFloorArea()));
+				else
+					occupancyWiseBuiltupArea.put(floor.getOccupancy(), floor.getFloorArea());
+			}
+		}
+		return occupancyWiseBuiltupArea;
+	}
+	
+	public Map<Integer, String> getOccupancyAndFloorNumber(List<BuildingDetail> buildingDetails) {
+		Map<Integer, String> occupancyAndFloorNumber = new ConcurrentHashMap<>();
+		for (BuildingDetail building : buildingDetails) {
+			for (ApplicationFloorDetail floor : building.getApplicationFloorDetails()) {
+				if (occupancyAndFloorNumber.containsKey(floor.getFloorNumber()))
+					occupancyAndFloorNumber.put(floor.getFloorNumber(), occupancyAndFloorNumber.get(floor.getFloorNumber()));
+				else
+					occupancyAndFloorNumber.put(floor.getFloorNumber(), floor.getOccupancy().getCode());
+			}
+		}
+		return occupancyAndFloorNumber;
+	}
 	
 	public Map<Occupancy, BigDecimal> getExistingBldgBlockWiseOccupancyAndBuiltupArea(List<ExistingBuildingDetail> existBldgDtls) {
 		Map<Occupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
@@ -585,4 +612,22 @@ public class BpaUtils {
 		return getAppconfigValueByKeyName(BPA_CITIZENACCEPTANCE_CHECK).equalsIgnoreCase(YES);
 	}
 
+	public Map<Integer, HashMap<Integer, BigDecimal>> getBlockWiseAndFloorWiseFloorArea(
+			List<BuildingDetail> bpaBuildings) {
+		Map<Integer, HashMap<Integer, BigDecimal>> bpaMap = new HashMap<>();
+		 for(BuildingDetail bpaBuilding : bpaBuildings){
+		    	HashMap<Integer, BigDecimal> map = new HashMap<Integer,BigDecimal>();
+		    	for(ApplicationFloorDetail bpaFloor : bpaBuilding.getApplicationFloorDetails())
+		    		map.put(bpaFloor.getFloorNumber(), bpaFloor.getFloorArea());
+		    	bpaMap.put(bpaBuilding.getNumber(), map);
+		    }
+		return bpaMap;
+	
+	}
+	
+	public String getAppConfigForOcAllowDeviation() {
+		List<AppConfigValues> appConfigValueList = appConfigValueService
+				.getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, "OC_ALLOW_DEVIATION");
+		return appConfigValueList.get(0).getValue();
+	}
 }
