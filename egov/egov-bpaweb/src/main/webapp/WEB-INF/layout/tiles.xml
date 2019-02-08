@@ -616,4 +616,15 @@
 	<put-attribute name="page-title" value="title.approve.stakeholder" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/stakeholder/stakeholderstate-view.jsp"/>
 	</definition>
+	
+	<definition name="view-oc-comparison-report" extends="base_layout">
+	<put-attribute name="page-title" value="lbl.oc.comparison.report" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/occupancyCertificate/view-oc-comparison-report.jsp"/>
+	</definition>
+	<definition name="application-status" extends="base_layout">
+	<put-attribute name="page-title" value="title.view.appln.status"
+		cascade="true" />
+	<put-attribute name="body"
+		value="/WEB-INF/views/application/application-status.jsp" />
+</definition>
 </tiles-definitions>
