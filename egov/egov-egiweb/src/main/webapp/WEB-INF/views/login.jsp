@@ -95,13 +95,13 @@
 
 		<div class="main-content" >
 			<div class="navbar-header col-md-8 col-xs-8">
-				<a class="navbar-brand" href="javascript:void(0);">
+				<%-- <a class="navbar-brand" href="javascript:void(0);">
 					<img src="https://www.egovernments.org/wp-content/uploads/2018/11/Logo-2.png" style="background-color:#3b73af" height="90">
-						 
-					<%--<div>
-						<span class="title2" style="color: black; font-family: OpenSans; font-size:20px "><b>${sessionScope.citymunicipalityname}</b></span>
-					</div>--%>
-				</a>
+						</a> --%> 
+					<div>
+						<span class="title2" style="color: black; font-family: OpenSans; font-size:30px "><b>${sessionScope.citymunicipalityname}</b></span>
+					</div>
+				
 			</div>
 			<div class="nav-right-menu col-md-4 col-xs-4">
 				<ul class="hr-menu text-right">
@@ -112,6 +112,7 @@
 					</a></li>
 				</ul>
 			</div>
+			
 
 			<div style="color: white; height: 80px"></div>
 
@@ -120,31 +121,81 @@
 					<noscript>You don't have javascript enabled. Make sure
 						Javascript is enabled.</noscript>
 				</div>
-				<div class="col-md-6 side-space login-form-licensee" style="top: 195px;position: relative;">
-						<img src="<cdn:url value='/resources/guide/assets/digit_dcr_glow_logo.png'/>"
-								 height="128" style="position: relative;right: 37px;bottom:  -10px;">
+				<div class="col-md-6 side-space">
+					<div class="col-md-12 community-card">
+						<a href="/portal/citizen/signup" target="_blank">
+							<div class="rounded-circle">
+								<i class="fa fa-user a"></i>
+							</div>&nbsp;
+							<div class="label-font">
+								<spring:message code="lbl.create.ac.citizen" />
+								<br> <span class="label-subfont"><spring:message
+										code="lbl.create.ac.desc" /></span>
+							</div>
+						</a>
+					</div>
 
-					<div class="col-md-9 " style="margin: 20px 0px ; left: -80px; bottom: 52px">
+					<div class="col-md-12 community-card"<%--style="opacity: 0.75"--%>>
+						<a href="#"
+							onclick="window.open('/bpa/stakeholder/createbycitizen','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
+							<div class="rounded-circle">
+								<i class="fa fa-user a"></i>
+							</div>&nbsp;
+							<div class="label-font">
+								<spring:message code="lbl.bldng.create.ac" />
+								<br> <span class="label-subfont"><spring:message
+										code="lbl.create.ac.desc" /></span>
+							</div>
+						</a>
+					</div>
+					<div class="col-md-12 community-card">
+						<div class="label-font" style="vertical-align: sub">
+							<spring:message code="lbl.check.application.status" />
+							&nbsp;<br> <input type="text"
+								placeholder="Application number" id="appsearchtxt"
+								style="padding: 2px 5px; height: 30px; font-size: 14px; border: 0; padding-left: 0; border-bottom: 1px solid #D0D2D7; outline: none; box-shadow: none;">
+							<button class="btn-custom" id="appsearch"
+								style="padding: 4px 5px; border-radius: 4px; font-size: 14px; vertical-align: bottom;">
+								<spring:message code="btn.lbl.search" />
+							</button>
+						</div>
+						<div class="error-msg search-error-msg display-hide"
+							style="padding-left: 65px;">Application number is mandatory</div>
+					</div>
+					<div class="col-md-6 side-space login-form-licensee"">
+						<img
+							src="<cdn:url value='/resources/guide/assets/digit_dcr_glow_logo.png'/>"
+							height="128"
+							style="position: relative; right: 37px; bottom: -10px;">
 
-						<div class="community-card" style="background: white;color: black;padding: 30px;height: 123px;width:410px">
-							<div class="text-center page-desc-title" style="position: relative; bottom: 22px">Building Planning Approval</div>
-							<div class="page-desc-details" style="bottom: 25px;position:  relative;">
-								<b>Citizens, ULB officials, and
-								other stakeholders can submit and track applications in real time
-								and obtain approvals without having to physically visit an
-								office.</b>
+						<div class="col-md-9 "
+							style="margin: 20px 0px; left: -80px; bottom: 52px">
+
+							<div class="community-card"
+								style="background: white; color: black; padding: 30px; height: 123px; width: 410px">
+								<div class="text-center page-desc-title"
+									style="position: relative; bottom: 22px">Building
+									Planning Approval</div>
+								<div class="page-desc-details"
+									style="bottom: 25px; position: relative;">
+									<b>Citizens, ULB officials, and other stakeholders can
+										submit and track applications in real time and obtain
+										approvals without having to physically visit an office.</b>
+								</div>
 							</div>
 						</div>
+						<div class="col-md-3 "></div>
 					</div>
-					<div class="col-md-3 "></div>
 				</div>
 
-				<div class="col-md-6 side-space login-form-licensee" style="position: relative ; left: 63px ; top:60px">
 
-					<div class="signin-formcontent signin-section" >
+				<div class="col-md-6 side-space login-form-licensee"
+					style="position: relative; left: 63px; top: 60px">
+
+					<div class="signin-formcontent signin-section">
 						<form method="post" role="form" id="signform"
 							action="${pageContext.request.contextPath}/j_security_check"
-							autocomplete="off" <%--style="opacity: 0.75"--%>>
+							autocomplete="off"<%--style="opacity: 0.75"--%>>
 							<div class="form-group">
 								<div class="signin-title">
 									<spring:message code="lbl.login" />
@@ -266,25 +317,11 @@
 								name="loginType" /> <input type="hidden" name="userAgentInfo"
 								value="<%=userAgentInfo%>" />
 						</form>
-									<div style="color: white; height: 30px"></div>
-						
-						<div class="col-md-12 community-card" <%--style="opacity: 0.75"--%>>
-							<a href="#"
-								onclick="window.open('/bpa/stakeholder/createbycitizen','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
-								<div class="rounded-circle">
-									<i class="fa fa-user a"></i>
-								</div>&nbsp;
-								<div class="label-font">
-									<spring:message code="lbl.bldng.create.ac" />
-									<br> <span class="label-subfont"><spring:message
-											code="lbl.create.ac.desc" /></span>
-								</div>
-							</a>
-						</div>
+						<div style="color: white; height: 30px"></div>
 					</div>
 				</div>
-				</div>
 			</div>
+		</div>
 		</div>
 		<div>
 			<%@include file="../../resources/guide/landingPage.jsp"%>

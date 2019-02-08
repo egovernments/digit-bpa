@@ -215,4 +215,13 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         return "viewapplication-form";
     }
     
+    @RequestMapping(value = "/view/status/{applicationNumber}", method = RequestMethod.GET)
+    public String viewApplicationStatus(final Model model, @PathVariable final String applicationNumber,
+            final HttpServletRequest request) {
+        BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        if(application == null)
+        	model.addAttribute("message", messageSource.getMessage("msg.validate.building.plan.approval.no", null, null));
+        model.addAttribute("bpaApplication", application);
+        return "application-status";
+    }
 }

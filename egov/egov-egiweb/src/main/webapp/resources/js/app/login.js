@@ -159,5 +159,14 @@ $(document).ready(function()
 		$('#cookieornoscript').modal('show', {backdrop: 'static'});
 	}
 	
-	
+	$('#appsearch').click(function() {
+		var applnum=$('#appsearchtxt').val();
+		if (applnum !== "") {
+			$('.search-error-msg').addClass('display-hide');
+			$('#appsearchtxt').val("");
+			window.open("/bpa/application/view/status/"+applnum, "_blank");
+		}else{
+			$('.search-error-msg').removeClass('display-hide');
+		}
+	});
 });
