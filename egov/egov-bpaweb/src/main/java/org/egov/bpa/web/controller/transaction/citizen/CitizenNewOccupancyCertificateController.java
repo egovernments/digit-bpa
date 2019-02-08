@@ -57,6 +57,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
@@ -190,6 +191,13 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
             model.addAttribute(MESSAGE,
                     "Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".");
         }
+        
+      /* Applicant applicant= occupancyCertificate.getParent().getOwner();
+			bpaSmsAndEmailService.buildSmsAndEmailForOCNewAppln(occupancyCertificate,
+					applicant.getName(), applicant.getUser().getMobileNumber(),
+					applicant.getUser().getEmailId(), applicant.getUser().getUsername(),
+					applicant.getUser().getPassword(), isCitizen);*/
+			
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)
@@ -197,6 +205,7 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(occupancyCertificate, model);
         }
+        
         return BPAAPPLICATION_CITIZEN;
     }
 }

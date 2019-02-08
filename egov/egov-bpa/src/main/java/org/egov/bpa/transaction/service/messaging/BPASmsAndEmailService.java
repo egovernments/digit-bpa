@@ -47,6 +47,7 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -136,7 +137,12 @@ public class BPASmsAndEmailService {
 	private static final String SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_PP = "msg.newstakeholder.email.paymentpending.subject";
 	private static final String BODY_KEY_EMAIL_STAKEHOLDER_NEW_PP = "msg.newstakeholder.email.paymentpending.body";
 
-
+	private static final String MSG_KEY_SMS_OC_APPLN_NEW_CZN = "msg.oc.submit.sms.citizen";
+	private static final String BODY_KEY_EMAIL_OC_APPLN_NEW_CZN = "msg.oc.submit.mail.body.citizen";
+	private static final String SUBJECT_KEY_EMAIL_OC_APPLN_NEW = "msg.oc.submit.mail.subject";
+	private static final String MSG_KEY_SMS_OC_APPLN_NEW = "msg.oc.submit.sms";
+	private static final String BODY_KEY_EMAIL_OC_APPLN_NEW = "msg.oc.submit.mail.body";
+	
 	@Autowired
 	private NotificationService notificationService;
 	@Autowired
@@ -729,5 +735,43 @@ public class BPASmsAndEmailService {
 		return msg;
 	}
 
+	public void buildSmsAndEmailForOCNewAppln(final OccupancyCertificate occupancyCertificate,
+			final String applicantName, final String mobileNo, final String email, final String loginUserName,
+			final String password, final Boolean isCitizen) {
+		String smsMsg = EMPTY;
+		String body = EMPTY;
+		String subject = EMPTY;
+		String smsCode;
+		String mailCode;
+		if (isCitizen) {
+			smsCode = MSG_KEY_SMS_OC_APPLN_NEW_CZN;
+			mailCode = BODY_KEY_EMAIL_OC_APPLN_NEW_CZN;
+
+			smsMsg = bpaMessageSource.getMessage(smsCode, new String[] { applicantName,
+					occupancyCertificate.getApplicationNumber(), loginUserName, password }, null);
+			body = bpaMessageSource.getMessage(mailCode, new String[] { applicantName,
+					occupancyCertificate.getApplicationNumber(), loginUserName, password, getMunicipalityName() },
+					null);
+
+		} else {
+			smsCode = MSG_KEY_SMS_OC_APPLN_NEW;
+			mailCode = BODY_KEY_EMAIL_OC_APPLN_NEW;
+			smsMsg = bpaMessageSource.getMessage(smsCode,
+					new String[] { applicantName, occupancyCertificate.getApplicationNumber() }, null);
+			body = bpaMessageSource.getMessage(mailCode, new String[] { applicantName,
+					occupancyCertificate.getApplicationNumber(), loginUserName, password, getMunicipalityName() },
+					null);
+
+		}
+
+		subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_OC_APPLN_NEW,
+				occupancyCertificate.getApplicationNumber());
+
+		if (mobileNo != null && smsMsg != null)
+			notificationService.sendSMS(mobileNo, smsMsg);
+		if (email != null && body != null) {
+			notificationService.sendEmail(email, subject, body);
+		}
+	}
 
 }
