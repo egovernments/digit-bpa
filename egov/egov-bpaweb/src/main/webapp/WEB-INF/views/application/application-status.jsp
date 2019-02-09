@@ -46,55 +46,103 @@
   ~
   --%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title text-center no-float">
-		<c:if test="${not empty message}">
-			<strong>${message}</strong>
-		</c:if>
-	</div>
-<div class="row">
-	<div class="col-md-12">
-		<form:form role="form" action="" method="post"
-			modelAttribute="bpaApplication" id="viewApplicationStatus"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-			<div class="col-md-12">
-				<br>
-				<table class="table table-striped datatable">
-					<thead>
-						<tr>
-							<th><spring:message code="lbl.applicant.name" /></th>
-							<th><spring:message code="lbl.applicartionno" /></th>
-							<th><spring:message code="lbl.applicationdate" /></th>
-							<th><spring:message code="lbl.servicename" /></th>
-							<th><spring:message code="lbl.status" /></th>
-							<th><spring:message code="lbl.pendingaction" /></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>${bpaApplication.owner.name}</td>
-							<td>${bpaApplication.applicationNumber}</td>
-							<td>${bpaApplication.applicationDate}</td>
-							<td>${bpaApplication.serviceType.description}</td>
-							<td>${bpaApplication.getCurrentState().getValue()}</td>
-							<td>${bpaApplication.getCurrentState().getNextAction()}</td>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-						</tr>
 
-					</tbody>
-				</table>
+<c:if test="${not empty message}">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title text-center no-float">
+						<strong>${message}</strong>
+					</div>
+				</div>
 			</div>
-			 <div class="buttonbottom" align="center">
-                <table>
-                    <tr>
-                        <td><input type="button" name="button2" id="button2" value="Close"
-                                   class="btn btn-default" onclick="window.close();"/>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-		</form:form>
+			<div class="row text-center">
+				<div class="row">
+					<div class="text-center">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							onclick="window.close();">
+							<spring:message code="lbl.close" />
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
+</c:if>
+<c:if test="${empty message && bpaApplication ne null}">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading custom_form_panel_heading">
+					<div class="panel-title">
+						<spring:message code="lbl.appln.details" />
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="row add-border">
+						<div class="col-sm-3 add-margin">
+							<spring:message code="lbl.applicant.name" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<c:out value="${bpaApplication.owner.name}" default="N/A"></c:out>
+						</div>
+						<div class="col-sm-3 add-margin">
+							<spring:message code="lbl.applicartionno" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<c:out value="${bpaApplication.applicationNumber}" default="N/A"></c:out>
+						</div>
+					</div>
+					<div class="row add-border">
+						<div class="col-sm-3 add-margin">
+							<spring:message code="lbl.applicationdate" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<fmt:formatDate value="${bpaApplication.applicationDate}"
+								pattern="dd/MM/yyyy" var="applicationDate" />
+							<c:out value="${applicationDate}" default="N/A"></c:out>
+						</div>
+						<div class="col-sm-3 add-margin">
+							<spring:message code="lbl.servicename" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<c:out value="${bpaApplication.serviceType.description}"
+								default="N/A"></c:out>
+						</div>
+					</div>
+					<div class="row add-border">
+						<div class="col-sm-3 add-margin">
+							<spring:message code="lbl.status" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<c:out value="${bpaApplication.status.code}" default="N/A"></c:out>
+						</div>
+						<div class="col-sm-3 add-margin">
+							<spring:message code="lbl.pendingaction" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<c:out value="${bpaApplication.currentState.nextAction}"
+								default="N/A"></c:out>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row text-center">
+				<div class="row">
+					<div class="text-center">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							onclick="window.close();">
+							<spring:message code="lbl.close" />
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</c:if>
 

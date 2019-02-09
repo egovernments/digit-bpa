@@ -161,10 +161,10 @@ $(document).ready(function()
 	
 	$('#appsearch').click(function() {
 		var applnum=$('#appsearchtxt').val();
-		if (applnum !== "") {
+		if (applnum) {
 			$('.search-error-msg').addClass('display-hide');
 			$('#appsearchtxt').val("");
-			window.open("/bpa/application/view/status/"+applnum, "_blank");
+			window.open("/bpa/application/citizen/check-status/"+applnum,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes')
 		}else{
 			$('.search-error-msg').removeClass('display-hide');
 		}

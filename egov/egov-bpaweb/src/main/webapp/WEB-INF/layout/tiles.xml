@@ -33,598 +33,663 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-	<definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+	<definition name="base_layout"
+		template="/WEB-INF/views/template/main.jsp">
 		<put-attribute name="title" value="eGov Urban Portal" />
-		<put-attribute name="header" value="/WEB-INF/views/template/header.jsp" />
+		<put-attribute name="header"
+			value="/WEB-INF/views/template/header.jsp" />
 		<put-attribute name="body" value="" />
-		<put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp" />
+		<put-attribute name="footer"
+			value="/WEB-INF/views/template/footer.jsp" />
 	</definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page"
-			cascade="true" />
-		<put-attribute name="header" value="/WEB-INF/views/template/header.jsp" />
+	<definition name="error"
+		template="/WEB-INF/views/template/error.jsp">
+		<put-attribute name="page-title"
+			value="title.error.page" cascade="true" />
+		<put-attribute name="header"
+			value="/WEB-INF/views/template/header.jsp" />
 		<put-attribute name="body" value="" />
-		<put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp" />
+		<put-attribute name="footer"
+			value="/WEB-INF/views/template/footer.jsp" />
 	</definition>
 	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/error/{1}.jsp" />
 	</definition>
-	<definition name="collecttax-redirection" extends="base_layout">
-		<put-attribute name="page-title" value="title.collect.tax.view"
-			cascade="true" />
+	<definition name="collecttax-redirection"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.collect.tax.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/collecttax-redirection.jsp" />
 	</definition>
 	<definition name="common-error" extends="base_layout">
-		<put-attribute name="page-title" value="title.common.msg"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.common.msg" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/common/common-error.jsp" />
+			value="/WEB-INF/views/common/common-error.jsp" />
 	</definition>
 	<definition name="newapplication-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.new.appln.header"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.new.appln.header" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/newapplication-form.jsp" />
 	</definition>
 
-	<definition name="citizenApplication-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.new.appln.header"
-			cascade="true" />
+	<definition name="citizenApplication-form"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.new.appln.header" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/citizenApplication-form.jsp" />
 	</definition>
 
 	<definition name="citizen_suceess" extends="base_layout">
-		<put-attribute name="page-title" value="title.bpa.appln.success"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.bpa.appln.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/citizen-sucess.jsp" />
 	</definition>
 
 	<definition name="bpaapplication-Form" extends="base_layout">
-		<put-attribute name="page-title" value="title.updateApplication"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.updateApplication" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/application-Edit.jsp" />
 	</definition>
 	<definition name="citizen-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.view.appln.details"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.view.appln.details" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/citizen-viewForm.jsp" />
 	</definition>
 	<definition name="bpaapp-citizenForm" extends="base_layout">
-		<put-attribute name="page-title" value="title.updateApplication"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.updateApplication" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/citizen-updateForm.jsp" />
 	</definition>
-	<definition name="viewapplication-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.view.appln.details"
-			cascade="true" />
+	<definition name="viewapplication-form"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.view.appln.details" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/viewapplication-form.jsp" />
 	</definition>
 	<definition name="application-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.view.appln.details"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.view.appln.details" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/application-view.jsp" />
 	</definition>
-	<definition name="documentscrutiny-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.documentScrutiny"
-			cascade="true" />
+	<definition name="documentscrutiny-form"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.documentScrutiny" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/documentscrutiny-form.jsp" />
 	</definition>
 
-	<definition name="createdocumentscrutiny-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.documentScrutiny.create"
-			cascade="true" />
+	<definition name="createdocumentscrutiny-form"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.documentScrutiny.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/createdocumentscrutiny-form.jsp" />
 	</definition>
 
 	<definition name="stakeholder-new" extends="base_layout">
-		<put-attribute name="page-title" value="title.stakehol.create"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.stakehol.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/stakeholder-new.jsp" />
 	</definition>
 
-	<definition name="stakeholder-new-bycitizen" extends="base_layout">
-		<put-attribute name="page-title" value="title.stakehol.create"
-					   cascade="true" />
+	<definition name="stakeholder-new-bycitizen"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.stakehol.create" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/stakeholder/stakeholder-new-bycitizen.jsp" />
+			value="/WEB-INF/views/stakeholder/stakeholder-new-bycitizen.jsp" />
 	</definition>
 
 	<definition name="stakeholder-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.stakehol.view"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.stakehol.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/stakeholder-view.jsp" />
 	</definition>
 	<definition name="stakeholder-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.stakehol.update"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.stakehol.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/stakeholder-update.jsp" />
 	</definition>
-	<definition name="search-stakeholder-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.stakehol.view"
-			cascade="true" />
+	<definition name="search-stakeholder-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.stakehol.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/search-stakeholder-view.jsp" />
 	</definition>
 	<definition name="stakeholder-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.stakehol.success"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.stakehol.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/stakeholder-result.jsp" />
 	</definition>
-	<definition name="search-stakeholder-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.stakehol.update"
-			cascade="true" />
+	<definition name="search-stakeholder-edit"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.stakehol.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/search-stakeholder-edit.jsp" />
 	</definition>
-	<definition name="schedule-appiontment-new" extends="base_layout">
-		<put-attribute name="page-title" value="title.schedule.appmnt"
-			cascade="true" />
+	<definition name="schedule-appiontment-new"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.schedule.appmnt" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/schedule-appiontment-new.jsp" />
 	</definition>
-	<definition name="reschedule-appiontment" extends="base_layout">
-		<put-attribute name="page-title" value="title.reschedule.appmnt"
-			cascade="true" />
+	<definition name="reschedule-appiontment"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.reschedule.appmnt" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/reschedule-appiontment.jsp" />
 	</definition>
-	<definition name="view-schedule-appiontment" extends="base_layout">
-		<put-attribute name="page-title" value="title.view.schedule.appmnt"
-			cascade="true" />
+	<definition name="view-schedule-appiontment"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.view.schedule.appmnt" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/view-schedule-appiontment.jsp" />
 	</definition>
-	<definition name="bpa-application-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.bpa.appln.success"
-			cascade="true" />
+	<definition name="bpa-application-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.bpa.appln.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/bpa-application-result.jsp" />
 	</definition>
-	<definition name="schedule-appiontment-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.result.schedule.appmnt"
-			cascade="true" />
+	<definition name="schedule-appiontment-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.result.schedule.appmnt" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/schedule-appiontment-result.jsp" />
 	</definition>
-	<definition name="search-bpa-application" extends="base_layout">
-		<put-attribute name="page-title" value="title.search.appln"
-			cascade="true" />
+	<definition name="search-bpa-application"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.search.appln" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/search-bpa-application.jsp" />
 	</definition>
-	<definition name="lettertoparty-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.success"
-			cascade="true" />
+	<definition name="lettertoparty-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/lettertoparty-result.jsp" />
 	</definition>
-	<definition name="createinspectiondetail-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.inspection.appln"
-			cascade="true" />
+	<definition name="createinspectiondetail-form"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.appln" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/createinspectiondetail-form.jsp" />
 	</definition>
-	<definition name="inspection-details-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.inspection.result"
-			cascade="true" />
+	<definition name="inspection-details-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.result" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-details-result.jsp" />
 	</definition>
-	<definition name="show-inspection-details" extends="base_layout">
-		<put-attribute name="page-title" value="title.inspection.view"
-			cascade="true" />
+	<definition name="show-inspection-details"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/show-inspection-details.jsp" />
 	</definition>
 	<definition name="inspection-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.inspection.modify"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.inspection.modify" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspectiondetail-edit.jsp" />
 	</definition>
 	<definition name="createbpafee-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.createfee.create"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.createfee.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/createbpafee-form.jsp" />
 	</definition>
 	<definition name="createbpafee-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.createfee.view"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.createfee.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/createbpafee-view.jsp" />
 	</definition>
 	<definition name="collect-failure" extends="base_layout">
-		<put-attribute name="page-title" value="title.bpacollect.fee"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.bpacollect.fee" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/collect-failure.jsp" />
 	</definition>
-	<definition name="lettertoparty-create" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.create"
-			cascade="true" />
+	<definition name="lettertoparty-create"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/lettertoparty-create.jsp" />
 	</definition>
-	<definition name="lettertoparty-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.update"
-			cascade="true" />
+	<definition name="lettertoparty-update"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/lettertoparty-update.jsp" />
 	</definition>
-	<definition name="lettertoparty-checklist" extends="base_layout">
-		<put-attribute name="page-title" value="title.checklist "
-			cascade="true" />
+	<definition name="lettertoparty-checklist"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.checklist " cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/lettertoparty-checklist.jsp" />
 	</definition>
-	<definition name="lettertoparty-capturesentdate" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.update"
-			cascade="true" />
+	<definition name="lettertoparty-capturesentdate"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/lettertoparty-capturesentdate.jsp" />
 	</definition>
-	<definition name="lettertoparty-lpreply" extends="base_layout">
+	<definition name="lettertoparty-lpreply"
+		extends="base_layout">
 		<put-attribute name="page-title" value="title.lpreply "
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/lettertoparty-lpreply.jsp" />
 	</definition>
 	<definition name="lettertoparty-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.view"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.lettertoparty.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/lettertoparty-view.jsp" />
 	</definition>
-	<definition name="search-servicewise-status-report" extends="base_layout">
-		<put-attribute name="page-title" value="title.report.appln.status"
-			cascade="true" />
+	<definition name="search-servicewise-status-report"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.report.appln.status" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/search-servicewise-status-report.jsp" />
 	</definition>
-	<definition name="view-servicewise-appln-details" extends="base_layout">
-		<put-attribute name="page-title" value="title.view.appln.details"
-			cascade="true" />
+	<definition name="view-servicewise-appln-details"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.view.appln.details" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/view-servicewise-appln-details.jsp" />
 	</definition>
-	<definition name="search-zonewise-report" extends="base_layout">
-		<put-attribute name="page-title" value="title.zone.wise.services"
-			cascade="true" />
+	<definition name="search-zonewise-report"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.zone.wise.services" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/search-zonewise-report.jsp" />
 	</definition>
 	<definition name="search-collect-fee" extends="base_layout">
-		<put-attribute name="page-title" value="title.collect.fee"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.collect.fee" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/search-collect-fee.jsp" />
 	</definition>
 	<definition name="view-fees" extends="base_layout">
-		<put-attribute name="page-title" value="title.update.fee"
-			cascade="true" />
-		<put-attribute name="body" value="/WEB-INF/views/fees/view-fees.jsp" />
+		<put-attribute name="page-title"
+			value="title.update.fee" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/view-fees.jsp" />
 	</definition>
 	<definition name="feesDetail-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.update.fee"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.update.fee" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/fees/fees-update.jsp" />
 	</definition>
 	<definition name="holidaylist-new" extends="base_layout">
-		<put-attribute name="page-title" value="title.holiday.create"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.holiday.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/holiday/holidayList-new.jsp" />
 	</definition>
 	<definition name="holidaylist-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.holiday.view"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.holiday.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/holiday/holidayList-view.jsp" />
 	</definition>
 	<definition name="holidaylist-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.holiday.update"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.holiday.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/holiday/holidayList-update.jsp" />
 	</definition>
-	<definition name="search-holidaylist-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.holiday.view"
-			cascade="true" />
+	<definition name="search-holidaylist-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.holiday.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/holiday/search-holidayList-view.jsp" />
 	</definition>
 	<definition name="holidaylist-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.holiday.success"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.holiday.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/holiday/holidayList-result.jsp" />
 	</definition>
-	<definition name="search-holidayList-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.holiday.update"
-			cascade="true" />
+	<definition name="search-holidayList-edit"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.holiday.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/holiday/search-holidayList-edit.jsp" />
 	</definition>
 	<definition name="holiday-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.holiday.search"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.holiday.search" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/holiday/holiday-search.jsp" />
 	</definition>
-		<definition name="slotmapping-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.slotmapping.create"
-			cascade="true" />
+	<definition name="slotmapping-form" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.slotmapping.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/slotMapping/slotmapping-form.jsp" />
 	</definition>
-		<definition name="slotmapping-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.slotmapping.result"
-			cascade="true" />
+	<definition name="slotmapping-result" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.slotmapping.result" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/slotMapping/slotmapping-result.jsp" />
 	</definition>
 	<definition name="slotmapping-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.slotmapping.update"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.slotmapping.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/slotMapping/slotmapping-edit.jsp" />
 	</definition>
-		<definition name="slotmapping-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.slotmapping.update"
-			cascade="true" />
+	<definition name="slotmapping-update" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.slotmapping.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/slotMapping/slotmapping-update.jsp" />
 	</definition>
-		<definition name="search-slotmapping-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.slotmapping.view"
-			cascade="true" />
+	<definition name="search-slotmapping-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.slotmapping.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/slotMapping/search-slotmapping-view.jsp" />
 	</definition>
-		<definition name="slotmapping-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.slotmapping.view"
-			cascade="true" />
+	<definition name="slotmapping-view" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.slotmapping.view" cascade="true" />
 		<put-attribute name="body"
-			value="/WEB-INF/views/slotMapping/slotmapping-view.jsp" /> 
+			value="/WEB-INF/views/slotMapping/slotmapping-view.jsp" />
 	</definition>
-	<definition name="reschedule-document-scrutiny" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.re.schedule.doc.scrutiny"
-					   cascade="true"/>
+	<definition name="reschedule-document-scrutiny"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="lbl.re.schedule.doc.scrutiny" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/application/reschedule-document-scrutiny.jsp"/>
+			value="/WEB-INF/views/application/reschedule-document-scrutiny.jsp" />
 	</definition>
-	<definition name="view-scheduled-scrutiny-details-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.view.schedule.appmnt"
-					   cascade="true"/>
+	<definition name="view-scheduled-scrutiny-details-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.view.schedule.appmnt" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/application/view-scheduled-scrutiny-details-result.jsp"/>
+			value="/WEB-INF/views/application/view-scheduled-scrutiny-details-result.jsp" />
 	</definition>
-	<definition name="search-document-scrutiny" extends="base_layout">
-		<put-attribute name="page-title" value="title.document.scrutiny "
-			cascade="true" />
+	<definition name="search-document-scrutiny"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.document.scrutiny " cascade="true" />
 		<put-attribute name="body"
-			value="/WEB-INF/views/application/search-document-scrutiny.jsp" /> 
+			value="/WEB-INF/views/application/search-document-scrutiny.jsp" />
 	</definition>
-	<definition name="search-regular-slotdetails-report" extends="base_layout">
-		<put-attribute name="page-title" value="title.slot.regular.report"
-					   cascade="true" />
+	<definition name="search-regular-slotdetails-report"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.slot.regular.report" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/reports/search-regular-slotdetails-report.jsp" />
+			value="/WEB-INF/views/reports/search-regular-slotdetails-report.jsp" />
 	</definition>
-	<definition name="search-onedaypermit-slotdetails-report" extends="base_layout">
-		<put-attribute name="page-title" value="title.slot.onedaypermit.report"
-					   cascade="true" />
+	<definition name="search-onedaypermit-slotdetails-report"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.slot.onedaypermit.report" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/reports/search-onedaypermit-slotdetails-report.jsp" />
+			value="/WEB-INF/views/reports/search-onedaypermit-slotdetails-report.jsp" />
 	</definition>
 
-	<definition name="view-slot-application-details" extends="base_layout">
-		<put-attribute name="page-title" value="title.view.appln.details"
-					   cascade="true" />
+	<definition name="view-slot-application-details"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.view.appln.details" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/reports/view-slot-application-details.jsp" />
+			value="/WEB-INF/views/reports/view-slot-application-details.jsp" />
 	</definition>
 	<definition name="search-scheduler-failure-records-report"
 		extends="base_layout">
-		<put-attribute name="page-title" value="title.scheduler.failure.records"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.scheduler.failure.records" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/search-scheduler-failure-records-report.jsp" />
 	</definition>
-		<definition name="search-stakeholder-forapproval"
+	<definition name="search-stakeholder-forapproval"
 		extends="base_layout">
-		<put-attribute name="page-title" value="title.search.stakeholder"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.search.stakeholder" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/search-stakeholder-forapproval.jsp" />
 	</definition>
-		<definition name="stakeholder-approve"
-		extends="base_layout">
-		<put-attribute name="page-title" value="title.approve.stakeholder"
-			cascade="true" />
+	<definition name="stakeholder-approve" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.approve.stakeholder" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/stakeholder-approve.jsp" />
 	</definition>
-	<definition name="personal-register-report" extends="base_layout">
-		<put-attribute name="page-title" value="title.report.personal.reg"
-					   cascade="true" />
+	<definition name="personal-register-report"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.report.personal.reg" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/reports/personal-register-report.jsp" />
+			value="/WEB-INF/views/reports/personal-register-report.jsp" />
 	</definition>
 	<definition name="bpa-register-report" extends="base_layout">
-		<put-attribute name="page-title" value="title.report.bpa.register"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.report.bpa.register" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/reports/bpa-register-report.jsp" />
+			value="/WEB-INF/views/reports/bpa-register-report.jsp" />
 	</definition>
-	<definition name="citizen-occupancy-certificate-new" extends="base_layout">
-		<put-attribute name="page-title" value="title.occ.certificate"
-					   cascade="true" />
+	<definition name="citizen-occupancy-certificate-new"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.occ.certificate" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/citizen/citizen-occupancy-certificate-new.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/citizen/citizen-occupancy-certificate-new.jsp" />
 	</definition>
-	<definition name="citizen-occupancy-certificate-update" extends="base_layout">
+	<definition name="citizen-occupancy-certificate-update"
+		extends="base_layout">
 		<put-attribute name="page-title" value="title.update.oc"
-					   cascade="true" />
+			cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/citizen/citizen-occupancy-certificate-update.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/citizen/citizen-occupancy-certificate-update.jsp" />
 	</definition>
-	<definition name="citizen-occupancy-certificate-view" extends="base_layout">
+	<definition name="citizen-occupancy-certificate-view"
+		extends="base_layout">
 		<put-attribute name="page-title" value="title.view.oc"
-					   cascade="true" />
+			cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/citizen/citizen-occupancy-certificate-view.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/citizen/citizen-occupancy-certificate-view.jsp" />
 	</definition>
-	<definition name="occupancy-certificate-view" extends="base_layout">
+	<definition name="occupancy-certificate-view"
+		extends="base_layout">
 		<put-attribute name="page-title" value="title.update.oc"
-					   cascade="true" />
+			cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/occupancy-certificate-view.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/occupancy-certificate-view.jsp" />
 	</definition>
-	<definition name="oc-document-scrutiny-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.occ.certificate"
-					   cascade="true" />
+	<definition name="oc-document-scrutiny-form"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.occ.certificate" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/oc-document-scrutiny-form.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/oc-document-scrutiny-form.jsp" />
 	</definition>
-	<definition name="oc-create-document-scrutiny-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.documentScrutiny.create"
-					   cascade="true" />
+	<definition name="oc-create-document-scrutiny-form"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.documentScrutiny.create" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/oc-create-document-scrutiny-form.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/oc-create-document-scrutiny-form.jsp" />
 	</definition>
-	<definition name="oc-schedule-appointment-new" extends="base_layout">
-		<put-attribute name="page-title" value="title.schedule.appmnt"
-					   cascade="true" />
+	<definition name="oc-schedule-appointment-new"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.schedule.appmnt" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/oc-schedule-appointment-new.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/oc-schedule-appointment-new.jsp" />
 	</definition>
-	<definition name="occupancy-certificate-result" extends="base_layout">
+	<definition name="occupancy-certificate-result"
+		extends="base_layout">
 		<put-attribute name="page-title" value="title.view.oc"
-					   cascade="true" />
+			cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/occupancy-certificate-result.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/occupancy-certificate-result.jsp" />
 	</definition>
-	<definition name="reschedule-document-scrutiny-oc" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.re.schedule.doc.scrutiny"
-					   cascade="true" />
+	<definition name="reschedule-document-scrutiny-oc"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="lbl.re.schedule.doc.scrutiny" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/reschedule-document-scrutiny-oc.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/reschedule-document-scrutiny-oc.jsp" />
 	</definition>
-	<definition name="search-document-scrutiny-oc" extends="base_layout">
-		<put-attribute name="page-title" value="title.document.scrutiny"
-					   cascade="true" />
+	<definition name="search-document-scrutiny-oc"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.document.scrutiny" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/search-document-scrutiny-oc.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/search-document-scrutiny-oc.jsp" />
 	</definition>
-	<definition name="view-scheduled-scrutiny-details-result-oc" extends="base_layout">
-		<put-attribute name="page-title" value="title.view.schedule.appmnt"
-					   cascade="true" />
+	<definition name="view-scheduled-scrutiny-details-result-oc"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.view.schedule.appmnt" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/view-scheduled-scrutiny-details-result-oc.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/view-scheduled-scrutiny-details-result-oc.jsp" />
 	</definition>
-	<definition name="oc-create-inspection" extends="base_layout">
-		<put-attribute name="page-title" value="title.inspection.appln"
-					   cascade="true" />
+	<definition name="oc-create-inspection"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.appln" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/inspection/oc-create-inspection-detail-form.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/inspection/oc-create-inspection-detail-form.jsp" />
 	</definition>
 	<definition name="oc-inspection-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.inspection.modify"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.inspection.modify" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/inspection/oc-inspection-detail-update.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/inspection/oc-inspection-detail-update.jsp" />
 	</definition>
-	<definition name="oc-inspection-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.inspection.result"
-					   cascade="true" />
+	<definition name="oc-inspection-success"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.result" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/inspection/oc-inspection-details-result.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/inspection/oc-inspection-details-result.jsp" />
 	</definition>
 	<definition name="oc-show-inspection" extends="base_layout">
-		<put-attribute name="page-title" value="title.inspection.view"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.inspection.view" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/inspection/oc-show-inspection-details.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/inspection/oc-show-inspection-details.jsp" />
 	</definition>
 	<definition name="oc-ltp-create" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.create"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.lettertoparty.create" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-create.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-create.jsp" />
 	</definition>
-	<definition name="oc-ltp-capture-sent-date" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.update"
-					   cascade="true" />
+	<definition name="oc-ltp-capture-sent-date"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-capture-sent-date.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-capture-sent-date.jsp" />
 	</definition>
 	<definition name="oc-ltp-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.update"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-update.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-update.jsp" />
 	</definition>
 	<definition name="oc-ltp-reply" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.update"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-reply.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-reply.jsp" />
 	</definition>
 	<definition name="oc-ltp-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.success"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.lettertoparty.success" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-result.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-result.jsp" />
 	</definition>
 	<definition name="oc-ltp-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.lettertoparty.view"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.lettertoparty.view" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-view.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/letterToParty/oc-ltp-view.jsp" />
 	</definition>
-	<definition name="oc-reschedule-appointment" extends="base_layout">
-		<put-attribute name="page-title" value="title.reschedule.appmnt"
-					   cascade="true" />
+	<definition name="oc-reschedule-appointment"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.reschedule.appmnt" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/oc-reschedule-appointment.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/oc-reschedule-appointment.jsp" />
 	</definition>
-	<definition name="oc-scheduled-appointment-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.reschedule.appmnt"
-					   cascade="true" />
+	<definition name="oc-scheduled-appointment-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.reschedule.appmnt" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/oc-scheduled-appointment-result.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/oc-scheduled-appointment-result.jsp" />
 	</definition>
-	<definition name="stakeholderstate-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.approve.stakeholder" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/stakeholder/stakeholderstate-view.jsp"/>
+	<definition name="stakeholderstate-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.approve.stakeholder" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/stakeholder/stakeholderstate-view.jsp" />
 	</definition>
-	
-	<definition name="view-oc-comparison-report" extends="base_layout">
-	<put-attribute name="page-title" value="lbl.oc.comparison.report" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/occupancyCertificate/view-oc-comparison-report.jsp"/>
+
+	<definition name="view-oc-comparison-report"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="lbl.oc.comparison.report" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/occupancyCertificate/view-oc-comparison-report.jsp" />
 	</definition>
 	<definition name="application-status" extends="base_layout">
-	<put-attribute name="page-title" value="title.view.appln.status"
-		cascade="true" />
-	<put-attribute name="body"
-		value="/WEB-INF/views/application/application-status.jsp" />
-</definition>
+		<put-attribute name="page-title"
+			value="title.view.appln.details" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/application-status.jsp" />
+	</definition>
 </tiles-definitions>

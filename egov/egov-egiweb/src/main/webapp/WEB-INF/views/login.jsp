@@ -49,13 +49,13 @@
 
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
-	String ipAddress = request.getRemoteAddr();
-	String proxiedIPAddress = request.getHeader("X-Forwarded-For");
-	if (StringUtils.isNotBlank(proxiedIPAddress)) {
-		String [] ipAddresses = proxiedIPAddress.split(",");
-		ipAddress = ipAddresses[ipAddresses.length-1].trim();
-	}
-	String userAgentInfo = request.getHeader("User-Agent");
+    String ipAddress = request.getRemoteAddr();
+			String proxiedIPAddress = request.getHeader("X-Forwarded-For");
+			if (StringUtils.isNotBlank(proxiedIPAddress)) {
+				String[] ipAddresses = proxiedIPAddress.split(",");
+				ipAddress = ipAddresses[ipAddresses.length - 1].trim();
+			}
+			String userAgentInfo = request.getHeader("User-Agent");
 %>
 <!DOCTYPE html>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
@@ -90,18 +90,20 @@
 			<script src="<cdn:url value='/resources/global/js/ie8/respond.min.js'/>"></script>
 		<![endif]-->
 </head>
-<body class="page-body index" style="height: 580px;background: #F8F9F9;">
-	<div class="page-container" >
+<body class="page-body index"
+	style="height: 580px; background: #F8F9F9;">
+	<div class="page-container">
 
-		<div class="main-content" >
+		<div class="main-content">
 			<div class="navbar-header col-md-8 col-xs-8">
 				<%-- <a class="navbar-brand" href="javascript:void(0);">
 					<img src="https://www.egovernments.org/wp-content/uploads/2018/11/Logo-2.png" style="background-color:#3b73af" height="90">
-						</a> --%> 
-					<div>
-						<span class="title2" style="color: black; font-family: OpenSans; font-size:30px "><b>${sessionScope.citymunicipalityname}</b></span>
-					</div>
-				
+						</a> --%>
+				<div>
+					<span class="title2"
+						style="color: black; font-family: OpenSans; font-size: 30px"><b>${sessionScope.citymunicipalityname}</b></span>
+				</div>
+
 			</div>
 			<div class="nav-right-menu col-md-4 col-xs-4">
 				<ul class="hr-menu text-right">
@@ -112,7 +114,7 @@
 					</a></li>
 				</ul>
 			</div>
-			
+
 
 			<div style="color: white; height: 80px"></div>
 
@@ -123,7 +125,8 @@
 				</div>
 				<div class="col-md-6 side-space">
 					<div class="col-md-12 community-card">
-						<a href="/portal/citizen/signup" target="_blank">
+						<a href="#"
+							onclick="window.open('/portal/citizen/signup','CTZ',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
 							<div class="rounded-circle">
 								<i class="fa fa-user a"></i>
 							</div>&nbsp;
@@ -149,13 +152,16 @@
 						</a>
 					</div>
 					<div class="col-md-12 community-card">
+					<div class="rounded-circle">
+							<i class="fa fa-search c"></i>
+						</div>
 						<div class="label-font" style="vertical-align: sub">
 							<spring:message code="lbl.check.application.status" />
 							&nbsp;<br> <input type="text"
-								placeholder="Application number" id="appsearchtxt"
-								style="padding: 2px 5px; height: 30px; font-size: 14px; border: 0; padding-left: 0; border-bottom: 1px solid #D0D2D7; outline: none; box-shadow: none;">
+								placeholder="Enter application number" id="appsearchtxt"
+								style="padding: 2px 5px; height: 30px; font-size: 14px; border: 0; padding-left: 0; border-bottom: 1px solid #D0D2D7; outline: none; box-shadow: none; width: initial;">
 							<button class="btn-custom" id="appsearch"
-								style="padding: 4px 5px; border-radius: 4px; font-size: 14px; vertical-align: bottom;">
+								style="padding: 4px 5px; border-radius: 4px; font-size: 14px; vertical-align: sub;">
 								<spring:message code="btn.lbl.search" />
 							</button>
 						</div>
@@ -322,13 +328,13 @@
 				</div>
 			</div>
 		</div>
-		</div>
-		<div>
-			<%@include file="../../resources/guide/landingPage.jsp"%>
-		</div>
+	</div>
+	<div>
+		<%@include file="../../resources/guide/landingPage.jsp"%>
+	</div>
 
 
-		<%-- <footer class="main">
+	<%-- <footer class="main">
 				<div class="col-md-12 feature-top text-center"></div>
 				<div class="col-md-4 top-community-space login-footer-icon" style=" text-align: center ;>
 					<a href="${sessionScope.corpGisLink}" target="_blank"><span><i
@@ -358,155 +364,157 @@
 		</div>
 		</div>
 		</footer> --%>
-		<div class="modal fade" id="fpassword" tabindex="-1" role="dialog"
-			aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal fade" id="fpassword" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						<spring:message code="lbl.recover.pwd" />
+					</h4>
+				</div>
+				<form method="post" role="form" id="forgotPasswordForm">
+					<div class="modal-body">
+						<div class="form-group">
+							<div class="input-group" style="margin: 0;">
+								<div class="input-group-addon style-label">
+									<i class="fa fa-user style-color"></i>
+								</div>
+								<input type="text" class="form-control style-form"
+									name="identity" id="emailOrMobileNum" required="required"
+									placeholder="Mobile Number / Login ID" autocomplete="off" /> <input
+									type="hidden" name="originURL" id="originURL"> <input
+									type="hidden" name="byOTP" id="byOtp">
+							</div>
+							<div id="emailOrMobileNoReq"
+								class="text-right error-msg display-hide">
+								<spring:message code="lbl.pwd.recover.un.req" />
+							</div>
+							<div class="text-right" style="font-size: 12px; color: #6b4f2c;">
+								<spring:message code="lbl.pwd.reset.link" />
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<div class="form-group text-right">
+							<button type="button" class="btn btn-primary recovrbtn">
+								<spring:message code="btn.lbl.recover.link" />
+							</button>
+							<button type="button" id="recoveryotpbtn"
+								class="btn btn-primary recovrbtn">
+								<spring:message code="btn.lbl.recover.otp" />
+							</button>
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">
+								<spring:message code="lbl.close" />
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="cookieornoscript" data-backdrop="static">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Enable Cookies</h4>
+				</div>
+				<div class="modal-body">Your browser seems to have cookies
+					disabled. Make sure cookies are enabled or try opening a new
+					browser window.</div>
+			</div>
+		</div>
+	</div>
+	<c:if test="${not empty param.recovered}">
+		<div class="modal fade" data-backdrop="static" id="resetpwd">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"
-							aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-						<h4 class="modal-title" id="myModalLabel">
+						<h4 class="modal-title">
 							<spring:message code="lbl.recover.pwd" />
 						</h4>
 					</div>
-					<form method="post" role="form" id="forgotPasswordForm">
-						<div class="modal-body">
-							<div class="form-group">
-								<div class="input-group" style="margin: 0;">
-									<div class="input-group-addon style-label">
-										<i class="fa fa-user style-color"></i>
-									</div>
-									<input type="text" class="form-control style-form"
-										name="identity" id="emailOrMobileNum" required="required"
-										placeholder="Mobile Number / Login ID" autocomplete="off" />
-									<input type="hidden" name="originURL" id="originURL"> <input
-										type="hidden" name="byOTP" id="byOtp">
-								</div>
-								<div id="emailOrMobileNoReq"
-									class="text-right error-msg display-hide">
-									<spring:message code="lbl.pwd.recover.un.req" />
-								</div>
-								<div class="text-right" style="font-size: 12px; color: #6b4f2c;">
-									<spring:message code="lbl.pwd.reset.link" />
-								</div>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<div class="form-group text-right">
-								<button type="button" class="btn btn-primary recovrbtn">
-									<spring:message code="btn.lbl.recover.link" />
-								</button>
-								<button type="button" id="recoveryotpbtn"
-									class="btn btn-primary recovrbtn">
-									<spring:message code="btn.lbl.recover.otp" />
-								</button>
-								<button type="button" class="btn btn-default"
-									data-dismiss="modal">
-									<spring:message code="lbl.close" />
-								</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div class="modal fade" id="cookieornoscript" data-backdrop="static">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h4 class="modal-title">Enable Cookies</h4>
-					</div>
-					<div class="modal-body">Your browser seems to have cookies
-						disabled. Make sure cookies are enabled or try opening a new
-						browser window.</div>
-				</div>
-			</div>
-		</div>
-		<c:if test="${not empty param.recovered}">
-			<div class="modal fade" data-backdrop="static" id="resetpwd">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h4 class="modal-title">
-								<spring:message code="lbl.recover.pwd" />
-							</h4>
-						</div>
-						<form method="post" role="form">
-							<c:choose>
-								<c:when test="${param.recovered}">
-									<c:if test="${param.byOTP}">
-										<div class="modal-body">
-											<div class="form-group">
-												<div class="input-group" style="margin: 0;">
-													<div class="input-group-addon style-label">
-														<i class="fa fa-key theme-color style-color"></i>
-													</div>
-													<input style="display: none" type="password"> <input
-														type="password" class="form-control style-form"
-														name="token" id="token" placeholder="Enter your OTP"
-														autocomplete="new-password" required="required" /> <span
-														class="mandatory set-mandatory"></span>
-												</div>
-												<div class="text-right font-12">OTP sent to your
-													registered mobile / email</div>
-											</div>
-										</div>
-										<div class="modal-footer">
-											<button type="button"
-												class="btn btn-custom recovrbtn text-right"
-												id="otprecoverybtn">
-												<spring:message code="title.reset.password" />
-											</button>
-										</div>
-									</c:if>
-									<c:if test="${not param.byOTP}">
-										<div class="modal-body">
-											<div class="text-center font-12">
-												<spring:message
-													code="msg.success.pwd.recov.otp.${param.byOTP}" />
-											</div>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-default text-right"
-												data-dismiss="modal">Close</button>
-										</div>
-									</c:if>
-								</c:when>
-								<c:otherwise>
+					<form method="post" role="form">
+						<c:choose>
+							<c:when test="${param.recovered}">
+								<c:if test="${param.byOTP}">
 									<div class="modal-body">
-										<div class="text-center error-msg">
-											<spring:message code="msg.fail.pwd.recov" />
+										<div class="form-group">
+											<div class="input-group" style="margin: 0;">
+												<div class="input-group-addon style-label">
+													<i class="fa fa-key theme-color style-color"></i>
+												</div>
+												<input style="display: none" type="password"> <input
+													type="password" class="form-control style-form"
+													name="token" id="token" placeholder="Enter your OTP"
+													autocomplete="new-password" required="required" /> <span
+													class="mandatory set-mandatory"></span>
+											</div>
+											<div class="text-right font-12">OTP sent to your
+												registered mobile / email</div>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button"
+											class="btn btn-custom recovrbtn text-right"
+											id="otprecoverybtn">
+											<spring:message code="title.reset.password" />
+										</button>
+									</div>
+								</c:if>
+								<c:if test="${not param.byOTP}">
+									<div class="modal-body">
+										<div class="text-center font-12">
+											<spring:message
+												code="msg.success.pwd.recov.otp.${param.byOTP}" />
 										</div>
 									</div>
 									<div class="modal-footer">
 										<button type="button" class="btn btn-default text-right"
 											data-dismiss="modal">Close</button>
 									</div>
-								</c:otherwise>
-							</c:choose>
-						</form>
-					</div>
+								</c:if>
+							</c:when>
+							<c:otherwise>
+								<div class="modal-body">
+									<div class="text-center error-msg">
+										<spring:message code="msg.fail.pwd.recov" />
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default text-right"
+										data-dismiss="modal">Close</button>
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</form>
 				</div>
 			</div>
-			<script>
-		$(document).ready(function(){
-				$('#resetpwd').modal('show', {backdrop: 'static'});
-		});
+		</div>
+		<script>
+			$(document).ready(function() {
+				$('#resetpwd').modal('show', {
+					backdrop : 'static'
+				});
+			});
 		</script>
-		</c:if>
+	</c:if>
 
-		<script
-			src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js'/>"
-			type="text/javascript"></script>
-		<script
-			src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"
-			type="text/javascript"></script>
-		<script
-			src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
-		<script
-			src="<cdn:url value='/resources/js/app/login.js?rnd=${app_release_no}'/>"
-			type="text/javascript"></script>
+	<script
+		src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js'/>"
+		type="text/javascript"></script>
+	<script
+		src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"
+		type="text/javascript"></script>
+	<script
+		src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
+	<script
+		src="<cdn:url value='/resources/js/app/login.js?rnd=${app_release_no}'/>"
+		type="text/javascript"></script>
 </body>
 </html>
