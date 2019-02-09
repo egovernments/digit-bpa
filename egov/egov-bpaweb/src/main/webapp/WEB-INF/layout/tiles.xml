@@ -692,4 +692,29 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/application-status.jsp" />
 	</definition>
+	
+	<definition name="modifyocfee-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.createocfee.create"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/occupancyCertificate/modifyocfee-form.jsp" />
+	</definition>
+	<definition name="modifyocfee-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.createocfee.view"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/occupancyCertificate/modifyocfee-view.jsp" />
+	</definition>
+	<definition name="createocfee-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.createfee.create"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/occupancyCertificate/createocfee-form.jsp" />
+	</definition>
+	<definition name="createocfee-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.createfee.view"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/occupancyCertificate/createocfee-view.jsp" />
+	</definition>
 </tiles-definitions>

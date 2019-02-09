@@ -216,6 +216,7 @@ public class BpaConstants {
     public static final String BPASTATUS_APPLICATIONFEE_MODULE = "APPLICATIONFEE";
     public static final String BPASTATUS_APPLICATIONFEE_APPROVED = APPROVED;
     public static final String FEETYPE_SANCTIONFEE = "SanctionFee";
+    public static final String OCFEETYPE_SANCTIONFEE = "OCSanctionFee";
     public static final String AUTOCALCULATEFEEBYINSPECTION = "BPA_AUTOCALCULATE_FEE";
     public static final String BPASTATUS_MODULETYPE_REGISTRATIONFEE = "APPLICATIONFEE";
     public static final String BPASTATUS_REGISTRATIONFEE_APPROVED = APPROVED;
@@ -312,6 +313,9 @@ public class BpaConstants {
     //configuration value constants
     public static final String YES = "YES";
     public static final String NO = "NO";
+    public static final String MANUAL = "MANUAL";
+    public static final String AUTOFEECAL = "AUTOFEECAL";
+    public static final String AUTOFEECALEDIT = "AUTOFEECAL_EDIT";
     //App config key name constants
     public static final String DCR_DOC_AUTO_POPULATE_UPLOAD = "DCR_DOC_AUTO_POPULATE_UPLOAD";
 	public static final String DCR_DOC_MANUAL_UPLOAD = "DCR_DOC_MANUAL_UPLOAD";
@@ -321,7 +325,7 @@ public class BpaConstants {
     public static final String REGULAR_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED = "REGULAR_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED";
     public static final String ONE_DAY_PERMIT_APPLN_INTEGRATION_REQUIRED = "ONE_DAY_PERMIT_APPLN_INTEGRATION_REQUIRED";
     public static final String RECENT_DCRRULE_AMENDMENTDAYS = "RECENT_DCRRULE_AMENDMENTDAYS";
-    
+    public static final String OCFEECALULATION = "OC_FEE_CALCULATION";
     // other
     public static final int SCALING_FACTOR = 2;
     public static final String MESSAGE = "message";

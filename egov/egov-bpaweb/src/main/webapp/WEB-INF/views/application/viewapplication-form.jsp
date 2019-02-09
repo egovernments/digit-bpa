@@ -78,7 +78,7 @@
                     <li><a data-toggle="tab" href="#view-inspection" data-tabidx=4><spring:message
                             code='lbl.inspection.appln'/></a></li>
                 </c:if>
-                <c:if test="${not empty bpaApplication.applicationFee}">
+                <c:if test="${not empty bpaApplication.permitFee}">
                     <li><a data-toggle="tab" href="#view-fee" data-tabidx=5><spring:message
                             code='lbl.fee.details'/></a></li>
                 </c:if>
@@ -162,7 +162,7 @@
                         </c:if>
                     </div>
                 </c:if>
-                <c:if test="${not empty bpaApplication.applicationFee}">
+                <c:if test="${not empty bpaApplication.permitFee}">
                     <div id="view-fee" class="tab-pane fade">
                         <div class="panel panel-primary" data-collapsed="0">
                             <jsp:include page="view-bpa-fee-details.jsp"></jsp:include>

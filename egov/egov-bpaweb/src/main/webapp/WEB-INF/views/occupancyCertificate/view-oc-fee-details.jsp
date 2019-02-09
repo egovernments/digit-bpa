@@ -56,7 +56,7 @@
 
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title">
-        <spring:message code="lbl.fee.details"/>
+        <spring:message code="lbl.ocfee.details"/>
     </div>
 </div>
 
@@ -72,7 +72,7 @@
             </thead>
             <tbody id="tblBody">
             <c:set var="totalAmount" value="${0}"/>
-            <c:forEach var="feeType" items="${bpaApplication.permitFee[0].applicationFee.applicationFeeDetail}"
+            <c:forEach var="feeType" items="${occupancyCertificate.occupancyFee[0].applicationFee.applicationFeeDetail}"
                        varStatus="counter">
                 <tr>
                     <td class="text-center view-content"><c:out value="${counter.index+1}"/></td>
@@ -95,13 +95,13 @@
         </table>
     </c:if>
     <c:if
-            test="${bpaApplication.permitFee[0].applicationFee.modifyFeeReason ne null}">
+            test="${occupancyCertificate.occupancyFee[0].applicationFee.modifyFeeReason ne null}">
         <div class="row add-border">
             <div class="col-sm-5 text-right add-margin">
-                <spring:message code="lbl.modify.fee.reason"/>
+                <spring:message code="lbl.modify.ocfee.reason"/>
             </div>
             <div class="col-sm-7 add-margin view-content text-justify">
-                <c:out value="${bpaApplication.permitFee[0].applicationFee.modifyFeeReason}"/>
+                <c:out value="${occupancyCertificate.occupancyFee[0].applicationFee.modifyFeeReason}"/>
             </div>
         </div>
     </c:if>

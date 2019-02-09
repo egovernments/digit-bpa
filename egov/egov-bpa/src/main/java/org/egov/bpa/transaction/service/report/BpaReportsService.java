@@ -326,11 +326,11 @@ public class BpaReportsService {
                 bpaRegister.setFieldVerificationDate(appointmentScheduledList.get(0).getAppointmentDate());
             bpaRegister.setNocDetails(getNocDetails(application));
             bpaRegister.setBuildingPermitNo(application.getPlanPermissionNumber());
-            if (!application.getApplicationFee().isEmpty()) {
+            if (!application.getPermitFee().isEmpty()) {
                 BigDecimal permitFee = BigDecimal.ZERO;
                 BigDecimal additionalFee = BigDecimal.ZERO;
                 BigDecimal otherFee = BigDecimal.ZERO;
-                for (ApplicationFeeDetail appFeeDtl : application.getApplicationFee().get(0)
+                for (ApplicationFeeDetail appFeeDtl : application.getPermitFee().get(0).getApplicationFee()
                         .getApplicationFeeDetail()) {
                     if (appFeeDtl.getBpaFee().getDescription().equalsIgnoreCase(BPA_ADDITIONAL_FEE))
                         additionalFee = appFeeDtl.getAmount();

@@ -51,6 +51,7 @@
 			id="occupancyCertificateUpdateForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
+			<input type="hidden"  id="feeCalculationMode" value="${feeCalculationMode}"/>
 
 			<c:if
 				test="${isFeeCollected && occupancyCertificate.status.code eq 'Approved'}">
@@ -126,6 +127,10 @@
 				<c:if test="${not empty letterToPartyList}">
 					<li><a data-toggle="tab" href="#view-lp" data-tabidx=7><spring:message
 								code='lbl.lp.details' /></a></li>
+				</c:if>
+				<c:if test="${not empty occupancyCertificate.occupancyFee}">
+					<li><a data-toggle="tab" href="#view-fee" data-tabidx=8><spring:message
+								code='lbl.ocfee.details' /></a></li>
 				</c:if>
 			</ul>
 			<div class="tab-content">
@@ -229,6 +234,13 @@
 						</div>
 					</div>
 				</c:if>
+				<c:if test="${not empty occupancyCertificate.occupancyFee}">
+					<div id="view-fee" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-oc-fee-details.jsp"></jsp:include>						
+						</div>
+					</div>
+				</c:if>
 			</div>
 
 			<div class="text-center">
@@ -257,7 +269,12 @@
                             onclick="window.open('/bpa/application/occupancy-certificate/create-inspection/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
                             class="btn btn-primary"> <spring:message code='lbl.btn.inspection.details'/> </a>
                 </c:if>
+                <c:if test="${mode eq 'initiatedForApproval' && (feeCalculationMode eq 'MANUAL' || (feeCalculationMode ne 'MANUAL' && not empty occupancyCertificate.occupancyFee)) }">
+					<a
+							href="/bpa/occupancy-certificate/fee/calculateFee/${occupancyCertificate.applicationNumber}"
+							class="btn btn-primary"> <spring:message code="lbl.btn.modify.fee"/> </a>
 
+				</c:if>
 				<c:if
 					test="${occupancyCertificate.state.value ne 'Field Inspection completed' && occupancyCertificate.status.code eq 'Field Inspected'}">
 					<input type="button" name="save" id="btnSave" value="Save"

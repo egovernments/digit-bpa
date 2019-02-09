@@ -48,6 +48,7 @@ import org.apache.log4j.Logger;
 import org.egov.bpa.autonumber.ApplicationFeeNumberGenerator;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
+import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.repository.ApplicationFeeRepository;
 import org.egov.bpa.utils.BpaConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,11 +68,6 @@ public class ApplicationFeeService {
     @Autowired
     private ApplicationFeeNumberGenerator applicationFeeNumberGenerator;
 
-    public List<ApplicationFee> getApplicationFeeListByApplicationId(Long applicationId) {
-        return applicationFeeRepository.findNonRevisedFeeByApplicationId(applicationId);
-
-    }
-
     @Transactional
     public ApplicationFee saveApplicationFee(ApplicationFee applicationFee) {
         LOGGER.debug("Enter saveApplicationFee");
@@ -80,8 +76,9 @@ public class ApplicationFeeService {
 
         if (applicationFee != null && applicationFee.getId() == null) {
             applicationFee.setChallanNumber(applicationFeeNumberGenerator.generateApplicationFeeNumber(applicationFee));
-            applicationFee.setStatus(bpaStatusService.findByModuleTypeAndCode(BpaConstants.BPASTATUS_APPLICATIONFEE_MODULE,
-                    BpaConstants.BPASTATUS_APPLICATIONFEE_APPROVED));
+            BpaStatus status = bpaStatusService.findByModuleTypeAndCode(BpaConstants.BPASTATUS_APPLICATIONFEE_MODULE,
+                    BpaConstants.APPROVED);
+            applicationFee.setStatus(status);
         }
         applicationFee.setIsRevised(Boolean.FALSE);
         List<ApplicationFeeDetail> applicationFeeDetailsSet = new ArrayList<>();

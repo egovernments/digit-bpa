@@ -68,6 +68,7 @@ import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_NOC_UPDATE;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_AE_AFTER_TS_INSP;
+import static org.egov.bpa.utils.BpaConstants.FWD_TO_AE_FOR_APPROVAL;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_AE_FOR_FIELD_ISPECTION;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVERSEER_AFTER_TS_INSPN;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
@@ -272,6 +273,9 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         else if (FORWARDED_TO_NOC_UPDATE.equalsIgnoreCase(pendingAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus))
             model.addAttribute("showUpdateNoc", true);
+        else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(pendingAction)
+                && !oc.getInspections().isEmpty())
+            mode = "initiatedForApproval";
 
         // To show/hide TS inspection required checkbox
         if (!oc.getInspections().isEmpty()
@@ -376,6 +380,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("stateType", oc.getClass().getSimpleName());
         model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
         model.addAttribute("currentState", oc.getCurrentState() == null ? "" : oc.getCurrentState().getValue());
+    	model.addAttribute("feeCalculationMode",bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION));
+
     }
 
     private void setCityName(final Model model, final HttpServletRequest request) {

@@ -368,7 +368,7 @@ public class BpaNoticeUtil {
             reportParams.put("permitOrderTitle", "ONE DAY BUILDING PERMIT");
         else
             reportParams.put("permitOrderTitle", "GENERAL BUILDING PERMIT");
-        if (!bpaApplication.getApplicationFee().isEmpty())
+        if (!bpaApplication.getPermitFee().isEmpty())
             reportParams.put("permitFeeDetails", getPermitFeeDetails(bpaApplication));
 
         reportParams.put("cityName", ApplicationThreadLocals.getCityName());

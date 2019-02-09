@@ -42,6 +42,7 @@ package org.egov.bpa.transaction.service.oc;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
@@ -74,6 +75,7 @@ import javax.persistence.PersistenceContext;
 import org.egov.bpa.autonumber.OccupancyCertificateNumberGenerator;
 import org.egov.bpa.master.service.CheckListDetailService;
 import org.egov.bpa.service.es.OccupancyCertificateIndexService;
+import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.common.DCRDocumentCommon;
@@ -85,13 +87,19 @@ import org.egov.bpa.transaction.entity.oc.OCDcrDocuments;
 import org.egov.bpa.transaction.entity.oc.OCDocuments;
 import org.egov.bpa.transaction.entity.oc.OCExistingBuilding;
 import org.egov.bpa.transaction.entity.oc.OCExistingBuildingFloor;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
 import org.egov.bpa.transaction.entity.oc.OCNoticeConditions;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
 import org.egov.bpa.transaction.repository.oc.OccupancyCertificateRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.ApplicationFeeService;
+import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
+import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.OccupancyCertificateBillService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.commons.entity.Source;
@@ -116,6 +124,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class OccupancyCertificateService {
+	
+    private static final String NOC_UPDATION_IN_PROGRESS = "NOC updation in progress";
 
     @Autowired
     private BpaUtils bpaUtils;
@@ -149,6 +159,14 @@ public class OccupancyCertificateService {
     private FileStoreService fileStoreService;
     @Autowired
     private OCNoticeConditionsService  ocNoticeConditionsService;
+    @Autowired
+    private OccupancyCertificateFeeCalculation occupancyCertificateFeeCalculation;
+    @Autowired
+    private ApplicationFeeService applicationFeeService;
+    @Autowired
+    private BpaDemandService bpaDemandService;
+    @Autowired
+    private OccupancyFeeRepository ocFeeRepository;
 
     public List<OccupancyCertificate> findByEdcrNumber(String edcrNumber) {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
@@ -203,6 +221,28 @@ public class OccupancyCertificateService {
         processAndStoreGeneralDocuments(oc);
         oc.setDcrDocuments(persistApplnDCRDocuments(oc));
         processAndStoreNocDocuments(oc);
+        if (!WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
+                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(oc.getStatus().getCode())
+                && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(oc.getState().getValue())) {
+        	String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
+            if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
+            		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
+        	OccupancyFee ocFee = new OccupancyFee();
+			try {
+				ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(oc);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(!ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
+        	ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(ocFee.getApplicationFee());
+            ocFee.setApplicationFee(applicationFee);
+            ocFeeRepository.save(ocFee);
+        	oc.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(ocFee.getApplicationFee(), ocFee.getOc().getDemand()));
+       
+			}
+		  }
+        }
         if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(oc.getStatus().getCode())

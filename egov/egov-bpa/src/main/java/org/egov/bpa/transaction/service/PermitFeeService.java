@@ -37,17 +37,28 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.repository;
+package org.egov.bpa.transaction.service;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.ApplicationFee;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.apache.log4j.Logger;
+import org.egov.bpa.transaction.entity.PermitFee;
+import org.egov.bpa.transaction.repository.PermitFeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface ApplicationFeeRepository extends JpaRepository<ApplicationFee, Long> {
+@Service
+@Transactional(readOnly = true)
+public class PermitFeeService {
 
+    private static final Logger LOGGER = Logger.getLogger(PermitFeeService.class);
+    @Autowired
+    private PermitFeeRepository PermitFeerepository;
+
+
+    public List<PermitFee> getPermitFeeListByApplicationId(Long applicationId) {
+        return PermitFeerepository.findNonRevisedFeeByApplicationId(applicationId);
+
+    }
 }

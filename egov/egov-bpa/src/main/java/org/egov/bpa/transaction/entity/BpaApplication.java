@@ -220,7 +220,7 @@ public class BpaApplication extends StateAware<Position> {
 	private List<LettertoParty> lettertoParty = new ArrayList<>();
 	@OrderBy(ORDER_BY_ID_ASC)
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<ApplicationFee> applicationFee = new ArrayList<>();
+	private List<PermitFee> permitFee = new ArrayList<>();
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<BpaDocumentScrutiny> documentScrutiny = new ArrayList<>();
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -492,12 +492,12 @@ public class BpaApplication extends StateAware<Position> {
 		this.lettertoParty = lettertoParty;
 	}
 
-	public List<ApplicationFee> getApplicationFee() {
-		return applicationFee;
+	public List<PermitFee> getPermitFee() {
+		return permitFee;
 	}
 
-	public void setApplicationFee(final List<ApplicationFee> applicationFee) {
-		this.applicationFee = applicationFee;
+	public void setPermitFee(final List<PermitFee> permitFee) {
+		this.permitFee = permitFee;
 	}
 
 	public List<ApplicationStakeHolder> getStakeHolder() {

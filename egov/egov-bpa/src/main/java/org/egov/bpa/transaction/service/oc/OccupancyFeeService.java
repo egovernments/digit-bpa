@@ -37,17 +37,27 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.repository;
+package org.egov.bpa.transaction.service.oc;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.ApplicationFee;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.apache.log4j.Logger;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
+import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface ApplicationFeeRepository extends JpaRepository<ApplicationFee, Long> {
+@Service
+@Transactional(readOnly = true)
+public class OccupancyFeeService {
 
+    private static final Logger LOGGER = Logger.getLogger(OccupancyFeeService.class);
+    @Autowired
+    private OccupancyFeeRepository ocFeeRepository;
+
+
+    public List<OccupancyFee> getOCFeeListByApplicationId(Long applicationId) {
+        return ocFeeRepository.findNonRevisedFeeByApplicationId(applicationId);
+    }
 }

@@ -47,7 +47,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="" method="post"
-			modelAttribute="applicationFee" id="applicationFee"
+			modelAttribute="permitFee" id="permitFee"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
@@ -64,14 +64,14 @@
 								<spring:message code="lbl.application.no" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${applicationFee.application.applicationNumber}"
+								<c:out value="${permitFee.application.applicationNumber}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.application.date" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate value="${applicationFee.application.applicationDate}" pattern="dd/MM/yyyy" var="applicationDate" />
+								<fmt:formatDate value="${permitFee.application.applicationDate}" pattern="dd/MM/yyyy" var="applicationDate" />
 								<c:out value="${applicationDate}" default="N/A"></c:out>
 							</div>
 						</div>
@@ -81,19 +81,19 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out
-									value="${applicationFee.application.serviceType.description}"
+									value="${permitFee.application.serviceType.description}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 add-margin">Amenity Type</div>
 							<c:choose>
-								<c:when test="${empty applicationFee.application.amenityName}">
+								<c:when test="${empty permitFee.application.amenityName}">
 									<div class="col-sm-3 add-margin view-content">
 										<c:out value="N/A"/>
 									</div>
 								</c:when>
 								<c:otherwise>
 									<div class="col-sm-3 add-margin view-content">
-									<c:out value="${applicationFee.application.amenityName}"/>
+									<c:out value="${permitFee.application.amenityName}"/>
 									</div>
 								</c:otherwise>
 							</c:choose>
@@ -103,7 +103,7 @@
 								<spring:message code="lbl.admission.fees" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${applicationFee.application.admissionfeeAmount}"
+								<c:out value="${permitFee.application.admissionfeeAmount}"
 									default="N/A"></c:out>
 							</div>
 						</div>
@@ -116,17 +116,19 @@
 					<div class="form-group">
 						<div class="col-sm-3 add-margin">
 							<form:hidden path="application" id="feeapplicationid"
-								value="${applicationFee.application.id}" />
-							<form:hidden path="status" id="feeapplicationstatusid"
-								value="${applicationFee.status.id}" />
+								value="${permitFee.application.id}" />
+							<form:hidden path="applicationFee.status" id="feeapplicationstatusid"
+								value="${permitFee.applicationFee.status.id}" />
+	                        <form:hidden path="applicationFee" id="applicationfeeid"
+								value="${permitFee.applicationFee.id}" />
 
-							<form:hidden path="id" id="id" value="${applicationFee.id}" />
+							<form:hidden path="id" id="id" value="${permitFee.id}" />
 
 						</div>
 					</div>
 
 					<c:choose>
-						<c:when test="${!applicationFeeDetail.isEmpty()}">
+						<c:when test="${!permitFee.applicationFee.applicationFeeDetail.isEmpty()}">
 							<div class="form-group view-content header-color hidden-xs">
 								<div class="col-sm-5 text-right">
 									<spring:message code="lbl.applicationFee.feeType" />
@@ -136,20 +138,20 @@
 								</div>
 							</div>
 							<c:forEach var="docs"
-								items="${applicationFee.applicationFeeDetail}"
+								items="${permitFee.applicationFee.applicationFeeDetail}"
 								varStatus="status">
 								<div class="form-group">
 									<div class="col-sm-5 add-margin check-text text-right">
 										<c:out value="${docs.bpaFee.description}" />
 										<form:hidden id="applicationFeeDetail${status.index}id"
-											path="applicationFeeDetail[${status.index}].id"
+											path="applicationFee.applicationFeeDetail[${status.index}].id"
 											value="${docs.id}" />
 										<form:hidden id="applicationFeeDetail${status.index}bpaFee"
-											path="applicationFeeDetail[${status.index}].bpaFee"
+											path="applicationFee.applicationFeeDetail[${status.index}].bpaFee"
 											value="${docs.bpaFee.id}" />
 										<form:hidden
 											id="applicationFeeDetail${status.index}applicationFee"
-											path="applicationFeeDetail[${status.index}].applicationFee"
+											path="applicationFee.applicationFeeDetail[${status.index}].applicationFee"
 											value="${docs.applicationFee.id}" />
 
 									</div>
@@ -162,18 +164,18 @@
 													data-pattern="number" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
 													value="${docs.amount}"
-													path="applicationFeeDetail[${status.index}].amount" />
+													path="applicationFee.applicationFeeDetail[${status.index}].amount" />
 											</c:when>
 											<c:otherwise>
 												<form:input class="form-control patternvalidation text-right"
 													data-pattern="decimalvalue" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
 													value="${docs.amount}" disabled="true"
-													path="applicationFeeDetail[${status.index}].amount" />
+													path="applicationFee.applicationFeeDetail[${status.index}].amount" />
 											</c:otherwise>
 										</c:choose>
 										<form:errors
-											path="applicationFeeDetail[${status.index}].amount"
+											path="applicationFee.applicationFeeDetail[${status.index}].amount"
 											cssClass="add-margin error-msg" />
 									</div>
 								</div>
@@ -187,8 +189,8 @@
 						<div class="col-sm-7 add-margin text-center">
 							<form:textarea class="form-control patternvalidation"
 								data-pattern="alphanumericspecialcharacters" rows="3" maxlength="510"
-								id="modifyFeeReason" path="modifyFeeReason" required="required" />
-							<form:errors path="modifyFeeReason"
+								id="modifyFeeReason" path="applicationFee.modifyFeeReason" required="required" />
+							<form:errors path="applicationFee.modifyFeeReason"
 								cssClass="add-margin error-msg" />
 						</div>
 					</div>

@@ -60,6 +60,7 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
+import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.common.entity.bpa.Occupancy;
 import org.egov.commons.service.OccupancyService;
@@ -101,24 +102,27 @@ public class ApplicationBpaFeeCalculationService {
 	private ApplicationFeeService applicationFeeService;
 	@Autowired
 	private OccupancyService occupancyService;
+	@Autowired
+	private PermitFeeService permitFeeService;
 
-	private ApplicationFee getbpaFee(final BpaApplication application) {
-		ApplicationFee applicationFee = null;
+	private PermitFee getbpaFee(final BpaApplication application) {
+		PermitFee permitFee = null;
 		if (application != null) {
-			List<ApplicationFee> applicationFeeList = applicationFeeService
-					.getApplicationFeeListByApplicationId(application.getId());
-			if (applicationFeeList.isEmpty()) {
-				applicationFee = new ApplicationFee();
-				applicationFee.setApplication(application);
-				return applicationFee;
+			List<PermitFee> permitFeeList = permitFeeService
+					.getPermitFeeListByApplicationId(application.getId());
+			if (permitFeeList.isEmpty()) {
+				permitFee = new PermitFee();
+				permitFee.setApplicationFee(new ApplicationFee());
+				permitFee.setApplication(application);
+				return permitFee;
 			} else {
-				return applicationFeeList.get(0);
+				return permitFeeList.get(0);
 			}
 		}
-		return applicationFee;
+		return permitFee;
 	}
 
-	public ApplicationFee calculateBpaSanctionFees(final BpaApplication application) {
+	public PermitFee calculateBpaSanctionFees(final BpaApplication application) {
 		List<Long> serviceTypeList = new ArrayList<>();
 		// getting all service type and amenities to retrieve fee details
 		serviceTypeList.add(application.getServiceType().getId());
@@ -127,14 +131,14 @@ public class ApplicationBpaFeeCalculationService {
 				serviceTypeList.add(serviceType.getId());
 			}
 		}
-		ApplicationFee applicationFee = getbpaFee(application);
+		PermitFee permitFee = getbpaFee(application);
 		// If record rejected and recalculation required again, then this logic
 		// has to be change.
-		if (applicationFee.getApplicationFeeDetail().isEmpty()) {
-			calculateFeeByServiceType(application, serviceTypeList, applicationFee);
+		if (permitFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
+			calculateFeeByServiceType(application, serviceTypeList, permitFee);
 		}
 
-		return applicationFee;
+		return permitFee;
 	}
 
 	/**
@@ -144,7 +148,7 @@ public class ApplicationBpaFeeCalculationService {
 	 */
 
 	public void calculateFeeByServiceType(final BpaApplication application, final List<Long> serviceTypeList,
-			final ApplicationFee applicationFee) {
+			final PermitFee permitFee) {
 		if (application != null) {
 			for (Long serviceTypdId : serviceTypeList) {
 
@@ -296,8 +300,8 @@ public class ApplicationBpaFeeCalculationService {
 							else if (("1006").equals(bpaFee.getCode()))
 								amount = calculatePoleStructureConstructionCharges(inputArea, feeAmount);
 						}
-						applicationFee
-								.addApplicationFeeDetail(buildApplicationFeeDetail(bpaFee, applicationFee, amount));
+						permitFee.getApplicationFee()
+								.addApplicationFeeDetail(buildApplicationFeeDetail(bpaFee, permitFee.getApplicationFee(), amount));
 					}
 				}
 			}

@@ -1,5 +1,19 @@
 package org.egov.bpa.service.es;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.bpa.utils.BpaConstants.BPA_ADDITIONAL_FEE;
+import static org.egov.bpa.utils.BpaConstants.BPA_COMPOUND_FEE;
+import static org.egov.bpa.utils.BpaConstants.BPA_OTHER_FEE;
+import static org.egov.bpa.utils.BpaConstants.BPA_PERMIT_FEE;
+import static org.egov.bpa.utils.BpaConstants.BPA_WELL_FEE;
+import static org.egov.bpa.utils.BpaConstants.ROOF_CNVRSN_FEE;
+import static org.egov.bpa.utils.BpaConstants.SHTR_DOOR_FEE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.bpa.entity.es.BpaIndex;
@@ -27,20 +41,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.bpa.utils.BpaConstants.BPA_ADDITIONAL_FEE;
-import static org.egov.bpa.utils.BpaConstants.BPA_COMPOUND_FEE;
-import static org.egov.bpa.utils.BpaConstants.BPA_OTHER_FEE;
-import static org.egov.bpa.utils.BpaConstants.BPA_PERMIT_FEE;
-import static org.egov.bpa.utils.BpaConstants.BPA_WELL_FEE;
-import static org.egov.bpa.utils.BpaConstants.ROOF_CNVRSN_FEE;
-import static org.egov.bpa.utils.BpaConstants.SHTR_DOOR_FEE;
 
 @Service
 @Transactional(readOnly = true)
@@ -130,9 +130,10 @@ public class BpaIndexService {
 				: bpaApplication.getDemand().getBaseDemand());
 		bpaIndex.setTotalCollectedAmount(bpaApplication.getDemand().getAmtCollected() == null ? BigDecimal.ZERO
 				: bpaApplication.getDemand().getAmtCollected());
-		if (!bpaApplication.getApplicationFee().isEmpty()
-				&& !bpaApplication.getApplicationFee().get(0).getApplicationFeeDetail().isEmpty()) {
-			for (ApplicationFeeDetail appFeeDetail : bpaApplication.getApplicationFee().get(0)
+		if (!bpaApplication.getPermitFee().isEmpty()
+				&& bpaApplication.getPermitFee().get(0).getApplicationFee() != null && 
+				!bpaApplication.getPermitFee().get(0).getApplicationFee().getApplicationFeeDetail().isEmpty()) {
+			for (ApplicationFeeDetail appFeeDetail : bpaApplication.getPermitFee().get(0).getApplicationFee()
 					.getApplicationFeeDetail()) {
 				BpaFee bpaFee = appFeeDetail.getBpaFee();
 				if (bpaFee.getDescription().equals(BPA_PERMIT_FEE)) {

@@ -54,7 +54,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="" method="post"
-			modelAttribute="permitFee" id="permitFee"
+			modelAttribute="occupancyFee" id="occupancyFee"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
@@ -71,14 +71,14 @@
 								<spring:message code="lbl.application.no" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${permitFee.application.applicationNumber}"
+								<c:out value="${occupancyFee.oc.applicationNumber}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.application.date" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${permitFee.application.applicationDate}"
+								<c:out value="${occupancyFee.oc.applicationDate}"
 									default="N/A"></c:out>
 							</div>
 						</div>
@@ -88,12 +88,12 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out
-									value="${permitFee.application.serviceType.description}"
+									value="${occupancyFee.oc.parent.serviceType.description}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 add-margin"><spring:message code="lbl.amenity.type" /></div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${permitFee.application.amenityName}"
+								<c:out value="${occupancyFee.oc.parent.amenityName}"
 									default="N/A"></c:out>
 							</div>
 						</div>
@@ -102,31 +102,30 @@
 								<spring:message code="lbl.admission.fees" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${permitFee.application.admissionfeeAmount}"
+								<c:out value="${occupancyFee.oc.parent.admissionfeeAmount}"
 									default="N/A"></c:out>
 							</div>
 						</div>
 					</div>
 					<div class="panel-heading custom_form_panel_heading">
 						<div class="panel-title">
-							<spring:message code="lbl.fee.details" />
+							<spring:message code="lbl.ocfee.details" />
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-sm-3 add-margin">
-							<form:hidden path="application" id="feeapplicationid"
-								value="${permitFee.application.id}" />
-                            <form:hidden path="applicationFee.status" id="feeapplicationstatusid"
-								value="${permitFee.applicationFee.status.id}" />
-	                        <form:hidden path="applicationFee" id="applicationfeeid"
-								value="${permitFee.applicationFee.id}" />
-							<form:hidden path="id" id="id" value="${permitFee.id}" />
+							<form:hidden path="oc" id="feeocid"
+								value="${occupancyFee.oc.id}" />
+							<form:hidden path="applicationFee.status" id="feeapplicationstatusid"
+								value="${occupancyFee.applicationFee.status.id}" />
+
+							<form:hidden path="id" id="id" value="${occupancyFee.id}" />
 
 						</div>
 					</div>
 
 					<c:choose>
-						<c:when test="${!permitFee.applicationFee.applicationFeeDetail.isEmpty()}">
+						<c:when test="${!occupancyFee.applicationFee.applicationFeeDetail.isEmpty()}">
 							<div class="form-group view-content header-color hidden-xs">
 								<div class="col-sm-5 text-right">
 									<spring:message code="lbl.applicationFee.feeType" />
@@ -136,7 +135,7 @@
 								</div>
 							</div>
 							<c:forEach var="docs"
-								items="${permitFee.applicationFee.applicationFeeDetail}"
+								items="${occupancyFee.applicationFee.applicationFeeDetail}"
 								varStatus="status">
 								<div class="form-group">
 									<div class="col-sm-5 add-margin check-text text-right">
@@ -167,7 +166,7 @@
 					
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.modify.fee.reason" /><span class="mandatory"></span></label>
+								code="lbl.modify.ocfee.reason" /><span class="mandatory"></span></label>
 						<div class="col-sm-7 add-margin text-center">
 							<form:textarea class="form-control patternvalidation"
 								data-pattern="alphanumericspecialcharacters" rows="3" maxlength="510"
@@ -186,6 +185,13 @@
 		</form:form>
 	</div>
 </div>
-
+<script>
+jQuery(document).ready(function($) {
+	jQuery(document).ready(function($) {
+            $(".amount").prop("disabled", disabled);
+        else
+            $(".amount").removeAttr("disabled");
+    });
+</script>
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

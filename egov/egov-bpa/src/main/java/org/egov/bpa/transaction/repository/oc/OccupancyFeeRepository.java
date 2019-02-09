@@ -37,17 +37,19 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.repository;
+package org.egov.bpa.transaction.repository.oc;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.ApplicationFee;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ApplicationFeeRepository extends JpaRepository<ApplicationFee, Long> {
+public interface OccupancyFeeRepository extends JpaRepository<OccupancyFee, Long> {
 
+    @Query("select ocFee from OccupancyFee ocFee where ocFee.oc.id=:applicationId and ocFee.applicationFee.isRevised=false  order by id desc ")
+    List<OccupancyFee> findNonRevisedFeeByApplicationId(@Param("applicationId") Long applicationId);
 }

@@ -1,0 +1,1 @@
+alter table egbpa_application_fee drop column application ;

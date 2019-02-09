@@ -41,13 +41,16 @@ package org.egov.bpa.transaction.repository;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.ApplicationFee;
+import org.egov.bpa.transaction.entity.PermitFee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ApplicationFeeRepository extends JpaRepository<ApplicationFee, Long> {
+public interface PermitFeeRepository extends JpaRepository<PermitFee, Long> {
+
+    @Query("select pf from PermitFee pf where pf.application.id=:applicationId and pf.applicationFee.isRevised=false  order by id desc ")
+    List<PermitFee> findNonRevisedFeeByApplicationId(@Param("applicationId") Long applicationId);
 
 }

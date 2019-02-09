@@ -39,22 +39,9 @@
  */
 package org.egov.bpa.service;
 
-import org.egov.bpa.master.entity.BpaFee;
-import org.egov.bpa.master.entity.BpaFeeDetail;
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.master.service.BpaFeeService;
-import org.egov.bpa.transaction.entity.ApplicationFee;
-import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BuildingDetail;
-import org.egov.bpa.transaction.entity.SiteDetail;
-import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
-import org.egov.bpa.transaction.service.ApplicationFeeService;
-import org.egov.common.entity.bpa.Occupancy;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -64,9 +51,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import org.egov.bpa.master.entity.BpaFee;
+import org.egov.bpa.master.entity.BpaFeeDetail;
+import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.service.BpaFeeService;
+import org.egov.bpa.transaction.entity.ApplicationFee;
+import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
+import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BuildingDetail;
+import org.egov.bpa.transaction.entity.PermitFee;
+import org.egov.bpa.transaction.entity.SiteDetail;
+import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
+import org.egov.bpa.transaction.service.ApplicationFeeService;
+import org.egov.common.entity.bpa.Occupancy;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 public class ApplicationBpaFeeCalculationServiceTest {
 
@@ -346,7 +347,8 @@ public class ApplicationBpaFeeCalculationServiceTest {
     @Test
     public void testCalculatePermissionFee_Residential_with5001Area() {
 
-        ApplicationFee applicationFee = new ApplicationFee();
+        PermitFee permitFee = new PermitFee();
+        permitFee.setApplicationFee(new ApplicationFee());
         BpaApplication application = new BpaApplication();
         application.setId(Long.valueOf(1));
         BuildingDetail buildingDetail = new BuildingDetail();
@@ -397,17 +399,18 @@ public class ApplicationBpaFeeCalculationServiceTest {
         when(bpaFeeService.getActiveSanctionFeeForListOfServices(Long.valueOf(1))).thenReturn(
                 bpaFeeList);
         serviceTypeList.add(Long.valueOf(1));
-        applicationBpaFeeCalculationService.calculateFeeByServiceType(application, serviceTypeList, applicationFee);
-        assertEquals(2, applicationFee.getApplicationFeeDetail().size());
+        applicationBpaFeeCalculationService.calculateFeeByServiceType(application, serviceTypeList, permitFee);
+        assertEquals(2, permitFee.getApplicationFee().getApplicationFeeDetail().size());
       //  assertEquals(BigDecimal.valueOf(40000), applicationFee.getApplicationFeeDetail().get(0).getAmount());
-        assertEquals(BigDecimal.valueOf(0), applicationFee.getApplicationFeeDetail().get(1).getAmount());
+        assertEquals(BigDecimal.valueOf(0), permitFee.getApplicationFee().getApplicationFeeDetail().get(1).getAmount());
 
     }
 
     @Test
     public void testCalculatePermissionFee_Residential_with5000Area() {
 
-        ApplicationFee applicationFee = new ApplicationFee();
+        PermitFee permitFee = new PermitFee();
+        permitFee.setApplicationFee(new ApplicationFee());
         BpaApplication application = new BpaApplication();
         application.setId(Long.valueOf(1));
         BuildingDetail buildingDetail = new BuildingDetail();
@@ -458,17 +461,18 @@ public class ApplicationBpaFeeCalculationServiceTest {
         when(bpaFeeService.getActiveSanctionFeeForListOfServices(Long.valueOf(1))).thenReturn(
                 bpaFeeList);
         serviceTypeList.add(Long.valueOf(1));
-        applicationBpaFeeCalculationService.calculateFeeByServiceType(application, serviceTypeList, applicationFee);
-        assertEquals(2, applicationFee.getApplicationFeeDetail().size());
+        applicationBpaFeeCalculationService.calculateFeeByServiceType(application, serviceTypeList, permitFee);
+        assertEquals(2, permitFee.getApplicationFee().getApplicationFeeDetail().size());
     //    assertEquals(BigDecimal.valueOf(40000), applicationFee.getApplicationFeeDetail().get(0).getAmount());
-        assertEquals(BigDecimal.valueOf(0), applicationFee.getApplicationFeeDetail().get(1).getAmount());
+        assertEquals(BigDecimal.valueOf(0),  permitFee.getApplicationFee().getApplicationFeeDetail().get(1).getAmount());
 
     }
 
     @Test
     public void testCalculatePermissionFee_Residential_with1000Area() {
 
-        ApplicationFee applicationFee = new ApplicationFee();
+        PermitFee permitFee = new PermitFee();
+        permitFee.setApplicationFee(new ApplicationFee());
         BpaApplication application = new BpaApplication();
         application.setId(Long.valueOf(1));
         BuildingDetail buildingDetail = new BuildingDetail();
@@ -519,10 +523,10 @@ public class ApplicationBpaFeeCalculationServiceTest {
         when(bpaFeeService.getActiveSanctionFeeForListOfServices(Long.valueOf(1))).thenReturn(
                 bpaFeeList);
         serviceTypeList.add(Long.valueOf(1));
-        applicationBpaFeeCalculationService.calculateFeeByServiceType(application, serviceTypeList, applicationFee);
-        assertEquals(2, applicationFee.getApplicationFeeDetail().size());
+        applicationBpaFeeCalculationService.calculateFeeByServiceType(application, serviceTypeList, permitFee);
+        assertEquals(2, permitFee.getApplicationFee().getApplicationFeeDetail().size());
     //    assertEquals(BigDecimal.valueOf(35000), applicationFee.getApplicationFeeDetail().get(0).getAmount());
-        assertEquals(BigDecimal.valueOf(1500000), applicationFee.getApplicationFeeDetail().get(1).getAmount());
+        assertEquals(BigDecimal.valueOf(1500000), permitFee.getApplicationFee().getApplicationFeeDetail().get(1).getAmount());
 
     }
 

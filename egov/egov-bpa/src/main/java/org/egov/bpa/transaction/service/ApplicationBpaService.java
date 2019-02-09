@@ -99,6 +99,7 @@ import org.egov.bpa.master.service.RegistrarOfficeVillageService;
 import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.ApplicationDocument;
+import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationNocDocument;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -106,11 +107,13 @@ import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
 import org.egov.bpa.transaction.entity.DCRDocument;
+import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.StoreDCRFiles;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
 import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
 import org.egov.bpa.transaction.repository.DcrDocumentRepository;
+import org.egov.bpa.transaction.repository.PermitFeeRepository;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
@@ -234,6 +237,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 	private MessageSource bpaMessageSource;
     @Autowired
     private DcrRestService dcrRestService;
+    @Autowired
+    private PermitFeeRepository permitFeeRepository;
     
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -447,15 +452,23 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // For one day permit
         if (application.getIsOneDayPermitApplication()
                 && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())) {
-            bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
-                    .saveApplicationFee(applicationBpaFeeCalculationService.calculateBpaSanctionFees(application)));
+        	PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
+		
+        	ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
+            permitFee.setApplicationFee(applicationFee);
+            permitFeeRepository.save(permitFee);
+        	application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(), permitFee.getApplication().getDemand()));
         }
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
-            bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
-                    .saveApplicationFee(applicationBpaFeeCalculationService.calculateBpaSanctionFees(application)));
-        }
+			PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
+
+        	ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
+            permitFee.setApplicationFee(applicationFee);
+            permitFeeRepository.save(permitFee);
+        	application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(), permitFee.getApplication().getDemand()));
+         }
         if (WF_APPROVE_BUTTON.equals(workFlowAction)) {
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
             application.setPlanPermissionDate(new Date());

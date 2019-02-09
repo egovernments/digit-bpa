@@ -37,10 +37,10 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.web.controller.transaction;
+package org.egov.bpa.web.controller.transaction.occupancy;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -51,19 +51,24 @@ import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.PermitFee;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.repository.PermitFeeRepository;
+import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
-import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.bpa.transaction.service.BpaStatusService;
+import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
 import org.egov.bpa.transaction.service.PermitFeeService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
+import org.egov.bpa.transaction.service.oc.OccupancyFeeService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -79,17 +84,19 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping(value = "/application")
-public class UpdateBpaPermitFeeController {
-    private static final String PERMIT_FEE = "permitFee";
-    private static final String BPA_APPLICATION = "bpaApplication";
-    private static final String CREATEBPAFEE_FORM = "createbpafee-form";
-    private static final String CREATEBPAFEE_VIEW = "createbpafee-view";
+@RequestMapping(value = "/occupancy-certificate/fee")
+public class UpdateOccupancyCertificateFeeController {
+    private static final String OC_FEE = "occupancyFee";
+    private static final String OC = "oc";
+    private static final String CREATEOCFEE_FORM = "createocfee-form";
+    private static final String MODIFYOCFEE_FORM = "modifyocfee-form"; 
+    private static final String CREATEOCFEE_VIEW = "createocfee-view"; 
+    private static final String MODIFYOCFEE_VIEW = "modifyocfee-view"; 
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String MESSAGE = "message";
 
     @Autowired
-    protected ApplicationBpaService applicationBpaService;
+    protected OccupancyCertificateService ocService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
@@ -107,66 +114,89 @@ public class UpdateBpaPermitFeeController {
     @Autowired
     protected PermitFeeRepository permitFeeRepository;
     @Autowired
-    private ApplicationBpaFeeCalculationService applicationBpaFeeCalculationService;
+    protected ApplicationBpaFeeCalculationService applicationBpaFeeCalculationService;
+    @Autowired
+    protected OccupancyFeeService ocFeeService;
+    @Autowired
+    protected OccupancyCertificateFeeCalculation occupancyCertificateFeeCalculation;
+    @Autowired
+    protected OccupancyFeeRepository ocFeeRepository;
+    @Autowired
+    protected BpaUtils bpaUtils;
     @ModelAttribute
-    public PermitFee getBpaApplication(@PathVariable final String applicationNumber) {
-        BpaApplication bpaApplication = applicationBpaService.findByApplicationNumber(applicationNumber);
-        PermitFee permitFee = new PermitFee();
-        if (bpaApplication != null) {
-            List<PermitFee> permitFeeList = permitFeeService
-                    .getPermitFeeListByApplicationId(bpaApplication.getId());
-            if (permitFeeList.isEmpty()) {
-            	permitFee.setApplication(bpaApplication);
-                return permitFee;
+    public OccupancyFee getOCApplication(@PathVariable final String applicationNumber) {
+    	OccupancyCertificate oc = ocService.findByApplicationNumber(applicationNumber);
+        OccupancyFee ocFee = new OccupancyFee();
+        if (oc != null) {
+            List<OccupancyFee> ocFeeList = ocFeeService
+                    .getOCFeeListByApplicationId(oc.getId());
+            if (ocFeeList.isEmpty()) {
+            	ocFee.setOc(oc);
+                return ocFee;
             } else {
-                return permitFeeList.get(0);
+                return ocFeeList.get(0);
             }
         }
-        return permitFee;
+        return ocFee;
     }
    
 
     @RequestMapping(value = "/calculateFee/{applicationNumber}", method = RequestMethod.GET)
     public String calculateFeeform(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
-        PermitFee permitFee = getBpaApplication(applicationNumber);
-        if (permitFee != null && permitFee.getApplication() != null
+        OccupancyFee ocFee = getOCApplication(applicationNumber);
+        if (ocFee != null && ocFee.getOc() != null
                             ) {
-            loadViewdata(model, permitFee);
+            loadViewdata(model, ocFee);
 
             // check fee calculate first time or update ? Check inspection is captured for existing application ?
 
             // Get all sanction fee by service type
             List<BpaFee> bpaSanctionFees = bpaFeeService
-                    .getAllActiveSanctionFeesByServiceId(permitFee.getApplication().getServiceType().getId(),BpaConstants.FEETYPE_SANCTIONFEE);
-
-            if (getAppConfigValueByPassingModuleAndType(BpaConstants.EGMODULE_NAME, BpaConstants.AUTOCALCULATEFEEBYINSPECTION)) {
+                    .getAllActiveSanctionFeesByServiceId(ocFee.getOc()
+                    		.getParent().getServiceType().getId(),BpaConstants.OCFEETYPE_SANCTIONFEE);
+            String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
+            model.addAttribute("sanctionFees", bpaSanctionFees);
+            model.addAttribute("feeCalculationMode", feeCalculationMode);
+            if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
+            		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)){
                 // calculate fee by passing sanction list, inspection latest object.
                 // based on fee code, define calculation logic for each servicewise.
-            	permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(permitFee.getApplication());
+            	try {
+					ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(ocFee.getOc());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                model.addAttribute(OC_FEE, ocFee);
+
+                return MODIFYOCFEE_FORM;
             } else {
 
-                if (permitFee.getApplicationFee().getId() == null) {
-                	permitFee.getApplicationFee().setStatus(bpaStatusService
+                if (ocFee.getApplicationFee() == null) {
+                	ocFee.setApplicationFee(new ApplicationFee());
+                	ocFee.getApplicationFee().setStatus(bpaStatusService
                             .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE_REGISTRATIONFEE,
-                                    BpaConstants.BPASTATUS_REGISTRATIONFEE_APPROVED));
-                	permitFee.getApplicationFee().setFeeDate(new Date());
+                                    BpaConstants.APPROVED));
+                	ocFee.getApplicationFee().setFeeDate(new Date());
 
                     for (BpaFee bpaFee : bpaSanctionFees) {
                         ApplicationFeeDetail applicationDtl = new ApplicationFeeDetail();
-                        applicationDtl.setApplicationFee(permitFee.getApplicationFee());
+                        applicationDtl.setApplicationFee(ocFee.getApplicationFee());
                         applicationDtl.setBpaFee(bpaFee);
                         applicationDtl.setAmount(BigDecimal.ZERO);
-                        permitFee.getApplicationFee().addApplicationFeeDetail(applicationDtl);
+                        ocFee.getApplicationFee().addApplicationFeeDetail(applicationDtl);
                     }
                 }
-                // If manual process, then return list of sanction fee.
+                model.addAttribute(OC_FEE, ocFee);
+
+                BigDecimal amount = ocFee.getApplicationFee().getApplicationFeeDetail().stream().map(ApplicationFeeDetail::getAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                return  amount.compareTo(BigDecimal.ZERO) > 0 ? MODIFYOCFEE_FORM : CREATEOCFEE_FORM;
             }
-            model.addAttribute(PERMIT_FEE, permitFee);
-            model.addAttribute("sanctionFees", bpaSanctionFees);
         }
 
-        return CREATEBPAFEE_FORM;
+        return MODIFYOCFEE_FORM;
     }
 
     public Boolean getAppConfigValueByPassingModuleAndType(String moduleName, String autocalculateFee) {
@@ -176,37 +206,35 @@ public class UpdateBpaPermitFeeController {
                 appConfigValue != null && !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : "NO");
     }
 
-    private void loadViewdata(final Model model, final PermitFee permitFee) {
-        model.addAttribute("stateType", permitFee.getApplication().getClass().getSimpleName());
+    private void loadViewdata(final Model model, final OccupancyFee ocFee) {
+        model.addAttribute("stateType", ocFee.getOc().getClass().getSimpleName());
         model.addAttribute(ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-        model.addAttribute("currentState", permitFee.getApplication().getCurrentState().getValue());
-        model.addAttribute(PERMIT_FEE, permitFee);
-        model.addAttribute(BPA_APPLICATION, permitFee.getApplication());
+        model.addAttribute("currentState", ocFee.getOc().getCurrentState().getValue());
+        model.addAttribute(OC_FEE, ocFee);
+        model.addAttribute(OC, ocFee.getOc());
 
     }
 
     @RequestMapping(value = "/calculateFee/{applicationNumber}", method = RequestMethod.POST)
-    public String calculateFeeform(@Valid @ModelAttribute(PERMIT_FEE) PermitFee permitFee,
+    public String calculateFeeform(@Valid @ModelAttribute(OC_FEE) OccupancyFee ocFee,
             @PathVariable final String applicationNumber,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
 
         // save sanction fee in application fee
         // generate demand based on sanction list, application
-        ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
-        permitFee.setApplicationFee(applicationFee);
-        EgDemand demand = bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(), permitFee.getApplication().getDemand());
-        if (permitFee.getApplication().getDemand() == null) { 
-        	permitFee.getApplication().setDemand(demand);	
+        ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(ocFee.getApplicationFee());
+        ocFee.setApplicationFee(applicationFee);
+        EgDemand demand = bpaDemandService.generateDemandUsingSanctionFeeList(ocFee.getApplicationFee(), ocFee.getOc().getDemand());
+        if (ocFee.getOc().getDemand() == null) { 
+        	ocFee.getOc().setDemand(demand);	
 		}
-        permitFeeRepository.save(permitFee);
-        
+        ocFeeRepository.save(ocFee);
+
         String message = messageSource.getMessage("msg.create.calculateFee", new String[] {
-                permitFee.getApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
+                ocFee.getOc().getApplicationNumber() }, LocaleContextHolder.getLocale());
         model.addAttribute(MESSAGE, message);
 
-        return CREATEBPAFEE_VIEW;
-        // redirect to success page.
-
+        return StringUtils.isBlank(applicationFee.getModifyFeeReason()) ? CREATEOCFEE_VIEW : MODIFYOCFEE_VIEW;
     }
 }

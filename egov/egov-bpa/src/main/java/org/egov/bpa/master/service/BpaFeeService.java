@@ -90,6 +90,16 @@ public class BpaFeeService {
 		return feeCrit.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<BpaFee> getActiveOCSanctionFeeForListOfServices(Long serviceType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFee.class, "bpaFeeObj")
+				.createAlias("bpaFeeObj.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.isActive", Boolean.TRUE));
+		feeCrit.add(Restrictions.ilike("bpaFeeObj.feeType", BpaConstants.OCFEETYPE_SANCTIONFEE));
+		return feeCrit.list();
+	}
+	
 	
 	public List<BpaFee> getAllActiveBpaFees(){
 		return bpaFeeRepository.findAllByIsActiveOrderByServiceType_IdAsc(true);  

@@ -592,6 +592,42 @@ public class BpaUtils {
 		return exstArea;
 	}
 
+	public static Map<String,BigDecimal> getOCTotalProposedArea(List<OCBuilding> buildingDetails) {
+		BigDecimal totalBltUpArea = BigDecimal.ZERO;
+		BigDecimal totalFloorArea = BigDecimal.ZERO;
+		BigDecimal totalCarpetArea = BigDecimal.ZERO;
+		Map<String,BigDecimal> proposedArea = new HashMap<>();
+		for (OCBuilding building : buildingDetails) {
+			for (OCFloor floor : building.getFloorDetails()) {
+				totalBltUpArea = totalBltUpArea.add(floor.getPlinthArea());
+				totalFloorArea = totalFloorArea.add(floor.getFloorArea());
+				totalCarpetArea = totalCarpetArea.add(floor.getCarpetArea());
+			}
+		}
+		proposedArea.put("totalBltUpArea",totalBltUpArea);
+		proposedArea.put("totalFloorArea",totalFloorArea);
+		proposedArea.put("totalCarpetArea",totalCarpetArea);
+		return proposedArea;
+	}
+	
+
+	public String getAppConfigValueForFeeCalculation(String moduleName, String mode) {
+		final List<AppConfigValues> appConfigValue = appConfigValueService.getConfigValuesByModuleAndKey(moduleName,
+				mode);
+		String feeCalculationMode = BpaConstants.MANUAL;
+		
+		if(appConfigValue != null && !appConfigValue.isEmpty()) {
+			String configValue = appConfigValue.get(0).getValue();
+			if(configValue.equalsIgnoreCase(BpaConstants.AUTOFEECAL))
+			return configValue;
+			else if(configValue.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT))
+				return configValue;
+			else
+				return feeCalculationMode;
+		}
+			return feeCalculationMode;
+	}
+	
 	public boolean isDocScrutinyIntegrationRequired() {
 		return getAppconfigValueByKeyName(DOC_SCRUTINY_INTEGRATION_REQUIRED).equalsIgnoreCase(YES);
 	}

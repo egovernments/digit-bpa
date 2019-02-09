@@ -164,6 +164,9 @@ public class OccupancyCertificate extends StateAware<Position> {
     private List<OCBuilding> buildings = new ArrayList<>();
 
     @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OccupancyFee> occupancyFee = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("buildingNumber ASC")
     private List<OCExistingBuilding> existingBuildings = new ArrayList<>();
 
@@ -304,7 +307,15 @@ public class OccupancyCertificate extends StateAware<Position> {
         this.demand = demand;
     }
 
-    public Date getCommencedDate() {
+    public List<OccupancyFee> getOccupancyFee() {
+		return occupancyFee;
+	}
+
+	public void setOccupancyFee(List<OccupancyFee> occupancyFee) {
+		this.occupancyFee = occupancyFee;
+	}
+
+	public Date getCommencedDate() {
         return commencedDate;
     }
 

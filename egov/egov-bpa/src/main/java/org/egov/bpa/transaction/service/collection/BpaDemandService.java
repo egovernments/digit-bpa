@@ -96,17 +96,17 @@ public class BpaDemandService {
     }
 
     @Transactional
-    public ApplicationFee generateDemandUsingSanctionFeeList(ApplicationFee applicationFee) {
+    public EgDemand generateDemandUsingSanctionFeeList(ApplicationFee applicationFee, EgDemand demand) {
 
         final Installment installment = getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date());
 
         List<Long> delDmdDetailList = new ArrayList<>();
 
-        EgDemand dmd = applicationFee.getApplication().getDemand() != null ? applicationFee.getApplication().getDemand()
+        EgDemand dmd = demand != null ? demand
                 : buildDemandObject(new HashSet<EgDemandDetails>(), BigDecimal.ZERO,
                         installment);
 
-        Set<EgDemandDetails> demandDetailsSet = applicationFee.getApplication().getDemand().getEgDemandDetails();
+        Set<EgDemandDetails> demandDetailsSet = demand.getEgDemandDetails();
         HashMap<String, BigDecimal> feecodeamountmap = new HashMap<>();
         HashMap<String, Long> feecodedemanddetailsIdmap = new HashMap<>();
 
@@ -167,11 +167,12 @@ public class BpaDemandService {
 
         dmd.setBaseDemand(totaldmdAmt);
 
-        if (applicationFee.getApplication().getDemand() == null) {
-            applicationFee.getApplication().setDemand(dmd);
-
-        }
-        return applicationFee;
+		/*
+		 * if (demand == null) { applicationFee.getApplication().setDemand(dmd);
+		 * 
+		 * }
+		 */
+        return dmd;
     }
 
     protected EgDemand buildDemandObject(Set<EgDemandDetails> demandDetailSet,

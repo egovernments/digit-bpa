@@ -54,7 +54,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="" method="post"
-			modelAttribute="permitFee" id="permitFee"
+			modelAttribute="occupancyFee" id="occupancyFee"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
@@ -71,14 +71,14 @@
 								<spring:message code="lbl.application.no" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${permitFee.application.applicationNumber}"
+								<c:out value="${occupancyFee.oc.applicationNumber}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.application.date" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${permitFee.application.applicationDate}"
+								<c:out value="${occupancyFee.oc.applicationDate}"
 									default="N/A"></c:out>
 							</div>
 						</div>
@@ -88,92 +88,91 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out
-									value="${permitFee.application.serviceType.description}"
+									value="${occupancyFee.oc.parent.serviceType.description}"
 									default="N/A"></c:out>
 							</div>
-							<div class="col-sm-3 add-margin"><spring:message code="lbl.amenity.type" /></div>
-							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${permitFee.application.amenityName}"
-									default="N/A"></c:out>
-							</div>
+							<div class="col-sm-3 add-margin">Amenity Type</div>
+							<c:choose>
+								<c:when test="${empty occupancyFee.oc.parent.amenityName}">
+									<div class="col-sm-3 add-margin view-content">
+										<c:out value="N/A"/>
+									</div>
+								</c:when>
+								<c:otherwise>
+									<div class="col-sm-3 add-margin view-content">
+										<c:out value="${occupancyFee.oc.parent.amenityName}"/>
+									</div>
+								</c:otherwise>
+							</c:choose>
 						</div>
 						<div class="row add-border">
 							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.admission.fees" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${permitFee.application.admissionfeeAmount}"
+								<c:out value="${occupancyFee.oc.parent.admissionfeeAmount}"
 									default="N/A"></c:out>
 							</div>
 						</div>
 					</div>
 					<div class="panel-heading custom_form_panel_heading">
 						<div class="panel-title">
-							<spring:message code="lbl.fee.details" />
+							<spring:message code="lbl.ocfee.details" />
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-sm-3 add-margin">
-							<form:hidden path="application" id="feeapplicationid"
-								value="${permitFee.application.id}" />
-                            <form:hidden path="applicationFee.status" id="feeapplicationstatusid"
-								value="${permitFee.applicationFee.status.id}" />
-	                        <form:hidden path="applicationFee" id="applicationfeeid"
-								value="${permitFee.applicationFee.id}" />
-							<form:hidden path="id" id="id" value="${permitFee.id}" />
+							<form:hidden path="oc" id="feeocid"
+								value="${occupancyFee.oc.id}" />
+							<form:hidden path="applicationFee.status" id="feeapplicationstatusid"
+								value="${occupancyFee.applicationFee.status.id}" />
+									<form:hidden path="applicationFee" id="feeapplicationid"
+								value="${occupancyFee.applicationFee.id}" />
+							<form:hidden path="id" id="id" value="${occupancyFee.id}" />
 
 						</div>
 					</div>
 
 					<c:choose>
-						<c:when test="${!permitFee.applicationFee.applicationFeeDetail.isEmpty()}">
-							<div class="form-group view-content header-color hidden-xs">
-								<div class="col-sm-5 text-right">
-									<spring:message code="lbl.applicationFee.feeType" />
-								</div>
-								<div class="col-sm-2 text-center">
-									<spring:message code="lbl.applicationFee.amount" />
-								</div>
-							</div>
-							<c:forEach var="docs"
-								items="${permitFee.applicationFee.applicationFeeDetail}"
-								varStatus="status">
-								<div class="form-group">
-									<div class="col-sm-5 add-margin check-text text-right">
-										<c:out value="${docs.bpaFee.description}" />
-										<form:hidden id="applicationFeeDetail${status.index}bpaFee"
-											path="applicationFee.applicationFeeDetail[${status.index}].bpaFee"
-											value="${docs.bpaFee.id}" />
-										<form:hidden
-											id="applicationFeeDetail${status.index}applicationFee"
-											path="applicationFee.applicationFeeDetail[${status.index}].applicationFee"
-											value="${docs.applicationFee.id}" />
-
-									</div>
-									<div class="col-sm-2 add-margin text-right">
-										<form:input class="form-control patternvalidation text-right"
-											data-pattern="decimalvalue" maxlength="10"
-											id="applicationFeeDetail${status.index}amount"
-											value="${docs.amount}" readonly="true"
-											path="applicationFee.applicationFeeDetail[${status.index}].amount" />
-										<form:errors
-											path="applicationFee.applicationFeeDetail[${status.index}].amount"
-											cssClass="add-margin error-msg" />
-									</div>
-								</div>
-							</c:forEach>
+						<c:when test="${!applicationFeeDetail.isEmpty()}">
+                            <table class="table table-striped table-bordered" id="bpafeedetail" style="width:50%;margin:0 auto;">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"><spring:message code="lbl.applicationFee.feeType"/></th>
+                                    <th class="text-center"><spring:message code="lbl.applicationFee.amount"/></th>
+                                </tr>
+                                </thead>
+                                <tbody id="tblBody">
+                                <c:set var="totalAmount" value="${0}"/>
+                                <c:forEach var="docs"
+                                           items="${occupancyFee.applicationFee.applicationFeeDetail}"
+                                           varStatus="status">
+                                    <tr>
+                                        <td class="text-left view-content"><c:out value="${docs.bpaFee.description}"/></td>
+                                        <td class="text-right view-content"><c:set var="totalAmount"
+                                                                                   value="${totalAmount + docs.amount}"/>
+                                            <fmt:formatNumber type="number" maxFractionDigits="2" value="${docs.amount}"/>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td class="text-left view-content">Total Amount</td>
+                                    <td class="text-right view-content"><fmt:formatNumber type="number" maxFractionDigits="2"
+                                                                                          value="${totalAmount}"/></td>
+                                </tr>
+                                </tfoot>
+                            </table>
 						</c:when>
 					</c:choose>
 					
 					<div class="form-group">
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.modify.fee.reason" /><span class="mandatory"></span></label>
-						<div class="col-sm-7 add-margin text-center">
-							<form:textarea class="form-control patternvalidation"
-								data-pattern="alphanumericspecialcharacters" rows="3" maxlength="510"
-								id="modifyFeeReason" path="applicationFee.modifyFeeReason" readonly="true" />
-							<form:errors path="applicationFee.modifyFeeReason"
-								cssClass="add-margin error-msg" />
+						<label class="col-sm-3 control-label text-center"><spring:message
+								code="lbl.modify.ocfee.reason" /><span class="mandatory"></span></label>
+						<div class="col-sm-7 add-margin text-left">
+							<c:out value="${oc.applicationFee.modifyFeeReason}"
+								   default="N/A"></c:out>
 						</div>
 					</div>
 				</div>
