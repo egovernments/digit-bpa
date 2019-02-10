@@ -49,50 +49,66 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title"><spring:message code="lbl.appln.details"/></div>
+	<div class="panel-title">
+		<spring:message code="lbl.appln.details" />
+	</div>
 </div>
 <div class="panel-body">
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.app.num"/>
+			<spring:message code="lbl.app.num" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.applicationNumber}" default="N/A"></c:out>
+			<c:out value="${occupancyCertificate.applicationNumber}"
+				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.application.date"/>
+			<spring:message code="lbl.application.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${occupancyCertificate.applicationDate}" pattern="dd/MM/yyyy" var="applicationDate" />
+			<fmt:formatDate value="${occupancyCertificate.applicationDate}"
+				pattern="dd/MM/yyyy" var="applicationDate" />
 			<c:out value="${applicationDate}" default="N/A"></c:out>
 		</div>
 	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.work.commence.date"/>
+			<spring:message code="lbl.work.commence.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${occupancyCertificate.commencedDate}" pattern="dd/MM/yyyy" var="commencedDate" />
+			<fmt:formatDate value="${occupancyCertificate.commencedDate}"
+				pattern="dd/MM/yyyy" var="commencedDate" />
 			<c:out value="${commencedDate}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.work.completion.date"/>
+			<spring:message code="lbl.work.completion.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${occupancyCertificate.completionDate}" pattern="dd/MM/yyyy" var="completionDate" />
+			<fmt:formatDate value="${occupancyCertificate.completionDate}"
+				pattern="dd/MM/yyyy" var="completionDate" />
 			<c:out value="${completionDate}" default="N/A"></c:out>
 		</div>
-		<div class="col-sm-6 add-margin view-content">
-			<a
-					target="popup" class="btn btn-primary" onclick="window.open('/bpa/application/citizen/occupancy-certificate/comparison-report/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
-					class="btn btn-primary"><spring:message code="lbl.oc.comparison.report"/></a>
+
+	</div>
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.edcr.number" />
 		</div>
-		
+		<div class="col-sm-3 add-margin view-content">
+		<input type="hidden" id="ocEDcrNumber" value="${occupancyCertificate.eDcrNumber}">
+			<c:out value="${occupancyCertificate.eDcrNumber}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-6 add-margin view-content">
+			<a target="popup" class="btn btn-primary"
+				onclick="window.open('/bpa/application/citizen/occupancy-certificate/comparison-report/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
+				class="btn btn-primary"><spring:message
+					code="lbl.oc.comparison.report" /></a>
+		</div>
 	</div>
 </div>
 

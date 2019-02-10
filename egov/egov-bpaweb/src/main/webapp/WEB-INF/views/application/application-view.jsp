@@ -368,6 +368,19 @@
 		<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
 		<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
 		<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>
+		<input type="hidden" id="rejectAppln" value="<spring:message code='msg.confirm.reject.appln' />" />
+		<input type="hidden" id="sendBackApplnPreOfficial" value="<spring:message code='msg.confirm.sendback.previous.approved.official' />" />
+		<input type="hidden" id="approveAppln" value="<spring:message code='msg.confirm.approve.appln' />" />
+		<input type="hidden" id="forwardAppln" value="<spring:message code='msg.confirm.forward.application' />" />
+		<input type="hidden" id="generatePermitOrder" value="<spring:message code='msg.confirm.generate.permitorder' />" />
+		<input type="hidden" id="permitRequired" value="<spring:message code='msg.validate.permit.mandatory' />" />
+		<input type="hidden" id="generateRejectNotice" value="<spring:message code='msg.confirm.generate.rejection.notice' />" />
+		<input type="hidden" id="townsurvFieldInspeRequest" value="<spring:message code='msg.validate.townsurveyor.filedinspec.request' />" />
+		<input type="hidden" id="townsurvFieldInspeRequired" value="<spring:message code='msg.validate.townsurveyor.fieldinspec.required' />" />
+		<input type="hidden" id="townsurvCommentsRequired" value="<spring:message code='msg.validate.comments.reqfor.townsurveyor' />" />
+		<input type="hidden" id="rejectionReasonMandatory" value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
+		<input type="hidden" id="rejectionCommentsRequired" value="<spring:message code='msg.validate.enter.rejection.comments' />" />
+		<input type="hidden" id="applnSendbackCommentsRequired" value="<spring:message code='msg.validate.comments.required.toappln.sentback' />" />
 	</div>
 </div>
 
