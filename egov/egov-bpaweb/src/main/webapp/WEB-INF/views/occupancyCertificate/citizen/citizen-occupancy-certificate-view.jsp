@@ -157,23 +157,28 @@
 						<c:if test="${ mode eq 'showRescheduleToCitizen'}">
 							<td><a
 								href="/bpa/application/occupancy-certificate/scrutiny/reschedule/${occupancyCertificate.applicationNumber}"
-								class="btn btn-primary"> <spring:message code='lbl.btn.reschedule.appointment' /> </a>
-						</td>
-					</c:if>
-					<c:if test="${ occupancyCertificate.status.code eq 'Scheduled For Document Scrutiny'
+								class="btn btn-primary"> <spring:message
+										code='lbl.btn.reschedule.appointment' />
+							</a></td>
+						</c:if>
+						<c:if
+							test="${ occupancyCertificate.status.code eq 'Scheduled For Document Scrutiny'
 								|| occupancyCertificate.status.code eq 'Pending For Rescheduling For Document Scrutiny'
 								|| occupancyCertificate.status.code eq 'Rescheduled For Document Scrutiny'}">
 							<td><a
 								href="/bpa/application/occupancy-certificate/scrutiny/view/${occupancyCertificate.applicationNumber}"
 								target="popup" class="btn btn-primary"
 								onclick="window.open('/bpa/application/occupancy-certificate/scrutiny/view/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;">
-									<spring:message code='title.view.schedule.appmnt' /> </a></td>
+									<spring:message code='title.view.schedule.appmnt' />
+							</a></td>
 						</c:if>
 						<c:if
 							test="${occupancyCertificate.status.code eq  'Letter To Party Created' && mode eq 'showLPDetails' }">
 							<td><a
 								href="/bpa/occupancy-certificate/letter-to-party/reply/${occupancyCertificate.applicationNumber}/${letterToPartyList.get(0).letterToParty.lpNumber}"
-								class="btn btn-primary"> <spring:message code='lbl.btn.reply.letter.to.party' /> </a></td>
+								class="btn btn-primary"> <spring:message
+										code='lbl.btn.reply.letter.to.party' />
+							</a></td>
 						</c:if>
 						<c:if
 							test="${occupancyCertificate.status.code eq 'Order Issued to Applicant' }">
@@ -181,13 +186,11 @@
 								href="/bpa/application/occupancy-certificate/generate-occupancy-certificate/${occupancyCertificate.applicationNumber}"
 								target="popup" class="btn btn-primary"
 								onclick="window.open('/bpa/application/occupancy-certificate/generate-occupancy-certificate/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;">
-									<spring:message code='lbl.print.occupancy.certificate' /> </a></td>
+									<spring:message code='lbl.print.occupancy.certificate' />
+							</a></td>
 						</c:if>
-						<td>
-							<div align="center">
-								<input type="button" name="button2" id="button2" value="Close"
-									class="btn btn-default" onclick="window.close();" />
-							</div>
+						<td>&nbsp;<input type="button" name="button2" class="btn btn-default" id="button2"
+							value="Close" class="btn btn-default" onclick="window.close();" />
 						</td>
 					</tr>
 				</table>
@@ -237,8 +240,10 @@
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 			</div>
-			<input type="hidden" id="feeAmount" value="<spring:message code='msg.validation.feeamount'/>"/>
-			<input type="hidden" id="incrFeeamtTopOfsysCalcFee" value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>"/>
+			<input type="hidden" id="feeAmount"
+				value="<spring:message code='msg.validation.feeamount'/>" /> <input
+				type="hidden" id="incrFeeamtTopOfsysCalcFee"
+				value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>" />
 		</div>
 	</div>
 </div>

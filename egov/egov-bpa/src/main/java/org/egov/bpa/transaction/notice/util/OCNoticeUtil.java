@@ -92,8 +92,8 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,7 +122,7 @@ public class OCNoticeUtil {
     private ReportService reportService;
     @Autowired
     @Qualifier("parentMessageSource")
-    protected ResourceBundleMessageSource messageSource;
+    private MessageSource ocMessageSource;
 
     public OCNotice findByOcAndNoticeType(OccupancyCertificate oc, String noticeType) {
         return ocNoticeRepository.findByOcAndNoticeType(oc, noticeType);
@@ -178,7 +178,7 @@ public class OCNoticeUtil {
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(oc.getApplicationDate()));
         reportParams.put("applicationNumber", oc.getApplicationNumber());
         reportParams.put("noticeGenerationDate", currentDateToDefaultDateFormat());
-        reportParams.put("lawAct", messageSource.getMessage(MSG_OC_LAWACT, new String[] {}, LocaleContextHolder.getLocale()));
+        reportParams.put("lawAct", ocMessageSource.getMessage(MSG_OC_LAWACT, new String[] {}, LocaleContextHolder.getLocale()));
         reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(oc)));
         String amenities = oc.getParent().getApplicationAmenity().stream().map(ServiceType::getDescription)
                 .collect(Collectors.joining(", "));

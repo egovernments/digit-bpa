@@ -215,6 +215,12 @@ public class OccupancyCertificateService {
     public OccupancyCertificate update(final OccupancyCertificate oc, final WorkflowBean wfBean) {
         if (WF_APPROVE_BUTTON.equals(wfBean.getWorkFlowAction())) {
             oc.setApprovalDate(new Date());
+            
+            /*TODO: To be configurable,
+             * Need to generate new number
+             * or permit application plan permission number
+             * to be used as occupancy certificate number
+             */
             oc.setOccupancyCertificateNumber(generateOccupancyCertificateNumber());
         }
         oc.setSentToPreviousOwner(false);
@@ -231,7 +237,6 @@ public class OccupancyCertificateService {
 			try {
 				ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(oc);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if(!ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {

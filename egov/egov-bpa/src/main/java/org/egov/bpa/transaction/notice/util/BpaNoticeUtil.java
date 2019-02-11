@@ -335,7 +335,7 @@ public class BpaNoticeUtil {
                     ? EMPTY
                     : bpaApplication.getSiteDetail().get(0).getPostalAddress().getTaluk());
             reportParams.put("district", bpaApplication.getSiteDetail().get(0).getPostalAddress() == null
-                    ? EMPTY
+                    ? cityService.getDistrictName()
                     : bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict());
         }
         reportParams.put("certificateValidity",
