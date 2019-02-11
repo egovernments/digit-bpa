@@ -91,6 +91,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -120,7 +121,8 @@ public class OCNoticeUtil {
     @Autowired
     private ReportService reportService;
     @Autowired
-	protected ResourceBundleMessageSource messageSource;
+    @Qualifier("parentMessageSource")
+    protected ResourceBundleMessageSource messageSource;
 
     public OCNotice findByOcAndNoticeType(OccupancyCertificate oc, String noticeType) {
         return ocNoticeRepository.findByOcAndNoticeType(oc, noticeType);

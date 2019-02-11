@@ -717,4 +717,19 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/occupancyCertificate/createocfee-view.jsp" />
 	</definition>
+	
+	<definition name="search-occupany-certificate" extends="base_layout">
+		<put-attribute name="page-title" value="title.search.oc"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/application/search-occupany-certificate.jsp" />
+	</definition>
+	
+	<definition name="search-occupancy-certificate-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.oc.view"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/occupancyCertificate/search-occupancy-certificate-view.jsp" />
+	</definition>
+	
 </tiles-definitions>

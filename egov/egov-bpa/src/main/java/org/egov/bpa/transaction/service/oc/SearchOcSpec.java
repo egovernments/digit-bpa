@@ -55,6 +55,57 @@ import java.util.Date;
 
 public class SearchOcSpec {
 
+    public static Specification<OccupancyCertificate> search(final SearchBpaApplicationForm requestForm) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            Join<OccupancyCertificate, BpaApplication> bpaApplication = root.join("parent");
+            Join<BpaApplication, SiteDetail> siteDetailJoin = bpaApplication.join("siteDetail");
+            Join<SiteDetail, Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
+            if (requestForm.getApplicantName() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(bpaApplication.get("owner").get("name"),
+                                requestForm.getApplicantName()));
+            if (requestForm.getServiceTypeId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(bpaApplication.get("serviceType").get("id"), requestForm.getServiceTypeId()));
+            if (requestForm.getServiceType() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(bpaApplication.get("serviceType").get("description"),
+                                requestForm.getServiceTypeId()));
+
+            if (requestForm.getOccupancyId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(bpaApplication.get("occupancy").get("id"), requestForm.getOccupancyId()));
+            if (requestForm.getElectionWardId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), requestForm.getElectionWardId()));
+            if (requestForm.getWardId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(adminBoundaryJoin.get("id"), requestForm.getWardId()));
+            if (requestForm.getZoneId() != null) {
+                predicate.getExpressions()
+                        .add(builder.equal(adminBoundaryJoin.get("parent").get("id"), requestForm.getZoneId()));
+            }
+            if (requestForm.getZoneId() == null && requestForm.getZone() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(adminBoundaryJoin.get("parent").get("name"), requestForm.getZone()));
+            if (requestForm.getFromDate() != null)
+                predicate.getExpressions()
+                        .add(builder.greaterThanOrEqualTo(root.get("applicationDate"), requestForm.getFromDate()));
+            if (requestForm.getToDate() != null)
+                predicate.getExpressions()
+                        .add(builder.lessThanOrEqualTo(root.get("applicationDate"), requestForm.getToDate()));
+            if (requestForm.getFromBuiltUpArea() != null)
+                predicate.getExpressions()
+                        .add(builder.greaterThanOrEqualTo(bpaApplication.get("totalBuiltUpArea"), requestForm.getFromBuiltUpArea()));
+            if (requestForm.getToBuiltUpArea() != null)
+                predicate.getExpressions()
+                        .add(builder.lessThanOrEqualTo(bpaApplication.get("totalBuiltUpArea"), requestForm.getToBuiltUpArea()));
+            query.distinct(true);
+            return predicate;
+        };
+    }
+
     public static Specification<OCSlot> hasDocumentScrutinyPendingSpecificationForOc(final SearchBpaApplicationForm requestForm) {
         return (root, query, builder) -> {
             final Predicate predicate = builder.conjunction();
@@ -83,7 +134,8 @@ public class SearchOcSpec {
                 predicate.getExpressions()
                         .add(builder.equal(adminBoundaryJoin.get("parent").get("name"), requestForm.getZone()));
             predicate.getExpressions()
-                    .add(certificateJoin.get("status").get("code").in("Scheduled For Document Scrutiny", "Rescheduled For Document Scrutiny"));
+                    .add(certificateJoin.get("status").get("code").in("Scheduled For Document Scrutiny",
+                            "Rescheduled For Document Scrutiny"));
             predicate.getExpressions()
                     .add(builder.equal(root.get("isActive"), true));
             query.distinct(true);
