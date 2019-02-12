@@ -47,12 +47,9 @@
 
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -70,9 +67,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+
+import org.egov.bpa.master.entity.CheckListDetail;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egbpa_lp_document_common")
@@ -166,23 +167,23 @@ public class LetterToPartyDocumentCommon extends AbstractAuditable {
         this.submissionDate = submissionDate;
     }
 
-    public Boolean getSubmitted() {
-        return isSubmitted;
-    }
+    public Boolean getIsSubmitted() {
+		return isSubmitted;
+	}
 
-    public void setSubmitted(Boolean submitted) {
-        isSubmitted = submitted;
-    }
+	public void setIsSubmitted(Boolean isSubmitted) {
+		this.isSubmitted = isSubmitted;
+	}
 
-    public Boolean getRequested() {
-        return isRequested;
-    }
+	public Boolean getIsRequested() {
+		return isRequested;
+	}
 
-    public void setRequested(Boolean requested) {
-        isRequested = requested;
-    }
+	public void setIsRequested(Boolean isRequested) {
+		this.isRequested = isRequested;
+	}
 
-    public User getCreatedUser() {
+	public User getCreatedUser() {
         return createdUser;
     }
 

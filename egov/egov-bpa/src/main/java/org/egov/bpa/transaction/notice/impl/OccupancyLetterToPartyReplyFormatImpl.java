@@ -98,7 +98,7 @@ public class OccupancyLetterToPartyReplyFormatImpl implements OccupancyLetterToP
         Boolean checkListPresent = Boolean.FALSE;
         List<CheckListDetail> chkList = new ArrayList<>();
         for (LetterToPartyDocumentCommon document : ocLettertoParty.getLetterToParty().getLetterToPartyDocuments()) {
-            if (!isEmpty(document.getChecklistDetail()) && document.getRequested() == Boolean.TRUE
+            if (!isEmpty(document.getChecklistDetail()) && document.getIsRequested() == Boolean.TRUE
                     && document.getChecklistDetail().getDescription() != null) {
                 chkList.add(document.getChecklistDetail());
             }

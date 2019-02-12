@@ -235,7 +235,7 @@
 					<printWhenExpression><![CDATA[$P{checkListPresent}]]></printWhenExpression>
 				</reportElement>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{letterToParty}.getLetterToPartyDocuments(), false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("lp_reply_checklist.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("oc_lp_reply_checklist.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="50">

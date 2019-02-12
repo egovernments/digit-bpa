@@ -40,7 +40,7 @@
 package org.egov.bpa.web.controller.transaction.occupancy;
 
 import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
-import static org.egov.bpa.utils.BpaConstants.LP_CHECKLIST;
+import static org.egov.bpa.utils.OcConstants.OC_LTP_CHECKLIST;
 import static org.egov.bpa.utils.OcConstants.OCCUPANCY_CERTIFICATE;
 
 import java.util.Comparator;
@@ -147,7 +147,7 @@ public class OccupancyCertificateLetterToPartyController {
 	}
 
 	public List<CheckListDetail> getCheckListDetailList(final Long serviceTypeId) {
-		return checkListDetailService.findActiveCheckListByServiceType(serviceTypeId, LP_CHECKLIST);
+		return checkListDetailService.findActiveCheckListByServiceType(serviceTypeId, OC_LTP_CHECKLIST);
 	}
 
 	@GetMapping("/create/{applicationNumber}")
@@ -262,7 +262,7 @@ public class OccupancyCertificateLetterToPartyController {
 				lpDocumentCommon.setLetterToParty(ocLetterToParty.getLetterToParty());
 				if (lpDocumentCommon.getFiles() != null && lpDocumentCommon.getFiles().length > 0) {
 					lpDocumentCommon.setSupportDocs(applicationBpaService.addToFileStore(lpDocumentCommon.getFiles()));
-					lpDocumentCommon.setSubmitted(true);
+					lpDocumentCommon.setIsSubmitted(true);
 				}
 			}
 	}

@@ -181,7 +181,7 @@ public class OCLetterToPartyService {
 		Boolean checkListPresent = Boolean.FALSE;
 		List<CheckListDetail> chkList = new ArrayList<>();
 		for (LetterToPartyDocumentCommon document : ocLetterToParty.getLetterToParty().getLetterToPartyDocuments()) {
-			if (!isEmpty(document.getChecklistDetail()) && document.getRequested() == Boolean.TRUE && document.getChecklistDetail().getDescription() != null) {
+			if (!isEmpty(document.getChecklistDetail()) && document.getIsRequested() == Boolean.TRUE && document.getChecklistDetail().getDescription() != null) {
 				chkList.add(document.getChecklistDetail());
 			}
 			checkListPresent = chkList.size() > 0 ? Boolean.TRUE : Boolean.FALSE;
