@@ -293,7 +293,7 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
 						int floorNumber = ocFloor.getFloorNumber();
 						for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
 							if (floorNumber == bpaFloor.getFloorNumber()) {
-								if (!ocFloor.getSubOccupancy().getCode().equals(bpaFloor.getSubOccupancy().getCode())) {
+								if (!ocFloor.getOccupancy().getCode().equals(bpaFloor.getOccupancy().getCode())) {
 									model.addAttribute("OcComparisonValidation",
 											"For Occupancy Certificate submitted plan building floor occupancy and permitted building floor occupancy "
 													+ " not matching for Block - " + oc.getBuildingNumber()
