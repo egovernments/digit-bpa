@@ -70,110 +70,111 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertificateFeeCalculation {
     private static final String TOTAL_FLOOR_AREA = "totalFloorArea";
-	private static final String OTHERS = "Others";
+    private static final String OTHERS = "Others";
 
+    @Autowired
+    protected BpaUtils bpaUtils;
 
-	@Autowired
-	protected BpaUtils bpaUtils;
-	
-	@Autowired
-	protected OccupancyService occupancyService;
-	
-	@Autowired
-	protected OccupancyFeeService ocFeeService;
-	
-	@Autowired
-	protected BpaFeeService bpaFeeService;
-	
-	   //.setScale(0, BigDecimal.ROUND_HALF_UP)
-	
-	private OccupancyFee getOCFee(final OccupancyCertificate oc) {
-		OccupancyFee ocFee = null;
-		if (oc != null) {
-			List<OccupancyFee> ocFeeList = ocFeeService
-					.getOCFeeListByApplicationId(oc.getId());
-			if (ocFeeList.isEmpty()) {
-				ocFee = new OccupancyFee();
-				ocFee.setApplicationFee(new ApplicationFee());
-				ocFee.setOc(oc);
-				return ocFee;
-			} else {
-				return ocFeeList.get(0);
-			}
-		}
-		return ocFee;
-	}
-	
-	@Override
-	public OccupancyFee calculateOCSanctionFees(final OccupancyCertificate oc) {
-		
-		OccupancyFee ocFee = getOCFee(oc);
-		// If record rejected and recalculation required again, then this logic
-		// has to be change.
-		if (ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
-			calculateOCFees(oc, ocFee);
-		}
+    @Autowired
+    protected OccupancyService occupancyService;
 
-		return ocFee;
-	}
-	
-	
-	public void calculateOCFees(OccupancyCertificate oc, OccupancyFee ocFee) {
-        Map<String, BigDecimal> ocProposedArea = bpaUtils.getOCTotalProposedArea(oc.getBuildings());
-	    Map<String, BigDecimal> totalProposedArea = bpaUtils.getTotalProposedArea(oc.getParent().getBuildingDetail());
-	    BigDecimal ocFloorArea = ocProposedArea.get(TOTAL_FLOOR_AREA) != null ? ocProposedArea.get(TOTAL_FLOOR_AREA) : BigDecimal.ZERO;
-	    BigDecimal proposedFloorArea = totalProposedArea.get(TOTAL_FLOOR_AREA) != null ? totalProposedArea.get(TOTAL_FLOOR_AREA) : BigDecimal.ZERO;
-	    BigDecimal maxPermittedFloorArea = proposedFloorArea.multiply(BigDecimal.valueOf(5)).divide(BigDecimal.valueOf(100)).add(proposedFloorArea);
-	    if(ocFloorArea.compareTo(proposedFloorArea) > 0 && ocFloorArea.compareTo(maxPermittedFloorArea) < 0) {
-	  	
-			BigDecimal deviatedArea = ocFloorArea.subtract(proposedFloorArea);
-			calculateFeeByServiceType(oc, deviatedArea, ocFee);
+    @Autowired
+    protected OccupancyFeeService ocFeeService;
+
+    @Autowired
+    protected BpaFeeService bpaFeeService;
+
+    // .setScale(0, BigDecimal.ROUND_HALF_UP)
+
+    private OccupancyFee getOCFee(final OccupancyCertificate oc) {
+        OccupancyFee ocFee = null;
+        if (oc != null) {
+            List<OccupancyFee> ocFeeList = ocFeeService
+                    .getOCFeeListByApplicationId(oc.getId());
+            if (ocFeeList.isEmpty()) {
+                ocFee = new OccupancyFee();
+                ocFee.setApplicationFee(new ApplicationFee());
+                ocFee.setOc(oc);
+                return ocFee;
+            } else {
+                return ocFeeList.get(0);
+            }
         }
-	}
-	
-	public void calculateFeeByServiceType(OccupancyCertificate oc, BigDecimal deviatedArea, OccupancyFee ocFee) {
-		BigDecimal feeAmount;
-		for(BpaFee bpaFee : bpaFeeService.getActiveOCSanctionFeeForListOfServices(oc.getParent().getServiceType().getId())){
-		String occupancy;
-		if ((BpaConstants.RESIDENTIAL
-						.equalsIgnoreCase(oc.getParent().getOccupancy().getCode())
-						|| BpaConstants.APARTMENT_FLAT.equalsIgnoreCase(
-								oc.getParent().getOccupancy().getCode())))
-			occupancy = BpaConstants.RESIDENTIAL;
-		else
-			occupancy = OTHERS;
-		// set occupancy type and get fee
-		// and calculate amount.
-		feeAmount = getBpaFeeObjByOccupancyType(bpaFee.getCode(), occupancy,
-				bpaFee);
-		BigDecimal amount = deviatedArea.multiply(feeAmount).multiply(BigDecimal.valueOf(3));
-		ocFee.getApplicationFee()	
-		.addApplicationFeeDetail(buildApplicationFeeDetail(bpaFee, ocFee.getApplicationFee(), amount));
-	}
-}
+        return ocFee;
+    }
 
-	private BigDecimal getBpaFeeObjByOccupancyType(final String feeCode, String occupancyType, final BpaFee bpaFee) {
-		BigDecimal rate = BigDecimal.ZERO;
-		for (BpaFeeDetail feeDetail : bpaFee.getFeeDetail()) {
-			if (feeCode != null && feeCode.equalsIgnoreCase(bpaFee.getCode())) {
-				if (feeDetail.getAdditionalType() != null
-						&& occupancyType.equalsIgnoreCase(feeDetail.getAdditionalType())) {
-					rate = BigDecimal.valueOf(feeDetail.getAmount());
-					break;
-				} else {
-					rate = BigDecimal.valueOf(feeDetail.getAmount());
-				}
-			}
-		}
-		return rate;
-	}
-	
-	private ApplicationFeeDetail buildApplicationFeeDetail(final BpaFee bpaFee, final ApplicationFee applicationFee,
-			BigDecimal amount) {
-		ApplicationFeeDetail feeDetail = new ApplicationFeeDetail();
-		feeDetail.setAmount(amount.setScale(0, BigDecimal.ROUND_HALF_UP));
-		feeDetail.setBpaFee(bpaFee);
-		feeDetail.setApplicationFee(applicationFee);
-		return feeDetail;
-	}
+    @Override
+    public OccupancyFee calculateOCSanctionFees(final OccupancyCertificate oc) {
+
+        OccupancyFee ocFee = getOCFee(oc);
+        // If record rejected and recalculation required again, then this logic
+        // has to be change.
+        if (ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
+            calculateOCFees(oc, ocFee);
+        }
+
+        return ocFee;
+    }
+
+    public void calculateOCFees(OccupancyCertificate oc, OccupancyFee ocFee) {
+        Map<String, BigDecimal> ocProposedArea = bpaUtils.getProposedBuildingAreasOfOC(oc.getBuildings());
+        Map<String, BigDecimal> totalProposedArea = bpaUtils.getTotalProposedArea(oc.getParent().getBuildingDetail());
+        BigDecimal ocFloorArea = ocProposedArea.get(TOTAL_FLOOR_AREA) != null ? ocProposedArea.get(TOTAL_FLOOR_AREA)
+                : BigDecimal.ZERO;
+        BigDecimal proposedFloorArea = totalProposedArea.get(TOTAL_FLOOR_AREA) != null ? totalProposedArea.get(TOTAL_FLOOR_AREA)
+                : BigDecimal.ZERO;
+        BigDecimal maxPermittedFloorArea = proposedFloorArea.multiply(BigDecimal.valueOf(5)).divide(BigDecimal.valueOf(100))
+                .add(proposedFloorArea);
+        if (ocFloorArea.compareTo(proposedFloorArea) > 0 && ocFloorArea.compareTo(maxPermittedFloorArea) < 0) {
+
+            BigDecimal deviatedArea = ocFloorArea.subtract(proposedFloorArea);
+            calculateFeeByServiceType(oc, deviatedArea, ocFee);
+        }
+    }
+
+    public void calculateFeeByServiceType(OccupancyCertificate oc, BigDecimal deviatedArea, OccupancyFee ocFee) {
+        BigDecimal feeAmount;
+        for (BpaFee bpaFee : bpaFeeService.getActiveOCSanctionFeeForListOfServices(oc.getParent().getServiceType().getId())) {
+            String occupancy;
+            if ((BpaConstants.RESIDENTIAL
+                    .equalsIgnoreCase(oc.getParent().getOccupancy().getCode())
+                    || BpaConstants.APARTMENT_FLAT.equalsIgnoreCase(
+                            oc.getParent().getOccupancy().getCode())))
+                occupancy = BpaConstants.RESIDENTIAL;
+            else
+                occupancy = OTHERS;
+            // set occupancy type and get fee
+            // and calculate amount.
+            feeAmount = getBpaFeeObjByOccupancyType(bpaFee.getCode(), occupancy,
+                    bpaFee);
+            BigDecimal amount = deviatedArea.multiply(feeAmount).multiply(BigDecimal.valueOf(3));
+            ocFee.getApplicationFee()
+                    .addApplicationFeeDetail(buildApplicationFeeDetail(bpaFee, ocFee.getApplicationFee(), amount));
+        }
+    }
+
+    private BigDecimal getBpaFeeObjByOccupancyType(final String feeCode, String occupancyType, final BpaFee bpaFee) {
+        BigDecimal rate = BigDecimal.ZERO;
+        for (BpaFeeDetail feeDetail : bpaFee.getFeeDetail()) {
+            if (feeCode != null && feeCode.equalsIgnoreCase(bpaFee.getCode())) {
+                if (feeDetail.getAdditionalType() != null
+                        && occupancyType.equalsIgnoreCase(feeDetail.getAdditionalType())) {
+                    rate = BigDecimal.valueOf(feeDetail.getAmount());
+                    break;
+                } else {
+                    rate = BigDecimal.valueOf(feeDetail.getAmount());
+                }
+            }
+        }
+        return rate;
+    }
+
+    private ApplicationFeeDetail buildApplicationFeeDetail(final BpaFee bpaFee, final ApplicationFee applicationFee,
+            BigDecimal amount) {
+        ApplicationFeeDetail feeDetail = new ApplicationFeeDetail();
+        feeDetail.setAmount(amount.setScale(0, BigDecimal.ROUND_HALF_UP));
+        feeDetail.setBpaFee(bpaFee);
+        feeDetail.setApplicationFee(applicationFee);
+        return feeDetail;
+    }
 }
