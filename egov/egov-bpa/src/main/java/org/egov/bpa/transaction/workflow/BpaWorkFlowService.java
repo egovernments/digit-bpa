@@ -40,6 +40,27 @@
 
 package org.egov.bpa.transaction.workflow;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_02;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_08;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_09;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
+import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
@@ -67,27 +88,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_02;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_08;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_09;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
-import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
-
 @Service
 @Transactional(readOnly = true)
 public class BpaWorkFlowService {
@@ -110,20 +110,19 @@ public class BpaWorkFlowService {
     public Assignment getWorkFlowInitiator(final State<Position> state, final User createdBy) {
         Assignment wfInitiator;
         List<Assignment> assignment;
-            if (state != null && state.getInitiatorPosition() != null) {
-                wfInitiator = getUserAssignmentByPassingPositionAndUser(createdBy, state.getInitiatorPosition());
-                if (wfInitiator == null) {
-                    assignment = assignmentService
-                            .getAssignmentsForPosition(state.getInitiatorPosition().getId(),
-                                    new Date());
-                    wfInitiator = getActiveAssignment(assignment);
-                }
-            } else
-                wfInitiator = assignmentService.getPrimaryAssignmentForUser(createdBy.getId());
+        if (state != null && state.getInitiatorPosition() != null) {
+            wfInitiator = getUserAssignmentByPassingPositionAndUser(createdBy, state.getInitiatorPosition());
+            if (wfInitiator == null) {
+                assignment = assignmentService
+                        .getAssignmentsForPosition(state.getInitiatorPosition().getId(),
+                                new Date());
+                wfInitiator = getActiveAssignment(assignment);
+            }
+        } else
+            wfInitiator = assignmentService.getPrimaryAssignmentForUser(createdBy.getId());
 
         return wfInitiator;
     }
-
 
     private Assignment getActiveAssignment(final List<Assignment> assignment) {
         Assignment wfInitiator = null;
@@ -192,12 +191,13 @@ public class BpaWorkFlowService {
         if (null == model
                 || null == model.getId() || (model.getCurrentState() == null)
                 || ((model != null && model.getCurrentState() != null) && (model.getCurrentState().getValue()
-																				.equals("Closed")
-																		   || model.getCurrentState().getValue().equals("END"))))
+                        .equals("Closed")
+                        || model.getCurrentState().getValue().equals("END"))))
             validActions = Arrays.asList("Forward");
         else if (null != model.getCurrentState())
             validActions = customizedWorkFlowService.getNextValidActions(model.getStateType(), container
-                    .getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(), model
+                    .getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
+                    model
                             .getCurrentState().getValue(),
                     container.getPendingActions(), model.getCreatedDate());
         else
@@ -207,7 +207,8 @@ public class BpaWorkFlowService {
         return validActions;
     }
 
-    public StateHistory<Position> getStateHistoryToGetLPInitiator(final List<StateHistory<Position>> stateHistories, final String stateForOwnerPosition) {
+    public StateHistory<Position> getStateHistoryToGetLPInitiator(final List<StateHistory<Position>> stateHistories,
+            final String stateForOwnerPosition) {
         return stateHistories.stream()
                 .filter(history -> history.getValue().equalsIgnoreCase(stateForOwnerPosition))
                 .findAny().orElse(null);
@@ -221,7 +222,7 @@ public class BpaWorkFlowService {
         return assignmentService.getAllActiveEmployeeAssignmentsByEmpId(userId);
     }
 
-    public Assignment getApproverAssignmentByDate(final Position position , final Date date) {
+    public Assignment getApproverAssignmentByDate(final Position position, final Date date) {
         return assignmentService.getPrimaryAssignmentForPositionAndDate(position.getId(), date);
     }
 
@@ -231,7 +232,8 @@ public class BpaWorkFlowService {
         return assignments;
     }
 
-    public List<Assignment> getAssignmentByPositionAndUserAsOnDate(final Long positionId, final Long userId, final Date givenDate) {
+    public List<Assignment> getAssignmentByPositionAndUserAsOnDate(final Long positionId, final Long userId,
+            final Date givenDate) {
         return assignmentService.getAssignmentByPositionAndUserAsOnDate(positionId, userId, givenDate);
     }
 
@@ -245,7 +247,7 @@ public class BpaWorkFlowService {
         try {
             return assignmentService.getAssignmentsForPosition(posId).get(0);
         } catch (final IndexOutOfBoundsException e) {
-            throw new ApplicationRuntimeException("Assignment Details Not Found For Given Position : "+posId);
+            throw new ApplicationRuntimeException("Assignment Details Not Found For Given Position : " + posId);
         } catch (final Exception e) {
             throw new ApplicationRuntimeException(e.getMessage());
         }
@@ -255,15 +257,16 @@ public class BpaWorkFlowService {
         return stateHistories.stream().reduce((sh1, sh2) -> sh2);
     }
 
-    public BpaStateInfo getBpaStateInfo(final State<Position> state, final List<StateHistory<Position>> stateHistories
-                                        , final boolean isTownSurveyorInspectionRequire, final BpaStateInfo bpaStateInfo, final WorkFlowMatrix wfmatrix, final String workFlowAction) {
+    public BpaStateInfo getBpaStateInfo(final State<Position> state, final List<StateHistory<Position>> stateHistories,
+            final boolean isTownSurveyorInspectionRequire, final BpaStateInfo bpaStateInfo, final WorkFlowMatrix wfmatrix,
+            final String workFlowAction) {
         bpaStateInfo.setWfMatrixRef(wfmatrix.getId());
         List<Assignment> assignments = getAssignmentByUserAsOnDate(securityUtils.getCurrentUser().getId(), new Date());
         if ((state != null
-            && state.getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED)||
-             state.getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
-            || state.getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED))
-            && !assignments.isEmpty()) {
+                && state.getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
+                state.getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
+                || state.getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED))
+                && !assignments.isEmpty()) {
             bpaStateInfo.setScrutinizedBy(assignments.get(0).getPosition().getId());
             bpaStateInfo.setScrutinizedUser(assignments.get(0).getEmployee().getId());
         }
@@ -272,9 +275,10 @@ public class BpaWorkFlowService {
         else if (isTownSurveyorInspectionRequire)
             bpaStateInfo.setTsInitiatorPos(state.getOwnerPosition().getId());
 
-        if (!isBlank(workFlowAction)&& WF_REVERT_BUTTON.equalsIgnoreCase(workFlowAction)
+        if (!isBlank(workFlowAction) && WF_REVERT_BUTTON.equalsIgnoreCase(workFlowAction)
                 && !assignments.isEmpty() && assignments.get(0).getDesignation() != null) {
-            bpaStateInfo.setRevertedBy("Reverted By " + securityUtils.getCurrentUser().getName() + " - " + assignments.get(0).getDesignation().getName());
+            bpaStateInfo.setRevertedBy("Reverted By " + securityUtils.getCurrentUser().getName() + " - "
+                    + assignments.get(0).getDesignation().getName());
         }
 
         return bpaStateInfo;
@@ -293,7 +297,8 @@ public class BpaWorkFlowService {
         return Long.valueOf(json.get("wfMatrixRef").toString());
     }
 
-    public Long getTownSurveyorInspnInitiator(final List<StateHistory<Position>> stateHistories, final State<Position> currentState) {
+    public Long getTownSurveyorInspnInitiator(final List<StateHistory<Position>> stateHistories,
+            final State<Position> currentState) {
         JSONParser parser = new JSONParser();
         JSONObject json = null;
         try {
@@ -318,8 +323,8 @@ public class BpaWorkFlowService {
             if (StringUtils.isNotEmpty(currentState.getExtraInfo()))
                 json = (JSONObject) parser.parse(currentState.getExtraInfo());
             if (json == null || json.get(SCRUTINIZED_POS) == null) {
-                for(StateHistory<Position> stateHistory : stateHistories) {
-                    if(stateHistory.getExtraInfo() != null && stateHistory.getExtraInfo().contains(SCRUTINIZED_POS)) {
+                for (StateHistory<Position> stateHistory : stateHistories) {
+                    if (stateHistory.getExtraInfo() != null && stateHistory.getExtraInfo().contains(SCRUTINIZED_POS)) {
                         json = (JSONObject) parser.parse(stateHistory.getExtraInfo());
                     }
                 }
@@ -337,8 +342,8 @@ public class BpaWorkFlowService {
             if (StringUtils.isNotEmpty(currentState.getExtraInfo()))
                 json = (JSONObject) parser.parse(currentState.getExtraInfo());
             if (json == null || json.get(SCRUTINIZED_USER) == null) {
-                for(StateHistory<Position> stateHistory : stateHistories) {
-                    if(stateHistory.getExtraInfo() != null && stateHistory.getExtraInfo().contains(SCRUTINIZED_USER)) {
+                for (StateHistory<Position> stateHistory : stateHistories) {
+                    if (stateHistory.getExtraInfo() != null && stateHistory.getExtraInfo().contains(SCRUTINIZED_USER)) {
                         json = (JSONObject) parser.parse(stateHistory.getExtraInfo());
                     }
                 }
@@ -348,7 +353,6 @@ public class BpaWorkFlowService {
         }
         return json == null || json.get(SCRUTINIZED_USER) == null ? 0 : Long.valueOf(json.get(SCRUTINIZED_USER).toString());
     }
-
 
     public String getRevertedBy(final String extraInfo) {
 
@@ -369,43 +373,65 @@ public class BpaWorkFlowService {
     }
 
     public Position getApproverPositionOfElectionWardByCurrentState(final BpaApplication application, final String currentState) {
-        WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(), application.getStateType(), currentState);
+        WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
+                application.getStateType(), currentState);
         return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
                 application.getSiteDetail().get(0) != null
-                && application.getSiteDetail().get(0).getElectionBoundary() != null
-                ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
+                        && application.getSiteDetail().get(0).getElectionBoundary() != null
+                                ? application.getSiteDetail().get(0).getElectionBoundary().getId()
+                                : null);
     }
 
-    public Position getApproverPositionOfElectionWardByCurrentStateForOC(final OccupancyCertificate oc, final String currentState) {
+    public Position getApproverPositionOfElectionWardByCurrentStateForOC(final OccupancyCertificate oc,
+            final String currentState) {
         WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(oc.getStateType(), currentState);
         SiteDetail siteDetail = oc.getParent().getSiteDetail().get(0);
         return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
                 siteDetail != null && siteDetail.getElectionBoundary() != null
-                ? siteDetail.getElectionBoundary().getId() : null);
+                        ? siteDetail.getElectionBoundary().getId()
+                        : null);
     }
 
     public BigDecimal getAmountRuleByServiceType(final BpaApplication application) {
         BigDecimal amountRule = BigDecimal.ONE;
         if (ST_CODE_14.equalsIgnoreCase(application.getServiceType().getCode())
-            || ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
+                || ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
             amountRule = new BigDecimal(2501);
-        } else if (ST_CODE_02.equalsIgnoreCase(application.getServiceType().getCode()) && application.getSiteDetail().get(0).getDemolitionArea() != null) {
+        } else if (ST_CODE_02.equalsIgnoreCase(application.getServiceType().getCode())
+                && application.getSiteDetail().get(0).getDemolitionArea() != null) {
             amountRule = application.getSiteDetail().get(0).getDemolitionArea().doubleValue() == 0
-                         ? BigDecimal.ONE : application.getSiteDetail().get(0).getDemolitionArea();
+                    ? BigDecimal.ONE
+                    : application.getSiteDetail().get(0).getDemolitionArea();
         } else if (ST_CODE_05.equalsIgnoreCase(application.getServiceType().getCode())) {
             amountRule = application.getSiteDetail().get(0).getExtentinsqmts();
         } else if (ST_CODE_08.equalsIgnoreCase(application.getServiceType().getCode())
-                   || ST_CODE_09.equalsIgnoreCase(application.getServiceType().getCode())) {
+                || ST_CODE_09.equalsIgnoreCase(application.getServiceType().getCode())) {
             amountRule = BigDecimal.ONE;
         } else if (!application.getBuildingDetail().isEmpty()
-                   && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
+                && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
             if (!application.getExistingBuildingDetails().isEmpty())
-                for (Map.Entry<Occupancy, BigDecimal> existBuiltupArea : bpaUtils.getExistingBldgBlockWiseOccupancyAndBuiltupArea(application.getExistingBuildingDetails()).entrySet())
+                for (Map.Entry<Occupancy, BigDecimal> existBuiltupArea : bpaUtils
+                        .getExistingBldgBlockWiseOccupancyAndBuiltupArea(application.getExistingBuildingDetails()).entrySet())
                     amountRule = amountRule.add(existBuiltupArea.getValue());
             else {
-                for (Map.Entry<Occupancy, BigDecimal> builtupArea : bpaUtils.getBlockWiseOccupancyAndBuiltupArea(application.getBuildingDetail()).entrySet())
+                for (Map.Entry<Occupancy, BigDecimal> builtupArea : bpaUtils
+                        .getBlockWiseOccupancyAndBuiltupArea(application.getBuildingDetail()).entrySet())
                     amountRule = amountRule.add(builtupArea.getValue());
             }
+        }
+        return amountRule.setScale(0, BigDecimal.ROUND_UP);
+    }
+
+    public BigDecimal getAmountRuleByServiceTypeForOc(final OccupancyCertificate oc) {
+        BigDecimal amountRule = BigDecimal.ONE;
+        if (!oc.getBuildings().isEmpty()
+                && oc.getBuildings().get(0).getTotalPlinthArea() != null) {
+            Map<String, BigDecimal> ocProposedArea = BpaUtils.getProposedBuildingAreasOfOC(oc.getBuildings());
+            Map<String, BigDecimal> ocExistingdArea = BpaUtils.getExistingBuildingAreasOfOC(oc.getExistingBuildings());
+            if (!ocProposedArea.isEmpty())
+                amountRule = amountRule.add(ocProposedArea.get("totalBltUpArea"));
+            if (!ocExistingdArea.isEmpty())
+                amountRule = amountRule.add(ocExistingdArea.get("totalBltUpArea"));
         }
         return amountRule.setScale(0, BigDecimal.ROUND_UP);
     }

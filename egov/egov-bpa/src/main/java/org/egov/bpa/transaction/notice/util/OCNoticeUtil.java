@@ -173,7 +173,7 @@ public class OCNoticeUtil {
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         reportParams.put("applicantName", oc.getParent().getOwner().getName());
         reportParams.put("approverName", getApproverName(oc));
-        reportParams.put("approverDesignation", bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(oc.getParent()).intValue()));
+        reportParams.put("approverDesignation", bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()));
         reportParams.put("serviceType", oc.getParent().getServiceType().getDescription());
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(oc.getApplicationDate()));
         reportParams.put("applicationNumber", oc.getApplicationNumber());
@@ -216,7 +216,7 @@ public class OCNoticeUtil {
 
     public String getApproverName(final OccupancyCertificate occupancyCertificate) {
         StateHistory<Position> stateHistory = occupancyCertificate.getStateHistory().stream()
-                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(occupancyCertificate.getParent()).intValue())))
+                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(occupancyCertificate).intValue())))
                 .findAny().orElse(null);
         return stateHistory == null ? N_A : bpaWorkFlowService.getApproverAssignmentByDate(stateHistory.getOwnerPosition(), stateHistory.getLastModifiedDate()).getEmployee().getName();
     }
@@ -230,7 +230,7 @@ public class OCNoticeUtil {
             qrCodeValue = qrCodeValue.append("Edcr number : ").append(oc.getParent().geteDcrNumber()).append(ONE_NEW_LINE);
         }
         qrCodeValue = isBlank(oc.getParent().getPlanPermissionNumber()) ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Permit number : ").append(oc.getParent().getPlanPermissionNumber()).append(ONE_NEW_LINE);
-        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(oc.getParent()) == null ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Approved by : ").append(bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(oc.getParent()).intValue())).append(ONE_NEW_LINE);
+        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc) == null ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Approved by : ").append(bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue())).append(ONE_NEW_LINE);
         qrCodeValue = oc.getApprovalDate() == null ? qrCodeValue.append("Date of approval of oc : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Date of approval of oc : ").append(DateUtils.getDefaultFormattedDate(oc.getApprovalDate())).append(ONE_NEW_LINE);
         qrCodeValue = isBlank(getApproverName(oc)) ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Name of approver : ").append(getApproverName(oc)).append(ONE_NEW_LINE);
         return qrCodeValue.toString();

@@ -174,6 +174,23 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
                         .withStateValue(wfMatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                         .withNextAction(wfMatrix.getNextAction()).withNatureOfTask(NATURE_OF_WORK_OC);
             }
+        } else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
+                || OcConstants.WF_FEE_COLL_PENDING.equals(wfBean.getCurrentState())) {
+            if (bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()))
+                wfMatrix = bpaApplicationWorkflowService.getWfMatrix(oc.getStateType(), null, wfBean.getAmountRule(),
+                        wfBean.getAdditionalRule(), "Final Approval Process initiated", OcConstants.WF_APPROVED_AND_FEE_PENDING);
+            else
+                wfMatrix = bpaApplicationWorkflowService.getWfMatrix(oc.getStateType(), null, wfBean.getAmountRule(),
+                        wfBean.getAdditionalRule(), oc.getCurrentState().getValue(), oc.getState().getNextAction());
+            if (wfMatrix != null) {
+                oc.setStatus(getStatusByCurrentMatrixStatus(wfMatrix));
+                oc.transition().progressWithStateCopy()
+                        .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+                        .withComments(wfBean.getApproverComments())
+                        .withStateValue(wfMatrix.getNextState()).withDateInfo(currentDate.toDate())
+                        .withOwner(pos).withOwner(ownerUser)
+                        .withNextAction(wfMatrix.getNextAction()).withNatureOfTask(NATURE_OF_WORK_OC);
+            }
         } else if (BpaConstants.WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             pos = bpaWorkFlowService.getApproverPositionOfElectionWardByCurrentStateForOC(oc,
                     BpaConstants.REJECT_BY_CLERK);
@@ -284,7 +301,7 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
                     && !BpaConstants.APPLICATION_STATUS_RECORD_APPROVED.equalsIgnoreCase(oc.getState().getValue())) {
                 wfMatrix = bpaApplicationWorkflowService.getWfMatrix(oc.getStateType(), null,
                         wfBean.getAmountRule(), wfBean.getAdditionalRule(),
-                        oc.getCurrentState().getValue(), null);
+                        oc.getCurrentState().getValue(), oc.getCurrentState().getNextAction());
             } else if (wfBean.getApproverComments() != null && wfBean.getApproverComments().equals(BpaConstants.BPAFEECOLLECT)
                     && bpaUtils.applicationInitiatedByNonEmployee(oc.getCreatedBy())
                     && oc.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_REGISTERED)) {

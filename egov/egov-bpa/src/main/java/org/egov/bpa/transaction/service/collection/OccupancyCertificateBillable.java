@@ -195,7 +195,7 @@ public class OccupancyCertificateBillable extends AbstractBillable implements Bi
 
 	@Override
 	public String getServiceCode() {
-		return "BPA";
+		return "OC";
 	}
 
 	@Override

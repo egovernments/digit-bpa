@@ -66,6 +66,7 @@ $(document)
 					var demandNoticeurl = '/bpa/application/occupancy-certificate/demandnotice/';
 					var permitorderurl = '/bpa/application/occupancy-certificate/generate-occupancy-certificate/';
 					var rejectionnoticeurl = '/bpa/application/occupancy-certificate/rejectionnotice/';
+					var collecturl = '/bpa/application/occupancy-certificate/generate-bill/';
 					$('#btnSearch').click(function() {
 						var isValid = false;
                         $('#searchBpaApplicationForm').find(':input',':select',':textarea').each(function() {
@@ -189,7 +190,9 @@ $(document)
 															if (row.status == 'Approved' && row.isFeeCollected) {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ demandNoticeurl
-																		+ row.applicationNumber + '>Generate Demand Notice</option></select>');
+																		+ row.applicationNumber + '>Generate Demand Notice</option><option  value='
+																		+ collecturl + row.applicationNumber +
+																		'>Collect Fee</option></select>');
 															} 
 															else if (row.status == 'Order Issued to Applicant') {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='

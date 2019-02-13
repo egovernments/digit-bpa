@@ -39,13 +39,28 @@
  */
 package org.egov.bpa.transaction.service.collection;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.bpa.transaction.entity.CollectionApportioner;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.bpa.utils.OcConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
@@ -71,396 +86,393 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @Service
 @Transactional(readOnly = true)
 public class OccupancyCertificateTaxCollection extends TaxCollection {
-	private static final Logger LOGGER = Logger.getLogger(OccupancyCertificateTaxCollection.class);
-	@Autowired
-	private EgBillDao egBillDAO;
-	@Autowired
-	private ModuleService moduleService;
+    private static final Logger LOGGER = Logger.getLogger(OccupancyCertificateTaxCollection.class);
+    @Autowired
+    private EgBillDao egBillDAO;
+    @Autowired
+    private ModuleService moduleService;
 
-	@Autowired
-	private BpaUtils bpaUtils;
+    @Autowired
+    private BpaUtils bpaUtils;
 
-	@Autowired
-	private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private BpaWorkFlowService baWorkFlowService;
 
-	@Autowired
-	private OccupancyCertificateBillService ocBillService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
 
-	@Autowired
-	private CollectionIntegrationService collectionService;
+    @Autowired
+    private OccupancyCertificateBillService ocBillService;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @Autowired
+    private CollectionIntegrationService collectionService;
 
-	@Autowired
-	private FinancialYearDAO financialYearDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@Autowired
-	private FunctionHibernateDAO functionDAO;
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
-	@Autowired
-	private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    @Autowired
+    private FunctionHibernateDAO functionDAO;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @Autowired
+    private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
 
-	@Override
-	@Transactional
-	public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
-		final BigDecimal totalAmount = billRcptInfo.getTotalAmount();
-		final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-		final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
-																   .getConsumerCode();
-		try {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("updateDemandDetails : Demand before proceeding : " + demand);
-				LOGGER.debug("updateDemandDetails : collection back update started for property : " + indexNo
-							 + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is."
-							 + totalAmount + " with receipt no." + billRcptInfo.getReceiptNum());
-			}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-			if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
-				if (LOGGER.isInfoEnabled())
-					LOGGER.info(" *************Before Receipt creation**************");
-				updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
-				if (LOGGER.isInfoEnabled())
-					LOGGER.info(" *************After Receipt creation**************");
-				updateBpaApplication(demand);
+    @Override
+    @Transactional
+    public void updateDemandDetails(final BillReceiptInfo billRcptInfo) {
+        final BigDecimal totalAmount = billRcptInfo.getTotalAmount();
+        final EgDemand demand = getCurrentDemand(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+        final String indexNo = ((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader()
+                .getConsumerCode();
+        try {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("updateDemandDetails : Demand before proceeding : " + demand);
+                LOGGER.debug("updateDemandDetails : collection back update started for property : " + indexNo
+                        + " and receipt event is " + billRcptInfo.getEvent() + ". Total Receipt amount is."
+                        + totalAmount + " with receipt no." + billRcptInfo.getReceiptNum());
+            }
 
-			} else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
-				updateCollectionForRcptCancel(demand, billRcptInfo);
-			else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
-				updateCollForChequeBounce(demand, billRcptInfo);
-			if (LOGGER.isDebugEnabled())
-				LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
-		} catch (final Exception e) {
+            if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CREATED)) {
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info(" *************Before Receipt creation**************");
+                updateCollForRcptCreate(demand, billRcptInfo, totalAmount);
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info(" *************After Receipt creation**************");
+                updateOCApplication(demand);
 
-			throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
-		}
-	}
+            } else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
+                updateCollectionForRcptCancel(demand, billRcptInfo);
+            else if (billRcptInfo.getEvent().equals(EVENT_INSTRUMENT_BOUNCED))
+                updateCollForChequeBounce(demand, billRcptInfo);
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
+        } catch (final Exception e) {
 
-	private void updateCollForChequeBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-		cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-		demand.setStatus(BpaConstants.DMD_STATUS_CHEQUE_BOUNCED);
-		updateDmdDetForRcptCancelAndCheckBounce(demand, billRcptInfo);
-		LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " + demand);
-	}
+            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
+        }
+    }
 
-	@Transactional
-	public void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-		LOGGER.debug("Entering method updateDmdDetForRcptCancelAndCheckBounce");
-		String installment;
-		for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-			if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-				&& !rcptAccInfo.getIsRevenueAccount()) {
-				final String[] desc = rcptAccInfo.getDescription().split("-", 2);
-				final String reason = desc[0].trim();
-				final String[] installsplit = desc[1].split("#");
-				installment = installsplit[0].trim();
-				for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
-					if (reason.equalsIgnoreCase(
-							demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
-						&& installment.equalsIgnoreCase(
-							demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
-						for (final ReceiptInstrumentInfo instrumentHeader : billRcptInfo.getInstrumentDetails()) {
-							if (instrumentHeader != null) {
-								demandDetail.setAmtCollected(demandDetail.getAmtCollected()
-																		 .subtract(instrumentHeader.getInstrumentAmount()));
-								if (demand.getAmtCollected() != null
-									&& demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
-									&& demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-									demand.setAmtCollected(
-											demand.getAmtCollected().subtract(instrumentHeader.getInstrumentAmount()));
-							}
-							LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
-										+ reason + " and installment : " + installment);
-							break;
-						}
-						break;
-					}
-				break;
-			}
+    private void updateCollForChequeBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+        demand.setStatus(BpaConstants.DMD_STATUS_CHEQUE_BOUNCED);
+        updateDmdDetForRcptCancelAndCheckBounce(demand, billRcptInfo);
+        LOGGER.debug("reconcileCollForChequeBounce : Updating Collection finished For Demand : " + demand);
+    }
 
-		updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-		LOGGER.debug("Exiting method updateDmdDetForRcptCancelAndCheckBounce");
-	}
+    @Transactional
+    public void updateDmdDetForRcptCancelAndCheckBounce(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        LOGGER.debug("Entering method updateDmdDetForRcptCancelAndCheckBounce");
+        String installment;
+        for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && !rcptAccInfo.getIsRevenueAccount()) {
+                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                final String reason = desc[0].trim();
+                final String[] installsplit = desc[1].split("#");
+                installment = installsplit[0].trim();
+                for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
+                    if (reason.equalsIgnoreCase(
+                            demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
+                            && installment.equalsIgnoreCase(
+                                    demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+                        for (final ReceiptInstrumentInfo instrumentHeader : billRcptInfo.getInstrumentDetails()) {
+                            if (instrumentHeader != null) {
+                                demandDetail.setAmtCollected(demandDetail.getAmtCollected()
+                                        .subtract(instrumentHeader.getInstrumentAmount()));
+                                if (demand.getAmtCollected() != null
+                                        && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
+                                        && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                                    demand.setAmtCollected(
+                                            demand.getAmtCollected().subtract(instrumentHeader.getInstrumentAmount()));
+                            }
+                            LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : "
+                                    + reason + " and installment : " + installment);
+                            break;
+                        }
+                        break;
+                    }
+                break;
+            }
 
-	/**
-	 * @param demand Updates bpaApplication Object once Collection Is done. send Record move to Commissioner and Send SMS
-	 *               and Email after Collection
-	 * @throws IOException
-	 */
-	@Transactional
-	public void updateBpaApplication(final EgDemand demand) {
-		final OccupancyCertificate oc = occupancyCertificateService.findByDemand(demand);
-		if (oc.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CREATED)) {
-			bpaUtils.redirectToBpaWorkFlowForOC(oc, getWorkflowBean(BpaConstants.WF_NEW_STATE, BpaConstants.BPAFEECOLLECT, null));
-		}
-		//bpaUtils.updatePortalUserinbox(application,null);
-		//occupancyCertificateService.saveAndFlushApplication(application);
-	}
+        updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
+        LOGGER.debug("Exiting method updateDmdDetForRcptCancelAndCheckBounce");
+    }
 
-	private WorkflowBean getWorkflowBean(final String currentState, final String remarks, final Long approvalPosId) {
-		WorkflowBean wfBean = new WorkflowBean();
-		wfBean.setCurrentState(currentState);
-		wfBean.setApproverComments(remarks);
-		if (approvalPosId != null)
-			wfBean.setApproverPositionId(approvalPosId);
-		return wfBean;
-	}
+    /**
+     * @param demand Updates bpaApplication Object once Collection Is done. send Record move to Commissioner and Send SMS and
+     * Email after Collection
+     * @throws IOException
+     */
+    @Transactional
+    public void updateOCApplication(final EgDemand demand) {
+        final OccupancyCertificate oc = occupancyCertificateService.findByDemand(demand);
+        if (oc.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CREATED)) {
+            bpaUtils.redirectToBpaWorkFlowForOC(oc,
+                    getWorkflowBean(BpaConstants.WF_NEW_STATE, BpaConstants.BPAFEECOLLECT, null, null));
+        }
+        // bpaUtils.updatePortalUserinbox(application,null);
+        // occupancyCertificateService.saveAndFlushApplication(application);
+    }
 
-	@Transactional
-	public void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,
-										final BigDecimal totalAmount) {
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
-						 + " with BillReceiptInfo - " + billRcptInfo);
-		try {
-			updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
-		} catch (final Exception e) {
+    private WorkflowBean getWorkflowBean(final String currentState, final String remarks, final Long approvalPosId,
+            BigDecimal amountRule) {
+        WorkflowBean wfBean = new WorkflowBean();
+        wfBean.setCurrentState(currentState);
+        wfBean.setApproverComments(remarks);
+        wfBean.setAmountRule(amountRule);
+        if (approvalPosId != null)
+            wfBean.setApproverPositionId(approvalPosId);
+        return wfBean;
+    }
 
-			throw new ApplicationRuntimeException(
-					"Error occured during back update of DCB : updateCollForRcptCreate() " + e.getMessage(), e);
-		}
-	}
+    @Transactional
+    public void updateCollForRcptCreate(final EgDemand demand, final BillReceiptInfo billRcptInfo,
+            final BigDecimal totalAmount) {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("updateCollForRcptCreate : Updating Collection Started For Demand : " + demand
+                    + " with BillReceiptInfo - " + billRcptInfo);
+        try {
+            updateDemandDetailForReceiptCreate(billRcptInfo.getAccountDetails(), demand, billRcptInfo, totalAmount);
+        } catch (final Exception e) {
 
-	@Transactional
-	public void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
-												   final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
-		final OccupancyCertificate oc = occupancyCertificateService.findByDemand(demand);
-		final StringBuilder query = new StringBuilder(
-				"select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-				.append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-				.append("WHERE dmdet.egDemand.id = :demand");
-		final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
-																		  .setLong("demand", demand.getId()).list();
-		final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new HashMap<String, Map<String, EgDemandDetails>>();
-		Map<String, EgDemandDetails> demandDetailByReason;
-		EgDemandReason dmdRsn;
-		String installmentDesc;
+            throw new ApplicationRuntimeException(
+                    "Error occured during back update of DCB : updateCollForRcptCreate() " + e.getMessage(), e);
+        }
+    }
 
-		for (final EgDemandDetails dmdDtls : demandDetailList) {
-			dmdRsn = dmdDtls.getEgDemandReason();
-			installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
-			demandDetailByReason = new HashMap<>(0);
-			if (installmentWiseDemandDetailsByReason.get(installmentDesc) == null) {
-				demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
-				installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
-			} else
-				installmentWiseDemandDetailsByReason.get(installmentDesc)
-													.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
-		}
+    @Transactional
+    public void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
+            final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
+        final OccupancyCertificate oc = occupancyCertificateService.findByDemand(demand);
+        final StringBuilder query = new StringBuilder(
+                "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
+                        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
+                        .append("WHERE dmdet.egDemand.id = :demand");
+        final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
+                .setLong("demand", demand.getId()).list();
+        final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new HashMap<String, Map<String, EgDemandDetails>>();
+        Map<String, EgDemandDetails> demandDetailByReason;
+        EgDemandReason dmdRsn;
+        String installmentDesc;
 
-		EgDemandDetails demandDetail;
+        for (final EgDemandDetails dmdDtls : demandDetailList) {
+            dmdRsn = dmdDtls.getEgDemandReason();
+            installmentDesc = dmdRsn.getEgInstallmentMaster().getDescription();
+            demandDetailByReason = new HashMap<>(0);
+            if (installmentWiseDemandDetailsByReason.get(installmentDesc) == null) {
+                demandDetailByReason.put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
+                installmentWiseDemandDetailsByReason.put(installmentDesc, demandDetailByReason);
+            } else
+                installmentWiseDemandDetailsByReason.get(installmentDesc)
+                        .put(dmdRsn.getEgDemandReasonMaster().getReasonMaster(), dmdDtls);
+        }
 
-		for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
-			if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
-				if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
-					final String[] desc = rcptAccInfo.getDescription().split("-", 2);
-					final String[] installsplit = desc[1].split("#");
-					final String reason = desc[0].trim();
-					final String instDesc = installsplit[0].trim();
-					demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
-					demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
-					if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-						demand.addCollected(rcptAccInfo.getCrAmount());
+        EgDemandDetails demandDetail;
 
-					persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
-							billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
-				}
-		if (BpaConstants.APPLICATION_STATUS_APPROVED.equalsIgnoreCase(oc.getStatus().getCode())) {
-			if (LOGGER.isInfoEnabled())
-				LOGGER.info(" On Approve *************workflow current state**************" + oc.getCurrentState());
-			bpaUtils.redirectToBpaWorkFlowForOC(oc, getWorkflowBean(BpaConstants.WF_PERMIT_FEE_COLL_PENDING, BpaConstants.BPA_PERMIT_FEE_COLLECTED, oc.getCurrentState().getOwnerPosition().getId()));
-		}
-		//bpaIndexService.updateIndexes(application);
-		//bpaSmsAndEmailService.sendSmsForCollection(totalAmount, application, billRcptInfo);
-	}
+        for (final ReceiptAccountInfo rcptAccInfo : accountDetails)
+            if (rcptAccInfo.getDescription() != null && !rcptAccInfo.getDescription().isEmpty())
+                if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1) {
+                    final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                    final String[] installsplit = desc[1].split("#");
+                    final String reason = desc[0].trim();
+                    final String instDesc = installsplit[0].trim();
+                    demandDetail = installmentWiseDemandDetailsByReason.get(instDesc).get(reason);
+                    demandDetail.addCollectedWithOnePaisaTolerance(rcptAccInfo.getCrAmount());
+                    if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                        demand.addCollected(rcptAccInfo.getCrAmount());
 
-	public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
-											   final BigDecimal dmdAmount) {
-		return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
-	}
+                    persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
+                            billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
+                }
+        if (BpaConstants.APPLICATION_STATUS_APPROVED.equalsIgnoreCase(oc.getStatus().getCode())) {
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info(" On Approve *************workflow current state**************" + oc.getCurrentState());
+            bpaUtils.redirectToBpaWorkFlowForOC(oc,
+                    getWorkflowBean(OcConstants.WF_FEE_COLL_PENDING, OcConstants.OC_FEE_COLLECTED,
+                            oc.getCurrentState().getOwnerPosition().getId(),
+                            baWorkFlowService.getAmountRuleByServiceTypeForOc(oc)));
+        }
+        // bpaIndexService.updateIndexes(application);
+        // bpaSmsAndEmailService.sendSmsForCollection(totalAmount, application, billRcptInfo);
+    }
 
-	@Override
-	protected Module module() {
-		return moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
-	}
+    public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
+            final BigDecimal dmdAmount) {
+        return EgDemandDetails.fromReasonAndAmounts(dmdAmount, egDemandReason, amtCollected);
+    }
 
-	public EgDemand getCurrentDemand(final Long billId) {
-		final EgBill egBill = egBillDAO.findById(billId, false);
-		EgDemand demand = null;
-		if (egBill.getEgDemand() != null && egBill.getEgDemand().getIsHistory() != null
-			&& egBill.getEgDemand().getIsHistory().equals(BpaConstants.DEMANDISHISTORY))
-			demand = egBill.getEgDemand();
+    @Override
+    protected Module module() {
+        return moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
+    }
 
-		return demand;
-	}
+    public EgDemand getCurrentDemand(final Long billId) {
+        final EgBill egBill = egBillDAO.findById(billId, false);
+        EgDemand demand = null;
+        if (egBill.getEgDemand() != null && egBill.getEgDemand().getIsHistory() != null
+                && egBill.getEgDemand().getIsHistory().equals(BpaConstants.DEMANDISHISTORY))
+            demand = egBill.getEgDemand();
 
-	// Receipt cancellation ,updating bill,demanddetails,demand
-	@Transactional
-	public void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-		LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
-					 + " with BillReceiptInfo - " + billRcptInfo);
-		try {
-			cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-			updateDmdDetForRcptCancel(demand, billRcptInfo);
-			LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
-		} catch (final Exception e) {
+        return demand;
+    }
 
-			throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
-		}
-	}
+    // Receipt cancellation ,updating bill,demanddetails,demand
+    @Transactional
+    public void updateCollectionForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        LOGGER.debug("reconcileCollForRcptCancel : Updating Collection Started For Demand : " + demand
+                + " with BillReceiptInfo - " + billRcptInfo);
+        try {
+            cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
+            updateDmdDetForRcptCancel(demand, billRcptInfo);
+            LOGGER.debug("reconcileCollForRcptCancel : Updating Collection finished For Demand : " + demand);
+        } catch (final Exception e) {
 
-	@Transactional
-	public void cancelBill(final Long billId) {
-		if (billId != null) {
-			final EgBill egBill = egBillDAO.findById(billId, false);
-			egBill.setIs_Cancelled("Y");
-		}
-	}
+            throw new ApplicationRuntimeException("Error occured during back update of DCB : " + e.getMessage(), e);
+        }
+    }
 
-	@Transactional
-	public void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
-		String installment;
-		for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
-			if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-				&& !rcptAccInfo.getIsRevenueAccount()) {
+    @Transactional
+    public void cancelBill(final Long billId) {
+        if (billId != null) {
+            final EgBill egBill = egBillDAO.findById(billId, false);
+            egBill.setIs_Cancelled("Y");
+        }
+    }
 
-				final String[] desc = rcptAccInfo.getDescription().split("-", 2);
-				final String reason = desc[0].trim();
-				final String[] installsplit = desc[1].split("#");
-				installment = installsplit[0].trim();
+    @Transactional
+    public void updateDmdDetForRcptCancel(final EgDemand demand, final BillReceiptInfo billRcptInfo) {
+        String installment;
+        for (final ReceiptAccountInfo rcptAccInfo : billRcptInfo.getAccountDetails())
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && !rcptAccInfo.getIsRevenueAccount()) {
 
-				for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
-					if (reason.equalsIgnoreCase(
-							demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
-						&& installment.equalsIgnoreCase(
-							demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
-						if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
-							throw new ApplicationRuntimeException(
-									"updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
-									+ "to be deducted amount " + rcptAccInfo.getCrAmount()
-									+ " is greater than the collected amount " + demandDetail.getAmtCollected()
-									+ " for demandDetail " + demandDetail);
+                final String[] desc = rcptAccInfo.getDescription().split("-", 2);
+                final String reason = desc[0].trim();
+                final String[] installsplit = desc[1].split("#");
+                installment = installsplit[0].trim();
 
-						demandDetail
-								.setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
-						if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
-							&& demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
-							demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                for (final EgDemandDetails demandDetail : demand.getEgDemandDetails())
+                    if (reason.equalsIgnoreCase(
+                            demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster())
+                            && installment.equalsIgnoreCase(
+                                    demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
+                        if (demandDetail.getAmtCollected().compareTo(rcptAccInfo.getCrAmount()) < 0)
+                            throw new ApplicationRuntimeException(
+                                    "updateDmdDetForRcptCancel : Exception while updating cancel receipt, "
+                                            + "to be deducted amount " + rcptAccInfo.getCrAmount()
+                                            + " is greater than the collected amount " + demandDetail.getAmtCollected()
+                                            + " for demandDetail " + demandDetail);
 
-						LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : " + reason
-									+ " and installment : " + installment);
-					}
-			}
-		updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
-		LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
-	}
+                        demandDetail
+                                .setAmtCollected(demandDetail.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
+                        if (demand.getAmtCollected() != null && demand.getAmtCollected().compareTo(BigDecimal.ZERO) > 0
+                                && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getIsDemand())
+                            demand.setAmtCollected(demand.getAmtCollected().subtract(rcptAccInfo.getCrAmount()));
 
-	@Override
-	public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
-														final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
-		final Long billID = Long.valueOf(billReferenceNumber);
-		final List<EgBillDetails> billDetails = new ArrayList<>(0);
-		final EgBill bill = ocBillService.updateBillWithLatest(billID);
-		LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
-					 + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
-		final CollectionApportioner apportioner = new CollectionApportioner();
-		billDetails.addAll(bill.getEgBillDetails());
-		return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO);
-	}
+                        LOGGER.info("Deducted Collected amount Rs." + rcptAccInfo.getCrAmount() + " for tax : " + reason
+                                + " and installment : " + installment);
+                    }
+            }
+        updateReceiptStatusWhenCancelled(billRcptInfo.getReceiptNum());
+        LOGGER.debug("Exiting method updateDmdDetForRcptCancel");
+    }
 
-	@Override
-	public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
-		StringBuilder additionalInfo = new StringBuilder("Paid From");
-		final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
-		final BigDecimal amounttobeCalc = egBill.getTotalAmount().subtract(egBill.getTotalCollectedAmount());
-		final List<ReceiptDetail> reciptDetailList = collectionService
-				.getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
+    @Override
+    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
+            final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
+        final Long billID = Long.valueOf(billReferenceNumber);
+        final List<EgBillDetails> billDetails = new ArrayList<>(0);
+        final EgBill bill = ocBillService.updateBillWithLatest(billID);
+        LOGGER.debug("Reconstruct consumer code :" + bill.getConsumerId() + ", with bill reference number: "
+                + billReferenceNumber + ", for Amount Paid :" + actualAmountPaid);
+        final CollectionApportioner apportioner = new CollectionApportioner();
+        billDetails.addAll(bill.getEgBillDetails());
+        return apportioner.reConstruct(actualAmountPaid, billDetails, functionDAO, chartOfAccountsDAO);
+    }
 
-		for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
-			if (billDet.getOrderNo() == 1) {
-				additionalInfo.append(" ")
-							  .append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()))
-							  .append(" To ");
-				if (egBill.getEgBillDetails().size() == 1) {
-					additionalInfo
-							.append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
-					break;
-				}
+    @Override
+    public String constructAdditionalInfoForReceipt(final BillReceiptInfo billReceiptInfo) {
+        StringBuilder additionalInfo = new StringBuilder("Paid From");
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
+        final BigDecimal amounttobeCalc = egBill.getTotalAmount().subtract(egBill.getTotalCollectedAmount());
+        final List<ReceiptDetail> reciptDetailList = collectionService
+                .getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
 
-			}
-			if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-				&& reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
-				additionalInfo
-						.append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
-				break;
-			}
-		}
-		if (amounttobeCalc.compareTo(BigDecimal.ZERO) == 1)
-			additionalInfo = additionalInfo.append(" (Partialy)");
+        for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
+            if (billDet.getOrderNo() == 1) {
+                additionalInfo.append(" ")
+                        .append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()))
+                        .append(" To ");
+                if (egBill.getEgBillDetails().size() == 1) {
+                    additionalInfo
+                            .append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
+                    break;
+                }
 
-		return additionalInfo.toString();
-	}
+            }
+            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
+                additionalInfo
+                        .append(formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
+                break;
+            }
+        }
+        if (amounttobeCalc.compareTo(BigDecimal.ZERO) == 1)
+            additionalInfo = additionalInfo.append(" (Partialy)");
 
-	@Override
-	public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
-		final ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
-		final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
-		final List<EgBillDetails> billDetails = new ArrayList<>(egBill.getEgBillDetails());
-		financialYearDAO.getFinancialYearByDate(new Date());
-		BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
-		final BigDecimal advanceInstallmentAmount = BigDecimal.ZERO;
-		final BigDecimal arrearAmount = BigDecimal.ZERO;
-		final List<ReceiptDetail> reciptDetailList = collectionService
-				.getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
-		for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
-			if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1)
-				currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
+        return additionalInfo.toString();
+    }
 
-		for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
-			if (billDet.getOrderNo() == 1) {
-				receiptAmountInfo.setInstallmentFrom(
-						formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()));
-				if (billDetails.size() == 1) {
-					receiptAmountInfo.setInstallmentTo(
-							formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
-					break;
-				}
+    @Override
+    public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
+        final ReceiptAmountInfo receiptAmountInfo = new ReceiptAmountInfo();
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        final EgBill egBill = egBillDAO.findById(Long.valueOf(billReceiptInfo.getBillReferenceNum()), false);
+        final List<EgBillDetails> billDetails = new ArrayList<>(egBill.getEgBillDetails());
+        financialYearDAO.getFinancialYearByDate(new Date());
+        BigDecimal currentInstallmentAmount = BigDecimal.ZERO;
+        final BigDecimal advanceInstallmentAmount = BigDecimal.ZERO;
+        final BigDecimal arrearAmount = BigDecimal.ZERO;
+        final List<ReceiptDetail> reciptDetailList = collectionService
+                .getReceiptDetailListByReceiptNumber(billReceiptInfo.getReceiptNum());
+        for (final ReceiptAccountInfo rcptAccInfo : billReceiptInfo.getAccountDetails())
+            if (rcptAccInfo.getCrAmount() != null && rcptAccInfo.getCrAmount().compareTo(BigDecimal.ZERO) == 1)
+                currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
 
-			}
-			if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
-				&& reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
-				receiptAmountInfo.setInstallmentTo(
-						formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
-				break;
-			}
-		}
-		final String revenueWard = "Election Ward 1";
-		receiptAmountInfo.setArrearsAmount(arrearAmount);
-		receiptAmountInfo.setAdvanceAmount(advanceInstallmentAmount);
-		receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
-		receiptAmountInfo.setRevenueWard(revenueWard);
-		return receiptAmountInfo;
-	}
+        for (final EgBillDetails billDet : egBill.getEgBillDetails()) {
+            if (billDet.getOrderNo() == 1) {
+                receiptAmountInfo.setInstallmentFrom(
+                        formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getFromDate()));
+                if (billDetails.size() == 1) {
+                    receiptAmountInfo.setInstallmentTo(
+                            formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
+                    break;
+                }
+
+            }
+            if (egBill.getEgBillDetails().size() > 1 && billDet.getCrAmount().compareTo(BigDecimal.ZERO) == 1
+                    && reciptDetailList.get(0).getOrdernumber().equals(Long.valueOf(billDet.getOrderNo()))) {
+                receiptAmountInfo.setInstallmentTo(
+                        formatter.format(billDet.getEgDemandReason().getEgInstallmentMaster().getToDate()));
+                break;
+            }
+        }
+        final String revenueWard = "Election Ward 1";
+        receiptAmountInfo.setArrearsAmount(arrearAmount);
+        receiptAmountInfo.setAdvanceAmount(advanceInstallmentAmount);
+        receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
+        receiptAmountInfo.setRevenueWard(revenueWard);
+        return receiptAmountInfo;
+    }
 
 }

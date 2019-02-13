@@ -108,7 +108,7 @@
 				<text><![CDATA[Receipt Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy HH:mm:ss">
-				<reportElement stretchType="ElementGroupHeight" x="423" y="85" width="132" height="20" uuid="78344be2-2a07-4e90-beea-2a61c850e882"/>
+				<reportElement stretchType="RelativeToTallestObject" x="423" y="85" width="132" height="20" uuid="78344be2-2a07-4e90-beea-2a61c850e882"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -139,7 +139,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[BUILDING PLAN APPROVAL FEE RECEIPT]]></text>
+				<text><![CDATA[OCCUPANCY CERTIFICATE APPROVAL FEE RECEIPT]]></text>
 			</staticText>
 		</band>
 		<band height="20">

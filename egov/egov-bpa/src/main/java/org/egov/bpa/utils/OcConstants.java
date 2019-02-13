@@ -48,32 +48,33 @@ package org.egov.bpa.utils;
 
 public class OcConstants {
 
-
     // workflow related
     public static final String WF_FWD_AE_APPROVAL_PENDING = "Forwarded to Assistant Engineer Approval";
     public static final String WF_TS_ADDNL_INSPN = "Forwarded to Town Surveyor Additional Inspection";
+    public static final String WF_APPROVED_AND_FEE_PENDING = "Approved with fee collection pending";
+    public static final String WF_FEE_COLL_PENDING = "Approval Fee Collection Pending";
+    public static final String OC_FEE_COLLECTED = "Occupancy certificate permit fees collected";
 
     public static final String OCCUPANCY_CERTIFICATE = "occupancyCertificate";
     public static final String OC_LTP_CHECKLIST = "OCLTPDOCUMENTS";
 
     // inspection related constants
     public static final String OC_INSPECTION = "OCINSPECTION";
-/*    public static final String OC_INSPECTION_LOCATION = "OCINSPECTIONLOCATION";
-    public static final String OC_INSPECTION_MEASUREMENT = "OCINSPECTIONMEASUREMENT";
-    public static final String OC_INSPECTION_ACCESS = "OCINSPECTIONACCESS";
-    public static final String OC_INSPECTION_SURROUNDING = "OCINSPECTIONSURROUNDING";
-    public static final String OC_INSPECTION_TYPE_OF_LAND = "OCINSPECTIONTYPEOFLAND";
-    public static final String OC_INSPECTION_PROPOSED_STAGE_WORK = "OCINSPECTIONPROPOSEDSTAGEWORK";
-    public static final String OC_INSPECTION_WORK_COMPLETED_PER_PLAN = "OCINSPECTIONWORKCOMPLETEDPERPLAN";
-    public static final String OC_INSPECTION_AREA_LOC = "OCINSPECTIONAREALOC";
-    public static final String OC_INSPECTION_LENGTH_OF_COMPOUND_WALL = "OCINSPECTIONLENGTHOFCOMPOUNDWALL";
-    public static final String OC_INSPECTION_NUMBER_OF_WELLS = "OCINSPECTIONNUMBEROFWELLS";
-    public static final String OC_INSPECTION_ERECTION_OF_TOWER = "OCINSPECTIONERECTIONOFTOWER";
-    public static final String OC_INSPECTION_SHUTTER = "OCINSPECTIONSHUTTER";
-    public static final String OC_INSPECTION_ROOF_CONVERSION = "OCINSPECTIONROOFCONVERSION";
-    public static final String OC_INSPECTION_HGT_BUILD_ABUT_ROAD = "OCINSPECTIONHGTBUILDABUTROAD";*/
+    /*
+     * public static final String OC_INSPECTION_LOCATION = "OCINSPECTIONLOCATION"; public static final String
+     * OC_INSPECTION_MEASUREMENT = "OCINSPECTIONMEASUREMENT"; public static final String OC_INSPECTION_ACCESS =
+     * "OCINSPECTIONACCESS"; public static final String OC_INSPECTION_SURROUNDING = "OCINSPECTIONSURROUNDING"; public static final
+     * String OC_INSPECTION_TYPE_OF_LAND = "OCINSPECTIONTYPEOFLAND"; public static final String OC_INSPECTION_PROPOSED_STAGE_WORK
+     * = "OCINSPECTIONPROPOSEDSTAGEWORK"; public static final String OC_INSPECTION_WORK_COMPLETED_PER_PLAN =
+     * "OCINSPECTIONWORKCOMPLETEDPERPLAN"; public static final String OC_INSPECTION_AREA_LOC = "OCINSPECTIONAREALOC"; public
+     * static final String OC_INSPECTION_LENGTH_OF_COMPOUND_WALL = "OCINSPECTIONLENGTHOFCOMPOUNDWALL"; public static final String
+     * OC_INSPECTION_NUMBER_OF_WELLS = "OCINSPECTIONNUMBEROFWELLS"; public static final String OC_INSPECTION_ERECTION_OF_TOWER =
+     * "OCINSPECTIONERECTIONOFTOWER"; public static final String OC_INSPECTION_SHUTTER = "OCINSPECTIONSHUTTER"; public static
+     * final String OC_INSPECTION_ROOF_CONVERSION = "OCINSPECTIONROOFCONVERSION"; public static final String
+     * OC_INSPECTION_HGT_BUILD_ABUT_ROAD = "OCINSPECTIONHGTBUILDABUTROAD";
+     */
 
-    //App config key name constants
+    // App config key name constants
     public static final String OC_DOC_SCRUTINY_INTEGRATION_REQUIRED = "OC_DOCUMENT_SCRUTINY_INTEGRATION_REQUIRED";
     public static final String APPLN_FEE_COLLECTION_REQUIRED = "APPLICATIONFEECOLLECTIONREQUIRED";
     public static final String OC_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED = "OC_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED";

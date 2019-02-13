@@ -282,7 +282,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 && ((hasInspectionStatus && hasInspectionPendingAction)
                         || (FIELD_INSPECTION_COMPLETED.equalsIgnoreCase(currentStateValue)
                                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus))))
-            model.addAttribute("isTSInspectionRequired", true);
+            model.addAttribute("isTSInspectionRequired", false);
 
         if (mode == null)
             mode = "edit";
@@ -328,7 +328,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         if (APPLICATION_STATUS_NOCUPDATED.equals(oc.getStatus().getCode())
                 || APPLICATION_STATUS_APPROVED.equals(oc.getStatus().getCode())) {
-            workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceType(oc.getParent()));
+            workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc));
         }
         model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
         workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE_OC);
