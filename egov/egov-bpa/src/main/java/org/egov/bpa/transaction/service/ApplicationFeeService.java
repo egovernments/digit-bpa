@@ -84,7 +84,7 @@ public class ApplicationFeeService {
         List<ApplicationFeeDetail> applicationFeeDetailsSet = new ArrayList<>();
 
         for (ApplicationFeeDetail applicationFeeDtl : applicationFee.getApplicationFeeDetail()) {
-            applicationFeeDtl.setAmount(applicationFeeDtl.getAmount() != null ? applicationFeeDtl.getAmount() : BigDecimal.ZERO);
+            applicationFeeDtl.setAmount(applicationFeeDtl.getAmount() != null ? applicationFeeDtl.getAmount().setScale(0, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
             applicationFeeDtl.setApplicationFee(applicationFee);
             if (applicationFee != null && applicationFee.getId() == null) {
                 applicationFeeDetailsSet.add(applicationFeeDtl);

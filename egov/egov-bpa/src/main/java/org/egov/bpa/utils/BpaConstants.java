@@ -349,7 +349,8 @@ public class BpaConstants {
     public static final String OCCUPANCY_CERTIFICATE_NOTICE_TYPE = "Occupancy Certificate";
     public static final String NATURE_OF_WORK_STAKEHOLDER = "Stake Holder Registration";
 
-
+    public static final String BPAFEECALULATION = "BPA_FEE_CALCULATION";
+    
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {
         BUILDPERMIT.add(ST_CODE_01); // New Construction

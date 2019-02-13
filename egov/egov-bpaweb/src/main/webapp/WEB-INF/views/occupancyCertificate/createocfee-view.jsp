@@ -185,13 +185,5 @@
 		</form:form>
 	</div>
 </div>
-<script>
-jQuery(document).ready(function($) {
-	jQuery(document).ready(function($) {
-            $(".amount").prop("disabled", disabled);
-        else
-            $(".amount").removeAttr("disabled");
-    });
-</script>
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

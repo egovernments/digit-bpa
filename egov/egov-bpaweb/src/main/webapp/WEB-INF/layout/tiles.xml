@@ -268,11 +268,23 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/createbpafee-form.jsp" />
 	</definition>
+	<definition name="modifybpafee-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.modifyfee.create"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/application/modifybpafee-form.jsp" />
+    </definition>
 	<definition name="createbpafee-view" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.createfee.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/createbpafee-view.jsp" />
+	</definition>
+	<definition name="modifybpafee-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.createfee.view"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/modifybpafee-view.jsp" />
 	</definition>
 	<definition name="collect-failure" extends="base_layout">
 		<put-attribute name="page-title"

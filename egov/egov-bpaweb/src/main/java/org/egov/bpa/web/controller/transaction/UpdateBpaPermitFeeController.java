@@ -40,7 +40,6 @@
 package org.egov.bpa.web.controller.transaction;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -61,9 +60,11 @@ import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.PermitFeeService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -84,7 +85,9 @@ public class UpdateBpaPermitFeeController {
     private static final String PERMIT_FEE = "permitFee";
     private static final String BPA_APPLICATION = "bpaApplication";
     private static final String CREATEBPAFEE_FORM = "createbpafee-form";
+    private static final String MODIFYPAFEE_FORM = "modifybpafee-form";
     private static final String CREATEBPAFEE_VIEW = "createbpafee-view";
+    private static final String MODIFYBPAFEE_VIEW = "modifybpafee-view";
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String MESSAGE = "message";
 
@@ -108,6 +111,9 @@ public class UpdateBpaPermitFeeController {
     protected PermitFeeRepository permitFeeRepository;
     @Autowired
     private ApplicationBpaFeeCalculationService applicationBpaFeeCalculationService;
+    @Autowired
+    private BpaUtils bpaUtils;
+
     @ModelAttribute
     public PermitFee getBpaApplication(@PathVariable final String applicationNumber) {
         BpaApplication bpaApplication = applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -130,8 +136,7 @@ public class UpdateBpaPermitFeeController {
     public String calculateFeeform(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         PermitFee permitFee = getBpaApplication(applicationNumber);
-        if (permitFee != null && permitFee.getApplication() != null
-                            ) {
+        if (permitFee != null && permitFee.getApplication() != null) {
             loadViewdata(model, permitFee);
 
             // check fee calculate first time or update ? Check inspection is captured for existing application ?
@@ -140,13 +145,20 @@ public class UpdateBpaPermitFeeController {
             List<BpaFee> bpaSanctionFees = bpaFeeService
                     .getAllActiveSanctionFeesByServiceId(permitFee.getApplication().getServiceType().getId(),BpaConstants.FEETYPE_SANCTIONFEE);
 
-            if (getAppConfigValueByPassingModuleAndType(BpaConstants.EGMODULE_NAME, BpaConstants.AUTOCALCULATEFEEBYINSPECTION)) {
+            String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.BPAFEECALULATION);
+            model.addAttribute("sanctionFees", bpaSanctionFees);
+            model.addAttribute("feeCalculationMode", feeCalculationMode);
+            
+            if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
+            		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 // calculate fee by passing sanction list, inspection latest object.
                 // based on fee code, define calculation logic for each servicewise.
             	permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(permitFee.getApplication());
-            } else {
-
-                if (permitFee.getApplicationFee().getId() == null) {
+                model.addAttribute(PERMIT_FEE, permitFee);
+               return MODIFYPAFEE_FORM;
+            }  else {
+                if (permitFee.getApplicationFee() == null) {
+                	permitFee.setApplicationFee(new ApplicationFee());
                 	permitFee.getApplicationFee().setStatus(bpaStatusService
                             .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE_REGISTRATIONFEE,
                                     BpaConstants.BPASTATUS_REGISTRATIONFEE_APPROVED));
@@ -159,14 +171,17 @@ public class UpdateBpaPermitFeeController {
                         applicationDtl.setAmount(BigDecimal.ZERO);
                         permitFee.getApplicationFee().addApplicationFeeDetail(applicationDtl);
                     }
+                    
+                    model.addAttribute(PERMIT_FEE, permitFee);
+                    BigDecimal amount = permitFee.getApplicationFee().getApplicationFeeDetail().stream().map(ApplicationFeeDetail::getAmount)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    return  amount.compareTo(BigDecimal.ZERO) > 0 ? MODIFYPAFEE_FORM : CREATEBPAFEE_FORM;
                 }
                 // If manual process, then return list of sanction fee.
             }
-            model.addAttribute(PERMIT_FEE, permitFee);
-            model.addAttribute("sanctionFees", bpaSanctionFees);
         }
 
-        return CREATEBPAFEE_FORM;
+        return MODIFYPAFEE_FORM;
     }
 
     public Boolean getAppConfigValueByPassingModuleAndType(String moduleName, String autocalculateFee) {
@@ -205,7 +220,7 @@ public class UpdateBpaPermitFeeController {
                 permitFee.getApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
         model.addAttribute(MESSAGE, message);
 
-        return CREATEBPAFEE_VIEW;
+        return StringUtils.isBlank(applicationFee.getModifyFeeReason()) ? CREATEBPAFEE_VIEW : MODIFYBPAFEE_VIEW;
         // redirect to success page.
 
     }

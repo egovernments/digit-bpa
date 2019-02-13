@@ -105,6 +105,13 @@
 							<div class="col-sm-3 add-margin view-content">
 								<c:out value="${permitFee.application.admissionfeeAmount}"
 									default="N/A"></c:out>
+									</div>
+							<div class="col-sm-3 add-margin">
+								<spring:message code="lbl.admission.fees" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								<c:out value="${applicationFee.feeDate}"
+									   default="N/A"></c:out>
 							</div>
 						</div>
 					</div>
@@ -121,7 +128,7 @@
 								value="${permitFee.applicationFee.status.id}" />
 	                        <form:hidden path="applicationFee" id="applicationfeeid"
 								value="${permitFee.applicationFee.id}" />
-
+							<input type="hidden"  id="feeCalculationMode" value="${feeCalculationMode}"/>
 							<form:hidden path="id" id="id" value="${permitFee.id}" />
 
 						</div>
@@ -183,7 +190,7 @@
 						</c:when>
 					</c:choose>
 
-					<div class="form-group">
+					<%-- <div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.modify.fee.reason" /><span class="mandatory"></span></label>
 						<div class="col-sm-7 add-margin text-center">
@@ -193,7 +200,7 @@
 							<form:errors path="applicationFee.modifyFeeReason"
 								cssClass="add-margin error-msg" />
 						</div>
-					</div>
+					</div> --%>
 
 				</div>
 			</div>
@@ -208,6 +215,17 @@
 		</form:form>
 	</div>
 </div>
+
+<script>
+    jQuery(document)
+        .ready(
+            function () {
+                if ($('#feeCalculationMode').val() == 'AUTOFEECAL')
+                    $(".patternvalidation").prop("disabled", disabled);
+                else
+                    $(".patternvalidation").removeAttr("disabled");
+            });
+</script>
 
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

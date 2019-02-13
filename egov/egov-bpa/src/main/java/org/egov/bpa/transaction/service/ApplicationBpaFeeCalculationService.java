@@ -73,7 +73,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(readOnly = true)
-public class ApplicationBpaFeeCalculationService {
+public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCalculation{
 	private static final String OTHERS = "Others";
 	private static final BigDecimal ONE_HUNDRED_FIFTY = BigDecimal.valueOf(150);
 	private static final BigDecimal THREE_HUNDRED = BigDecimal.valueOf(300);
@@ -122,6 +122,7 @@ public class ApplicationBpaFeeCalculationService {
 		return permitFee;
 	}
 
+	@Override
 	public PermitFee calculateBpaSanctionFees(final BpaApplication application) {
 		List<Long> serviceTypeList = new ArrayList<>();
 		// getting all service type and amenities to retrieve fee details

@@ -44,21 +44,25 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title text-center no-float">
+		<c:if test="${not empty message}">
+			<strong>${message}</strong>
+		</c:if>
+	</div>
+</div>
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="" method="post"
-			modelAttribute="occupancyFee" id="occupancyFee"
+			modelAttribute="permitFee" id="permitFee"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden"  id="autoFeeCalculationEnabled" value="${autoFeeCalculationEnabled}"/>
-			<input type="hidden"  name="id" value="${occupancyFee.id}"/>
-			<input type="hidden"  id="feeCalculationMode" value="${feeCalculationMode}"/>
-			<form:hidden path="applicationFee.feeDate"/>
+
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
 					<div class="panel-heading custom_form_panel_heading">
 						<div class="panel-title">
-							<spring:message code="lbl.basic.info" />
+							<spring:message code="lbl.appln.details" />
 						</div>
 					</div>
 					<div class="panel-body">
@@ -67,15 +71,15 @@
 								<spring:message code="lbl.application.no" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${occupancyFee.oc.applicationNumber}"
+								<c:out value="${permitFee.application.applicationNumber}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.application.date" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate value="${occupancyFee.oc.applicationDate}" pattern="dd/MM/yyyy" var="applicationDate" />
-								<c:out value="${applicationDate}" default="N/A"></c:out>
+								<c:out value="${permitFee.application.applicationDate}"
+									default="N/A"></c:out>
 							</div>
 						</div>
 						<div class="row add-border">
@@ -84,127 +88,92 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out
-									value="${occupancyFee.oc.parent.serviceType.description}"
+									value="${permitFee.application.serviceType.description}"
 									default="N/A"></c:out>
 							</div>
-							<div class="col-sm-3 add-margin">Amenity Type</div>
-							<c:choose>
-								<c:when test="${empty occupancyFee.oc.parent.amenityName}">
-									<div class="col-sm-3 add-margin view-content">
-										<c:out value="N/A"/>
-									</div>
-								</c:when>
-								<c:otherwise>
-									<div class="col-sm-3 add-margin view-content">
-									<c:out value="${occupancyFee.oc.parent.amenityName}"/>
-									</div>
-								</c:otherwise>
-							</c:choose>
+							<div class="col-sm-3 add-margin"><spring:message code="lbl.amenity.type" /></div>
+							<div class="col-sm-3 add-margin view-content">
+								<c:out value="${permitFee.application.amenityName}"
+									default="N/A"></c:out>
+							</div>
 						</div>
 						<div class="row add-border">
 							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.admission.fees" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${occupancyFee.oc.parent.admissionfeeAmount}"
+								<c:out value="${permitFee.application.admissionfeeAmount}"
 									default="N/A"></c:out>
+							</div>
 						</div>
 					</div>
 					<div class="panel-heading custom_form_panel_heading">
 						<div class="panel-title">
-							<spring:message code="lbl.ocfee.details" />
+							<spring:message code="lbl.fee.details" />
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-sm-3 add-margin">
-							<form:hidden path="oc" id="feeocid"
-								value="${occupancyFee.oc.id}" />
-							<form:hidden path="applicationFee.status" id="feeapplicationstatusid"
-								value="${occupancyFee.applicationFee.status.id}" />
-									<form:hidden path="applicationFee" id="feeapplicationid"
-								value="${occupancyFee.applicationFee.id}" />
-								
-							<form:hidden path="id" id="id" value="${occupancyFee.id}" />
+							<form:hidden path="application" id="feeapplicationid"
+								value="${permitFee.application.id}" />
+                            <form:hidden path="applicationFee.status" id="feeapplicationstatusid"
+								value="${permitFee.applicationFee.status.id}" />
+	                        <form:hidden path="applicationFee" id="applicationfeeid"
+								value="${permitFee.applicationFee.id}" />
+							<form:hidden path="id" id="id" value="${permitFee.id}" />
 
 						</div>
 					</div>
 
 					<c:choose>
-						<c:when test="${!occupancyFee.applicationFee.applicationFeeDetail.isEmpty()}">
-							<div class="form-group view-content header-color hidden-xs">
-								<div class="col-sm-5 text-right">
-									<spring:message code="lbl.applicationFee.feeType" />
-								</div>
-								<div class="col-sm-2 text-right">
-									<spring:message code="lbl.applicationFee.amount" />
-								</div>
-							</div>
+						<c:when test="${!permitFee.applicationFee.applicationFeeDetail.isEmpty()}">
+							
+							<table class="table table-striped table-bordered" id="bpafeedetail" style="width:50%;margin:0 auto;">
+								<thead>
+								<tr>
+									<th class="text-center"><spring:message code="lbl.applicationFee.feeType"/></th>
+									<th class="text-center"><spring:message code="lbl.applicationFee.amount"/></th>
+								</tr>
+								</thead>
+								<tbody id="tblBody">
+								<c:set var="totalAmount" value="${0}"/>
 							<c:forEach var="docs"
-								items="${occupancyFee.applicationFee.applicationFeeDetail}"
+								items="${permitFee.applicationFee.applicationFeeDetail}"
 								varStatus="status">
-								<div class="form-group">
-
-									<div class="col-sm-5 add-margin check-text text-right">
-										<c:out value="${docs.bpaFee.description}" />
-										<form:hidden id="applicationFeeDetail${status.index}id"
-											path="applicationFee.applicationFeeDetail[${status.index}].id"
-											value="${docs.id}" />
-										<form:hidden id="applicationFeeDetail${status.index}bpaFee"
-											path="applicationFee.applicationFeeDetail[${status.index}].bpaFee"
-											value="${docs.bpaFee.id}" />
-										<form:hidden
-											id="applicationFeeDetail${status.index}applicationFee"
-											path="applicationFee.applicationFeeDetail[${status.index}].applicationFee"
-											value="${docs.applicationFee.id}" />
-									</div>
-
-									<div class="col-sm-2 add-margin text-right">
-										<c:choose>
-											<c:when
-												test="${docs.bpaFee.description eq 'Other Fees'}">
-												<input type="hidden" id="currentPermitFee" value="${docs.amount}">
-												<form:input class="form-control patternvalidation text-right otherFees"
-													data-pattern="number" maxlength="10"
-													id="applicationFeeDetail${status.index}amount"
-													value="${docs.amount}"
-													path="applicationFee.applicationFeeDetail[${status.index}].amount" />
-											</c:when>
-											<c:otherwise>
-												<form:input class="form-control patternvalidation text-right amount"
-													data-pattern="number" maxlength="10"
-													id="applicationFeeDetail${status.index}amount"
-													value="${docs.amount}" disabled="true"
-													path="applicationFee.applicationFeeDetail[${status.index}].amount" />
-											</c:otherwise>
-										</c:choose>
-										<form:errors
-											path="applicationFee.applicationFeeDetail[${status.index}].amount"
-											cssClass="add-margin error-msg" />
-									</div>
-
-								</div>
-							</c:forEach>
+									<tr>
+										<td class="text-left view-content"><c:out value="${docs.bpaFee.description}"/></td>
+										<td class="text-right view-content"><c:set var="totalAmount"
+																				   value="${totalAmount + docs.amount}"/>
+											<fmt:formatNumber type="number" maxFractionDigits="2" value="${docs.amount}"/>
+										</td>
+									</tr>
+								</c:forEach>
+								</tbody>
+								<tfoot>
+								<tr>
+									<td class="text-left view-content">Total Amount</td>
+									<td class="text-right view-content"><fmt:formatNumber type="number" maxFractionDigits="2"
+																						  value="${totalAmount}"/></td>
+								</tr>
+								</tfoot>
+							</table>
 						</c:when>
 					</c:choose>
-
+					
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.modify.ocfee.reason" /><span class="mandatory"></span></label>
+								code="lbl.modify.fee.reason" /><span class="mandatory"></span></label>
 						<div class="col-sm-7 add-margin text-center">
 							<form:textarea class="form-control patternvalidation"
 								data-pattern="alphanumericspecialcharacters" rows="3" maxlength="510"
-								id="modifyFeeReason" path="applicationFee.modifyFeeReason" required="required" />
+								id="modifyFeeReason" path="applicationFee.modifyFeeReason" readonly="true" />
 							<form:errors path="applicationFee.modifyFeeReason"
 								cssClass="add-margin error-msg" />
 						</div>
 					</div>
-
 				</div>
 			</div>
 			<div class="text-center">
-				<button type="submit" class='btn btn-primary' id="createFeeSubmit">
-					<spring:message code='lbl.applicationFee.create' />
-				</button>
 				<a href='javascript:void(0)' class='btn btn-default'
 					onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>
@@ -213,15 +182,5 @@
 	</div>
 </div>
 
-<script>
-    jQuery(document)
-        .ready(
-            function () {
-                if ($('#feeCalculationMode').val() == 'AUTOFEECAL')
-                    $(".patternvalidation").prop("disabled", disabled);
-                else
-                    $(".patternvalidation").removeAttr("disabled");
-            });
-</script>
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

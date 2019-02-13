@@ -104,6 +104,7 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
 		return ocFee;
 	}
 	
+	@Override
 	public OccupancyFee calculateOCSanctionFees(final OccupancyCertificate oc) {
 		
 		OccupancyFee ocFee = getOCFee(oc);

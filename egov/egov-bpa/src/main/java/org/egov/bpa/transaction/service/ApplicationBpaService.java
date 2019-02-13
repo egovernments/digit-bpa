@@ -118,6 +118,7 @@ import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
@@ -462,6 +463,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
+        	
+        	String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.BPAFEECALULATION);
+        	
+        	if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
+            		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
 			PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
 
         	ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
@@ -469,6 +475,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             permitFeeRepository.save(permitFee);
         	application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(), permitFee.getApplication().getDemand()));
          }
+        }
         if (WF_APPROVE_BUTTON.equals(workFlowAction)) {
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
             application.setPlanPermissionDate(new Date());
