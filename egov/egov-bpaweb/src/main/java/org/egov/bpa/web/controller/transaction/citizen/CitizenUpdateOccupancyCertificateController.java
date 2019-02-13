@@ -264,6 +264,9 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 
             message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
             model.addAttribute(MESSAGE, message);
+            if(!bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+                ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
+            }
         } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
             model.addAttribute(MESSAGE,
                     "Occupancy Certificate  Application is cancelled by applicant itself successfully with application number "

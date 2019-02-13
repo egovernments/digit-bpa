@@ -59,6 +59,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
@@ -195,15 +196,14 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
             model.addAttribute(MESSAGE, message);
         } else {
             model.addAttribute(MESSAGE,
-                    "Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".");
+                            "Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".");
+           
+            if (bpaUtils.isCitizenAcceptanceRequired())//&& !occupancyCertificate.isCitizenAccepted())
+                ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
+
+            return "redirect:/application/citizen/success/" + occupancyCertificate.getApplicationNumber();
         }
         
-      /* Applicant applicant= occupancyCertificate.getParent().getOwner();
-			bpaSmsAndEmailService.buildSmsAndEmailForOCNewAppln(occupancyCertificate,
-					applicant.getName(), applicant.getUser().getMobileNumber(),
-					applicant.getUser().getEmailId(), applicant.getUser().getUsername(),
-					applicant.getUser().getPassword(), isCitizen);*/
-			
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)

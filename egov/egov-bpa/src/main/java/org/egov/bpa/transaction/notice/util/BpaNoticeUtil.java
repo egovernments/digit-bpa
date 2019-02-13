@@ -544,7 +544,7 @@ public class BpaNoticeUtil {
             int order = buildPredefinedRejectReasons(bpaApplication, rejectReasons);
             int additionalOrder = buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions,
                     order);
-            StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication);
+            StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication.getStateHistory());
             rejectReasons.append(String.valueOf(additionalOrder) + ") "
                     + (stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY)
                     + TWO_NEW_LINE);

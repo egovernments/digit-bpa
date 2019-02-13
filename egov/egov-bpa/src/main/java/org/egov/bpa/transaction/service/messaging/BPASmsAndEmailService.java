@@ -58,11 +58,13 @@ import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -85,6 +87,7 @@ import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
 import static org.egov.bpa.utils.BpaConstants.YES;
 
 @Service
+@Transactional(readOnly = true)
 public class BPASmsAndEmailService {
 	private static final String MSG_KEY_SMS_STAKEHOLDER_NEW = "msg.newstakeholder.sms";
 	private static final String SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW = "msg.newstakeholder.email.subject";
@@ -137,12 +140,7 @@ public class BPASmsAndEmailService {
 	private static final String SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_PP = "msg.newstakeholder.email.paymentpending.subject";
 	private static final String BODY_KEY_EMAIL_STAKEHOLDER_NEW_PP = "msg.newstakeholder.email.paymentpending.body";
 
-	private static final String MSG_KEY_SMS_OC_APPLN_NEW_CZN = "msg.oc.submit.sms.citizen";
-	private static final String BODY_KEY_EMAIL_OC_APPLN_NEW_CZN = "msg.oc.submit.mail.body.citizen";
-	private static final String SUBJECT_KEY_EMAIL_OC_APPLN_NEW = "msg.oc.submit.mail.subject";
-	private static final String MSG_KEY_SMS_OC_APPLN_NEW = "msg.oc.submit.sms";
-	private static final String BODY_KEY_EMAIL_OC_APPLN_NEW = "msg.oc.submit.mail.body";
-	
+
 	@Autowired
 	private NotificationService notificationService;
 	@Autowired
@@ -458,7 +456,7 @@ public class BPASmsAndEmailService {
 	}
 
 	private String getCancelApplnMessage(String code, String applicantName, BpaApplication bpaApplication) {
-		StateHistory stateHistory = bpaUtils.getRejectionComments(bpaApplication);
+		StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication.getStateHistory());
 		return bpaMessageSource.getMessage(code,
 				new String[]{applicantName, bpaApplication.getApplicationNumber(),
 						stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY,
@@ -693,6 +691,8 @@ public class BPASmsAndEmailService {
 				new String[]{name, application.getApplicationNumber(), getMunicipalityName()}, null);
 		return msg;
 	}
+	
+	//////
 
 	public void sendSmsForCollection(BigDecimal totalAmount, BpaApplication application, BillReceiptInfo billRcptInfo) {
 		if (isSmsEnabled()) {
@@ -735,43 +735,6 @@ public class BPASmsAndEmailService {
 		return msg;
 	}
 
-	public void buildSmsAndEmailForOCNewAppln(final OccupancyCertificate occupancyCertificate,
-			final String applicantName, final String mobileNo, final String email, final String loginUserName,
-			final String password, final Boolean isCitizen) {
-		String smsMsg = EMPTY;
-		String body = EMPTY;
-		String subject = EMPTY;
-		String smsCode;
-		String mailCode;
-		if (isCitizen) {
-			smsCode = MSG_KEY_SMS_OC_APPLN_NEW_CZN;
-			mailCode = BODY_KEY_EMAIL_OC_APPLN_NEW_CZN;
-
-			smsMsg = bpaMessageSource.getMessage(smsCode, new String[] { applicantName,
-					occupancyCertificate.getApplicationNumber(), loginUserName, password }, null);
-			body = bpaMessageSource.getMessage(mailCode, new String[] { applicantName,
-					occupancyCertificate.getApplicationNumber(), loginUserName, password, getMunicipalityName() },
-					null);
-
-		} else {
-			smsCode = MSG_KEY_SMS_OC_APPLN_NEW;
-			mailCode = BODY_KEY_EMAIL_OC_APPLN_NEW;
-			smsMsg = bpaMessageSource.getMessage(smsCode,
-					new String[] { applicantName, occupancyCertificate.getApplicationNumber() }, null);
-			body = bpaMessageSource.getMessage(mailCode, new String[] { applicantName,
-					occupancyCertificate.getApplicationNumber(), loginUserName, password, getMunicipalityName() },
-					null);
-
-		}
-
-		subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_OC_APPLN_NEW,
-				occupancyCertificate.getApplicationNumber());
-
-		if (mobileNo != null && smsMsg != null)
-			notificationService.sendSMS(mobileNo, smsMsg);
-		if (email != null && body != null) {
-			notificationService.sendEmail(email, subject, body);
-		}
-	}
+	
 
 }

@@ -51,6 +51,8 @@ import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.repository.oc.OCLetterToPartyRepository;
 import org.egov.bpa.transaction.service.BpaStatusService;
+import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
+import org.egov.bpa.transaction.service.messaging.oc.OcSmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.service.FinancialYearService;
@@ -99,6 +101,9 @@ public class OCLetterToPartyService {
 	private CityService cityService;
 	@Autowired
 	private BpaStatusService bpaStatusService;
+	 @Autowired
+	    private OcSmsAndEmailService ocSmsAndEmailService;
+	
 
 	public List<OCLetterToParty> findAllByOC(final OccupancyCertificate oc) {
 		return letterToPartyRepository.findByOcOrderByIdDesc(oc);
@@ -118,6 +123,7 @@ public class OCLetterToPartyService {
 			ocLetterToParty.getLetterToParty().setLetterDate(new Date());
 			ocLetterToParty.getLetterToParty().setLpNumber(generateLetterToPartyNumber());
 			bpaUtils.redirectToBpaWorkFlowForOC(ocLetterToParty.getOc(), getWorkflowBean(approvalPosition, BpaConstants.LETTERTOPARTYINITIATE, LETTER_TO_PARTY_INITIATE));
+			 ocSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(ocLetterToParty.getOc());
 		}
 
 		if (ocLetterToParty.getLetterToParty().getReplyDate() != null) {

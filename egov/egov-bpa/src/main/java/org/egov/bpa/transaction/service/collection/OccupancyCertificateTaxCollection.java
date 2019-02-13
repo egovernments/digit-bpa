@@ -53,9 +53,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
+import org.egov.bpa.service.es.OccupancyCertificateIndexService;
 import org.egov.bpa.transaction.entity.CollectionApportioner;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.service.messaging.oc.OcSmsAndEmailService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
@@ -121,6 +123,12 @@ public class OccupancyCertificateTaxCollection extends TaxCollection {
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
+    
+    @Autowired
+   private OcSmsAndEmailService ocSmsAndEmailService;
+    
+    @Autowired
+   private OccupancyCertificateIndexService occupancyCertificateIndexService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -219,8 +227,8 @@ public class OccupancyCertificateTaxCollection extends TaxCollection {
             bpaUtils.redirectToBpaWorkFlowForOC(oc,
                     getWorkflowBean(BpaConstants.WF_NEW_STATE, BpaConstants.BPAFEECOLLECT, null, null));
         }
-        // bpaUtils.updatePortalUserinbox(application,null);
-        // occupancyCertificateService.saveAndFlushApplication(application);
+        ocSmsAndEmailService.sendSMSAndEmail(oc, null, null);
+        occupancyCertificateIndexService.updateOccupancyIndex(oc);
     }
 
     private WorkflowBean getWorkflowBean(final String currentState, final String remarks, final Long approvalPosId,
@@ -301,9 +309,9 @@ public class OccupancyCertificateTaxCollection extends TaxCollection {
                             oc.getCurrentState().getOwnerPosition().getId(),
                             baWorkFlowService.getAmountRuleByServiceTypeForOc(oc)));
         }
-        // bpaIndexService.updateIndexes(application);
-        // bpaSmsAndEmailService.sendSmsForCollection(totalAmount, application, billRcptInfo);
-    }
+        ocSmsAndEmailService.sendSmsForCollection(totalAmount,oc, billRcptInfo);  
+        occupancyCertificateIndexService.updateOccupancyIndex(oc);
+        }
 
     public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,
             final BigDecimal dmdAmount) {

@@ -48,6 +48,7 @@
 package org.egov.bpa.web.controller.transaction.occupancy;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_HISTORY;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
@@ -59,6 +60,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS;
+import static org.egov.bpa.utils.BpaConstants.OCREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_AE;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_OVERSEER;
@@ -105,6 +107,7 @@ import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
+import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
@@ -117,6 +120,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.custom.CustomImplProvider;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -155,6 +159,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
     private static final String APPRIVALPOSITION = "approvalPosition";
+    private static final String PDFEXTN = ".pdf";
+
     @Autowired
     private PositionMasterService positionMasterService;
     @Autowired
@@ -321,7 +327,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 || APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())) {
             if (bpaUtils.applicationInitiatedByNonEmployee(oc.getCreatedBy())
                     && bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
-                model.addAttribute(COLLECT_FEE_VALIDATE, messageSource.getMessage("msg.collect.applnfees.toprocess.appln", null, null));
+                model.addAttribute(COLLECT_FEE_VALIDATE,
+                        messageSource.getMessage("msg.collect.applnfees.toprocess.appln", null, null));
             } else
                 model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }
@@ -380,7 +387,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("stateType", oc.getClass().getSimpleName());
         model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
         model.addAttribute("currentState", oc.getCurrentState() == null ? "" : oc.getCurrentState().getValue());
-    	model.addAttribute("feeCalculationMode",bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION));
+        model.addAttribute("feeCalculationMode",
+                bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION));
 
     }
 
@@ -526,14 +534,23 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 && GENERATE_OCCUPANCY_CERTIFICATE.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             OccupancyCertificateNoticesFormat ocNoticeFeature = (OccupancyCertificateNoticesFormat) specificNoticeService
                     .find(OccupancyCertificateFormatImpl.class, specificNoticeService.getCityDetails());
-            ocNoticeFeature
+            ReportOutput reportOutput = ocNoticeFeature
                     .generateNotice(
                             occupancyCertificateService.findByApplicationNumber(occupancyCertificate.getApplicationNumber()));
+            ocSmsAndEmailService.sendSmsAndEmailOnPermitOrderGeneration(occupancyCertificate, reportOutput);
+
             return "redirect:/application/occupancy-certificate/generate-occupancy-certificate/"
                     + occupancyCertificate.getApplicationNumber();
-        }else if (isNotBlank(wfBean.getWorkFlowAction()) && GENERATEREJECTNOTICE.equalsIgnoreCase(wfBean.getWorkFlowAction()))
-            return "redirect:/application/occupancy-certificate/demandnotice/" + occupancyCertificate.getApplicationNumber();
-        
+        } else if (isNotBlank(wfBean.getWorkFlowAction()) && GENERATEREJECTNOTICE.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            OccupancyCertificateNoticesFormat ocNoticeFeature = (OccupancyCertificateNoticesFormat) specificNoticeService
+                    .find(OccupancyRejectionFormatImpl.class, specificNoticeService.getCityDetails());
+            ReportOutput reportOutput = ocNoticeFeature
+                    .generateNotice(
+                            occupancyCertificateService.findByApplicationNumber(occupancyCertificate.getApplicationNumber()));
+            ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, reportOutput, OCREJECTIONFILENAME + PDFEXTN);
+            return "redirect:/application/occupancy-certificate/rejectionnotice/" + occupancyCertificate.getApplicationNumber();
+        }
+
         return REDIRECT_APPLICATION_OC_SUCCESS + ocResponse.getApplicationNumber();
     }
 
@@ -545,6 +562,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
         model.addAttribute(BPA_APPLICATION, oc.getParent());
         model.addAttribute(OCCUPANCY_CERTIFICATE, oc);
+        //
+        ocSmsAndEmailService.sendSMSAndEmail(oc, null, null);
         return OCCUPANCY_CERTIFICATE_RESULT;
     }
 

@@ -55,6 +55,7 @@ import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
+import org.egov.bpa.transaction.service.messaging.oc.OcSmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl;
 import org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -136,6 +137,9 @@ public class BpaUtils {
 
     @Autowired
     private CollectionIntegrationService collectionIntegrationService;
+    
+    @Autowired
+    private OcSmsAndEmailService ocSmsAndEmailService;
 
     private String fileStoreDir;
 
@@ -466,12 +470,12 @@ public class BpaUtils {
         return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
     }
 
-    public StateHistory<Position> getRejectionComments(BpaApplication bpaApplication) {
-        StateHistory<Position> stateHistory = bpaApplication.getStateHistory().stream()
+    public StateHistory<Position> getRejectionComments(List<StateHistory<Position>> stateHistories) {
+        StateHistory<Position> stateHistory = stateHistories.stream()
                 .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
                 .findAny().orElse(null);
         if (stateHistory == null)
-            stateHistory = bpaApplication.getStateHistory().stream()
+            stateHistory = stateHistories.stream()
                     .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECT_CLERK))
                     .findAny().orElse(null);
         return stateHistory;

@@ -87,27 +87,32 @@ import org.egov.bpa.transaction.entity.oc.OCDcrDocuments;
 import org.egov.bpa.transaction.entity.oc.OCDocuments;
 import org.egov.bpa.transaction.entity.oc.OCExistingBuilding;
 import org.egov.bpa.transaction.entity.oc.OCExistingBuildingFloor;
-import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
 import org.egov.bpa.transaction.entity.oc.OCNoticeConditions;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
+import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
+import org.egov.bpa.transaction.notice.impl.OccupancyCertificateDemandFormatImpl;
 import org.egov.bpa.transaction.repository.oc.OccupancyCertificateRepository;
+import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.OccupancyCertificateBillService;
+import org.egov.bpa.transaction.service.messaging.oc.OcSmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.FileStoreUtils;
@@ -167,6 +172,10 @@ public class OccupancyCertificateService {
     private BpaDemandService bpaDemandService;
     @Autowired
     private OccupancyFeeRepository ocFeeRepository;
+    @Autowired
+    private OcSmsAndEmailService ocSmsAndEmailService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     public List<OccupancyCertificate> findByEdcrNumber(String edcrNumber) {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
@@ -222,6 +231,11 @@ public class OccupancyCertificateService {
              * to be used as occupancy certificate number
              */
             oc.setOccupancyCertificateNumber(generateOccupancyCertificateNumber());
+            OccupancyCertificateNoticesFormat ocNoticeFeature = (OccupancyCertificateNoticesFormat) specificNoticeService
+                    .find(OccupancyCertificateDemandFormatImpl.class, specificNoticeService.getCityDetails());
+            ReportOutput reportOutput = ocNoticeFeature
+                    .generateNotice(findByApplicationNumber(oc.getApplicationNumber()));
+            ocSmsAndEmailService.sendSmsAndEmailOnApproval(oc, reportOutput);
         }
         oc.setSentToPreviousOwner(false);
         processAndStoreGeneralDocuments(oc);

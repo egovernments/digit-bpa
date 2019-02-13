@@ -71,6 +71,7 @@ import org.egov.bpa.transaction.service.ExistingBuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
+import org.egov.bpa.transaction.service.messaging.oc.OcSmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
@@ -183,6 +184,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 	protected UserService userService;
 	@Autowired
 	protected StakeHolderService stakeHolderService;
+	@Autowired
+	protected OcSmsAndEmailService ocSmsAndEmailService;
 
 	protected void prepareFormData(Model model) {
 		model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
