@@ -597,7 +597,7 @@ $(document).ready(
                                     && ($("#serviceType option:selected").text() === 'Alteration'
                                         || $("#serviceType option:selected").text() === 'Addition or Extension'
                                         || $("#serviceType option:selected").text() === 'Change in occupancy')
-                                    && jQuery.inArray(true, existingBldgPresent) < 0) {
+                                    && jQuery.inArray(true, existingBldgPresent) === -1) {
                                     // Validate existing building details if not present for required service
                                     bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + $('#existingBuildDetailsNotPresent').val());
                                     $('#eDcrNumber').val('');
@@ -617,12 +617,12 @@ $(document).ready(
                                     $('#occupancyapplnlevel').trigger('change');
                                     $('#occupancyapplnlevel').attr("disabled", "disabled");
 
-                                    if(isExistingBuildingDetailsPresent(block)) {
-                                    	$('.existingbuildingdetails').show();
-                                    	setExistingBuildingDetailFromEdcrs(response.plan);
-                                    } else {
-                                    	$('.existingbuildingdetails').hide();
-                                    }
+                                    if(existingBldgPresent.length > 0 && jQuery.inArray(true, existingBldgPresent) !== -1) {
+                                     	$('.existingbuildingdetails').show();
++                                    	setExistingBuildingDetailFromEdcrs(response.planDetail);
+                                     } else {
+                                     	$('.existingbuildingdetails').hide();
+                                     }
 
                                     setProposedBuildingDetailFromEdcrs(response.plan);
                                     if($('#dcrDocsAutoPopulate').val() === 'true' || $('#dcrDocsAutoPopulateAndManuallyUpload').val() === 'true')

@@ -527,7 +527,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 && ((hasInspectionStatus && hasInspectionPendingAction)
                         || (FIELD_INSPECTION_COMPLETED.equalsIgnoreCase(currentStateValue)
                                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus))))
-            model.addAttribute("isTSInspectionRequired", true);
+            model.addAttribute("isTSInspectionRequired", false);
 
         if (mode == null)
             mode = "edit";

@@ -403,6 +403,10 @@ $(document).ready(function() {
         }
     });
 
+    $('#workCommencementDate').on('changeDate', function() {
+    	$('#workCompletionDate').val('').datepicker("refresh");
+    });
+    
     $('#workCompletionDate').on('changeDate', function() {
 
         if (!$('#workCommencementDate').val()) {

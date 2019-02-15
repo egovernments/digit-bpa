@@ -1,0 +1,1 @@
+update eg_wf_matrix set nextdesignation  ='Superintendent' where currentstate='Field Inspection completed' and nextaction='Forwarded to Superintendent for Noc Updation' and objecttype ='BpaApplication';

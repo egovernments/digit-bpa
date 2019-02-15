@@ -519,7 +519,7 @@ $(document).ready(
                                     && ($("#serviceType option:selected").text() === 'Alteration'
                                         || $("#serviceType option:selected").text() === 'Addition or Extension'
                                         || $("#serviceType option:selected").text() === 'Change in occupancy')
-                                    && jQuery.inArray(true, existingBldgPresent) < 0) {
+                                    && jQuery.inArray(true, existingBldgPresent) === -1) {
                                     // Validate existing building details if not present for required service
                                     bootbox.alert("For entered building plan scrutiny number : " + $('#ocEDcrNumber').val() + " existing building details are not present from submitted building plan scrutiny, so you are not allowed to submit application using that. Please use approved plan which have existing and proposed building details.");
                                     $('#ocEDcrNumber').val('');
@@ -539,7 +539,7 @@ $(document).ready(
                                     $('#occupancyapplnlevel').trigger('change');
                                     $('#occupancyapplnlevel').attr("disabled", "disabled");
 
-                                    if(isExistingBuildingDetailsPresent(block)) {
+                                    if(existingBldgPresent.length > 0 && jQuery.inArray(true, existingBldgPresent) !== -1) {
                                     	$('.existingbuildingdetails').show();
                                     	setExistingBuildingDetailFromEdcrs(response.plan);
                                     } else {

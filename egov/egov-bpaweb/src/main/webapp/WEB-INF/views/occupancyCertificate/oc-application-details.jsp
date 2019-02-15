@@ -151,7 +151,7 @@
 				code="lbl.extentin.sqmts" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="" id="plotArea"
-				class="form-control plotArea resetValues"
+				class="form-control plotArea resetValues decimalfixed"
 				value="${occupancyCertificate.parent.siteDetail[0].extentinsqmts}"
 				readonly="readonly">
 		</div>
