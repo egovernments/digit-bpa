@@ -55,7 +55,7 @@
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.appln.details" />
+		<spring:message code="lbl.basic.info" />
 	</div>
 </div>
 <div class="panel-body">
