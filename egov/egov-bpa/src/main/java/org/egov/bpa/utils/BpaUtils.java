@@ -481,6 +481,10 @@ public class BpaUtils {
         pdfQrCodeAppend.addStamp(fileMapper, application);
     }
 
+    public void addQrCodeToOcPdfDocuments(FileStoreMapper fileMapper, OccupancyCertificate oc) {
+        pdfQrCodeAppend.addStampForOc(fileMapper, oc);
+    }
+    
     public Path getExistingFilePath(FileStoreMapper fileMapper, String moduleName) throws IOException {
         Path fileDirPath = this.getFileDirectoryPath(moduleName);
         if (!fileDirPath.toFile().exists()) {

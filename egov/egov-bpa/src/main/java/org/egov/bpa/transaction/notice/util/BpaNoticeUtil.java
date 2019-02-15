@@ -99,6 +99,7 @@ import org.egov.bpa.transaction.entity.Response;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.dto.PermitFeeHelper;
 import org.egov.bpa.transaction.entity.enums.PermitConditionType;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.repository.BpaNoticeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
@@ -518,6 +519,40 @@ public class BpaNoticeUtil {
         return qrCodeValue.toString();
     }
 
+    public String buildQRCodeDetailsForOc(final OccupancyCertificate oc) {
+        StringBuilder qrCodeValue = new StringBuilder();
+        qrCodeValue = isBlank(ApplicationThreadLocals.getMunicipalityName()) ? qrCodeValue.append("")
+                : qrCodeValue.append(ApplicationThreadLocals.getMunicipalityName()).append(ONE_NEW_LINE);
+        
+       
+        qrCodeValue = isBlank(oc.getParent().getPlanPermissionNumber())
+                ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Permit number : ").append(oc.getParent().getPlanPermissionNumber()).append(ONE_NEW_LINE);
+        qrCodeValue = oc.getParent().getPlanPermissionDate() == null
+                        ? qrCodeValue.append("Date of issue of permit : ").append(N_A).append(ONE_NEW_LINE)
+                        : qrCodeValue.append("Date of issue of permit : ")
+                        .append(DateUtils.getDefaultFormattedDate(oc.getParent().getPlanPermissionDate())).append(ONE_NEW_LINE);
+      
+         qrCodeValue = isBlank(oc.getParent().getPlanPermissionNumber())
+                                ? qrCodeValue.append("Occupancy certificate number : ").append(N_A).append(ONE_NEW_LINE)
+                                : qrCodeValue.append("Occupancy certificate number : ").append(oc.getOccupancyCertificateNumber()).append(ONE_NEW_LINE);
+         qrCodeValue = oc.getParent().getPlanPermissionDate() == null
+                                        ? qrCodeValue.append("Date of issue of Occupancy certificate: ").append(N_A).append(ONE_NEW_LINE)
+                                        : qrCodeValue.append("Date of issue of Occupancy certificate: ")
+                                        .append(DateUtils.getDefaultFormattedDate(oc.getApprovalDate())).append(ONE_NEW_LINE);                        
+        
+        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc) == null
+                ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Approved by : ")
+                        .append(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()))
+                        .append(ONE_NEW_LINE);
+       
+        qrCodeValue = isBlank(getOcApproverName(oc))
+                ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Name of approver : ").append(getOcApproverName(oc)).append(ONE_NEW_LINE);
+        return qrCodeValue.toString();
+    }
+    
     private String getValidityDescription(final String serviceTypeCode, final Date planPermissionDate) {
         StringBuilder certificateValidatiy = new StringBuilder();
         String validityExpiryDate;
@@ -683,6 +718,16 @@ public class BpaNoticeUtil {
         Assignment assignment = getAssignment(stateHistory);
         return assignment == null ? N_A : assignment.getEmployee().getName();
     }
+    
+    public String getOcApproverName(final OccupancyCertificate oc) {
+        StateHistory<Position> stateHistory = oc.getStateHistory().stream()
+                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(
+                        getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue())))
+                .findAny().orElse(null);
+        Assignment assignment = getAssignment(stateHistory);
+        return assignment == null ? N_A : assignment.getEmployee().getName();
+    }
+    
 
     private Assignment getAssignment(StateHistory<Position> stateHistory) {
         if (stateHistory == null)
@@ -769,6 +814,24 @@ public class BpaNoticeUtil {
                     && !assignment.getDesignation().getName().equals("Superintendent") &&
                     !assignment.getDesignation().getName().equals(
                             getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()))) {
+                Map<String, String> reviewerNameAndDesignationMap = new HashMap<>();
+                reviewerNameAndDesignationMap.put("name", assignment.getEmployee().getName());
+                reviewerNameAndDesignationMap.put("designation", assignment.getDesignation().getName());
+                reviewerNameAndDesignation.add(reviewerNameAndDesignationMap);
+            }
+        }
+        return reviewerNameAndDesignation;
+    }
+    
+    public List<Map<String, String>> getAllOcReviewersList(OccupancyCertificate oc) {
+        oc.getStateHistory().sort(Comparator.comparing(StateHistory::getId));
+        List<Map<String, String>> reviewerNameAndDesignation = new LinkedList<>();
+        for (StateHistory<Position> stateHistory : oc.getStateHistory()) {
+            Assignment assignment = getAssignment(stateHistory);
+            if (assignment != null && !assignment.getDesignation().getName().equals(SECTION_CLERK)
+                    && !assignment.getDesignation().getName().equals("Superintendent") &&
+                    !assignment.getDesignation().getName().equals(
+                            getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()))) {
                 Map<String, String> reviewerNameAndDesignationMap = new HashMap<>();
                 reviewerNameAndDesignationMap.put("name", assignment.getEmployee().getName());
                 reviewerNameAndDesignationMap.put("designation", assignment.getDesignation().getName());

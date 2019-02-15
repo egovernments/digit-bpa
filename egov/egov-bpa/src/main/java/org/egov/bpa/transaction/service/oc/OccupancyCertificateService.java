@@ -94,6 +94,7 @@ import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateDemandFormatImpl;
+import org.egov.bpa.transaction.repository.OCDcrDocumentRepository;
 import org.egov.bpa.transaction.repository.oc.OccupancyCertificateRepository;
 import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -176,7 +177,9 @@ public class OccupancyCertificateService {
     private OcSmsAndEmailService ocSmsAndEmailService;
     @Autowired
     private CustomImplProvider specificNoticeService;
-
+    @Autowired
+    private OCDcrDocumentRepository ocDcrDocumentRepository;
+    
     public List<OccupancyCertificate> findByEdcrNumber(String edcrNumber) {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
     }
@@ -236,6 +239,7 @@ public class OccupancyCertificateService {
             ReportOutput reportOutput = ocNoticeFeature
                     .generateNotice(findByApplicationNumber(oc.getApplicationNumber()));
             ocSmsAndEmailService.sendSmsAndEmailOnApproval(oc, reportOutput);
+            appendQrCodeWithDcrDocumentsForOc(oc);
         }
         oc.setSentToPreviousOwner(false);
         processAndStoreGeneralDocuments(oc);
@@ -501,5 +505,17 @@ public class OccupancyCertificateService {
 
     public List<OccupancyCertificate> findByStatusListOrderByCreatedDate(List<BpaStatus> listOfBpaStatus) {
         return occupancyCertificateRepository.findByStatusListOrderByCreatedDateAsc(listOfBpaStatus);
+    }
+    
+    private void appendQrCodeWithDcrDocumentsForOc(OccupancyCertificate oc) {
+        List<OCDcrDocuments> dcrDocuments = ocDcrDocumentRepository.findByOc(oc);
+        for (OCDcrDocuments dcrDocument : dcrDocuments) {
+            DCRDocumentCommon ocDcrDocument = dcrDocument.getDcrDocument();
+			if(ocDcrDocument != null) {
+            for (StoreDCRFilesCommon file : ocDcrDocument.getDcrAttachments()) {
+                bpaUtils.addQrCodeToOcPdfDocuments(file.getFileStoreMapper(), oc);
+            }
+        }
+        }
     }
 }

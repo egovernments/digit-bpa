@@ -34,6 +34,7 @@ import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaUtils;
@@ -449,6 +450,202 @@ public class PdfQrCodeAppendService {
 
 	}
 
+	public void addStampForOc(FileStoreMapper fileMapper, OccupancyCertificate oc) {
+		try {
+			Path path = bpautils.getExistingFilePath(fileMapper, APPLICATION_MODULE_TYPE);
+			
+			if(path.toString().contains("e028ea4e-9bfc-4681-9684-3fb8e2b6eec7"))
+			{
+				LOG.info("Test");
+				
+			}
+			PdfReader pdfReader = new PdfReader(path.toString());
+			String newpath=path.toString()+"Modified";
+			PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(newpath));
+
+			int pageNum = pdfReader.getNumberOfPages();
+			//PdfDictionary pageN = pdfReader.getPageN(pageNum);
+			Rectangle pageSize = pdfReader.getPageSize(pageNum);
+			int pageRotation = pdfReader.getPageRotation(pageNum);
+			float height = pageSize.getHeight();
+			float width = pageSize.getWidth();
+			String location = getLocation(pageRotation, width, height, pageSize, 280, 280);
+			String[] split = location.split("--");
+		
+			float height1 = height / PageSize.A4.getHeight();
+			float width1 = width / PageSize.A4.getWidth();
+		
+		
+			float x = 0;
+			float y = 0;
+			float x1 = 0;
+			float y1 = 0;
+			if (split != null && split.length > 1) {
+				x = Float.valueOf(split[0]);
+				y = Float.valueOf(split[1]);
+			}
+			/*  This is not used as of now 
+			 * if (height > width) {
+				x1 = x * width;
+				y1 = y * height;
+			} else {
+				x1 = x * height;
+				y1 = y * width;
+			}*/
+			
+			
+			PdfContentByte canvas = pdfStamper.getOverContent(pageNum);
+		//	City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
+			String corporationName = ApplicationThreadLocals.getMunicipalityName(); 
+
+			Font font = new Font(BaseFont.createFont("/fonts/ROCC____.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 14,
+					Font.BOLD, BaseColor.BLACK);
+			
+			Font font1 = new Font(Font.FontFamily.TIMES_ROMAN, 14f, Font.BOLD, BaseColor.BLACK);
+			
+			Font font2 = new Font(Font.FontFamily.COURIER, 9f, Font.NORMAL, BaseColor.BLACK);
+
+			Phrase phrase = new Phrase(corporationName, font1);
+			x1=x + (140 - (corporationName.length()/2) * 0.8f );
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase, x1, y, 0);
+			font1.setStyle(Font.BOLD);
+			font1.setSize(12);
+			String permitDocument = "OCCUPANCY CERTIFICATE";
+			x1=x+(140 -(permitDocument.length()/2));
+			Phrase phrase2 = new Phrase(permitDocument, font1);
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase2, x1, y - 12, 0);
+			
+			font1.setSize(10);
+			font1.setStyle(Font.NORMAL);
+			String pattern = "dd-MM-yyyy";
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+			String planPermissionDate = simpleDateFormat.format(oc.getParent().getPlanPermissionDate());
+			String permitNumber = "PERMIT NUMBER : "+oc.getParent().getPlanPermissionNumber() + ", Dt :" + planPermissionDate.replace("/", "-");
+			x1=x+(140 -(permitNumber.length()/2));
+			Phrase phrase3 = new Phrase(permitNumber, font1);
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase3, x1, y - 30, 0);
+
+			
+			String ocApprovalDate = simpleDateFormat.format(oc.getApprovalDate());
+			String ocNumber = "OCCUPANCY CERTIFICATE NUMBER : " + oc.getOccupancyCertificateNumber() + ", Dt : " + ocApprovalDate.replace("/", "-");
+			Phrase phrase4 = new Phrase(ocNumber, font1);
+			x1=x+(140 -(ocNumber.length()/2));
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase4, x1, y-45, 0);
+
+			/*
+			 * String applicationNumber = "Application Number : " +
+			 * oc.getApplicationNumber(); Phrase phrase5 = new Phrase(applicationNumber,
+			 * font1); x1=x+(140 -(applicationNumber.length()/2));
+			 * ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase5, x1, y-60,
+			 * 0);
+			 */
+			
+			String approvedBy = "Approved By :";
+			Phrase phrase6 = new Phrase(approvedBy, font2);
+			x1=x+(140 -(approvedBy.length()/2));
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase6, x1, y - 60, 0);
+
+			String approverName = bpaNoticeUtil.getOcApproverName(oc) + "("
+								  + bpaNoticeUtil
+							.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue())
+
+								  + ")";
+			Phrase phrase7 = new Phrase(approverName, font1);
+			x1=x+(140 -(approverName.length()/2));
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase7, x1, y - 75, 0);
+			/*
+			 * String reviewedBy = "Reviewed By :"; Phrase phrase8 = new Phrase(reviewedBy,
+			 * font2); x1=x+(140 -(reviewedBy.length()/2));
+			 * ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase8, x1, y - 90,
+			 * 0);
+			 */
+			
+			
+			
+			/*
+			 * LinkedHashSet<String> reviewersList = new LinkedHashSet<>(); List<Map<String,
+			 * String>> reviewersNameAndDesignationMapList = bpaNoticeUtil
+			 * .getAllOcReviewersList(oc);
+			 * 
+			 * 
+			 * for (Map<String, String> nameAndDesignation :
+			 * reviewersNameAndDesignationMapList) {
+			 * reviewersList.add(nameAndDesignation.get("name") + " " + "(" +
+			 * nameAndDesignation.get("designation") + ")"); }
+			 * 
+			 * List<String> listOfAuthorities = new ArrayList<>(reviewersList);
+			 * Collections.reverse(listOfAuthorities);
+			 */
+			 
+			Float yy = y - 120;
+
+			/*
+			 * for (String reviewer : listOfAuthorities) { Phrase phrase9 = new
+			 * Phrase(reviewer, font1); x1=x+(140 -(reviewer.length()/2));
+			 * ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase9, x1, yy, 0);
+			 * yy = yy - 13f; }
+			 */
+		
+			
+			LOG.info("Path = "+path.toString());
+			LOG.info("Height ="+height +"width ="+width);
+			LOG.info("x ="+x +"y ="+y);
+			LOG.info("Rotation =" +pageRotation);
+			LOG.info("RATIO HEIGT =" +height1);
+			LOG.info("RATIO width =" +width);
+			if (height > width || pageRotation==0 || pageRotation==90) {
+				LOG.info("Portrait");
+			}else
+			{
+				LOG.info("LandScape");
+			}
+			
+			String pathOfQrCode = generatePDF417Code(bpaNoticeUtil.buildQRCodeDetailsForOc(oc),140, 50)
+					.getAbsolutePath();
+
+			//File f = SecureCodeUtils.generatePDF417Code("manikanta PT", 140, 50).getAbsoluteFile();
+
+			Image image = Image.getInstance(pathOfQrCode);
+			PdfImage stream = new PdfImage(image, "", null);
+
+			yy=yy - 35;
+		
+			PdfIndirectObject ref = pdfStamper.getWriter().addToBody(stream);
+			image.setDirectReference(ref.getIndirectReference());
+			x1=x+(140-image.getWidth()/2);
+					
+			image.setAbsolutePosition(x1, yy);
+			canvas.addImage(image);
+			yy=yy - 15;
+			String authentication = "This is a computer generated authentication";
+			Phrase phrase9 = new Phrase(authentication, font1);
+			x1=x+(140 -(authentication.length()/2));
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase9, x1, yy , 0);
+			yy=yy - 10;
+			 authentication = "And Does not require any Seal or Signature in original";
+			Phrase phrase10 = new Phrase(authentication, font1);
+			x1=x+(140 -(authentication.length()/2));
+			//yy=yy-15;
+			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase10, x1, yy , 0);
+			LOG.info("Last y position "+yy);
+			
+			pdfStamper.close();
+			pdfReader.close();
+			
+			File modified=new File(newpath.toString());
+			File original=new File(path.toString());
+			boolean delete = original.delete();
+			LOG.info("Deleted " +path.toString() +" status " +delete);
+			modified.renameTo(original);
+			
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+		}
+
+	}
 	public static String getLocation(int rotation, float width, float height, Rectangle mediaBox, int x, int y)
 			throws Exception {
 		PDImageXObject pdImage;
