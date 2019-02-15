@@ -68,14 +68,9 @@ public class OCFloor extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buildingDetail", nullable = false)
     private OCBuilding buildingDetails;
-    /*@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "occupancy")
-    private Occupancy occupancy;*/
-    
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "suboccupancy")
     private SubOccupancy subOccupancy;
-    
     private Integer floorNumber;
     private String floorDescription;
     private BigDecimal carpetArea;

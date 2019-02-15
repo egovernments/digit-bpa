@@ -71,9 +71,6 @@ public class ExistingBuildingFloorDetail extends AbstractAuditable {
     private Integer orderOfFloor;
     private String floorDescription;
     private Integer floorNumber;
-/*  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "occupancy")
-    private Occupancy occupancy;*/
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "suboccupancy")
     private SubOccupancy subOccupancy;

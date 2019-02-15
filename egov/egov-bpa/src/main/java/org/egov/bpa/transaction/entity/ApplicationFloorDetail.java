@@ -77,9 +77,6 @@ public class ApplicationFloorDetail extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "proposedbuilingusage")
     private BuildingUsage proposedbuilingusage;
-   /* @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "occupancy")
-    private Occupancy occupancy;*/
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "suboccupancy")
     private SubOccupancy subOccupancy;
