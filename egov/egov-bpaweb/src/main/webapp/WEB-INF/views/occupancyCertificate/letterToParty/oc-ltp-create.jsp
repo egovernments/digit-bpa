@@ -145,7 +145,7 @@
                                     <div class="col-sm-3 add-margin">
                                         <form:checkbox
                                                 id="lettertoPartyDocument${status.index}requested"
-                                                path="letterToParty.letterToPartyDocuments[${status.index}].requested"
+                                                path="letterToParty.letterToPartyDocuments[${status.index}].isRequested"
                                                 class="requested"/>
                                     </div>
 

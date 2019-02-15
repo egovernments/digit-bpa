@@ -148,7 +148,7 @@
                                             default="N/A"/></td>
 
                                     <td class="view-content" style="font-size: 97%;"><c:out
-                                            value="${docs.requested ? 'Yes' : 'No'}"/></td>
+                                            value="${docs.isRequested ? 'Yes' : 'No'}"/></td>
                                     <td class="view-content" style="font-size: 97%;"><c:out value="${docs.remarks}"
                                                                                             default="N/A"/></td>
                                     <td class="view-content" style="font-size: 97%;"><c:set value="false"

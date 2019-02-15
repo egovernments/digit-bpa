@@ -177,7 +177,7 @@
                                     <div class="col-sm-2 add-margin">
                                         <form:checkbox
                                                 id="lettertoPartyDocument${status.index}isrequested"
-                                                path="letterToParty.letterToPartyDocuments[${status.index}].requested"
+                                                path="letterToParty.letterToPartyDocuments[${status.index}].isRequested"
                                                 value="lettertoPartyDocument${status.index}isrequested"
                                                 disabled="true"/>
                                     </div>
@@ -195,7 +195,7 @@
                                     <div class="col-sm-4 add-margin">
                                         <div class="files-upload-container"
                                              data-file-max-size="5"
-                                             <c:if test="${lpdoc.requested eq true && fn:length(lpdoc.getSupportDocs()) eq 0}">required</c:if>
+                                             <c:if test="${lpdoc.isRequested eq true && fn:length(lpdoc.getSupportDocs()) eq 0}">required</c:if>
                                              data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
                                             <div class="files-viewer">
 
@@ -267,13 +267,6 @@
            onclick='self.close()'><spring:message code='lbl.close'/></a>
     </div>
 </form:form>
-
-<input type="hidden" id="lpReplyDateGreaterThanPartySentDate" value="<spring:message code='msg.validate.lpreplydate.greaterthan.party.sentdate'/>"/>
-<input type="hidden" id="updateLpSentDate" value="<spring:message code='msg.validate.update.lpsent.date'/>"/>
-<input type="hidden" id="partSentDateGreaterThanLpDate" value="<spring:message code='msg.validate.party.sentdate.greaterthan.lpdate'/>"/>
-<input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
-<input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.filesize.validate' />" />
-<input type="hidden" id="noPreviewAvailble" value="<spring:message code='msg.nopreview.availble' />" />
 
 <!-- The Modal -->
 <div id="imgModel" class="image-modal">
