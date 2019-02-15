@@ -135,15 +135,15 @@
                                                     maxlength="15" value="${proposedBuildFloorDetail.floorNumber}"
                                                     disabled="true"/></td>
                                     <td><form:select
-                                            path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].occupancy"
+                                            path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].subOccupancy"
                                             data-first-option="false"
-                                            id="applicationFloorDetails${counter.index}occupancy"
-                                            class="form-control dcr-floor-details-mandatory occupancy${bldgCounter.index}"
+                                            id="applicationFloorDetails${counter.index}suboccupancy"
+                                            class="form-control dcr-floor-details-mandatory suboccupancy${bldgCounter.index}"
                                             maxlength="128" disabled="true">
                                         <form:option value="">
                                             <spring:message code="lbl.select"/>
                                         </form:option>
-                                        <form:options items="${occupancyList}" itemValue="id"
+                                        <form:options items="${subOccupancyList}" itemValue="id"
                                                       itemLabel="description"/>
                                     </form:select></td>
                                     <td><form:input type="text"

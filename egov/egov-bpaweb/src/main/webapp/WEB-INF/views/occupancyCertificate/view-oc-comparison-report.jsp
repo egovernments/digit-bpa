@@ -119,8 +119,8 @@
 										<tr>
 											<td class="text-center">${ocFloor.floorNumber}</td>
 											<td class="text-center">${bpaFloor.floorNumber}</td>
-											<td>${ocFloor.occupancy.name}</td>
-											<td>${bpaFloor.occupancy.name}</td>
+											<td>${ocFloor.subOccupancy.name}</td>
+											<td>${bpaFloor.subOccupancy.name}</td>
 											<td class="text-right"><fmt:formatNumber type="number"
 													minFractionDigits="2" maxFractionDigits="2"
 													value="${ocFloor.plinthArea}" /></td>

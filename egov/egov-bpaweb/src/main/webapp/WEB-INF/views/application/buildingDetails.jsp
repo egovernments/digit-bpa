@@ -65,10 +65,10 @@
 	<div class="panel-title header-color">
 		<spring:message code="lbl.plint.carpet.details" />
 	</div>
-	<input type="hidden" id="buildingFloorList"
-		value="${buildingFloorList}"> <input type="hidden"
-		id="occupancyList" value="${occupancyList}"> <input
-		type="hidden" id="sumOfFloorArea" value=""> 
+	<input type="hidden" id="buildingFloorList"	value="${buildingFloorList}"> 
+	<input type="hidden" id="occupancyList" value="${occupancyList}">
+	<input type="hidden" id="subOccupancyList" value="${subOccupancyList}">
+	<input type="hidden" id="sumOfFloorArea" value=""> 
 	<input type="hidden" id="violationMessage" value="${violationMessage}">
 	<form:hidden id="deletedFloorIds"
 		path="buildingDetail[0].deletedFloorIds" value="" />
@@ -124,15 +124,15 @@
 									id="applicationFloorDetails${counter.index}floorNumber"
 									maxlength="15" value="${proposedBuildFloorDetail.floorNumber}" /></td>
 							<td><form:select
-									path="buildingDetail[0].applicationFloorDetails[${counter.index}].occupancy"
+									path="buildingDetail[0].applicationFloorDetails[${counter.index}].subOccupancy"
 									data-first-option="false"
-									id="applicationFloorDetails${counter.index}occupancy"
+									id="applicationFloorDetails${counter.index}suboccupancy"
 									class="form-control floor-details-mandatory occupancy"
 									maxlength="128">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${occupancyList}" itemValue="id"
+									<form:options items="${subOccupancyList}" itemValue="id"
 										itemLabel="description" />
 								</form:select></td>
 							<td><form:input type="text"
@@ -194,15 +194,15 @@
 								id="applicationFloorDetails0floorNumber" maxlength="3"
 								value="${proposedBuildFloorDetail.floorNumber}" /></td>
 						<td><form:select
-								path="buildingDetail[0].applicationFloorDetails[0].occupancy"
+								path="buildingDetail[0].applicationFloorDetails[0].subOccupancy"
 								data-first-option="false"
-								id="applicationFloorDetails[0]occupancy"
+								id="applicationFloorDetails[0]suboccupancy"
 								class="form-control floor-details-mandatory occupancy"
 								maxlength="128">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${occupancyList}" itemValue="id"
+								<form:options items="${subOccupancyList}" itemValue="id"
 									itemLabel="description" />
 							</form:select></td>
 						<td><form:input type="text"

@@ -64,7 +64,7 @@ public class OCBuildingFloorDetailsService {
 						if (null != floor && null == floor.getId() && floor.getFloorDescription() != null) {
 							OCFloor floorDetails = new OCFloor();
 							floorDetails.setBuildingDetails(bldg);
-							floorDetails.setOccupancy(floor.getOccupancy());
+							floorDetails.setSubOccupancy(floor.getSubOccupancy());
 							floorDetails.setOrderOfFloor(floor.getOrderOfFloor());
 							floorDetails.setFloorNumber(floor.getFloorNumber());
 							floorDetails.setFloorDescription(floor.getFloorDescription());

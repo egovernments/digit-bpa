@@ -107,7 +107,7 @@ import org.egov.bpa.transaction.service.DcrRestService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
-import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.Receipt;
@@ -397,7 +397,7 @@ public class BpaNoticeUtil {
         reportParams.put("mobileNo", bpaApplication.getOwner().getUser().getMobileNumber());
         StringBuilder totalBuiltUpArea = new StringBuilder();
         if (bpaApplication.getOccupancy().getCode().equals(BpaConstants.MIXED_OCCUPANCY)) {
-            for (Map.Entry<Occupancy, BigDecimal> innerMap : bpaUtils
+            for (Map.Entry<SubOccupancy, BigDecimal> innerMap : bpaUtils
                     .getBlockWiseOccupancyAndBuiltupArea(bpaApplication.getBuildingDetail()).entrySet()) {
                 totalBuiltUpArea = totalBuiltUpArea.append(innerMap.getKey().getDescription()).append(" : ")
                         .append(innerMap.getValue().setScale(2,

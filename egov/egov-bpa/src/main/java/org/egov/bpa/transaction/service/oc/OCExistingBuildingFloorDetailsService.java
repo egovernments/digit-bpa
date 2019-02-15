@@ -63,7 +63,7 @@ public class OCExistingBuildingFloorDetailsService {
 					if (null != existFloor && null == existFloor.getId() && existFloor.getFloorDescription() != null) {
 						OCExistingBuildingFloor floorDetails = new OCExistingBuildingFloor();
 						floorDetails.setExistingBuildingDetail(existBldg);
-						floorDetails.setOccupancy(existFloor.getOccupancy());
+						floorDetails.setSubOccupancy(existFloor.getSubOccupancy());
 						floorDetails.setOrderOfFloor(existFloor.getOrderOfFloor());
 						floorDetails.setFloorNumber(existFloor.getFloorNumber());
 						floorDetails.setFloorDescription(existFloor.getFloorDescription());

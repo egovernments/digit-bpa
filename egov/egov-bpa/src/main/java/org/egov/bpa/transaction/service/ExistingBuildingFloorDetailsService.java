@@ -80,7 +80,7 @@ public class ExistingBuildingFloorDetailsService {
                         && existingBuildFloorDetails.getFloorDescription() != null) {
                         ExistingBuildingFloorDetail floorDetails = new ExistingBuildingFloorDetail();
                         floorDetails.setExistingBuildingDetail(existBldg);
-                        floorDetails.setOccupancy(existingBuildFloorDetails.getOccupancy());
+                        floorDetails.setSubOccupancy(existingBuildFloorDetails.getSubOccupancy());
                         floorDetails.setOrderOfFloor(existingBuildFloorDetails.getOrderOfFloor());
                         floorDetails.setFloorNumber(existingBuildFloorDetails.getFloorNumber());
                         floorDetails.setFloorDescription(existingBuildFloorDetails.getFloorDescription());

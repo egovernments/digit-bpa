@@ -116,7 +116,7 @@
 									id="existingBuildingFloorDetails${counter.index}floorNumber"
 									maxlength="15" value="${existingBuildFloorDetail.floorNumber}" disabled="true"/></td>
 							<td><form:select
-									path="existingBuildings[${existBldgCounter.index}].existingBuildingFloorDetails[${counter.index}].occupancy"
+									path="existingBuildings[${existBldgCounter.index}].existingBuildingFloorDetails[${counter.index}].subOccupancy"
 									data-first-option="false"
 									id="existingBuildingFloorDetails${counter.index}occupancy"
 									class="form-control exist-floor-details-mandatory existOccupancy"
@@ -124,7 +124,7 @@
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${occupancyList}" itemValue="id"
+									<form:options items="${subOccupancyList}" itemValue="id"
 										itemLabel="description" />
 								</form:select></td>
 							<td><form:input type="text"

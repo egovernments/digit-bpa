@@ -52,7 +52,7 @@ jQuery(document).ready(function() {
 	'<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" class="orderNo" data-sno name="buildingDetail[0].applicationFloorDetailsForUpdate[{{idx}}].orderOfFloor"/></td>'+
 	'<td ><select name="buildingDetail[0].applicationFloorDetailsForUpdate[{{idx}}].floorDescription" data-first-option="false" id="applicationFloorDetailsForUpdate[{{idx}}]floorDescription" class="form-control floor-details-mandatory floorDescription duplicate-clear" required="required" maxlength="128" > <option value="">Select</option><options items="${buildingFloorList}" /></select></td>'+
 	'<td class="text-right"><input type="text" class="form-control table-input text-center patternvalidation floorNumber floor-details-mandatory duplicate-clear" name="buildingDetail[0].applicationFloorDetailsForUpdate[{{idx}}].floorNumber" data-pattern="number" required="required" id="applicationFloorDetailsForUpdate[{{idx}}]floorNumber" maxlength="3" /></td>'+
-	'<td ><select name="buildingDetail[0].applicationFloorDetailsForUpdate[{{idx}}].occupancy" data-first-option="false" id="applicationFloorDetailsForUpdate[{{idx}}]occupancy" class="form-control floor-details-mandatory occupancy" required="required" maxlength="128" > <option value="">Select</option><options items="${occupancyList}" /></select></td>'+
+	'<td ><select name="buildingDetail[0].applicationFloorDetailsForUpdate[{{idx}}].subOccupancy" data-first-option="false" id="applicationFloorDetailsForUpdate[{{idx}}]suboccupancy" class="form-control floor-details-mandatory occupancy" required="required" maxlength="128" > <option value="">Select</option><options items="${occupancyList}" /></select></td>'+
 	'<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation plinthArea nonzero floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="buildingDetail[0].applicationFloorDetailsForUpdate[{{idx}}].plinthArea" id="applicationFloorDetailsForUpdate[{{idx}}]plinthArea" required="required" maxlength="10" onblur="validateFloorDetails(this)" /></td>'+
 	'<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation floorArea nonzero floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="buildingDetail[0].applicationFloorDetailsForUpdate[{{idx}}].floorArea" id="applicationFloorDetailsForUpdate[{{idx}}]floorArea" maxlength="10" required="required" /></td>'+
 	'<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation carpetArea floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="buildingDetail[0].applicationFloorDetailsForUpdate[{{idx}}].carpetArea" id="applicationFloorDetailsForUpdate[{{idx}}]carpetArea" maxlength="10" required="required" value=""  /></td>'+
@@ -73,9 +73,9 @@ jQuery(document).ready(function() {
 			generateSno();
 			loadFloorlist("buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].floorDescription");
 			if($("#occupancyapplnlevel option:selected" ).text() == 'Mixed') {
-				loadOccupanctyDetails("buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].occupancy");
+				loadOccupanctyDetails("buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].subOccupancy");
 			} else {
-				loadOccupancyDetails1("buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].occupancy",$("#occupancyapplnlevel option:selected" ).val(),$("#occupancyapplnlevel option:selected" ).text());
+				loadOccupancyDetails1("buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].subOccupancy",$("#occupancyapplnlevel option:selected" ).val(),$("#occupancyapplnlevel option:selected" ).text());
 			}
 		}
 	});

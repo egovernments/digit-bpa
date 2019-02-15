@@ -46,6 +46,37 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
+import static org.egov.bpa.utils.BpaConstants.ADMINISTRATION_HIERARCHY_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
+import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
+import static org.egov.bpa.utils.BpaConstants.DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD;
+import static org.egov.bpa.utils.BpaConstants.DCR_DOC_AUTO_POPULATE_UPLOAD;
+import static org.egov.bpa.utils.BpaConstants.DCR_DOC_MANUAL_UPLOAD;
+import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
+import static org.egov.bpa.utils.BpaConstants.LOCALITY;
+import static org.egov.bpa.utils.BpaConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.bpa.utils.BpaConstants.MESSAGE;
+import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.bpa.utils.BpaConstants.STREET;
+import static org.egov.bpa.utils.BpaConstants.WARD;
+import static org.egov.bpa.utils.BpaConstants.WF_REJECT_STATE;
+import static org.egov.bpa.utils.BpaConstants.YES;
+import static org.egov.bpa.utils.BpaConstants.ZONE;
+import static org.egov.bpa.utils.BpaConstants.getBuildingFloorsList;
+import static org.egov.bpa.utils.OcConstants.OCCUPANCY_CERTIFICATE;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.entity.enums.SlotMappingApplType;
@@ -76,6 +107,7 @@ import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.service.OccupancyService;
+import org.egov.commons.service.SubOccupancyService;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
@@ -101,37 +133,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.egov.bpa.utils.BpaConstants.ADMINISTRATION_HIERARCHY_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
-import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
-import static org.egov.bpa.utils.BpaConstants.DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD;
-import static org.egov.bpa.utils.BpaConstants.DCR_DOC_AUTO_POPULATE_UPLOAD;
-import static org.egov.bpa.utils.BpaConstants.DCR_DOC_MANUAL_UPLOAD;
-import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
-import static org.egov.bpa.utils.BpaConstants.LOCALITY;
-import static org.egov.bpa.utils.BpaConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.bpa.utils.BpaConstants.MESSAGE;
-import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.bpa.utils.BpaConstants.STREET;
-import static org.egov.bpa.utils.BpaConstants.WARD;
-import static org.egov.bpa.utils.BpaConstants.WF_REJECT_STATE;
-import static org.egov.bpa.utils.BpaConstants.YES;
-import static org.egov.bpa.utils.BpaConstants.ZONE;
-import static org.egov.bpa.utils.BpaConstants.getBuildingFloorsList;
-import static org.egov.bpa.utils.OcConstants.OCCUPANCY_CERTIFICATE;
 
 public abstract class BpaGenericApplicationController extends GenericWorkFlowController {
 
@@ -177,6 +178,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 	@Autowired
 	protected OccupancyService occupancyService;
 	@Autowired
+	protected SubOccupancyService subOccupancyService;
+	@Autowired
 	protected ConstructionStagesService constructionStagesService;
 	@Autowired
 	protected AppConfigValueService appConfigValueService;
@@ -189,6 +192,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
 	protected void prepareFormData(Model model) {
 		model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
+		model.addAttribute("subOccupancyList", subOccupancyService.findAllOrderByOrderNumber());
 		model.addAttribute("zones", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
 				REVENUE_HIERARCHY_TYPE));
 		model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveMainServiceTypes());

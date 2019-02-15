@@ -63,6 +63,7 @@ import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.commons.service.OccupancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -203,9 +204,9 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 										.equalsIgnoreCase(application.getOccupancy().getCode())) {
 									List<Occupancy> occupancies = occupancyService.findAllOrderByOrderNumber();
 									Map<String, Map<Occupancy, BigDecimal>> convertedOccupancies = new ConcurrentHashMap<>();
-									for (Map.Entry<String, Map<Occupancy, BigDecimal>> block : groupBlockOccupancyFloorArea(
+									for (Map.Entry<String, Map<SubOccupancy, BigDecimal>> block : groupBlockOccupancyFloorArea(
 											application.getBuildingDetail()).entrySet()) {
-										for (Map.Entry<Occupancy, BigDecimal> blockOccupancy : block.getValue()
+										for (Map.Entry<SubOccupancy, BigDecimal> blockOccupancy : block.getValue()
 												.entrySet()) {
 											Map<Occupancy, BigDecimal> convertInner;
 											String convertedOccu = getOccupancyAsPerFloorArea(blockOccupancy.getKey(),
@@ -482,8 +483,8 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 		BigDecimal maximumPermittedFAR;
 		BigDecimal additionalFeeCalculationArea = BigDecimal.ZERO;
 
-		Map<Occupancy, BigDecimal> occFloorArea = getOccupancyWiseFloorArea(application.getBuildingDetail());
-		Map<Occupancy, BigDecimal> existBldgOccupancyWiseFloorArea = getExistBldgOccupancyWiseFloorArea(
+		Map<SubOccupancy, BigDecimal> occFloorArea = getOccupancyWiseFloorArea(application.getBuildingDetail());
+		Map<SubOccupancy, BigDecimal> existBldgOccupancyWiseFloorArea = getExistBldgOccupancyWiseFloorArea(
 				application.getExistingBuildingDetails());
 		BigDecimal proposedBldgFloorArea = getTotalFloorArea(application);
 		BigDecimal existBldgFloorArea = getExistBldgTotalFloorArea(application);
@@ -538,15 +539,15 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 	 * @return
 	 */
 	// Floor Area considered here.
-	public Map<Occupancy, BigDecimal> getOccupancyWiseFloorArea(List<BuildingDetail> buildingDetails) {
-		Map<Occupancy, BigDecimal> occupancyWiseFloorArea = new ConcurrentHashMap<>();
+	public Map<SubOccupancy, BigDecimal> getOccupancyWiseFloorArea(List<BuildingDetail> buildingDetails) {
+		Map<SubOccupancy, BigDecimal> occupancyWiseFloorArea = new ConcurrentHashMap<>();
 		for (BuildingDetail building : buildingDetails) {
 			for (ApplicationFloorDetail floor : building.getApplicationFloorDetails()) {
-				if (occupancyWiseFloorArea.containsKey(floor.getOccupancy())) {
-					occupancyWiseFloorArea.put(floor.getOccupancy(),
-							occupancyWiseFloorArea.get(floor.getOccupancy()).add(floor.getFloorArea()));
+				if (occupancyWiseFloorArea.containsKey(floor.getSubOccupancy())) {
+					occupancyWiseFloorArea.put(floor.getSubOccupancy(),
+							occupancyWiseFloorArea.get(floor.getSubOccupancy()).add(floor.getFloorArea()));
 				} else {
-					occupancyWiseFloorArea.put(floor.getOccupancy(), floor.getFloorArea());
+					occupancyWiseFloorArea.put(floor.getSubOccupancy(), floor.getFloorArea());
 				}
 			}
 		}
@@ -560,30 +561,30 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 	 * @return
 	 */
 	// Floor Area considered here.
-	public Map<Occupancy, BigDecimal> getExistBldgOccupancyWiseFloorArea(List<ExistingBuildingDetail> existBldgDtls) {
-		Map<Occupancy, BigDecimal> occupancyWiseFloorArea = new ConcurrentHashMap<>();
+	public Map<SubOccupancy, BigDecimal> getExistBldgOccupancyWiseFloorArea(List<ExistingBuildingDetail> existBldgDtls) {
+		Map<SubOccupancy, BigDecimal> occupancyWiseFloorArea = new ConcurrentHashMap<>();
 		for (ExistingBuildingDetail building : existBldgDtls) {
 			for (ExistingBuildingFloorDetail floor : building.getExistingBuildingFloorDetails()) {
-				if (occupancyWiseFloorArea.containsKey(floor.getOccupancy())) {
-					occupancyWiseFloorArea.put(floor.getOccupancy(),
-							occupancyWiseFloorArea.get(floor.getOccupancy()).add(floor.getFloorArea()));
+				if (occupancyWiseFloorArea.containsKey(floor.getSubOccupancy())) {
+					occupancyWiseFloorArea.put(floor.getSubOccupancy(),
+							occupancyWiseFloorArea.get(floor.getSubOccupancy()).add(floor.getFloorArea()));
 				} else {
-					occupancyWiseFloorArea.put(floor.getOccupancy(), floor.getFloorArea());
+					occupancyWiseFloorArea.put(floor.getSubOccupancy(), floor.getFloorArea());
 				}
 			}
 		}
 		return occupancyWiseFloorArea;
 	}
 
-	public Map<String, Map<Occupancy, BigDecimal>> groupBlockOccupancyFloorArea(List<BuildingDetail> buildingDetails) {
-		Map<String, Map<Occupancy, BigDecimal>> groupByBlkOccupancyFloorArea = new ConcurrentHashMap<>();
+	public Map<String, Map<SubOccupancy, BigDecimal>> groupBlockOccupancyFloorArea(List<BuildingDetail> buildingDetails) {
+		Map<String, Map<SubOccupancy, BigDecimal>> groupByBlkOccupancyFloorArea = new ConcurrentHashMap<>();
 		for (BuildingDetail building : buildingDetails) {
-			Map<Occupancy, BigDecimal> subMap = new ConcurrentHashMap<>();
+			Map<SubOccupancy, BigDecimal> subMap = new ConcurrentHashMap<>();
 			for (ApplicationFloorDetail floor : building.getApplicationFloorDetails()) {
-				if (subMap.containsKey(floor.getOccupancy())) {
-					subMap.put(floor.getOccupancy(), subMap.get(floor.getOccupancy()).add(floor.getFloorArea()));
+				if (subMap.containsKey(floor.getSubOccupancy())) {
+					subMap.put(floor.getSubOccupancy(), subMap.get(floor.getSubOccupancy()).add(floor.getFloorArea()));
 				} else {
-					subMap.put(floor.getOccupancy(), floor.getFloorArea());
+					subMap.put(floor.getSubOccupancy(), floor.getFloorArea());
 				}
 			}
 			groupByBlkOccupancyFloorArea.put(building.getName(), subMap);
@@ -620,14 +621,14 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 		List<BigDecimal> minimumFARs = new ArrayList<>();
 		for (BuildingDetail bldg : application.getBuildingDetail()) {
 			for (ApplicationFloorDetail floor : bldg.getApplicationFloorDetails()) {
-				minimumFARs.add(floor.getOccupancy().getMinFar());
+				minimumFARs.add(floor.getSubOccupancy().getMinFar());
 			}
 		}
 		if (!application.getExistingBuildingDetails().isEmpty()
 				&& application.getExistingBuildingDetails().get(0).getTotalPlintArea() != null)
 			for (ExistingBuildingDetail existBldg : application.getExistingBuildingDetails())
 				for (ExistingBuildingFloorDetail floorDetails : existBldg.getExistingBuildingFloorDetails())
-					minimumFARs.add(floorDetails.getOccupancy().getMaxFar());
+					minimumFARs.add(floorDetails.getSubOccupancy().getMaxFar());
 		return Collections.min(minimumFARs);
 	}
 
@@ -641,14 +642,14 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 		List<BigDecimal> maximumFARs = new ArrayList<>();
 		for (BuildingDetail bldg : application.getBuildingDetail()) {
 			for (ApplicationFloorDetail floor : bldg.getApplicationFloorDetails()) {
-				maximumFARs.add(floor.getOccupancy().getMaxFar());
+				maximumFARs.add(floor.getSubOccupancy().getMaxFar());
 			}
 		}
 		if (!application.getExistingBuildingDetails().isEmpty()
 				&& application.getExistingBuildingDetails().get(0).getTotalPlintArea() != null)
 			for (ExistingBuildingDetail existBldg : application.getExistingBuildingDetails())
 				for (ExistingBuildingFloorDetail floorDetails : existBldg.getExistingBuildingFloorDetails())
-					maximumFARs.add(floorDetails.getOccupancy().getMaxFar());
+					maximumFARs.add(floorDetails.getSubOccupancy().getMaxFar());
 		return Collections.min(maximumFARs);
 	}
 
@@ -658,17 +659,17 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 	 * @param occupancyWiseFloorArea
 	 * @return
 	 */
-	public BigDecimal weightageAverageFarWithoutAdditionalFee(Map<Occupancy, BigDecimal> occupancyWiseFloorArea,
-			Map<Occupancy, BigDecimal> existBldgOccupancyWiseFloorArea) {
+	public BigDecimal weightageAverageFarWithoutAdditionalFee(Map<SubOccupancy, BigDecimal> occupancyWiseFloorArea,
+			Map<SubOccupancy, BigDecimal> existBldgOccupancyWiseFloorArea) {
 		BigDecimal maxPermittedFloorArea = BigDecimal.ZERO;
 		BigDecimal sumOfFloorArea = BigDecimal.ZERO;
-		for (Entry<Occupancy, BigDecimal> setOfOccupancy : occupancyWiseFloorArea.entrySet()) {
+		for (Entry<SubOccupancy, BigDecimal> setOfOccupancy : occupancyWiseFloorArea.entrySet()) {
 			maxPermittedFloorArea = maxPermittedFloorArea
 					.add(setOfOccupancy.getKey().getMinFar().multiply(setOfOccupancy.getValue()));
 			sumOfFloorArea = sumOfFloorArea.add(setOfOccupancy.getValue());
 		}
 		if (!existBldgOccupancyWiseFloorArea.isEmpty()) {
-			for (Entry<Occupancy, BigDecimal> occupancy : existBldgOccupancyWiseFloorArea.entrySet()) {
+			for (Entry<SubOccupancy, BigDecimal> occupancy : existBldgOccupancyWiseFloorArea.entrySet()) {
 				maxPermittedFloorArea = maxPermittedFloorArea
 						.add(occupancy.getKey().getMinFar().multiply(occupancy.getValue()));
 				sumOfFloorArea = sumOfFloorArea.add(occupancy.getValue());
@@ -687,18 +688,18 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 	 * @param occupancyWiseFloorArea
 	 * @return
 	 */
-	public BigDecimal weightageAverageFarWithAdditionalFee(Map<Occupancy, BigDecimal> occupancyWiseFloorArea,
-			Map<Occupancy, BigDecimal> existBldgOccupancyWiseFloorArea) {
+	public BigDecimal weightageAverageFarWithAdditionalFee(Map<SubOccupancy, BigDecimal> occupancyWiseFloorArea,
+			Map<SubOccupancy, BigDecimal> existBldgOccupancyWiseFloorArea) {
 
 		BigDecimal maxPermittedFloorArea = BigDecimal.ZERO;
 		BigDecimal sumOfFloorArea = BigDecimal.ZERO;
-		for (Entry<Occupancy, BigDecimal> setOfOccupancy : occupancyWiseFloorArea.entrySet()) {
+		for (Entry<SubOccupancy, BigDecimal> setOfOccupancy : occupancyWiseFloorArea.entrySet()) {
 			maxPermittedFloorArea = maxPermittedFloorArea
 					.add(setOfOccupancy.getKey().getMaxFar().multiply(setOfOccupancy.getValue()));
 			sumOfFloorArea = sumOfFloorArea.add(setOfOccupancy.getValue());
 		}
 		if (!existBldgOccupancyWiseFloorArea.isEmpty()) {
-			for (Entry<Occupancy, BigDecimal> occupancy : existBldgOccupancyWiseFloorArea.entrySet()) {
+			for (Entry<SubOccupancy, BigDecimal> occupancy : existBldgOccupancyWiseFloorArea.entrySet()) {
 				maxPermittedFloorArea = maxPermittedFloorArea
 						.add(occupancy.getKey().getMaxFar().multiply(occupancy.getValue()));
 				sumOfFloorArea = sumOfFloorArea.add(occupancy.getValue());
@@ -710,7 +711,7 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 		return null;
 	}
 
-	public static String getOccupancyAsPerFloorArea(Occupancy occupancy, BigDecimal floorArea) {
+	public static String getOccupancyAsPerFloorArea(SubOccupancy occupancy, BigDecimal floorArea) {
 		String type = occupancy.getCode();
 		String convertedOccupancy = type;
 		if ((BpaConstants.EDUCATIONAL.equals(type) || BpaConstants.EDUCATIONAL_HIGHSCHOOL.equals(type)

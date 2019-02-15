@@ -66,9 +66,13 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
 @Table(name = "EGBPA_OCCUPANCY")
 @SequenceGenerator(name = Occupancy.SEQ_OCCUPANCY, sequenceName = Occupancy.SEQ_OCCUPANCY, allocationSize = 1)
+@JsonIdentityInfo(generator=ObjectIdGenerators.UUIDGenerator.class,property = "@id")
 public class Occupancy extends AbstractAuditable {
 
 	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_OCCUPANCY";

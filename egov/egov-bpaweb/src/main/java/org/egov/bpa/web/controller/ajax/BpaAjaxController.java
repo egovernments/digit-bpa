@@ -50,7 +50,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -77,8 +76,10 @@ import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.service.OccupancyService;
+import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
@@ -127,6 +128,8 @@ public class BpaAjaxController {
     private StakeHolderService stakeHolderService;
     @Autowired
     private OccupancyService occupancyService;
+    @Autowired
+    private SubOccupancyService subOccupancyService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -218,7 +221,31 @@ public class BpaAjaxController {
     public List<Occupancy> getOccupancyDetails() {
         return occupancyService.findAll();
     }
+    
+	@GetMapping(value = "/application/getsuboccupancydetails", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<SubOccupancy> getSubOccupancyDetails() {
+		return subOccupancyService.findAll();
+	}
+	
+	@GetMapping(value = "/application/getOccupancyAndSuboccupancyMap", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<Long, List<SubOccupancy>> getOccupancyAndSuboccupancyMap() {
+		List<SubOccupancy> subOccupancyList = subOccupancyService.findAll();
+		Map<Long, List<SubOccupancy>> map = new HashMap<>();
 
+		for (SubOccupancy subOccupancy : subOccupancyList) {
+			if (map.containsKey(subOccupancy.getOccupancy().getId())) {
+				map.get(subOccupancy.getOccupancy().getId()).add(subOccupancy);
+			} else {
+				List<SubOccupancy> sub = new ArrayList<>();
+				sub.add(subOccupancy);
+				map.put(subOccupancy.getOccupancy().getId(), sub);
+			}
+		}
+		return map;
+	}
+    
     @GetMapping(value = "/getApplicantDetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, String> getApplicantDetailsForMobileNumber(@RequestParam final String mobileNumber) {

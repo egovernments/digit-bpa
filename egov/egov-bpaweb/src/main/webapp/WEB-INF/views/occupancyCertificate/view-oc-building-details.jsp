@@ -109,7 +109,7 @@
                                     value="${floorDetails.floorDescription}" default="0"></c:out>
                             <td class="text-center view-content"><c:out
 											value="${floorDetails.floorNumber}" default="0"></c:out><td class="view-content"><c:out
-                                    value="${floorDetails.occupancy.description}" default="0"></c:out>
+                                    value="${floorDetails.subOccupancy.description}" default="0"></c:out>
                             <td class="text-right view-content"><fmt:formatNumber type="number"
                                                                                   maxFractionDigits="2"
                                                                                   value="${floorDetails.plinthArea}"/>

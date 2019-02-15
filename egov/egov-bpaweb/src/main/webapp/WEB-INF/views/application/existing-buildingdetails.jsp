@@ -115,7 +115,7 @@
 									id="existingBuildingFloorDetails${counter.index}floorNumber"
 									maxlength="15" value="${existingBuildFloorDetail.floorNumber}" /></td>
 							<td><form:select
-									path="existingBuildingDetails[0].existingBuildingFloorDetails[${counter.index}].occupancy"
+									path="existingBuildingDetails[0].existingBuildingFloorDetails[${counter.index}].subOccupancy"
 									data-first-option="false"
 									id="existingBuildingFloorDetails${counter.index}occupancy"
 									class="form-control exist-floor-details-mandatory existOccupancy"
@@ -184,7 +184,7 @@
 								id="existingBuildingFloorDetails0floorNumber" maxlength="3"
 								value="${existingBuildFloorDetail.floorNumber}" /></td>
 						<td><form:select
-								path="existingBuildingDetails[0].existingBuildingFloorDetails[0].occupancy"
+								path="existingBuildingDetails[0].existingBuildingFloorDetails[0].subOccupancy"
 								data-first-option="false"
 								id="existingBuildingFloorDetails[0]occupancy"
 								class="form-control exist-floor-details-mandatory existOccupancy"

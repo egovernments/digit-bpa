@@ -51,7 +51,7 @@ jQuery(document).ready(function() {
 	'<td class="text-center"><span class="serialNoForExistBuild text-center">{{sno}}</span><input type="hidden" class="orderNoForExistBuild" data-sno name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].orderOfFloor"/></td>'+
 	'<td ><select name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].floorDescription" data-first-option="false" id="existingBuildingFloorDetailsUpdate[{{idx}}]floorDescription" class="form-control exist-floor-details-mandatory existFloorDescription clear-details" required="required" maxlength="128" > <option value="">Select</option><options items="${buildingFloorList}" /></select></td>'+
 	'<td class="text-right"><input type="text" class="form-control table-input text-center patternvalidation existFloorNumber exist-floor-details-mandatory clear-details" name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].floorNumber" data-pattern="number" required="required" id="existingBuildingFloorDetailsUpdate[{{idx}}]floorNumber" maxlength="3" /></td>'+
-	'<td ><select name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].occupancy" data-first-option="false" id="existingBuildingFloorDetailsUpdate[{{idx}}]occupancy" class="form-control exist-floor-details-mandatory existOccupancy" required="required" maxlength="128" > <option value="">Select</option><options items="${occupancyList}" /></select></td>'+
+	'<td ><select name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].subOccupancy" data-first-option="false" id="existingBuildingFloorDetailsUpdate[{{idx}}]occupancy" class="form-control exist-floor-details-mandatory existOccupancy" required="required" maxlength="128" > <option value="">Select</option><options items="${occupancyList}" /></select></td>'+
 	'<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation existPlinthArea nonzero exist-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].plinthArea" id="existingBuildingFloorDetailsUpdate[{{idx}}]plinthArea" required="required" maxlength="10" /></td>'+
 	'<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation existFloorArea nonzero exist-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].floorArea" id="existingBuildingFloorDetailsUpdate[{{idx}}]floorArea" maxlength="10" required="required" /></td>'+
 	'<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation existCarpetArea exist-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].carpetArea" id="existingBuildingFloorDetailsUpdate[{{idx}}]carpetArea" maxlength="10" required="required" value=""  /></td>'+
@@ -71,7 +71,7 @@ jQuery(document).ready(function() {
 			patternvalidation();
 			generateSnoForExistingBuilding();
 			loadFloorlist("existingBuildingDetails[0].existingBuildingFloorDetailsUpdate["+idx+"].floorDescription");
-			loadOccupanctyDetails("existingBuildingDetails[0].existingBuildingFloorDetailsUpdate["+idx+"].occupancy");
+			loadOccupanctyDetails("existingBuildingDetails[0].existingBuildingFloorDetailsUpdate["+idx+"].subOccupancy");
 		}
 	});
 	

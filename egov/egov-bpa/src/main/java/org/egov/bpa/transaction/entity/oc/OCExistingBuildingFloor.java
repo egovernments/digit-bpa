@@ -52,7 +52,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -71,9 +71,12 @@ public class OCExistingBuildingFloor extends AbstractAuditable {
     private Integer orderOfFloor;
     private String floorDescription;
     private Integer floorNumber;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+   /* @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "occupancy")
-    private Occupancy occupancy;
+    private Occupancy occupancy;*/
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "suboccupancy")
+    private SubOccupancy subOccupancy;
     private BigDecimal plinthArea;
     private BigDecimal floorArea;
     private BigDecimal carpetArea;
@@ -120,14 +123,6 @@ public class OCExistingBuildingFloor extends AbstractAuditable {
         this.floorNumber = floorNumber;
     }
 
-    public Occupancy getOccupancy() {
-        return occupancy;
-    }
-
-    public void setOccupancy(Occupancy occupancy) {
-        this.occupancy = occupancy;
-    }
-
     public BigDecimal getPlinthArea() {
         return plinthArea;
     }
@@ -151,5 +146,13 @@ public class OCExistingBuildingFloor extends AbstractAuditable {
     public void setCarpetArea(BigDecimal carpetArea) {
         this.carpetArea = carpetArea;
     }
+
+	public SubOccupancy getSubOccupancy() {
+		return subOccupancy;
+	}
+
+	public void setSubOccupancy(SubOccupancy subOccupancy) {
+		this.subOccupancy = subOccupancy;
+	}
 
 }

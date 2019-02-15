@@ -67,6 +67,7 @@ import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
@@ -410,12 +411,10 @@ public class BpaWorkFlowService {
         } else if (!application.getBuildingDetail().isEmpty()
                 && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
             if (!application.getExistingBuildingDetails().isEmpty())
-                for (Map.Entry<Occupancy, BigDecimal> existBuiltupArea : bpaUtils
-                        .getExistingBldgBlockWiseOccupancyAndBuiltupArea(application.getExistingBuildingDetails()).entrySet())
+                for (Map.Entry<SubOccupancy, BigDecimal> existBuiltupArea : bpaUtils.getExistingBldgBlockWiseOccupancyAndBuiltupArea(application.getExistingBuildingDetails()).entrySet())
                     amountRule = amountRule.add(existBuiltupArea.getValue());
             else {
-                for (Map.Entry<Occupancy, BigDecimal> builtupArea : bpaUtils
-                        .getBlockWiseOccupancyAndBuiltupArea(application.getBuildingDetail()).entrySet())
+                for (Map.Entry<SubOccupancy, BigDecimal> builtupArea : bpaUtils.getBlockWiseOccupancyAndBuiltupArea(application.getBuildingDetail()).entrySet())
                     amountRule = amountRule.add(builtupArea.getValue());
             }
         }

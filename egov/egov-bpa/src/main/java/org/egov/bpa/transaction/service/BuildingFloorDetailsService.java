@@ -81,7 +81,7 @@ public class BuildingFloorDetailsService {
 							&& floor.getFloorDescription() != null) {
 							ApplicationFloorDetail floorDetails = new ApplicationFloorDetail();
 							floorDetails.setBuildingDetail(bldg);
-							floorDetails.setOccupancy(floor.getOccupancy());
+							floorDetails.setSubOccupancy(floor.getSubOccupancy());
 							floorDetails.setOrderOfFloor(floor.getOrderOfFloor());
 							floorDetails.setFloorNumber(floor.getFloorNumber());
 							floorDetails.setFloorDescription(floor.getFloorDescription());

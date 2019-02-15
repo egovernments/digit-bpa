@@ -39,14 +39,19 @@
  */
 
 var occupancyResponse;
+var subOccupancyResponse;
 var extentOfLand;
 var totalFloorArea;
 var extentInSqmts;
 var mixedOccupancyResponse;
-var occupancyResponseByDesc;
+var occupancyResponseByName;
+var subOccupancyResponseByName;
+var occupancySuboccupancyMap;
 $(document).ready(function() {
 
     getOccupancyObjects();
+	getSubOccupancyObjects();
+	getOccupancyAndSubOccupanyMap();
     //$('#oneDayPermitSec').hide();
     $('.buildingdetails').hide();
     $('.existingbuildingdetails').hide();
@@ -427,7 +432,7 @@ $(document).ready(function() {
             dataType: "json",
             success: function (response) {
                 occupancyResponse = arrayGroupByKey(response, 'id');
-                occupancyResponseByDesc = arrayGroupByKey(response, 'description');
+                occupancyResponseByName = arrayGroupByKey(response, 'name');
                 mixedOccupancyResponse = response;
             },
             error: function (response) {
@@ -435,6 +440,52 @@ $(document).ready(function() {
         });
     }
 
+    function getSubOccupancyObjects() {
+        $.ajax({
+            url: "/bpa/application/getsuboccupancydetails",
+            async: false,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                subOccupancyResponse = arrayGroupByKey(response, 'id');
+                subOccupancyResponseByName = arrayGroupByKey(response, 'name');
+               // mixedOccupancyResponse = response;
+            },
+            error: function (response) {
+            }
+        });
+    }
+    
+    function getSubOccupancyObjects() {
+        $.ajax({
+            url: "/bpa/application/getsuboccupancydetails",
+            async: false,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                subOccupancyResponse = arrayGroupByKey(response, 'id');
+                subOccupancyResponseByName = arrayGroupByKey(response, 'name');
+               // mixedOccupancyResponse = response;
+            },
+            error: function (response) {
+            }
+        });
+    }
+    
+    function getOccupancyAndSubOccupanyMap(){
+    	$.ajax({
+            url: "/bpa/application/getOccupancyAndSuboccupancyMap",
+            async: false,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+            occupancySuboccupancyMap = response;
+            },
+            error: function (response) {
+            }
+        });
+    }
+    
     $('#extentOfLand,#unitOfMeasurement').change(function(){
         var extentOfLand = $('#extentOfLand').val();
         var uom = $('#unitOfMeasurement').val();
@@ -509,8 +560,8 @@ $(document).ready(function() {
     // onchange of main occupancy reset floorwise occupancy details column value
     function resetOccupancyDetails() {
         $('#buildingAreaDetails tbody tr *[name$="occupancy"]').each(function(idx){
-            var  selectBoxName = "buildingDetail[0].applicationFloorDetails["+idx+"].occupancy";
-            var  selectBoxName1 = "buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].occupancy";
+            var  selectBoxName = "buildingDetail[0].applicationFloorDetails["+idx+"].subOccupancy";
+            var  selectBoxName1 = "buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].subOccupancy";
             clearExistingDropDownValues(selectBoxName);
             clearExistingDropDownValues(selectBoxName1);
             if($("#occupancyapplnlevel option:selected" ).text() == 'Mixed'){

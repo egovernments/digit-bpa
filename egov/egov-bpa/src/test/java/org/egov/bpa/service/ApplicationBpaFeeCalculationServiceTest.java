@@ -64,6 +64,7 @@ import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -698,7 +699,7 @@ public class ApplicationBpaFeeCalculationServiceTest {
         applicationFloorDetail.setFloorArea(floorArea);
         applicationFloorDetail.setBuildingDetail(buildingDetail);
         applicationFloorDetail.setPlinthArea(plinthArea);
-        applicationFloorDetail.setOccupancy(getOccupancy(occupancycode, occupancydesc, occupancyid, areapermissibleinpercentage,
+        applicationFloorDetail.setSubOccupancy(getSubOccupancy(occupancycode, occupancydesc, occupancyid, areapermissibleinpercentage,
                 arewithaddnfee, areawithoutaddnfee));
         return applicationFloorDetail;
     }
@@ -714,6 +715,19 @@ public class ApplicationBpaFeeCalculationServiceTest {
         occupancy.setMinFar(areawithoutaddnfee);
         occupancy.setMaxCoverage(areapermissibleinpercentage);
         return occupancy;
+    }
+    
+    private SubOccupancy getSubOccupancy(String code, String desc, Long id, BigDecimal areapermissibleinpercentage,
+    		BigDecimal areawithoutaddnfee, BigDecimal arewithaddnfee) {
+    	SubOccupancy subOccupancy = new SubOccupancy();
+    	subOccupancy.setCode(code);
+    	subOccupancy.setDescription(desc);
+    	subOccupancy.setId(id);
+    	subOccupancy.setIsactive(true);
+    	subOccupancy.setMaxFar(arewithaddnfee);
+    	subOccupancy.setMinFar(areawithoutaddnfee);
+    	subOccupancy.setMaxCoverage(areapermissibleinpercentage);
+        return subOccupancy;
     }
 
 }

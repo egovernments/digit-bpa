@@ -11,7 +11,7 @@
 	<field name="floorDescription" class="java.lang.String"/>
 	<field name="plinthArea" class="java.math.BigDecimal"/>
 	<field name="floorNumber" class="java.lang.Integer"/>
-	<field name="occupancy" class="org.egov.common.entity.bpa.Occupancy"/>
+	<field name="subOccupancy" class="org.egov.common.entity.bpa.SubOccupancy"/>
 	<field name="floorArea" class="java.math.BigDecimal"/>
 	<field name="carpetArea" class="java.math.BigDecimal"/>
 	<variable name="totalPlintArea" class="java.math.BigDecimal" calculation="Sum">
@@ -258,7 +258,7 @@
 					<font fontName="SansSerif" isBold="false"/>
 					<paragraph leftIndent="5" rightIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{occupancy}.getDescription()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{subOccupancy}.getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="350" y="0" width="92" height="20" uuid="38bd136a-1dca-4cfc-ae84-e33ecea7a6e4">

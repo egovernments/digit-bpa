@@ -64,16 +64,21 @@ import java.util.Map.Entry;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
+import org.egov.bpa.transaction.entity.oc.OCBuilding;
+import org.egov.bpa.transaction.entity.oc.OCFloor;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
-import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.custom.CustomImplProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -103,14 +108,9 @@ public class BpaApplicationValidationService {
     @Qualifier("parentMessageSource")
     private MessageSource bpaMessageSource;
     @Autowired
-    private ApplicationBpaFeeCalculationService applicationBpaFeeCalculationService;
-    @Autowired
     private AppConfigValueService appConfigValuesService;
-    @Autowired
-    private BuildingFloorDetailsService buildingFloorDetailsService;
 	@Autowired
 	private BpaUtils bpaUtils;
-	
 	@Autowired
 	private CustomImplProvider  customImplProvider;
 
@@ -123,7 +123,7 @@ public class BpaApplicationValidationService {
         BigDecimal totalPlinthArea = BigDecimal.ZERO;
         BigDecimal heightOfBuilding = BigDecimal.ZERO;
         if(!bpaApplication.getBuildingDetail().isEmpty()) {
-			for (Map.Entry < Occupancy, BigDecimal > builtupArea : bpaUtils.getBlockWiseOccupancyAndBuiltupArea(bpaApplication.getBuildingDetail()).entrySet())
+			for (Map.Entry <SubOccupancy, BigDecimal > builtupArea : bpaUtils.getBlockWiseOccupancyAndBuiltupArea(bpaApplication.getBuildingDetail()).entrySet())
 				totalPlinthArea = totalPlinthArea.add(builtupArea.getValue());
 			BuildingDetail building = bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetail());
 			noOfFloors = building.getFloorCount();
@@ -247,7 +247,7 @@ public class BpaApplicationValidationService {
         BigDecimal plinthAreaInput = BigDecimal.ZERO;
         BigDecimal floorCountInput = BigDecimal.ZERO;
         BigDecimal buildingHeightInput = BigDecimal.ZERO;
-        String message;
+        String message ;
 
 		if ((getStakeholderType1Restrictions().containsKey(stakeHolderType.toLowerCase())
 			 || getStakeholderType3Restrictions().containsKey(stakeHolderType.toLowerCase())
@@ -330,13 +330,13 @@ public class BpaApplicationValidationService {
             if (floorMap
                     .containsKey(floorDesc)) {
                 BigDecimal permissableFloorCoveredArea = floorMap.get(floorDesc)[0]
-                        .add(floorDetail.getOccupancy().getMaxCoverage()
+                        .add(floorDetail.getSubOccupancy().getMaxCoverage()
                                 .multiply(floorDetail.getPlinthArea()));
                 BigDecimal floorWiseArea = floorMap.get(floorDesc)[1].add(floorDetail.getPlinthArea());
                 floorMap.put(floorDesc, new BigDecimal[] { permissableFloorCoveredArea, floorWiseArea });
             } else {
                 BigDecimal permissableFloorCoveredArea = 
-                        floorDetail.getOccupancy().getMaxCoverage().multiply(floorDetail.getPlinthArea());
+                        floorDetail.getSubOccupancy().getMaxCoverage().multiply(floorDetail.getPlinthArea());
                 floorMap.put(floorDesc, new BigDecimal[] { permissableFloorCoveredArea, floorDetail.getPlinthArea() });
             }
         }
@@ -515,5 +515,125 @@ public class BpaApplicationValidationService {
         return edcrRequiredService == null || StringUtils.isBlank(occupancy) || !edcrRequiredService.contains(occupancy) ? false : true;*/
         return getEdcrRequiredServices().contains(serviceType);
     }
+    
+    
+	public Boolean validateOcApplnWithPermittedBpaAppln(final Model model, final OccupancyCertificate occupancyCertificate) {
+		Boolean isValid = Boolean.FALSE ;
+		List<OCBuilding> ocBuildings = occupancyCertificate.getBuildings();
+		List<BuildingDetail> bpaBuildingDetail = occupancyCertificate.getParent().getBuildingDetail();
+		// check number of blocks same are not
+		if (ocBuildings.size() > bpaBuildingDetail.size()) {
+			model.addAttribute("OcComparisonValidation",
+					bpaMessageSource.getMessage("msg.oc.appln.comparison.validation1", null, null));
+			return isValid;
+		}
+		
+		//check building number exist in permitted building details.
+		for (OCBuilding oc : ocBuildings) {
+			boolean buildingExist = false;
+			for (BuildingDetail bpa : bpaBuildingDetail) {
+				if (oc.getBuildingNumber() == bpa.getNumber())
+					buildingExist = true;
+			}
+			if (!buildingExist) {
+				model.addAttribute("OcComparisonValidation", bpaMessageSource.getMessage("msg.oc.appln.comparison.validation2",
+								new String[] { oc.getBuildingNumber().toString() }, null));
+				return isValid;
+			}
+		}
+		// check the floor count for particular building same or not
+		for (OCBuilding oc : ocBuildings) {
+			Integer size = oc.getFloorDetailsForUpdate().size();
+			for (BuildingDetail bpa : bpaBuildingDetail) {
+				if (oc.getBuildingNumber() == bpa.getNumber()) {
+					if (size > bpa.getApplicationFloorDetails().size()) {
+						model.addAttribute("OcComparisonValidation",bpaMessageSource.getMessage("msg.oc.appln.comparison.validation3",
+								new String[] { oc.getBuildingNumber().toString(),size.toString(),bpa.getNumber().toString(),String.valueOf(bpa.getApplicationFloorDetails().size())}, null));
+						return isValid;
+					}
+				}
+			}
+		}
+		//  check floor wise floor area same or not
+		BigDecimal hundred = new BigDecimal(100);
+		BigDecimal percent = new BigDecimal(bpaUtils.getAppConfigForOcAllowDeviation());
+		for (OCBuilding oc : ocBuildings) {
+			for (BuildingDetail bpa : bpaBuildingDetail) {
+				if (oc.getBuildingNumber() == bpa.getNumber()) {
+					for (OCFloor ocFloor : oc.getFloorDetailsForUpdate()) {
+						int floorNumber = ocFloor.getFloorNumber();
+						for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
+							if (floorNumber == bpaFloor.getFloorNumber()) {
+								BigDecimal allowDeviation = bpaFloor.getFloorArea().multiply(percent).divide(hundred);
+								BigDecimal total = bpaFloor.getFloorArea().add(allowDeviation);
+								if (ocFloor.getFloorArea().compareTo(total) > 0) {
+									model.addAttribute("OcComparisonValidation",bpaMessageSource.getMessage("msg.oc.appln.comparison.validation4",
+											new String[] { oc.getBuildingNumber().toString(),String.valueOf(floorNumber),String.valueOf(bpa.getNumber()),bpaFloor.getFloorNumber().toString()}, null));
+									return isValid;
+								}
+							}
+						}
+					}
+				}
+			}
+		} 
+		// check floor wise occupancy same are not
+		for (OCBuilding oc : ocBuildings) {
+			for (BuildingDetail bpa : bpaBuildingDetail) {
+				if (oc.getBuildingNumber() == bpa.getNumber()) {
+					for (OCFloor ocFloor : oc.getFloorDetailsForUpdate()) {
+						int floorNumber = ocFloor.getFloorNumber();
+						for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
+							if (floorNumber == bpaFloor.getFloorNumber()) {
+								if (!ocFloor.getSubOccupancy().getCode().equals(bpaFloor.getSubOccupancy().getCode())) {
+									model.addAttribute("OcComparisonValidation",bpaMessageSource.getMessage("msg.oc.appln.comparison.validation5",
+											new String[] { oc.getBuildingNumber().toString(),String.valueOf(floorNumber),String.valueOf(bpa.getNumber()),bpaFloor.getFloorNumber().toString()}, null));
+									return isValid;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		// check block wise floor area same are not
+		BigDecimal limitSqurMtrs = new BigDecimal(40);
+		for (OCBuilding oc : ocBuildings) {
+			for (BuildingDetail bpa : bpaBuildingDetail) {
+				if (oc.getBuildingNumber() == bpa.getNumber()) {
+					BigDecimal totalOcFloor = getOcTotalFloorArea(oc.getFloorDetailsForUpdate());
+					BigDecimal totalBpaFloor = getBpaTotalFloorArea(bpa.getApplicationFloorDetails());
+					BigDecimal allowDeviation = totalBpaFloor.multiply(percent).divide(hundred);
+					BigDecimal totalBpaWithAllowDeviation = totalBpaFloor.add(allowDeviation);
+					if (totalBpaWithAllowDeviation.compareTo(totalOcFloor) < 0) {
+						model.addAttribute("OcComparisonValidation",
+								bpaMessageSource.getMessage("msg.oc.appln.comparison.validation6",
+										new String[] { oc.getBuildingNumber().toString() }, null));
+						return isValid;
+					}
+					if (totalOcFloor.subtract(totalBpaFloor).compareTo(limitSqurMtrs) > 0) {
+						model.addAttribute("OcComparisonValidation",
+								bpaMessageSource.getMessage("msg.oc.appln.comparison.validation7",
+										new String[] { oc.getBuildingNumber().toString() }, null));
+						return isValid;
+					}
+				}
+			}
+		}
+		return true;
+	}
 
+	private BigDecimal getOcTotalFloorArea(List<OCFloor> floorList) {
+		BigDecimal totalFloorArea = BigDecimal.ZERO;
+		for (OCFloor floorDetail : floorList)
+			totalFloorArea = totalFloorArea.add(floorDetail.getFloorArea());
+		return totalFloorArea;
+	}
+
+	private BigDecimal getBpaTotalFloorArea(List<ApplicationFloorDetail> floorList) {
+		BigDecimal totalFloorArea = BigDecimal.ZERO;
+		for (ApplicationFloorDetail floorDetail : floorList)
+			totalFloorArea = totalFloorArea.add(floorDetail.getFloorArea());
+		return totalFloorArea;
+	}
 }

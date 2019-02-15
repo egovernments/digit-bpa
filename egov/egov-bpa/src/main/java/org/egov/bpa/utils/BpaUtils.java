@@ -59,7 +59,7 @@ import org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl
 import org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
-import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
@@ -505,29 +505,29 @@ public class BpaUtils {
         return Paths.get(fileDirPath + separator + fileStoreId);
     }
 
-    public Map<Occupancy, BigDecimal> getBlockWiseOccupancyAndBuiltupArea(List<BuildingDetail> buildingDetails) {
-        Map<Occupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
+    public Map<SubOccupancy, BigDecimal> getBlockWiseOccupancyAndBuiltupArea(List<BuildingDetail> buildingDetails) {
+        Map<SubOccupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
         for (BuildingDetail building : buildingDetails) {
             for (ApplicationFloorDetail floor : building.getApplicationFloorDetails()) {
-                if (occupancyWiseBuiltupArea.containsKey(floor.getOccupancy()))
-                    occupancyWiseBuiltupArea.put(floor.getOccupancy(),
-                            occupancyWiseBuiltupArea.get(floor.getOccupancy()).add(floor.getPlinthArea()));
+                if (floor.getSubOccupancy()!=null && occupancyWiseBuiltupArea.containsKey(floor.getSubOccupancy()))
+                    occupancyWiseBuiltupArea.put(floor.getSubOccupancy(),
+                            occupancyWiseBuiltupArea.get(floor.getSubOccupancy()).add(floor.getPlinthArea()));
                 else
-                    occupancyWiseBuiltupArea.put(floor.getOccupancy(), floor.getPlinthArea());
+                    occupancyWiseBuiltupArea.put(floor.getSubOccupancy(), floor.getPlinthArea());
             }
         }
         return occupancyWiseBuiltupArea;
     }
 
-    public Map<Occupancy, BigDecimal> getOccupancyWiseFloorArea(List<BuildingDetail> buildingDetails) {
-        Map<Occupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
+    public Map<SubOccupancy, BigDecimal> getOccupancyWiseFloorArea(List<BuildingDetail> buildingDetails) {
+        Map<SubOccupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
         for (BuildingDetail building : buildingDetails) {
             for (ApplicationFloorDetail floor : building.getApplicationFloorDetails()) {
-                if (occupancyWiseBuiltupArea.containsKey(floor.getOccupancy()))
-                    occupancyWiseBuiltupArea.put(floor.getOccupancy(),
-                            occupancyWiseBuiltupArea.get(floor.getOccupancy()).add(floor.getFloorArea()));
+                if (occupancyWiseBuiltupArea.containsKey(floor.getSubOccupancy()))
+                    occupancyWiseBuiltupArea.put(floor.getSubOccupancy(),
+                            occupancyWiseBuiltupArea.get(floor.getSubOccupancy()).add(floor.getFloorArea()));
                 else
-                    occupancyWiseBuiltupArea.put(floor.getOccupancy(), floor.getFloorArea());
+                    occupancyWiseBuiltupArea.put(floor.getSubOccupancy(), floor.getFloorArea());
             }
         }
         return occupancyWiseBuiltupArea;
@@ -540,22 +540,22 @@ public class BpaUtils {
                 if (occupancyAndFloorNumber.containsKey(floor.getFloorNumber()))
                     occupancyAndFloorNumber.put(floor.getFloorNumber(), occupancyAndFloorNumber.get(floor.getFloorNumber()));
                 else
-                    occupancyAndFloorNumber.put(floor.getFloorNumber(), floor.getOccupancy().getCode());
+                    occupancyAndFloorNumber.put(floor.getFloorNumber(), floor.getSubOccupancy().getCode());
             }
         }
         return occupancyAndFloorNumber;
     }
 
-    public Map<Occupancy, BigDecimal> getExistingBldgBlockWiseOccupancyAndBuiltupArea(
+    public Map<SubOccupancy, BigDecimal> getExistingBldgBlockWiseOccupancyAndBuiltupArea(
             List<ExistingBuildingDetail> existBldgDtls) {
-        Map<Occupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
+        Map<SubOccupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
         for (ExistingBuildingDetail building : existBldgDtls) {
             for (ExistingBuildingFloorDetail floor : building.getExistingBuildingFloorDetails()) {
-                if (occupancyWiseBuiltupArea.containsKey(floor.getOccupancy()))
-                    occupancyWiseBuiltupArea.put(floor.getOccupancy(),
-                            occupancyWiseBuiltupArea.get(floor.getOccupancy()).add(floor.getPlinthArea()));
+                if (occupancyWiseBuiltupArea.containsKey(floor.getSubOccupancy()))
+                    occupancyWiseBuiltupArea.put(floor.getSubOccupancy(),
+                            occupancyWiseBuiltupArea.get(floor.getSubOccupancy()).add(floor.getPlinthArea()));
                 else
-                    occupancyWiseBuiltupArea.put(floor.getOccupancy(), floor.getPlinthArea());
+                    occupancyWiseBuiltupArea.put(floor.getSubOccupancy(), floor.getPlinthArea());
             }
         }
         return occupancyWiseBuiltupArea;
@@ -692,4 +692,5 @@ public class BpaUtils {
                 .getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, "OC_ALLOW_DEVIATION");
         return appConfigValueList.get(0).getValue();
     }
+
 }

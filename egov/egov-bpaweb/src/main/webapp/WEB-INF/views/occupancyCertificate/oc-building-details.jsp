@@ -122,7 +122,7 @@
 									id="floorDetails${counter.index}floorNumber"
 									maxlength="15" value="${proposedBuildFloorDetail.floorNumber}" /></td>
 							<td><form:select
-									path="buildings[0].floorDetails[${counter.index}].occupancy"
+									path="buildings[0].floorDetails[${counter.index}].subOccupancy"
 									data-first-option="false"
 									id="floorDetails${counter.index}occupancy"
 									class="form-control floor-details-mandatory occupancy"
@@ -192,7 +192,7 @@
 								id="floorDetails0floorNumber" maxlength="3"
 								value="${proposedBuildFloorDetail.floorNumber}" /></td>
 						<td><form:select
-								path="buildings[0].floorDetails[0].occupancy"
+								path="buildings[0].floorDetails[0].subOccupancy"
 								data-first-option="false"
 								id="floorDetails[0]occupancy"
 								class="form-control floor-details-mandatory occupancy"

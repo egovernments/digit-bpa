@@ -256,11 +256,16 @@ public class BpaConstants {
     public static final String MIXED_OCCUPANCY ="15"; 
     public static final String INDUSTRIAL = "G1";
     public static final String MERCANTILE_COMMERCIAL = "F";
-    public static final String RESIDENTIAL = "A1";
+   
     public static final String THATCHED_TILED_HOUSE = "14";
+    public static final String RESIDENTIAL = "A";
+    public static final String RESIDENTIAL_A1 = "A1";
     public static final String SPECIAL_RESIDENTIAL = "A2";
+    public static final String HOSTEL_EDUCATIONAL = "A3";
+    public static final String APARTMENT_FLAT = "A4";
     public static final String PROFESSIONAL_OFFICE = "A5";
-    public static final String EDUCATIONAL = "B1";
+    public static final String EDUCATIONAL = "B";
+    public static final String EDUCATIONAL_B1 = "B1";
     public static final String EDUCATIONAL_HIGHSCHOOL = "B2";
     public static final String HIGHER_EDUCATIONAL_INSTITUTE= "B3";
     public static final String MEDIACL_HOSPITAL = "C";
@@ -272,7 +277,7 @@ public class BpaConstants {
     public static final String BUS_TERMINAL = "D2";
     public static final String OFFICE_BUSINESS = "E";
     public static final String STORAGE = "H";
-    public static final String APARTMENT_FLAT = "A4";
+    
     
     
     // notices file name and type
