@@ -39,13 +39,28 @@
  */
 package org.egov.bpa.transaction.service.messaging.oc;
 
-import org.egov.bpa.master.entity.StakeHolder;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
+import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
+import static org.egov.bpa.utils.BpaConstants.NO;
+import static org.egov.bpa.utils.BpaConstants.OCDEMANDFILENAME;
+import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
+import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
+import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPELETTERTOPARTY;
+import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
+import static org.egov.bpa.utils.BpaConstants.YES;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Locale;
+
+import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
-import org.egov.bpa.transaction.entity.common.AppointmentScheduleCommon;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.oc.OCAppointmentSchedule;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
@@ -68,28 +83,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.sf.jasperreports.engine.part.FinalFillingPrintPart;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Locale;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
-import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
-import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
-import static org.egov.bpa.utils.BpaConstants.NO;
-import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
-import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
-import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPELETTERTOPARTY;
-import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
-import static org.egov.bpa.utils.BpaConstants.YES;
-import static org.egov.bpa.utils.BpaConstants.OCDEMANDFILENAME;
-
 @Service
 @Transactional(readOnly = true)
 public class OcSmsAndEmailService {
@@ -104,8 +97,6 @@ public class OcSmsAndEmailService {
     private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_RESCHE = "msg.bpa.oc.doc.scruty.reschedule.email.body";
     private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING = "msg.bpa.oc.doc.scruty.reschedule.pending.email.body";
     private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_CANCELLED = "msg.bpa.oc.doc.scruty.cancel.email.body";
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final String MSG_KEY_SMS_OC_APPLN_NEW_CZN = "msg.oc.submit.sms.citizen";
     private static final String BODY_KEY_EMAIL_OC_APPLN_NEW_CZN = "msg.oc.submit.mail.body.citizen";
@@ -152,9 +143,6 @@ public class OcSmsAndEmailService {
     private MessageSource bpaMessageSource;
     @Autowired
     private BpaUtils bpaUtils;
-
-    // @Autowired
-    // private AppointmentScheduleCommon appointmentScheduleCommon;
 
     public String getMunicipalityName() {
         return ApplicationThreadLocals.getMunicipalityName();

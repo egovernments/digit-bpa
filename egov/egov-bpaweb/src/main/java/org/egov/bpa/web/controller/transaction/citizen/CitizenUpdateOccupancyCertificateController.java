@@ -57,6 +57,8 @@ import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -118,6 +120,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
     private static final String COMMON_ERROR = "common-error";
     private static final String ADDITIONALRULE = "additionalRule";
+    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
     @Autowired
     private GenericBillGeneratorService genericBillGeneratorService;
     @Autowired
@@ -195,8 +198,18 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
             model.addAttribute("mode", "showRescheduleToCitizen");
         }
         model.addAttribute("inspectionList", ocInspectionService.findByOcOrderByIdAsc(oc));
+        model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
+        if (APPLICATION_STATUS_APPROVED.equals(oc.getStatus().getCode())
+                && bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
+            model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
+            String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
+            model.addAttribute(ONLINE_PAYMENT_ENABLE,
+                    (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+        } else {
+            model.addAttribute(COLLECT_FEE_VALIDATE, "");
+        }
         buildAppointmentDetailsOfScrutinyAndInspection(model, oc);
-        buildReceiptDetails(oc.getDemand().getEgDemandDetails(), new HashSet<>());
+        buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
     }

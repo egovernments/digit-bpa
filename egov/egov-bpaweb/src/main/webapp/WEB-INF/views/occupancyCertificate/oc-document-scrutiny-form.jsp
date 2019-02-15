@@ -91,7 +91,7 @@
 					</div>
 					<c:if test="${not empty  occupancyCertificate.receipts}">
 						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="../application/view-bpa-receipt-details.jsp"></jsp:include>
+							<jsp:include page="view-oc-receipt-details.jsp"></jsp:include>
 						</div>
 					</c:if>
 					<div class="panel panel-primary" data-collapsed="0">

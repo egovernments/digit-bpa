@@ -55,7 +55,6 @@ import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
-import org.egov.bpa.transaction.service.messaging.oc.OcSmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl;
 import org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -137,9 +136,6 @@ public class BpaUtils {
 
     @Autowired
     private CollectionIntegrationService collectionIntegrationService;
-    
-    @Autowired
-    private OcSmsAndEmailService ocSmsAndEmailService;
 
     private String fileStoreDir;
 

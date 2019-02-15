@@ -48,7 +48,9 @@ package org.egov.bpa.transaction.notice.util;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
@@ -71,12 +73,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.Response;
 import org.egov.bpa.transaction.entity.common.NoticeCommon;
+import org.egov.bpa.transaction.entity.enums.PermitConditionType;
 import org.egov.bpa.transaction.entity.oc.OCNotice;
+import org.egov.bpa.transaction.entity.oc.OCNoticeConditions;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.repository.oc.OcNoticeRepository;
+import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.service.CityService;
@@ -104,7 +110,9 @@ public class OCNoticeUtil {
     private static final String N_A = "N/A";
     private static final String APPLICATION_PDF = "application/pdf";
     private static final String MSG_OC_LAWACT = "msg.oc.lawact";
-
+    public static final String TWO_NEW_LINE = "\n\n";
+    private static final String APPLICATION_REJECTION_REASON = "applctn.reject.reason";
+    private static final String APPLICATION_AUTO_REJECTION_REASON = "applctn.auto.reject.reason";
 
     @Autowired
     private BpaNoticeUtil bpaNoticeUtil;
@@ -123,6 +131,10 @@ public class OCNoticeUtil {
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource ocMessageSource;
+    @Autowired
+    private BpaUtils bpaUtils;
+    @Autowired
+    private OCNoticeConditionsService ocNoticeConditionsService;
 
     public OCNotice findByOcAndNoticeType(OccupancyCertificate oc, String noticeType) {
         return ocNoticeRepository.findByOcAndNoticeType(oc, noticeType);
@@ -186,6 +198,9 @@ public class OCNoticeUtil {
         reportParams.put("occupancy", oc.getParent().getOccupancy().getDescription());
         reportParams.put("applicantAddress",
                 oc.getParent().getOwner() == null ? "Not Mentioned" : oc.getParent().getOwner().getAddress());
+        if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(oc.getStatus().getCode())) {
+            reportParams.put("rejectionReasons", buildRejectionReasons(oc));
+        }
         if (!oc.getParent().getSiteDetail().isEmpty()) {
             reportParams.put("electionWard", oc.getParent().getSiteDetail().get(0).getElectionBoundary().getName());
             reportParams.put("revenueWard", oc.getParent().getSiteDetail().get(0).getAdminBoundary().getName());
@@ -212,6 +227,62 @@ public class OCNoticeUtil {
                     : oc.getParent().getSiteDetail().get(0).getPostalAddress().getDistrict());
         }
         return reportParams;
+    }
+    
+    public String buildRejectionReasons(final OccupancyCertificate oc) {
+        StringBuilder rejectReasons = new StringBuilder();
+        if (!oc.getRejectionReasons().isEmpty()) {
+            List<OCNoticeConditions> additionalPermitConditions = ocNoticeConditionsService
+                    .findAllOcConditionsByOcAndType(oc, PermitConditionType.ADDITIONAL_PERMITCONDITION);
+            int order = buildPredefinedRejectReasons(oc, rejectReasons);
+            int additionalOrder = buildAdditionalNoticeConditions(rejectReasons, additionalPermitConditions,
+                    order);
+            StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(oc.getStateHistory());
+            rejectReasons.append(String.valueOf(additionalOrder) + ") "
+                    + (stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY)
+                    + TWO_NEW_LINE);
+        } else {
+            rejectReasons.append(oc.getState().getComments() != null
+                    && oc.getState().getComments().equalsIgnoreCase("Application cancelled by citizen")
+                            ? getMessageFromPropertyFile(APPLICATION_REJECTION_REASON)
+                            : getMessageFromPropertyFile(APPLICATION_AUTO_REJECTION_REASON));
+        }
+        return rejectReasons.toString();
+    }
+
+    public String getMessageFromPropertyFile(String key) {
+        return ocMessageSource.getMessage(key, null, null);
+    }
+
+    private int buildPredefinedRejectReasons(final OccupancyCertificate oc,
+            StringBuilder permitConditions) {
+        int order = 1;
+        for (OCNoticeConditions rejectReason : oc.getRejectionReasons()) {
+            if (rejectReason.isRequired()
+                    && PermitConditionType.REJECTION_REASON.equals(rejectReason.getType())) {
+                permitConditions
+                        .append(String.valueOf(order) + ") " + rejectReason.getNoticeCondition().getDescription() + TWO_NEW_LINE);
+                order++;
+            }
+        }
+        return order;
+    }
+
+    private int buildAdditionalNoticeConditions(StringBuilder permitConditions,
+            List<OCNoticeConditions> additionalConditions, int order) {
+        int additionalOrder = order;
+        if (!additionalConditions.isEmpty()
+                && isNotBlank(additionalConditions.get(0).getAdditionalCondition())) {
+            for (OCNoticeConditions addnlNoticeCondition : additionalConditions) {
+                if (isNotBlank(addnlNoticeCondition.getAdditionalCondition())) {
+                    permitConditions.append(
+                            String.valueOf(additionalOrder) + ") " + addnlNoticeCondition.getAdditionalCondition()
+                                    + TWO_NEW_LINE);
+                    additionalOrder++;
+                }
+            }
+        }
+        return additionalOrder;
     }
 
     public String getApproverName(final OccupancyCertificate occupancyCertificate) {

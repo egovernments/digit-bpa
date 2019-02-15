@@ -194,6 +194,7 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
         } else if (BpaConstants.WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             pos = bpaWorkFlowService.getApproverPositionOfElectionWardByCurrentStateForOC(oc,
                     BpaConstants.REJECT_BY_CLERK);
+            ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0).getEmployee();
             wfMatrix = bpaApplicationWorkflowService.getWfMatrix(oc.getStateType(), null,
                     null, wfBean.getAdditionalRule(), BpaConstants.REJECT_BY_CLERK, null);
             BpaStateInfo bpaStateInfo = bpaWorkFlowService.getBpaStateInfo(oc.getCurrentState(), oc.getStateHistory(),
@@ -233,6 +234,7 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
         } else if (BpaConstants.LPCREATED.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             wfMatrix = bpaApplicationWorkflowService.getWfMatrix(oc.getStateType(), null, null, wfBean.getAdditionalRule(),
                     BpaConstants.LPCREATED, null);
+            ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(oc.getState().getOwnerPosition().getId(), new Date()).get(0).getEmployee();
             oc.setStatus(getStatusByCurrentMatrixStatus(wfMatrix));
             oc.transition().progressWithStateCopy()
                     .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
@@ -259,7 +261,7 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
             oc.transition().progressWithStateCopy()
                     .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                     .withComments(wfBean.getApproverComments()).withStateValue(wfMatrix.getNextState())
-                    .withDateInfo(currentDate.toDate()).withOwner(stateHistory.getOwnerPosition()).withOwner(ownerUser)
+                    .withDateInfo(currentDate.toDate()).withOwner(stateHistory.getOwnerPosition()).withOwner(stateHistory.getOwnerUser())
                     .withNextAction(wfMatrix.getNextAction()).withNatureOfTask(NATURE_OF_WORK_OC);
         } else {
             Assignment approverAssignment = bpaWorkFlowService.getApproverAssignment(pos);
@@ -327,6 +329,7 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
                 BpaStateInfo bpaStateInfo = bpaWorkFlowService.getBpaStateInfo(oc.getCurrentState(), oc.getStateHistory(),
                         oc.getTownSurveyorInspectionRequire(), new BpaStateInfo(), wfMatrix, wfBean.getWorkFlowAction());
                 BpaStatus status = getStatusByCurrentMatrixStatus(wfMatrix);
+                ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0).getEmployee();
                 if (status != null)
                     oc.setStatus(getStatusByCurrentMatrixStatus(wfMatrix));
 

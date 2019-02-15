@@ -59,7 +59,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
@@ -83,6 +82,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/application/citizen")
@@ -113,7 +113,6 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
     @Autowired
     private OccupancyCertificateService occupancyCertificateService;
 
-
     @GetMapping("/occupancy-certificate/apply")
     public String newOCForm(final Model model, final HttpServletRequest request) {
         OccupancyCertificate occupancyCertificate = new OccupancyCertificate();
@@ -137,14 +136,14 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
     @PostMapping("/occupancy-certificate/submit")
     public String submitOCDetails(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
             final HttpServletRequest request, final Model model,
-            final BindingResult errors) {
+            final BindingResult errors, final RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
         }
         occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
-		String result = validateOcWithBpaApplication(model, occupancyCertificate);
-		if (!result.isEmpty())
-			return result;
+        String result = validateOcWithBpaApplication(model, occupancyCertificate);
+        if (!result.isEmpty())
+            return result;
         WorkflowBean wfBean = new WorkflowBean();
         Long userPosition = null;
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
@@ -164,11 +163,11 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
                             && occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary() != null
                                     ? occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
                                     : null);
-		if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-				&& (userPosition == 0 || userPosition == null)) {
-			model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
-			return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-		}
+        if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && (userPosition == 0 || userPosition == null)) {
+            model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
+            return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+        }
 
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
         OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
@@ -177,33 +176,30 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
                 bpaUtils.createPortalUserinbox(ocResponse, Arrays.asList(ocResponse.getParent().getOwner().getUser(),
                         ocResponse.getParent().getStakeHolder().get(0).getStakeHolder()), workFlowAction);
             else
-				bpaUtils.createPortalUserinbox(ocResponse,
-						Arrays.asList(ocResponse.getParent().getOwner().getUser(), securityUtils.getCurrentUser()),
+                bpaUtils.createPortalUserinbox(ocResponse,
+                        Arrays.asList(ocResponse.getParent().getOwner().getUser(), securityUtils.getCurrentUser()),
                         workFlowAction);
         }
-		if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+        String message;
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && !bpaUtils.logedInuserIsCitizen()) {
             Position pos = positionMasterService.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
             User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
-			String message = messageSource.getMessage("msg.portal.forward.registration",
-					new String[] {
-							wfUser == null ? ""
-									: wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
-							ocResponse.getApplicationNumber() },
-					LocaleContextHolder.getLocale());
+            message = messageSource.getMessage("msg.portal.forward.registration",
+                    new String[] {
+                            wfUser == null ? ""
+                                    : wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
+                            ocResponse.getApplicationNumber() },
+                    LocaleContextHolder.getLocale());
 
             message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
             model.addAttribute(MESSAGE, message);
         } else {
-            model.addAttribute(MESSAGE,
-                            "Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".");
-           
-            if (bpaUtils.isCitizenAcceptanceRequired())//&& !occupancyCertificate.isCitizenAccepted())
+            message = "Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".";
+            if (bpaUtils.isCitizenAcceptanceRequired())// && !occupancyCertificate.isCitizenAccepted())
                 ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
-
-            return "redirect:/application/citizen/success/" + occupancyCertificate.getApplicationNumber();
         }
-        
+        redirectAttributes.addFlashAttribute(MESSAGE, message);
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)
@@ -211,7 +207,7 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(occupancyCertificate, model);
         }
-        return BPAAPPLICATION_CITIZEN;
+        return "redirect:/application/citizen/success/" + occupancyCertificate.getApplicationNumber();
     }
 
     /**
@@ -220,133 +216,133 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
      * @param occupancyCertificate
      * @return
      */
-	private String validateOcWithBpaApplication(final Model model, final OccupancyCertificate occupancyCertificate) {
-		List<OCBuilding> ocBuildings = occupancyCertificate.getBuildings();
-		List<BuildingDetail> bpaBuildingDetail = occupancyCertificate.getParent().getBuildingDetail();
-		// 1.check number of blocks,floors same or not
-		if (ocBuildings.size() > bpaBuildingDetail.size()) {
-			model.addAttribute("OcComparisonValidation",
-					"For Occupancy Certificate submitted plan buildings more than permit application buildings.Not eligible to apply occupancy certificate. ");
-			return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-		}
-		for (OCBuilding oc : ocBuildings) {
-			boolean buildingExist = false;
-			for (BuildingDetail bpa : bpaBuildingDetail) {
-				if (oc.getBuildingNumber() == bpa.getNumber())
-					buildingExist = true;
-			}
-			if (!buildingExist) {
-				model.addAttribute("OcComparisonValidation",
-						"For Occupancy Certificate submitted plan building " + oc.getBuildingNumber()
-								+ "details and permit application building "
-								+ "details are not matching.Not eligible to apply occupancy certificate.");
-				return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-			}
-		}
-		// 2.check the floor count same or not
-		for (OCBuilding oc : ocBuildings) {
-			int size = oc.getFloorDetails().size();
-			for (BuildingDetail bpa : bpaBuildingDetail) {
-				if (oc.getBuildingNumber() == bpa.getNumber()) {
-					if (size > bpa.getApplicationFloorDetails().size()) {
-						model.addAttribute("OcComparisonValidation",
-								"For Occupancy Certificate submitted plan building " + oc.getBuildingNumber()
-										+ ", floor count " + size + " and permitted application building "
-										+ oc.getBuildingNumber() + ",floor count  "
-										+ bpa.getApplicationFloorDetails().size()
-										+ " not matching. Not eligible to apply occupancy certificate.");
-						return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-					}
-				}
-			}
-		}
-		// 3. check floor wise floor area same or not
-		BigDecimal hundred = new BigDecimal(100);
-		BigDecimal percent = new BigDecimal(bpaUtils.getAppConfigForOcAllowDeviation());
-		for (OCBuilding oc : ocBuildings) {
-			for (BuildingDetail bpa : bpaBuildingDetail) {
-				if (oc.getBuildingNumber() == bpa.getNumber()) {
-					for (OCFloor ocFloor : oc.getFloorDetails()) {
-						int floorNumber = ocFloor.getFloorNumber();
-						for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
-							if (floorNumber == bpaFloor.getFloorNumber()) {
-								BigDecimal allowDeviation = bpaFloor.getFloorArea().multiply(percent).divide(hundred);
-								BigDecimal total = bpaFloor.getFloorArea().add(allowDeviation);
-								if (ocFloor.getFloorArea().compareTo(total) > 0) {
-									model.addAttribute("OcComparisonValidation",
-											"For Occupancy Certificate submitted plan building floor area constructed more than permitted building floor area for Block - "
-													+ oc.getBuildingNumber() + "for floor - " + floorNumber
-													+ ".Not eligible to apply occupancy certificate since it's crossing 5% deviation .");
-									return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-								}
-							}
-						}
-					}
-				}
-			}
-		} 
-		// check floor wise occupancy
-		for (OCBuilding oc : ocBuildings) {
-			for (BuildingDetail bpa : bpaBuildingDetail) {
-				if (oc.getBuildingNumber() == bpa.getNumber()) {
-					for (OCFloor ocFloor : oc.getFloorDetails()) {
-						int floorNumber = ocFloor.getFloorNumber();
-						for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
-							if (floorNumber == bpaFloor.getFloorNumber()) {
-								if (!ocFloor.getOccupancy().getCode().equals(bpaFloor.getOccupancy().getCode())) {
-									model.addAttribute("OcComparisonValidation",
-											"For Occupancy Certificate submitted plan building floor occupancy and permitted building floor occupancy "
-													+ " not matching for Block - " + oc.getBuildingNumber()
-													+ " and floor - " + floorNumber
-													+ ".Not eligible to apply occupancy certificate.");
-									return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		// 4.check block wise floor area
-		BigDecimal limitSqurMtrs = new BigDecimal(40);
-		for (OCBuilding oc : ocBuildings) {
-			for (BuildingDetail bpa : bpaBuildingDetail) {
-				if (oc.getBuildingNumber() == bpa.getNumber()) {
-					BigDecimal totalOcFloor = getOcTotalFloorArea(oc.getFloorDetails());
-					BigDecimal totalBpaFloor = getBpaTotalFloorArea(bpa.getApplicationFloorDetails());
-					BigDecimal allowDeviation = totalBpaFloor.multiply(percent).divide(hundred);
-					BigDecimal totalBpaWithAllowDeviation = totalBpaFloor.add(allowDeviation);
-					if (totalBpaWithAllowDeviation.compareTo(totalOcFloor) < 0) {
-						model.addAttribute("OcComparisonValidation",
-								"For Occupancy Certificate submitted plan building total floor area constructed more than permitted building total floor area for Block "
-										+ oc.getBuildingNumber()
-										+ ".Not eligible to apply occupancy certificate since it's crossing 5% deviation .");
-						return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-					}
-					if (totalOcFloor.subtract(totalBpaFloor).compareTo(limitSqurMtrs) > 0) {
-						model.addAttribute("OcComparisonValidation",
-								"For Occupancy Certificate submitted plan building total floor area constructed more than permitted building total floor area for Block "
-										+ oc.getBuildingNumber()
-										+ ".Not eligible to apply occupancy certificate since it's crossing limit (40 sqmtrs) .");
-						return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-					}
-				}
-			}
-		}
-		return "";
-	}
-	
-	private BigDecimal getOcTotalFloorArea(List<OCFloor> floorList){
-		BigDecimal totalFloorArea = BigDecimal.ZERO;
-		for(OCFloor floorDetail : floorList)
-			totalFloorArea = totalFloorArea.add(floorDetail.getFloorArea());
-		return totalFloorArea;
-	}
-	
-	private BigDecimal getBpaTotalFloorArea(List<ApplicationFloorDetail> floorList){
-		BigDecimal totalFloorArea = BigDecimal.ZERO;
-		for(ApplicationFloorDetail floorDetail : floorList)
-			totalFloorArea = totalFloorArea.add(floorDetail.getFloorArea());
-		return totalFloorArea;
-	}
+    private String validateOcWithBpaApplication(final Model model, final OccupancyCertificate occupancyCertificate) {
+        List<OCBuilding> ocBuildings = occupancyCertificate.getBuildings();
+        List<BuildingDetail> bpaBuildingDetail = occupancyCertificate.getParent().getBuildingDetail();
+        // 1.check number of blocks,floors same or not
+        if (ocBuildings.size() > bpaBuildingDetail.size()) {
+            model.addAttribute("OcComparisonValidation",
+                    "For Occupancy Certificate submitted plan buildings more than permit application buildings.Not eligible to apply occupancy certificate. ");
+            return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+        }
+        for (OCBuilding oc : ocBuildings) {
+            boolean buildingExist = false;
+            for (BuildingDetail bpa : bpaBuildingDetail) {
+                if (oc.getBuildingNumber() == bpa.getNumber())
+                    buildingExist = true;
+            }
+            if (!buildingExist) {
+                model.addAttribute("OcComparisonValidation",
+                        "For Occupancy Certificate submitted plan building " + oc.getBuildingNumber()
+                                + "details and permit application building "
+                                + "details are not matching.Not eligible to apply occupancy certificate.");
+                return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+            }
+        }
+        // 2.check the floor count same or not
+        for (OCBuilding oc : ocBuildings) {
+            int size = oc.getFloorDetails().size();
+            for (BuildingDetail bpa : bpaBuildingDetail) {
+                if (oc.getBuildingNumber() == bpa.getNumber()) {
+                    if (size > bpa.getApplicationFloorDetails().size()) {
+                        model.addAttribute("OcComparisonValidation",
+                                "For Occupancy Certificate submitted plan building " + oc.getBuildingNumber()
+                                        + ", floor count " + size + " and permitted application building "
+                                        + oc.getBuildingNumber() + ",floor count  "
+                                        + bpa.getApplicationFloorDetails().size()
+                                        + " not matching. Not eligible to apply occupancy certificate.");
+                        return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+                    }
+                }
+            }
+        }
+        // 3. check floor wise floor area same or not
+        BigDecimal hundred = new BigDecimal(100);
+        BigDecimal percent = new BigDecimal(bpaUtils.getAppConfigForOcAllowDeviation());
+        for (OCBuilding oc : ocBuildings) {
+            for (BuildingDetail bpa : bpaBuildingDetail) {
+                if (oc.getBuildingNumber() == bpa.getNumber()) {
+                    for (OCFloor ocFloor : oc.getFloorDetails()) {
+                        int floorNumber = ocFloor.getFloorNumber();
+                        for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
+                            if (floorNumber == bpaFloor.getFloorNumber()) {
+                                BigDecimal allowDeviation = bpaFloor.getFloorArea().multiply(percent).divide(hundred);
+                                BigDecimal total = bpaFloor.getFloorArea().add(allowDeviation);
+                                if (ocFloor.getFloorArea().compareTo(total) > 0) {
+                                    model.addAttribute("OcComparisonValidation",
+                                            "For Occupancy Certificate submitted plan building floor area constructed more than permitted building floor area for Block - "
+                                                    + oc.getBuildingNumber() + "for floor - " + floorNumber
+                                                    + ".Not eligible to apply occupancy certificate since it's crossing 5% deviation .");
+                                    return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // check floor wise occupancy
+        for (OCBuilding oc : ocBuildings) {
+            for (BuildingDetail bpa : bpaBuildingDetail) {
+                if (oc.getBuildingNumber() == bpa.getNumber()) {
+                    for (OCFloor ocFloor : oc.getFloorDetails()) {
+                        int floorNumber = ocFloor.getFloorNumber();
+                        for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
+                            if (floorNumber == bpaFloor.getFloorNumber()) {
+                                if (!ocFloor.getOccupancy().getCode().equals(bpaFloor.getOccupancy().getCode())) {
+                                    model.addAttribute("OcComparisonValidation",
+                                            "For Occupancy Certificate submitted plan building floor occupancy and permitted building floor occupancy "
+                                                    + " not matching for Block - " + oc.getBuildingNumber()
+                                                    + " and floor - " + floorNumber
+                                                    + ".Not eligible to apply occupancy certificate.");
+                                    return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // 4.check block wise floor area
+        BigDecimal limitSqurMtrs = new BigDecimal(40);
+        for (OCBuilding oc : ocBuildings) {
+            for (BuildingDetail bpa : bpaBuildingDetail) {
+                if (oc.getBuildingNumber() == bpa.getNumber()) {
+                    BigDecimal totalOcFloor = getOcTotalFloorArea(oc.getFloorDetails());
+                    BigDecimal totalBpaFloor = getBpaTotalFloorArea(bpa.getApplicationFloorDetails());
+                    BigDecimal allowDeviation = totalBpaFloor.multiply(percent).divide(hundred);
+                    BigDecimal totalBpaWithAllowDeviation = totalBpaFloor.add(allowDeviation);
+                    if (totalBpaWithAllowDeviation.compareTo(totalOcFloor) < 0) {
+                        model.addAttribute("OcComparisonValidation",
+                                "For Occupancy Certificate submitted plan building total floor area constructed more than permitted building total floor area for Block "
+                                        + oc.getBuildingNumber()
+                                        + ".Not eligible to apply occupancy certificate since it's crossing 5% deviation .");
+                        return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+                    }
+                    if (totalOcFloor.subtract(totalBpaFloor).compareTo(limitSqurMtrs) > 0) {
+                        model.addAttribute("OcComparisonValidation",
+                                "For Occupancy Certificate submitted plan building total floor area constructed more than permitted building total floor area for Block "
+                                        + oc.getBuildingNumber()
+                                        + ".Not eligible to apply occupancy certificate since it's crossing limit (40 sqmtrs) .");
+                        return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    private BigDecimal getOcTotalFloorArea(List<OCFloor> floorList) {
+        BigDecimal totalFloorArea = BigDecimal.ZERO;
+        for (OCFloor floorDetail : floorList)
+            totalFloorArea = totalFloorArea.add(floorDetail.getFloorArea());
+        return totalFloorArea;
+    }
+
+    private BigDecimal getBpaTotalFloorArea(List<ApplicationFloorDetail> floorList) {
+        BigDecimal totalFloorArea = BigDecimal.ZERO;
+        for (ApplicationFloorDetail floorDetail : floorList)
+            totalFloorArea = totalFloorArea.add(floorDetail.getFloorArea());
+        return totalFloorArea;
+    }
 }
