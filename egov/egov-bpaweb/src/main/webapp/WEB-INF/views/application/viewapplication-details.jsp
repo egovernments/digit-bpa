@@ -111,7 +111,66 @@
 			</div>
 		</div>
 	</c:if>
-
+<c:if test="${bpaApplication.siteDetail[0].isappForRegularization}">
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.if.regularized" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out
+						value="${bpaApplication.siteDetail[0].isappForRegularization ? 'YES' : 'NO'}"></c:out>
+			</div>
+		</div>
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.cons.stages" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out
+						value="${bpaApplication.siteDetail[0].constStages.description}"
+						default="N/A"></c:out>
+			</div>
+			<c:if
+					test="${bpaApplication.siteDetail[0].constStages.description eq 'In Progress'}">
+				<div class="col-sm-3 add-margin">
+					<spring:message code="lbl.if.cons.not.cmplted" />
+				</div>
+				<div class="col-sm-3 add-margin view-content">
+					<c:out value="${bpaApplication.siteDetail[0].stateOfConstruction}"
+						   default="N/A"></c:out>
+				</div>
+			</c:if>
+		</div>
+		<div class="row add-border">
+			<c:choose>
+				<c:when test="${bpaApplication.siteDetail[0].constStages.description eq 'In Progress'}">
+					<div class="col-sm-3 add-margin">
+						<spring:message code="lbl.work.commence.date" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCommencementDate}" pattern="dd/MM/yyyy" var="workCommencementDate" />
+						<c:out value="${workCommencementDate}" default="N/A"></c:out>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="col-sm-3 add-margin">
+						<spring:message code="lbl.work.commence.date" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCommencementDate}" pattern="dd/MM/yyyy" var="workCommencementDate1" />
+						<c:out value="${workCommencementDate1}" default="N/A"></c:out>
+					</div>
+					<div class="col-sm-3 add-margin">
+						<spring:message code="lbl.work.completion.date" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCompletionDate}" pattern="dd/MM/yyyy" var="workCompletionDate" />
+						<c:out value="${workCompletionDate}" default="N/A"></c:out>
+					</div>
+				</c:otherwise>
+			</c:choose>
+		</div>
+	</c:if>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.applctn.type" />

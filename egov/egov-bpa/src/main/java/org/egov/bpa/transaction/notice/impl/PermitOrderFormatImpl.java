@@ -51,6 +51,9 @@ import static org.egov.bpa.utils.BpaConstants.BUILDINGDEVELOPPERMITFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITOTHERSFILENAME;
 import static org.egov.bpa.utils.BpaConstants.PERMIT_ORDER_NOTICE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.REGULARIZATIONFIILENAME;
+import static org.egov.bpa.utils.BpaConstants.REGULARIZATIONOTHERSFIILENAME;
+import static org.egov.bpa.utils.BpaConstants.REGULARIZATIONBUILDINGDEVELOPMENTFIILENAME;
 import static org.egov.bpa.utils.BpaConstants.getServicesForBuildPermit;
 import static org.egov.bpa.utils.BpaConstants.getServicesForDevelopPermit;
 import static org.egov.bpa.utils.BpaConstants.getServicesForOtherPermit;
@@ -107,10 +110,19 @@ public class PermitOrderFormatImpl implements PermitApplicationNoticesFormat {
         if (bpaNotice == null || bpaNotice.getNoticeFileStore() == null) {
             String reportFileName = null;
             if (getServicesForBuildPermit().contains(bpaApplication.getServiceType().getCode())) {
+            	if(bpaApplication.getSiteDetail().get(0).getIsappForRegularization())
+            		reportFileName = REGULARIZATIONFIILENAME;
+            	else
                 reportFileName = BUILDINGPERMITFILENAME;
             } else if (getServicesForDevelopPermit().contains(bpaApplication.getServiceType().getCode())) {
-                reportFileName = BUILDINGDEVELOPPERMITFILENAME;
+            	if(bpaApplication.getSiteDetail().get(0).getIsappForRegularization())
+            		reportFileName = REGULARIZATIONBUILDINGDEVELOPMENTFIILENAME;
+            	else 
+            	reportFileName = BUILDINGDEVELOPPERMITFILENAME;
             } else if (getServicesForOtherPermit().contains(bpaApplication.getServiceType().getCode())) {
+            	if(bpaApplication.getSiteDetail().get(0).getIsappForRegularization())
+            		reportFileName = REGULARIZATIONOTHERSFIILENAME;
+            	else 
                 reportFileName = BUILDINGPERMITOTHERSFILENAME;
             }
             final Map<String, Object> reportParams = bpaNoticeUtil.buildParametersForReport(bpaApplication);

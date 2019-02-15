@@ -781,6 +781,7 @@ $(document).ready(function() {
                     $('.amenityHideShow').show();
             }*/
             $('#typeOfLand').prop('required', 'required');
+            hideRegularization();
             $('#oneDayPermitTypeOfLandSec').show();
             $('#isOneDayPermitApplication').val(true);
             $('.documentRequire').attr('required', true);
@@ -800,6 +801,7 @@ $(document).ready(function() {
             $('#isOneDayPermitApplication').prop('checked', false);
             $('#typeOfLand').removeAttr('required');
             $('#isOneDayPermitApplication').val(false);
+            showRegularization();
             /*if('Addition or Extension' == serviceTypeName){
                 hideAndShowEdcrDetails();
             }*/
@@ -812,6 +814,22 @@ $(document).ready(function() {
     });
 
 });
+
+function hideRegularization() {
+	$('#constDiv').hide();
+	$( ".appForRegularization" ).hide();
+    $( "#isappForRegularization" ).prop('checked', false);
+    $('#constStages').prop('selectedIndex',0);
+    $(".resetRegularization").val('');
+}
+
+function showRegularization() {
+	$('#constDiv').hide();
+	$( ".appForRegularization" ).show();
+    $( "#isappForRegularization" ).prop('checked', false);
+    $('#constStages').prop('selectedIndex',0);
+    $(".resetRegularization").val('');
+}
 
 function validateSlotMappingForOneDayPermit(zoneId, electionWardId){
     $.ajax({

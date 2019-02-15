@@ -105,6 +105,75 @@
 				</div>
 			</div>
 		</c:if>
+		<div class="form-group appForRegularization">
+			<label class="col-sm-3 control-label text-right"><spring:message
+					code="lbl.if.regularized" /> </label>
+			<div class="col-sm-3 add-margin">
+				<form:checkbox id="isappForRegularization"
+					path="siteDetail[0].isappForRegularization"
+					value="siteDetail[0].isappForRegularization" />
+				<form:errors path="siteDetail[0].isappForRegularization" />
+			</div>
+		</div>
+		<div class="form-group" id="constDiv">
+			<div class="form-group">
+				<label class="col-sm-3 control-label text-right constStages"><spring:message
+						code="lbl.cons.stages" /><span></span></label>
+				<div class="col-sm-3 add-margin">
+					<form:select path="siteDetail[0].constStages"
+						data-first-option="false" id="constStages"
+						cssClass="form-control resetRegularization">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${constStages}" itemValue="id"
+							itemLabel="code" />
+					</form:select>
+					<form:errors path="siteDetail[0].constStages"
+						cssClass="add-margin error-msg" />
+				</div>
+				<div id="inprogress">
+					<label
+						class="col-sm-2 control-label text-right stateOfConstruction"><spring:message
+							code="lbl.if.cons.not.cmplted" /><span></span></label>
+					<div class="col-sm-3 add-margin">
+						<form:input
+							class="form-control patternvalidation resetRegularization"
+							data-pattern="alphanumericwithspace" maxlength="128"
+							id="stateOfConstruction" path="siteDetail[0].stateOfConstruction" />
+						<form:errors path="siteDetail[0].stateOfConstruction"
+							cssClass="add-margin error-msg" />
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="workCommencementDate1">
+					<label
+						class="col-sm-3 control-label text-right workCommencementDate"><spring:message
+							code="lbl.work.commence.date" /><span></span></label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="siteDetail[0].workCommencementDate"
+							class="form-control datepicker resetRegularization"
+							data-date-end-date="0d" id="workCommencementDate"
+							data-inputmask="'mask': 'd/m/y'" />
+						<form:errors path="siteDetail[0].workCommencementDate"
+							cssClass="add-margin error-msg" />
+					</div>
+				</div>
+				<div class="workCompletionDate1">
+					<label class="col-sm-2 control-label text-right workCompletionDate"><spring:message
+							code="lbl.work.completion.date" /><span></span></label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="siteDetail[0].workCompletionDate"
+							class="form-control datepicker resetRegularization"
+							data-date-end-date="0d" id="workCompletionDate"
+							data-inputmask="'mask': 'd/m/y'" />
+						<form:errors path="siteDetail[0].workCompletionDate"
+							cssClass="add-margin error-msg" />
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.applctn.type"/> <span class="mandatory"></span>
 			</label>

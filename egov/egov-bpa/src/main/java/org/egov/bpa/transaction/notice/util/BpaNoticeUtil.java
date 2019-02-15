@@ -96,6 +96,7 @@ import org.egov.bpa.transaction.entity.BpaNotice;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
 import org.egov.bpa.transaction.entity.Response;
+import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.dto.PermitFeeHelper;
 import org.egov.bpa.transaction.entity.enums.PermitConditionType;
 import org.egov.bpa.transaction.repository.BpaNoticeRepository;
@@ -108,7 +109,9 @@ import org.egov.bpa.utils.BpaUtils;
 import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.Installment;
+import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
@@ -137,6 +140,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BpaNoticeUtil {
 
+    private static final String PERMIT_ORDER_TITLE = "permitOrderTitle";
     private static final String TOTAL_CARPET_AREA = "totalCarpetArea";
     private static final String TOTAL_FLOOR_AREA = "totalFloorArea";
     private static final String TOTAL_BLT_UP_AREA = "totalBltUpArea";
@@ -283,7 +287,52 @@ public class BpaNoticeUtil {
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("bpademandtitle", WordUtils.capitalize(BPADEMANDNOTICETITLE));
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
-        reportParams.put("lawAct", "[See Rule 11 (3)]");
+        String approverName = getApproverName(bpaApplication);
+        String approverDesignation = getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue());
+
+        String lawAct;
+        if(!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0).getIsappForRegularization()) {
+            String applicantName = bpaApplication.getOwner().getName();
+            String serviceType = bpaApplication.getServiceType().getDescription();
+            SiteDetail site = bpaApplication.getSiteDetail().get(0);
+            List<Receipt> receipts = new ArrayList();
+            
+            
+    		for (final EgDemandDetails demandDtl : bpaApplication.getDemand().getEgDemandDetails())
+    			for (final EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts())
+    				if (!collRecpt.isCancelled()) {
+    					Receipt receipt = new Receipt();
+    					receipt.setReceiptNumber(collRecpt.getReceiptNumber());
+    					receipt.setReceiptDate(collRecpt.getReceiptDate());
+    					receipt.setReceiptAmt(collRecpt.getAmount());
+    					receipts.add(receipt);
+    				}
+    	
+    		receipts.sort((o1, o2) -> o2.getReceiptDate().compareTo(o1.getReceiptDate()));
+    				
+            
+    		String regularizationMsg1 = bpaMessageSource.getMessage("msg.regularization.permit.desc1",
+                    new String[] { applicantName, serviceType, site.getReSurveyNumber(), site.getPlotdoornumber(), site.getNearestbuildingnumber(),
+                            DateUtils.toDefaultDateFormat(bpaApplication.getPlanPermissionDate()), applicantName,
+                            String.valueOf(receipts.get(0).getReceiptAmt()) , 
+                            String.valueOf(receipts.get(0).getReceiptNumber()) , 
+                            String.valueOf(DateUtils.toDefaultDateFormat(receipts.get(0).getReceiptDate()))},
+                    null);
+            String regularizationMsg2 = bpaMessageSource.getMessage("msg.regularization.permit.desc2",
+                    new String[] { approverName, approverDesignation, serviceType, site.getPlotdoornumber(), site.getNearestbuildingnumber(),
+                            DateUtils.toDefaultDateFormat(bpaApplication.getPlanPermissionDate()), applicantName,
+                            String.valueOf(receipts.get(0).getReceiptAmt()) , 
+                            String.valueOf(receipts.get(0).getReceiptNumber()) , 
+                            String.valueOf(DateUtils.toDefaultDateFormat(receipts.get(0).getReceiptDate()))},
+                    null);
+            reportParams.put("regularizationMsg1", regularizationMsg1);
+            reportParams.put("regularizationMsg2", regularizationMsg2);
+
+            lawAct="APPENDIX -I, [See rule 146 (3)]";
+        } else {
+            lawAct = "APPENDIX C, [See Rule 11 (3)]";
+        }
+        reportParams.put("lawAct", lawAct);
         reportParams.put("applicationNumber", bpaApplication.getApplicationNumber());
         reportParams.put("buildingPermitNumber",
                 bpaApplication.getPlanPermissionNumber() == null ? EMPTY : bpaApplication.getPlanPermissionNumber());
@@ -341,9 +390,8 @@ public class BpaNoticeUtil {
         reportParams.put("certificateValidity",
                 getValidityDescription(bpaApplication.getServiceType().getCode(), bpaApplication.getPlanPermissionDate()));
         reportParams.put("isBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
-        reportParams.put("designation",
-                getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()));
-        reportParams.put("approverName", getApproverName(bpaApplication));
+		reportParams.put("designation", approverDesignation);
+		reportParams.put("approverName", approverName);
         reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(bpaApplication)));
         reportParams.put("mobileNo", bpaApplication.getOwner().getUser().getMobileNumber());
         StringBuilder totalBuiltUpArea = new StringBuilder();
@@ -365,9 +413,11 @@ public class BpaNoticeUtil {
                                     : EMPTY);
         }
         if (bpaApplication.getIsOneDayPermitApplication())
-            reportParams.put("permitOrderTitle", "ONE DAY BUILDING PERMIT");
+            reportParams.put(PERMIT_ORDER_TITLE, "ONE DAY BUILDING PERMIT");
+        else if (!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0).getIsappForRegularization())
+            reportParams.put(PERMIT_ORDER_TITLE, "REGULARISATION GRANTED- ORDERS ISSUED.");
         else
-            reportParams.put("permitOrderTitle", "GENERAL BUILDING PERMIT");
+            reportParams.put(PERMIT_ORDER_TITLE, "GENERAL BUILDING PERMIT");
         if (!bpaApplication.getPermitFee().isEmpty())
             reportParams.put("permitFeeDetails", getPermitFeeDetails(bpaApplication));
 

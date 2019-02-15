@@ -301,6 +301,9 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
 							else if (("1006").equals(bpaFee.getCode()))
 								amount = calculatePoleStructureConstructionCharges(inputArea, feeAmount);
 						}
+						if (checkIsWorkAlreadyStarted(application)) {
+                            amount = amount.multiply(BigDecimal.valueOf(3));
+                        }
 						permitFee.getApplicationFee()
 								.addApplicationFeeDetail(buildApplicationFeeDetail(bpaFee, permitFee.getApplicationFee(), amount));
 					}
