@@ -46,6 +46,7 @@
 	modelAttribute="searchBpaApplicationForm" id="searchScrutinyApplicationForm"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+	<input type="hidden" id="isUnattendedCancelled" name="isUnattendedCancelled" value="${isUnattendedCancelled}" />
 	<div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -66,7 +67,7 @@
 					</div>
 					
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.date" /></label>
+							code="lbl.frmdate" /></label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="toDate" class="form-control datepicker"
 							data-date-end-date="0d" id="toDate"

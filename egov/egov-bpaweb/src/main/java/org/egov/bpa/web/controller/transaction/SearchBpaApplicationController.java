@@ -82,6 +82,7 @@ import java.util.Set;
 
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
+import static org.egov.bpa.utils.BpaConstants.IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION;
 import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.WARD;
 
@@ -170,6 +171,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         List<Boundary> employeeMappedZone = new ArrayList<>();
         List<Boundary> mappedElectionWard = new ArrayList<>();
         Set<Boundary> electionWards = new HashSet<>();
+        String isUnattendedCancelled=bpaUtils.getAppconfigValueByKeyName(IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION);
         BoundaryType revenueType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
         final Employee employee = employeeService.getEmployeeById(securityUtils.getCurrentUser().getId());
         for (Jurisdiction jurisdiction : employee.getJurisdictions()) {
@@ -191,6 +193,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
         model.addAttribute("serviceTypeEnumList", getApplicationTypes());
+        model.addAttribute("isUnattendedCancelled",isUnattendedCancelled);
         return "search-document-scrutiny";
     }
 

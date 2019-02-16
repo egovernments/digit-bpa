@@ -114,7 +114,6 @@ public final class SearchBpaApplnFormSpec {
 			if (requestForm.getServiceTypeEnum() != null && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name())) {
 				predicate.getExpressions()
 						 .add(builder.equal(applicationJoin.get("isOneDayPermitApplication"), false));
-				requestForm.setToDate(new Date());
 			}
 			else if (requestForm.getServiceTypeEnum() != null && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
 				predicate.getExpressions()
@@ -123,7 +122,7 @@ public final class SearchBpaApplnFormSpec {
 				Join<SlotApplication,SlotDetail> slotDetailJoin = root.join("slotDetail");
 				Join<SlotDetail,Slot> slotJoin = slotDetailJoin.join("slot");
 				predicate.getExpressions()
-						 .add(builder.equal(slotJoin.get("appointmentDate"), requestForm.getToDate()));
+						 .add(builder.greaterThanOrEqualTo(slotJoin.get("appointmentDate"), requestForm.getToDate()));
 			}
 			Join<SiteDetail,Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
 			if (requestForm.getElectionWardId() != null)

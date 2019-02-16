@@ -66,7 +66,7 @@ $(document)
                     });
                     $("#toDate").datepicker().datepicker("setDate", new Date());
 					$('#serviceTypeEnum').on('change', function() {
-						if($("#serviceTypeEnum option:selected" ).val() == 'ALL_OTHER_SERVICES') {
+						if($("#serviceTypeEnum option:selected" ).val() == 'ALL_OTHER_SERVICES' && $("#isUnattendedCancelled").val()=='YES') {
 							$("#toDate").prop('disabled', true);
 						} else {
 							$("#toDate").prop('disabled', false);
