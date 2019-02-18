@@ -39,20 +39,35 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
-import org.egov.bpa.transaction.entity.DocketDetail;
-import org.egov.bpa.transaction.entity.Inspection;
-import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
-import org.egov.bpa.transaction.service.InspectionService;
-import org.egov.bpa.transaction.service.PlanScrutinyChecklistService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import static org.egov.infra.utils.StringUtils.append;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.egov.bpa.transaction.entity.DocketDetail;
+import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
+import org.egov.bpa.transaction.notice.InspectionReportFormat;
+import org.egov.bpa.transaction.notice.impl.InspectionReportFormatImpl;
+import org.egov.bpa.transaction.service.InspectionService;
+import org.egov.bpa.transaction.service.PlanScrutinyChecklistService;
+import org.egov.infra.custom.CustomImplProvider;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -60,11 +75,16 @@ public class ViewInspectionController {
     private static final String SHOW_INSPECTION_DETAILS = "show-inspection-details";
 
     private static final String INSPECTION_RESULT = "inspection-details-result";
+    private static final String INLINE_FILENAME = "inline;filename=";
+    private static final String CONTENT_DISPOSITION = "content-disposition";
+    private static final String PDFEXTN = ".pdf";
 
     @Autowired
     private InspectionService inspectionService;
     @Autowired
     private PlanScrutinyChecklistService planScrutinyChecklistService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
 
     @RequestMapping(value = "/view-inspection/{id}", method = RequestMethod.GET)
@@ -98,6 +118,29 @@ public class ViewInspectionController {
         model.addAttribute("inspection", inspectionObj);
         buildPlanScrutinyChecklistDetails(inspectionObj, model);
         return SHOW_INSPECTION_DETAILS;
+    }
+    
+    @GetMapping("/inspectionreport")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateLettertoPartyCreate(final HttpServletRequest request,
+            final HttpSession session) {
+        final Inspection inspection = inspectionService.findById(new Long(request.getParameter("pathVar")));
+        InspectionReportFormat inspectionReportFormat = (InspectionReportFormat) specificNoticeService
+                .find(InspectionReportFormatImpl.class, specificNoticeService.getCityDetails());
+        return getFileAsResponseEntity(inspection.getInspectionNumber(), inspectionReportFormat.generateNotice(inspection),
+                "inspectionreport");
+    }
+    
+    private ResponseEntity<InputStreamResource> getFileAsResponseEntity(String inspectionNumber, ReportOutput reportOutput,
+            String prefixFileName) {
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .cacheControl(CacheControl.noCache())
+                .contentLength(reportOutput.getReportOutputData().length)
+                .header(CONTENT_DISPOSITION, String.format(INLINE_FILENAME,
+                        append(prefixFileName, inspectionNumber) + PDFEXTN))
+                .body(new InputStreamResource(reportOutput.asInputStream()));
     }
 
     private void buildPlanScrutinyChecklistDetails(Inspection inspectionObj, Model model) {

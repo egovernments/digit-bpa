@@ -67,11 +67,14 @@
 							<td align="center" class="view-content" style="font-size: 90%;">
 								<fmt:formatDate value="${inspn.inspectionDate}" pattern="dd/MM/yyyy" var="inspectionDate"/>
 								<c:out value="${inspectionDate}" /></td>
-							<td align="center"  style="font-size: 90%;"><a class="view-content"
-									style="cursor: pointer; font-size: 15px;" onclick="window.open('/bpa/application/showinspectiondetails/${inspn.id}','view','width=600, height=400,scrollbars=yes')">
-								<i class="fa fa-eye" aria-hidden="true"> <spring:message
-										code="lbl.view"/></i>
-							</a></td>
+							<td align="center"  style="font-size: 90%;">
+								<a class="view-content" style="cursor: pointer; font-size: 15px;" onclick="window.open('/bpa/application/showinspectiondetails/${inspn.id}','view','width=600, height=400,scrollbars=yes')">
+									<i class="fa fa-eye" aria-hidden="true"> <spring:message code="lbl.view"/></i>
+								</a>
+								<a href="/bpa/application/inspectionreport?pathVar=${inspn.id}">
+									<i class="fa fa-print" aria-hidden="true"></i> <spring:message code="lbl.print"/>
+								</a>
+							</td>
 						</tr>
 					</c:forEach>
 				</c:when>

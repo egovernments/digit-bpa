@@ -99,7 +99,11 @@ public class InspectionService {
 	private ApplicationBpaService applicationBpaService;
 	@Autowired
 	private PlanScrutinyChecklistService planScrutinyChecklistService;
-
+	
+	public Inspection findById(Long id)
+	{
+	    return inspectionRepository.getOne(id);
+	}
 	public Session getCurrentSession() {
 		return entityManager.unwrap(Session.class);
 	}
