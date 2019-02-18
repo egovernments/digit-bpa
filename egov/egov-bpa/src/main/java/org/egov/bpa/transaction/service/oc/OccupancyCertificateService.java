@@ -200,7 +200,13 @@ public class OccupancyCertificateService {
         else
             oc.setDemand(ocBillService.createDemandWhenFeeCollectionNotRequire());
         processAndStoreGeneralDocuments(oc);
-        oc.setDcrDocuments(persistApplnDCRDocuments(oc));
+        List<OCDcrDocuments> ocDcrDocuments; 
+        if (oc.getId() == null) {
+            ocDcrDocuments = oc.getDcrDocuments();
+            oc.getDcrDocuments().forEach(dcrDocument -> dcrDocument.setOc(oc));
+        } else {
+            ocDcrDocuments = oc.getDcrDocuments();
+        }
         processAndStoreNocDocuments(oc);
         if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)
                 && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
@@ -219,6 +225,8 @@ public class OccupancyCertificateService {
                     applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
         }
         OccupancyCertificate ocResult = occupancyCertificateRepository.saveAndFlush(oc);
+        ocResult.setDcrDocuments(persistApplnDCRDocuments(ocResult, ocDcrDocuments));
+        occupancyCertificateRepository.save(ocResult);
         occupancyCertificateIndexService.updateOccupancyIndex(oc);
         return ocResult;
     }
@@ -243,7 +251,7 @@ public class OccupancyCertificateService {
         }
         oc.setSentToPreviousOwner(false);
         processAndStoreGeneralDocuments(oc);
-        oc.setDcrDocuments(persistApplnDCRDocuments(oc));
+        oc.setDcrDocuments(persistApplnDCRDocuments(oc, oc.getDcrDocuments()));
         processAndStoreNocDocuments(oc);
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(oc.getStatus().getCode())
@@ -393,10 +401,10 @@ public class OccupancyCertificateService {
         }
     }
     
-    private List<OCDcrDocuments> persistApplnDCRDocuments(final OccupancyCertificate oc) {
+    private List<OCDcrDocuments> persistApplnDCRDocuments(final OccupancyCertificate oc, List<OCDcrDocuments> ocDcrDocuments) {
         List<OCDcrDocuments> dcrDocuments = new ArrayList<>();
-        if (!oc.getDcrDocuments().isEmpty() && null == oc.getDcrDocuments().get(0).getId())
-            for (final OCDcrDocuments ocDcrDocument : oc.getDcrDocuments()) {
+        if (!ocDcrDocuments.isEmpty() && null == ocDcrDocuments.get(0).getId())
+            for (final OCDcrDocuments ocDcrDocument : ocDcrDocuments) {
                 ocDcrDocument.setOc(oc);
                 DCRDocumentCommon dcrDocumentCommon = ocDcrDocument.getDcrDocument();
                 dcrDocumentCommon.setChecklistDtl(
@@ -407,7 +415,7 @@ public class OccupancyCertificateService {
                 dcrDocuments.add(ocDcrDocument);
             }
         else
-            for (final OCDcrDocuments dcrDocument : oc.getDcrDocuments()) {
+            for (final OCDcrDocuments dcrDocument : ocDcrDocuments) {
                 DCRDocumentCommon dcrDocumentRes = buildAutoPopulatedDCRFiles(dcrDocument.getDcrDocument());
                 buildDCRFiles(dcrDocumentRes);
                 dcrDocument.setDcrDocument(dcrDocumentRes);
