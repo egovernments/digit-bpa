@@ -595,7 +595,7 @@
 	<definition name="search-document-scrutiny-oc"
 		extends="base_layout">
 		<put-attribute name="page-title"
-			value="title.document.scrutiny" cascade="true" />
+			value="title.oc.document.scrutiny" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/occupancyCertificate/search-document-scrutiny-oc.jsp" />
 	</definition>

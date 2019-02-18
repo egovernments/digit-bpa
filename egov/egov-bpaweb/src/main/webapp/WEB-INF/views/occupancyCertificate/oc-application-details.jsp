@@ -62,10 +62,10 @@
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.edcr.number" /> <span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation resetValues" maxlength="20"
-				id="ocEDcrNumber" placeholder="Enter plan scrutiny number"
-				path="eDcrNumber" value="${occupancyCertificate.eDcrNumber}"
-				required="required" />
+			<form:input class="form-control patternvalidation resetValues"
+				maxlength="20" id="ocEDcrNumber"
+				placeholder="Enter plan scrutiny number" path="eDcrNumber"
+				value="${occupancyCertificate.eDcrNumber}" required="required" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.appln.date" /><span class="mandatory"></span> </label>
@@ -76,13 +76,14 @@
 			<form:errors path="applicationDate" cssClass="add-margin error-msg" />
 		</div>
 	</div>
-	
+
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.plan.permission.no" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="planPermissionNumber"
-				id="planPermissionNumber" class="form-control planPermissionNumber resetValues"
+				id="planPermissionNumber"
+				class="form-control planPermissionNumber resetValues"
 				value="${occupancyCertificate.parent.planPermissionNumber}"
 				readonly="readonly">
 		</div>
@@ -90,22 +91,24 @@
 				code="lbl.service.type" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="serviceTypeDesc" id="serviceTypeDesc"
-				class="form-control resetValues serviceType" readonly="readonly" value="${occupancyCertificate.parent.serviceType.description}">
+				class="form-control resetValues serviceType" readonly="readonly"
+				value="${occupancyCertificate.parent.serviceType.description}">
 		</div>
 	</div>
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.applicant.name" /> </label>
 		<div class="col-sm-3 add-margin">
-			<input
-				type="text" name="applicantName" id="applicantName" class="form-control applicantName resetValues"
+			<input type="text" name="applicantName" id="applicantName"
+				class="form-control applicantName resetValues"
 				value="${occupancyCertificate.parent.owner.name}"
 				readonly="readonly">
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.occupancy.type" /> </label>
 		<div class="col-sm-3 add-margin">
-			<input type="text" name="" id="occupancy" class="form-control occupancy resetValues"
+			<input type="text" name="" id="occupancy"
+				class="form-control occupancy resetValues"
 				value="${occupancyCertificate.parent.occupancy.description}"
 				readonly="readonly">
 		</div>
@@ -122,7 +125,8 @@
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.zonal.office" /> </label>
 		<div class="col-sm-3 add-margin">
-			<input type="text" name="zone" id="zone" class="form-control zone resetValues"
+			<input type="text" name="zone" id="zone"
+				class="form-control zone resetValues"
 				value="${occupancyCertificate.parent.siteDetail[0].adminBoundary.parent.name}"
 				readonly="readonly">
 
@@ -140,7 +144,8 @@
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.locality" /> </label>
 		<div class="col-sm-3 add-margin">
-			<input type="text" name="" id="village" class="form-control village resetValues"
+			<input type="text" name="" id="village"
+				class="form-control village resetValues"
 				value="${occupancyCertificate.parent.siteDetail[0].locationBoundary.name}"
 				readonly="readonly">
 
@@ -158,25 +163,24 @@
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.re.survey.no" /> </label>
 		<div class="col-sm-3 add-margin">
-			<input type="text" name="" id="resurveyNumber" class="form-control resurveyNumber resetValues"
+			<input type="text" name="" id="resurveyNumber"
+				class="form-control resurveyNumber resetValues"
 				value="${occupancyCertificate.parent.siteDetail[0].reSurveyNumber}"
 				readonly="readonly">
 
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">Work Commence
-			Date <span class="mandatory"></span>
-		</label>
+		<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.work.commence.date" /><span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="commencedDate" class="form-control datepicker"
 				data-date-end-date="0d" id="commencedDate"
 				data-inputmask="'mask': 'd/m/y'" required="required" />
 			<form:errors path="commencedDate" cssClass="add-margin error-msg" />
 		</div>
-		<label class="col-sm-2 control-label text-right">Work
-			Completion Date <span class="mandatory"></span>
-		</label>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.work.completion.date" /><span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
 			<form:input path="completionDate" class="form-control datepicker"
 				data-date-end-date="0d" id="completionDate"
