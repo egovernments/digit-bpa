@@ -39,11 +39,25 @@
  */
 package org.egov.bpa.transaction.service.oc;
 
+import static org.egov.bpa.utils.OcConstants.OC_INSPECTION;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.egov.bpa.autonumber.InspectionNumberGenerator;
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.service.CheckListDetailService;
-import org.egov.bpa.transaction.entity.Inspection;
 import org.egov.bpa.transaction.entity.common.DocketCommon;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
@@ -52,7 +66,6 @@ import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.repository.oc.OCInspectionRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
-import org.egov.bpa.transaction.service.PlanScrutinyChecklistService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -66,29 +79,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION;
-/*import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_AREA_LOC;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_HGT_BUILD_ABUT_ROAD;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_LENGTH_OF_COMPOUND_WALL;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_LOCATION;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_MEASUREMENT;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_NUMBER_OF_WELLS;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_PROPOSED_STAGE_WORK;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_SURROUNDING;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_TYPE_OF_LAND;
-import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_WORK_COMPLETED_PER_PLAN;*/
 
 @Service
 @Transactional(readOnly = true)
@@ -204,71 +194,16 @@ public class OCInspectionService {
 	public List<DocketDetailCommon> buildDocketDetail(final InspectionCommon inspection) {
 		final List<DocketDetailCommon> docketDetailList = new ArrayList<>();
 		docketDetailList.addAll(inspection.getDocketDetailLocList());
-		/*docketDetailList.addAll(inspection.getDocketDetailMeasurementList());
-		docketDetailList.addAll(inspection.getDocketDetailAccessList());
-		docketDetailList.addAll(inspection.getDocketDetailSurroundingPlotList());
-		docketDetailList.addAll(inspection.getDocketDetailLandTypeList());
-		docketDetailList.addAll(inspection.getDocketDetailProposedWorkList());
-		docketDetailList.addAll(inspection.getDocketDetailWorkAsPerPlanList());
-		docketDetailList.addAll(inspection.getDocketDetailHgtAbuttRoadList());
-		docketDetailList.addAll(inspection.getDocketDetailAreaLoc());
-		docketDetailList.addAll(inspection.getDocketDetailLengthOfCompWall());
-		docketDetailList.addAll(inspection.getDocketDetailNumberOfWell());
-		docketDetailList.addAll(inspection.getDocketDetailErectionTower());
-		docketDetailList.addAll(inspection.getDocketDetailShutter());
-		docketDetailList.addAll(inspection.getDocketDetailRoofConversion());*/
 		return docketDetailList;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void buildDocketDetailList(InspectionCommon inspection) {
 		Criteria criteriaLocation = getCheckListByServiceAndType(OC_INSPECTION);
-/*		Criteria criteriaMeasurement = getCheckListByServiceAndType(OC_INSPECTION_MEASUREMENT);
-		Criteria criteriaAccess = getCheckListByServiceAndType(OC_INSPECTION_ACCESS);
-		Criteria criteriaSurrounding = getCheckListByServiceAndType(OC_INSPECTION_SURROUNDING);
-		Criteria criteriaTypeofLand = getCheckListByServiceAndType(OC_INSPECTION_TYPE_OF_LAND);
-		Criteria criteriaProposedStage = getCheckListByServiceAndType(OC_INSPECTION_PROPOSED_STAGE_WORK);
-		Criteria criteriaWorkPerPlan = getCheckListByServiceAndType(OC_INSPECTION_WORK_COMPLETED_PER_PLAN);
-		Criteria criteriaHgtAbutRoad = getCheckListByServiceAndType(OC_INSPECTION_HGT_BUILD_ABUT_ROAD);
-		Criteria criteriaAreaLoc = getCheckListByServiceAndType(OC_INSPECTION_AREA_LOC);
-		Criteria criteriaLengthOfCompoundWall = getCheckListByServiceAndType(OC_INSPECTION_LENGTH_OF_COMPOUND_WALL);
-		Criteria criteriaNumberOfWell = getCheckListByServiceAndType(OC_INSPECTION_NUMBER_OF_WELLS);*/
-
 		List<CheckListDetail> inspectionCheckList = criteriaLocation.list();
-/*		List<CheckListDetail> inspectionCheckList2 = criteriaMeasurement.list();
-		List<CheckListDetail> inspectionCheckList3 = criteriaAccess.list();
-		List<CheckListDetail> inspectionCheckList4 = criteriaSurrounding.list();
-		List<CheckListDetail> inspectionCheckList5 = criteriaTypeofLand.list();
-		List<CheckListDetail> inspectionCheckList6 = criteriaProposedStage.list();
-		List<CheckListDetail> inspectionCheckList7 = criteriaWorkPerPlan.list();
-		List<CheckListDetail> inspectionCheckList8 = criteriaHgtAbutRoad.list();
-		List<CheckListDetail> inspectionCheckAreaLoc = criteriaAreaLoc.list();
-		List<CheckListDetail> inspectionCheckLenCompound = criteriaLengthOfCompoundWall.list();
-		List<CheckListDetail> inspectionCheckNumberOfWell = criteriaNumberOfWell.list();*/
-
-		List<DocketDetailCommon> docketTempLocList = inspectionCheckList.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-/*		List<DocketDetailCommon> docketTempMeasurementList = inspectionCheckList2.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempAccessList = inspectionCheckList3.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempSurroundingList = inspectionCheckList4.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempLandList = inspectionCheckList5.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempProposedWorkList = inspectionCheckList6.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempWorkAsPerPlanList = inspectionCheckList7.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempAbuttRoadList = inspectionCheckList8.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempAreaLoc = inspectionCheckAreaLoc.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempLengthOfCompoundWall = inspectionCheckLenCompound.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		List<DocketDetailCommon> docketTempNumberOfWell = inspectionCheckNumberOfWell.stream().map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-*/
+		List<DocketDetailCommon> docketTempLocList = inspectionCheckList.stream()
+				.map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
 		inspection.setDocketDetailLocList(docketTempLocList);
-/*		inspection.setDocketDetailMeasurementList(docketTempMeasurementList);
-		inspection.setDocketDetailAccessList(docketTempAccessList);
-		inspection.setDocketDetailSurroundingPlotList(docketTempSurroundingList);
-		inspection.setDocketDetailLandTypeList(docketTempLandList);
-		inspection.setDocketDetailProposedWorkList(docketTempProposedWorkList);
-		inspection.setDocketDetailWorkAsPerPlanList(docketTempWorkAsPerPlanList);
-		inspection.setDocketDetailHgtAbuttRoadList(docketTempAbuttRoadList);
-		inspection.setDocketDetailAreaLoc(docketTempAreaLoc);
-		inspection.setDocketDetailLengthOfCompWall(docketTempLengthOfCompoundWall);
-		inspection.setDocketDetailNumberOfWell(docketTempNumberOfWell);*/
 	}
 
 	public Criteria getCheckListByServiceAndType(final String checkListTypeVal) {
@@ -285,38 +220,8 @@ public class OCInspectionService {
 				String checkListType = docketDet.getCheckListDetail().getCheckList().getChecklistType();
 				if (OC_INSPECTION.equals(checkListType))
 					inspection.getDocketDetailLocList().add(docketDet);
-				/*if (OC_INSPECTION_MEASUREMENT.equals(checkListType))
-					inspection.getDocketDetailMeasurementList().add(docketDet);
-				if (OC_INSPECTION_ACCESS.equals(checkListType))
-					inspection.getDocketDetailAccessList().add(docketDet);
-				if (OC_INSPECTION_SURROUNDING.equals(checkListType))
-					inspection.getDocketDetailSurroundingPlotList().add(docketDet);
-				if (OC_INSPECTION_TYPE_OF_LAND.equals(checkListType))
-					inspection.getDocketDetailLandTypeList().add(docketDet);
-				if (OC_INSPECTION_PROPOSED_STAGE_WORK.equals(checkListType))
-					inspection.getDocketDetailProposedWorkList().add(docketDet);
-				if (OC_INSPECTION_WORK_COMPLETED_PER_PLAN.equals(checkListType))
-					inspection.getDocketDetailWorkAsPerPlanList().add(docketDet);
-				if (OC_INSPECTION_HGT_BUILD_ABUT_ROAD.equals(checkListType))
-					inspection.getDocketDetailHgtAbuttRoadList().add(docketDet);
-				if (OC_INSPECTION_AREA_LOC.equals(checkListType))
-					inspection.getDocketDetailAreaLoc().add(docketDet);
-				if (OC_INSPECTION_LENGTH_OF_COMPOUND_WALL.equals(checkListType))
-					inspection.getDocketDetailLengthOfCompWall().add(docketDet);
-				if (OC_INSPECTION_NUMBER_OF_WELLS.equals(checkListType))
-					inspection.getDocketDetailNumberOfWell().add(docketDet);*/
 			}
 		model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
-		/*model.addAttribute("docketDetailMeasumentList", inspection.getDocketDetailMeasurementList());
-		model.addAttribute("docketDetailAccessList", inspection.getDocketDetailAccessList());
-		model.addAttribute("docketDetlSurroundingPlotList", inspection.getDocketDetailSurroundingPlotList());
-		model.addAttribute("docketDetailLandTypeList", inspection.getDocketDetailLandTypeList());
-		model.addAttribute("docketDetailProposedWorkList", inspection.getDocketDetailProposedWorkList());
-		model.addAttribute("docketDetailWorkAsPerPlanList", inspection.getDocketDetailWorkAsPerPlanList());
-		model.addAttribute("docketDetailHgtAbuttRoadList", inspection.getDocketDetailHgtAbuttRoadList());
-		model.addAttribute("docketDetailAreaLoc", inspection.getDocketDetailAreaLoc());
-		model.addAttribute("docketDetailLengthOfCompWall", inspection.getDocketDetailLengthOfCompWall());
-		model.addAttribute("docketDetailNumberOfWell", inspection.getDocketDetailNumberOfWell());*/
 	}
 
 	public Map<Long, String> prepareImagesForView(final OCInspection ocInspection) {

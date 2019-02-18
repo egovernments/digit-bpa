@@ -39,8 +39,6 @@
  */
 package org.egov.bpa.web.controller.transaction.occupancy;
 
-import org.egov.bpa.master.service.CheckListDetailService;
-import org.egov.bpa.transaction.entity.Inspection;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
