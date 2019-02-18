@@ -385,7 +385,10 @@ public class StakeHolderService {
 			stakeHolder.setStatus(StakeHolderStatus.UNBLOCKED);
 			setActiveToStakeholder(stakeHolder);
 		}
-		StakeHolderState stakeHolderState = new StakeHolderState();
+		StakeHolderState stakeHolderState = stakeHolderStateRepository.findByStakeHolderId(stakeHolder.getId());
+		if(stakeHolderState == null){
+			stakeHolderState = new StakeHolderState();
+		}
 		stakeHolderRepository.save(stakeHolder);
 		stakeHolderState.setStakeHolder(stakeHolder);
 		stakeHolderStateRepository.save(stakeHolderState);
