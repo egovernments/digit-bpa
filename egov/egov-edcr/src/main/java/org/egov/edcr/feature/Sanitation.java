@@ -829,7 +829,7 @@ public class Sanitation extends FeatureProcess {
             expected = "" + helper.urinal.intValue();
             actual = "" + urinalActual.intValue();
             if (helper.urinal.intValue() >= 0) {
-                checkDimension(helper.urinal.intValue(), scrutinyDetail, sanityDetails.getUrinals(), 0.6d, 0.5d,
+                checkDimension(helper.urinal.intValue(), detail, sanityDetails.getUrinals(), 0.6d, 0.5d,
                         BLDG_PART_URINAL, DIMESION_DESC_KEY, RULE_38_1);
                 if (helper.urinal.intValue() > urinalActual.intValue()) {
                     addReportDetail(helper.ruleNo, description, expected, actual, Result.Not_Accepted.getResultVal(), detail);
@@ -881,10 +881,10 @@ public class Sanitation extends FeatureProcess {
             wcrList.addAll(sanityDetails.getFemaleRoomsWithWaterCloset());
             wcrList.addAll(sanityDetails.getCommonRoomsWithWaterCloset());
             if (totalBathExpected.intValue() >= 0) {
-                checkDimension(totalBathExpected.intValue(), scrutinyDetail, wcList, 1.1d, 1.5d,
+                checkDimension(totalBathExpected.intValue(), detail, wcList, 1.1d, 1.5d,
                         BLDG_PART_BATHROOM, DIMESION_DESC_KEY, RULE_38_1);
 
-                checkDimension(totalBathExpected.intValue(), scrutinyDetail, wcrList, 1.1d, 2.2d, MALE_BATH_WITH_WC,
+                checkDimension(totalBathExpected.intValue(), detail, wcrList, 1.1d, 2.2d, MALE_BATH_WITH_WC,
                         DIMESION_DESC_KEY, RULE_38_1);
 
                 if (totalBathExpected.intValue() > totalActualBath) {
@@ -913,7 +913,7 @@ public class Sanitation extends FeatureProcess {
             int totalSize = list.size();
             desc = type + "- Minimum Dimension";
 
-            String expectedResult = minSide + " M x " + minSide + " M ";
+            String expectedResult = minSide + " M x ";
             String actualResult = "";
             Set<String> ruleNo = new HashSet<>();
             ruleNo.add(ruleNum);
