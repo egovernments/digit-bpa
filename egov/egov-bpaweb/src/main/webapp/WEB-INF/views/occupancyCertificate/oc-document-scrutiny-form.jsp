@@ -75,7 +75,7 @@
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
 							code='title.documentdetail' /></a></li>
 				<li><a data-toggle="tab" href="#noc-document-info"
-					data-tabidx=2><spring:message code='lbl.noc.doc.details' /></a></li>
+					data-tabidx=2><spring:message code='lbl.noc.details' /></a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="application-info" class="tab-pane fade in active">

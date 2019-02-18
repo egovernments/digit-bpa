@@ -126,7 +126,7 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
         model.addAttribute("inspectionList", inspectionService.findByOcOrderByIdAsc(oc));
-        model.addAttribute("lettertopartylist", lettertoPartyService.findAllByOC(oc));
+        model.addAttribute("letterToPartyList", lettertoPartyService.findAllByOC(oc));
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
     	return "search-occupancy-certificate-view";
     }
