@@ -37,12 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-var occupancyResponse;
-var subOccupancyResponse;
-var mixedOccupancyResponse;
-var occupancyResponseByName;
-var subOccupancyResponseByName;
-var occupancySuboccupancyMap;
+
 $(document).ready(
     function ($) {
 
@@ -55,10 +50,6 @@ $(document).ready(
             }
         }());
 
-        getOccupancyObjects();
-        getSubOccupancyObjects();
-        getOccupancyAndSubOccupanyMap();
-        
         // To calculate and set SUM on edit mode for existing buildings
         var existingBldgLen = $('.existBuilding').data('bldg-len');
         if(existingBldgLen > 0)
@@ -272,53 +263,6 @@ $(document).ready(
             $table.append(row.compose(rowJsonObj));
         }
         
-        // on form load get occupancy details List
-        function getOccupancyObjects() {
-            $.ajax({
-                url: "/bpa/application/getoccupancydetails",
-                async: false,
-                type: "GET",
-                dataType: "json",
-                success: function (response) {
-                    occupancyResponse = arrayGroupByKey(response, 'id');
-                    occupancyResponseByName = arrayGroupByKey(response, 'name');
-                    mixedOccupancyResponse = response;
-                },
-                error: function (response) {
-                }
-            });
-        }
-        
-        function getSubOccupancyObjects() {
-            $.ajax({
-                url: "/bpa/application/getsuboccupancydetails",
-                async: false,
-                type: "GET",
-                dataType: "json",
-                success: function (response) {
-                	 subOccupancyResponse = arrayGroupByKey(response, 'id');
-                     subOccupancyResponseByName = arrayGroupByKey(response, 'name');
-                     mixedOccupancyResponse = response;
-                },
-                error: function (response) {
-                }
-            });
-        }
-        
-        function getOccupancyAndSubOccupanyMap(){
-        	$.ajax({
-                url: "/bpa/application/getOccupancyAndSuboccupancyMap",
-                async: false,
-                type: "GET",
-                dataType: "json",
-                success: function (response) {
-                occupancySuboccupancyMap = response;
-                },
-                error: function (response) {
-                }
-            });
-        }
-
         // Will Auto Populate proposed building details
         function setProposedBuildingDetailFromEdcrs(planDetail) {
             var blockIdx = 0;

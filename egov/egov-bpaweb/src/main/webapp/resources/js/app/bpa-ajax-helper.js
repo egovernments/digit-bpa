@@ -587,7 +587,7 @@ $(document).ready(
 	            		+'].dcrDocument.fileStoreIds" id="fileStoreIds" class="'
 	            		+checklistName
 	            		+'_fileStoreIds" > </div> </div>';
-	            	var whenManualOrOverride = '<div class="col-sm-6 add-margin "><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
+	            	var whenManualOrOverride = '<div class="col-sm-6 add-margin "><div class="files-upload-container" data-allowed-extenstion="pdf" '
                         + (checklist.isMandatory ? "required"
     	                        : '')
     	                        + '> <div class="files-viewer '

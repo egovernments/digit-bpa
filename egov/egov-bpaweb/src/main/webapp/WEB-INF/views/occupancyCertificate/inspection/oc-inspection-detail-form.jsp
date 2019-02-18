@@ -38,99 +38,108 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="panel-heading toggle-header custom_form_panel_heading">
-    <div class="panel-title">
-        <spring:message code="lbl.inspn.details"/>
-    </div>
+	<div class="panel-title">
+		<spring:message code="lbl.inspn.details" />
+	</div>
 </div>
 <div class="panel-body">
-    <c:choose>
-        <c:when test="${!docketDetailLocList.isEmpty()}">
-            <div class="panel-heading custom_form_panel_heading">
-                <div class="panel-title"><%-- <spring:message code="lbl.loc.plt"/> --%></div>
-            </div>
-            <div class="form-group view-content header-color hidden-xs">
-                <div class="col-sm-5 text-left"><spring:message code="lbl.files"/></div>
-                <div class="col-sm-3 text-left"><spring:message code="lbl.provided"/></div>
-                <div class="col-sm-4 text-left">
-                    <spring:message code="lbl.remarks"/>
-                </div>
-            </div>
-            <c:forEach var="docs" items="${docketDetailLocList}"
-                       varStatus="status">
-                <div class="form-group">
-                    <div class="col-sm-5 add-margin check-text text-left">
-                        <c:out value="${docs.checkListDetail.description}"/>
-                        <form:hidden
-                                id="inspection.docketDetailLocList${status.index}checkListDetail.id"
-                                path="inspection.docketDetailLocList[${status.index}].checkListDetail.id"
-                                value="${docs.checkListDetail.id}"/>
-                        <form:hidden
-                                id="inspection.docketDetailLocList${status.index}checkListDetail.description"
-                                path="inspection.docketDetailLocList[${status.index}].checkListDetail.description"
-                                value="${docs.checkListDetail.description}"/>
-                    </div>
+	<c:choose>
+		<c:when test="${!docketDetailLocList.isEmpty()}">
+			<div class="panel-heading custom_form_panel_heading">
+				<div class="panel-title">
+					<%-- <spring:message code="lbl.loc.plt"/> --%>
+				</div>
+			</div>
+			<div class="form-group view-content header-color hidden-xs">
+				<div class="col-sm-5 text-left">
+					<spring:message code="lbl.files" />
+				</div>
+				<div class="col-sm-3 text-left">
+					<spring:message code="lbl.provided" />
+				</div>
+				<div class="col-sm-4 text-left">
+					<spring:message code="lbl.remarks" />
+				</div>
+			</div>
+			<c:forEach var="docs" items="${docketDetailLocList}"
+				varStatus="status">
+				<div class="form-group">
+					<div class="col-sm-5 add-margin check-text text-left">
+						<c:out value="${docs.checkListDetail.description}" />
+						<form:hidden
+							id="inspection.docketDetailLocList${status.index}checkListDetail.id"
+							path="inspection.docketDetailLocList[${status.index}].checkListDetail.id"
+							value="${docs.checkListDetail.id}" />
+						<form:hidden
+							id="inspection.docketDetailLocList${status.index}checkListDetail.description"
+							path="inspection.docketDetailLocList[${status.index}].checkListDetail.description"
+							value="${docs.checkListDetail.description}" />
+					</div>
 
-                    <div class="col-sm-3 add-margin text-left">
-                        <c:choose>
-                            <c:when test="${mode =='editinsp'}">
-                                <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                    <div class="radio">
-                                        <label><input type="radio" value="${inspnVal}"
-                                                      name="inspection.docketDetailLocList[${status.index}].value"
-                                                <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
-                                        </label>
-                                    </div>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                    <div class="radio">
-                                        <label><input type="radio" value="${inspnVal}"
-                                                      name="inspection.docketDetailLocList[${status.index}].value"
-                                                <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
-                                        </label>
-                                    </div>
-                                </c:forEach>
-                            </c:otherwise>
-                        </c:choose>
-                        <form:errors path="inspection.docketDetailLocList[${status.index}].value"
-                                     cssClass="add-margin error-msg"/>
-                    </div>
-                    <div class="col-sm-4 add-margin text-left">
-                        <form:textarea class="form-control patternvalidation"
-                                       data-pattern="alphanumericspecialcharacters" maxlength="256"
-                                       id="inspection.docketDetailLocList${status.index}remarks" rows="3"
-                                       path="inspection.docketDetailLocList[${status.index}].remarks"/>
+					<div class="col-sm-3 add-margin text-left">
+						<c:choose>
+							<c:when test="${mode =='editinsp'}">
+								<c:forEach items="${planScrutinyValues}" var="inspnVal">
+									<div class="radio">
+										<label><input type="radio" value="${inspnVal}"
+											name="inspection.docketDetailLocList[${status.index}].value"
+											<c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+										</label>
+									</div>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<c:forEach items="${planScrutinyValues}" var="inspnVal">
+									<div class="radio">
+										<label><input type="radio" value="${inspnVal}"
+											name="inspection.docketDetailLocList[${status.index}].value"
+											<c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+										</label>
+									</div>
+								</c:forEach>
+							</c:otherwise>
+						</c:choose>
+						<form:errors
+							path="inspection.docketDetailLocList[${status.index}].value"
+							cssClass="add-margin error-msg" />
+					</div>
+					<div class="col-sm-4 add-margin text-left">
+						<form:textarea class="form-control patternvalidation"
+							data-pattern="alphanumericspecialcharacters" maxlength="256"
+							id="inspection.docketDetailLocList${status.index}remarks"
+							rows="3"
+							path="inspection.docketDetailLocList[${status.index}].remarks" />
 
-                        <form:errors path="inspection.docketDetailLocList[${status.index}].remarks"
-                                     cssClass="add-margin error-msg"/>
-                    </div>
-                </div>
-            </c:forEach>
-        </c:when>
-    </c:choose>
-        <label class="col-sm-3 control-label text-right"><spring:message
-                code="lbl.ins.remarks"/></label>
-        <div class="col-sm-6 add-margin text-left">
-            <form:textarea class="form-control patternvalidation"
-                           data-pattern="alphanumericspecialcharacters" maxlength="1000"
-                           id="inspectionRemarks" rows="3" path="inspection.inspectionRemarks"/>
+						<form:errors
+							path="inspection.docketDetailLocList[${status.index}].remarks"
+							cssClass="add-margin error-msg" />
+					</div>
+				</div>
+			</c:forEach>
+		</c:when>
+	</c:choose>
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.ins.remarks" /></label>
+	<div class="col-sm-6 add-margin text-left">
+		<form:textarea class="form-control patternvalidation"
+			data-pattern="alphanumericspecialcharacters" maxlength="1000"
+			id="inspectionRemarks" rows="3" path="inspection.inspectionRemarks" />
 
-            <form:errors path="inspection.inspectionRemarks" cssClass="add-margin error-msg"/>
-        </div>
-    </div>
+		<form:errors path="inspection.inspectionRemarks"
+			cssClass="add-margin error-msg" />
+	</div>
 </div>
 
 <script>
-    jQuery(document).ready(function ($) {
-        window.onunload = function () {
-            window.opener.location.reload();
-        };
-    });
+	jQuery(document).ready(function($) {
+		window.onunload = function() {
+			window.opener.location.reload();
+		};
+	});
 </script>
