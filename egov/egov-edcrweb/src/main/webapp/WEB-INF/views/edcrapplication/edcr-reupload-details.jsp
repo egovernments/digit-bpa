@@ -59,18 +59,18 @@
 </div>
 <div class="panel-body">
     <div class="form-group">
-        <label class="col-sm-3 control-label text-right">Re-Upload E-DCR<span class="mandatory"></span></label>
+        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.upload.edcr"/><span class="mandatory"></span></label>
         <div class="col-sm-4 add-margin">
             <div class="fileSection col-md77-4">
                 <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">
                 <p class="hide"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span></p>
                 <button type="button" id="fileTrigger" class="btn btn-primary fullWidth">
-                    <span class="glyphicon glyphicon glyphicon-cloud-upload"></span> &nbsp;Choose a file
+                    <span class="glyphicon glyphicon glyphicon-cloud-upload"></span> &nbsp;<spring:message code="lbl.choose.file"/>
                 </button>
                 <div class="row hide fileActions">
                     <div class="col-md-6">
                         <button type="button" id="fileDelete" class="btn btn-primary fullWidth">
-                            <i class="fa fa-trash-o"></i> &nbsp;Delete
+                            <i class="fa fa-trash-o"></i> &nbsp;<spring:message code="lbl.delete"/>
                         </button>
                     </div>
                 </div>
