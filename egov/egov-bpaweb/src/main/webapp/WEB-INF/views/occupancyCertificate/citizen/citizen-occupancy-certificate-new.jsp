@@ -168,6 +168,8 @@
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
+	src="<cdn:url value='/resources/js/app/occupancy-certificate/bpa-oc-validations.js?rnd=${app_release_no}'/>"></script>
+<script
 	src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/>"></script>
@@ -175,5 +177,3 @@
 	src="<cdn:url value='/resources/js/app/occupancy-certificate/occupancy-certificate-new.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-edcr-helper.js?rnd=${app_release_no}'/>"></script>
-<script
-	src="<cdn:url value='/resources/js/app/occupancy-certificate/bpa-oc-validations.js?rnd=${app_release_no}'/>"></script>
