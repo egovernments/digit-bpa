@@ -164,8 +164,8 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_PENDING_FOR_RESCHEDULING = "Pending For Rescheduling For Document Scrutiny";
     public static final String APPLICATION_STATUS_TS_INS_INITIATED = "Town Surveyor Inspection Initiated";
     public static final String APPLICATION_STATUS_REJECT_CLERK = "Rejection initiated by clerk";
-    public static final String APPLICATION_APPROVAL_PENDING= "Secretary Application Approval Pending";
-    //Checklist document type constants
+    public static final String APPLICATION_APPROVAL_PENDING = "Secretary Application Approval Pending";
+    // Checklist document type constants
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
     public static final String CHECKLIST_TYPE_NOC = "NOC";
     public static final String FILESTORE_MODULECODE = "BPA";
@@ -246,17 +246,17 @@ public class BpaConstants {
     public static final String DESIGNATION_TOWN_SURVEYOR = "Town Surveyor";
     public static final String DESIGNATION_OVERSEER = "Town Planning Building Overseer";
     // occupancy type constants
-   /* public static final String THATCHED_TILED_HOUSE = "Thatched / Tiled House";
-    public static final String MERCANTILE_COMMERCIAL = "Mercantile / Commercial";
-    public static final String INDUSTRIAL = "Industrial";
-    public static final String RESIDENTIAL = "Residential";
-    public static final String MIXED_OCCUPANCY = "Mixed";*/
-    
-    //Occupancy Constants
-    public static final String MIXED_OCCUPANCY ="15"; 
+    /*
+     * public static final String THATCHED_TILED_HOUSE = "Thatched / Tiled House"; public static final String
+     * MERCANTILE_COMMERCIAL = "Mercantile / Commercial"; public static final String INDUSTRIAL = "Industrial"; public static
+     * final String RESIDENTIAL = "Residential"; public static final String MIXED_OCCUPANCY = "Mixed";
+     */
+
+    // Occupancy Constants
+    public static final String MIXED_OCCUPANCY = "15";
     public static final String INDUSTRIAL = "G1";
     public static final String MERCANTILE_COMMERCIAL = "F";
-   
+
     public static final String THATCHED_TILED_HOUSE = "14";
     public static final String RESIDENTIAL = "A";
     public static final String RESIDENTIAL_A1 = "A1";
@@ -267,19 +267,17 @@ public class BpaConstants {
     public static final String EDUCATIONAL = "B";
     public static final String EDUCATIONAL_B1 = "B1";
     public static final String EDUCATIONAL_HIGHSCHOOL = "B2";
-    public static final String HIGHER_EDUCATIONAL_INSTITUTE= "B3";
+    public static final String HIGHER_EDUCATIONAL_INSTITUTE = "B3";
     public static final String MEDIACL_HOSPITAL = "C";
     public static final String MEDIACL_IP = "C1";
     public static final String MEDIACL_OP = "C2";
     public static final String MEDICAL_ADMIN = "C3";
-    public static final String ASSEMBLY ="D";
+    public static final String ASSEMBLY = "D";
     public static final String ASSEMBLY_WORSHIP = "D1";
     public static final String BUS_TERMINAL = "D2";
     public static final String OFFICE_BUSINESS = "E";
     public static final String STORAGE = "H";
-    
-    
-    
+
     // notices file name and type
     public static final String BUILDINGPERMITFILENAME = "buildingpermit";
     public static final String BUILDINGPERMITOTHERSFILENAME = "buildingpermitothers";
@@ -318,16 +316,16 @@ public class BpaConstants {
     public static final String BPA_CITIZENACCEPTANCE_CHECK = "BPA_CITIZENACCEPTANCE_CHECK";
     public static final String DISCLIMER_MESSAGE_ONSAVE = "\n   Acceptance of building permit application in the system and DCR checking process does not confer a claim for building permit approval.";
     public static final String DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE = "\n   Acceptance of one day building permit application in the system and DCR checking process does not confer a claim for building permit approval.\n\n";
-    //configuration value constants
+    // configuration value constants
     public static final String YES = "YES";
     public static final String NO = "NO";
     public static final String MANUAL = "MANUAL";
     public static final String AUTOFEECAL = "AUTOFEECAL";
     public static final String AUTOFEECALEDIT = "AUTOFEECAL_EDIT";
-    //App config key name constants
+    // App config key name constants
     public static final String DCR_DOC_AUTO_POPULATE_UPLOAD = "DCR_DOC_AUTO_POPULATE_UPLOAD";
-	public static final String DCR_DOC_MANUAL_UPLOAD = "DCR_DOC_MANUAL_UPLOAD";
-	public static final String DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD = "DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD";
+    public static final String DCR_DOC_MANUAL_UPLOAD = "DCR_DOC_MANUAL_UPLOAD";
+    public static final String DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD = "DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD";
     public static final String DOC_SCRUTINY_INTEGRATION_REQUIRED = "DOCUMENT_SCRUTINY_INTEGRATION_REQUIRED";
     public static final String ONE_DAY_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED = "ONE_DAY_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED";
     public static final String REGULAR_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED = "REGULAR_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED";
@@ -346,20 +344,21 @@ public class BpaConstants {
 
     public static final String SLOT_TYPE_NORMAL = "Normal";
     public static final String SLOT_TYPE_ONE_DAY_PERMIT = "One Day Permit";
-    public static final String AUTH_TO_SUBMIT_PLAN = "This application requires signed plan documents for document scrutiny"; 
+    public static final String AUTH_TO_SUBMIT_PLAN = "This application requires signed plan documents for document scrutiny";
     public static final String SHTR_DOOR_FEE = "Charges for Shutter or Door Conversion";
     public static final String ROOF_CNVRSN_FEE = "Charges for Roof Conversion";
 
-    //Occupancy certificate related
+    // Occupancy certificate related
     public static final String CREATE_ADDITIONAL_RULE_CREATE_OC = "OCCUPANCYCERTIFICATE";
     public static final String BPA_OC_NUMBER_SEQ = "SEQ_BPA_OC_NO_";
 
-    //Occupancy certificate notice types
+    // Occupancy certificate notice types
     public static final String OCCUPANCY_CERTIFICATE_NOTICE_TYPE = "Occupancy Certificate";
     public static final String NATURE_OF_WORK_STAKEHOLDER = "Stake Holder Registration";
+    public static final String PERMIT_APPLICATION_NOTICE_TYPE = "Permit Application";
 
     public static final String BPAFEECALULATION = "BPA_FEE_CALCULATION";
-    
+
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {
         BUILDPERMIT.add(ST_CODE_01); // New Construction
@@ -370,7 +369,7 @@ public class BpaConstants {
     }
 
     private static final List<String> BUILDING_PERMIT_OTHERS = new ArrayList<>();
-    static{
+    static {
         BUILDING_PERMIT_OTHERS.add(ST_CODE_02); // Demolition
         BUILDING_PERMIT_OTHERS.add(ST_CODE_08);
         BUILDING_PERMIT_OTHERS.add(ST_CODE_09);
@@ -456,7 +455,7 @@ public class BpaConstants {
     private static final Map<String, Map<String, BigDecimal>> STAKEHOLDERTYPE7RESTRICTIONS = new ConcurrentHashMap<>();
     static {
         Map<String, BigDecimal> stakeHolderType7Restrictions = new ConcurrentHashMap<>();
-        stakeHolderType7Restrictions.put(EXTENTINSQMTS, BigDecimal.valueOf(1000000)); //Unlimited
+        stakeHolderType7Restrictions.put(EXTENTINSQMTS, BigDecimal.valueOf(1000000)); // Unlimited
         STAKEHOLDERTYPE7RESTRICTIONS.put("town planner - a", stakeHolderType7Restrictions);
     }
 
@@ -496,7 +495,6 @@ public class BpaConstants {
         EDCRREQUIREDSERVICES.add(ST_CODE_07); // Change in Occupancy
     }
 
-
     private static final List<String> BPAFEECATEGORY2 = new ArrayList<>();
 
     static {
@@ -513,16 +511,12 @@ public class BpaConstants {
     }
 
     // Update and use this code if DCR integration require to particular service type and occupancy
-    /*private static final List<String> EDCRREQUIREDOCCUPANCY = new ArrayList<>();
-    static {
-        EDCRREQUIREDOCCUPANCY.add(RESIDENTIAL);
-    }
-
-    private static final Map<String, List<String>> EDCRREQUIREDSERVICES = new ConcurrentHashMap<>();
-    static {
-        EDCRREQUIREDSERVICES.put(ST_CODE_01, EDCRREQUIREDOCCUPANCY);
-        EDCRREQUIREDSERVICES.put(ST_CODE_06, EDCRREQUIREDOCCUPANCY);
-    }*/
+    /*
+     * private static final List<String> EDCRREQUIREDOCCUPANCY = new ArrayList<>(); static {
+     * EDCRREQUIREDOCCUPANCY.add(RESIDENTIAL); } private static final Map<String, List<String>> EDCRREQUIREDSERVICES = new
+     * ConcurrentHashMap<>(); static { EDCRREQUIREDSERVICES.put(ST_CODE_01, EDCRREQUIREDOCCUPANCY);
+     * EDCRREQUIREDSERVICES.put(ST_CODE_06, EDCRREQUIREDOCCUPANCY); }
+     */
 
     private BpaConstants() {
         // only invariants
@@ -580,8 +574,7 @@ public class BpaConstants {
         return Collections.unmodifiableList(DEVELOPPERMIT);
     }
 
-    public static List<String> getServicesForOtherPermit()
-    {
+    public static List<String> getServicesForOtherPermit() {
         return Collections.unmodifiableList(BUILDING_PERMIT_OTHERS);
     }
 
