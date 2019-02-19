@@ -62,5 +62,8 @@ public interface OccupancyCertificateRepository
 
 	@Query("select occupancycertificate from OccupancyCertificate occupancycertificate where occupancycertificate.status in :status order by createddate asc")
 	List<OccupancyCertificate> findByStatusListOrderByCreatedDateAsc(@Param("status") List<BpaStatus> listOfBpaStatus);
+	
+	@Query("select occupancycertificate from OccupancyCertificate occupancycertificate where occupancycertificate.parent.planPermissionNumber =:permitNumber")
+	OccupancyCertificate findByPermitNumber(@Param("permitNumber") String permitNumber);
 
 }

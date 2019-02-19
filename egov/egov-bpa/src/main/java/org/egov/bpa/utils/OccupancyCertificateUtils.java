@@ -118,4 +118,22 @@ public class OccupancyCertificateUtils {
         }
         return eDcrApplicationDetails;
     }
+    
+    public Map<String, String> checkIsPermitNumberUsedWithAnyOCApplication(final String permitNumber) {
+        Map<String, String> ocApplicationDetails = new HashMap<>();
+        OccupancyCertificate occupancyCertificate = occupancyCertificateService.findByPermitNumber(permitNumber);
+        if (occupancyCertificate==null) {
+        	ocApplicationDetails.put("isExists", "false");
+        	ocApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
+        } else {
+            String message = bpaMessageSource.getMessage("msg.oc.exist.with.appln",
+                    new String[] { securityUtils.getCurrentUser().getName(), permitNumber,
+                            occupancyCertificate.getApplicationNumber() },
+                    null);
+            ocApplicationDetails.put("isExists", "true");
+            ocApplicationDetails.put("applnNoUsedEdcr", occupancyCertificate.getApplicationNumber());
+            ocApplicationDetails.put(BpaConstants.MESSAGE, message);
+        }
+        return ocApplicationDetails;
+    }
 }

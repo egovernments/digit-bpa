@@ -221,7 +221,11 @@ function getPermitApplicationByPermitNo(permitNumber) {
         dataType: "json",
         success: function (response) {
             if(Object.keys(response).length > 0) {
-            	if($('#isCitizen').val() === 'true' && !response.isSingleFamily) {
+            	if(response.ocExists === 'true') {
+            		bootbox.alert(response.ocExistsMessage);
+            		$('.resetValues').val('');
+            		return false;
+            	}else if($('#isCitizen').val() === 'true' && !response.isSingleFamily) {
             		bootbox.alert("Dear Citizen, you are not allowed to submit plan, as per permit application do not comply these conditions such as a single family residential and floor area is less then or equal to 150 m2 and Maximum Ground+1 floors can be submitted");
             		$('.resetValues').val('');
             		return false;

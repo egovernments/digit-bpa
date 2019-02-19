@@ -184,6 +184,9 @@ public class OccupancyCertificateService {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
     }
     
+    public OccupancyCertificate findByPermitNumber(String permitNumber) {
+        return occupancyCertificateRepository.findByPermitNumber(permitNumber);
+    }
     @Transactional
     public OccupancyCertificate saveOrUpdate(final OccupancyCertificate oc, final WorkflowBean wfBean) {
         buildProposedAndExistingBuildings(oc);

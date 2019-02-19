@@ -53,6 +53,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.BpaScheme;
 import org.egov.bpa.master.entity.BpaSchemeLandUsage;
 import org.egov.bpa.master.entity.CheckListDetail;
@@ -430,9 +431,11 @@ public class BpaAjaxController {
     @ResponseBody
     public void getApplicationDetailsByPlanPermissionNumber(@RequestParam final String permitNumber,
             final HttpServletResponse response) throws IOException {
-        BpaApplication application = applicationBpaService.findByPermitNumber(permitNumber);
+        BpaApplication application = StringUtils.isBlank(permitNumber) ? null : applicationBpaService.findByPermitNumber(permitNumber);
         final JsonObject jsonObj = new JsonObject();
         if (application != null) {
+        	jsonObj.addProperty("ocExists",occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get("isExists"));
+        	jsonObj.addProperty("ocExistsMessage",occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get(BpaConstants.MESSAGE));
             jsonObj.addProperty("id", application.getId());
             jsonObj.addProperty("stakeholderId", application.getStakeHolder().get(0).getId());
             jsonObj.addProperty("occupancy", application.getOccupancy().getDescription());
