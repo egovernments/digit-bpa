@@ -90,7 +90,7 @@
         </div>
         <div class="col-sm-3" style=" padding-left: 5px;">
             <form:password path="activationCode" id="activationcode" cssClass="form-control"
-                           placeholder="Enter OTP" minlength="5" maxlength="5" autocomplete="off"/>
+                           placeholder="Enter OTP"  autocomplete="off"/>
             <label id="activationcode-error" class="error align-right pull-right display-hide"
                    for="activationcode">Required</label>
             <span class="mandatory set-mandatory"></span>
