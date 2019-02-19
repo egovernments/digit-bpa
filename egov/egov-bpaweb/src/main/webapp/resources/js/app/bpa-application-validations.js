@@ -103,6 +103,18 @@ $(document).ready(function() {
         }
         return true;
     });
+    
+    $('textarea').keypress(function(event) {
+    	if (event.keyCode == 13) {
+    		event.preventDefault();
+    	}
+    });
+    
+    
+    var myStr = $(".original").text();
+    var trimStr = $.trim(myStr);
+    $(".trimmed").html(trimStr);
+    
 
     $(document).on('blur', '.decimalfixed', function(evt) {
         if($(this).val() == '.')
