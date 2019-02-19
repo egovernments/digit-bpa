@@ -66,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -311,6 +312,14 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
+            return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
+        }
+        Map<String, String> eDcrApplDetails= workflowHistoryService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
+        if(!eDcrApplDetails.isEmpty() && eDcrApplDetails.get("isExists")=="true"){
+        	buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
+            applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
+            prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
+        	model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
 

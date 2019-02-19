@@ -51,6 +51,13 @@
 					code="lbl.applicant.name" /> : <span id="applicantName"></span>
 			</span>
 		</div>
+		<c:if test="${eDcrApplExistsMessage ne null}">
+			<div class="panel-heading custom_form_panel_heading">
+				<div class="panel-title text-center no-float">
+					<strong class="error-msg">${eDcrApplExistsMessage}</strong>
+				</div>
+			</div>
+		</c:if>
 		<%-- <div class="text-right error-msg col-sm-6" style="font-size: 14px;">
 			<spring:message code="lbl.application.date" />
 			:
@@ -80,7 +87,7 @@
 			<input type="hidden"  id="loadingFloorDetailsFromEdcrRequire" value="${loadingFloorDetailsFromEdcrRequire}"/>
 			<form:hidden path="authorizedToSubmitPlan" id="authorizedToSubmitPlan"/>
 			<input type="hidden"  id="stakeHolderType" value="${stakeHolderType}"/>
-
+			
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
 									  href="#appliccation-info" data-tabidx=0><spring:message
@@ -219,7 +226,7 @@
 	<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
 	<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
 	<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>    
-	
+
 </div>
 
 <link rel="stylesheet"
