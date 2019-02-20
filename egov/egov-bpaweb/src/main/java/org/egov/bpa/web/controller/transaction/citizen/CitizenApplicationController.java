@@ -142,6 +142,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
         setCityName(model, request);
+        model.addAttribute("currentuser",securityUtils.getCurrentUser().getName());
         return loadNewForm(bpaApplication, model, ST_CODE_01);
     }
 

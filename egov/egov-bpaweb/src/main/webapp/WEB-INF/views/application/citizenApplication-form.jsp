@@ -226,6 +226,8 @@
 	<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
 	<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
 	<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>    
+	<input type="hidden" id="dcrforoc" value="<spring:message code='msg.dcr.for.oc' arguments="${currentuser}" htmlEscape="false" argumentSeparator=";"/>" />
+	<c:set var="currentuser" value="${currentuser}" />
 
 </div>
 

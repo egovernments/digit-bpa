@@ -63,6 +63,7 @@ public class EdcrApplicationInfo implements Serializable {
     private Long planDetailFileStore;
     private Long planDetailId;
     private String projectType;
+    private String applicationType;
     // E-Dcr Document related
     private Long eDcrDocId;
     private FileStoreMapper reportOutput;
@@ -156,6 +157,14 @@ public class EdcrApplicationInfo implements Serializable {
         this.projectType = projectType;
     }
 
+	public String getApplicationType() {
+		return applicationType;
+	}
+
+	public void setApplicationType(String applicationType) {
+		this.applicationType = applicationType;
+	}
+	
     public Long geteDcrDocId() {
         return eDcrDocId;
     }

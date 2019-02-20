@@ -104,6 +104,7 @@ public class EdcrExternalService {
         applicationInfo.setDxfFile(applicationDetail.getDxfFileId());
         applicationInfo.setReportOutput(applicationDetail.getReportOutputId());
         applicationInfo.setProjectType(applicationDetail.getApplication().getProjectType());
+        applicationInfo.setApplicationType(applicationDetail.getApplication().getApplicationType().getApplicationTypeVal());
         applicationInfo.setPlanPermitNumber(applicationDetail.getApplication().getPlanPermitNumber());
         applicationInfo.setServiceType(applicationDetail.getApplication().getServiceType() == null ? "N/A"
                 : applicationDetail.getApplication().getServiceType());

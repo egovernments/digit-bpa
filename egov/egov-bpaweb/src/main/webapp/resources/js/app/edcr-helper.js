@@ -583,7 +583,9 @@ $(document).ready(
                     type: "GET",
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
-                        if (response.errorDetail && response.errorDetail.errorCode != null && response.errorDetail.errorCode != '') {
+                    	if(response.applicationType !== 'Permit') {
+                            bootbox.alert($('#dcrforoc').val());
+                    	} else if (response.errorDetail && response.errorDetail.errorCode != null && response.errorDetail.errorCode != '') {
                             bootbox.alert(response.errorDetail.errorMessage);
                             $('#eDcrNumber').val('');
                             resetDCRPopulatedValues();
