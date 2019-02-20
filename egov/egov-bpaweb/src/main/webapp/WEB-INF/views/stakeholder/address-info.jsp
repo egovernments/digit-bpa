@@ -76,7 +76,7 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${address}.streetRoadLine" id="${address}.streetRoadLine"
-			type="text" cssClass="form-control is_valid_alphabet inline-elem"
+			type="text" cssClass="form-control inline-elem"
 			placeholder="" maxlength="256" autocomplete="off" required="required" />
 		<form:errors path="${address}.streetRoadLine"
 			cssClass="add-margin error-msg" />
