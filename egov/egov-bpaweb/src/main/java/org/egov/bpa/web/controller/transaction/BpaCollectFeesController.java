@@ -114,8 +114,16 @@ public class BpaCollectFeesController {
 		StakeHolder stkHldr = stakeHolderService.findById(userId);
 		if(stkHldr != null){
 		if(stkHldr.getStatus().toString().equals(BpaConstants.APPLICATION_STATUS_PENDNING)){
-	        return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr,model);
+		    if(bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT).equalsIgnoreCase("YES"))  {
+		        return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr,model);
+		    } else {
+		        model.addAttribute("message", messageSource.getMessage("msg.onlinepayment.disabled", null, null));
+                        return COLLECT_ERROR_PAGE;
+		    }
+		        
+	        
 		}
+		
 		}
 		return null;
 	}
