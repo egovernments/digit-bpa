@@ -85,15 +85,19 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -155,6 +159,10 @@ public class BpaAjaxController {
     private CheckListDetailService checkListDetailService;
     @Autowired
     private OccupancyCertificateUtils occupancyCertificateUtils;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -483,4 +491,41 @@ public class BpaAjaxController {
         return applicationBpaService.checkEdcrExpiry(eDcrNumber,((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
     }
 
+	@GetMapping(value = "/boundary/ajax-boundary-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void getBoundaryConfiguration(HttpServletResponse response) throws IOException {
+		JSONArray validBoundaryTypeJsonArray;
+		JSONObject boundaryJsonData = new JSONObject();
+		JSONObject boundaryTypeInJson;
+		JSONObject boundaryTypeJson;
+		JSONObject boundaryJson = null;
+		JSONArray boundaryArray = null;
+		
+		final AppConfigValues boundaryConfiguration = appConfigValuesService
+				.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME, BpaConstants.BOUNDARY_CONFIGURATION_KEY)
+				.get(0);
+		JSONObject boundaryConfigJson = new JSONObject(boundaryConfiguration.getValue());
+		JSONObject validBoundaryJson = (JSONObject) boundaryConfigJson.get("validBoundary");
+		JSONObject crossBoundaryJson = (JSONObject) boundaryConfigJson.get("crossBoundary");
+		boundaryJsonData.put("crossBoundary", crossBoundaryJson);
+		for (final String heirarchy : validBoundaryJson.keySet()) {
+			boundaryTypeJson = new JSONObject();
+			validBoundaryTypeJsonArray = validBoundaryJson.getJSONArray(heirarchy);
+			for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {
+				boundaryTypeInJson = validBoundaryTypeJsonArray.getJSONObject(i);
+				boundaryArray = new JSONArray();
+				for (final Boundary boundary : boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+						boundaryTypeInJson.getString("boundary"), heirarchy)) {
+					boundaryJson = new JSONObject();
+					boundaryJson.put("id", boundary.getId());
+					boundaryJson.put("code", boundary.getCode());
+					boundaryJson.put("name", boundary.getName());
+					boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getId());
+					boundaryArray.put(boundaryJson);
+				}
+				boundaryTypeJson.put(boundaryTypeInJson.getString("displayName"), boundaryArray);
+			}
+			boundaryJsonData.put(heirarchy, boundaryTypeJson);
+		}
+		IOUtils.write(boundaryJsonData.toString(), response.getWriter());
+	}
 }
