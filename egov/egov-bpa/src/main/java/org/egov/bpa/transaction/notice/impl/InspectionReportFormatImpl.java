@@ -49,7 +49,9 @@ package org.egov.bpa.transaction.notice.impl;
 
 import static ar.com.fdvs.dj.domain.constants.Stretching.RELATIVE_TO_BAND_HEIGHT;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -62,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.bpa.model.DocumentDetails;
+import org.egov.bpa.model.InspectionImg;
 import org.egov.bpa.service.common.JasperReportHelperService;
 import org.egov.bpa.transaction.entity.DocketDetail;
 import org.egov.bpa.transaction.entity.Inspection;
@@ -91,6 +94,7 @@ import ar.com.fdvs.dj.domain.Style;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
 import ar.com.fdvs.dj.domain.builders.ColumnBuilderException;
 import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
+import ar.com.fdvs.dj.domain.constants.ImageScaleMode;
 import ar.com.fdvs.dj.domain.constants.Page;
 import ar.com.fdvs.dj.domain.entities.Subreport;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
@@ -171,6 +175,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         final Map<String, Object> reportParams = new HashMap<>();
         FastReportBuilder drb = new FastReportBuilder();
         List<DocumentDetails> ddList = new ArrayList<>();
+        List<InspectionImg> imageList = new ArrayList<>();
         reportParams.put("stateLogo", ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH));
         reportParams.put("logoPath", cityService.getCityLogoAsStream());
         reportParams.put("cityName", ApplicationThreadLocals.getCityName());
@@ -254,8 +259,14 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         drb.addConcatenatedReport(getSubreport("Building Plan Scrutiny Details For Drawing Details"));
         reportParams.put("Building Plan Scrutiny Details For Drawing Details", ddList);
 
+        imageList = getImages(inspection);
+        drb.addConcatenatedReport(getSubreportForImgs("Inspection Site Images"));
+        reportParams.put("Inspection Site Images", imageList);
+
+        reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(inspection)));
+
         drb.setTemplateFile("/reports/templates/inspectionreport.jrxml");
-        drb.setMargins(5, 0, 33, 20);
+        // drb.setMargins(5, 0, 33, 20);
         final DynamicReport dr = drb.build();
         InputStream exportPdf = null;
         try {
@@ -309,6 +320,29 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         return dd;
     }
 
+    private List<InspectionImg> getImages(Inspection inspection) {
+
+        List<InspectionImg> imgsList = new ArrayList<>();
+
+        for (FileStoreMapper cl : inspection.getInspectionSupportDocs())
+            imgsList.add(getInspectionImg(cl));
+
+        return imgsList;
+    }
+
+    private InspectionImg getInspectionImg(FileStoreMapper docketDet) {
+        InspectionImg img = new InspectionImg();
+        img.setFileName(docketDet.getFileName());
+        try {
+            img.setImg(new FileInputStream(fileStoreService.fetch(docketDet.getFileStoreId(), APPLICATION_MODULE_TYPE)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        img.setDescription("NA");
+
+        return img;
+    }
+
     private Subreport getSubreport(String title) {
         try {
 
@@ -340,8 +374,6 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
                     jasperReportHelperService.getColumnHeaderStyle(), jasperReportHelperService.getDetailStyle());
             frb.setAllowDetailSplit(false);
             frb.setPageSizeAndOrientation(Page.Page_A4_Portrait());
-            frb.setGrandTotalLegend("Total");
-            frb.setGrandTotalLegendStyle(jasperReportHelperService.getNumberStyle());
             DynamicReport build = frb.build();
             Subreport sub = new Subreport();
             sub.setDynamicReport(build);
@@ -356,5 +388,68 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private Subreport getSubreportForImgs(String title) {
+        try {
+
+            FastReportBuilder frb = new FastReportBuilder();
+
+            try {
+                frb.addImageColumn("Site Image", "img", 550, true, ImageScaleMode.FILL);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            frb.setDetailHeight(250);
+            frb.setMargins(0, 0, 0, 0);
+            frb.setUseFullPageWidth(true);
+            frb.setTitle(title);
+            frb.setTitleStyle(jasperReportHelperService.getTitleStyle());
+            frb.setHeaderHeight(5);
+            frb.setTopMargin(5);
+            frb.setDefaultStyles(jasperReportHelperService.getTitleStyle(), jasperReportHelperService.getSubTitleStyle(),
+                    jasperReportHelperService.getColumnHeaderStyle(), jasperReportHelperService.getDetailStyle());
+            frb.setAllowDetailSplit(false);
+            frb.setPageSizeAndOrientation(Page.Page_A4_Portrait());
+            DynamicReport build = frb.build();
+            Subreport sub = new Subreport();
+            sub.setDynamicReport(build);
+            Style style = new Style();
+            style.setStretchWithOverflow(true);
+            style.setStreching(RELATIVE_TO_BAND_HEIGHT);
+            sub.setStyle(style);
+            sub.setDatasource(new DJDataSource(title, DJConstants.DATA_SOURCE_ORIGIN_PARAMETER, 0));
+            sub.setLayoutManager(new ClassicLayoutManager());
+            return sub;
+        } catch (ColumnBuilderException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String buildQRCodeDetails(final Inspection inspection) {
+        StringBuilder qrCodeValue = new StringBuilder();
+        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(inspection.getApplication().getApplicationNumber())
+                ? qrCodeValue.append("Application Number : ").append(inspection.getApplication().getApplicationNumber())
+                        .append("\n")
+                : qrCodeValue.append("Application Number : ").append("N/A").append("\n");
+        qrCodeValue = inspection.getApplication().getApplicationDate() != null
+                ? qrCodeValue.append("Application Date : ").append(inspection.getApplication().getApplicationDate()).append("\n")
+                : qrCodeValue.append("Application Date : ").append("N/A").append("\n");
+        qrCodeValue = inspection.getApplication().getOwner() != null
+                ? qrCodeValue.append("Applicant Name : ").append(inspection.getApplication().getOwner().getName()).append("\n")
+                : qrCodeValue.append("Applicant Name : ").append("N/A").append("\n");
+        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(inspection.getInspectionNumber())
+                ? qrCodeValue.append("Inspection Number : ").append(inspection.getInspectionNumber())
+                        .append("\n")
+                : qrCodeValue.append("Inspection Number : ").append("N/A").append("\n");
+        qrCodeValue = inspection.getInspectionDate() != null
+                ? qrCodeValue.append("Inspection Date : ").append(inspection.getInspectionDate()).append("\n")
+                : qrCodeValue.append("Inspection Date : ").append("N/A").append("\n");
+        qrCodeValue = inspection.getInspectedBy() != null
+                ? qrCodeValue.append("Inspected By : ").append(inspection.getInspectedBy().getName()).append("\n")
+                : qrCodeValue.append("Inspected By : ").append("N/A").append("\n");
+
+        return qrCodeValue.toString();
     }
 }

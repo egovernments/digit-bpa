@@ -3,7 +3,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="8"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/collections/reports/templates/"]]></defaultValueExpression>
 	</parameter>
@@ -29,6 +29,7 @@
 	<parameter name="licenseeName" class="java.lang.String"/>
 	<parameter name="applicationNo" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="qrCode" class="java.io.File"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -477,4 +478,12 @@
 	<columnHeader>
 		<band splitType="Stretch"/>
 	</columnHeader>
+	<pageFooter>
+		<band height="77">
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="413" y="12" width="138" height="56" uuid="2ee7304d-8f73-4035-81ba-77c90821b4ec"/>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
 </jasperReport>
