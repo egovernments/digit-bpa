@@ -303,11 +303,15 @@
 				</div>
 			</c:if>
 			<c:choose>
-				<c:when test="${isFeeCollected && bpaApplication.status.code eq 'Approved'}">
-					<div class="buttonbottom" align="center">
-						<input type="button" name="button2" value="Close" class="btn btn-default" onclick="window.close();" />
-					</div>
-				</c:when>
+				<c:if test="${bpaApplication.status.code eq 'Approved' && isFeeCollected }">
+							<td>
+								<a href="/bpa/application/demandnotice/${bpaApplication.applicationNumber}"
+								   target="popup" class="btn btn-primary"
+								   onclick="window.open('/bpa/application/demandnotice/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
+									<spring:message code='lbl.btn.print.demand.notice' />
+								</a>
+							</td> 
+						</c:if>
 				<c:otherwise>
 					<c:choose>
 						<c:when
