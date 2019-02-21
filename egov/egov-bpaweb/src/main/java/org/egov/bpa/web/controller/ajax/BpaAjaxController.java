@@ -464,7 +464,7 @@ public class BpaAjaxController {
             if (!application.getBuildingDetail().isEmpty()) {
                 BigDecimal floorArea = permitFeeCalculationService.getTotalFloorArea(application);
                 jsonObj.addProperty("isSingleFamily",
-                        application.getOccupancy().getDescription().equals(BpaConstants.RESIDENTIAL)
+                        application.getOccupancy().getCode().equals(BpaConstants.RESIDENTIAL)
                                 && application.getBuildingDetail().get(0).getFloorCount().intValue() <= 2
                                 && floorArea.doubleValue() <= 150);
             }
