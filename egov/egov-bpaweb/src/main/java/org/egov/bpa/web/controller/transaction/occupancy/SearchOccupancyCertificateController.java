@@ -133,26 +133,34 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
 
     @RequestMapping(value = "/occupancy-certificate/search/document-scrutiny", method = RequestMethod.GET)
     public String showDocumentScrutinyPendingRecords(final Model model) {
-        List<Boundary> employeeMappedZone = new ArrayList<>();
-        List<Boundary> mappedElectionWard = new ArrayList<>();
+        Set<Boundary> employeeMappedZone = new HashSet<>();
+        Set<Boundary> mappedElectionWard = new HashSet<>();
         Set<Boundary> electionWards = new HashSet<>();
+        Set<Boundary> revenueWards = new HashSet<>();
+        Set<Boundary> revWards = new HashSet<>();
         BoundaryType revenueType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
         final Employee employee = employeeService.getEmployeeById(securityUtils.getCurrentUser().getId());
         for (Jurisdiction jurisdiction : employee.getJurisdictions()) {
             if (!BOUNDARY_TYPE_CITY.equals(jurisdiction.getBoundaryType().getName())) {
                 mappedElectionWard.add(jurisdiction.getBoundary());
-                break;
             }
         }
-        List<Boundary> revenueWards = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(mappedElectionWard.get(0).getId(), revenueType.getId());
-        employeeMappedZone.add(revenueWards.get(0).getParent());
+       for (Boundary boundary : mappedElectionWard) {
+			List<Boundary> b = crossHierarchyService
+					.getParentBoundaryByChildBoundaryAndParentBoundaryType(boundary.getId(), revenueType.getId());
+			revenueWards.addAll(b);
+		}
+        
+		for (Boundary boundary : revenueWards) {
+			employeeMappedZone.add(boundary.getParent());
+			revWards.addAll(boundaryService.getActiveChildBoundariesByBoundaryId(boundary.getParent().getId()));
+			for (Boundary revenue : revWards) {
+				electionWards.addAll(crossHierarchyService
+						.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(WARD,
+								REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
+			}
+		}
         model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
-        List<Boundary> revWards = boundaryService.getActiveChildBoundariesByBoundaryId(revenueWards.get(0).getParent().getId());
-        for (Boundary revenue : revWards) {
-            electionWards.addAll(crossHierarchyService
-                    .findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(WARD,
-                            REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
-        }
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
