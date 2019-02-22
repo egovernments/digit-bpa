@@ -49,7 +49,7 @@ package org.egov.bpa.utils;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.YES;
-import static org.egov.bpa.utils.OcConstants.APPLN_FEE_COLLECTION_REQUIRED;
+import static org.egov.bpa.utils.OcConstants.OC_APPLN_FEE_COLLECTION_REQUIRED;
 import static org.egov.bpa.utils.OcConstants.OC_DOC_SCRUTINY_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.OcConstants.OC_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
 
@@ -89,7 +89,7 @@ public class OccupancyCertificateUtils {
     }
 
     public Boolean isApplicationFeeCollectionRequired() {
-        return getAppConfigValueByKeyName(APPLN_FEE_COLLECTION_REQUIRED).equals(YES);
+        return getAppConfigValueByKeyName(OC_APPLN_FEE_COLLECTION_REQUIRED).equals(YES);
     }
 
     public boolean isDocScrutinyIntegrationRequiredForOc() {

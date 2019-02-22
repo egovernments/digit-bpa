@@ -269,7 +269,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.setStatus(bpaStatus);
         setSource(application);
         Long approvalPosition = null;
-        application.setDemand(applicationBpaBillService.createDemand(application));
+        if (bpaUtils.isApplicationFeeCollectionRequired())
+        	application.setDemand(applicationBpaBillService.createDemand(application));
+        else
+        	application.setDemand(applicationBpaBillService.createDemandWhenFeeCollectionNotRequire());
+
         if (!bpaUtils.logedInuseCitizenOrBusinessUser()) {
             WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
                     application.getStateType(), WF_CREATED_STATE);
@@ -459,8 +463,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             permitFee.setApplicationFee(applicationFee);
             permitFeeRepository.save(permitFee);
         	application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(), permitFee.getApplication().getDemand()));
-        }
-        if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
+        }        
+        if (bpaUtils.isApplicationFeeCollectionRequired() 
+        		&& !WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
         	
@@ -539,7 +544,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     public BigDecimal setAdmissionFeeAmountForRegistrationWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
         BigDecimal admissionfeeAmount;
-        if (serviceType != null)
+        if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired())
             admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
                     BPAFEETYPE);
         else

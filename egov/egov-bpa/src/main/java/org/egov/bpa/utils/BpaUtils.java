@@ -24,6 +24,7 @@ import static org.egov.bpa.utils.BpaConstants.REGULAR_PERMIT_INSPECTION_SCHEDULE
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_PERMIT_FEE_COLL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.YES;
+import static org.egov.bpa.utils.BpaConstants.PERMIT_APPLN_FEE_COLLECTION_REQUIRED;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -691,6 +692,10 @@ public class BpaUtils {
         List<AppConfigValues> appConfigValueList = appConfigValueService
                 .getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, "OC_ALLOW_DEVIATION");
         return appConfigValueList.get(0).getValue();
+    }
+    
+    public Boolean isApplicationFeeCollectionRequired() {
+        return getAppconfigValueByKeyName(PERMIT_APPLN_FEE_COLLECTION_REQUIRED).equalsIgnoreCase(YES);
     }
 
 }

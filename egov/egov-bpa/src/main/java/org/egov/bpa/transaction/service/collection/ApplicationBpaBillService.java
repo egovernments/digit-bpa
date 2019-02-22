@@ -163,6 +163,19 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         return bpaDemandService.createCriteriaforFeeAmount(amenityList, feeType);
     }
 
+    public EgDemand createDemandWhenFeeCollectionNotRequire() {
+        EgDemand egDemand = new EgDemand();
+        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+                moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
+        egDemand.setEgInstallmentMaster(installment);
+        egDemand.setIsHistory("N");
+        egDemand.setBaseDemand(BigDecimal.ZERO);
+        egDemand.setCreateDate(new Date());
+        egDemand.setEgDemandDetails(new HashSet<>());
+        egDemand.setModifiedDate(new Date());
+        return egDemand;
+    }
+    
     private EgDemandDetails createDemandDetails(final BigDecimal amount, final String demandReason,
             final Installment installment) {
         final EgDemandReason demandReasonObj = bpaDemandService.getDemandReasonByCodeAndInstallment(demandReason,
@@ -176,7 +189,7 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         demandDetail.setModifiedDate(new Date());
         return demandDetail;
     }
-
+  
     public EgDemand createDemand(final BpaApplication application) {
 
         final Map<String, BigDecimal> feeDetails = new HashMap<>();

@@ -238,6 +238,8 @@ public class BpaConstants {
     public static final String BPA_DEFAULT_FUNCTIONARY_CODE = "BPA_DEFAULT_FUNCTIONARY_CODE";
     public static final String BPA_DEFAULT_FUND_SRC_CODE = "BPA_DEFAULT_FUND_SRC_CODE";
     public static final String BPA_PERMIT_FEE_COLLECTED = "BPA Permit fees collected";
+    public static final String PERMIT_APPLN_FEE_COLLECTION_REQUIRED = "PERMITAPPLNFEECOLLECTIONREQUIRED";
+    
     // designation constants
     public static final String DESIGNATION_AEE = "Assistant executive engineer";
     public static final String DESIGNATION_AE = "Assistant engineer";
