@@ -332,9 +332,9 @@
 									   class="btn btn-default" onclick="window.close();" />
 							</div>
 						</c:when>
-						<c:otherwise>
+						<c:otherwise>	
 						   
-							<c:if test="${bpaApplication.status.code ne 'Digitally signed'}">
+							<c:if test="${bpaApplication.status.code eq 'Digitally signed'}">
 								<jsp:include page="../common/commonWorkflowMatrix.jsp" />
 							</c:if>
 							<div class="buttonbottom" align="center">
