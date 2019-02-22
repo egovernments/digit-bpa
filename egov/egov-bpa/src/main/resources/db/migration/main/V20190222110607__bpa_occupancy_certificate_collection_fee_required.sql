@@ -1,4 +1,4 @@
-delete from eg_appconfig_values where KEY_ID=(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='APPLICATIONFEECOLLECTIONREQUIRED' AND MODULE =(select id from eg_module where name='BPA'))
+delete from eg_appconfig_values where KEY_ID=(SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='APPLICATIONFEECOLLECTIONREQUIRED' AND MODULE =(select id from eg_module where name='BPA'));
 
 delete from eg_appconfig where KEY_NAME='APPLICATIONFEECOLLECTIONREQUIRED' AND MODULE =(select id from eg_module where name='BPA');
 
