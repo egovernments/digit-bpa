@@ -1,8 +1,8 @@
 /*
- *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,13 +26,6 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces,
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *            derived works should carry eGovernments Foundation logo on the top right corner.
- *
- *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines,
- *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -43,61 +36,21 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- *
  */
+package org.egov.bpa.master.repository;
 
-package org.egov.demand.dao;
-
-import org.egov.demand.model.EgDemandReason;
-import org.egov.demand.model.EgDemandReasonMaster;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Repository(value = "egDemandReasonDAO")
-@Transactional(readOnly = true)
-public class EgDemandReasonHibDao implements EgDemandReasonDao {
+import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+@Repository
+public interface BpaFeeMappingRepository extends JpaRepository<BpaFeeMapping, Long> {
 
-	@SuppressWarnings("unused")
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
-
-	@Override
-	public EgDemandReason findById(Integer id, boolean lock) {
-
-		return null;
-	}
-
-	@Override
-	public List<EgDemandReason> findAll() {
-
-		return null;
-	}
-
-	@Override
-	public void create(EgDemandReason egDemandReason) {
-
-	       getCurrentSession().save(egDemandReason);
-	}
-
-	@Override
-	public void delete(EgDemandReason egDemandReason) {
-
-
-	}
-
-	@Override
-	public EgDemandReason update(EgDemandReason egDemandReason) {
-
-		return null;
-	}
+	@Query("select bfm from BpaFeeMapping bfm where bfm.bpaFeeCommon.code=:code  order by bfm.id asc ")
+	List<BpaFeeMapping> findByFeeCode(@Param("code") String code);
 
 }

@@ -37,45 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.service;
+package org.egov.bpa.master.entity.enums;
 
-import java.util.List;
-
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.master.repository.ServiceTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-@Service
-@Transactional(readOnly = true)
-public class ServiceTypeService {
-
-    @Autowired
-    private ServiceTypeRepository serviceTypeRepository;
-
-    public List<ServiceType> findAll() {
-        return serviceTypeRepository.findAll();
-    }
+public enum FeeApplicationType {
+	PERMIT_APPLICATION("Permit Application"), OCCUPANCY_CERTIFICATE("Occupancy Certificate");
     
-    public List<ServiceType> getAllActiveMainServiceTypes() {
-        return serviceTypeRepository.getAllActiveMainServiceTypes();
-    }
-    
-    public ServiceType getServiceTypeByCode(final String code) {
-        return serviceTypeRepository.getServiceTypeByCode(code);
+    private final String feeApplicationTypeVal;
+
+    FeeApplicationType(String faTypeVal) {
+        this.feeApplicationTypeVal = faTypeVal;
     }
 
-    public List<ServiceType> getServiceTypeByCode(final List<String> code) {
-        return serviceTypeRepository.getServiceTypeByListOfCode(code);
-    }
-
-    public List<ServiceType> getAllActiveAmenities() {
-        return serviceTypeRepository.getAllActiveAmenities();
-    }
-    
-    public List<ServiceType> getAllActiveServiceTypes() {
-        return serviceTypeRepository.findByIsActiveTrueOrderByDescriptionAsc();
-    }
-
+    public String getFeeApplicationTypeVal() {
+		return feeApplicationTypeVal;
+	}
 }

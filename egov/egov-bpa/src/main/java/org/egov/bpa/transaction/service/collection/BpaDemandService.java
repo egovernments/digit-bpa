@@ -51,6 +51,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.bpa.master.entity.BpaFee;
+import org.egov.bpa.master.entity.BpaFeeCommon;
 import org.egov.bpa.master.entity.BpaFeeDetail;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
@@ -60,10 +61,13 @@ import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.dao.EgDemandReasonDao;
+import org.egov.demand.dao.EgDemandReasonMasterDao;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.demand.model.EgDemandReasonMaster;
+import org.egov.demand.model.EgReasonCategory;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.hibernate.Criteria;
@@ -84,6 +88,12 @@ public class BpaDemandService {
     private DemandGenericDao demandGenericDao;
     @PersistenceContext
     private EntityManager entityManager;
+    
+	@Autowired
+	private EgDemandReasonMasterDao egDemandReasonMasterDao;
+	
+	@Autowired
+	private EgDemandReasonDao egDemandReasonDao;
 
     @Autowired
     private InstallmentDao installmentDao;
@@ -225,24 +235,42 @@ public class BpaDemandService {
         return egDemandReason;
     }
 
-    /*
-     * @Transactional public EgDemandReasonMaster createEgDemandReasonMaster(BpaFee bpaFee) { EgDemandReasonMaster egDmdRsnMstr =
-     * null; Module module = moduleService.getModuleByName(BpaConstants.EGMODULE_NAME); egDmdRsnMstr = (EgDemandReasonMaster)
-     * demandGenericDao.getDemandReasonMasterByCode(bpaFee.getCode(), module); if (egDmdRsnMstr == null) { egDmdRsnMstr = new
-     * EgDemandReasonMaster(); EgReasonCategory egRsnCategory = demandGenericDao.getReasonCategoryByCode(CATEGORY_FEE);
-     * egDmdRsnMstr.setReasonMaster(bpaFee.getDescription()); egDmdRsnMstr.setCode(bpaFee.getCode());
-     * egDmdRsnMstr.setEgModule(module); egDmdRsnMstr.setOrderId(Long.valueOf("1"));
-     * egDmdRsnMstr.setEgReasonCategory(egRsnCategory); egDmdRsnMstr.setIsDebit("N"); egDmdRsnMstr.setIsDemand(Boolean.TRUE);
-     * egDmdRsnMstr.setCreatedDate(new Date()); egDmdRsnMstr.setModifiedDate(new Date()); //
-     * egDemandReasonMasterService.persist(egDmdRsnMstr); egDemandReasonMasterDao.create(egDmdRsnMstr); // Create defaultly demand
-     * reason along with demand master createEgDemandReason(bpaFee, egDmdRsnMstr); } return egDmdRsnMstr; }
-     * @Transactional public EgDemandReason createEgDemandReason(BpaFee bpaFee, EgDemandReasonMaster egDemandReasonMaster) {
-     * EgDemandReason egDmdRsn = new EgDemandReason(); // PersistenceService persistenceService =
-     * feeService.getPersistenceService(); egDmdRsn.setEgDemandReasonMaster(egDemandReasonMaster);
-     * egDmdRsn.setEgInstallmentMaster(getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date()));
-     * egDmdRsn.setGlcodeId(bpaFee.getGlcode()); egDmdRsn.setCreateDate(new Date()); egDmdRsn.setModifiedDate(new Date()); //
-     * demandReasonService.persist(egDmdRsn); egDemandReasonDao.create(egDmdRsn); return egDmdRsn; }
-     */
+
+	@Transactional 
+    public EgDemandReasonMaster createEgDemandReasonMaster(BpaFeeCommon bpaFeeCommon) { 
+    	EgDemandReasonMaster egDmdRsnMstr =     null; 
+    	Module module = moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
+    	egDmdRsnMstr = (EgDemandReasonMaster)
+    	      demandGenericDao.getDemandReasonMasterByCode(bpaFeeCommon.getCode(), module); 
+    	if (egDmdRsnMstr == null) { 
+    		egDmdRsnMstr = new    EgDemandReasonMaster();
+    		EgReasonCategory egRsnCategory = demandGenericDao.getReasonCategoryByCode(CATEGORY_FEE);
+    	      egDmdRsnMstr.setReasonMaster(bpaFeeCommon.getDescription()); 
+    	      egDmdRsnMstr.setCode(bpaFeeCommon.getCode());
+    	      egDmdRsnMstr.setEgModule(module); 
+    	      egDmdRsnMstr.setOrderId(Long.valueOf("1"));
+    	      egDmdRsnMstr.setEgReasonCategory(egRsnCategory); egDmdRsnMstr.setIsDebit("N");
+    	      egDmdRsnMstr.setIsDemand(Boolean.TRUE);
+    	      egDmdRsnMstr.setCreatedDate(new Date()); egDmdRsnMstr.setModifiedDate(new Date()); 
+    	      egDemandReasonMasterDao.create(egDmdRsnMstr); 
+
+    	      createEgDemandReason(bpaFeeCommon, egDmdRsnMstr); 
+    	      } 
+    	return egDmdRsnMstr; 
+    	}
+
+	@Transactional
+	public EgDemandReason createEgDemandReason(BpaFeeCommon bpaFeeCommon, EgDemandReasonMaster egDemandReasonMaster) {
+		EgDemandReason egDmdRsn = new EgDemandReason();
+		egDmdRsn.setEgDemandReasonMaster(egDemandReasonMaster);
+		egDmdRsn.setEgInstallmentMaster(
+				getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date()));
+		egDmdRsn.setGlcodeId(bpaFeeCommon.getGlcode());
+		egDmdRsn.setCreateDate(new Date());
+		egDmdRsn.setModifiedDate(new Date());
+		egDemandReasonDao.create(egDmdRsn);
+		return egDmdRsn;
+	}
 
     public Installment getCurrentInstallment(final String moduleName, final String installmentType, final Date date) {
         if (null == installmentType)

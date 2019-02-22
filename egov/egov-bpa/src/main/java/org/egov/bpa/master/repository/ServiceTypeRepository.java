@@ -60,5 +60,7 @@ public interface ServiceTypeRepository extends JpaRepository<ServiceType, Long> 
 
 	@Query("select A from ServiceType A where A.isAmenity=false and A.code in (:code) order by A.id asc ")
 	List<ServiceType> getServiceTypeByListOfCode(@Param("code") List<String> code);
+	
+	List<ServiceType> findByIsActiveTrueOrderByDescriptionAsc();
 
 }

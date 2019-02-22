@@ -744,4 +744,49 @@
 					   value="/WEB-INF/views/occupancyCertificate/search-occupancy-certificate-view.jsp" />
 	</definition>
 	
+	  <definition name="view-fees" extends="base_layout">
+        <put-attribute name="page-title" value="title.fee.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/fees/view-fees.jsp"/>
+    </definition>
+    <definition name="fees-search-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.fee.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/fees/fees-search-update.jsp"/>
+    </definition>
+    <definition name="fees-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.fee.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/fees/fees-update.jsp"/>
+    </definition>
+    <definition name="fees-search-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.fee.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/fees/fees-search-view.jsp"/>
+    </definition>
+    	<definition name="fees-view" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.fee.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/fees-view.jsp" />
+	</definition>
+    <definition name="fees-new" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.create.fee" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/fees-new.jsp" />
+	</definition>
+	    <definition name="update-fees" extends="base_layout">
+        <put-attribute name="page-title" value="title.fee.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/fees/update-fees.jsp"/>
+    </definition>
+	<definition name="fees-result" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.fees.success" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/fees-result.jsp" />
+	</definition>
+	<definition name="fees-create" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.create.fee" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/fees-create.jsp" />
+	</definition>
+	
 </tiles-definitions>
