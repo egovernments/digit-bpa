@@ -106,8 +106,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -230,31 +228,31 @@ public class BpaAjaxController {
     public List<Occupancy> getOccupancyDetails() {
         return occupancyService.findAll();
     }
-    
-	@GetMapping(value = "/application/getsuboccupancydetails", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public List<SubOccupancy> getSubOccupancyDetails() {
-		return subOccupancyService.findAll();
-	}
-	
-	@GetMapping(value = "/application/getOccupancyAndSuboccupancyMap", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<Long, List<SubOccupancy>> getOccupancyAndSuboccupancyMap() {
-		List<SubOccupancy> subOccupancyList = subOccupancyService.findAll();
-		Map<Long, List<SubOccupancy>> map = new HashMap<>();
 
-		for (SubOccupancy subOccupancy : subOccupancyList) {
-			if (map.containsKey(subOccupancy.getOccupancy().getId())) {
-				map.get(subOccupancy.getOccupancy().getId()).add(subOccupancy);
-			} else {
-				List<SubOccupancy> sub = new ArrayList<>();
-				sub.add(subOccupancy);
-				map.put(subOccupancy.getOccupancy().getId(), sub);
-			}
-		}
-		return map;
-	}
-    
+    @GetMapping(value = "/application/getsuboccupancydetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<SubOccupancy> getSubOccupancyDetails() {
+        return subOccupancyService.findAll();
+    }
+
+    @GetMapping(value = "/application/getOccupancyAndSuboccupancyMap", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<Long, List<SubOccupancy>> getOccupancyAndSuboccupancyMap() {
+        List<SubOccupancy> subOccupancyList = subOccupancyService.findAll();
+        Map<Long, List<SubOccupancy>> map = new HashMap<>();
+
+        for (SubOccupancy subOccupancy : subOccupancyList) {
+            if (map.containsKey(subOccupancy.getOccupancy().getId())) {
+                map.get(subOccupancy.getOccupancy().getId()).add(subOccupancy);
+            } else {
+                List<SubOccupancy> sub = new ArrayList<>();
+                sub.add(subOccupancy);
+                map.put(subOccupancy.getOccupancy().getId(), sub);
+            }
+        }
+        return map;
+    }
+
     @GetMapping(value = "/getApplicantDetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, String> getApplicantDetailsForMobileNumber(@RequestParam final String mobileNumber) {
@@ -394,12 +392,6 @@ public class BpaAjaxController {
         return !slotMappings.isEmpty();
     }
 
-    @GetMapping(value = "/validate/edcr-usedinbpa", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Map<String, String> validateEdcrIsUsedInBpaApplication(@RequestParam final String eDcrNumber) {
-        return workflowHistoryService.checkIsEdcrUsedInBpaApplication(eDcrNumber);
-    }
-
     @GetMapping(value = "/validate/emailandmobile", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Boolean validateEmailAndMobileNumber(@RequestParam final String inputType,
@@ -423,12 +415,6 @@ public class BpaAjaxController {
         return false;
     }
 
-    @GetMapping(value = "/application/edcr-require", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Boolean checkEDCRIsRequire(@RequestParam final String serviceType, @RequestParam final String occupancy) {
-        return bpaApplicationValidationService.isEdcrInetgrationRequired(serviceType, occupancy);
-    }
-
     @GetMapping(value = "/occupancy/sub-usages", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Usage> getSubUsagesByOccupancy(@RequestParam String occupancy) {
@@ -439,18 +425,22 @@ public class BpaAjaxController {
     @ResponseBody
     public void getApplicationDetailsByPlanPermissionNumber(@RequestParam final String permitNumber,
             final HttpServletResponse response) throws IOException {
-        BpaApplication application = StringUtils.isBlank(permitNumber) ? null : applicationBpaService.findByPermitNumber(permitNumber);
+        BpaApplication application = StringUtils.isBlank(permitNumber) ? null
+                : applicationBpaService.findByPermitNumber(permitNumber);
         final JsonObject jsonObj = new JsonObject();
         if (application != null) {
-        	jsonObj.addProperty("ocExists",occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get("isExists"));
-        	jsonObj.addProperty("ocExistsMessage",occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get(BpaConstants.MESSAGE));
+            jsonObj.addProperty("ocExists",
+                    occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get("isExists"));
+            jsonObj.addProperty("ocExistsMessage", occupancyCertificateUtils
+                    .checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get(BpaConstants.MESSAGE));
             jsonObj.addProperty("id", application.getId());
             jsonObj.addProperty("stakeholderId", application.getStakeHolder().get(0).getId());
             jsonObj.addProperty("occupancy", application.getOccupancy().getDescription());
             jsonObj.addProperty("zone", application.getSiteDetail().get(0).getAdminBoundary().getParent().getName());
             jsonObj.addProperty("revenueWard", application.getSiteDetail().get(0).getAdminBoundary().getName());
             jsonObj.addProperty("reSurveyNumber", application.getSiteDetail().get(0).getReSurveyNumber());
-            jsonObj.addProperty("village", application.getSiteDetail().get(0).getLocationBoundary() == null ? "" : application.getSiteDetail().get(0).getLocationBoundary().getName());
+            jsonObj.addProperty("village", application.getSiteDetail().get(0).getLocationBoundary() == null ? ""
+                    : application.getSiteDetail().get(0).getLocationBoundary().getName());
             jsonObj.addProperty("plotArea", application.getSiteDetail().get(0).getExtentinsqmts());
             jsonObj.addProperty("serviceTypeId", application.getServiceType().getId());
             jsonObj.addProperty("serviceTypeDesc", application.getServiceType().getDescription());
@@ -479,53 +469,41 @@ public class BpaAjaxController {
         return checkListDetailService.findActiveCheckListByServiceType(serviceType, checklistType);
     }
 
-    @GetMapping(value = "/validate/occupancy-certificate/edcrno-used", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Map<String, String> checkDCRIsUsedWithAnyOccupancyCertificateAppln(@RequestParam final String eDcrNumber) {
-        return occupancyCertificateUtils.checkIsEdcrUsedWithAnyOCApplication(eDcrNumber);
-    }
+    @GetMapping(value = "/boundary/ajax-boundary-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void getBoundaryConfiguration(HttpServletResponse response) throws IOException {
+        JSONArray validBoundaryTypeJsonArray;
+        JSONObject boundaryJsonData = new JSONObject();
+        JSONObject boundaryTypeInJson;
+        JSONObject boundaryTypeJson;
+        JSONObject boundaryJson = null;
+        JSONArray boundaryArray = null;
 
-    @GetMapping(value = "/validate/edcr-expiry", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public Map<String, String> validateEdcrExpiry(@RequestParam final String eDcrNumber) {
-        return applicationBpaService.checkEdcrExpiry(eDcrNumber,((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        final AppConfigValues boundaryConfiguration = appConfigValuesService
+                .getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME, BpaConstants.BOUNDARY_CONFIGURATION_KEY)
+                .get(0);
+        JSONObject boundaryConfigJson = new JSONObject(boundaryConfiguration.getValue());
+        JSONObject validBoundaryJson = (JSONObject) boundaryConfigJson.get("validBoundary");
+        JSONObject crossBoundaryJson = (JSONObject) boundaryConfigJson.get("crossBoundary");
+        boundaryJsonData.put("crossBoundary", crossBoundaryJson);
+        for (final String heirarchy : validBoundaryJson.keySet()) {
+            boundaryTypeJson = new JSONObject();
+            validBoundaryTypeJsonArray = validBoundaryJson.getJSONArray(heirarchy);
+            for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {
+                boundaryTypeInJson = validBoundaryTypeJsonArray.getJSONObject(i);
+                boundaryArray = new JSONArray();
+                for (final Boundary boundary : boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
+                        boundaryTypeInJson.getString("boundary"), heirarchy)) {
+                    boundaryJson = new JSONObject();
+                    boundaryJson.put("id", boundary.getId());
+                    boundaryJson.put("code", boundary.getCode());
+                    boundaryJson.put("name", boundary.getName());
+                    boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getId());
+                    boundaryArray.put(boundaryJson);
+                }
+                boundaryTypeJson.put(boundaryTypeInJson.getString("displayName"), boundaryArray);
+            }
+            boundaryJsonData.put(heirarchy, boundaryTypeJson);
+        }
+        IOUtils.write(boundaryJsonData.toString(), response.getWriter());
     }
-
-	@GetMapping(value = "/boundary/ajax-boundary-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
-	public void getBoundaryConfiguration(HttpServletResponse response) throws IOException {
-		JSONArray validBoundaryTypeJsonArray;
-		JSONObject boundaryJsonData = new JSONObject();
-		JSONObject boundaryTypeInJson;
-		JSONObject boundaryTypeJson;
-		JSONObject boundaryJson = null;
-		JSONArray boundaryArray = null;
-		
-		final AppConfigValues boundaryConfiguration = appConfigValuesService
-				.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME, BpaConstants.BOUNDARY_CONFIGURATION_KEY)
-				.get(0);
-		JSONObject boundaryConfigJson = new JSONObject(boundaryConfiguration.getValue());
-		JSONObject validBoundaryJson = (JSONObject) boundaryConfigJson.get("validBoundary");
-		JSONObject crossBoundaryJson = (JSONObject) boundaryConfigJson.get("crossBoundary");
-		boundaryJsonData.put("crossBoundary", crossBoundaryJson);
-		for (final String heirarchy : validBoundaryJson.keySet()) {
-			boundaryTypeJson = new JSONObject();
-			validBoundaryTypeJsonArray = validBoundaryJson.getJSONArray(heirarchy);
-			for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {
-				boundaryTypeInJson = validBoundaryTypeJsonArray.getJSONObject(i);
-				boundaryArray = new JSONArray();
-				for (final Boundary boundary : boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-						boundaryTypeInJson.getString("boundary"), heirarchy)) {
-					boundaryJson = new JSONObject();
-					boundaryJson.put("id", boundary.getId());
-					boundaryJson.put("code", boundary.getCode());
-					boundaryJson.put("name", boundary.getName());
-					boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getId());
-					boundaryArray.put(boundaryJson);
-				}
-				boundaryTypeJson.put(boundaryTypeInJson.getString("displayName"), boundaryArray);
-			}
-			boundaryJsonData.put(heirarchy, boundaryTypeJson);
-		}
-		IOUtils.write(boundaryJsonData.toString(), response.getWriter());
-	}
 }

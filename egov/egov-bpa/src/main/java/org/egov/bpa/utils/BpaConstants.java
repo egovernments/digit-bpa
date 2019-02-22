@@ -335,6 +335,7 @@ public class BpaConstants {
     public static final String RECENT_DCRRULE_AMENDMENTDAYS = "RECENT_DCRRULE_AMENDMENTDAYS";
     public static final String OCFEECALULATION = "OC_FEE_CALCULATION";
     public static final String IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION = "IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION";
+    public static final String DCR_BPA_INTEGRATION_REQUIRE = "DCR_INTEGRATION_REQUIRE_WITH_BPA";
     // other
     public static final int SCALING_FACTOR = 2;
     public static final String MESSAGE = "message";

@@ -58,7 +58,6 @@ public class ServiceType extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_SERVICETYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
-
     @NotNull
     @Length(min = 1, max = 128)
     @Column(name = "code", unique = true)
@@ -75,7 +74,7 @@ public class ServiceType extends AbstractAuditable {
     @NotNull
     private Boolean isPtisNumberRequired;
     @NotNull
-    private Boolean isAutoDcrNumberRequired;
+    private Boolean isEdcrMandatory;
     @NotNull
     @Length(min = 1, max = 128)
     private String serviceNumberPrefix;
@@ -83,9 +82,10 @@ public class ServiceType extends AbstractAuditable {
     private String descriptionLocal;
     private Boolean isDocUploadForCitizen;
     private Long sla;
-    
     @NotNull
     private Boolean isAmenity;
+    @Column(name = "isBuildingRequired")
+    private Boolean isBuildingDetailsRequired;
 
     @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<BpaDocument> document = new ArrayList<>(0);
@@ -133,14 +133,6 @@ public class ServiceType extends AbstractAuditable {
 
     public void setIsPtisNumberRequired(final Boolean isPtisNumberRequired) {
         this.isPtisNumberRequired = isPtisNumberRequired;
-    }
-
-    public Boolean getIsAutoDcrNumberRequired() {
-        return isAutoDcrNumberRequired;
-    }
-
-    public void setIsAutoDcrNumberRequired(final Boolean isAutoDcrNumberRequired) {
-        this.isAutoDcrNumberRequired = isAutoDcrNumberRequired;
     }
 
     public String getServiceNumberPrefix() {
@@ -207,12 +199,28 @@ public class ServiceType extends AbstractAuditable {
         return noc;
     }
 
-	public Boolean getIsAmenity() {
-		return isAmenity;
-	}
+    public Boolean getIsAmenity() {
+        return isAmenity;
+    }
 
-	public void setIsAmenity(Boolean isAmenity) {
-		this.isAmenity = isAmenity;
-	}
+    public void setIsAmenity(Boolean isAmenity) {
+        this.isAmenity = isAmenity;
+    }
+
+    public Boolean getIsEdcrMandatory() {
+        return isEdcrMandatory;
+    }
+
+    public void setIsEdcrMandatory(Boolean isEdcrMandatory) {
+        this.isEdcrMandatory = isEdcrMandatory;
+    }
+
+    public Boolean getIsBuildingDetailsRequired() {
+        return isBuildingDetailsRequired;
+    }
+
+    public void setIsBuildingDetailsRequired(Boolean isBuildingDetailsRequired) {
+        this.isBuildingDetailsRequired = isBuildingDetailsRequired;
+    }
 
 }

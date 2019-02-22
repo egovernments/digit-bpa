@@ -48,21 +48,20 @@
 package org.egov.bpa.web.controller.transaction.citizen;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_HISTORY;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -80,6 +79,7 @@ import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OCAppointmentScheduleService;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
@@ -133,6 +133,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private OCLetterToPartyService ocLetterToPartyService;
     @Autowired
     private OCInspectionService ocInspectionService;
+    @Autowired
+    private BpaDcrService bpaDcrService;
 
     @GetMapping("/occupancy-certificate/update/{applicationNumber}")
     public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
@@ -151,41 +153,41 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
             return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
         }
     }
-    
-	@RequestMapping(value = "/occupancy-certificate/comparison-report/{applicationNumber}", method = RequestMethod.GET)
-	public String viewApplicationByPermitNumber(final Model model, @PathVariable final String applicationNumber) {
-		OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
-		List<OCBuilding>  ocBuildings= oc.getBuildings();
-		List<BuildingDetail> bpaBuildingDetails = oc.getParent().getBuildingDetail();
-	//	List<OCComparisonReport> list = OccupancyCertificateUtils.getOcComparisonReport(ocBuildings,bpaBuildingDetails);
-		Map<Integer,HashMap<Integer,OCFloor>> ocMap= new HashMap<>();
-		Map<Integer,HashMap<Integer,ApplicationFloorDetail>> bpaMap= new HashMap<>();
-	    for(OCBuilding ocBuilding : ocBuildings){
-	    	HashMap<Integer, OCFloor> map = new HashMap<Integer,OCFloor>();
-	    	for(OCFloor ocFloor : ocBuilding.getFloorDetails())
-	    		map.put(ocFloor.getFloorNumber(), ocFloor);
-	    	ocMap.put(ocBuilding.getBuildingNumber(), map);
-	    }
-	    for(BuildingDetail bpaBuilding : bpaBuildingDetails){
-	    	HashMap<Integer, ApplicationFloorDetail> map = new HashMap<Integer,ApplicationFloorDetail>();
-	    	for(ApplicationFloorDetail bpaFloor : bpaBuilding.getApplicationFloorDetails())
-	    		map.put(bpaFloor.getFloorNumber(), bpaFloor);
-	    	bpaMap.put(bpaBuilding.getNumber(), map);
-	    }
-	    Map<Integer,BigDecimal> ocBuildHeightMap= new HashMap<>();
-	    Map<Integer,BigDecimal> bpaBuildHeightMap= new HashMap<>();
-	    for(OCBuilding ocBuilding : ocBuildings)
-	    	ocBuildHeightMap.put(ocBuilding.getBuildingNumber(), ocBuilding.getHeightFromGroundWithOutStairRoom());
-	    
-	    for(BuildingDetail bpaBuilding : bpaBuildingDetails)
-	    	bpaBuildHeightMap.put(bpaBuilding.getNumber(), bpaBuilding.getHeightFromGroundWithOutStairRoom());	
-	    
-		model.addAttribute("ocMap",ocMap);
-		model.addAttribute("bpaMap",bpaMap);
-		model.addAttribute("ocBuildingHeightMap",ocBuildHeightMap);
-		model.addAttribute("bpaBuildingHeightMap",bpaBuildHeightMap);
-		return "view-oc-comparison-report";
-	}
+
+    @RequestMapping(value = "/occupancy-certificate/comparison-report/{applicationNumber}", method = RequestMethod.GET)
+    public String viewApplicationByPermitNumber(final Model model, @PathVariable final String applicationNumber) {
+        OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
+        List<OCBuilding> ocBuildings = oc.getBuildings();
+        List<BuildingDetail> bpaBuildingDetails = oc.getParent().getBuildingDetail();
+        // List<OCComparisonReport> list = OccupancyCertificateUtils.getOcComparisonReport(ocBuildings,bpaBuildingDetails);
+        Map<Integer, HashMap<Integer, OCFloor>> ocMap = new HashMap<>();
+        Map<Integer, HashMap<Integer, ApplicationFloorDetail>> bpaMap = new HashMap<>();
+        for (OCBuilding ocBuilding : ocBuildings) {
+            HashMap<Integer, OCFloor> map = new HashMap<Integer, OCFloor>();
+            for (OCFloor ocFloor : ocBuilding.getFloorDetails())
+                map.put(ocFloor.getFloorNumber(), ocFloor);
+            ocMap.put(ocBuilding.getBuildingNumber(), map);
+        }
+        for (BuildingDetail bpaBuilding : bpaBuildingDetails) {
+            HashMap<Integer, ApplicationFloorDetail> map = new HashMap<Integer, ApplicationFloorDetail>();
+            for (ApplicationFloorDetail bpaFloor : bpaBuilding.getApplicationFloorDetails())
+                map.put(bpaFloor.getFloorNumber(), bpaFloor);
+            bpaMap.put(bpaBuilding.getNumber(), map);
+        }
+        Map<Integer, BigDecimal> ocBuildHeightMap = new HashMap<>();
+        Map<Integer, BigDecimal> bpaBuildHeightMap = new HashMap<>();
+        for (OCBuilding ocBuilding : ocBuildings)
+            ocBuildHeightMap.put(ocBuilding.getBuildingNumber(), ocBuilding.getHeightFromGroundWithOutStairRoom());
+
+        for (BuildingDetail bpaBuilding : bpaBuildingDetails)
+            bpaBuildHeightMap.put(bpaBuilding.getNumber(), bpaBuilding.getHeightFromGroundWithOutStairRoom());
+
+        model.addAttribute("ocMap", ocMap);
+        model.addAttribute("bpaMap", bpaMap);
+        model.addAttribute("ocBuildingHeightMap", ocBuildHeightMap);
+        model.addAttribute("bpaBuildingHeightMap", bpaBuildHeightMap);
+        return "view-oc-comparison-report";
+    }
 
     private void loadData(OccupancyCertificate oc, Model model) {
         List<OCLetterToParty> ocLetterToParties = ocLetterToPartyService.findAllByOC(oc);
@@ -216,8 +218,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 
     private void prepareFormData(final OccupancyCertificate oc, final Model model) {
         model.addAttribute("isEDCRIntegrationRequire",
-                bpaApplicationValidationService.isEdcrInetgrationRequired(oc.getParent().getServiceType().getCode(),
-                        oc.getParent().getOccupancy().getDescription()));
+                bpaDcrService.isEdcrIntegrationRequireByService(oc.getParent().getServiceType().getCode()));
         model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
         model.addAttribute("stateType", oc.getClass().getSimpleName());
         model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
@@ -277,7 +278,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 
             message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
             model.addAttribute(MESSAGE, message);
-            if(!bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            if (!bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
                 ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
             }
         } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {

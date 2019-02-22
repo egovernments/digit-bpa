@@ -118,6 +118,7 @@ import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
+import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.eis.entity.Assignment;
@@ -177,6 +178,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private BpaApplicationPermitConditionsService bpaApplicationPermitConditionsService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private BpaDcrService bpaDcrService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -204,7 +207,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 || APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())) {
             if (applicationBpaService.applicationinitiatedByNonEmployee(application)
                     && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
-                model.addAttribute(COLLECT_FEE_VALIDATE, messageSource.getMessage("msg.collect.applnfees.toprocess.appln", null, null));
+                model.addAttribute(COLLECT_FEE_VALIDATE,
+                        messageSource.getMessage("msg.collect.applnfees.toprocess.appln", null, null));
             } else
                 model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }
@@ -245,8 +249,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         loadFormData(model, application);
         loadCommonApplicationDetails(model, application);
         model.addAttribute("showDcrDocuments",
-                bpaApplicationValidationService.isEdcrInetgrationRequired(application.getServiceType().getCode(),
-                        application.getOccupancy().getCode()));
+                bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
         model.addAttribute("documentScrutinyValues", ChecklistValues.values());
         model.addAttribute("loginUser", securityUtils.getCurrentUser());
         getDcrDocumentsUploadMode(model);

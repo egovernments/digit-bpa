@@ -85,7 +85,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,6 +106,7 @@ import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
+import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
@@ -176,6 +176,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     private OCNoticeConditionsService ocNoticeConditionsService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private BpaDcrService bpaDcrService;
 
     @GetMapping("/update/{applicationNumber}")
     public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model,
@@ -210,8 +212,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         getActionsForOCApplication(model, oc);
         buildRejectionReasons(model, oc);
         model.addAttribute("showDcrDocuments",
-                bpaApplicationValidationService.isEdcrInetgrationRequired(oc.getParent().getServiceType().getCode(),
-                        oc.getParent().getOccupancy().getCode()));
+                bpaDcrService.isEdcrIntegrationRequireByService(oc.getParent().getServiceType().getCode()));
         model.addAttribute("documentScrutinyValues", ChecklistValues.values());
         model.addAttribute("loginUser", securityUtils.getCurrentUser());
         getDcrDocumentsUploadMode(model);

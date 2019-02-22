@@ -85,6 +85,7 @@ import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
+import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
@@ -137,12 +138,14 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private BuildingFloorDetailsService buildingFloorDetailsService;
     @Autowired
     private SearchBpaApplicationService searchBpaApplicationService;
+    @Autowired
+    private BpaDcrService bpaDcrService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
         setCityName(model, request);
-        model.addAttribute("currentuser",securityUtils.getCurrentUser().getName());
+        model.addAttribute("currentuser", securityUtils.getCurrentUser().getName());
         return loadNewForm(bpaApplication, model, ST_CODE_01);
     }
 
@@ -315,12 +318,13 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
-        Map<String, String> eDcrApplDetails= workflowHistoryService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
-        if(!eDcrApplDetails.isEmpty() && eDcrApplDetails.get("isExists")=="true"){
-        	buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
+        Map<String, String> eDcrApplDetails = bpaDcrService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
+        if (bpaDcrService.isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode())
+                && !eDcrApplDetails.isEmpty() && eDcrApplDetails.get("isExists").equals("true")) {
+            buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
-        	model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
+            model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
 

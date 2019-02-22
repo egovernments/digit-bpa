@@ -234,13 +234,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Autowired
     private CustomImplProvider specificNoticeService;
     @Autowired
-	@Qualifier("parentMessageSource")
-	private MessageSource bpaMessageSource;
+    @Qualifier("parentMessageSource")
+    private MessageSource bpaMessageSource;
     @Autowired
     private DcrRestService dcrRestService;
     @Autowired
     private PermitFeeRepository permitFeeRepository;
-    
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -254,7 +254,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.getApplicationAmenity().clear();
         application.setApplicationAmenity(application.getApplicationAmenityTemp());
         application.setApplicationNumber(applicationNumberGenerator.generate());
-        //buildRegistrarOfficeForVillage(application);
+        // buildRegistrarOfficeForVillage(application);
         persistBpaNocDocuments(application);
         application.setDcrDocuments(persistApplnDCRDocuments(application));
         buildBuildingSubUsage(application);
@@ -270,9 +270,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         setSource(application);
         Long approvalPosition = null;
         if (bpaUtils.isApplicationFeeCollectionRequired())
-        	application.setDemand(applicationBpaBillService.createDemand(application));
+            application.setDemand(applicationBpaBillService.createDemand(application));
         else
-        	application.setDemand(applicationBpaBillService.createDemandWhenFeeCollectionNotRequire());
+            application.setDemand(applicationBpaBillService.createDemandWhenFeeCollectionNotRequire());
 
         if (!bpaUtils.logedInuseCitizenOrBusinessUser()) {
             WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
@@ -393,8 +393,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
         application.setDcrDocuments(persistApplnDCRDocuments(application));
-        //persistPostalAddress(application);
-        //buildRegistrarOfficeForVillage(application);
+        // persistPostalAddress(application);
+        // buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
         applicationBpaRepository.saveAndFlush(application);
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
@@ -412,8 +412,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         }
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
-        //persistPostalAddress(application);
-        //buildRegistrarOfficeForVillage(application);
+        // persistPostalAddress(application);
+        // buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
         applicationBpaRepository.saveAndFlush(application);
     }
@@ -452,34 +452,36 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.setDcrDocuments(persistApplnDCRDocuments(application));
         persistBpaNocDocuments(application);
         buildExistingAndProposedBuildingDetails(application);
-        //persistPostalAddress(application);
+        // persistPostalAddress(application);
         buildSchemeLandUsage(application);
         // For one day permit
         if (application.getIsOneDayPermitApplication()
                 && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())) {
-        	PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
-		
-        	ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
+            PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
+
+            ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
             permitFee.setApplicationFee(applicationFee);
             permitFeeRepository.save(permitFee);
-        	application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(), permitFee.getApplication().getDemand()));
-        }        
-        if (bpaUtils.isApplicationFeeCollectionRequired() 
-        		&& !WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
+            application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(),
+                    permitFee.getApplication().getDemand()));
+        }
+        if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
-        	
-        	String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.BPAFEECALULATION);
-        	
-        	if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
-            		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
-			PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
 
-        	ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
-            permitFee.setApplicationFee(applicationFee);
-            permitFeeRepository.save(permitFee);
-        	application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(), permitFee.getApplication().getDemand()));
-         }
+            String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
+                    BpaConstants.BPAFEECALULATION);
+
+            if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
+                    feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
+                PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
+
+                ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
+                permitFee.setApplicationFee(applicationFee);
+                permitFeeRepository.save(permitFee);
+                application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(),
+                        permitFee.getApplication().getDemand()));
+            }
         }
         if (WF_APPROVE_BUTTON.equals(workFlowAction)) {
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
@@ -551,12 +553,12 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;
     }
-    
+
     public BigDecimal setRegistrationAmountForRegistrationWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
         BigDecimal admissionfeeAmount;
         if (serviceType != null)
             admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
-            		BPAREGISTRATIONFEETYPE);
+                    BPAREGISTRATIONFEETYPE);
         else
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;
@@ -907,34 +909,35 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return criteria.list();
 
     }
+
     /***
-     * Validate the dcr number within the specified date range.Configuration value used to decide the validity.
-     * Based on number of days configured, DCR plan will be compared.
+     * Validate the dcr number within the specified date range.Configuration value used to decide the validity. Based on number of
+     * days configured, DCR plan will be compared.
      * @param eDcrNumber
      * @param request
      * @return
      */
     public Map<String, String> checkEdcrExpiry(final String eDcrNumber, HttpServletRequest request) {
-    	Map<String, String> eDcrExpiryDetails = new HashMap<>();
-		int expirydays = Integer.parseInt(bpaUtils.getAppconfigValueByKeyName(RECENT_DCRRULE_AMENDMENTDAYS));
-	    Date dcrCreatedDate = dcrRestService.getDcrCreatedDate(eDcrNumber,request);
-	    
-	    eDcrExpiryDetails.put("isExpired", "false");
-		eDcrExpiryDetails.put(MESSAGE, "Not expired");
-		
-		if (dcrCreatedDate != null) {
-			int diffInDays = DateUtils.daysBetween(dcrCreatedDate, new Date());
-			if (diffInDays <= expirydays) {
-				eDcrExpiryDetails.put("isExpired", "false");
-				eDcrExpiryDetails.put(MESSAGE, "Not expired");
-			} else {
-				String message = bpaMessageSource.getMessage("msg.dcr.expiry", new String[] {
-						securityUtils.getCurrentUser().getName(), eDcrNumber, Integer.toString(expirydays) }, null);
-				eDcrExpiryDetails.put("isExpired", "true");
-				eDcrExpiryDetails.put(MESSAGE, message);
-			}
-		}
-		return eDcrExpiryDetails;
-	}
+        Map<String, String> eDcrExpiryDetails = new HashMap<>();
+        int expirydays = Integer.parseInt(bpaUtils.getAppconfigValueByKeyName(RECENT_DCRRULE_AMENDMENTDAYS));
+        Date dcrCreatedDate = dcrRestService.getDcrCreatedDate(eDcrNumber, request);
+
+        eDcrExpiryDetails.put("isExpired", "false");
+        eDcrExpiryDetails.put(MESSAGE, "Not expired");
+
+        if (dcrCreatedDate != null) {
+            int diffInDays = DateUtils.daysBetween(dcrCreatedDate, new Date());
+            if (diffInDays <= expirydays) {
+                eDcrExpiryDetails.put("isExpired", "false");
+                eDcrExpiryDetails.put(MESSAGE, "Not expired");
+            } else {
+                String message = bpaMessageSource.getMessage("msg.dcr.expiry", new String[] {
+                        securityUtils.getCurrentUser().getName(), eDcrNumber, Integer.toString(expirydays) }, null);
+                eDcrExpiryDetails.put("isExpired", "true");
+                eDcrExpiryDetails.put(MESSAGE, message);
+            }
+        }
+        return eDcrExpiryDetails;
+    }
 
 }
