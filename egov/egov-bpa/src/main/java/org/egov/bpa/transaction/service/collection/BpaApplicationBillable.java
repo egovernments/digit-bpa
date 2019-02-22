@@ -68,7 +68,7 @@ import java.util.List;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BpaApplicationBillable extends AbstractBillable implements Billable {
 
-	private static final String DISPLAY_MESSAGE = "Bpa Application Fee Collection";
+	private static final String DISPLAY_MESSAGE = "BPA Permit Application Fee Collection";
 	private BpaApplication application;
 	private Long userId;
 	private Boolean isCallbackForApportion = Boolean.FALSE;

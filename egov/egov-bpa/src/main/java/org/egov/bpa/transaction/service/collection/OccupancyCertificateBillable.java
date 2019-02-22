@@ -68,7 +68,7 @@ import java.util.List;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class OccupancyCertificateBillable extends AbstractBillable implements Billable {
 
-	private static final String DISPLAY_MESSAGE = "Bpa Application Fee Collection";
+	private static final String DISPLAY_MESSAGE = "BPA Occupancy Certificate Fee Collection";
 	private OccupancyCertificate oc;
 	private Long userId;
 	private Boolean isCallbackForApportion = Boolean.FALSE;
