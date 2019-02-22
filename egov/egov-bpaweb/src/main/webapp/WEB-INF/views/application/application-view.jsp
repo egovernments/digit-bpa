@@ -334,7 +334,7 @@
 						</c:when>
 						<c:otherwise>	
 						   
-							<c:if test="${bpaApplication.status.code eq 'Digitally signed'}">
+							<c:if test="${bpaApplication.status.code ne 'Digitally signed'}">
 								<jsp:include page="../common/commonWorkflowMatrix.jsp" />
 							</c:if>
 							<div class="buttonbottom" align="center">
