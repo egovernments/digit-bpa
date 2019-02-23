@@ -28,7 +28,7 @@
 	</variable>
 	<group name="totalArea">
 		<groupFooter>
-			<band height="20">
+			<band height="22">
 				<textField pattern="#,##0.00">
 					<reportElement x="442" y="0" width="100" height="20" uuid="a1d08495-a265-40b4-b31f-0768788fd88a"/>
 					<box>
@@ -72,7 +72,7 @@
 					<textFieldExpression><![CDATA[$V{totalFloorArea}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="88" y="0" width="37" height="20" uuid="ad891c00-1507-4034-bd92-919aad322837"/>
+					<reportElement x="125" y="0" width="120" height="20" uuid="ad891c00-1507-4034-bd92-919aad322837"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -98,7 +98,7 @@
 					<text><![CDATA[]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="125" y="0" width="120" height="20" uuid="21edbc1f-364d-4f0c-9511-b95f81d3994e"/>
+					<reportElement x="88" y="0" width="37" height="20" uuid="85429f13-aca0-489e-8c69-23bec4ba4825"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>

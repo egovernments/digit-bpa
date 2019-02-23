@@ -72,7 +72,7 @@
 					<textFieldExpression><![CDATA[$V{totalFloorArea}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="88" y="0" width="37" height="20" uuid="ad891c00-1507-4034-bd92-919aad322837"/>
+					<reportElement x="125" y="0" width="120" height="20" uuid="ad891c00-1507-4034-bd92-919aad322837"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>
@@ -98,7 +98,7 @@
 					<text><![CDATA[]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="125" y="0" width="120" height="20" uuid="21edbc1f-364d-4f0c-9511-b95f81d3994e"/>
+					<reportElement x="88" y="0" width="37" height="20" uuid="c2e0899d-a9ed-4ad6-9630-f59aa8ebd649"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 						<leftPen lineWidth="1.0"/>

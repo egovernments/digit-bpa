@@ -554,7 +554,7 @@
 				<text><![CDATA[Total Existing Area :]]></text>
 			</staticText>
 		</band>
-		<band height="35" splitType="Prevent">
+		<band height="48" splitType="Prevent">
 			<subreport>
 				<reportElement x="0" y="0" width="570" height="35" isRemoveLineWhenBlank="true" uuid="1f313474-b095-4a9a-891c-f4a17562ea2b">
 					<printWhenExpression><![CDATA[new Boolean($F{buildingDetail}.size()!= 0)]]></printWhenExpression>
@@ -566,6 +566,10 @@
 				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("buildingblockdetailssubreport.jasper")]]></subreportExpression>
 			</subreport>
+			<textField evaluationTime="Report">
+				<reportElement x="177" y="18" width="100" height="30" uuid="bdf305ff-9514-4034-ba23-4ffcf1d78ef6"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="57">
 			<printWhenExpression><![CDATA[new Boolean($F{buildingDetail}.size()!= 0)]]></printWhenExpression>
