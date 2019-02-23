@@ -744,7 +744,7 @@
 					   value="/WEB-INF/views/occupancyCertificate/search-occupancy-certificate-view.jsp" />
 	</definition>
 	
-	  <definition name="view-fees" extends="base_layout">
+  <definition name="view-fees" extends="base_layout">
         <put-attribute name="page-title" value="title.fee.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/fees/view-fees.jsp"/>
     </definition>
@@ -789,4 +789,32 @@
 			value="/WEB-INF/views/fees/fees-create.jsp" />
 	</definition>
 	
+	<definition name="servicetype-checklist-mapping" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.checklist.servicetype.mapping.create" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/checklistservicetype/servicetype-checklist-mapping.jsp" />
+	</definition>
+	
+	<definition name="servicetype-checklist-mapping-create" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.checklist.servicetype.mapping.create" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/checklistservicetype/servicetype-checklist-mapping-create.jsp" />
+	</definition>
+	
+	<definition name="checklist-servicetype-mapping-result" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.checklist.servicetype.mapping.result" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/checklistservicetype/checklist-servicetype-mapping-result.jsp" />
+	</definition>
+	
+	<definition name="checklist-servicetype-mapping-search" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.checklist.servicetype.mapping.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/checklistservicetype/checklist-servicetype-mapping-search.jsp" />
+	</definition>
+
 </tiles-definitions>
