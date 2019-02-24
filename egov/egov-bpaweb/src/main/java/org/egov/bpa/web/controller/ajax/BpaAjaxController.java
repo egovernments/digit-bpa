@@ -87,6 +87,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -469,41 +470,78 @@ public class BpaAjaxController {
         return checkListDetailService.findActiveCheckListByServiceType(serviceType, checklistType);
     }
 
-    @GetMapping(value = "/boundary/ajax-boundary-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void getBoundaryConfiguration(HttpServletResponse response) throws IOException {
-        JSONArray validBoundaryTypeJsonArray;
-        JSONObject boundaryJsonData = new JSONObject();
-        JSONObject boundaryTypeInJson;
-        JSONObject boundaryTypeJson;
-        JSONObject boundaryJson = null;
-        JSONArray boundaryArray = null;
+	@GetMapping(value = "/boundary/ajax-boundary-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void getBoundaryConfiguration(HttpServletResponse response) throws IOException {
+		JSONArray validBoundaryTypeJsonArray;
+		JSONObject boundaryDataJson = new JSONObject();
+		JSONObject boundaryOutputJson = new JSONObject();
+		JSONObject boundaryInfoJson = null;
+		JSONObject boundaryTypeInJson;
+		JSONObject boundaryJson = null;
+		JSONArray boundaryArray = null;
+		BoundaryType boundaryType = null;
 
-        final AppConfigValues boundaryConfiguration = appConfigValuesService
-                .getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME, BpaConstants.BOUNDARY_CONFIGURATION_KEY)
-                .get(0);
-        JSONObject boundaryConfigJson = new JSONObject(boundaryConfiguration.getValue());
-        JSONObject validBoundaryJson = (JSONObject) boundaryConfigJson.get("validBoundary");
-        JSONObject crossBoundaryJson = (JSONObject) boundaryConfigJson.get("crossBoundary");
-        boundaryJsonData.put("crossBoundary", crossBoundaryJson);
-        for (final String heirarchy : validBoundaryJson.keySet()) {
-            boundaryTypeJson = new JSONObject();
-            validBoundaryTypeJsonArray = validBoundaryJson.getJSONArray(heirarchy);
-            for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {
-                boundaryTypeInJson = validBoundaryTypeJsonArray.getJSONObject(i);
-                boundaryArray = new JSONArray();
-                for (final Boundary boundary : boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
-                        boundaryTypeInJson.getString("boundary"), heirarchy)) {
-                    boundaryJson = new JSONObject();
-                    boundaryJson.put("id", boundary.getId());
-                    boundaryJson.put("code", boundary.getCode());
-                    boundaryJson.put("name", boundary.getName());
-                    boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getId());
-                    boundaryArray.put(boundaryJson);
-                }
-                boundaryTypeJson.put(boundaryTypeInJson.getString("displayName"), boundaryArray);
-            }
-            boundaryJsonData.put(heirarchy, boundaryTypeJson);
-        }
-        IOUtils.write(boundaryJsonData.toString(), response.getWriter());
-    }
+		final AppConfigValues boundaryConfiguration = appConfigValuesService
+				.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME, BpaConstants.BOUNDARY_CONFIGURATION_KEY)
+				.get(0);
+		JSONObject boundaryConfigJson = new JSONObject(boundaryConfiguration.getValue());
+		JSONObject validBoundaryJson = (JSONObject) boundaryConfigJson.get("validBoundary");
+		JSONObject crossBoundaryJson = (JSONObject) boundaryConfigJson.get("crossBoundary");
+		boundaryOutputJson.put("crossBoundary", crossBoundaryJson);
+		for (final String heirarchy : validBoundaryJson.keySet()) {
+			validBoundaryTypeJsonArray = validBoundaryJson.getJSONArray(heirarchy);
+			for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {
+				boundaryInfoJson = new JSONObject();
+				boundaryInfoJson.put("hierarchy", heirarchy);
+				boundaryTypeInJson = validBoundaryTypeJsonArray.getJSONObject(i);
+				boundaryArray = new JSONArray();
+				boundaryType = boundaryTypeService
+						.getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeInJson.getString("boundary"), heirarchy);
+				boundaryInfoJson.put("displayName", boundaryTypeInJson.getString("displayName"));
+				for (final Boundary boundary : boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getId())) {
+					boundaryJson = new JSONObject();
+					boundaryJson.put("id", boundary.getId());
+					boundaryJson.put("code", boundary.getCode());
+					boundaryJson.put("name", boundary.getName());
+					boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getId());
+					boundaryArray.put(boundaryJson);
+				}
+				boundaryInfoJson.put("data", boundaryArray);
+				boundaryDataJson.put(boundaryType.getHierarchyType().getId() + "-" + boundaryType.getHierarchy(), boundaryInfoJson);
+			}
+		}
+		boundaryOutputJson.put("boundaryData", boundaryDataJson);
+		System.out.println("getBoundaryConfiguration--->" + boundaryOutputJson.toString());
+		IOUtils.write(boundaryOutputJson.toString(), response.getWriter());
+	}
+	
+	@GetMapping(value = "/boundary/ajax-cross-boundary", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void getCrossBoundary(HttpServletResponse response, @RequestParam final String parent,
+			@RequestParam final String child, @RequestParam final String selectedParent) throws IOException {
+		JSONObject childBoundaryJson = new JSONObject();
+		List<Boundary> childBoundaries;
+		JSONObject boundaryJson = null;
+		JSONArray boundaryArray = null;
+
+		String parentHeirarchy = parent.split(":")[0];
+		String parentBoundaryType = parent.split(":")[1];
+
+		String[] childBoundary = child.split(",");
+
+		for (int i = 0; i < childBoundary.length; i++) {
+			childBoundaries = crossHierarchyService
+					.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(parentBoundaryType,
+							parentHeirarchy, childBoundary[i].split(":")[1], Long.valueOf(selectedParent));
+			boundaryArray = new JSONArray();
+			for (final Boundary boundary : childBoundaries) {
+				boundaryJson = new JSONObject();
+				boundaryJson.put("id", boundary.getId());
+				boundaryJson.put("name", boundary.getName());
+				boundaryArray.put(boundaryJson);
+			}
+			childBoundaryJson.put(childBoundary[i].split(":")[1], boundaryArray);
+		}
+		System.out.println("getCrossBoundary--->"+childBoundaryJson.toString());
+		IOUtils.write(childBoundaryJson.toString(), response.getWriter());
+	}
 }

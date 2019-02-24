@@ -60,56 +60,71 @@ function loadBoundary() {
         contentType: 'application/json; charset=utf-8',
         success: function (response) {
         	isExist = true;
-        	var boundaryData = JSON.parse(response);
-        	var heirarchy = [];
-        	var adminBoundaryType = [];
-        	var revenueBoundaryType = [];
-        	var locationBoundaryType = [];
-        		for(var k in boundaryData) 
-        		heirarchy.push(k);
-        		for (var i = 0; i < heirarchy.length; i++) {
-        			if (heirarchy[i].toUpperCase() == 'ADMINISTRATION') {
-        				for(var k in boundaryData[heirarchy[i]]) {
-    						if(boundaryData[heirarchy[i]][k]!=null && boundaryData[heirarchy[i]][k]!=''){
-	        					$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+k+' : </label>');
-	        					$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" data-first-option="false" id="'+k.replace(/ +/g, "")+heirarchy[i]+'"> <option value="">select</option></select></div>');
-	    						$.each(boundaryData[heirarchy[i]][k], function(index, value) {
-	    							$("#"+k.replace(/ +/g, "")+heirarchy[i]).append($('<option>').text(value.name).attr('value', value.id));
-	    						});
-	        		        	adminBoundaryType.push(k);
-    						}
-        				}
-        			}
-        			$('#boundarydivision').append('<br/>')
-        			if (heirarchy[i].toUpperCase() == 'REVENUE') {
-        				for(var k in boundaryData[heirarchy[i]]) {
-    						if(boundaryData[heirarchy[i]][k]!=null && boundaryData[heirarchy[i]][k]!=''){
-	        					$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+k+' : </label>');
-	        					$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" data-first-option="false" id="'+k.replace(/ +/g, "")+heirarchy[i]+'"> <option value="">select</option></select></div>');
-	    						$.each(boundaryData[heirarchy[i]][k], function(index, value) {
-	    							$("#"+k.replace(/ +/g, "")+heirarchy[i]).append($('<option>').text(value.name).attr('value', value.id));
-	    						});
-	    						revenueBoundaryType.push(k);
-    						}
-        				}
-        			}
-        			$('#boundarydivision').append('<br/>')
-        			if (heirarchy[i].toUpperCase() == 'LOCATION') {
-        				for(var k in boundaryData[heirarchy[i]]) 
-    						if(boundaryData[heirarchy[i]][k]!=null && boundaryData[heirarchy[i]][k]!=''){
-	        					$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+k+' : </label>');
-	        					$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" data-first-option="false" id="'+k.replace(/ +/g, "")+heirarchy[i]+'"> <option value="">select</option></select></div>');
-	    						$.each(boundaryData[heirarchy[i]][k], function(index, value) {
-	    							$("#"+k.replace(/ +/g, "")+heirarchy[i]).append($('<option>').text(value.name).attr('value', value.id));
-	    						});
-	    						locationBoundaryType.push(k);
-    						}
-        			}
-        		}
+        	var responseData = JSON.parse(response);
+        	var orderArray = [];
+        	var fromHierarchy;
+        	var toHierarchy;
+        	var displayName;
+        	var hierarchy;
+        	var crosslinkConfig=responseData['crossBoundary'];
+        	var boundaryData=responseData['boundaryData'];
+        	if(crosslinkConfig!=null && crosslinkConfig!=''){
+	        	fromHierarchy=crosslinkConfig['fromHierarchy'];
+	        	toHierarchy=crosslinkConfig['toHierarchy'];
+        	}
+        	for(var k in boundaryData) 
+        		orderArray.push(k);
+        	orderArray.sort();
+        	for (var i = 0; i < orderArray.length; i++) {
+        		displayName = boundaryData[orderArray[i]]['displayName'];
+        		hierarchy = boundaryData[orderArray[i]]['hierarchy'];
+				if(boundaryData[orderArray[i]]['data']!=null && boundaryData[orderArray[i]]['data']!=''){
+					$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+' : </label>');
+					if(fromHierarchy.indexOf(displayName) != -1){
+						$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" data-first-option="false" id="'+hierarchy+displayName.replace(/ +/g, "")+'" onChange="crossBoundary(\''+hierarchy+displayName.replace(/ +/g, "")+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
+					}else {
+						$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" data-first-option="false" id="'+hierarchy+displayName.replace(/ +/g, "")+'"> <option value="">select</option></select></div>');
+					}
+					if(toHierarchy.indexOf(displayName) == -1){
+						$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
+							$("#"+hierarchy+displayName.replace(/ +/g, "")).append($('<option>').text(value.name).attr('value', value.id));
+						});
+					}
+				}
+        	}
         },
         error: function (response) {
             console.log("Error occurred while retrieving boundaries!!!"+response);
         }
     });
 	return isExist;
+}
+
+function crossBoundary(selectedBndryId, fromHeirarchy, toHeirarchy) {
+	var selectedBoundary = document.getElementById(selectedBndryId).selectedIndex;
+	$.ajax({
+		url : "/bpa/boundary/ajax-cross-boundary",
+		type : "GET",
+		data : {
+			parent : fromHeirarchy,
+			child : toHeirarchy,
+			selectedParent : selectedBoundary
+		},
+		cache : false,
+		async : false,
+		contentType : 'application/json; charset=utf-8',
+		success : function(response) {
+			var crossBoundaryData = JSON.parse(response);
+			var toHeirarchyArray = toHeirarchy.split(',');
+			for (var i = 0; i < toHeirarchyArray.length; i++) {
+				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[1]], function(index, value) {
+					$($("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+				});
+		    }
+		},
+		error : function(response) {
+			console.log("Error occurred while retrieving cross boundary!!!"
+					+ response);
+		}
+	});
 }
