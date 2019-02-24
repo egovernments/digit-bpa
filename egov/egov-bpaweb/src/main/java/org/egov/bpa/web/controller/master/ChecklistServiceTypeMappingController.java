@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
-import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.web.controller.adaptor.ChecklistServicetypeMappingAdaptor;
@@ -58,6 +57,7 @@ public class ChecklistServiceTypeMappingController {
 	public String getServiceTypeChecklistMappingForm(@ModelAttribute("serviceTypeChecklist") final ChecklistServiceTypeMapping checklistServiceType,
 			final Model model,final HttpServletRequest request, final BindingResult errors) {
 		model.addAttribute("serviceType", checklistServiceType.getServiceType());
+		model.addAttribute("checklistType", checklistServiceType.getChecklistType());
 		model.addAttribute("checklistServicetype", new ChecklistServiceTypeMapping());
 		model.addAttribute("checklists", bpaChecklistService.findByChecklistType(checklistServiceType.getChecklistType()));
 		model.addAttribute("servicetypes", serviceTypeService.findAll());

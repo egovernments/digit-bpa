@@ -64,9 +64,8 @@
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
-					Service Type : ${serviceType.description} </br> </br> Checklist Type : ${checklists[0].checklistType.description}
+					Service Type : ${serviceType.description} </br> </br> Checklist Type : ${checklistType.description}
 					</br> </br>
-                  <c:if test="${not empty checklists}">
                     <table class="table table-bordered table-hover multiheadertbl">
 							<thead>
 								<tr>
@@ -75,6 +74,8 @@
 									<th><spring:message code="lbl.ismandatory" /></th>
 								</tr>
 							</thead>
+							<tbody>
+							 <c:if test="${not empty checklists}">
 								<c:forEach items="${checklists}" var="checklist" varStatus="vs">
 									<tr>
 										<td class="form-control">${checklist.description}</td>
@@ -96,11 +97,12 @@
 										</div>
 									</tr>
 								</c:forEach>
+								</c:if>
+								<c:if test="${empty checklists}">
+									No Checklists found for selected checklist type
+								</c:if>
+							</tbody>
 						</table>
-						</c:if>
-						<c:if test="${empty checklists}">
-							<tr>No Checklists found for selected checklist type</tr>
-						</c:if>
 						<div class="text-center">
 						<c:if test="${not empty checklists}">
 							<button type='submit' class='btn btn-primary' id="buttonSubmit">
