@@ -122,7 +122,7 @@ public class BpaFeeController {
 		List<BpaFeeMapping> bpaFeeTempList = bpaFeeMappingService.save(bpaFeeMap.getBpaFeeMapTemp());
 		bpaFeeMapping.setBpaFeeMapTemp(bpaFeeTempList);
 		bpaFeeMapping.setBpaFeeCommon(bpaFee);
-		redirectAttributes.addFlashAttribute("bpaFeeMapping", bpaFeeMapping);
+		model.addAttribute("bpaFeeMapping", bpaFeeMapping);
 		model.addAttribute("message", messageSource.getMessage("msg.create.fees.success", null, null));
 
 		return FEES_RESULT;
@@ -152,6 +152,7 @@ public class BpaFeeController {
 
 	@RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
 	public String showSubCategoryUpdateForm(Model model, @PathVariable(required = false) String code) {
+		loadForm(model);
 		List<BpaFeeMapping> bpaFeeMapList = bpaFeeMappingService.findByFeeCode(code);
 		BpaFeeMapping bpaFeeMapping = new BpaFeeMapping();
 		bpaFeeMapping.setBpaFeeCommon(bpaFeeMapList.get(0).getBpaFeeCommon());
@@ -163,8 +164,10 @@ public class BpaFeeController {
 	@RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
 	public String updateFees(@ModelAttribute @Valid BpaFeeMapping bpaFeeMap, BindingResult bindingResult,
 			RedirectAttributes responseAttrbs, Model model) {
+		bpaFeeMap.getBpaFeeMapTemp().forEach(tmpMap -> tmpMap.setBpaFeeCommon(bpaFeeMap.getBpaFeeCommon()));
+		//bpaFeeMap.getBpaFeeMapTemp().get(0).setBpaFeeCommon(bpaFeeMap.getBpaFeeCommon());
 		bpaFeeMappingService.update(bpaFeeMap.getBpaFeeMapTemp());
-		responseAttrbs.addFlashAttribute("message", "msg.update.fees.success");
+		responseAttrbs.addFlashAttribute("message",messageSource.getMessage("msg.update.fees.success", null, null));
 		return "redirect:/bpafee/update/" + bpaFeeMap.getBpaFeeCommon().getCode();
 	}
 

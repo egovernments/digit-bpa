@@ -57,6 +57,11 @@
 
 
 		<div class="col-md-12">
+			<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert">
+				<strong>${message}</strong>
+			</div>
+		</c:if>
 
 			<input type="hidden" id="applicationTypes"
 				value="${applicationTypes}"> <input type="hidden"

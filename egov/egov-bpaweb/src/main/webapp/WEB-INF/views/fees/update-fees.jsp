@@ -56,11 +56,13 @@
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
 			<div class="alert alert-success" role="alert">
-				<spring:message code="${message}" arguments="${name}" />
+				<strong>${message}</strong>
 			</div>
 		</c:if>
+		
 		<form:form role="id" method="post" modelAttribute="bpaFeeMapping"
 			class="form-horizontal form-groups-bordered">
+			
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -97,7 +99,7 @@
 								code="lbl.fees.accounthead" /> <span id="mandatory"
 							class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="bpaFeeCommon.glcode" id="glcode"
+							<form:input path="bpaFeeCommon.glcode.glcode" id="glcode"
 								cssClass="form-control patternvalidation"
 								data-pattern="alphabets" cssErrorClass="form-control error"
 								readonly="true" required="required" maxLength="5" />
@@ -109,6 +111,9 @@
 						<div class="col-sm-3 add-margin">
 							<form:label cssClass="form-control" path="bpaFeeCommon.category">${bpaFeeMapping.bpaFeeCommon.category}</form:label>
 						</div>
+						<form:hidden path="bpaFeeCommon"
+									name="bpaFeeCommon" id="bpaFeeCommon"
+									class="form-control table-input hidden-input bpaFeeCommon" />
 					</div>
 					<div class="panel-heading">
 						<div class="panel-title text-left">
@@ -142,7 +147,7 @@
 														path="bpaFeeMapTemp[${item.index}].applicationType"
 														id="bpaFeeDetail[${item.index}].applicationType"
 														value="${bpaFeeDetail.applicationType}"
-														cssClass="form-control applicationType" disabled="true"
+														cssClass="form-control applicationType" readonly="true"
 														required="required">
 														<form:option value="">
 															<spring:message code="lbl.select" />
@@ -155,7 +160,7 @@
 														path="bpaFeeMapTemp[${item.index}].serviceType"
 														id="bpaFeeDetail[${item.index}].serviceType"
 														value="${bpaFeeDetail.serviceType.description}"
-														cssClass="form-control serviceType" disabled="true"
+														cssClass="form-control serviceType" readonly="true"
 														required="required">
 														<form:option value="">
 															<spring:message code="lbl.select" />
@@ -169,7 +174,7 @@
 														path="bpaFeeMapTemp[${item.index}].feeSubType"
 														id="bpaFeeDetail[${item.index}].feeSubType"
 														value="${bpaFeeDetail.feeSubType}"
-														cssClass="form-control feeSubType" disabled="true"
+														cssClass="form-control feeSubType" readonly="true"
 														required="required">
 														<form:option value="">
 															<spring:message code="lbl.select" />
@@ -182,7 +187,7 @@
 														path="bpaFeeMapTemp[${item.index}].calculationType"
 														id="bpaFeeDetail[${item.index}].calculationType"
 														value="${bpaFeeDetail.calculationType}"
-														cssClass="form-control calculationType" disabled="true"
+														cssClass="form-control calculationType" readonly="true"
 														required="required">
 														<form:option value="">
 															<spring:message code="lbl.select" />
@@ -197,6 +202,9 @@
 														path="bpaFeeMapTemp[${item.index}].amount"
 														data-pattern="number" maxlength="8"
 														cssClass="form-control text-right amount" /></td>
+														<form:hidden path="bpaFeeMapTemp[${item.index}]"
+									name="bpaFeeMapTemp" id="bpaFeeMapTemp"
+									class="form-control table-input hidden-input bpaFeeMapTemp" />
 
 											</tr>
 										</c:forEach>
@@ -273,4 +281,4 @@
 	</form:form>
 </div>
 <script
-	src="<cdn:url  value='/resources/js/app/license-subcategory.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url  value='/resources/js/app/fee-search.js?rnd=${app_release_no}'/>"></script>

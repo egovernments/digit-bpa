@@ -51,89 +51,69 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<div class="tab-content">
-
-	<div class="row">
-
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title"></div>
-				</div>
-				<div class="panel-body">
-					<div class="panel-title text-center no-float">
-						<strong>${message}</strong>
-					</div>
-				</div>
+<div class="row" id="page-content">
+	<div class="col-md-12">
+		<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert">
+				<strong>${message}</strong>
 			</div>
-		</div>
-		<div class="col-md-12">
+		</c:if>
+		
+		<form:form role="id" method="post" modelAttribute="bpaFeeMapping"
+			class="form-horizontal form-groups-bordered">
+			
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="title.create.fee" />
+						<strong><spring:message code="title.fee.view" /></strong>
 					</div>
 				</div>
-				<div class="panel-body">
-					<form:form role="form" action="create"
-						modelAttribute="bpaFeeMapping" id="bpafeeform"
-						cssClass="form-horizontal form-groups-bordered">
-						<spring:hasBindErrors name="feeMatrix">
-							<form:errors path="" cssClass="error-msg add-margin" />
-							<br />
-						</spring:hasBindErrors>
-
-						<div class="form-group">
-							<label class="col-sm-3 control-label"> <spring:message
-									code="lbl.fees.code" /><span class="mandatory"></span>
-							</label>
-							<div class="col-md-3 col-xs-6 add-margin view-content">
-								<c:out value="${bpaFeeMapping.bpaFeeCommon.code}" />
-							</div>
-							<label class="col-sm-3 control-label"> <spring:message
-									code="lbl.fees.name" /><span class="mandatory"></span>
-							</label>
-							<div class="col-sm-3 add-margin">
-								<form:input type="text" id="name" path="bpaFeeCommon.name"
-									cssClass="form-control name" />
-								<form:errors path="bpaFeeCommon.name"
-									cssClass="add-margin error-msg" />
-							</div>
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.name" /> <span id="mandatory" class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="bpaFeeCommon.name" id="name"
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required" maxLength="150" />
 						</div>
-
-						<div class="form-group">
-							<label class="col-sm-3 control-label"> <spring:message
-									code="lbl.description" /><span class="mandatory"></span>
-							</label>
-							<div class="col-sm-3 add-margin">
-								<form:input type="text" id="description"
-									path="bpaFeeCommon.description"
-									cssClass="form-control description" />
-								<form:errors path="bpaFeeCommon.description"
-									cssClass="add-margin error-msg" />
-							</div>
-							<label class="col-sm-3 control-label"> <spring:message
-									code="lbl.fees.accounthead" /><span class="mandatory"></span>
-							</label>
-							<div class="col-sm-3 add-margin">
-								<div class="col-md-3 col-xs-6 add-margin view-content">
-									<c:out value="${bpaFeeMapping.bpaFeeCommon.glcode.glcode}" />
-								</div>
-							</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.fees.code" /> <span id="mandatory" class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="bpaFeeCommon.code" id="code"
+								cssClass="form-control patternvalidation"
+								data-pattern="alphabets" cssErrorClass="form-control error"
+								readonly="true" required="required" maxLength="5" />
 						</div>
-
-						<div class="form-group">
-							<label class="col-sm-3 control-label"> <spring:message
-									code="lbl.fees.category" /><span class="mandatory"></span>
-							</label>
-							<div class="col-sm-3 add-margin">
-								<div class="col-md-3 col-xs-6 add-margin view-content">
-									<c:out value="${bpaFeeMapping.bpaFeeCommon.category}" />
-								</div>
-							</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.description" /> <span id="mandatory" class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="bpaFeeCommon.description" id="description"
+								cssClass="form-control" cssErrorClass="form-control error"
+								required="required" maxLength="150" />
 						</div>
-
-
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.fees.accounthead" /> <span id="mandatory"
+							class="mandatory"></span></label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="bpaFeeCommon.glcode.glcode" id="glcode"
+								cssClass="form-control patternvalidation"
+								data-pattern="alphabets" cssErrorClass="form-control error"
+								readonly="true" required="required" maxLength="5" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"><spring:message
+								code="lbl.fees.category" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:label cssClass="form-control" path="bpaFeeCommon.category">${bpaFeeMapping.bpaFeeCommon.category}</form:label>
+						</div>
+						<form:hidden path="bpaFeeCommon"
+									name="bpaFeeCommon" id="bpaFeeCommon"
+									class="form-control table-input hidden-input bpaFeeCommon" />
+					</div>
 						<div class="panel-heading">
 							<div class="col-md-12 panel-title text-left">
 								<spring:message code="lbl.fees.details" />
@@ -201,6 +181,9 @@
 							</table>
 
 						</div>
+						</div>
+						</div>
+						</div>
 						<div class="form-group text-center">
 
 							<button type="button" class="btn btn-default"
@@ -209,9 +192,6 @@
 							</button>
 						</div>
 					</form:form>
-				</div>
-			</div>
-		</div>
 	</div>
 </div>
 <script

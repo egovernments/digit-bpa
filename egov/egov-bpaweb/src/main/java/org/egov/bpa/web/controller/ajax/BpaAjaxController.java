@@ -59,6 +59,7 @@ import org.egov.bpa.master.entity.BpaSchemeLandUsage;
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.PostalAddress;
 import org.egov.bpa.master.entity.RegistrarOfficeVillage;
+import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.SlotMappingApplType;
@@ -66,6 +67,7 @@ import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.CheckListDetailService;
 import org.egov.bpa.master.service.PostalAddressService;
 import org.egov.bpa.master.service.RegistrarOfficeVillageService;
+import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -162,6 +164,8 @@ public class BpaAjaxController {
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private BoundaryTypeService boundaryTypeService;
+    @Autowired
+    private ServiceTypeService serviceTypeService;
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -544,4 +548,10 @@ public class BpaAjaxController {
 		System.out.println("getCrossBoundary--->"+childBoundaryJson.toString());
 		IOUtils.write(childBoundaryJson.toString(), response.getWriter());
 	}
+	
+    @GetMapping(value = "/application/getServiceTypeDetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ServiceType> getServiceTypeDetails() {
+        return serviceTypeService.getAllActiveServiceTypes();
+    }
 }
