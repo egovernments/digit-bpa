@@ -104,7 +104,7 @@ public class OccupancyCertificateUtils {
         Map<String, String> eDcrApplicationDetails = new HashMap<>();
         List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByEdcrNumber(eDcrNumber);
         if (occupancyCertificates.isEmpty() || !occupancyCertificates.isEmpty() && null == occupancyCertificates.get(0).getState()
-                && BpaConstants.APPLICATION_STATUS_CANCELLED.equals(occupancyCertificates.get(0).getStatus().getCode())) {
+                || BpaConstants.APPLICATION_STATUS_CANCELLED.equals(occupancyCertificates.get(0).getStatus().getCode())) {
             eDcrApplicationDetails.put("isExists", "false");
             eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
         } else {
