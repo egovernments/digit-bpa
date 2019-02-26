@@ -237,8 +237,6 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Qualifier("parentMessageSource")
     private MessageSource bpaMessageSource;
     @Autowired
-    private DcrRestService dcrRestService;
-    @Autowired
     private PermitFeeRepository permitFeeRepository;
 
     public Session getCurrentSession() {
@@ -250,9 +248,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         final Boundary boundaryObj = bpaUtils.getBoundaryById(application.getWardId() != null ? application.getWardId()
                 : getZone(application));
         buildSiteDetails(application, boundaryObj);
-        buildExistingAndProposedBuildingDetails(application);
         application.getApplicationAmenity().clear();
         application.setApplicationAmenity(application.getApplicationAmenityTemp());
+        application.getPermitOccupancies().clear();
+        application.setPermitOccupancies(application.getPermitOccupanciesTemp());
         application.setApplicationNumber(applicationNumberGenerator.generate());
         // buildRegistrarOfficeForVillage(application);
         persistBpaNocDocuments(application);
@@ -908,36 +907,6 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         criteria.setMaxResults(totalAvailableSlots);
         return criteria.list();
 
-    }
-
-    /***
-     * Validate the dcr number within the specified date range.Configuration value used to decide the validity. Based on number of
-     * days configured, DCR plan will be compared.
-     * @param eDcrNumber
-     * @param request
-     * @return
-     */
-    public Map<String, String> checkEdcrExpiry(final String eDcrNumber, HttpServletRequest request) {
-        Map<String, String> eDcrExpiryDetails = new HashMap<>();
-        int expirydays = Integer.parseInt(bpaUtils.getAppconfigValueByKeyName(RECENT_DCRRULE_AMENDMENTDAYS));
-        Date dcrCreatedDate = dcrRestService.getDcrCreatedDate(eDcrNumber, request);
-
-        eDcrExpiryDetails.put("isExpired", "false");
-        eDcrExpiryDetails.put(MESSAGE, "Not expired");
-
-        if (dcrCreatedDate != null) {
-            int diffInDays = DateUtils.daysBetween(dcrCreatedDate, new Date());
-            if (diffInDays <= expirydays) {
-                eDcrExpiryDetails.put("isExpired", "false");
-                eDcrExpiryDetails.put(MESSAGE, "Not expired");
-            } else {
-                String message = bpaMessageSource.getMessage("msg.dcr.expiry", new String[] {
-                        securityUtils.getCurrentUser().getName(), eDcrNumber, Integer.toString(expirydays) }, null);
-                eDcrExpiryDetails.put("isExpired", "true");
-                eDcrExpiryDetails.put(MESSAGE, message);
-            }
-        }
-        return eDcrExpiryDetails;
     }
 
 }

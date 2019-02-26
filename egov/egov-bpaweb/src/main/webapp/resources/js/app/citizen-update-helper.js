@@ -45,12 +45,12 @@ $(document).ready(function ($) {
         bootbox.alert($('#applnPaymtReconciProg').val())
 
     if ($('#isEDCRIntegrationRequire').val() === 'true') {
-        $("#occupancyapplnlevel").attr("disabled", "true");
+        $("#occupancyapplnlevel").attr("readOnly", "true");
         $("#eDcrNumber").attr("disabled", "true");
         $('.edcrApplnDetails').show();
         $('#demolitionArea').attr('readOnly',true);
     } else {
-        $("#occupancyapplnlevel").removeAttr("disabled");
+        $("#occupancyapplnlevel").removeAttr("readOnly");
         $("#eDcrNumber").removeAttr("disabled");
         $('.edcrApplnDetails').hide();
     }
@@ -307,8 +307,10 @@ function validateAdditionalConditionsOnUpdate(button) {
         if ('Amenities' == seviceTypeName) {
             inputArea = $('#roofConversion').val();
         } else if ('Addition or Extension' === seviceTypeName || 'Alteration' === seviceTypeName) {
-            if($('#totalPlintArea').val()) {
-                inputArea = $('#totalPlintArea').val();
+            if($('.totalPlintArea').val()) {
+                $('.totalPlintArea').each(function () {
+                    inputArea = parseFloat(inputArea) + parseFloat($(this).val());
+                });
             } else {
                 $('.totalPlintAreaFromEdcr').each(function () {
                     inputArea = parseFloat(inputArea) + parseFloat($(this).val());
@@ -318,8 +320,10 @@ function validateAdditionalConditionsOnUpdate(button) {
                 inputArea = parseFloat(inputArea) + parseFloat($(this).val());
             });
         } else {
-            if($('#totalPlintArea').val()) {
-                inputArea = $('#totalPlintArea').val();
+            if($('.totalPlintArea').val()) {
+            	$('.totalPlintArea').each(function () {
+                    inputArea = parseFloat(inputArea) + parseFloat($(this).val());
+                });
             } else {
                 $('.totalPlintAreaFromEdcr').each(function () {
                     inputArea = parseFloat(inputArea) + parseFloat($(this).val());

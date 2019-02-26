@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2019>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,18 +37,29 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.commons.repository.bpa;
+
+package org.egov.commons.service;
 
 import java.util.List;
 
-import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.commons.repository.bpa.UsagesRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface UsagesRepository extends JpaRepository<Usage, Long> {
+@Transactional(readOnly = true)
+@Service
+public class UsageService {
 
-	List<Usage> findBySubOccupancyAndIsActiveTrueOrderByOrderNumberAsc(SubOccupancy subOccupancy);
-	List<Usage> findBySubOccupancyNameAndIsActiveTrueOrderByOrderNumberAsc(String subOccupancy);
+    @Autowired
+    private UsagesRepository usagesRepository;
+
+    public List<Usage> findBySubOccupancy(final String subOccupancy) {
+        return usagesRepository.findBySubOccupancyNameAndIsActiveTrueOrderByOrderNumberAsc(subOccupancy);
+    }
+
+    public List<Usage> findAll() {
+        return usagesRepository.findAll();
+    }
 }

@@ -49,22 +49,24 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.basic.info"/>
+		<spring:message code="lbl.basic.info" />
 	</div>
 </div>
 <div class="panel-body">
-	<c:if test="${bpaApplication.planPermissionNumber ne null && bpaApplication.planPermissionNumber ne ''}">
+	<c:if
+		test="${bpaApplication.planPermissionNumber ne null && bpaApplication.planPermissionNumber ne ''}">
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.build.plan.permission.date" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<fmt:formatDate value="${bpaApplication.planPermissionDate}" pattern="dd/MM/yyyy" var="planPermissionDate" />
+				<fmt:formatDate value="${bpaApplication.planPermissionDate}"
+					pattern="dd/MM/yyyy" var="planPermissionDate" />
 				<c:out value="${planPermissionDate}" default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
@@ -80,14 +82,17 @@
 			<spring:message code="lbl.occupancy" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.occupancy.description}" default="N/A"></c:out>
+			<c:out
+				value="${bpaApplication.occupanciesName ne '' ?  bpaApplication.occupanciesName : 'N/A'}"></c:out>
 		</div>
-		<c:if test="${bpaApplication.eDcrNumber ne null && bpaApplication.eDcrNumber ne ''}">
+		<c:if
+			test="${bpaApplication.eDcrNumber ne null && bpaApplication.eDcrNumber ne ''}">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.edcr.number" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<input type="hidden" id="eDcrNumber" value="${bpaApplication.eDcrNumber}">
+				<input type="hidden" id="eDcrNumber"
+					value="${bpaApplication.eDcrNumber}">
 				<c:out value="${bpaApplication.eDcrNumber}" default="N/A"></c:out>
 			</div>
 		</c:if>
@@ -99,8 +104,11 @@
 				<spring:message code="lbl.is.one.permit" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<input type="hidden" id="isOneDayPermitApplication" value="${bpaApplication.isOneDayPermitApplication}">
-				<c:out value="${bpaApplication.isOneDayPermitApplication ? 'YES' : 'NO'}" default="N/A"></c:out>
+				<input type="hidden" id="isOneDayPermitApplication"
+					value="${bpaApplication.isOneDayPermitApplication}">
+				<c:out
+					value="${bpaApplication.isOneDayPermitApplication ? 'YES' : 'NO'}"
+					default="N/A"></c:out>
 			</div>
 
 			<div class="col-sm-3 add-margin">
@@ -111,14 +119,14 @@
 			</div>
 		</div>
 	</c:if>
-<c:if test="${bpaApplication.siteDetail[0].isappForRegularization}">
+	<c:if test="${bpaApplication.siteDetail[0].isappForRegularization}">
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.if.regularized" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out
-						value="${bpaApplication.siteDetail[0].isappForRegularization ? 'YES' : 'NO'}"></c:out>
+					value="${bpaApplication.siteDetail[0].isappForRegularization ? 'YES' : 'NO'}"></c:out>
 			</div>
 		</div>
 		<div class="row add-border">
@@ -127,28 +135,31 @@
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out
-						value="${bpaApplication.siteDetail[0].constStages.description}"
-						default="N/A"></c:out>
+					value="${bpaApplication.siteDetail[0].constStages.description}"
+					default="N/A"></c:out>
 			</div>
 			<c:if
-					test="${bpaApplication.siteDetail[0].constStages.description eq 'In Progress'}">
+				test="${bpaApplication.siteDetail[0].constStages.description eq 'In Progress'}">
 				<div class="col-sm-3 add-margin">
 					<spring:message code="lbl.if.cons.not.cmplted" />
 				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<c:out value="${bpaApplication.siteDetail[0].stateOfConstruction}"
-						   default="N/A"></c:out>
+						default="N/A"></c:out>
 				</div>
 			</c:if>
 		</div>
 		<div class="row add-border">
 			<c:choose>
-				<c:when test="${bpaApplication.siteDetail[0].constStages.description eq 'In Progress'}">
+				<c:when
+					test="${bpaApplication.siteDetail[0].constStages.description eq 'In Progress'}">
 					<div class="col-sm-3 add-margin">
 						<spring:message code="lbl.work.commence.date" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCommencementDate}" pattern="dd/MM/yyyy" var="workCommencementDate" />
+						<fmt:formatDate
+							value="${bpaApplication.siteDetail[0].workCommencementDate}"
+							pattern="dd/MM/yyyy" var="workCommencementDate" />
 						<c:out value="${workCommencementDate}" default="N/A"></c:out>
 					</div>
 				</c:when>
@@ -157,14 +168,18 @@
 						<spring:message code="lbl.work.commence.date" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCommencementDate}" pattern="dd/MM/yyyy" var="workCommencementDate1" />
+						<fmt:formatDate
+							value="${bpaApplication.siteDetail[0].workCommencementDate}"
+							pattern="dd/MM/yyyy" var="workCommencementDate1" />
 						<c:out value="${workCommencementDate1}" default="N/A"></c:out>
 					</div>
 					<div class="col-sm-3 add-margin">
 						<spring:message code="lbl.work.completion.date" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCompletionDate}" pattern="dd/MM/yyyy" var="workCompletionDate" />
+						<fmt:formatDate
+							value="${bpaApplication.siteDetail[0].workCompletionDate}"
+							pattern="dd/MM/yyyy" var="workCompletionDate" />
 						<c:out value="${workCompletionDate}" default="N/A"></c:out>
 					</div>
 				</c:otherwise>
@@ -182,13 +197,17 @@
 				default="N/A"></c:out>
 		</div>
 		<div class="amenityHideShow">
-			<div class="col-sm-3 add-margin"><spring:message code="lbl.amenity.type" /></div>
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.amenity.type" />
+			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${bpaApplication.amenityName ne '' ?  bpaApplication.amenityName : 'N/A'}"></c:out>
+				<c:out
+					value="${bpaApplication.amenityName ne '' ?  bpaApplication.amenityName : 'N/A'}"></c:out>
 			</div>
 		</div>
 	</div>
-	<c:if test="${ empty  bpaApplication.receipts && (bpaApplication.status.code eq 'Created' || bpaApplication.status.code eq 'Registered')}">
+	<c:if
+		test="${ empty  bpaApplication.receipts && (bpaApplication.status.code eq 'Created' || bpaApplication.status.code eq 'Registered')}">
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.admission.fees" />
@@ -227,7 +246,8 @@
 			<spring:message code="lbl.application.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${bpaApplication.applicationDate}" pattern="dd/MM/yyyy" var="applicationDate" />
+			<fmt:formatDate value="${bpaApplication.applicationDate}"
+				pattern="dd/MM/yyyy" var="applicationDate" />
 			<c:out value="${applicationDate}" default="N/A"></c:out>
 		</div>
 	</div>

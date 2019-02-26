@@ -82,7 +82,7 @@
                             <th class="text-center"><spring:message code="lbl.srl.no"/></th>
                             <th class="text-center"><spring:message code="lbl.floor.name"/></th>
                             <th class="text-center"><spring:message code="lbl.floor.level"/></th>
-                            <th class="text-center"><spring:message code="lbl.occupancy"/></th>
+                            <th class="text-center"><spring:message code="lbl.sub.occupancy"/></th>
                             <th class="text-center"><spring:message code="lbl.plinth.area"/></th>
                             <th class="text-center"><spring:message code="lbl.floor.area"/></th>
                             <th class="text-center"><spring:message code="lbl.carpet.area"/></th>
@@ -112,7 +112,7 @@
                                 <td class="text-center view-content"><c:out
                                         value="${floorDetails.floorNumber}" default="0"></c:out>
                                 <td class="text-center view-content"><c:out
-                                        value="${floorDetails.subOccupancy.description}" default="0"></c:out>
+                                        value="${floorDetails.subOccupancy.name}" default="0"></c:out>
                                 <td class="text-right view-content"><fmt:formatNumber type="number"
                                                                                       maxFractionDigits="2"
                                                                                       value="${floorDetails.plinthArea}"/>

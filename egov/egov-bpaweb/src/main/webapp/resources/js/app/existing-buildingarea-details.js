@@ -44,9 +44,14 @@ jQuery(document).ready(function() {
 	 $( ".existPlinthArea" ).trigger( "change" );
 	 $( ".existCarpetArea" ).trigger( "change" );
 	 $( ".existFloorArea" ).trigger( "change" );
+	 
+	 /*var existingBldgLen = $('.buildDetails').data('bldg-len')-1;
+		if(existingBldgLen > 0)
+	        for(var i = 0; i < existingBldgLen; i++)
+	            validateAndCalculateTotalOfFloorDetails('#existingBuildingAreaDetails'+i, i);*/
 	  
-	var tbody = $('#existingBuildingAreaDetails').children('tbody');
-	var table = tbody.length ? tbody : $('#existingBuildingAreaDetails');
+	var tbody;
+	var table;
 	var row = '<tr>'+
 	'<td class="text-center"><span class="serialNoForExistBuild text-center">{{sno}}</span><input type="hidden" class="orderNoForExistBuild" data-sno name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].orderOfFloor"/></td>'+
 	'<td ><select name="existingBuildingDetails[0].existingBuildingFloorDetailsUpdate[{{idx}}].floorDescription" data-first-option="false" id="existingBuildingFloorDetailsUpdate[{{idx}}]floorDescription" class="form-control exist-floor-details-mandatory existFloorDescription clear-details" required="required" maxlength="128" > <option value="">Select</option><options items="${buildingFloorList}" /></select></td>'+
@@ -58,8 +63,11 @@ jQuery(document).ready(function() {
 	'<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-danger" id="deleteExistBuildFloorRow" ><i class="fa fa-trash"></i></a></td>'+
 	'</tr>';
 	
-	$('#addExistBuildFloorRow').click(function(){
-		if(validateExistBuildFloorOnAdd()){
+	$(document).on('click','.addExistBuildFloorRow', function() {
+		var selectedBldgIdx = $(this).parent().data('exst-bldg-idx');
+		tbody = $('#existingBuildingAreaDetails'+selectedBldgIdx).children('tbody');
+		table = tbody.length ? tbody : $('#existingBuildingAreaDetails'+selectedBldgIdx);
+		if(validateExistBuildFloorOnAdd('existingBuildingAreaDetails'+selectedBldgIdx)){
 			var idx=$(tbody).find('tr').length;
 			var sno=idx+1;
 			//Add row
@@ -69,9 +77,9 @@ jQuery(document).ready(function() {
 			   };
 			addRowFromObject1(row);
 			patternvalidation();
-			generateSnoForExistingBuilding();
-			loadFloorlist("existingBuildingDetails[0].existingBuildingFloorDetailsUpdate["+idx+"].floorDescription");
-			loadOccupanctyDetails("existingBuildingDetails[0].existingBuildingFloorDetailsUpdate["+idx+"].subOccupancy");
+			generateSnoForExistingBuilding('existingBuildingAreaDetails'+selectedBldgIdx);
+			loadFloorlist("existingBuildingDetails["+selectedBldgIdx+"].existingBuildingFloorDetailsUpdate["+idx+"].floorDescription");
+			loadSubOccupancies("existingBuildingDetails["+selectedBldgIdx+"].existingBuildingFloorDetailsUpdate["+idx+"].subOccupancy");
 		}
 	});
 	
@@ -98,18 +106,24 @@ jQuery(document).ready(function() {
 					});
 		}
 	
-	function loadOccupanctyDetails(selectBoxName){
-		
+	function loadSubOccupancies(selectBoxName) {
+    	var occupancies = [];
+    	$.each($("#occupancyapplnlevel option:selected"), function(idx){
+    		occupancies.push($(this).text());
+        });
 		 $.ajax({
-				url: "/bpa/application/getoccupancydetails",     
+				url: "/bpa/getsuboccupancies/by-occupancy?occupancies="+occupancies,     
 				type: "GET",
 				async: false,
 				dataType: "json",
 				success: function (response) {
 					$('select[name="'+selectBoxName+'"]').empty();
 					$('select[name="'+selectBoxName+'"]').append($("<option value=''>Select </option>"));
-					$.each(response, function(index, occupancy) {
-						$('select[name="'+selectBoxName+'"]').append($('<option>').val(occupancy.id).text(occupancy.description));
+					var occFirst;
+					$.each(response, function(index, subOcc) {
+						if(subOcc && subOcc.occupancy.name)
+							occFirst = subOcc.occupancy.name;
+						$('select[name="'+selectBoxName+'"]').append($('<option>').val(subOcc.id).text(subOcc.name));
 					});
 				}, 
 				error: function (response) {
@@ -118,13 +132,17 @@ jQuery(document).ready(function() {
 		}
 	
 	$(document).on('blur','.existFloorNumber', function() {
+		var tableId = $(this).closest('table').attr('id');
 		var rowObj = $(this).closest('tr');
-		validateUniqueDetailsForExistBuild(rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
+		validateUniqueDetailsForExistBuild(tableId, rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
 	}); 
 	
 	$(document).on('blur','.existFloorDescription', function() {
+		var tableId = $(this).closest('table').attr('id');
+		var selectedBldgIdx = $('#'+tableId).data('exst-bldg-idx');
+		var rowObj = $(this).closest('tr');
 		if(!$("#occupancyapplnlevel").val()) {
-			$('#existingBuildingAreaDetails').find('select').val('');
+			$('#existingBuildingAreaDetails'+selectedBldgIdx).find('select').val('');
 			bootbox.alert($("#mainOccupancyReq").val());
 			return false;
 		}
@@ -135,30 +153,30 @@ jQuery(document).ready(function() {
 		}
 		patternvalidation();
 		$(rowObj).find('.existFloorNumber').val('');
-		var rowObj = $(this).closest('tr');
-		validateUniqueDetailsForExistBuild(rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
+		validateUniqueDetailsForExistBuild(tableId, rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
 	});
 	
 	$(document).on('blur','.existOccupancy', function() {
+		var tableId = $(this).closest('table').attr('id');
 		var rowObj = $(this).closest('tr');
-		validateUniqueDetailsForExistBuild(rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
+		validateUniqueDetailsForExistBuild(tableId, rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
 	});
 	
 });
 
 
-function validateUniqueDetailsForExistBuild(idx,floorDesc,level,occupancy){
+function validateUniqueDetailsForExistBuild(tableId, idx,floorDesc,level,occupancy){
 	if(floorDesc && occupancy) {
-		$('#existingBuildingAreaDetails tbody tr').each(function(index){
+		$('#'+tableId+' tbody tr').each(function(index){
 			
 			if(idx===index)
 				return;
 			
 			var floorName  = $(this).find('*[name$="floorDescription"]').val().trim();
 		    var floorNumber = $(this).find('*[name$="floorNumber"]').val().trim();
-		    var occupancy1 = $(this).find('*[name$="occupancy"]').val().trim();
+		    var occupancy1 = $(this).find('*[name$="subOccupancy"]').val().trim();
 		    if(floorDesc === floorName && level === floorNumber && occupancy ===occupancy1) {
-		    	$('#existingBuildingAreaDetails tbody tr:eq('+idx+')').find('.clear-details').val('');
+		    	$('#'+tableId+' tbody tr:eq('+idx+')').find('.clear-details').val('');
 		    	bootbox.alert($("#floorCombination").val()+floorDesc+$("#levelValidate").val()+level+$("#occuptypemsg").val()+$(this).find('*[name$="occupancy"] option:selected').text()+$("#floorAlreadyExist").val());
 			    return false;
 		    }
@@ -171,21 +189,24 @@ var carpetAreaSum = 0;
 
 $(document).on('change', '.existPlinthArea', function() {
     var totalPlinth = 0;
-    $("#existingBuildingAreaDetails tbody tr").each(function () {
+	var tableId = $(this).closest('table').attr('id');
+	var selectedBldgIdx = $('#'+tableId).data('exst-bldg-idx');
+    $("#"+tableId+" tbody tr").each(function () {
     	 if($(this).find('td:eq(4) input.existPlinthArea').val())
     		 totalPlinth +=  parseFloat($(this).find('td:eq(4) input.existPlinthArea').val());
     });
     var seviceTypeName = $( "#serviceType option:selected" ).text();
 	if(totalPlinth && 'Huts and Sheds' != seviceTypeName) {
-		$("#existTotalPlintArea").val(totalPlinth.toFixed(2));
+		$("#existTotalPlintArea"+selectedBldgIdx).val(totalPlinth.toFixed(2));
 	}
-    $("#existingBuildingAreaDetails tfoot tr td:eq(4)").html(totalPlinth.toFixed(2));
+    $("#"+tableId+" tfoot tr td:eq(4)").html(totalPlinth.toFixed(2));
 });
 
 $(document).on('change', '.existFloorArea', function() {
 	var totalFloorArea = 0 ;
+	var tableId = $(this).closest('table').attr('id');
 	var rowObj = $(this).closest('tr');
-    $("#existingBuildingAreaDetails tbody tr").each(function () {
+    $("#"+tableId+" tbody tr").each(function () {
     	var rowPlinthArea = parseFloat($(this).find('td:eq(4) input.existPlinthArea').val());
     	var rowFloorArea = parseFloat($(this).find('td:eq(5) input.existFloorArea').val());
    	 	if(rowFloorArea > rowPlinthArea) {
@@ -199,13 +220,14 @@ $(document).on('change', '.existFloorArea', function() {
     	if(rowFloorArea)
     	 totalFloorArea +=  parseFloat($(this).find('td:eq(5) input.existFloorArea').val());
     });
-    $("#existingBuildingAreaDetails tfoot tr td:eq(5)").html(totalFloorArea.toFixed(2));
+    $("#"+tableId+" tfoot tr td:eq(5)").html(totalFloorArea.toFixed(2));
 });
 
 $(document).on('change', '.existCarpetArea', function() {
+	 var tableId = $(this).closest('table').attr('id');
      var rowObj = $(this).closest('tr');
      var totalCarpet = 0;
-     $("#existingBuildingAreaDetails tbody tr").each(function () {
+     $("#"+tableId+" tbody tr").each(function () {
     	 var rowFloorArea = parseFloat($(this).find('td:eq(5) input.existFloorArea').val());
     	 var rowCarpetArea = parseFloat($(this).find('td:eq(6) input.existCarpetArea').val());
     	 if(rowCarpetArea > rowFloorArea) {
@@ -219,33 +241,33 @@ $(document).on('change', '.existCarpetArea', function() {
     	 if($(this).find('td:eq(6) input.existCarpetArea').val())
     	 totalCarpet += parseFloat($(this).find('td:eq(6) input.existCarpetArea').val());
      });
-    $("#existingBuildingAreaDetails tfoot tr td:eq(6)").html(totalCarpet.toFixed(2));
+    $("#"+tableId+" tfoot tr td:eq(6)").html(totalCarpet.toFixed(2));
      
 });
 	
-function generateSnoForExistingBuilding()
+function generateSnoForExistingBuilding(tableId)
 {
 	var idx=1;
-	$('.serialNoForExistBuild').each(function(){
+	$('#'+tableId+ ' tbody tr').find('.serialNoForExistBuild').each(function(){
 		$(this).text(idx);
 		idx++;
 	});
 	
-	$('.orderNoForExistBuild').each(function(i){
+	$('#'+tableId+ ' tbody tr').find('.orderNoForExistBuild').each(function(i){
 		$(this).val(++i);
 	});
 }
 
-function validateExistBuildFloorOnAdd(){
+function validateExistBuildFloorOnAdd(tableId){
 	
 	var isValid=true;
-    $('#existingBuildingAreaDetails tbody tr').each(function(index){
+    $('#'+tableId+' tbody tr').each(function(index){
     	var floorName  = $(this).find('*[name$="floorDescription"]').val();
     	var floorNumber  = $(this).find('*[name$="floorNumber"]').val();
 	    var plinthArea = $(this).find('*[name$="plinthArea"]').val();
 	    var floorArea = $(this).find('*[name$="floorArea"]').val();
 	    var carpetArea = $(this).find('*[name$="carpetArea"]').val();
-	    var occupancy  = $(this).find('*[name$="occupancy"]').val();
+	    var occupancy  = $(this).find('*[name$="subOccupancy"]').val();
 	    if(!floorName || !floorNumber || !plinthArea || !carpetArea || !floorArea || !occupancy) { 
 	    	bootbox.alert($('#valuesCannotEmpty').val());
 	    	isValid=false;
@@ -258,16 +280,18 @@ function validateExistBuildFloorOnAdd(){
 
 var deletedId = [];
 $(document).on('click',"#deleteExistBuildFloorRow",function (){
+	var tableId = $(this).closest('table').attr('id');
+	var selectedBldgIdx = $('#'+tableId).data('exst-bldg-idx');
     var rowIndex = $(this).closest('td').parent()[0].sectionRowIndex;
     if($(this).data('record-id'))
-    deletedId.push($(this).data('record-id'));
+    	deletedId.push($(this).data('record-id'));
     
-    $('#existDeletedFloorIds').val(deletedId);
+    $('#existDeletedFloorIds'+selectedBldgIdx).val(deletedId);
 	$(this).closest('tr').remove();	
 	
-	generateSnoForExistingBuilding();
+	generateSnoForExistingBuilding(tableId);
 	
-	$("#existingBuildingAreaDetails tbody tr").each(function() {
+	$("#"+tableId+" tbody tr").each(function() {
 			$(this).find("input, select, hidden,textarea").each(function() {
 				var index = $(this).closest('td').parent()[0].sectionRowIndex;
 				if(index>=rowIndex){
@@ -291,5 +315,6 @@ $(document).on('click',"#deleteExistBuildFloorRow",function (){
 	  $( ".existFloorArea" ).trigger( "change" );
 	  $( ".existPlinthArea" ).trigger( "change" );
 	  $( ".existCarpetArea" ).trigger( "change" );
+	//validateAndCalculateTotalOfFloorDetails(tableId, selectedBldgIdx);
 	
 });	

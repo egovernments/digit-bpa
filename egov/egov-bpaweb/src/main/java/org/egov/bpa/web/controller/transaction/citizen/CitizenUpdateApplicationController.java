@@ -59,6 +59,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +83,10 @@ import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
+import org.egov.common.entity.bpa.Occupancy;
+import org.egov.common.entity.bpa.SubOccupancy;
+import org.egov.common.entity.bpa.Usage;
+import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -126,6 +131,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private BpaAppointmentScheduleService bpaAppointmentScheduleService;
     @Autowired
     private BpaDcrService bpaDcrService;
+    @Autowired
+    private SubOccupancyService subOccupancyService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -162,13 +169,14 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         prepareFormData(model);
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
         application.setApplicationAmenityTemp(application.getApplicationAmenity());
+        application.setPermitOccupanciesTemp(application.getPermitOccupancies());
         applicationBpaService.buildExistingAndProposedBuildingDetails(application);
         if (!application.getBuildingSubUsages().isEmpty())
             buildBuildingSubUsages(application);
         model.addAttribute("stateType", application.getClass().getSimpleName());
         model.addAttribute("isEDCRIntegrationRequire",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
-        model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
+        model.addAttribute("loadingFloorDetailsFromEdcrRequire", bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
         if (application.getIsOneDayPermitApplication()) {
             model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
         } else
@@ -192,6 +200,21 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
             model.addAttribute("mode", "showLPDetails");
         buildAppointmentDetailsOfScutinyAndInspection(model, application);
+        if(bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode())) {
+            model.addAttribute("subOccupancyList", subOccupancyService.findAll());
+        } else  {
+            List<SubOccupancy> subOccupancies = new ArrayList<>();
+            if(!application.getPermitOccupancies().isEmpty()) {
+                for(Occupancy occ : application.getPermitOccupancies())
+                    subOccupancies.addAll(occ.getSubOccupancies());
+            }
+            model.addAttribute("subOccupancyList", subOccupancies);
+            List<Usage> usages = new ArrayList<>();
+            for(SubOccupancy subOcc : subOccupancies)
+                usages.addAll(subOcc.getUsages());
+            model.addAttribute("usageList", usages);
+        }
+        
         Boolean isCitizen = (Boolean) model.asMap().get(IS_CITIZEN);
         if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
                 || APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
@@ -298,6 +321,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 
         bpaApplication.getApplicationAmenity().clear();
         bpaApplication.setApplicationAmenity(bpaApplication.getApplicationAmenityTemp());
+        bpaApplication.getPermitOccupancies().clear();
+        bpaApplication.setPermitOccupancies(bpaApplication.getPermitOccupanciesTemp());
         bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
 

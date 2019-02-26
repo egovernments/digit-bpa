@@ -152,8 +152,10 @@ jQuery(document).ready(function ($) {
             if ('Amenities' === seviceTypeName) {
                 inputArea = $('#roofConversion').val();
             } else if ('Addition or Extension' === seviceTypeName || 'Alteration' === seviceTypeName) {
-                if($('#totalPlintArea').val()) {
-                    inputArea = $('#totalPlintArea').val();
+                if($('.totalPlintArea').val()) {
+                	$('.totalPlintArea').each(function () {
+                        inputArea = parseFloat(inputArea) + parseFloat($(this).val());
+                    });
                 } else {
                     $('.totalPlintAreaFromEdcr').each(function () {
                         inputArea = parseFloat(inputArea) + parseFloat($(this).val());
@@ -163,8 +165,10 @@ jQuery(document).ready(function ($) {
                     inputArea = parseFloat(inputArea) + parseFloat($(this).val());
                 });
             } else {
-                if($('#totalPlintArea').val()) {
-                    inputArea = $('#totalPlintArea').val();
+                if($('.totalPlintArea').val()) {
+                	$('.totalPlintArea').each(function () {
+                        inputArea = parseFloat(inputArea) + parseFloat($(this).val());
+                    });
                 } else {
                     $('.totalPlintAreaFromEdcr').each(function () {
                         inputArea = parseFloat(inputArea) + parseFloat($(this).val());

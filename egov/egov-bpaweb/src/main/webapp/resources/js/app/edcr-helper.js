@@ -74,7 +74,7 @@ $(document).ready(
             '<th class="text-center dcr-floor-toggle-mandatory">Occupancy</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Builtup Area (m2)</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Floor Area (m2)</th>'+
-            '<th class="text-center dcr-floor-toggle-mandatory">Carpet Area (m2)</th>'
+            '<th class="text-center dcr-floor-toggle-mandatory">Carpet Area (m2)</th>'+
         '</tr></thead>';
 
         var tbody = '<tbody></tbody>';
@@ -86,7 +86,7 @@ $(document).ready(
             '<td ><select name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].subOccupancy" data-first-option="false" id="buildingFloorDetailsByEdcr[{{idx}}]occupancy" class="form-control dcr-floor-details-mandatory{{bldgIdx}} occupancy{{bldgIdx}}" maxlength="128" disabled="true"> <option value="{{occupancyId}}">{{occupancyDesc}}</option></select></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrPlinthArea{{bldgIdx}} dcr-floor-details-mandatory editable nonzero decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].plinthArea" id="buildingFloorDetailsByEdcr[{{idx}}]plinthArea" value="{{plinthArea}}" maxlength="10" onblur="validateDCRFloorDetails(this)" required="required" disabled="true" /></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory editable nonzero decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].floorArea" id="buildingFloorDetailsByEdcr[{{idx}}]floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
-            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory editable decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].carpetArea" id="buildingFloorDetailsByEdcr[{{idx}}]carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'
+            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory editable decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].carpetArea" id="buildingFloorDetailsByEdcr[{{idx}}]carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'+
         '</tr>';
 
         var tfoot = '<tfoot><tr>'+
@@ -96,7 +96,7 @@ $(document).ready(
             '<td class="text-right">Total</td>'+
             '<td class="text-right dcr-reset-values"></td>'+
             '<td class="text-right dcr-reset-values"></td>'+
-            '<td class="text-right dcr-reset-values"></td>'
+            '<td class="text-right dcr-reset-values"></td>'+
         '</tr></tfoot>';
 
         var otherBldgDetails = '<div class="edcrBuildingAreaDetails{{bldgIdx}}"><div class="form-group">' +
@@ -402,7 +402,7 @@ $(document).ready(
             '<td ><select name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].subOccupancy" data-first-option="false" class="form-control dcr-floor-details-mandatory{{bldgIdx}} occupancy{{bldgIdx}}" maxlength="128" disabled="true"> <option value="{{occupancyId}}">{{occupancyDesc}}</option></select></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrPlinthArea{{bldgIdx}} dcr-floor-details-mandatory nonzero decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].plinthArea" value="{{plinthArea}}" maxlength="10" required="required" disabled="true" /></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory nonzero decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
-            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'
+            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'+
         '</tr>';
 
         function addExistBldgBlock(bldgIdx, name, noOfBlocks) {
@@ -625,19 +625,18 @@ $(document).ready(
                                     resetDCRPopulatedValues();
                                     return false;
                                 } else {
-                                    if (response.plan.occupancies.length > 1) {
-                                    	$('#occupancyapplnlevel').val('Mixed');
-                                        $('[name=occupancy] option').filter(function () {
-                                            return ($(this).text() == 'Mixed');
-                                        }).prop('selected', true);
-                                    } else {
-                                        $('[name=occupancy] option').filter(function () {
-                                            return ($(this).text() == response.plan.occupancies[0].type);
-                                        }).prop('selected', true);
-
-                                    }
+                                	if (response.plan.occupancies.length > 0) {
+                                		var occupancies = [];
+	                                    $.each(response.plan.occupancies, function(index, occupancy) {
+	                                    	occupancies.push(occupancy.type);
+	                                    });
+	                                    
+	                                    $('[name=permitOccupanciesTemp] option').filter(function () {
+	                                        return occupancies.indexOf($(this).text()) > -1; //Options text exists in array
+	                                      }).prop('selected', true);
+                                	}
                                     $('#occupancyapplnlevel').trigger('change');
-                                    $('#occupancyapplnlevel').attr("disabled", "disabled");
+                                    $('#occupancyapplnlevel').attr("readonly", "true");
 
                                     if(existingBldgPresent.length > 0 && jQuery.inArray(true, existingBldgPresent) !== -1) {
                                      	$('.existingbuildingdetails').show();

@@ -195,7 +195,7 @@ public class OCNoticeUtil {
         String amenities = oc.getParent().getApplicationAmenity().stream().map(ServiceType::getDescription)
                 .collect(Collectors.joining(", "));
         reportParams.put("amenities", StringUtils.isBlank(amenities) ? "N/A" : amenities);
-        reportParams.put("occupancy", oc.getParent().getOccupancy().getDescription());
+        reportParams.put("occupancy", oc.getParent().getOccupanciesName());
         reportParams.put("applicantAddress",
                 oc.getParent().getOwner() == null ? "Not Mentioned" : oc.getParent().getOwner().getAddress());
         if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(oc.getStatus().getCode())) {

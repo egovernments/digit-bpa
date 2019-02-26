@@ -92,6 +92,7 @@ import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
+import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
@@ -140,6 +141,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private SearchBpaApplicationService searchBpaApplicationService;
     @Autowired
     private BpaDcrService bpaDcrService;
+    @Autowired
+    protected SubOccupancyService subOccupancyService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -177,6 +180,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         bpaApplication.setSource(Source.CITIZENPORTAL);
         bpaApplication.setApplicantMode(ApplicantMode.NEW);
         bpaApplication.setServiceType(serviceTypeService.getServiceTypeByCode(serviceCode));
+        model.addAttribute("isEDCRIntegrationRequire",
+                bpaDcrService.isEdcrIntegrationRequireByService(serviceCode));
         model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
         model.addAttribute("checkListDetailList",
                 checkListDetailService.findActiveCheckListByServiceType(bpaApplication.getServiceType().getId(),
@@ -184,6 +189,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         List<CheckListDetail> checkListDetail = checkListDetailService.findActiveCheckListByServiceType(
                 bpaApplication.getServiceType().getId(),
                 CHECKLIST_TYPE);
+        model.addAttribute("subOccupancyList", subOccupancyService.findAllOrderByOrderNumber());
         List<ApplicationDocument> appDocList = new ArrayList<>();
         for (CheckListDetail checkdet : checkListDetail) {
             ApplicationDocument appdoc = new ApplicationDocument();
@@ -212,6 +218,16 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         }
         model.addAttribute("applicationDocumentList", appDocList);
         getDcrDocumentsUploadMode(model);
+        if(!bpaDcrService.isEdcrIntegrationRequireByService(serviceCode)) {
+            BuildingDetail bldg = new BuildingDetail();
+            bldg.setName("0");
+            bldg.setNumber(0);
+            bpaApplication.getBuildingDetail().add(bldg);
+            ExistingBuildingDetail exstBldg = new ExistingBuildingDetail();
+            exstBldg.setName("0");
+            exstBldg.setNumber(0);
+            bpaApplication.getExistingBuildingDetails().add(exstBldg);
+        }
         return "citizenApplication-form";
     }
 
@@ -312,6 +328,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
             final HttpServletRequest request, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
+        
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
@@ -319,42 +336,41 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
         Map<String, String> eDcrApplDetails = bpaDcrService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
-        if (bpaDcrService.isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode())
-                && !eDcrApplDetails.isEmpty() && eDcrApplDetails.get("isExists").equals("true")) {
+        boolean isEdcrIntegrationRequire = bpaDcrService.isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode());
+        if (isEdcrIntegrationRequire && !eDcrApplDetails.isEmpty() && eDcrApplDetails.get("isExists").equals("true")) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
-
-        bpaApplication.getBuildingDetail().clear();
-        // bpaApplication.getBuildingDetail().addAll(bpaApplication.getBuildingDetailFromEdcr());
-
-        for (BuildingDetail bldg : bpaApplication.getBuildingDetailFromEdcr()) {
-            List<BuildingDetail> bldgDetails = new ArrayList<>();
-            List<ApplicationFloorDetail> floorDetails = new ArrayList<>();
-            for (ApplicationFloorDetail floor : bldg.getBuildingFloorDetailsByEdcr())
-                floorDetails.add(floor);
-            bldg.setApplicationFloorDetailsForUpdate(floorDetails);
-            bldgDetails.add(bldg);
-            bpaApplication.getBuildingDetail().addAll(bldgDetails);
-        }
-        if (!bpaApplication.getExistingBldgDetailFromEdcr().isEmpty()) {
-            bpaApplication.getExistingBuildingDetails().clear();
-            for (ExistingBuildingDetail existBldg : bpaApplication.getExistingBldgDetailFromEdcr()) {
-                List<ExistingBuildingDetail> existBldgDetails = new ArrayList<>();
-                List<ExistingBuildingFloorDetail> floorDetails = new ArrayList<>();
-                for (ExistingBuildingFloorDetail floor : existBldg.getExistingBldgFloorDetailsFromEdcr())
+        
+        if(isEdcrIntegrationRequire) {
+            bpaApplication.getBuildingDetail().clear();
+            for (BuildingDetail bldg : bpaApplication.getBuildingDetailFromEdcr()) {
+                List<BuildingDetail> bldgDetails = new ArrayList<>();
+                List<ApplicationFloorDetail> floorDetails = new ArrayList<>();
+                for (ApplicationFloorDetail floor : bldg.getBuildingFloorDetailsByEdcr())
                     floorDetails.add(floor);
-                existBldg.setExistingBuildingFloorDetailsUpdate(floorDetails);
-                existBldgDetails.add(existBldg);
-                bpaApplication.getExistingBuildingDetails().addAll(existBldgDetails);
+                bldg.setApplicationFloorDetailsForUpdate(floorDetails);
+                bldgDetails.add(bldg);
+                bpaApplication.getBuildingDetail().addAll(bldgDetails);
+            }
+            if (!bpaApplication.getExistingBldgDetailFromEdcr().isEmpty()) {
+                bpaApplication.getExistingBuildingDetails().clear();
+                for (ExistingBuildingDetail existBldg : bpaApplication.getExistingBldgDetailFromEdcr()) {
+                    List<ExistingBuildingDetail> existBldgDetails = new ArrayList<>();
+                    List<ExistingBuildingFloorDetail> floorDetails = new ArrayList<>();
+                    for (ExistingBuildingFloorDetail floor : existBldg.getExistingBldgFloorDetailsFromEdcr())
+                        floorDetails.add(floor);
+                    existBldg.setExistingBuildingFloorDetailsUpdate(floorDetails);
+                    existBldgDetails.add(existBldg);
+                    bpaApplication.getExistingBuildingDetails().addAll(existBldgDetails);
+                }
             }
         }
-
-        // It require when building details not validating.
-        buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
+        
+        applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
 
         /*
          * if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {

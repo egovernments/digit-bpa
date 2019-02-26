@@ -41,7 +41,6 @@ package org.egov.bpa.web.controller.ajax;
 
 import java.util.Map;
 
-import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +59,6 @@ public class BpaDcrAjaxController {
     private OccupancyCertificateUtils occupancyCertificateUtils;
     @Autowired
     private BpaDcrService bpaDcrService;
-    @Autowired
-    private ApplicationBpaService applicationBpaService;
 
     @GetMapping(value = "/validate/edcr-usedinbpa", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -84,7 +81,7 @@ public class BpaDcrAjaxController {
     @GetMapping(value = "/validate/edcr-expiry", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, String> validateEdcrExpiry(@RequestParam final String eDcrNumber) {
-        return applicationBpaService.checkEdcrExpiry(eDcrNumber,
+        return bpaDcrService.checkEdcrExpiry(eDcrNumber,
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
     }
 

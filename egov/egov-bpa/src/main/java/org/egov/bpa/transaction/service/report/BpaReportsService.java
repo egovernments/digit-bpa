@@ -300,11 +300,11 @@ public class BpaReportsService {
             bpaRegister.setAddress(application.getOwner().getAddress());
             for (SiteDetail siteDetail : application.getSiteDetail()) {
                 bpaRegister.setSurveyNumber(siteDetail.getReSurveyNumber());
-                bpaRegister.setVillage(siteDetail.getLocationBoundary().getName());
-                bpaRegister.setRevenueWard(siteDetail.getAdminBoundary().getName());
-                bpaRegister.setElectionWard(siteDetail.getElectionBoundary().getName());
+                bpaRegister.setVillage(siteDetail.getLocationBoundary() == null ? "" : siteDetail.getLocationBoundary().getName());
+                bpaRegister.setRevenueWard(siteDetail.getAdminBoundary() == null ? "" : siteDetail.getAdminBoundary().getName());
+                bpaRegister.setElectionWard(siteDetail.getElectionBoundary() == null ? "" : siteDetail.getElectionBoundary().getName());
             }
-            bpaRegister.setNatureOfOccupancy(application.getOccupancy().getDescription());
+            bpaRegister.setNatureOfOccupancy(application.getOccupanciesName());
             if (!application.getBuildingDetail().isEmpty()
                     && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
                 bpaRegister.setNumberOfFloors(application.getBuildingDetail().get(0).getFloorCount());

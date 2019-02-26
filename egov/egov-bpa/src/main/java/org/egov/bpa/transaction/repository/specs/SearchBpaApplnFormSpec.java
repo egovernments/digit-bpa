@@ -48,6 +48,21 @@
 
 package org.egov.bpa.transaction.repository.specs;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_ORDER_ISSUED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SiteDetail;
@@ -61,25 +76,13 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_ORDER_ISSUED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
-
 public final class SearchBpaApplnFormSpec {
 
+    private static final String STATUS = "status";
+    private static final String IS_ONE_DAY_PERMIT_APPLICATION = "isOneDayPermitApplication";
+
     private SearchBpaApplnFormSpec() {
-        //static methods only
+        // static methods only
     }
 
     public static Specification<BpaApplication> searchSpecification(final SearchBpaApplicationForm requestForm) {
@@ -96,9 +99,10 @@ public final class SearchBpaApplnFormSpec {
         return (root, query, builder) -> {
             final Predicate predicate = builder.conjunction();
             predicate.getExpressions()
-                     .add(root.get("status").get("code").in(APPLICATION_STATUS_CREATED, APPLICATION_STATUS_REGISTERED, APPLICATION_STATUS_APPROVED));
-			Join<BpaApplication,EgDemand> demandJoin = root.join("demand");
-			predicate.getExpressions().add(builder.lessThan(demandJoin.get("amtCollected"), demandJoin.get("baseDemand")));
+                    .add(root.get(STATUS).get("code").in(APPLICATION_STATUS_CREATED, APPLICATION_STATUS_REGISTERED,
+                            APPLICATION_STATUS_APPROVED));
+            Join<BpaApplication, EgDemand> demandJoin = root.join("demand");
+            predicate.getExpressions().add(builder.lessThan(demandJoin.get("amtCollected"), demandJoin.get("baseDemand")));
             commonSpec(requestForm, root, builder, predicate);
             siteDetailSpec(requestForm, root, builder, predicate);
             query.distinct(true);
@@ -106,130 +110,138 @@ public final class SearchBpaApplnFormSpec {
         };
     }
 
-	public static Specification<SlotApplication> hasDocumentScrutinyPendingSpecification(final SearchBpaApplicationForm requestForm) {
-		return (root, query, builder) -> {
-			final Predicate predicate = builder.conjunction();
-			Join<SlotApplication,BpaApplication> applicationJoin = root.join("application");
-			Join<BpaApplication,SiteDetail> siteDetailJoin = applicationJoin.join("siteDetail");
-			if (requestForm.getServiceTypeEnum() != null && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name())) {
-				predicate.getExpressions()
-						 .add(builder.equal(applicationJoin.get("isOneDayPermitApplication"), false));
-			}
-			else if (requestForm.getServiceTypeEnum() != null && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
-				predicate.getExpressions()
-						 .add(builder.equal(applicationJoin.get("isOneDayPermitApplication"), true));
-			if (requestForm.getToDate() != null) {
-				Join<SlotApplication,SlotDetail> slotDetailJoin = root.join("slotDetail");
-				Join<SlotDetail,Slot> slotJoin = slotDetailJoin.join("slot");
-				predicate.getExpressions()
-						 .add(builder.greaterThanOrEqualTo(slotJoin.get("appointmentDate"), requestForm.getToDate()));
-			}
-			Join<SiteDetail,Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
-			if (requestForm.getElectionWardId() != null)
-				predicate.getExpressions()
-						 .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), requestForm.getElectionWardId()));
-			if (requestForm.getWardId() != null)
-				predicate.getExpressions()
-						 .add(builder.equal(adminBoundaryJoin.get("id"), requestForm.getWardId()));
-			if (requestForm.getZoneId() != null) {
-				predicate.getExpressions()
-						 .add(builder.equal(adminBoundaryJoin.get("parent").get("id"), requestForm.getZoneId()));
-			}
-			if (requestForm.getZoneId() == null && requestForm.getZone() != null)
-				predicate.getExpressions()
-						 .add(builder.equal(adminBoundaryJoin.get("parent").get("name"), requestForm.getZone()));
-			predicate.getExpressions()
-					 .add(applicationJoin.get("status").get("code").in(APPLICATION_STATUS_SCHEDULED, APPLICATION_STATUS_RESCHEDULED));
-			predicate.getExpressions()
-					 .add(builder.equal(root.get("isActive"), true));
-			query.distinct(true);
-			return predicate;
-		};
-	}
-
-	public static Specification<BpaApplication> searchBpaRegisterSpecification(final SearchBpaApplicationForm requestForm, final List<Long> positionIds) {
-		return (root, query, builder) -> {
-			final Predicate predicate = builder.conjunction();
-			Join<BpaApplication,State> stateJoin = root.join("state");
-			Join<State,StateHistory> historyJoin = stateJoin.join("history");
-			if(!positionIds.isEmpty())
-				predicate.getExpressions()
-						 .add(historyJoin.get("ownerPosition").get("id").in(positionIds));
-			commonSpec(requestForm, root, builder, predicate);
-			siteDetailSpec(requestForm, root, builder, predicate);
-			predicate.getExpressions()
-					 .add(root.get("status").get("code").in(APPLICATION_STATUS_ORDER_ISSUED, APPLICATION_STATUS_CANCELLED));
-			query.distinct(true);
-			return predicate;
-		};
-	}
-
-    private static void commonSpec(SearchBpaApplicationForm requestForm, Root<BpaApplication> root, CriteriaBuilder builder, Predicate predicate) {
-        if (requestForm.getApplicantName() != null)
-			predicate.getExpressions()
-					 .add(builder.equal(root.get("owner").get("name"), requestForm.getApplicantName()));
-        if (requestForm.getApplicationNumber() != null)
-			predicate.getExpressions()
-					 .add(builder.equal(root.get("applicationNumber"), requestForm.getApplicationNumber()));
-        if (requestForm.getServiceTypeId() != null)
-			predicate.getExpressions()
-					 .add(builder.equal(root.get("serviceType").get("id"), requestForm.getServiceTypeId()));
-        if (requestForm.getServiceType() != null)
-			predicate.getExpressions()
-					 .add(builder.equal(root.get("serviceType").get("description"), requestForm.getServiceTypeId()));
-        if (requestForm.getStatusId() != null)
-			predicate.getExpressions()
-					 .add(builder.equal(root.get("status").get("id"), requestForm.getStatusId()));
-        if (requestForm.getStatus() != null)
-			predicate.getExpressions()
-					 .add(builder.equal(root.get("status").get("code"), requestForm.getStatus()));
-        if (requestForm.getOccupancyId() != null)
-			predicate.getExpressions()
-					 .add(builder.equal(root.get("occupancy").get("id"), requestForm.getOccupancyId()));
-        if (requestForm.getFromDate() != null)
-			predicate.getExpressions()
-					 .add(builder.greaterThanOrEqualTo(root.get("applicationDate"), requestForm.getFromDate()));
-        if (requestForm.getToDate() != null)
-			predicate.getExpressions()
-					 .add(builder.lessThanOrEqualTo(root.get("applicationDate"), requestForm.getToDate()));
-        if (requestForm.getServiceTypeEnum() != null && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name()))
+    public static Specification<SlotApplication> hasDocumentScrutinyPendingSpecification(
+            final SearchBpaApplicationForm requestForm) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            Join<SlotApplication, BpaApplication> applicationJoin = root.join("application");
+            Join<BpaApplication, SiteDetail> siteDetailJoin = applicationJoin.join("siteDetail");
+            if (requestForm.getServiceTypeEnum() != null
+                    && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name())) {
+                predicate.getExpressions()
+                        .add(builder.equal(applicationJoin.get(IS_ONE_DAY_PERMIT_APPLICATION), false));
+            } else if (requestForm.getServiceTypeEnum() != null
+                    && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
+                predicate.getExpressions()
+                        .add(builder.equal(applicationJoin.get(IS_ONE_DAY_PERMIT_APPLICATION), true));
+            if (requestForm.getToDate() != null) {
+                Join<SlotApplication, SlotDetail> slotDetailJoin = root.join("slotDetail");
+                Join<SlotDetail, Slot> slotJoin = slotDetailJoin.join("slot");
+                predicate.getExpressions()
+                        .add(builder.greaterThanOrEqualTo(slotJoin.get("appointmentDate"), requestForm.getToDate()));
+            }
+            Join<SiteDetail, Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
+            if (requestForm.getElectionWardId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), requestForm.getElectionWardId()));
+            if (requestForm.getWardId() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(adminBoundaryJoin.get("id"), requestForm.getWardId()));
+            if (requestForm.getZoneId() != null) {
+                predicate.getExpressions()
+                        .add(builder.equal(adminBoundaryJoin.get("parent").get("id"), requestForm.getZoneId()));
+            }
+            if (requestForm.getZoneId() == null && requestForm.getZone() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(adminBoundaryJoin.get("parent").get("name"), requestForm.getZone()));
             predicate.getExpressions()
-                     .add(builder.equal(root.get("isOneDayPermitApplication"), false));
-        else if (requestForm.getServiceTypeEnum() != null && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
+                    .add(applicationJoin.get(STATUS).get("code").in(APPLICATION_STATUS_SCHEDULED,
+                            APPLICATION_STATUS_RESCHEDULED));
             predicate.getExpressions()
-                     .add(builder.equal(root.get("isOneDayPermitApplication"), true));
-		if(requestForm.getFromBuiltUpArea() != null)
-			predicate.getExpressions()
-					 .add(builder.greaterThanOrEqualTo(root.get("totalBuiltUpArea"), requestForm.getFromBuiltUpArea()));
-		if(requestForm.getToBuiltUpArea() != null)
-			predicate.getExpressions()
-					 .add(builder.lessThanOrEqualTo(root.get("totalBuiltUpArea"), requestForm.getToBuiltUpArea()));
+                    .add(builder.equal(root.get("isActive"), true));
+            query.distinct(true);
+            return predicate;
+        };
     }
 
-    private static void siteDetailSpec(SearchBpaApplicationForm requestForm, Root<BpaApplication> root, CriteriaBuilder builder, Predicate predicate) {
+    public static Specification<BpaApplication> searchBpaRegisterSpecification(final SearchBpaApplicationForm requestForm,
+            final List<Long> positionIds) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            Join<BpaApplication, State> stateJoin = root.join("state");
+            Join<State, StateHistory> historyJoin = stateJoin.join("history");
+            if (!positionIds.isEmpty())
+                predicate.getExpressions()
+                        .add(historyJoin.get("ownerPosition").get("id").in(positionIds));
+            commonSpec(requestForm, root, builder, predicate);
+            siteDetailSpec(requestForm, root, builder, predicate);
+            predicate.getExpressions()
+                    .add(root.get(STATUS).get("code").in(APPLICATION_STATUS_ORDER_ISSUED, APPLICATION_STATUS_CANCELLED));
+            query.distinct(true);
+            return predicate;
+        };
+    }
 
-		Join<BpaApplication,SiteDetail> siteDetailJoin = root.join("siteDetail");
-		if (requestForm.getFromPlotArea() != null)
-			predicate.getExpressions()
-					 .add(builder.greaterThanOrEqualTo(siteDetailJoin.get("extentinsqmts"), requestForm.getFromPlotArea()));
-		if (requestForm.getToPlotArea() != null)
-			predicate.getExpressions()
-					 .add(builder.lessThanOrEqualTo(siteDetailJoin.get("extentinsqmts"), requestForm.getToPlotArea()));
+    private static void commonSpec(SearchBpaApplicationForm requestForm, Root<BpaApplication> root, CriteriaBuilder builder,
+            Predicate predicate) {
+        if (requestForm.getApplicantName() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("owner").get("name"), requestForm.getApplicantName()));
+        if (requestForm.getApplicationNumber() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("applicationNumber"), requestForm.getApplicationNumber()));
+        if (requestForm.getServiceTypeId() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("serviceType").get("id"), requestForm.getServiceTypeId()));
+        if (requestForm.getServiceType() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("serviceType").get("description"), requestForm.getServiceTypeId()));
+        if (requestForm.getStatusId() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get(STATUS).get("id"), requestForm.getStatusId()));
+        if (requestForm.getStatus() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get(STATUS).get("code"), requestForm.getStatus()));
+        if (requestForm.getOccupancyId() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("occupancy").get("id"), requestForm.getOccupancyId()));
+        if (requestForm.getFromDate() != null)
+            predicate.getExpressions()
+                    .add(builder.greaterThanOrEqualTo(root.get("applicationDate"), requestForm.getFromDate()));
+        if (requestForm.getToDate() != null)
+            predicate.getExpressions()
+                    .add(builder.lessThanOrEqualTo(root.get("applicationDate"), requestForm.getToDate()));
+        if (requestForm.getServiceTypeEnum() != null
+                && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name()))
+            predicate.getExpressions()
+                    .add(builder.equal(root.get(IS_ONE_DAY_PERMIT_APPLICATION), false));
+        else if (requestForm.getServiceTypeEnum() != null
+                && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
+            predicate.getExpressions()
+                    .add(builder.equal(root.get(IS_ONE_DAY_PERMIT_APPLICATION), true));
+        if (requestForm.getFromBuiltUpArea() != null)
+            predicate.getExpressions()
+                    .add(builder.greaterThanOrEqualTo(root.get("totalBuiltUpArea"), requestForm.getFromBuiltUpArea()));
+        if (requestForm.getToBuiltUpArea() != null)
+            predicate.getExpressions()
+                    .add(builder.lessThanOrEqualTo(root.get("totalBuiltUpArea"), requestForm.getToBuiltUpArea()));
+    }
 
-		Join<SiteDetail,Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
+    private static void siteDetailSpec(SearchBpaApplicationForm requestForm, Root<BpaApplication> root, CriteriaBuilder builder,
+            Predicate predicate) {
+
+        Join<BpaApplication, SiteDetail> siteDetailJoin = root.join("siteDetail");
+        if (requestForm.getFromPlotArea() != null)
+            predicate.getExpressions()
+                    .add(builder.greaterThanOrEqualTo(siteDetailJoin.get("extentinsqmts"), requestForm.getFromPlotArea()));
+        if (requestForm.getToPlotArea() != null)
+            predicate.getExpressions()
+                    .add(builder.lessThanOrEqualTo(siteDetailJoin.get("extentinsqmts"), requestForm.getToPlotArea()));
+
+        Join<SiteDetail, Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
         if (requestForm.getElectionWardId() != null)
-			predicate.getExpressions()
-					 .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), requestForm.getElectionWardId()));
+            predicate.getExpressions()
+                    .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), requestForm.getElectionWardId()));
         if (requestForm.getWardId() != null)
             predicate.getExpressions()
-                     .add(builder.equal(adminBoundaryJoin.get("id"), requestForm.getWardId()));
+                    .add(builder.equal(adminBoundaryJoin.get("id"), requestForm.getWardId()));
         if (requestForm.getZoneId() != null) {
-			predicate.getExpressions()
-					 .add(builder.equal(adminBoundaryJoin.get("parent").get("id"), requestForm.getZoneId()));
-		}
+            predicate.getExpressions()
+                    .add(builder.equal(adminBoundaryJoin.get("parent").get("id"), requestForm.getZoneId()));
+        }
         if (requestForm.getZoneId() == null && requestForm.getZone() != null)
             predicate.getExpressions()
-                     .add(builder.equal(adminBoundaryJoin.get("parent").get("name"), requestForm.getZone()));
+                    .add(builder.equal(adminBoundaryJoin.get("parent").get("name"), requestForm.getZone()));
     }
 
 }

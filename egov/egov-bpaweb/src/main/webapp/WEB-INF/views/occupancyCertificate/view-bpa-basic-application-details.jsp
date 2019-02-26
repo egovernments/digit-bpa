@@ -121,7 +121,7 @@
 			<spring:message code="lbl.occupancy"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.parent.occupancy.description}" default="N/A"></c:out>
+			<c:out value="${occupancyCertificate.parent.occupanciesName}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.service.type"/>

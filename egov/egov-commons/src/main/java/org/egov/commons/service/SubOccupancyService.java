@@ -41,7 +41,6 @@ package org.egov.commons.service;
 
 import java.util.List;
 
-import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.commons.repository.bpa.SubOccupancyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,15 +52,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SubOccupancyService {
 
-	@Autowired
-	private SubOccupancyRepository subOccupancyRepository;
+    @Autowired
+    private SubOccupancyRepository subOccupancyRepository;
 
-	public List<SubOccupancy> findAll() {
-		return subOccupancyRepository.findAll();
-	}
-	
+    public SubOccupancy findById(final Long id) {
+        return subOccupancyRepository.findOne(id);
+    }
+    
+    public List<SubOccupancy> findAll() {
+        return subOccupancyRepository.findAll();
+    }
+
     public List<SubOccupancy> findAllOrderByOrderNumber() {
         return subOccupancyRepository.findAll(new Sort(Sort.Direction.ASC, "orderNumber"));
+    }
+    
+    public List<SubOccupancy> findSubOccupanciesByOccupancy(String occupancy) {
+        return subOccupancyRepository.findByOccupancyNameAndIsActiveTrueOrderByOrderNumberAsc(occupancy);
     }
 
 }

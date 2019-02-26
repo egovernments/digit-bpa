@@ -85,7 +85,7 @@ public class FailureInSchedulerService {
             searchBpaApplicationForm.setServiceType(
                     bpaApplication.getServiceType() == null ? "" : bpaApplication.getServiceType().getCode());
             searchBpaApplicationForm.setOccupancy(
-                    bpaApplication.getOccupancy() == null ? "" : bpaApplication.getOccupancy().getDescription());
+                    bpaApplication.getPermitOccupancies().isEmpty() ? "" : bpaApplication.getOccupanciesName());
             searchBpaApplicationForm.setStatus(bpaApplication.getStatus().getDescription());
             buildStateAndSiteDetails(bpaApplication, searchBpaApplicationForm);
             searchBpaApplicationForm.setFailureRemarks(

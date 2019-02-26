@@ -185,7 +185,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
 		reportParams.put("inspectedBy", inspection.getInspectedBy().getName());
 		reportParams.put("inspectedDate", DateUtils.getDefaultFormattedDate(inspection.getInspectionDate()));
 		reportParams.put("inspectedRemarks", inspection.getInspectionRemarks());
-		reportParams.put("occupancyType", inspection.getApplication().getOccupancy().getName());
+		reportParams.put("occupancyType", inspection.getApplication().getOccupanciesName());
 		reportParams.put("scrutinyNumber",
 				inspection.getApplication().geteDcrNumber() != null
 						&& !inspection.getApplication().geteDcrNumber().isEmpty()

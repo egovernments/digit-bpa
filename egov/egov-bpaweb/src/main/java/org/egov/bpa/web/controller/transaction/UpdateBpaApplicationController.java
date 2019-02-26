@@ -632,6 +632,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
         model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
+        model.addAttribute("isEDCRIntegrationRequire",
+                bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
     }
 
     private void loadCommonApplicationDetails(Model model, BpaApplication application) {

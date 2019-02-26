@@ -56,8 +56,8 @@
             <thead>
             <tr>
                 <th class="text-center" width="9%"><spring:message code="lbl.block.no"/></th>
-                <th><spring:message code="lbl.occupancy"/></th>
-                <th><spring:message code="lbl.sub.usage"/></th>
+                <th><spring:message code="lbl.sub.occupancy"/></th>
+                <th><spring:message code="lbl.usage"/></th>
             </tr>
             </thead>
             <tbody>

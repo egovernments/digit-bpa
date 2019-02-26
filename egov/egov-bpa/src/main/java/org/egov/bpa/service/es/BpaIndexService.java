@@ -108,7 +108,7 @@ public class BpaIndexService {
 		bpaIndex.setIsOneDayPermitApplication(bpaApplication.getIsOneDayPermitApplication());
 		buildBpaSiteDetails(bpaApplication, bpaIndex);
 		bpaIndex.setOccupancy(
-				bpaApplication.getOccupancy() == null ? EMPTY : bpaApplication.getOccupancy().getDescription());
+				bpaApplication.getPermitOccupancies().isEmpty() ? EMPTY : bpaApplication.getOccupanciesName());
 		buildGovernmentData(bpaApplication, bpaIndex);
 		buildBpaBuildingDetails(bpaApplication, bpaIndex);
 		buildBpaFeeData(bpaApplication, bpaIndex);

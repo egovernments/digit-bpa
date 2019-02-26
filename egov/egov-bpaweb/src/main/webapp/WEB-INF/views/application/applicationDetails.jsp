@@ -49,58 +49,65 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 
 <div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title"><spring:message code="lbl.basic.info"/></div>
+	<div class="panel-title">
+		<spring:message code="lbl.basic.info" />
+	</div>
 </div>
 <div class="panel-body">
 	<div id="appDet">
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.occupancy"/><span
-					class="mandatory"></span></label>
+			<label class="col-sm-3 control-label text-right"><spring:message
+					code="lbl.occupancy" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
-				<form:select path="occupancy" data-first-option="false"
-							 id="occupancyapplnlevel" cssClass="form-control" required="required">
-					<form:option value="">
-						<spring:message code="lbl.select"/>
-					</form:option>
-					<form:options items="${occupancyList}" itemValue="id"
-								  itemLabel="description"/>
-				</form:select>
-				<form:errors path="occupancy" cssClass="add-margin error-msg"/>
+				<select name="permitOccupanciesTemp" multiple
+					id="occupancyapplnlevel"
+					class="form-control occupancies tick-indicator">
+					<c:forEach items="${occupancyList}" var="ocpncy">
+						<option value="${ocpncy.id}" title="${ocpncy.name}"
+							<c:if test="${fn:contains(bpaApplication.permitOccupancies, ocpncy)}"> Selected </c:if>>${ocpncy.name}</option>
+					</c:forEach>
+				</select>
+				<form:errors path="permitOccupanciesTemp"
+					cssClass="add-margin error-msg" />
 			</div>
-			<div class="edcrApplnDetails">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.edcr.number"/> <span class="mandatory"></span>
-				</label>
-				<div class="col-sm-3 add-margin">
-					<form:input class="form-control patternvalidation" maxlength="20"
-								id="eDcrNumber" path="eDcrNumber" required="required"/>
-					<form:errors path="eDcrNumber"
-								 cssClass="add-margin error-msg"/>
-				</div>
-			</div>
+				<c:if test="${isEDCRIntegrationRequire eq true}">
+					<div class="edcrApplnDetails">
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.edcr.number" /> <span class="mandatory"></span> </label>
+						<div class="col-sm-3 add-margin">
+							<form:input class="form-control patternvalidation" maxlength="20"
+								id="eDcrNumber" path="eDcrNumber" required="required" />
+							<form:errors path="eDcrNumber" cssClass="add-margin error-msg" />
+						</div>
+					</div>
+				</c:if>
 		</div>
 		<c:if test="${isOneDayPermitApplicationIntegrationRequired eq true}">
 			<div class="form-group" id="oneDayPermitSec">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.is.one.permit"/></label>
+				<label class="col-sm-3 control-label text-right"><spring:message
+						code="lbl.is.one.permit" /></label>
 				<div class="col-sm-3 add-margin">
 					<form:checkbox path="isOneDayPermitApplication"
-								   id="isOneDayPermitApplication" name="isOneDayPermitApplication" value="false"/>
+						id="isOneDayPermitApplication" name="isOneDayPermitApplication"
+						value="false" />
 				</div>
 				<div id="oneDayPermitTypeOfLandSec">
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.type.land"/> <span class="mandatory"></span></label>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.type.land" /> <span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="typeOfLand" id="typeOfLand"
-									 cssClass="form-control" cssErrorClass="form-control error">
+							cssClass="form-control" cssErrorClass="form-control error">
 							<form:option value="">
-								<spring:message code="lbl.select"/>
+								<spring:message code="lbl.select" />
 							</form:option>
-							<form:options items="${oneDayPermitLandTypeList}"/>
+							<form:options items="${oneDayPermitLandTypeList}" />
 						</form:select>
-						<form:errors path="typeOfLand" cssClass="add-margin error-msg"/>
+						<form:errors path="typeOfLand" cssClass="add-margin error-msg" />
 					</div>
 				</div>
 			</div>
@@ -175,8 +182,8 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message code="lbl.applctn.type"/> <span class="mandatory"></span>
-			</label>
+			<label class="col-sm-3 control-label text-right"><spring:message
+					code="lbl.applctn.type" /> <span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="serviceType" data-first-option="false"
 					id="serviceType" cssClass="form-control serviceType"
@@ -190,13 +197,15 @@
 				<form:errors path="serviceType" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label amenityHideShow text-right">
-               <spring:message code="lbl.amenity.type"/>
+				<spring:message code="lbl.amenity.type" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<select name="applicationAmenityTemp" multiple id="applicationAmenity"
+				<select name="applicationAmenityTemp" multiple
+					id="applicationAmenity"
 					class="form-control applicationAmenity tick-indicator amenityHideShow">
 					<c:forEach items="${amenityTypeList}" var="amenity">
-						<option value="${amenity.id}" title="${amenity.description}" <c:if test="${fn:contains(bpaApplication.applicationAmenity, amenity)}"> Selected </c:if> >${amenity.description}</option>
+						<option value="${amenity.id}" title="${amenity.description}"
+							<c:if test="${fn:contains(bpaApplication.applicationAmenity, amenity)}"> Selected </c:if>>${amenity.description}</option>
 					</c:forEach>
 				</select>
 				<form:errors path="applicationAmenityTemp"
@@ -207,8 +216,8 @@
 
 		<c:if test="${mode != 'new'}">
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.application.number"/>
-					<span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-right"><spring:message
+						code="lbl.application.number" /> <span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:input class="form-control patternvalidation" maxlength="50"
@@ -221,13 +230,13 @@
 
 		<div class="form-group">
 
-			<label class="col-sm-3 control-label text-right"> <spring:message code="lbl.appln.date"/> <span class="mandatory"></span>
+			<label class="col-sm-3 control-label text-right"> <spring:message
+					code="lbl.appln.date" /> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="applicationDate" class="form-control datepicker"
 					data-date-end-date="0d" id="applicationDate"
-					data-inputmask="'mask': 'd/m/y'" required="required"
-					 />
+					data-inputmask="'mask': 'd/m/y'" required="required" />
 				<form:errors path="applicationDate" cssClass="add-margin error-msg" />
 			</div>
 
@@ -245,7 +254,8 @@
 		</div>
 	</div>
 	<!-- Provide Stakeholder dropdown for citizen login and officials -->
-	<c:if test="${(!citizenOrBusinessUser && !workFlowByNonEmp) || isCitizen}">
+	<c:if
+		test="${(!citizenOrBusinessUser && !workFlowByNonEmp) || isCitizen}">
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message
 					code="lbl.stakeholder.type" /> <span class="mandatory"></span></label>
@@ -266,7 +276,8 @@
 					code="lbl.stakeholder.name" /><span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">
 				<form:hidden path="stakeHolder[0].application" />
-				<input type="text" id="stakeHolderTypeHead" placeholder="Search Building Licensee.."
+				<input type="text" id="stakeHolderTypeHead"
+					placeholder="Search Building Licensee.."
 					class="form-control typeahead" autocomplete="off"
 					required="required"
 					value="${bpaApplication.stakeHolder[0].stakeHolder.name}" />
@@ -307,12 +318,14 @@
 </div> --%>
 
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.remarks" /></label>
+		<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.remarks" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden path="applicantMode" />
 			<form:hidden path="source" />
 			<form:textarea class="form-control patternvalidation"
-				data-pattern="alphanumericspecialcharacters" maxlength="128" id="remarks" path="remarks" />
+				data-pattern="alphanumericspecialcharacters" maxlength="128"
+				id="remarks" path="remarks" />
 			<form:errors path="remarks" cssClass="add-margin error-msg" />
 		</div>
 	</div>

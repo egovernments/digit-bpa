@@ -506,12 +506,12 @@ public class PersonalRegisterReportService {
 		personalRegister.setAddress(application.getOwner().getAddress());
 		personalRegister.setPermitType(application.getIsOneDayPermitApplication() ? ApplicationType.ONE_DAY_PERMIT.getApplicationTypeVal() : ApplicationType.ALL_OTHER_SERVICES.getApplicationTypeVal());
 		personalRegister.setDateOfAdmission(application.getApplicationDate());
-		personalRegister.setNatureOfOccupancy(application.getOccupancy().getDescription());
+		personalRegister.setNatureOfOccupancy(application.getOccupanciesName());
 		personalRegister.setFar(searchBpaApplicationService.getFar(application));
-		personalRegister.setApplicationType(application.getServiceType().getDescription().toString());
+		personalRegister.setApplicationType(application.getServiceType().getDescription());
 		for (SiteDetail siteDetail : application.getSiteDetail()) {
 			personalRegister.setSurveyNo(siteDetail.getReSurveyNumber());
-			personalRegister.setVillage(siteDetail.getLocationBoundary().getName());
+			personalRegister.setVillage(siteDetail.getLocationBoundary() == null ? "" : siteDetail.getLocationBoundary().getName());
 			personalRegister.setElectionWard(siteDetail.getElectionBoundary().getName());
 			personalRegister.setRevenueWard(siteDetail.getAdminBoundary().getName());
 		}

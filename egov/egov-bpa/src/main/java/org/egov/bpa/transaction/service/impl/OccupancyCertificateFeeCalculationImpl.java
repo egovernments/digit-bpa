@@ -49,6 +49,7 @@ package org.egov.bpa.transaction.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeDetail;
@@ -61,6 +62,7 @@ import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
 import org.egov.bpa.transaction.service.oc.OccupancyFeeService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.common.entity.bpa.Occupancy;
 import org.egov.commons.service.OccupancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,7 +73,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertificateFeeCalculation {
     private static final String TOTAL_FLOOR_AREA = "totalFloorArea";
     private static final String OTHERS = "Others";
-
+    private static final String RESIDENTIAL_DESC = "Residential";
+    
     @Autowired
     protected BpaUtils bpaUtils;
 
@@ -135,12 +138,13 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
     public void calculateFeeByServiceType(OccupancyCertificate oc, BigDecimal deviatedArea, OccupancyFee ocFee) {
         BigDecimal feeAmount;
         for (BpaFee bpaFee : bpaFeeService.getActiveOCSanctionFeeForListOfServices(oc.getParent().getServiceType().getId())) {
+            List<Occupancy> selectdOccupancies = oc.getParent().getPermitOccupancies();
             String occupancy;
-            if ((BpaConstants.RESIDENTIAL
-                    .equalsIgnoreCase(oc.getParent().getOccupancy().getCode())
-                    || BpaConstants.APARTMENT_FLAT.equalsIgnoreCase(
-                            oc.getParent().getOccupancy().getCode())))
-                occupancy = BpaConstants.RESIDENTIAL;
+            if (selectdOccupancies.size() == 1
+                    && (BpaConstants.RESIDENTIAL.equalsIgnoreCase(selectdOccupancies.get(0).getCode())
+                            || BpaConstants.APARTMENT_FLAT
+                                    .equalsIgnoreCase(selectdOccupancies.get(0).getCode())))
+                occupancy = RESIDENTIAL_DESC;
             else
                 occupancy = OTHERS;
             // set occupancy type and get fee
@@ -151,6 +155,11 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
             ocFee.getApplicationFee()
                     .addApplicationFeeDetail(buildApplicationFeeDetail(bpaFee, ocFee.getApplicationFee(), amount));
         }
+    }
+    
+    private boolean isOccupancyContains(final List<Occupancy> occupancies, final String occupancy) {
+        Optional<Occupancy> occ = occupancies.stream().filter(o -> o.getCode().equalsIgnoreCase(occupancy)).findAny();
+        return occ.isPresent();
     }
 
     private BigDecimal getBpaFeeObjByOccupancyType(final String feeCode, String occupancyType, final BpaFee bpaFee) {

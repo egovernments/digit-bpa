@@ -362,7 +362,7 @@ public class BpaNoticeUtil {
         reportParams.put("serviceTypeDesc", serviceTypeDesc.toString());
         reportParams.put("serviceTypeForDmd", bpaApplication.getServiceType().getDescription());
         reportParams.put("amenities", StringUtils.isBlank(amenities) ? "N/A" : amenities);
-        reportParams.put("occupancy", bpaApplication.getOccupancy().getDescription());
+        reportParams.put("occupancy", bpaApplication.getOccupanciesName());
         if (!bpaApplication.getSiteDetail().isEmpty()) {
             reportParams.put("electionWard", bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName());
             reportParams.put("revenueWard", bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName());
@@ -396,7 +396,7 @@ public class BpaNoticeUtil {
         reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(bpaApplication)));
         reportParams.put("mobileNo", bpaApplication.getOwner().getUser().getMobileNumber());
         StringBuilder totalBuiltUpArea = new StringBuilder();
-        if (bpaApplication.getOccupancy().getCode().equals(BpaConstants.MIXED_OCCUPANCY)) {
+        if (bpaApplication.getPermitOccupancies().size() > 1) {
             for (Map.Entry<SubOccupancy, BigDecimal> innerMap : bpaUtils
                     .getBlockWiseOccupancyAndBuiltupArea(bpaApplication.getBuildingDetail()).entrySet()) {
                 totalBuiltUpArea = totalBuiltUpArea.append(innerMap.getKey().getDescription()).append(" : ")

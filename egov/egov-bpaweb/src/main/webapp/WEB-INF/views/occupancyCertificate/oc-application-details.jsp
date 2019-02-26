@@ -109,7 +109,7 @@
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="" id="occupancy"
 				class="form-control occupancy resetValues"
-				value="${occupancyCertificate.parent.occupancy.description}"
+				value="${occupancyCertificate.parent.occupanciesName}"
 				readonly="readonly">
 		</div>
 	</div>

@@ -52,8 +52,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.bpa.master.entity.BuildingUsage;
 import org.egov.common.entity.bpa.SubOccupancy;
+import org.egov.common.entity.bpa.Usage;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -69,17 +69,12 @@ public class ApplicationFloorDetail extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buildingDetail", nullable = false)
     private BuildingDetail buildingDetail;
-    private BigDecimal existingbuildingArea;
-    private BigDecimal proposedBuildingArea;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "existingbuildingUsage")
-    private BuildingUsage existingbuildingUsage;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "proposedbuilingusage")
-    private BuildingUsage proposedbuilingusage;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "suboccupancy")
     private SubOccupancy subOccupancy;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usage")
+    private Usage usage;
     private Integer floorNumber;
     private String floorDescription;
     private BigDecimal carpetArea;
@@ -97,68 +92,36 @@ public class ApplicationFloorDetail extends AbstractAuditable {
         this.id = id;
     }
 
-    public BigDecimal getExistingbuildingArea() {
-        return existingbuildingArea;
+    public BuildingDetail getBuildingDetail() {
+        return buildingDetail;
     }
 
-    public void setExistingbuildingArea(final BigDecimal existingbuildingArea) {
-        this.existingbuildingArea = existingbuildingArea;
+    public void setBuildingDetail(BuildingDetail buildingDetail) {
+        this.buildingDetail = buildingDetail;
     }
 
-    public BigDecimal getProposedBuildingArea() {
-        return proposedBuildingArea;
+    public SubOccupancy getSubOccupancy() {
+        return subOccupancy;
     }
 
-    public void setProposedBuildingArea(final BigDecimal proposedBuildingArea) {
-        this.proposedBuildingArea = proposedBuildingArea;
+    public void setSubOccupancy(SubOccupancy subOccupancy) {
+        this.subOccupancy = subOccupancy;
     }
 
-    public BuildingUsage getExistingbuildingUsage() {
-        return existingbuildingUsage;
+    public Usage getUsage() {
+        return usage;
     }
 
-    public void setExistingbuildingUsage(final BuildingUsage existingbuildingUsage) {
-        this.existingbuildingUsage = existingbuildingUsage;
-    }
-
-    public BuildingUsage getProposedbuilingusage() {
-        return proposedbuilingusage;
-    }
-
-    public void setProposedbuilingusage(final BuildingUsage proposedbuilingusage) {
-        this.proposedbuilingusage = proposedbuilingusage;
+    public void setUsage(Usage usage) {
+        this.usage = usage;
     }
 
     public Integer getFloorNumber() {
         return floorNumber;
     }
 
-    public void setFloorNumber(final Integer floorNumber) {
+    public void setFloorNumber(Integer floorNumber) {
         this.floorNumber = floorNumber;
-    }
-
-    public BigDecimal getCarpetArea() {
-        return carpetArea;
-    }
-
-    public void setCarpetArea(final BigDecimal carpetArea) {
-        this.carpetArea = carpetArea;
-    }
-
-    public BigDecimal getPlinthArea() {
-        return plinthArea;
-    }
-
-    public void setPlinthArea(final BigDecimal plinthArea) {
-        this.plinthArea = plinthArea;
-    }
-
-    public BuildingDetail getBuildingDetail() {
-        return buildingDetail;
-    }
-
-    public void setBuildingDetail(final BuildingDetail buildingDetail) {
-        this.buildingDetail = buildingDetail;
     }
 
     public String getFloorDescription() {
@@ -167,6 +130,22 @@ public class ApplicationFloorDetail extends AbstractAuditable {
 
     public void setFloorDescription(String floorDescription) {
         this.floorDescription = floorDescription;
+    }
+
+    public BigDecimal getCarpetArea() {
+        return carpetArea;
+    }
+
+    public void setCarpetArea(BigDecimal carpetArea) {
+        this.carpetArea = carpetArea;
+    }
+
+    public BigDecimal getPlinthArea() {
+        return plinthArea;
+    }
+
+    public void setPlinthArea(BigDecimal plinthArea) {
+        this.plinthArea = plinthArea;
     }
 
     public BigDecimal getFloorArea() {
@@ -185,12 +164,4 @@ public class ApplicationFloorDetail extends AbstractAuditable {
         this.orderOfFloor = orderOfFloor;
     }
 
-	public SubOccupancy getSubOccupancy() {
-		return subOccupancy;
-	}
-
-	public void setSubOccupancy(SubOccupancy subOccupancy) {
-		this.subOccupancy = subOccupancy;
-	}
-    
 }

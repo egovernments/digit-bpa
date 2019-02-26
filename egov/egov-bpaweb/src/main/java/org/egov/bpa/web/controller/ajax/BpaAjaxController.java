@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -74,8 +75,6 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
-import org.egov.bpa.transaction.service.BpaApplicationValidationService;
-import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.common.entity.bpa.Occupancy;
@@ -83,6 +82,7 @@ import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.service.OccupancyService;
 import org.egov.commons.service.SubOccupancyService;
+import org.egov.commons.service.UsageService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
@@ -151,10 +151,6 @@ public class BpaAjaxController {
     @Autowired
     private SlotMappingService slotMappingService;
     @Autowired
-    private WorkflowHistoryService workflowHistoryService;
-    @Autowired
-    private BpaApplicationValidationService bpaApplicationValidationService;
-    @Autowired
     private ApplicationBpaFeeCalculationService permitFeeCalculationService;
     @Autowired
     private CheckListDetailService checkListDetailService;
@@ -166,6 +162,8 @@ public class BpaAjaxController {
     private BoundaryTypeService boundaryTypeService;
     @Autowired
     private ServiceTypeService serviceTypeService;
+    @Autowired
+    private UsageService usageService;
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -256,6 +254,33 @@ public class BpaAjaxController {
             }
         }
         return map;
+    }
+    
+    @GetMapping(value = "/application/group-usages/by-suboccupancy", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<Long, List<Usage>> getUsagesBySubOccupancy() {
+        Map<Long, List<Usage>> usagesMap = new HashMap<>();
+        for (Usage usage : usageService.findAll()) {
+            if (usagesMap.containsKey(usage.getSubOccupancy().getId())) {
+                usagesMap.get(usage.getSubOccupancy().getId()).add(usage);
+            } else {
+                List<Usage> usageSubMap = new ArrayList<>();
+                usageSubMap.add(usage);
+                usagesMap.put(usage.getSubOccupancy().getId(), usageSubMap);
+            }
+        }
+        return usagesMap;
+    }
+    
+    @GetMapping(value = "/getsuboccupancies/by-occupancy", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<SubOccupancy> getSubOccupancyDetailsByOccupancy(@RequestParam String[] occupancies) {
+        List<SubOccupancy> subOccupancies = new ArrayList<>();
+        if(occupancies != null && occupancies.length > 0) {
+            for(String occ : occupancies)
+                subOccupancies.addAll(subOccupancyService.findSubOccupanciesByOccupancy(occ));
+        }
+        return subOccupancies;
     }
 
     @GetMapping(value = "/getApplicantDetails", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -440,7 +465,7 @@ public class BpaAjaxController {
                     .checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get(BpaConstants.MESSAGE));
             jsonObj.addProperty("id", application.getId());
             jsonObj.addProperty("stakeholderId", application.getStakeHolder().get(0).getId());
-            jsonObj.addProperty("occupancy", application.getOccupancy().getDescription());
+            jsonObj.addProperty("occupancy", application.getOccupanciesName());
             jsonObj.addProperty("zone", application.getSiteDetail().get(0).getAdminBoundary().getParent().getName());
             jsonObj.addProperty("revenueWard", application.getSiteDetail().get(0).getAdminBoundary().getName());
             jsonObj.addProperty("reSurveyNumber", application.getSiteDetail().get(0).getReSurveyNumber());
@@ -458,9 +483,9 @@ public class BpaAjaxController {
             jsonObj.addProperty("planPermissionNumber", application.getPlanPermissionNumber());
             if (!application.getBuildingDetail().isEmpty()) {
                 BigDecimal floorArea = permitFeeCalculationService.getTotalFloorArea(application);
+                Optional<Occupancy> occ = application.getPermitOccupancies().stream().filter(o -> o.getCode().equalsIgnoreCase(BpaConstants.RESIDENTIAL)).findAny();
                 jsonObj.addProperty("isSingleFamily",
-                        application.getOccupancy().getCode().equals(BpaConstants.RESIDENTIAL)
-                                && application.getBuildingDetail().get(0).getFloorCount().intValue() <= 2
+                        occ.isPresent() && application.getBuildingDetail().get(0).getFloorCount().intValue() <= 2
                                 && floorArea.doubleValue() <= 150);
             }
         }

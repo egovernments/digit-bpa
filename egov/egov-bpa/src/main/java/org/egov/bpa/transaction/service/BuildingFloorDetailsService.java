@@ -69,7 +69,7 @@ public class BuildingFloorDetailsService {
 	}
 
 	public void buildProposedBuildingFloorDetails(final BpaApplication application) {
-
+	        buildNewlyAddedFloorDetails(application);
 		if (!application.getBuildingDetail().isEmpty()) {
 			for (BuildingDetail bldg : application.getBuildingDetail()) {
 				if (!bldg.getApplicationFloorDetails().isEmpty()) {
@@ -82,6 +82,7 @@ public class BuildingFloorDetailsService {
 							ApplicationFloorDetail floorDetails = new ApplicationFloorDetail();
 							floorDetails.setBuildingDetail(bldg);
 							floorDetails.setSubOccupancy(floor.getSubOccupancy());
+							floorDetails.setUsage(floor.getUsage());
 							floorDetails.setOrderOfFloor(floor.getOrderOfFloor());
 							floorDetails.setFloorNumber(floor.getFloorNumber());
 							floorDetails.setFloorDescription(floor.getFloorDescription());

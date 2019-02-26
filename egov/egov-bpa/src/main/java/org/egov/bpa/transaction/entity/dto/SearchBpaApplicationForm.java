@@ -111,7 +111,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setAddress(application.getOwner().getAddress());
         setRescheduledByEmployee(application.getIsRescheduledByEmployee());
         setApplicationType(application.getApplicantType());
-        setOccupancy(application.getOccupancy().getDescription());
+        setOccupancy(application.getOccupanciesName());
         setServiceType(application.getServiceType().getDescription());
         setServiceCode(application.getServiceType().getCode());
         setPlanPermissionNumber(application.getPlanPermissionNumber());
@@ -144,7 +144,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setAddress(occupancyCertificate.getParent().getOwner().getAddress());
         setRescheduledByEmployee(occupancyCertificate.getRescheduledByEmployee());
         setApplicationType(occupancyCertificate.getParent().getApplicantType());
-        setOccupancy(occupancyCertificate.getParent().getOccupancy().getDescription());
+        setOccupancy(occupancyCertificate.getParent().getOccupanciesName());
         setServiceType(occupancyCertificate.getParent().getServiceType().getDescription());
         setServiceCode(occupancyCertificate.getParent().getServiceType().getCode());
         setPlanPermissionNumber(occupancyCertificate.getParent().getPlanPermissionNumber());

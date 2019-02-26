@@ -107,7 +107,6 @@ import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.service.OccupancyService;
-import org.egov.commons.service.SubOccupancyService;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
@@ -136,259 +135,262 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 public abstract class BpaGenericApplicationController extends GenericWorkFlowController {
 
-	protected static final String COMMON_ERROR = "common-error";
+    protected static final String COMMON_ERROR = "common-error";
 
-	@Autowired
-	protected CheckListDetailService checkListDetailService;
-	@Autowired
-	@Qualifier("fileStoreService")
-	protected FileStoreService fileStoreService;
-	@Autowired
-	protected ApplicationBpaService applicationBpaService;
-	@Autowired
-	protected WorkflowHistoryService workflowHistoryService;
-	@Autowired
-	protected FileStoreUtils fileStoreUtils;
-	@Autowired
-	protected BpaDemandService bpaDemandService;
-	@Autowired
-	protected BpaWorkFlowService bpaWorkFlowService;
-	@Autowired
-	protected ResourceBundleMessageSource messageSource;
-	@Autowired
-	protected BpaStatusService bpaStatusService;
-	@Autowired
-	protected BpaSchemeService bpaSchemeService;
-	@Autowired
-	protected BpaUtils bpaUtils;
-	@Autowired
-	protected SecurityUtils securityUtils;
-	@Autowired
-	protected BpaApplicationValidationService bpaApplicationValidationService;
-	@Autowired
-	protected BuildingFloorDetailsService proposedBuildingFloorDetailsService;
-	@Autowired
-	protected ExistingBuildingFloorDetailsService existingBuildingFloorDetailsService;
-	@Autowired
-	protected BPASmsAndEmailService bpaSmsAndEmailService;
-	@Autowired
-	protected BoundaryService boundaryService;
-	@Autowired
-	protected ServiceTypeService serviceTypeService;
-	@Autowired
-	protected OccupancyService occupancyService;
-	@Autowired
-	protected SubOccupancyService subOccupancyService;
-	@Autowired
-	protected ConstructionStagesService constructionStagesService;
-	@Autowired
-	protected AppConfigValueService appConfigValueService;
-	@Autowired
-	protected UserService userService;
-	@Autowired
-	protected StakeHolderService stakeHolderService;
-	@Autowired
-	protected OcSmsAndEmailService ocSmsAndEmailService;
+    @Autowired
+    protected CheckListDetailService checkListDetailService;
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
+    @Autowired
+    protected ApplicationBpaService applicationBpaService;
+    @Autowired
+    protected WorkflowHistoryService workflowHistoryService;
+    @Autowired
+    protected FileStoreUtils fileStoreUtils;
+    @Autowired
+    protected BpaDemandService bpaDemandService;
+    @Autowired
+    protected BpaWorkFlowService bpaWorkFlowService;
+    @Autowired
+    protected ResourceBundleMessageSource messageSource;
+    @Autowired
+    protected BpaStatusService bpaStatusService;
+    @Autowired
+    protected BpaSchemeService bpaSchemeService;
+    @Autowired
+    protected BpaUtils bpaUtils;
+    @Autowired
+    protected SecurityUtils securityUtils;
+    @Autowired
+    protected BpaApplicationValidationService bpaApplicationValidationService;
+    @Autowired
+    protected BuildingFloorDetailsService proposedBuildingFloorDetailsService;
+    @Autowired
+    protected ExistingBuildingFloorDetailsService existingBuildingFloorDetailsService;
+    @Autowired
+    protected BPASmsAndEmailService bpaSmsAndEmailService;
+    @Autowired
+    protected BoundaryService boundaryService;
+    @Autowired
+    protected ServiceTypeService serviceTypeService;
+    @Autowired
+    protected OccupancyService occupancyService;
+    @Autowired
+    protected ConstructionStagesService constructionStagesService;
+    @Autowired
+    protected AppConfigValueService appConfigValueService;
+    @Autowired
+    protected UserService userService;
+    @Autowired
+    protected StakeHolderService stakeHolderService;
+    @Autowired
+    protected OcSmsAndEmailService ocSmsAndEmailService;
 
-	protected void prepareFormData(Model model) {
-		model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
-		model.addAttribute("subOccupancyList", subOccupancyService.findAllOrderByOrderNumber());
-		model.addAttribute("zones", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
-				REVENUE_HIERARCHY_TYPE));
-		model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveMainServiceTypes());
-		model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
-		model.addAttribute("stakeHolderTypeList", Arrays.asList(StakeHolderType.values()));
-		model.addAttribute("governmentTypeList", Arrays.asList(GovernmentType.values()));
-		model.addAttribute("constStages", constructionStagesService.findAll());
-		model.addAttribute("electionwards", getElectionWards());
-		model.addAttribute("wards", getRevenueWards());
-		model.addAttribute("street", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(STREET,
-				REVENUE_HIERARCHY_TYPE));
-		model.addAttribute("localitys", boundaryService
-				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
-						LOCATION_HIERARCHY_TYPE));
-		model.addAttribute("applicationModes", getApplicationModeMap());
-		model.addAttribute("buildingFloorList", getBuildingFloorsList());
-		model.addAttribute("uomList", BpaUom.values());
-		List<SlotMappingApplType> slotMappingApplTypes = new ArrayList<>();
-		for(SlotMappingApplType applType : SlotMappingApplType.values())
-			if(!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && applType.equals(SlotMappingApplType.ONE_DAY_PERMIT))
-				break;
-			else
-				slotMappingApplTypes.add(applType);
+    protected void prepareFormData(Model model) {
+        model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
+        model.addAttribute("zones", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
+                REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveMainServiceTypes());
+        model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
+        model.addAttribute("stakeHolderTypeList", Arrays.asList(StakeHolderType.values()));
+        model.addAttribute("governmentTypeList", Arrays.asList(GovernmentType.values()));
+        model.addAttribute("constStages", constructionStagesService.findAll());
+        model.addAttribute("electionwards", getElectionWards());
+        model.addAttribute("wards", getRevenueWards());
+        model.addAttribute("street", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(STREET,
+                REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("localitys", boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
+                        LOCATION_HIERARCHY_TYPE));
+        model.addAttribute("applicationModes", getApplicationModeMap());
+        model.addAttribute("buildingFloorList", getBuildingFloorsList());
+        model.addAttribute("uomList", BpaUom.values());
+        List<SlotMappingApplType> slotMappingApplTypes = new ArrayList<>();
+        for (SlotMappingApplType applType : SlotMappingApplType.values())
+            if (!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && applType.equals(SlotMappingApplType.ONE_DAY_PERMIT))
+                break;
+            else
+                slotMappingApplTypes.add(applType);
 
-		model.addAttribute("slotMappingApplTypes", slotMappingApplTypes);
-		model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType());
-		model.addAttribute("schemesList", bpaSchemeService.findAll());
-		model.addAttribute("oneDayPermitLandTypeList", Arrays.asList(OneDayPermitLandType.values()));
-		model.addAttribute("applicationTypes", getApplicationTypes());
-		model.addAttribute("userList", userService.getUserByTypeInOrder(UserType.EMPLOYEE));
-	}
+        model.addAttribute("slotMappingApplTypes", slotMappingApplTypes);
+        model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType());
+        model.addAttribute("schemesList", bpaSchemeService.findAll());
+        model.addAttribute("oneDayPermitLandTypeList", Arrays.asList(OneDayPermitLandType.values()));
+        model.addAttribute("applicationTypes", getApplicationTypes());
+        model.addAttribute("userList", userService.getUserByTypeInOrder(UserType.EMPLOYEE));
+    }
 
-	protected List<ApplicationType> getApplicationTypes() {
-		List<ApplicationType> applicationTypeList = new ArrayList<>();
-		for(ApplicationType appType : ApplicationType.values())
-			if(!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && appType.equals(ApplicationType.ONE_DAY_PERMIT))
-				break;
-			else
-				applicationTypeList.add(appType);
-		return applicationTypeList;
-	}
+    protected List<ApplicationType> getApplicationTypes() {
+        List<ApplicationType> applicationTypeList = new ArrayList<>();
+        for (ApplicationType appType : ApplicationType.values())
+            if (!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && appType.equals(ApplicationType.ONE_DAY_PERMIT))
+                break;
+            else
+                applicationTypeList.add(appType);
+        return applicationTypeList;
+    }
 
-	@ModelAttribute("isOneDayPermitApplicationIntegrationRequired")
-	public Boolean isOneDayPermitApplicationIntegrationRequired() {
-		return bpaUtils.isOneDayPermitApplicationIntegrationRequired();
-	}
+    @ModelAttribute("isOneDayPermitApplicationIntegrationRequired")
+    public Boolean isOneDayPermitApplicationIntegrationRequired() {
+        return bpaUtils.isOneDayPermitApplicationIntegrationRequired();
+    }
 
-	protected void getApplicationConfigurations(final Model model) {
-		model.addAttribute("regularPermitInspectionSchedulingIntegrationRequired", bpaUtils.isRegularPermitInspectionSchedulingIntegrationRequired());
-		model.addAttribute("oneDayPermitInspectionSchedulingIntegrationRequired", bpaUtils.isOneDayPermitInspectionSchedulingIntegrationRequired());
-	}
+    protected void getApplicationConfigurations(final Model model) {
+        model.addAttribute("regularPermitInspectionSchedulingIntegrationRequired",
+                bpaUtils.isRegularPermitInspectionSchedulingIntegrationRequired());
+        model.addAttribute("oneDayPermitInspectionSchedulingIntegrationRequired",
+                bpaUtils.isOneDayPermitInspectionSchedulingIntegrationRequired());
+    }
 
-	@ModelAttribute("nocStatusList")
-	public NocStatus[] getNocStatusList() {
-		return NocStatus.values();
-	}
+    @ModelAttribute("nocStatusList")
+    public NocStatus[] getNocStatusList() {
+        return NocStatus.values();
+    }
 
-	public List<Boundary> getElectionWards() {
-		List<Boundary> boundaries = boundaryService
-				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMINISTRATION_HIERARCHY_TYPE);
-		sortBoundaryByBndryNumberAsc(boundaries);
-		return boundaries;
-	}
+    public List<Boundary> getElectionWards() {
+        List<Boundary> boundaries = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMINISTRATION_HIERARCHY_TYPE);
+        sortBoundaryByBndryNumberAsc(boundaries);
+        return boundaries;
+    }
 
-	public List<Boundary> getRevenueWards() {
-		List<Boundary> boundaries = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
-				REVENUE_HIERARCHY_TYPE);
-		sortBoundaryByBndryNumberAsc(boundaries);
-		return boundaries;
-	}
+    public List<Boundary> getRevenueWards() {
+        List<Boundary> boundaries = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+                REVENUE_HIERARCHY_TYPE);
+        sortBoundaryByBndryNumberAsc(boundaries);
+        return boundaries;
+    }
 
-	private void sortBoundaryByBndryNumberAsc(List<Boundary> boundaries) {
-		boundaries.sort(Comparator.comparing(Boundary::getBoundaryNum));
-	}
+    private void sortBoundaryByBndryNumberAsc(List<Boundary> boundaries) {
+        boundaries.sort(Comparator.comparing(Boundary::getBoundaryNum));
+    }
 
-	public Map<String, String> getApplicationModeMap() {
-		final Map<String, String> applicationModeMap = new LinkedHashMap<>(0);
-		applicationModeMap.put(ApplicantMode.NEW.toString(), ApplicantMode.NEW.name());
-		applicationModeMap.put(ApplicantMode.OTHERS.name(), ApplicantMode.OTHERS.name());
-		return applicationModeMap;
-	}
+    public Map<String, String> getApplicationModeMap() {
+        final Map<String, String> applicationModeMap = new LinkedHashMap<>(0);
+        applicationModeMap.put(ApplicantMode.NEW.toString(), ApplicantMode.NEW.name());
+        applicationModeMap.put(ApplicantMode.OTHERS.name(), ApplicantMode.OTHERS.name());
+        return applicationModeMap;
+    }
 
-	/**
-	 * @param prepareModel
-	 * @param model
-	 * @param container    This method we are calling In GET Method..
-	 */
-	@Override
-	protected void prepareWorkflow(final Model prepareModel, final StateAware model, final WorkflowContainer container) {
-		prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
-		prepareModel.addAttribute("validActionList", bpaWorkFlowService.getValidActions(model, container));
-		prepareModel.addAttribute("nextAction", bpaWorkFlowService.getNextAction(model, container));
-	}
+    /**
+     * @param prepareModel
+     * @param model
+     * @param container This method we are calling In GET Method..
+     */
+    @Override
+    protected void prepareWorkflow(final Model prepareModel, final StateAware model, final WorkflowContainer container) {
+        prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
+        prepareModel.addAttribute("validActionList", bpaWorkFlowService.getValidActions(model, container));
+        prepareModel.addAttribute("nextAction", bpaWorkFlowService.getNextAction(model, container));
+    }
 
-	protected void prepareCommonModelAttribute(final Model model, final Boolean isCitizenAccepted) {
-		Boolean citizenUser = bpaUtils.logedInuserIsCitizen();
-		model.addAttribute("isCitizen", citizenUser);
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				APPLICATION_MODULE_TYPE, BPA_CITIZENACCEPTANCE_CHECK);
-		String validateCitizenAcceptance = appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-		model.addAttribute("validateCitizenAcceptance",
-				(validateCitizenAcceptance.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
-		if (StringUtils.isNotBlank(validateCitizenAcceptance)) {
-			model.addAttribute("citizenDisclaimerAccepted", isCitizenAccepted);
-		}
-		String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
-		model.addAttribute("onlinePaymentEnable",
-				(enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
-		model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
-	}
+    protected void prepareCommonModelAttribute(final Model model, final Boolean isCitizenAccepted) {
+        Boolean citizenUser = bpaUtils.logedInuserIsCitizen();
+        model.addAttribute("isCitizen", citizenUser);
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                APPLICATION_MODULE_TYPE, BPA_CITIZENACCEPTANCE_CHECK);
+        String validateCitizenAcceptance = appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+        model.addAttribute("validateCitizenAcceptance",
+                (validateCitizenAcceptance.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+        if (StringUtils.isNotBlank(validateCitizenAcceptance)) {
+            model.addAttribute("citizenDisclaimerAccepted", isCitizenAccepted);
+        }
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
+        model.addAttribute("onlinePaymentEnable",
+                (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+        model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
+    }
 
-	protected void prepareWorkflowDataForInspection(final Model model, final BpaApplication application) {
-		model.addAttribute("stateType", application.getClass().getSimpleName());
-		final WorkflowContainer workflowContainer = new WorkflowContainer();
-		model.addAttribute(BpaConstants.ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-		workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-		prepareWorkflow(model, application, workflowContainer);
-		model.addAttribute("currentState", application.getCurrentState().getValue());
-		model.addAttribute(BpaConstants.BPA_APPLICATION, application);
-	}
+    protected void prepareWorkflowDataForInspection(final Model model, final BpaApplication application) {
+        model.addAttribute("stateType", application.getClass().getSimpleName());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        model.addAttribute(BpaConstants.ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
+        workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
+        prepareWorkflow(model, application, workflowContainer);
+        model.addAttribute("currentState", application.getCurrentState().getValue());
+        model.addAttribute(BpaConstants.BPA_APPLICATION, application);
+    }
 
-	protected void prepareWorkflowDataForInspection(final Model model, final OccupancyCertificate occupancyCertificate) {
-		model.addAttribute("stateType", occupancyCertificate.getClass().getSimpleName());
-		final WorkflowContainer workflowContainer = new WorkflowContainer();
-		model.addAttribute(BpaConstants.ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-		workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-		prepareWorkflow(model, occupancyCertificate, workflowContainer);
-		model.addAttribute("currentState", occupancyCertificate.getCurrentState().getValue());
-		model.addAttribute(OCCUPANCY_CERTIFICATE, occupancyCertificate);
-	}
+    protected void prepareWorkflowDataForInspection(final Model model, final OccupancyCertificate occupancyCertificate) {
+        model.addAttribute("stateType", occupancyCertificate.getClass().getSimpleName());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        model.addAttribute(BpaConstants.ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
+        workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
+        prepareWorkflow(model, occupancyCertificate, workflowContainer);
+        model.addAttribute("currentState", occupancyCertificate.getCurrentState().getValue());
+        model.addAttribute(OCCUPANCY_CERTIFICATE, occupancyCertificate);
+    }
 
-	protected void buildReceiptDetails(Set<EgDemandDetails> egDemandDetails, Set<Receipt> receipts) {
-		for (final EgDemandDetails demandDtl : egDemandDetails)
-			for (final EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts())
-				if (!collRecpt.isCancelled()) {
-					Receipt receipt = new Receipt();
-					receipt.setReceiptNumber(collRecpt.getReceiptNumber());
-					receipt.setReceiptDate(collRecpt.getReceiptDate());
-					receipt.setReceiptAmt(collRecpt.getAmount());
-					receipts.add(receipt);
-				}
-	}
+    protected void buildReceiptDetails(Set<EgDemandDetails> egDemandDetails, Set<Receipt> receipts) {
+        for (final EgDemandDetails demandDtl : egDemandDetails)
+            for (final EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts())
+                if (!collRecpt.isCancelled()) {
+                    Receipt receipt = new Receipt();
+                    receipt.setReceiptNumber(collRecpt.getReceiptNumber());
+                    receipt.setReceiptDate(collRecpt.getReceiptDate());
+                    receipt.setReceiptAmt(collRecpt.getAmount());
+                    receipts.add(receipt);
+                }
+    }
 
-	protected String getDesinationNameByPosition(Position pos) {
-		return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() == null
-			   ? ""
-			   : pos.getDeptDesig().getDesignation().getName();
-	}
+    protected String getDesinationNameByPosition(Position pos) {
+        return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() == null
+                ? ""
+                : pos.getDeptDesig().getDesignation().getName();
+    }
 
-	protected void getAppointmentMsgForOnedayPermit(final BpaApplication bpaApplication, Model model) {
-		if (bpaApplication.getIsOneDayPermitApplication() && !bpaApplication.getSlotApplications().isEmpty()) {
-			String appmntDetailsMsg = messageSource.getMessage("msg.one.permit.schedule", new String[]{
-							bpaApplication.getOwner().getName(),
-							DateUtils.getDefaultFormattedDate(
-									bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()),
-							bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime()},
-					LocaleContextHolder.getLocale());
-			model.addAttribute("appmntDetailsMsg", appmntDetailsMsg);
-		}
-	}
+    protected void getAppointmentMsgForOnedayPermit(final BpaApplication bpaApplication, Model model) {
+        if (bpaApplication.getIsOneDayPermitApplication() && !bpaApplication.getSlotApplications().isEmpty()) {
+            String appmntDetailsMsg = messageSource.getMessage("msg.one.permit.schedule", new String[] {
+                    bpaApplication.getOwner().getName(),
+                    DateUtils.getDefaultFormattedDate(
+                            bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()),
+                    bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime() },
+                    LocaleContextHolder.getLocale());
+            model.addAttribute("appmntDetailsMsg", appmntDetailsMsg);
+        }
+    }
 
-	protected boolean validateOnDocumentScrutiny(Model model, BpaStatus status) {
-		if (APPLICATION_STATUS_DOC_VERIFIED.equals(status.getCode())) {
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.docverification.already.completed", null, null));
-			return true;
-		} else if (WF_REJECT_STATE.equals(status.getCode())) {
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.appln.already.intiated.rejection", null, null));
-			return true;
-		}
-		return false;
-	}
+    protected boolean validateOnDocumentScrutiny(Model model, BpaStatus status) {
+        if (APPLICATION_STATUS_DOC_VERIFIED.equals(status.getCode())) {
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.docverification.already.completed", null, null));
+            return true;
+        } else if (WF_REJECT_STATE.equals(status.getCode())) {
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.appln.already.intiated.rejection", null, null));
+            return true;
+        }
+        return false;
+    }
 
-	protected boolean validateLoginUserAndOwnerIsSame(Model model, User loginUser, Position ownerPosition) {
-		List<Assignment> loginUserAssignments = bpaWorkFlowService.getAllActiveAssignmentsForUser(loginUser.getId());
-		List<Position> loginUserPositions = Collections.emptyList();
-		if(!loginUserAssignments.isEmpty())
-			loginUserPositions = bpaWorkFlowService.getAllActiveAssignmentsForUser(securityUtils.getCurrentUser().getId()).stream().map(Assignment::getPosition).collect(Collectors.toList());
-		if(!loginUserPositions.contains(ownerPosition)) {
-			String designation = getDesinationNameByPosition(ownerPosition);
-			User user = workflowHistoryService.getUserPositionByPositionAndDate(ownerPosition.getId(), new Date());
-			model.addAttribute(MESSAGE,messageSource.getMessage("msg.position.mismatch", new String[]{user.getUsername().concat("~").concat(designation)}, LocaleContextHolder.getLocale()));
-			return true;
-		}
-		return false;
-	}
+    protected boolean validateLoginUserAndOwnerIsSame(Model model, User loginUser, Position ownerPosition) {
+        List<Assignment> loginUserAssignments = bpaWorkFlowService.getAllActiveAssignmentsForUser(loginUser.getId());
+        List<Position> loginUserPositions = Collections.emptyList();
+        if (!loginUserAssignments.isEmpty())
+            loginUserPositions = bpaWorkFlowService.getAllActiveAssignmentsForUser(securityUtils.getCurrentUser().getId())
+                    .stream().map(Assignment::getPosition).collect(Collectors.toList());
+        if (!loginUserPositions.contains(ownerPosition)) {
+            String designation = getDesinationNameByPosition(ownerPosition);
+            User user = workflowHistoryService.getUserPositionByPositionAndDate(ownerPosition.getId(), new Date());
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.position.mismatch",
+                    new String[] { user.getUsername().concat("~").concat(designation) }, LocaleContextHolder.getLocale()));
+            return true;
+        }
+        return false;
+    }
 
-	protected void getDcrDocumentsUploadMode(final Model model) {
-		/*
-		 * Either one App Config value only must be configured as YES.
-		 * If all three configured with either YES or NO then manual upload will be enabled by default.
-		 * If DCR_DOC_AUTO_POPULATE_UPLOAD and either DCR_DOC_MANUAL_UPLOAD or DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD is configured as YES
-		 * then will enable manual upload mode.
-		 */
-		model.addAttribute("dcrDocsAutoPopulate", bpaUtils.getAppconfigValueByKeyName(DCR_DOC_AUTO_POPULATE_UPLOAD).equalsIgnoreCase(YES));
-		model.addAttribute("dcrDocsManuallyUpload", bpaUtils.getAppconfigValueByKeyName(DCR_DOC_MANUAL_UPLOAD).equalsIgnoreCase(YES));
-		model.addAttribute("dcrDocsAutoPopulateAndManuallyUpload", bpaUtils.getAppconfigValueByKeyName(DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD).equalsIgnoreCase(YES));
-	}
+    protected void getDcrDocumentsUploadMode(final Model model) {
+        /*
+         * Either one App Config value only must be configured as YES. If all three configured with either YES or NO then manual
+         * upload will be enabled by default. If DCR_DOC_AUTO_POPULATE_UPLOAD and either DCR_DOC_MANUAL_UPLOAD or
+         * DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD is configured as YES then will enable manual upload mode.
+         */
+        model.addAttribute("dcrDocsAutoPopulate",
+                bpaUtils.getAppconfigValueByKeyName(DCR_DOC_AUTO_POPULATE_UPLOAD).equalsIgnoreCase(YES));
+        model.addAttribute("dcrDocsManuallyUpload",
+                bpaUtils.getAppconfigValueByKeyName(DCR_DOC_MANUAL_UPLOAD).equalsIgnoreCase(YES));
+        model.addAttribute("dcrDocsAutoPopulateAndManuallyUpload",
+                bpaUtils.getAppconfigValueByKeyName(DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD).equalsIgnoreCase(YES));
+    }
 
 }

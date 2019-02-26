@@ -65,72 +65,98 @@
 				value="${bpaApplication.applicationDate}" />
 		</div> --%>
 		<form:form role="form" action="application-create" method="post"
-				   modelAttribute="bpaApplication" id="newCitizenApplicationform"
-				   cssClass="form-horizontal form-groups-bordered"
-				   enctype="multipart/form-data">
+			modelAttribute="bpaApplication" id="newCitizenApplicationform"
+			cssClass="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data">
 			<input type="hidden" id="bpaApplication" name="bpaApplication"
-				   value="${bpaApplication.id}" />
+				value="${bpaApplication.id}" />
 			<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage"
-				   value="${noJAORSAMessage}" />
-			<input type="hidden" id="invalidStakeholder" name="invalidStakeholder"
-				   value="${invalidStakeholder}" />
-			<form:hidden path="" id="onlinePaymentEnable" name="onlinePaymentEnable" value="${onlinePaymentEnable}" />
+				value="${noJAORSAMessage}" />
+			<input type="hidden" id="invalidStakeholder"
+				name="invalidStakeholder" value="${invalidStakeholder}" />
+			<form:hidden path="" id="onlinePaymentEnable"
+				name="onlinePaymentEnable" value="${onlinePaymentEnable}" />
 			<input type="hidden" id="mode" name="mode" value="${mode}" />
-			<input type="hidden"  id="citizenOrBusinessUser" name="citizenOrBusinessUser" value="${citizenOrBusinessUser}"/>
-			<input type="hidden"  id="validateCitizenAcceptance" name="validateCitizenAcceptance" value="${validateCitizenAcceptance}"/>
-			<input type="hidden"  id="citizenDisclaimerAccepted" name="citizenDisclaimerAccepted" value="${citizenDisclaimerAccepted}"/>
-			<input type="hidden"  id="isCitizen" name="isCitizen" value="${isCitizen}"/>
-			<input type="hidden"  id="cityName" name="cityName" value="${cityName}"/>
+			<input type="hidden" id="citizenOrBusinessUser"
+				name="citizenOrBusinessUser" value="${citizenOrBusinessUser}" />
+			<input type="hidden" id="validateCitizenAcceptance"
+				name="validateCitizenAcceptance"
+				value="${validateCitizenAcceptance}" />
+			<input type="hidden" id="citizenDisclaimerAccepted"
+				name="citizenDisclaimerAccepted"
+				value="${citizenDisclaimerAccepted}" />
+			<input type="hidden" id="isCitizen" name="isCitizen"
+				value="${isCitizen}" />
+			<input type="hidden" id="cityName" name="cityName"
+				value="${cityName}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-			<input type="hidden" id="serviceTypeCode" value="${bpaApplication.serviceType.code}" />
-			<input type="hidden"  id="isEDCRIntegrationRequire" value="${isEDCRIntegrationRequire}"/>
-			<input type="hidden"  id="loadingFloorDetailsFromEdcrRequire" value="${loadingFloorDetailsFromEdcrRequire}"/>
-			<form:hidden path="authorizedToSubmitPlan" id="authorizedToSubmitPlan"/>
-			<input type="hidden"  id="stakeHolderType" value="${stakeHolderType}"/>
-			
+			<input type="hidden" id="serviceTypeCode"
+				value="${bpaApplication.serviceType.code}" />
+			<input type="hidden" id="isEDCRIntegrationRequire"
+				value="${isEDCRIntegrationRequire}" />
+			<input type="hidden" id="loadingFloorDetailsFromEdcrRequire"
+				value="${loadingFloorDetailsFromEdcrRequire}" />
+			<form:hidden path="authorizedToSubmitPlan"
+				id="authorizedToSubmitPlan" />
+			<input type="hidden" id="stakeHolderType" value="${stakeHolderType}" />
+
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
-									  href="#appliccation-info" data-tabidx=0><spring:message
-						code='lbl.appln.details' /></a></li>
+					href="#appliccation-info" data-tabidx=0><spring:message
+							code='lbl.appln.details' /></a></li>
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
-						code='title.documentdetail' /></a></li>
-				<li><a data-toggle="tab" href="#noc-document-info" data-tabidx=2><spring:message
-						code='lbl.noc.doc.details' /></a></li>
+							code='title.documentdetail' /></a></li>
+				<li><a data-toggle="tab" href="#noc-document-info"
+					data-tabidx=2><spring:message code='lbl.noc.doc.details' /></a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="appliccation-info" class="tab-pane fade in active">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="applicationDetails.jsp"></jsp:include>
 					</div>
-					<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
+					<div class="panel panel-primary edcrApplnDetails"
+						data-collapsed="0">
 						<jsp:include page="edcr-application-details-form.jsp"></jsp:include>
 					</div>
-					<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
+					<div class="panel panel-primary edcrApplnDetails"
+						data-collapsed="0">
 						<jsp:include page="building-subusages.jsp" />
 					</div>
-					<div class="panel panel-primary" data-collapsed="0" id="applicantDiv">
+					<div class="panel panel-primary" data-collapsed="0"
+						id="applicantDiv">
 						<jsp:include page="applicantDetailForm.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="siteDetail.jsp"></jsp:include>
 					</div>
-                    <div class="panel panel-primary demolitionDetails" data-collapsed="0">
-                        <jsp:include page="demolition-details.jsp" />
-                    </div>
-					<%--<div class="panel panel-primary existingbuildingdetails"
-						 data-collapsed="0">
-						<jsp:include page="existing-buildingdetails.jsp" />
-					</div>--%>
-					<div class="panel panel-primary existingbuildingdetails" data-collapsed="0">
-						<jsp:include page="edcr-existing-bldg-details.jsp" />
+					<div class="panel panel-primary demolitionDetails"
+						data-collapsed="0">
+						<jsp:include page="demolition-details.jsp" />
 					</div>
-					<%--<div class="panel panel-primary buildingdetails" data-collapsed="0">
-						<jsp:include page="buildingDetails.jsp" />
-					</div>--%>
-					<div class="panel panel-primary edcrbuildingdetails" data-collapsed="0">
-						<jsp:include page="edcr-buildingdetails.jsp" />
-					</div>
-					<c:if test="${(isCitizen && validateCitizenAcceptance) || (!isCitizen)}">
+					<c:choose>
+						<c:when test="${isEDCRIntegrationRequire eq true}">
+							<div class="panel panel-primary existingbuildingdetails"
+								data-collapsed="0">
+								<jsp:include page="edcr-existing-bldg-details.jsp" />
+							</div>
+							<div class="panel panel-primary edcrbuildingdetails"
+								data-collapsed="0">
+								<jsp:include page="edcr-buildingdetails.jsp" />
+							</div>
+						</c:when>
+						<c:otherwise>
+							<div class="panel panel-primary existingbuildingdetails"
+								data-collapsed="0">
+								<jsp:include page="existing-buildingdetails.jsp" />
+							</div>
+							<div class="panel panel-primary buildingdetails"
+								data-collapsed="0">
+								<jsp:include page="buildingDetails.jsp" />
+							</div>
+						</c:otherwise>
+					</c:choose>
+					<c:if
+						test="${(isCitizen && validateCitizenAcceptance) || (!isCitizen)}">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="disclaimer.jsp" />
 						</div>
@@ -152,81 +178,139 @@
 			</div>
 
 			<div align="center">
-			<c:choose>
-			<c:when test="${validateCitizenAcceptance}">
-			<c:choose>
-				<c:when test="${citizenDisclaimerAccepted }">
-			    	<form:button type="submit" id="bpaCreate" class="btn btn-primary"
-							 value="Submit"><spring:message code="lbl.submit"/></form:button>
-				</c:when>
-				<c:otherwise>
-			    	<form:button type="submit" id="bpaSave" class="btn btn-primary"
-							 value="Save"><spring:message code="lbl.save"/> </form:button>
-				</c:otherwise>
-			</c:choose>
-			</c:when>
-			<c:otherwise>
-			    <form:button type="submit" id="bpaSave" class="btn btn-primary"
-							 value="Save"><spring:message code="lbl.save"/> </form:button>
-				<form:button type="submit" id="bpaCreate" class="btn btn-primary"
-							 value="Submit"><spring:message code="lbl.submit"/></form:button>
-			</c:otherwise>
-			</c:choose>
+				<c:choose>
+					<c:when test="${validateCitizenAcceptance}">
+						<c:choose>
+							<c:when test="${citizenDisclaimerAccepted }">
+								<form:button type="submit" id="bpaCreate"
+									class="btn btn-primary" value="Submit">
+									<spring:message code="lbl.submit" />
+								</form:button>
+							</c:when>
+							<c:otherwise>
+								<form:button type="submit" id="bpaSave" class="btn btn-primary"
+									value="Save">
+									<spring:message code="lbl.save" />
+								</form:button>
+							</c:otherwise>
+						</c:choose>
+					</c:when>
+					<c:otherwise>
+						<form:button type="submit" id="bpaSave" class="btn btn-primary"
+							value="Save">
+							<spring:message code="lbl.save" />
+						</form:button>
+						<form:button type="submit" id="bpaCreate" class="btn btn-primary"
+							value="Submit">
+							<spring:message code="lbl.submit" />
+						</form:button>
+					</c:otherwise>
+				</c:choose>
 				<input type="button" name="button2" id="button2" value="Close"
-					   class="btn btn-default" onclick="window.close();" />
+					class="btn btn-default" onclick="window.close();" />
 			</div>
 		</form:form>
 	</div>
-	<input type="hidden" id="violationMessage1" value="<spring:message code='msg.validate.violationMessage' />"/>
-	<input type="hidden" id="startingDateReq" value="<spring:message code='msg.validate.startingdate.req' />"/>
-	<input type="hidden" id="completionDateReq" value="<spring:message code='msg.validate.workcompletiondate' />"/>
-	<input type="hidden" id="extendAreaLimit" value="<spring:message code='msg.validate.extendarea.limit' />"/>
-	<input type="hidden" id="resetFloorDetails" value="<spring:message code='msg.confirm.reset.floordetails' />"/>
-	<input type="hidden" id="slotmappingValidate" value="<spring:message code='msg.validate.slotmapping' />"/>
-	<input type="hidden" id="landAreaReq" value="<spring:message code='msg.validate.landarea.req' />"/>
-	<input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
-	<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
-	<input type="hidden" id="occupancyTypeMsg" value="<spring:message code='msg.validate.occupancytype' />"/>
-	<input type="hidden" id="areaPermissibleWOAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee1' />"/>
-	<input type="hidden" id="areaPermissibleWOAddnlFee2" value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee2' />"/>
-	<input type="hidden" id="areaPermissibleWithAddnlFee1" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee1' />"/>
-	<input type="hidden" id="areaPermissibleWithAddnlFee2" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee2' />"/>
-	<input type="hidden" id="areaPermissibleWithAddnlFee3" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee3' />"/>
-	<input type="hidden" id="areaPermissibleWithAddnlFee4" value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee4' />"/>
-	<input type="hidden" id="confirmAreaPermiWOAddnlFee" value="<spring:message code='msg.confirm.areaPermissibleWOAddnlFee' />"/>
-	<input type="hidden" id="confirmAreaPermiWOAddnlFee1" value="<spring:message code='msg.confirm.areaPermissibleWOAddnlFee1' />"/>
-	<input type="hidden" id="typeOfMsg" value="<spring:message code='msg.vlaidate.typeof' />"/>
-	<input type="hidden" id="permissibleAreaForFloor1" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />"/>
-	<input type="hidden" id="permissibleAreaForFloor2" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />"/>
-	<input type="hidden" id="floorCombination" value="<spring:message code='msg.validate.floorcombination' />" />
-	<input type="hidden" id="levelValidate" value="<spring:message code='msg.validate.level' />" />
-	<input type="hidden" id="occuptypemsg" value="<spring:message code='msg.validate.occuptypemsg' />" />
-	<input type="hidden" id="floorAlreadyExist" value="<spring:message code='msg.floordetails.already.exist' />" />
-	<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
-	<input type="hidden" id="submitMoreThanPermiPlotArea" value="<spring:message code='msg.validate.onsubmit.morethan.permissible.plotarea'/>"/>
-	<input type="hidden" id="saveApplication" value="<spring:message code='msg.confirm.save.appln'/>"/>
-	<input type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>"/>
-	<input type="hidden" id="acceptDisclaimer" value="<spring:message code='msg.validate.accept.disclaimer'/>"/>
-	<input type="hidden" id="oneAmenityReq" value="<spring:message code='msg.validate.atleast.oneamenity.req'/>"/>
-	<input type="hidden" id="onaDayPermitApplnValidate" value="<spring:message code='msg.validate.oneday.permit.appln'/>"/>
-    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
-    <input type="hidden" id="docNameLength" value="<spring:message code='msg.validate.docname.length' />" />
-    <input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.validate.filesize.limit' />" />
-    <input type="hidden" id="validDocFormat" value="<spring:message code='msg.validate.docformat' />" />
-    <input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
-	<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
-	<input type="hidden" id="typeOfMsg" value="<spring:message code='msg.vlaidate.typeof' />"/>
-	<input type="hidden" id="permissibleAreaForFloor1" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />"/>
-	<input type="hidden" id="permissibleAreaForFloor2" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />"/>
-	<input type="hidden" id="builtupAndCarpetDetails" value="<spring:message code='msg.tittle.builtup.carpet.details' />"/>
-	<input type="hidden" id="blockMsg" value="<spring:message code='msg.tittle.blockmsg' />"/>
-	<input type="hidden" id="buildScrutinyNumber" value="<spring:message code='msg.validate.building.scrutiny.number' />"/>
-	<input type="hidden" id="buildingPlanApplnForServiceType" value="<spring:message code='msg.validate.buildingplan.applnfor.servicetype' />"/>
-	<input type="hidden" id="buildServiceType" value="<spring:message code='msg.validate.building.servicetype' />"/>
-	<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
-	<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
-	<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>    
-	<input type="hidden" id="dcrforoc" value="<spring:message code='msg.dcr.for.oc' arguments="${currentuser}" htmlEscape="false" argumentSeparator=";"/>" />
+	<input type="hidden" id="violationMessage1"
+		value="<spring:message code='msg.validate.violationMessage' />" /> <input
+		type="hidden" id="startingDateReq"
+		value="<spring:message code='msg.validate.startingdate.req' />" /> <input
+		type="hidden" id="completionDateReq"
+		value="<spring:message code='msg.validate.workcompletiondate' />" />
+	<input type="hidden" id="extendAreaLimit"
+		value="<spring:message code='msg.validate.extendarea.limit' />" /> <input
+		type="hidden" id="resetFloorDetails"
+		value="<spring:message code='msg.confirm.reset.floordetails' />" /> <input
+		type="hidden" id="slotmappingValidate"
+		value="<spring:message code='msg.validate.slotmapping' />" /> <input
+		type="hidden" id="landAreaReq"
+		value="<spring:message code='msg.validate.landarea.req' />" /> <input
+		type="hidden" id="floorareaValidate"
+		value="<spring:message code='msg.validate.floorarea' />" /> <input
+		type="hidden" id="carpetareaValidate"
+		value="<spring:message code='msg.validate.carpetarea' />" /> <input
+		type="hidden" id="occupancyTypeMsg"
+		value="<spring:message code='msg.validate.occupancytype' />" /> <input
+		type="hidden" id="areaPermissibleWOAddnlFee1"
+		value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee1' />" />
+	<input type="hidden" id="areaPermissibleWOAddnlFee2"
+		value="<spring:message code='msg.validate.areaPermissibleWOAddnlFee2' />" />
+	<input type="hidden" id="areaPermissibleWithAddnlFee1"
+		value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee1' />" />
+	<input type="hidden" id="areaPermissibleWithAddnlFee2"
+		value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee2' />" />
+	<input type="hidden" id="areaPermissibleWithAddnlFee3"
+		value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee3' />" />
+	<input type="hidden" id="areaPermissibleWithAddnlFee4"
+		value="<spring:message code='msg.validate.areaPermissibleWithAddnlFee4' />" />
+	<input type="hidden" id="confirmAreaPermiWOAddnlFee"
+		value="<spring:message code='msg.confirm.areaPermissibleWOAddnlFee' />" />
+	<input type="hidden" id="confirmAreaPermiWOAddnlFee1"
+		value="<spring:message code='msg.confirm.areaPermissibleWOAddnlFee1' />" />
+	<input type="hidden" id="typeOfMsg"
+		value="<spring:message code='msg.vlaidate.typeof' />" /> <input
+		type="hidden" id="permissibleAreaForFloor1"
+		value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />" />
+	<input type="hidden" id="permissibleAreaForFloor2"
+		value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />" />
+	<input type="hidden" id="floorCombination"
+		value="<spring:message code='msg.validate.floorcombination' />" /> <input
+		type="hidden" id="levelValidate"
+		value="<spring:message code='msg.validate.level' />" /> <input
+		type="hidden" id="occuptypemsg"
+		value="<spring:message code='msg.validate.occuptypemsg' />" /> <input
+		type="hidden" id="floorAlreadyExist"
+		value="<spring:message code='msg.floordetails.already.exist' />" /> <input
+		type="hidden" id="valuesCannotEmpty"
+		value="<spring:message code='msg.validate.values.cannot.empty' />" />
+	<input type="hidden" id="submitMoreThanPermiPlotArea"
+		value="<spring:message code='msg.validate.onsubmit.morethan.permissible.plotarea'/>" />
+	<input type="hidden" id="saveApplication"
+		value="<spring:message code='msg.confirm.save.appln'/>" /> <input
+		type="hidden" id="submitApplication"
+		value="<spring:message code='msg.confirm.submit.appln'/>" /> <input
+		type="hidden" id="acceptDisclaimer"
+		value="<spring:message code='msg.validate.accept.disclaimer'/>" /> <input
+		type="hidden" id="oneAmenityReq"
+		value="<spring:message code='msg.validate.atleast.oneamenity.req'/>" />
+	<input type="hidden" id="onaDayPermitApplnValidate"
+		value="<spring:message code='msg.validate.oneday.permit.appln'/>" />
+	<input type="hidden" id="uploadMsg"
+		value="<spring:message code='msg.upload' />" /> <input type="hidden"
+		id="docNameLength"
+		value="<spring:message code='msg.validate.docname.length' />" /> <input
+		type="hidden" id="fileSizeLimit"
+		value="<spring:message code='msg.validate.filesize.limit' />" /> <input
+		type="hidden" id="validDocFormat"
+		value="<spring:message code='msg.validate.docformat' />" /> <input
+		type="hidden" id="floorareaValidate"
+		value="<spring:message code='msg.validate.floorarea' />" /> <input
+		type="hidden" id="carpetareaValidate"
+		value="<spring:message code='msg.validate.carpetarea' />" /> <input
+		type="hidden" id="typeOfMsg"
+		value="<spring:message code='msg.vlaidate.typeof' />" /> <input
+		type="hidden" id="permissibleAreaForFloor1"
+		value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />" />
+	<input type="hidden" id="permissibleAreaForFloor2"
+		value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />" />
+	<input type="hidden" id="builtupAndCarpetDetails"
+		value="<spring:message code='msg.tittle.builtup.carpet.details' />" />
+	<input type="hidden" id="blockMsg"
+		value="<spring:message code='msg.tittle.blockmsg' />" /> <input
+		type="hidden" id="buildScrutinyNumber"
+		value="<spring:message code='msg.validate.building.scrutiny.number' />" />
+	<input type="hidden" id="buildingPlanApplnForServiceType"
+		value="<spring:message code='msg.validate.buildingplan.applnfor.servicetype' />" />
+	<input type="hidden" id="buildServiceType"
+		value="<spring:message code='msg.validate.building.servicetype' />" />
+	<input type="hidden" id="forBuildScrutinyNumber"
+		value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />" />
+	<input type="hidden" id="floorDetailsNotExtracted"
+		value="<spring:message code='msg.validate.floordetsil.not.extracted' />" />
+	<input type="hidden" id="existingBuildDetailsNotPresent"
+		value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />
+	<input type="hidden" id="dcrforoc"
+		value="<spring:message code='msg.dcr.for.oc' arguments="${currentuser}" htmlEscape="false" argumentSeparator=";"/>" />
 	<c:set var="currentuser" value="${currentuser}" />
 
 </div>
@@ -236,18 +320,20 @@
 <script
 		src="<c:url value='/resources/global/js/bootstrap/bootstrap-tagsinput.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-		src="<c:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<c:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/>"></script>
+	src="<c:url value='/resources/global/js/jquery/plugins/select2/4.0.3/select2.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/buildingarea-details.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/bpa-application-validations.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/buildingarea-details.js?rnd=${app_release_no}'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/citizen-helper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/bpa-application-validations.js?rnd=${app_release_no}'/>"></script>
 <script
-		src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/citizen-helper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>

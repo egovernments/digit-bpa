@@ -48,6 +48,7 @@ package org.egov.bpa.web.controller.transaction;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
@@ -106,9 +107,9 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     @Autowired
     private CrossHierarchyService crossHierarchyService;
     @Autowired
-    private BoundaryService boundaryService;
-    @Autowired
     private PdfQrCodeAppendService pdfQrCodeAppendService;
+    @Autowired
+    private BpaDcrService bpaDcrService;
 
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -142,6 +143,8 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                 workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(), application.getStateHistory()));
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
+        model.addAttribute("isEDCRIntegrationRequire",
+                bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
         return "viewapplication-form";
     }

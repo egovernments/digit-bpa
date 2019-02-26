@@ -65,6 +65,10 @@ public class OccupancyService {
     @Autowired
     private UsagesRepository usagesRepository;
 
+    public Occupancy findById(final Long id) {
+        return occupancyRepository.findOne(id);
+    }
+    
     public List<Occupancy> findAll() {
         return occupancyRepository.findAll();
     }

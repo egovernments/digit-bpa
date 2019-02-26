@@ -47,11 +47,13 @@ var mixedOccupancyResponse;
 var occupancyResponseByName;
 var subOccupancyResponseByName;
 var occupancySuboccupancyMap;
+var usagesReponseBySuboccupancy;
 $(document).ready(function() {
 
     getOccupancyObjects();
 	getSubOccupancyObjects();
 	getOccupancyAndSubOccupanyMap();
+	getGroupedUsagesBySuboccupancy();
     //$('#oneDayPermitSec').hide();
     $('.buildingdetails').hide();
     $('.existingbuildingdetails').hide();
@@ -183,16 +185,16 @@ $(document).ready(function() {
             showNewAndExistingBuildingDetails();
             addMandatoryForNewBuildingDetails();
             $('.alterationInArea').find("span").addClass( "mandatory" );
-            $('#totalPlintArea').attr('required',true);
-            $('#totalPlintArea').attr('readOnly',true);
+            $('.totalPlintArea').attr('required',true);
+            $('.totalPlintArea').attr('readOnly',true);
             $('.alterationInArea').show();
             showDemolitionDetails();
         } else if('Addition or Extension' == seviceTypeName){
             addMandatoryForExistingBuildingDetails();
             showNewAndExistingBuildingDetails();
             addMandatoryForNewBuildingDetails();
-            $('#totalPlintArea').attr('required',true);
-            $('#totalPlintArea').attr('readOnly',true);
+            $('.totalPlintArea').attr('required',true);
+            $('.totalPlintArea').attr('readOnly',true);
             $('.additionInArea').find("span").addClass( "mandatory" );
             $('.additionInArea').show();
             showDemolitionDetails();
@@ -223,7 +225,7 @@ $(document).ready(function() {
                 $('.totalPlintArea').show();
             }
             addMandatoryForNewBuildingDetails();
-            jQuery('#totalPlintArea').attr('readOnly',true);
+            jQuery('.totalPlintArea').attr('readOnly',true);
         }
     });
     
@@ -468,22 +470,6 @@ $(document).ready(function() {
         });
     }
     
-    function getSubOccupancyObjects() {
-        $.ajax({
-            url: "/bpa/application/getsuboccupancydetails",
-            async: false,
-            type: "GET",
-            dataType: "json",
-            success: function (response) {
-                subOccupancyResponse = arrayGroupByKey(response, 'id');
-                subOccupancyResponseByName = arrayGroupByKey(response, 'name');
-               // mixedOccupancyResponse = response;
-            },
-            error: function (response) {
-            }
-        });
-    }
-    
     function getOccupancyAndSubOccupanyMap(){
     	$.ajax({
             url: "/bpa/application/getOccupancyAndSuboccupancyMap",
@@ -492,6 +478,21 @@ $(document).ready(function() {
             dataType: "json",
             success: function (response) {
             occupancySuboccupancyMap = response;
+            },
+            error: function (response) {
+            }
+        });
+    }
+    
+    // Api call will group usages by sub occupancy and return {key:subOccupancy Id, value:<List<Usages>}  
+    function getGroupedUsagesBySuboccupancy(){
+    	$.ajax({
+            url: "/bpa/application/group-usages/by-suboccupancy",
+            async: false,
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+            	usagesReponseBySuboccupancy = response;
             },
             error: function (response) {
             }
@@ -518,13 +519,13 @@ $(document).ready(function() {
     var landTypeDescIndex;
     $('#occupancyapplnlevel').focus(function () {
         // Store the current value on focus, before it changes
-        previousIndex= this.selectedIndex;
+        previousIndex = this.selectedIndex;
         oneDayPermitPreviousVal = $('#isOneDayPermitApplication').is(':checked');
         landTypeDescIndex = $('#typeOfLand').val()
     }).change(function(e){
-        if($('#buildingAreaDetails tbody tr').length == 1 && ($('.occupancy').val() == '' || $('.floorDescription').val() == '')){
-            resetOccupancyDetails();
-        } else if($('#buildingAreaDetails tbody tr').length >= 1 && $('.occupancy').val() != '' && $('.floorDescription').val() != ''){
+        if($('#buildingAreaDetails0 tbody tr').length <= 1 && ($('.subOccupancy').val() == '' || $('.floorDescription').val() == '')){
+            resetSubOccupancyDetails();
+        } else if($('#buildingAreaDetails0 tbody tr').length >= 1 && $('.subOccupancy').val() != '' && $('.floorDescription').val() != ''){
 
             var dropdown=e;
 
@@ -543,9 +544,9 @@ $(document).ready(function() {
                     },
                     callback : function(result) {
                         if (result) {
-                            $('#buildingAreaDetails').find('input').not('input[type=hidden]').val('');
-                            $('#buildingAreaDetails').find('select').val('');
-                            resetOccupancyDetails();
+                            $('#buildingAreaDetails0').find('input').not('input[type=hidden]').val('');
+                            $('#buildingAreaDetails0').find('select').val('');
+                            resetSubOccupancyDetails();
                             setFloorCount();
                             getOccupancyObject();
                             $( ".plinthArea" ).trigger( "change" );
@@ -564,34 +565,80 @@ $(document).ready(function() {
                         }
                     }
                 });
-        } else if($('#buildingAreaDetails tbody tr').length >1 && ($('.occupancy').val() == '' || $('.floorDescription').val() == '')){
-            resetOccupancyDetails();
+        } else if($('#buildingAreaDetails0 tbody tr').length >1 && ($('.subOccupancy').val() == '' || $('.floorDescription').val() == '')){
+            resetSubOccupancyDetails();
         }
     });
+    
+    $(document).on('change',"#subOccupancies",function () {
+    	resetSubOccupancyDetails();
+    });
+    
+    function loadSubOccupancies(selectBoxName){
+    	var occupancies = [];
+    	$.each($("#occupancyapplnlevel option:selected"), function(idx){
+    		occupancies.push($(this).text());
+        });
+		 $.ajax({
+				url: "/bpa/getsuboccupancies/by-occupancy?occupancies="+occupancies,     
+				type: "GET",
+				async: false,
+				dataType: "json",
+				success: function (response) {
+					$('select[name="'+selectBoxName+'"]').empty();
+					$('select[name="'+selectBoxName+'"]').append($("<option value=''>Select </option>"));
+					var occFirst;
+					$.each(response, function(index, subOcc) {
+						if(subOcc && subOcc.occupancy.name)
+							occFirst = subOcc.occupancy.name;
+						$('select[name="'+selectBoxName+'"]').append($('<option>').val(subOcc.id).text(occFirst +' - '+ subOcc.name));
+					});
+				}, 
+				error: function (response) {
+				}
+			});
+		}
 
     // onchange of main occupancy reset floorwise occupancy details column value
-    function resetOccupancyDetails() {
-        $('#buildingAreaDetails tbody tr *[name$="occupancy"]').each(function(idx){
-            var  selectBoxName = "buildingDetail[0].applicationFloorDetails["+idx+"].subOccupancy";
-            var  selectBoxName1 = "buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].subOccupancy";
-            clearExistingDropDownValues(selectBoxName);
-            clearExistingDropDownValues(selectBoxName1);
-            if($("#occupancyapplnlevel option:selected" ).text() == 'Mixed'){
+    function resetSubOccupancyDetails() {
+    	var proposedBldgLen = $('.buildDetails').data('bldg-len');
+    	for(var i = 0; i < proposedBldgLen; i++) {
+    		$('.buildingAreaDetails'+i+' tbody tr *[name$="subOccupancy"]').each(function(idx) {
+                var  selectBoxName = "buildingDetail["+i+"].applicationFloorDetails["+idx+"].subOccupancy";
+                var  selectBoxName1 = "buildingDetail["+i+"].applicationFloorDetailsForUpdate["+idx+"].subOccupancy";
+                var  usageSelectBoxName = "buildingDetail["+i+"].applicationFloorDetails["+idx+"].usage";
+                var  usageSelectBoxName1 = "buildingDetail["+i+"].applicationFloorDetailsForUpdate["+idx+"].usage";
+                clearExistingDropDownValues(selectBoxName);
+                clearExistingDropDownValues(selectBoxName1);
+                /*if($("#occupancyapplnlevel option:selected" ).text() == 'Mixed'){*/
                 $('select[name="'+selectBoxName+'"]').append($("<option value=''>Select </option>"));
                 $('select[name="'+selectBoxName1+'"]').append($("<option value=''>Select </option>"));
-                $.each(mixedOccupancyResponse, function(index, occupancyObj) {
-                    if(occupancyObj.description != 'Mixed')
-                        loadOccupancyDetails(selectBoxName, occupancyObj.id, occupancyObj.description);
-                    loadOccupancyDetails(selectBoxName1, occupancyObj.id, occupancyObj.description);
+                $.each($("#occupancyapplnlevel option:selected"), function(idx1) {
+                	
+                    /*$.each(mixedOccupancyResponse, function(index, occupancyObj) {*/
+                		var subOccupancies = occupancySuboccupancyMap[$(this).val()];
+                		var usages = usagesReponseBySuboccupancy[$(this).val()];
+                		$.each(subOccupancies, function(index, subOcc) {
+    						//$('select[name="'+selectBoxName+'"]').append($('<option>').val(subOcc.id).text(subOcc.name));
+    						loadDropdownValues(selectBoxName, subOcc.id, subOcc.name);
+                            loadDropdownValues(selectBoxName1, subOcc.id, subOcc.name);
+    					});
+                		$.each(usages, function(index, usage) {
+    						loadDropdownValues(usageSelectBoxName, usage.id, usage.name);
+                            loadDropdownValues(usageSelectBoxName1, usages.id, usages.name);
+    					});
+                    	
+                   // });
                 });
-            } else {
-                loadOccupancyDetails(selectBoxName, $("#occupancyapplnlevel option:selected" ).val(), $("#occupancyapplnlevel option:selected" ).text());
-                loadOccupancyDetails(selectBoxName1, $("#occupancyapplnlevel option:selected" ).val(), $("#occupancyapplnlevel option:selected" ).text());
-            }
-        });
+                /*} else {
+                    loadDropdownValues(selectBoxName, $("#occupancyapplnlevel option:selected" ).val(), $("#occupancyapplnlevel option:selected" ).text());
+                    loadDropdownValues(selectBoxName1, $("#occupancyapplnlevel option:selected" ).val(), $("#occupancyapplnlevel option:selected" ).text());
+                }*/
+            });
+    	}
     }
 
-    function loadOccupancyDetails(selectBoxName,id,value){
+    function loadDropdownValues(selectBoxName,id,value){
         $('select[name="'+selectBoxName+'"]').append($('<option>').val(id).text(value));
     }
 
@@ -671,22 +718,26 @@ $(document).ready(function() {
 
     // multi-select without pressing ctrl key
     $(document).on('mousedown', 'select.tick-indicator', function(e) {
-        e.preventDefault();
+    	var isReadonly = $(this).attr('readonly');
+    	e.preventDefault();
+    	if(!isReadonly) {
+    		e.preventDefault();
 
-        var select = this;
-        var scroll = select.scrollTop;
+            var select = this;
+            var scroll = select.scrollTop;
 
-        e.target.selected = !e.target.selected;
+            e.target.selected = !e.target.selected;
 
-        $(this).trigger('change');
+            $(this).trigger('change');
 
-        setTimeout(function(){select.scrollTop = scroll;}, 0);
+            setTimeout(function(){select.scrollTop = scroll;}, 0);
 
-        $(select).focus();
+            $(select).focus();
+    	}
 
     }).mousemove(function(e){e.preventDefault()});
 
-    // trigger events on pageload
+    // trigger events on pageloadr
     $( "#isexistingApprovedPlan" ).trigger( "change" );
     $( "#isappForRegularization" ).trigger( "change" );
     $( "#constStages" ).trigger( "change" );
@@ -699,8 +750,7 @@ $(document).ready(function() {
         || 'Amenities' == serviceTypeName) {
 
         showOnePermitOnPageLoad();
-
-        $('#occupancyapplnlevel').on('change', function() {
+        $(document).on('change',"#occupancyapplnlevel",function () {
             //$('.amenityHideShow').show();
             //resetValuesForAmenitiesOfOneDayPermit();
             if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){

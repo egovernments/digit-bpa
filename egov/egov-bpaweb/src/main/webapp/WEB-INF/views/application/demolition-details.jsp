@@ -67,7 +67,7 @@
                 code="lbl.demolition.area"/><span ></span></label>
         <div class="col-sm-3 add-margin">
             <form:input
-                    class="form-control patternvalidation maximumArea"
+                    class="form-control patternvalidation maximumArea decimalfixed"
                     maxlength="10" data-pattern="decimalvalue" id="demolitionArea"
                     path="siteDetail[0].demolitionArea"/>
         </div>
