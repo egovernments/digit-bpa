@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.common.entity.edcr.EdcrPdfDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.common.entity.edcr.PlanInformation;
@@ -43,7 +44,8 @@ public class PlanService {
     private CustomImplProvider specificRuleService;
     @Autowired
     private EdcrApplicationDetailService edcrApplicationDetailService;
-
+    @Autowired
+    private EdcrPdfDetailService edcrPdfDetailService;
     @Autowired
     private ExtractService extractService;
 
@@ -202,11 +204,31 @@ public class PlanService {
             edcrApplicationDetails.add(edcrApplicationDetail);
             savePlanDetail(plan, edcrApplicationDetail);
 
-            /*
-             * if (plan.getEdcrPdfDetails() != null && plan.getEdcrPdfDetails().size() > 0) { for (EdcrPdfDetail edcrPdfDetail :
-             * plan.getEdcrPdfDetails()) { edcrPdfDetail.setEdcrApplicationDetail(edcrApplicationDetail); }
-             * edcrPdfDetailService.saveAll(plan.getEdcrPdfDetails()); }
-             */
+            ArrayList<org.egov.edcr.entity.EdcrPdfDetail> edcrPdfDetails = new ArrayList();
+           
+            if (plan.getEdcrPdfDetails() != null && plan.getEdcrPdfDetails().size() > 0) {
+                for (EdcrPdfDetail edcrPdfDetail : plan.getEdcrPdfDetails()) {
+                	org.egov.edcr.entity.EdcrPdfDetail pdfDetail = new org.egov.edcr.entity.EdcrPdfDetail();
+                	pdfDetail.setLayer(edcrPdfDetail.getLayer());
+                	pdfDetail.setFailureReasons(edcrPdfDetail.getFailureReasons());
+                	pdfDetail.setStandardViolations(edcrPdfDetail.getStandardViolations());
+                	
+                	 File convertedPdf = edcrPdfDetail.getConvertedPdf();
+					if (convertedPdf != null) {
+                         FileStoreMapper fileStoreMapper = fileStoreService.store(convertedPdf, convertedPdf.getName(), "application/pdf", "Digit DCR");
+                         pdfDetail.setConvertedPdf(fileStoreMapper);
+                     }
+                }
+            }
+            
+            if (edcrPdfDetails != null && edcrPdfDetails.size() > 0) {
+                for (org.egov.edcr.entity.EdcrPdfDetail edcrPdfDetail : edcrPdfDetails) {
+                    edcrPdfDetail.setEdcrApplicationDetail(edcrApplicationDetail);
+                }
+
+                edcrPdfDetailService.saveAll(edcrPdfDetails);
+            }           
+           
             edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         }
     }

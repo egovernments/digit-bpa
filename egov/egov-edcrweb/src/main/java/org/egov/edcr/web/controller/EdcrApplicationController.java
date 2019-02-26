@@ -1,6 +1,7 @@
 package org.egov.edcr.web.controller;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.io.IOException;
@@ -8,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,19 +25,19 @@ import org.egov.commons.service.OccupancyService;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
+import org.egov.edcr.entity.EdcrPdfDetail;
 import org.egov.edcr.service.EdcrApplicationService;
 import org.egov.edcr.service.EdcrBpaRestService;
+import org.egov.edcr.service.EdcrPdfDetailService;
 import org.egov.edcr.web.adaptor.EdcrApplicationJsonAdaptor;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.persistence.entity.enums.UserType;
-import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -86,11 +86,9 @@ public class EdcrApplicationController {
 	private StakeHolderService stakeHolderService;
 	@Autowired
 	private EdcrBpaRestService edcrBpaRestService;
-
-
-	/*
-	 * @Autowired private EdcrPdfDetailService edcrPdfDetailService;
-	 */
+	@Autowired 
+	private EdcrPdfDetailService edcrPdfDetailService;
+	 
 	/*
 	 * @Autowired // private PlanInformationService planInformationService;
 	 */
@@ -380,22 +378,22 @@ public class EdcrApplicationController {
 				.toString();
 	}
 
-	@GetMapping("/edcrapplication/get-convertedpdf/{applicationDetailId}")
-	public String getConvertedPdfByApplicationDetailId(@PathVariable final String applicationDetailId, Model model) {
-		/*
-		 * List<EdcrPdfDetail> pdfDetails =
-		 * edcrPdfDetailService.findByDcrApplicationId(Long.valueOf(applicationDetailId)
-		 * ); if (pdfDetails != null && pdfDetails.size() > 0) {
-		 * 
-		 * for (EdcrPdfDetail edcrPdfDetail : pdfDetails) { if
-		 * (StringUtils.isNotBlank(edcrPdfDetail.getStandardViolations())){ String[]
-		 * split = edcrPdfDetail.getStandardViolations().split("\\|"); List<String>
-		 * violations = Arrays.asList(split); edcrPdfDetail.setViolations(violations); }
-		 * } }
-		 */
-		// model.addAttribute("pdfDetails", pdfDetails);
-		return EDCRAPPLICATION_CONVERTED_PDF;
-	}
+	 @GetMapping("/edcrapplication/get-convertedpdf/{applicationDetailId}")
+	    public String getConvertedPdfByApplicationDetailId(@PathVariable final String applicationDetailId, Model model) {
+	        List<EdcrPdfDetail> pdfDetails = edcrPdfDetailService.findByDcrApplicationId(Long.valueOf(applicationDetailId));
+	        if (pdfDetails != null && !pdfDetails.isEmpty()) {
+
+	            for (EdcrPdfDetail edcrPdfDetail : pdfDetails) {
+	                if (StringUtils.isNotBlank(edcrPdfDetail.getStandardViolations())) {
+	                    String[] split = edcrPdfDetail.getStandardViolations().split("\\|");
+	                    List<String> violations = Arrays.asList(split);
+	                    edcrPdfDetail.setViolations(violations);
+	                }
+	            }
+	        }
+	        model.addAttribute("pdfDetails", pdfDetails);
+	        return EDCRAPPLICATION_CONVERTED_PDF;
+	    }
 
 	@GetMapping(value = "/scrutinized-plan/findby-permitnumber/{permitNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody

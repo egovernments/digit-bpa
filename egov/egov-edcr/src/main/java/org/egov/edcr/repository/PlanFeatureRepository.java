@@ -57,6 +57,7 @@ import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.BuildingHeight;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.DistanceToRoad;
+import org.egov.edcr.feature.DxfToPdfConverter;
 import org.egov.edcr.feature.ExitWidth;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.HeightOfRoom;
@@ -152,7 +153,10 @@ public class PlanFeatureRepository {
          * pf = new PlanFeature(CommonFeature.class); features.add(pf); pf = new PlanFeature(DxfToPdfConverter.class);
          * features.add(pf); pf = new PlanFeature(OpenStairs.class); features.add(pf);
          */
-
+        
+		/*
+		 * pf = new PlanFeature(DxfToPdfConverter.class); features.add(pf);
+		 */
         return features;
     }
 
