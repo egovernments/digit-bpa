@@ -68,6 +68,8 @@
 				value="${citizenDisclaimerAccepted}" />
 			<input type="hidden" id="isCitizen" name="isCitizen"
 				value="${isCitizen}" />
+				<input type="hidden" id="onlinePaymentEnable" name="onlinePaymentEnable"
+				value="${onlinePaymentEnable}" />
 			<input type="hidden" id="cityName" name="cityName"
 				value="${cityName}" />
 			<input type="hidden" name="parent" id="bpaApplicationId" />
