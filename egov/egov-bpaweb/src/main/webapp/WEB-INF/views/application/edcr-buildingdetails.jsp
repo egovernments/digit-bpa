@@ -244,7 +244,7 @@
                                 class="form-control patternvalidation dcr-reset-values nonzero decimalfixed heightFromGroundWithOutStairRoom"
                                 maxlength="6" data-pattern="decimalvalue"
                                 id="heightFromGroundWithOutStairRoomFromEdcr" required="required"
-                                path="buildingDetailFromEdcr[0].heightFromGroundWithOutStairRoom"
+                                path="buildingDetailFromEdcr[${bldgCounter.index}].heightFromGroundWithOutStairRoom"
                                 value="${bldg.heightFromGroundWithOutStairRoom}"/>
                         <form:errors
                                 path="buildingDetailFromEdcr[${bldgCounter.index}].heightFromGroundWithOutStairRoom"

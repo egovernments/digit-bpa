@@ -79,11 +79,22 @@ jQuery(document).ready(function ($) {
 
     if ($('#invalidStakeholder').val())
         bootbox.alert($('#invalidStakeholder').val());
+    
+    function setBuildingModifiedDetails() {
+        $('#setTotalPlintArea').val($('#totalPlintAreaFromEdcr').val());
+        $('#setFloorCount').val($('#floorCountFromEdcr').val());
+        $('#setHeightFromGroundWithStairRoom').val($('#heightFromGroundWithStairRoomFromEdcr').val());
+        $('#setHeightFromGroundWithOutStairRoom').val($('#heightFromGroundWithOutStairRoomFromEdcr').val());
+        $('#setFromStreetLevelWithStairRoom').val($('#fromStreetLevelWithStairRoomFromEdcr').val());
+        $('#setFromStreetLevelWithOutStairRoom').val($('#fromStreetLevelWithOutStairRoomFromEdcr').val());
+    }
+    
 
     function validateFormOnSave(button, validator) {
         // On Save documents mandatory check not require and on Submit only need to do documents mandatory check
         if ($('#occupancyCertificateUpdateForm').valid() && validateAdditionalConditions()) {
             document.getElementById("workFlowAction").value = button;
+            setBuildingModifiedDetails();
             validateIsAuthorizedToSubmitPlanOnCreate($("#extentinsqmts").val(), seviceTypeName);
             return true;
         } else {
@@ -95,6 +106,7 @@ jQuery(document).ready(function ($) {
 
         if ($('#occupancyCertificateUpdateForm').valid() && validateUploadFilesMandatory() && validateAdditionalConditions()) {
             document.getElementById("workFlowAction").value = button;
+            setBuildingModifiedDetails();
             validateIsAuthorizedToSubmitPlanOnCreate($("#extentinsqmts").val(), seviceTypeName);
             return true;
         } else {
