@@ -128,7 +128,7 @@ public final class SearchBpaApplnFormSpec {
                 Join<SlotApplication, SlotDetail> slotDetailJoin = root.join("slotDetail");
                 Join<SlotDetail, Slot> slotJoin = slotDetailJoin.join("slot");
                 predicate.getExpressions()
-                        .add(builder.greaterThanOrEqualTo(slotJoin.get("appointmentDate"), requestForm.getToDate()));
+                        .add(builder.equal(slotJoin.get("appointmentDate"), requestForm.getToDate()));
             }
             Join<SiteDetail, Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
             if (requestForm.getElectionWardId() != null)
