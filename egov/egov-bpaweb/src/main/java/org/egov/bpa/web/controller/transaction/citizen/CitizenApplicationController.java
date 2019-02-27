@@ -83,6 +83,7 @@ import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.DCRDocument;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
+import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.BpaDcrService;
@@ -96,6 +97,7 @@ import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -143,6 +145,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private BpaDcrService bpaDcrService;
     @Autowired
     protected SubOccupancyService subOccupancyService;
+    @Autowired
+    private BoundaryService boundaryService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -371,7 +375,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         }
         
         applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
-
+        saveBoundary(bpaApplication);
         /*
          * if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
          * applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication); prepareCommonModelAttribute(model,
@@ -509,4 +513,24 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         model.addAttribute("bpaApplication", application);
         return "application-status";
     }
+    
+	private void saveBoundary(BpaApplication bpaApplication) {
+		SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
+		List<SiteDetail> siteDetails = new ArrayList<>();
+		if (bpaApplication.getAdminBoundary() != null && !bpaApplication.getAdminBoundary().isEmpty()) {
+			siteDetail.setElectionBoundary(
+					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getAdminBoundary())));
+		}
+		if (bpaApplication.getRevenueBoundary() != null && !bpaApplication.getRevenueBoundary().isEmpty()) {
+			siteDetail.setAdminBoundary(
+					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getRevenueBoundary())));
+			bpaApplication.setWardId(Long.valueOf(bpaApplication.getRevenueBoundary()));
+		}
+		if (bpaApplication.getLocationBoundary() != null && !bpaApplication.getLocationBoundary().isEmpty()) {
+			siteDetail.setLocationBoundary(
+					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getLocationBoundary())));
+		}
+		siteDetails.add(siteDetail);
+		bpaApplication.setSiteDetail(siteDetails);
+	}
 }

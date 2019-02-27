@@ -127,6 +127,9 @@
 						<jsp:include page="applicantDetailForm.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="generic-boundary-form.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="siteDetail.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary demolitionDetails"

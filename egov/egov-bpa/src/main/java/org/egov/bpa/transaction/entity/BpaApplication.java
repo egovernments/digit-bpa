@@ -273,6 +273,9 @@ public class BpaApplication extends StateAware<Position> {
     private transient List<BuildingDetail> buildingDetailFromEdcr = new ArrayList<>(0);
     private transient List<ExistingBuildingDetail> existingBldgDetailFromEdcr = new ArrayList<>(0);
     private transient List<Occupancy> permitOccupanciesTemp = new ArrayList<>(0);
+    private transient String adminBoundary;
+    private transient String revenueBoundary;
+    private transient String locationBoundary;
 
     @Override
     public Long getId() {
@@ -1023,5 +1026,29 @@ public class BpaApplication extends StateAware<Position> {
     public void setPermitOccupanciesTemp(List<Occupancy> permitOccupanciesTemp) {
         this.permitOccupanciesTemp = permitOccupanciesTemp;
     }
+
+	public String getAdminBoundary() {
+		return adminBoundary;
+	}
+
+	public void setAdminBoundary(String adminBoundary) {
+		this.adminBoundary = adminBoundary;
+	}
+
+	public String getRevenueBoundary() {
+		return revenueBoundary;
+	}
+
+	public void setRevenueBoundary(String revenueBoundary) {
+		this.revenueBoundary = revenueBoundary;
+	}
+
+	public String getLocationBoundary() {
+		return locationBoundary;
+	}
+
+	public void setLocationBoundary(String locationBoundary) {
+		this.locationBoundary = locationBoundary;
+	}
 
 }

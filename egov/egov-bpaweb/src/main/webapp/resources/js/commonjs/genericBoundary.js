@@ -46,7 +46,6 @@
  *
  */
 $(function() {
-    console.log( "ready!" );
     loadBoundary();
 });
 
@@ -62,24 +61,39 @@ function loadBoundary() {
         	isExist = true;
         	var responseData = JSON.parse(response);
         	var orderArray = [];
+        	var tempArray = [];
+        	var orderMap = new Map(); 
         	var fromHierarchy;
         	var toHierarchy;
         	var displayName;
         	var hierarchy;
+        	var hierarchyNumber;
+        	var boundaryType;
         	var crosslinkConfig=responseData['crossBoundary'];
         	var boundaryData=responseData['boundaryData'];
         	if(crosslinkConfig!=null && crosslinkConfig!=''){
 	        	fromHierarchy=crosslinkConfig['fromHierarchy'];
 	        	toHierarchy=crosslinkConfig['toHierarchy'];
         	}
-        	for(var k in boundaryData) 
+        	for(var k in boundaryData) {
         		orderArray.push(k);
+        		hierarchyNumber=k.split('-')[0];
+        		boundaryType=k.split('-')[1];
+        		
+        		if(orderMap.get(hierarchyNumber) == null){
+        			orderMap.set(hierarchyNumber, [boundaryType]);
+        		} else {
+        			tempArray = orderMap.get(hierarchyNumber);
+        			tempArray.push(boundaryType);
+        			orderMap.set(hierarchyNumber, tempArray);
+        		}
+        	}
         	orderArray.sort();
         	for (var i = 0; i < orderArray.length; i++) {
         		displayName = boundaryData[orderArray[i]]['displayName'];
         		hierarchy = boundaryData[orderArray[i]]['hierarchy'];
 				if(boundaryData[orderArray[i]]['data']!=null && boundaryData[orderArray[i]]['data']!=''){
-					$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+' : </label>');
+					$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
 					if(fromHierarchy.indexOf(displayName) != -1){
 						$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" data-first-option="false" id="'+hierarchy+displayName.replace(/ +/g, "")+'" onChange="crossBoundary(\''+hierarchy+displayName.replace(/ +/g, "")+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
 					}else {
@@ -89,6 +103,14 @@ function loadBoundary() {
 						$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
 							$("#"+hierarchy+displayName.replace(/ +/g, "")).append($('<option>').text(value.name).attr('value', value.id));
 						});
+					}
+					if(Math.max.apply(null, orderMap.get(orderArray[i].split('-')[0]))==orderArray[i].split('-')[1]){
+						if(hierarchy=='ADMINISTRATION')
+							document.getElementById(hierarchy+displayName.replace(/ +/g, "")).name="adminBoundary";
+						if(hierarchy=='REVENUE')
+							document.getElementById(hierarchy+displayName.replace(/ +/g, "")).name="revenueBoundary";
+						if(hierarchy=='LOCATION')
+							document.getElementById(hierarchy+displayName.replace(/ +/g, "")).name="locationBoundary";
 					}
 				}
         	}

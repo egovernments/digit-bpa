@@ -511,7 +511,7 @@ public class BpaAjaxController {
 		BoundaryType boundaryType = null;
 
 		final AppConfigValues boundaryConfiguration = appConfigValuesService
-				.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME, BpaConstants.BOUNDARY_CONFIGURATION_KEY)
+				.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME, BpaConstants.GENERIC_BOUNDARY_CONFIGURATION_KEY)
 				.get(0);
 		JSONObject boundaryConfigJson = new JSONObject(boundaryConfiguration.getValue());
 		JSONObject validBoundaryJson = (JSONObject) boundaryConfigJson.get("validBoundary");
@@ -530,9 +530,9 @@ public class BpaAjaxController {
 				for (final Boundary boundary : boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getId())) {
 					boundaryJson = new JSONObject();
 					boundaryJson.put("id", boundary.getId());
-					boundaryJson.put("code", boundary.getCode());
 					boundaryJson.put("name", boundary.getName());
 					boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getId());
+					boundaryJson.put("materialpath", boundary.getMaterializedPath());
 					boundaryArray.put(boundaryJson);
 				}
 				boundaryInfoJson.put("data", boundaryArray);
@@ -566,6 +566,7 @@ public class BpaAjaxController {
 				boundaryJson = new JSONObject();
 				boundaryJson.put("id", boundary.getId());
 				boundaryJson.put("name", boundary.getName());
+				boundaryJson.put("materialpath", boundary.getMaterializedPath());
 				boundaryArray.put(boundaryJson);
 			}
 			childBoundaryJson.put(childBoundary[i].split(":")[1], boundaryArray);

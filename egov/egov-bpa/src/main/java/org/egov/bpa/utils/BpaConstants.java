@@ -363,7 +363,7 @@ public class BpaConstants {
     public static final String BPAFEECALULATION = "BPA_FEE_CALCULATION";
 
     public static final String BPA_MODULE_NAME = "BPA";
-    public static final String BOUNDARY_CONFIGURATION_KEY="BPA_BOUNDARY_CONFIGURATION";
+    public static final String GENERIC_BOUNDARY_CONFIGURATION_KEY="BPA_GENERIC_BOUNDARY_CONFIGURATION";
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {
