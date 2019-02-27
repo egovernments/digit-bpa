@@ -84,7 +84,7 @@
 									value="${permitFee.application.serviceType.description}"
 									default="N/A"></c:out>
 							</div>
-							<div class="col-sm-3 add-margin">Amenity Type</div>
+							<div class="col-sm-3 add-margin"><spring:message code="lbl.amenity.type" /></div>
 							<c:choose>
 								<c:when test="${empty permitFee.application.amenityName}">
 									<div class="col-sm-3 add-margin view-content">
@@ -106,13 +106,13 @@
 								<c:out value="${permitFee.application.admissionfeeAmount}"
 									default="N/A"></c:out>
 									</div>
-							<div class="col-sm-3 add-margin">
+							<%-- <div class="col-sm-3 add-margin">
 								<spring:message code="lbl.admission.fees" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out value="${applicationFee.feeDate}"
 									   default="N/A"></c:out>
-							</div>
+							</div> --%>
 						</div>
 					</div>
 					<div class="panel-heading custom_form_panel_heading">
