@@ -118,7 +118,7 @@ public class PermitOrderFormatImpl implements PermitApplicationNoticesFormat {
             	if(bpaApplication.getSiteDetail().get(0).getIsappForRegularization())
             		reportFileName = REGULARIZATIONBUILDINGDEVELOPMENTFIILENAME;
             	else 
-            	reportFileName = BUILDINGDEVELOPPERMITFILENAME;
+            	    reportFileName = BUILDINGDEVELOPPERMITFILENAME;
             } else if (getServicesForOtherPermit().contains(bpaApplication.getServiceType().getCode())) {
             	if(bpaApplication.getSiteDetail().get(0).getIsappForRegularization())
             		reportFileName = REGULARIZATIONOTHERSFIILENAME;
