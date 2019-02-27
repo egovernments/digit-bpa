@@ -196,12 +196,12 @@ $(document)
                             }
                         } else {
                             $('.resetValues').val('');
-                            bootbox.alert("Please check application number is correct, with entered application number data not found.");
+                            bootbox.alert("Please check application number is correct, with entered application number for the application type "+$('#applicationType').val()+" data not found.");
                         }
                     },
                     error: function (response) {
                         $('.resetValues').val('');
-                        bootbox.alert("Please check application number is correct, with entered application number data not found.");
+                        bootbox.alert("Please check application number is correct, with entered application number for the application type "+$('#applicationType').val()+" data not found.");
                     }
                 });
             });

@@ -54,367 +54,353 @@ import com.google.gson.JsonObject;
 
 @Controller
 public class EdcrApplicationController {
-	private static final String EDCR_APPLICATION = "edcrApplication";
-	private static final String MSG_EDCRAPPLICATION_SUCCESS = "msg.edcrapplication.success";
-	private static final String REDIRECT_APPLICATION_RESULT = "redirect:/edcrapplication/result/";
-	private static final String EDCRAPPLICATION_NEW = "edcrapplication-new";
-	private static final String EDCRAPPLICATION_RESULT = "edcrapplication-result";
-	private static final String EDCRAPPLICATION_EDIT = "edcrapplication-edit";
-	private static final String EDCRAPPLICATION_VIEW = "edcrapplication-view";
-	private static final String EDCRAPPLICATION_SEARCH = "edcrapplication-search";
-	private static final String EDCRAPPLICATION_RE_UPLOAD = "edcr-reupload-form";
-	private static final String EDCRAPPLICATION_CONVERTED_PDF = "view-edcr-pdf";
-	private static final String DCR_ACKNOWLEDGEMENT = "dcr-acknowledgement";
-	private static final String OC_PLAN_SCRUTINY_NEW = "oc-plan-scrutiny-new";
-	private static final String OC_PLAN_SCRUTINY_RESUBMIT = "oc-resubmit-plan-scrutiny-form";
-	private static final String OC_PLAN_SCRUTINY_RESULT = "oc-plan-scrutiny-result";
-	private static final String REDIRECT_OC_APPLICATION_RESULT = "redirect:/occupancy-certificate/plan/result/";
-	private static final String MESSAGE = "message";
+    private static final String EDCR_APPLICATION = "edcrApplication";
+    private static final String MSG_EDCRAPPLICATION_SUCCESS = "msg.edcrapplication.success";
+    private static final String REDIRECT_APPLICATION_RESULT = "redirect:/edcrapplication/result/";
+    private static final String EDCRAPPLICATION_NEW = "edcrapplication-new";
+    private static final String EDCRAPPLICATION_RESULT = "edcrapplication-result";
+    private static final String EDCRAPPLICATION_EDIT = "edcrapplication-edit";
+    private static final String EDCRAPPLICATION_VIEW = "edcrapplication-view";
+    private static final String EDCRAPPLICATION_SEARCH = "edcrapplication-search";
+    private static final String EDCRAPPLICATION_RE_UPLOAD = "edcr-reupload-form";
+    private static final String EDCRAPPLICATION_CONVERTED_PDF = "view-edcr-pdf";
+    private static final String DCR_ACKNOWLEDGEMENT = "dcr-acknowledgement";
+    private static final String OC_PLAN_SCRUTINY_NEW = "oc-plan-scrutiny-new";
+    private static final String OC_PLAN_SCRUTINY_RESUBMIT = "oc-resubmit-plan-scrutiny-form";
+    private static final String OC_PLAN_SCRUTINY_RESULT = "oc-plan-scrutiny-result";
+    private static final String REDIRECT_OC_APPLICATION_RESULT = "redirect:/occupancy-certificate/plan/result/";
+    private static final String MESSAGE = "message";
 
-	@Autowired
-	private EdcrApplicationService edcrApplicationService;
+    @Autowired
+    private EdcrApplicationService edcrApplicationService;
 
-	@Autowired
-	private MessageSource messageSource;
-	@Autowired
-	private OccupancyService occupancyService;
-	@Autowired
-	private ServiceTypeService serviceTypeService;
-	@Autowired
-	private SecurityUtils securityUtils;
-	@Autowired
-	private StakeHolderService stakeHolderService;
-	@Autowired
-	private EdcrBpaRestService edcrBpaRestService;
-	@Autowired 
-	private EdcrPdfDetailService edcrPdfDetailService;
-	 
-	/*
-	 * @Autowired // private PlanInformationService planInformationService;
-	 */
-	private void prepareNewForm(Model model, HttpServletRequest request) {
-		// model.addAttribute("planInformations", planInformationService.findAll());
-		List<ServiceType> dcrRequireServices = new ArrayList<>();
-		for (ServiceType serviceType : serviceTypeService.getAllActiveMainServiceTypes()) {
-			if (serviceType.getCode().equals("01") || serviceType.getCode().equals("03")
-					|| serviceType.getCode().equals("04") || serviceType.getCode().equals("06")
-					|| serviceType.getCode().equals("07"))
-				dcrRequireServices.add(serviceType);
-		}
-		model.addAttribute("serviceTypeList", dcrRequireServices);
-		model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
-		model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
-	}
-	
-	@GetMapping("/edcrapplication/new")
-	public String newForm(final Model model, HttpServletRequest request) {
-		prepareNewForm(model,request);
-		StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
-		if (validateStakeholder(model, stakeHolder,request))
-			return DCR_ACKNOWLEDGEMENT;
-		Address permanentAddress = stakeHolder.getAddress().stream()
-				.filter(permtAddress -> permtAddress.getType().equals(AddressType.PERMANENT)).findAny().orElse(null);
-		StringBuilder architectInfo = new StringBuilder(256).append(stakeHolder.getName()).append(",")
-				.append(stakeHolder.getStakeHolderType().name()).append(",").append(stakeHolder.getMobileNumber())
-				.append(",").append(permanentAddress.getStreetRoadLine()).append(".");
+    @Autowired
+    private MessageSource messageSource;
+    @Autowired
+    private OccupancyService occupancyService;
+    @Autowired
+    private ServiceTypeService serviceTypeService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private StakeHolderService stakeHolderService;
+    @Autowired
+    private EdcrBpaRestService edcrBpaRestService;
+    @Autowired
+    private EdcrPdfDetailService edcrPdfDetailService;
 
-		EdcrApplication edcrApplication = new EdcrApplication();
-		if (stakeHolder != null && !isBlank(stakeHolder.getName())) {
-			edcrApplication.setArchitectInformation(stakeHolder.getName());
-		}
+    /*
+     * @Autowired // private PlanInformationService planInformationService;
+     */
+    private void prepareNewForm(Model model, HttpServletRequest request) {
+        // model.addAttribute("planInformations", planInformationService.findAll());
+        List<ServiceType> dcrRequireServices = new ArrayList<>();
+        for (ServiceType serviceType : serviceTypeService.getAllActiveMainServiceTypes()) {
+            if (serviceType.getCode().equals("01") || serviceType.getCode().equals("03")
+                    || serviceType.getCode().equals("04") || serviceType.getCode().equals("06")
+                    || serviceType.getCode().equals("07"))
+                dcrRequireServices.add(serviceType);
+        }
+        model.addAttribute("serviceTypeList", dcrRequireServices);
+        model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
+        model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
+    }
 
-		model.addAttribute(EDCR_APPLICATION, edcrApplication);
+    @GetMapping("/edcrapplication/new")
+    public String newForm(final Model model, HttpServletRequest request) {
+        prepareNewForm(model, request);
+        StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
+        if (validateStakeholder(model, stakeHolder, request))
+            return DCR_ACKNOWLEDGEMENT;
+        Address permanentAddress = stakeHolder.getAddress().stream()
+                .filter(permtAddress -> permtAddress.getType().equals(AddressType.PERMANENT)).findAny().orElse(null);
+        StringBuilder architectInfo = new StringBuilder(256).append(stakeHolder.getName()).append(",")
+                .append(stakeHolder.getStakeHolderType().name()).append(",").append(stakeHolder.getMobileNumber())
+                .append(",").append(permanentAddress.getStreetRoadLine()).append(".");
 
-		return EDCRAPPLICATION_NEW;
-	}
+        EdcrApplication edcrApplication = new EdcrApplication();
+        if (stakeHolder != null && !isBlank(stakeHolder.getName())) {
+            edcrApplication.setArchitectInformation(stakeHolder.getName());
+        }
 
-	private boolean validateStakeholder(Model model, StakeHolder stakeHolder, HttpServletRequest request) {
-		if (stakeHolder != null && StakeHolderStatus.BLOCKED.equals(stakeHolder.getStatus())) {
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.license.blocked",
-					new String[] { ApplicationThreadLocals.getMunicipalityName() }, null));
-			return true;
-		}
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
 
-		if (stakeHolder != null && stakeHolder.getBuildingLicenceExpiryDate().before(new Date())) {
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.expiry.reached",
-					new String[] { securityUtils.getCurrentUser().getName() }, null));
-			return true;
-		}
-		
+        return EDCRAPPLICATION_NEW;
+    }
+
+    private boolean validateStakeholder(Model model, StakeHolder stakeHolder, HttpServletRequest request) {
+        if (stakeHolder != null && StakeHolderStatus.BLOCKED.equals(stakeHolder.getStatus())) {
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.license.blocked",
+                    new String[] { ApplicationThreadLocals.getMunicipalityName() }, null));
+            return true;
+        }
+
+        if (stakeHolder != null && stakeHolder.getBuildingLicenceExpiryDate().before(new Date())) {
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.expiry.reached",
+                    new String[] { securityUtils.getCurrentUser().getName() }, null));
+            return true;
+        }
+
         User user = securityUtils.getCurrentUser();
-		
-		if (user.getType().equals(BUSINESS) && stakeHolder.getDemand() != null) {
-			if (edcrBpaRestService.checkAnyTaxIsPendingToCollectForStakeHolder(user.getId(),request)) {
-		     model.addAttribute("userId", user.getId());
-		     return true;
-			}
-			}
-			
-		return false;
-	}
 
-	@PostMapping("/edcrapplication/create")
-	public String create(@ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		if (errors.hasErrors()) {
-			prepareNewForm(model,request);
-			return EDCRAPPLICATION_NEW;
-		}
+        if (user.getType().equals(BUSINESS) && stakeHolder != null && stakeHolder.getDemand() != null
+                && edcrBpaRestService.checkAnyTaxIsPendingToCollectForStakeHolder(user.getId(), request)) {
+            model.addAttribute("userId", user.getId());
+            return true;
+        }
 
-		/*
-		 * Plan plan = new Plan();
-		 * 
-		 * PlanInformation planInformation = new PlanInformation();
-		 * planInformation.setApplicantName(edcrApplication.getApplicantName());
-		 * planInformation.setOccupancy(edcrApplication.getOccupancy());
-		 * planInformation.setServiceType(edcrApplication.getServiceType());
-		 * planInformation.setAmenities(edcrApplication.getAmenities());
-		 * planInformation.setArchitectInformation(edcrApplication.
-		 * getArchitectInformation());
-		 */
-		EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
-		// plan.setPlanInformation(planInformation);
-		// edcrApplicationDetail.setPlanDetail(plan);
-		// edcrApplicationDetail.getPlan().setPlanInformation(planInformation);
-		List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
-		edcrApplicationDetails.add(edcrApplicationDetail);
-		edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
-		edcrApplicationService.create(edcrApplication);
+        return false;
+    }
 
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.edcrapplication.success", null, null));
-		return REDIRECT_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
-	}
+    @PostMapping("/edcrapplication/create")
+    public String create(@ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model, request);
+            return EDCRAPPLICATION_NEW;
+        }
 
-	@GetMapping("/edcrapplication/edit/{applicationNumber}")
-	public String edit(@PathVariable("id") final String applicationNumber, Model model, HttpServletRequest request) {
-		EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
-		  prepareNewForm(model,request);
-		model.addAttribute(EDCR_APPLICATION, edcrApplication);
-		return EDCRAPPLICATION_EDIT;
-	}
+        /*
+         * Plan plan = new Plan(); PlanInformation planInformation = new PlanInformation();
+         * planInformation.setApplicantName(edcrApplication.getApplicantName());
+         * planInformation.setOccupancy(edcrApplication.getOccupancy());
+         * planInformation.setServiceType(edcrApplication.getServiceType());
+         * planInformation.setAmenities(edcrApplication.getAmenities()); planInformation.setArchitectInformation(edcrApplication.
+         * getArchitectInformation());
+         */
+        EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
+        // plan.setPlanInformation(planInformation);
+        // edcrApplicationDetail.setPlanDetail(plan);
+        // edcrApplicationDetail.getPlan().setPlanInformation(planInformation);
+        List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+        edcrApplicationDetails.add(edcrApplicationDetail);
+        edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
+        edcrApplicationService.create(edcrApplication);
 
-	@GetMapping("/edcrapplication/resubmit")
-	public String uploadAgain(Model model, HttpServletRequest request) {
-		StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
-		if (validateStakeholder(model, stakeHolder,request))
-			return DCR_ACKNOWLEDGEMENT;
-		  prepareNewForm(model,request);
-		model.addAttribute(EDCR_APPLICATION, new EdcrApplication());
-		return EDCRAPPLICATION_RE_UPLOAD;
-	}
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.edcrapplication.success", null, null));
+        return REDIRECT_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
+    }
 
-	@PostMapping("/edcrapplication/update")
-	public String update(@ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
-			final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		if (errors.hasErrors()) {
-			prepareNewForm(model,request);
-			return EDCRAPPLICATION_EDIT;
-		}
+    @GetMapping("/edcrapplication/edit/{applicationNumber}")
+    public String edit(@PathVariable("id") final String applicationNumber, Model model, HttpServletRequest request) {
+        EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
+        prepareNewForm(model, request);
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
+        return EDCRAPPLICATION_EDIT;
+    }
 
-		/*
-		 * PlanDetail planDetail = new PlanDetail();
-		 * 
-		 * PlanInformation planInformation = new PlanInformation();
-		 * planInformation.setApplicantName(edcrApplication.getApplicantName());
-		 * planInformation.setOccupancy(edcrApplication.getOccupancy());
-		 * planInformation.setServiceType(edcrApplication.getServiceType());
-		 * planInformation.setAmenities(edcrApplication.getAmenities());
-		 * planInformation.setArchitectInformation(edcrApplication.
-		 * getArchitectInformation());
-		 */
+    @GetMapping("/edcrapplication/resubmit")
+    public String uploadAgain(Model model, HttpServletRequest request) {
+        StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
+        if (validateStakeholder(model, stakeHolder, request))
+            return DCR_ACKNOWLEDGEMENT;
+        prepareNewForm(model, request);
+        EdcrApplication edcrApplication = new EdcrApplication();
+        edcrApplication.setApplicationType(ApplicationType.PERMIT);
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
+        return EDCRAPPLICATION_RE_UPLOAD;
+    }
 
-		EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
-		// planDetail.setPlanInformation(planInformation);
-		// edcrApplicationDetail.setPlanDetail(planDetail);
+    @PostMapping("/edcrapplication/update")
+    public String update(@ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
+            final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model, request);
+            return EDCRAPPLICATION_EDIT;
+        }
 
-		List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
-		edcrApplicationDetails.add(edcrApplicationDetail);
-		edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
+        /*
+         * PlanDetail planDetail = new PlanDetail(); PlanInformation planInformation = new PlanInformation();
+         * planInformation.setApplicantName(edcrApplication.getApplicantName());
+         * planInformation.setOccupancy(edcrApplication.getOccupancy());
+         * planInformation.setServiceType(edcrApplication.getServiceType());
+         * planInformation.setAmenities(edcrApplication.getAmenities()); planInformation.setArchitectInformation(edcrApplication.
+         * getArchitectInformation());
+         */
 
-		edcrApplicationService.update(edcrApplication);
-		redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.edcrapplication.success", null, null));
-		return REDIRECT_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
-	}
+        EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
+        // planDetail.setPlanInformation(planInformation);
+        // edcrApplicationDetail.setPlanDetail(planDetail);
 
-	@GetMapping("/edcrapplication/view/{applicationNumber}")
-	public String view(@PathVariable final String applicationNumber, Model model, HttpServletRequest request) {
-		EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
-		  prepareNewForm(model,request);
-		setFailedLayersCount(edcrApplication);
-		model.addAttribute(EDCR_APPLICATION, edcrApplication);
-		return EDCRAPPLICATION_VIEW;
-	}
+        List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+        edcrApplicationDetails.add(edcrApplicationDetail);
+        edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
 
-	@GetMapping("/edcrapplication/result/{applicationNumber}")
-	public String result(@PathVariable final String applicationNumber, Model model) {
-		EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
-		setFailedLayersCount(edcrApplication);
-		model.addAttribute(EDCR_APPLICATION, edcrApplication);
-		return EDCRAPPLICATION_RESULT;
-	}
+        edcrApplicationService.update(edcrApplication);
+        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.edcrapplication.success", null, null));
+        return REDIRECT_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
+    }
 
-	@GetMapping("/occupancy-certificate/plan/submit")
-	public String ocNewPlanScrutinyForm(final Model model, final HttpServletRequest request) {
-		 prepareNewForm(model,request);
-		StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
-		if (validateStakeholder(model, stakeHolder,request))
-			return DCR_ACKNOWLEDGEMENT;
-		EdcrApplication edcrApplication = new EdcrApplication();
-		edcrApplication.setApplicationType(ApplicationType.OCCUPANCY_CERTIFICATE);
-		if (stakeHolder != null && StringUtils.isNotBlank(stakeHolder.getName()))
-			edcrApplication.setArchitectInformation(stakeHolder.getName());
-		model.addAttribute("stakeHolderTypeList", Arrays.asList(StakeHolderType.values()));
-		model.addAttribute("isCitizen", securityUtils.getCurrentUser().getType().equals(UserType.CITIZEN));
-		model.addAttribute(EDCR_APPLICATION, edcrApplication);
-		return OC_PLAN_SCRUTINY_NEW;
-	}
+    @GetMapping("/edcrapplication/view/{applicationNumber}")
+    public String view(@PathVariable final String applicationNumber, Model model, HttpServletRequest request) {
+        EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
+        prepareNewForm(model, request);
+        setFailedLayersCount(edcrApplication);
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
+        return EDCRAPPLICATION_VIEW;
+    }
 
-	@PostMapping("/occupancy-certificate/plan/submit")
-	public String submitPlanForOccupancyCertificate(@ModelAttribute final EdcrApplication edcrApplication,
-			final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		if (errors.hasErrors()) {
-			 prepareNewForm(model,request);
-			return OC_PLAN_SCRUTINY_NEW;
-		}
-		/*
-		 * PlanDetail planDetail = new PlanDetail();
-		 * 
-		 * PlanInformation planInformation = new PlanInformation();
-		 * planInformation.setApplicantName(edcrApplication.getApplicantName());
-		 * planInformation.setOccupancy(edcrApplication.getOccupancy());
-		 * planInformation.setServiceType(edcrApplication.getServiceType());
-		 * planInformation.setAmenities(edcrApplication.getAmenities());
-		 * planInformation.setArchitectInformation(edcrApplication.
-		 * getArchitectInformation());
-		 */
+    @GetMapping("/edcrapplication/result/{applicationNumber}")
+    public String result(@PathVariable final String applicationNumber, Model model) {
+        EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
+        setFailedLayersCount(edcrApplication);
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
+        return EDCRAPPLICATION_RESULT;
+    }
 
-		EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
-		// planDetail.setPlanInformation(planInformation);
-		// edcrApplicationDetail.setPlanDetail(planDetail);
+    @GetMapping("/occupancy-certificate/plan/submit")
+    public String ocNewPlanScrutinyForm(final Model model, final HttpServletRequest request) {
+        prepareNewForm(model, request);
+        StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
+        if (validateStakeholder(model, stakeHolder, request))
+            return DCR_ACKNOWLEDGEMENT;
+        EdcrApplication edcrApplication = new EdcrApplication();
+        edcrApplication.setApplicationType(ApplicationType.OCCUPANCY_CERTIFICATE);
+        if (stakeHolder != null && StringUtils.isNotBlank(stakeHolder.getName()))
+            edcrApplication.setArchitectInformation(stakeHolder.getName());
+        model.addAttribute("stakeHolderTypeList", Arrays.asList(StakeHolderType.values()));
+        model.addAttribute("isCitizen", securityUtils.getCurrentUser().getType().equals(UserType.CITIZEN));
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
+        return OC_PLAN_SCRUTINY_NEW;
+    }
 
-		List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
-		edcrApplicationDetails.add(edcrApplicationDetail);
-		edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
-		edcrApplication
-				.setPermitApplicationDate(DateUtils.toDateUsingDefaultPattern(edcrApplication.getPermitDateTemp()));
-		edcrApplicationService.create(edcrApplication);
-		redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(MSG_EDCRAPPLICATION_SUCCESS, null, null));
-		return REDIRECT_OC_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
-	}
+    @PostMapping("/occupancy-certificate/plan/submit")
+    public String submitPlanForOccupancyCertificate(@ModelAttribute final EdcrApplication edcrApplication,
+            final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model, request);
+            return OC_PLAN_SCRUTINY_NEW;
+        }
+        /*
+         * PlanDetail planDetail = new PlanDetail(); PlanInformation planInformation = new PlanInformation();
+         * planInformation.setApplicantName(edcrApplication.getApplicantName());
+         * planInformation.setOccupancy(edcrApplication.getOccupancy());
+         * planInformation.setServiceType(edcrApplication.getServiceType());
+         * planInformation.setAmenities(edcrApplication.getAmenities()); planInformation.setArchitectInformation(edcrApplication.
+         * getArchitectInformation());
+         */
 
-	@GetMapping("/occupancy-certificate/plan/resubmit")
-	public String resubmitPlanForOccupancyCertificate(Model model, HttpServletRequest request) {
-		StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
-		if (validateStakeholder(model, stakeHolder,request))
-			return DCR_ACKNOWLEDGEMENT;
-		 prepareNewForm(model,request);
-		EdcrApplication edcrApplication = new EdcrApplication();
-		edcrApplication.setApplicationType(ApplicationType.OCCUPANCY_CERTIFICATE);
-		model.addAttribute(EDCR_APPLICATION, edcrApplication);
-		return OC_PLAN_SCRUTINY_RESUBMIT;
-	}
+        EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
+        // planDetail.setPlanInformation(planInformation);
+        // edcrApplicationDetail.setPlanDetail(planDetail);
 
-	@PostMapping("/occupancy-certificate/plan/resubmit")
-	public String resubmitPlanForOccupancyCertificate(@ModelAttribute final EdcrApplication edcrApplication,
-			final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		if (errors.hasErrors()) {
-			 prepareNewForm(model,request);
-			return OC_PLAN_SCRUTINY_RESUBMIT;
-		}
-		/*
-		 * PlanDetail planDetail = new PlanDetail();
-		 * 
-		 * PlanInformation planInformation = new PlanInformation();
-		 * planInformation.setApplicantName(edcrApplication.getApplicantName());
-		 * planInformation.setOccupancy(edcrApplication.getOccupancy());
-		 * planInformation.setServiceType(edcrApplication.getServiceType());
-		 * planInformation.setAmenities(edcrApplication.getAmenities());
-		 * planInformation.setArchitectInformation(edcrApplication.
-		 * getArchitectInformation());
-		 */
+        List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+        edcrApplicationDetails.add(edcrApplicationDetail);
+        edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
+        edcrApplication
+                .setPermitApplicationDate(DateUtils.toDateUsingDefaultPattern(edcrApplication.getPermitDateTemp()));
+        edcrApplicationService.create(edcrApplication);
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(MSG_EDCRAPPLICATION_SUCCESS, null, null));
+        return REDIRECT_OC_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
+    }
 
-		EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
-		// planDetail.setPlanInformation(planInformation);
-		// edcrApplicationDetail.setPlanDetail(planDetail);
+    @GetMapping("/occupancy-certificate/plan/resubmit")
+    public String resubmitPlanForOccupancyCertificate(Model model, HttpServletRequest request) {
+        StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
+        if (validateStakeholder(model, stakeHolder, request))
+            return DCR_ACKNOWLEDGEMENT;
+        prepareNewForm(model, request);
+        EdcrApplication edcrApplication = new EdcrApplication();
+        edcrApplication.setApplicationType(ApplicationType.OCCUPANCY_CERTIFICATE);
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
+        return OC_PLAN_SCRUTINY_RESUBMIT;
+    }
 
-		List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
-		edcrApplicationDetails.add(edcrApplicationDetail);
-		edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
-		edcrApplicationService.update(edcrApplication);
-		redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(MSG_EDCRAPPLICATION_SUCCESS, null, null));
-		return REDIRECT_OC_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
-	}
+    @PostMapping("/occupancy-certificate/plan/resubmit")
+    public String resubmitPlanForOccupancyCertificate(@ModelAttribute final EdcrApplication edcrApplication,
+            final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
+        if (errors.hasErrors()) {
+            prepareNewForm(model, request);
+            return OC_PLAN_SCRUTINY_RESUBMIT;
+        }
+        /*
+         * PlanDetail planDetail = new PlanDetail(); PlanInformation planInformation = new PlanInformation();
+         * planInformation.setApplicantName(edcrApplication.getApplicantName());
+         * planInformation.setOccupancy(edcrApplication.getOccupancy());
+         * planInformation.setServiceType(edcrApplication.getServiceType());
+         * planInformation.setAmenities(edcrApplication.getAmenities()); planInformation.setArchitectInformation(edcrApplication.
+         * getArchitectInformation());
+         */
 
-	@GetMapping("/occupancy-certificate/plan/result/{applicationNumber}")
-	public String planScrutinyResultForOccupancyCertificate(@PathVariable final String applicationNumber, Model model) {
-		EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
-		setFailedLayersCount(edcrApplication);
-		model.addAttribute(EDCR_APPLICATION, edcrApplication);
-		return OC_PLAN_SCRUTINY_RESULT;
-	}
+        EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
+        // planDetail.setPlanInformation(planInformation);
+        // edcrApplicationDetail.setPlanDetail(planDetail);
 
-	@GetMapping("/edcrapplication/search/{mode}")
-	public String search(@PathVariable("mode") final String mode, Model model, HttpServletRequest request) {
-		EdcrApplication edcrApplication = new EdcrApplication();
-		 prepareNewForm(model,request);
-		model.addAttribute(EDCR_APPLICATION, edcrApplication);
-		return EDCRAPPLICATION_SEARCH;
+        List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+        edcrApplicationDetails.add(edcrApplicationDetail);
+        edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
+        edcrApplicationService.update(edcrApplication);
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(MSG_EDCRAPPLICATION_SUCCESS, null, null));
+        return REDIRECT_OC_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
+    }
 
-	}
+    @GetMapping("/occupancy-certificate/plan/result/{applicationNumber}")
+    public String planScrutinyResultForOccupancyCertificate(@PathVariable final String applicationNumber, Model model) {
+        EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
+        setFailedLayersCount(edcrApplication);
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
+        return OC_PLAN_SCRUTINY_RESULT;
+    }
 
-	@GetMapping(value = "/edcrapplication/get-information/{applicationNumber}/{applicationType}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public EdcrApplication getEdcrApplicationDetailsByApplnNumber(@PathVariable final String applicationNumber,
-			Model model) {
-		return edcrApplicationService.findByApplicationNo(applicationNumber);
-	}
+    @GetMapping("/edcrapplication/search/{mode}")
+    public String search(@PathVariable("mode") final String mode, Model model, HttpServletRequest request) {
+        EdcrApplication edcrApplication = new EdcrApplication();
+        prepareNewForm(model, request);
+        model.addAttribute(EDCR_APPLICATION, edcrApplication);
+        return EDCRAPPLICATION_SEARCH;
 
-	@PostMapping(value = "/edcrapplication/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-			@ModelAttribute final EdcrApplication edcrApplication) {
-		List<EdcrApplication> searchResultList = edcrApplicationService.search(edcrApplication);
-		return new StringBuilder("{ \"data\":")
-				.append(toJSON(searchResultList, EdcrApplication.class, EdcrApplicationJsonAdaptor.class)).append("}")
-				.toString();
-	}
+    }
 
-	 @GetMapping("/edcrapplication/get-convertedpdf/{applicationDetailId}")
-	    public String getConvertedPdfByApplicationDetailId(@PathVariable final String applicationDetailId, Model model) {
-	        List<EdcrPdfDetail> pdfDetails = edcrPdfDetailService.findByDcrApplicationId(Long.valueOf(applicationDetailId));
-	        if (pdfDetails != null && !pdfDetails.isEmpty()) {
+    @GetMapping(value = "/edcrapplication/get-information/{applicationNumber}/{applicationType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public EdcrApplication getEdcrApplicationDetailsByApplnNumber(@PathVariable final String applicationNumber,
+            @PathVariable final ApplicationType applicationType, Model model) {
+        return edcrApplicationService.findByApplicationNoAndType(applicationNumber, applicationType);
+    }
 
-	            for (EdcrPdfDetail edcrPdfDetail : pdfDetails) {
-	                if (StringUtils.isNotBlank(edcrPdfDetail.getStandardViolations())) {
-	                    String[] split = edcrPdfDetail.getStandardViolations().split("\\|");
-	                    List<String> violations = Arrays.asList(split);
-	                    edcrPdfDetail.setViolations(violations);
-	                }
-	            }
-	        }
-	        model.addAttribute("pdfDetails", pdfDetails);
-	        return EDCRAPPLICATION_CONVERTED_PDF;
-	    }
+    @PostMapping(value = "/edcrapplication/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
+    public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
+            @ModelAttribute final EdcrApplication edcrApplication) {
+        List<EdcrApplication> searchResultList = edcrApplicationService.search(edcrApplication);
+        return new StringBuilder("{ \"data\":")
+                .append(toJSON(searchResultList, EdcrApplication.class, EdcrApplicationJsonAdaptor.class)).append("}")
+                .toString();
+    }
 
-	@GetMapping(value = "/scrutinized-plan/findby-permitnumber/{permitNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public void getEdcrApplicationDetailsByPermitNumber(@PathVariable final String permitNumber,
-			HttpServletResponse response) throws IOException {
-		EdcrApplication application = edcrApplicationService.findByPlanPermitNumber(permitNumber);
-		final JsonObject jsonObj = new JsonObject();
-		if (application != null)
-			jsonObj.addProperty("applicationNumber", application.getApplicationNumber());
-		IOUtils.write(jsonObj.toString(), response.getWriter());
-	}
+    @GetMapping("/edcrapplication/get-convertedpdf/{applicationDetailId}")
+    public String getConvertedPdfByApplicationDetailId(@PathVariable final String applicationDetailId, Model model) {
+        List<EdcrPdfDetail> pdfDetails = edcrPdfDetailService.findByDcrApplicationId(Long.valueOf(applicationDetailId));
+        if (pdfDetails != null && !pdfDetails.isEmpty()) {
 
-	private void setFailedLayersCount(EdcrApplication edcrApplication) {
-		/*
-		 * for (EdcrApplicationDetail edcrApplicationDetail :
-		 * edcrApplication.getEdcrApplicationDetails()){ List<EdcrPdfDetail>
-		 * edcrPdfDetails = edcrApplicationDetail.getEdcrPdfDetails(); if
-		 * (edcrPdfDetails != null && edcrPdfDetails.size()> 0){ long count =
-		 * edcrPdfDetails.stream().filter(edcrPdfDetail ->
-		 * StringUtils.isNotBlank(edcrPdfDetail.getFailureReasons())).count();
-		 * edcrApplicationDetail.setNoOfErrors(count); } }
-		 */
-	}
+            for (EdcrPdfDetail edcrPdfDetail : pdfDetails) {
+                if (StringUtils.isNotBlank(edcrPdfDetail.getStandardViolations())) {
+                    String[] split = edcrPdfDetail.getStandardViolations().split("\\|");
+                    List<String> violations = Arrays.asList(split);
+                    edcrPdfDetail.setViolations(violations);
+                }
+            }
+        }
+        model.addAttribute("pdfDetails", pdfDetails);
+        return EDCRAPPLICATION_CONVERTED_PDF;
+    }
+
+    @GetMapping(value = "/scrutinized-plan/findby-permitnumber/{permitNumber}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void getEdcrApplicationDetailsByPermitNumber(@PathVariable final String permitNumber,
+            HttpServletResponse response) throws IOException {
+        EdcrApplication application = edcrApplicationService.findByPlanPermitNumber(permitNumber);
+        final JsonObject jsonObj = new JsonObject();
+        if (application != null)
+            jsonObj.addProperty("applicationNumber", application.getApplicationNumber());
+        IOUtils.write(jsonObj.toString(), response.getWriter());
+    }
+
+    private void setFailedLayersCount(EdcrApplication edcrApplication) {
+        /*
+         * for (EdcrApplicationDetail edcrApplicationDetail : edcrApplication.getEdcrApplicationDetails()){ List<EdcrPdfDetail>
+         * edcrPdfDetails = edcrApplicationDetail.getEdcrPdfDetails(); if (edcrPdfDetails != null && edcrPdfDetails.size()> 0){
+         * long count = edcrPdfDetails.stream().filter(edcrPdfDetail ->
+         * StringUtils.isNotBlank(edcrPdfDetail.getFailureReasons())).count(); edcrApplicationDetail.setNoOfErrors(count); } }
+         */
+    }
 }

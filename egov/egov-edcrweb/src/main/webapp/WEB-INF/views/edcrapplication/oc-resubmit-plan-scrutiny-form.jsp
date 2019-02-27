@@ -54,67 +54,83 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="panel-heading custom_form_panel_heading">
-    <div class="panel-title">
-    </div>
+	<div class="panel-title"></div>
 </div>
 <div class="panel-body">
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right"><spring:message
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.upload.edcr" /><span class="mandatory"></span></label>
-        <div class="col-sm-4 add-margin">
-            <div class="fileSection col-md77-4">
-                <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">
-                <p class="hide"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span></p>
-                <button type="button" id="fileTrigger" class="btn btn-primary fullWidth">
-                    <span class="glyphicon glyphicon glyphicon-cloud-upload"></span> &nbsp;<spring:message code="lbl.choose.file"/>
-                </button>
-                <div class="row hide fileActions">
-                    <div class="col-md-6">
-                        <button type="button" id="fileDelete" class="btn btn-primary fullWidth">
-                            <i class="fa fa-trash-o"></i> &nbsp;<spring:message code="lbl.delete"/>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <small class="error-msg"><spring:message
-                    code="lbl.dcr.upload.help" /></small>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicationnumber" /> <span
-                class="mandatory"></span></label>
-        <div class="col-sm-3 add-margin">
-            <input type="hidden" name="id" id="edcrApplnId" value="${edcrApplication.id}">
-            <input type="hidden" name="edcrApplication" id="edcrApplication" value="${edcrApplication.id}">
-            <input type="text" class="form-control resetValues" name="applicationNumber" placeholder="Enter plan scrutiny application number" id="applicationNumber" value="${edcrApplication.applicationNumber}" required="required">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.appln.type" />
-        </label>
-        <div class="col-sm-3 add-margin">
-        	<input type="hidden" name="applicationType" id="applnType" value="${edcrApplication.applicationType}">
-            <input type="text" class="form-control resetValues" id="applicationType" value="${edcrApplication.applicationType.applicationTypeVal}" readonly="readonly">
-        </div>
-        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.permit.no" />
-        </label>
-        <div class="col-sm-3 add-margin">
-            <input type="text" name="planPermitNumber" class="form-control resetValues" id="planPermitNumber" value="${edcrApplication.planPermitNumber}" readonly="readonly">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicantname" />
-        </label>
-        <div class="col-sm-3 add-margin">
-            <input type="text" name="applicantName" class="form-control resetValues" id="applicantName" value="${edcrApplication.applicantName}" readonly="readonly">
-        </div>
-        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.service.type" />
-        </label>
-        <div class="col-sm-3 add-margin">
-            <input type="text" name="serviceType" class="form-control resetValues" id="serviceType" value="${edcrApplication.serviceType}" readonly="readonly">
-        </div>
-    </div>
-    <%--<div class="form-group">
+		<div class="col-sm-4 add-margin">
+			<div class="fileSection col-md77-4">
+				<input type="file" required="required" name="dxfFile" id="myfile"
+					style="display: none;">
+				<p class="hide">
+					<i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span>
+				</p>
+				<button type="button" id="fileTrigger"
+					class="btn btn-primary fullWidth">
+					<span class="glyphicon glyphicon glyphicon-cloud-upload"></span>
+					&nbsp;
+					<spring:message code="lbl.choose.file" />
+				</button>
+				<div class="row hide fileActions">
+					<div class="col-md-6">
+						<button type="button" id="fileDelete"
+							class="btn btn-primary fullWidth">
+							<i class="fa fa-trash-o"></i> &nbsp;
+							<spring:message code="lbl.delete" />
+						</button>
+					</div>
+				</div>
+			</div>
+			<small class="error-msg"><spring:message
+					code="lbl.dcr.upload.help" /></small>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.applicationnumber" /> <span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+			<input type="hidden" name="id" id="edcrApplnId"
+				value="${edcrApplication.id}"> <input type="hidden"
+				name="edcrApplication" id="edcrApplication"
+				value="${edcrApplication.id}"> <input type="text"
+				class="form-control resetValues" name="applicationNumber"
+				placeholder="Enter plan scrutiny application number"
+				id="applicationNumber" value="${edcrApplication.applicationNumber}"
+				required="required">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.permit.no" /> </label>
+		<div class="col-sm-3 add-margin">
+			<input type="hidden" name="applicationType" id="applnType"
+				value="${edcrApplication.applicationType}"> <input type="hidden"
+				id="applicationType"
+				value="${edcrApplication.applicationType.applicationTypeVal}">
+			<input type="text" name="planPermitNumber"
+				class="form-control resetValues" id="planPermitNumber"
+				value="${edcrApplication.planPermitNumber}" readonly="readonly">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.applicantname" /> </label>
+		<div class="col-sm-3 add-margin">
+			<input type="text" name="applicantName"
+				class="form-control resetValues" id="applicantName"
+				value="${edcrApplication.applicantName}" readonly="readonly">
+		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.service.type" /> </label>
+		<div class="col-sm-3 add-margin">
+			<input type="text" name="serviceType"
+				class="form-control resetValues" id="serviceType"
+				value="${edcrApplication.serviceType}" readonly="readonly">
+		</div>
+	</div>
+	<%--<div class="form-group">
         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.occupancy" />
         </label>
         <div class="col-sm-3 add-margin">
@@ -130,6 +146,7 @@
 
 </div>
 
-<link rel="stylesheet" href="<c:url value='/resources/app/css/edcr-style.css?rnd=${app_release_no}'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/app/css/edcr-style.css?rnd=${app_release_no}'/>">
 <script
-        src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
