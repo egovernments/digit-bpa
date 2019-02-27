@@ -139,7 +139,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
-				<text><![CDATA[BUILDING PLAN APPROVAL FEE RECEIPT]]></text>
+				<text><![CDATA[BUILDING LICENSEE REGISTRASTION FEE RECEIPT]]></text>
 			</staticText>
 		</band>
 		<band height="20">

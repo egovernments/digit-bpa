@@ -236,7 +236,7 @@ public class StakeHolderBillable extends AbstractBillable implements Billable {
 
 	@Override
 	public String getDescription() {
-		return "BPA StakeHolder Number: " + getStakeHolder().getCode();
+		return "Acknowledgement Number: " + getStakeHolder().getCode();
 	}
 
 	@Override
