@@ -43,6 +43,8 @@
 	<parameter name="egovLogo" class="java.lang.String"/>
 	<parameter name="buildingDetailList" class="java.util.List"/>
 	<parameter name="blocks" class="java.util.List"/>
+	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="licensee" class="java.lang.String"/>
 	<field name="planInformation" class="org.egov.common.entity.edcr.PlanInformation"/>
 	<field name="plot" class="org.egov.common.entity.edcr.Plot"/>
 	<field name="building" class="org.egov.common.entity.edcr.Building"/>
@@ -193,7 +195,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getApplicantName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="12" y="150" width="16" height="21" uuid="0c83f012-38c6-4be2-b461-0f898f6730cd"/>
@@ -442,7 +444,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getArchitectInformation()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{licensee}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="28" y="192" width="114" height="21" uuid="5610e790-d506-4f00-aa75-3a31f265903a"/>

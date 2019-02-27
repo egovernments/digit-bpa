@@ -516,11 +516,7 @@ public class PlanReportService {
                 ? dcrApplication.getApplicationNumber()
                 : "NA";
         String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
-
-        if (dcrApplication.getPlanInformation() != null
-                && dcrApplication.getPlanInformation().getApplicantName() != null)
-            plan.getPlanInformation().setApplicantName(dcrApplication.getApplicantName());
-
+            
         if (plan.getVirtualBuilding() != null && plan.getVirtualBuilding().getOccupancies() != null
                 && !plan.getVirtualBuilding().getOccupancies().isEmpty()) {
             EnumSet<OccupancyType> occupancies = plan.getVirtualBuilding().getOccupancies();
@@ -578,6 +574,8 @@ public class PlanReportService {
         }
 
         final Map<String, Object> valuesMap = new HashMap();
+        valuesMap.put("applicantName", dcrApplication.getApplicantName());
+        valuesMap.put("licensee", dcrApplication.getArchitectInformation());
         valuesMap.put("applicationNumber", applicationNumber);
         valuesMap.put("applicationDate", applicationDate);
         valuesMap.put("errors", plan.getErrors());
