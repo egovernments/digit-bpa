@@ -181,6 +181,7 @@ public class BpaApplication extends StateAware<Position> {
     private Boolean failureInScheduler = false;
     private String schedulerFailedRemarks;
     private Boolean authorizedToSubmitPlan = false;
+    private Boolean mailPwdRequired = false;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "typeOfLand")
@@ -263,7 +264,6 @@ public class BpaApplication extends StateAware<Position> {
     private transient Long wardId;
     private transient String approvalComent;
     private transient Set<Receipt> receipts = new HashSet<>();
-    private transient boolean mailPwdRequired;
     private transient List<ApplicationPermitConditions> dynamicPermitConditionsTemp = new ArrayList<>(0);
     private transient List<ApplicationPermitConditions> staticPermitConditionsTemp = new ArrayList<>(0);
     private transient List<ApplicationPermitConditions> rejectionReasonsTemp = new ArrayList<>(0);

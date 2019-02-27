@@ -208,7 +208,7 @@
 						<c:if test="${ mode eq 'showRescheduleToCitizen'}">
 							<td> <a
 									href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
-									class="btn btn-primary"> <spring:message code='lbl.btn.reschedule.appointment' /> </a>
+									class="btn btn-primary"> <spring:message code='lbl.btn.reschedule.appointment' /> </a>&nbsp;
 							</td>
 						</c:if>
 						<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny'
@@ -219,21 +219,21 @@
 								   target="popup" class="btn btn-primary"
 								   onclick="window.open('/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
 									<spring:message code='title.view.schedule.appmnt' />
-								</a>
+								</a>&nbsp;
 							</td>
 						</c:if>
 
 						<c:if test="${bpaApplication.status.code eq  'Letter To Party Created' && mode eq 'showLPDetails' }">
 							<td> <a	href="/bpa/lettertoparty/lettertopartyreply/${lettertopartylist.get(0).id}" class="btn btn-primary">
 										 <spring:message code='lbl.btn.reply.letter.to.party' />
-								    </a>
+								    </a>&nbsp;
 							</td>
 						</c:if>
 						<input type="hidden" id="onlinePaymentEnable" value="${onlinePaymentEnable}">
 						<c:if test="${onlinePaymentEnable && isFeeCollected && (bpaApplication.status.code eq 'Registered' || bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Approved') }">
 							<td> <a	href="/bpa/application/bpageneratebill/${bpaApplication.applicationNumber}" class="btn btn-primary">
 								<spring:message code='lbl.btn.pay.fee.online' />
-							</a>
+							</a>&nbsp;
 							</td>
 						</c:if>
 						<c:if test="${bpaApplication.status.code eq 'Approved' && isFeeCollected }">
@@ -242,7 +242,7 @@
 								   target="popup" class="btn btn-primary"
 								   onclick="window.open('/bpa/application/demandnotice/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
 									<spring:message code='lbl.btn.print.demand.notice' />
-								</a>
+								</a>&nbsp;
 							</td> 
 						</c:if>
 						<c:if test="${bpaApplication.status.code eq 'Order Issued to Applicant' }">
@@ -251,7 +251,7 @@
 								   target="popup" class="btn btn-primary"
 								   onclick="window.open('/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
 									<spring:message code='lbl.btn.print.permit.order' />
-								</a>
+								</a>&nbsp;
 							</td> 
 						</c:if>
 						
@@ -261,7 +261,7 @@
 								   target="popup" class="btn btn-primary"
 								   onclick="window.open('/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
 									<spring:message code='lbl.btn.print.rejection.notice' />
-								</a>
+								</a>&nbsp;
 							</td>
 						</c:if>
 						

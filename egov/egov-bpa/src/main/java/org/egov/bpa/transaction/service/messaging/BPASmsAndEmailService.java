@@ -39,6 +39,26 @@
  */
 package org.egov.bpa.transaction.service.messaging;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
+import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
+import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
+import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
+import static org.egov.bpa.utils.BpaConstants.NO;
+import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
+import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
+import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPELETTERTOPARTY;
+import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
+import static org.egov.bpa.utils.BpaConstants.YES;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Locale;
+
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.transaction.entity.Applicant;
@@ -47,7 +67,6 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
-import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -65,26 +84,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Locale;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
-import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
-import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
-import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
-import static org.egov.bpa.utils.BpaConstants.NO;
-import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
-import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
-import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPELETTERTOPARTY;
-import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
-import static org.egov.bpa.utils.BpaConstants.YES;
 
 @Service
 @Transactional(readOnly = true)
@@ -267,10 +266,11 @@ public class BPASmsAndEmailService {
 		if (isSmsEnabled() || isEmailEnabled()) {
 			ApplicationStakeHolder applnStakeHolder = bpaApplication.getStakeHolder().get(0);
 			if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
-				applicantName = applnStakeHolder.getApplication().getOwner().getName();
-				email = applnStakeHolder.getApplication().getOwner().getEmailId();
-				mobileNo = applnStakeHolder.getApplication().getOwner().getUser().getMobileNumber();
-				loginUserName = applnStakeHolder.getApplication().getOwner().getUser().getUsername();
+			        Applicant applicant = applnStakeHolder.getApplication().getOwner();
+				applicantName = applicant.getName();
+				email = applicant.getEmailId();
+				mobileNo = applicant.getUser().getMobileNumber();
+				loginUserName = applicant.getUser().getUsername();
 				password = mobileNo;
 				buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email, loginUserName, password, reportOutput, fileName);
 			}
@@ -325,7 +325,7 @@ public class BPASmsAndEmailService {
 		String smsCode;
 		String mailCode;
 		if ((APPLICATION_STATUS_REGISTERED).equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
-			if (isNotBlank(password)) {
+			if (bpaApplication.isMailPwdRequired() && isNotBlank(password)) {
 				smsCode = MSG_KEY_SMS_BPA_APPLN_NEW_PWD;
 				mailCode = BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD;
 			} else {

@@ -789,6 +789,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             bpaApplication.setOwner(applicant);
         } else {
             bpaApplication.setOwner(existApplicant);
+            bpaApplication.setMailPwdRequired(false);
         }
         if (!bpaApplication.getOwner().getUser().isActive())
             bpaApplication.getOwner().getUser().setActive(true);
@@ -820,6 +821,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             bpaApplication.setMailPwdRequired(true);
         } else {
             citizen = existingCitizen;
+            bpaApplication.setMailPwdRequired(false);
         }
         return citizen;
     }
