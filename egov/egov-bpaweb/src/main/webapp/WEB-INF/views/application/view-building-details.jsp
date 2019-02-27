@@ -143,8 +143,8 @@
 								<td></td>
 								<td></td>
 								<c:if test="${isEDCRIntegrationRequire eq false}">
-											<td></td>
-										</c:if>
+									<td></td>
+								</c:if>
 								<td class="text-right view-content">Total</td>
 								<td class="text-right view-content"><fmt:formatNumber
 										type="number" maxFractionDigits="2" value="${plinthAreaTotal}" /></td>
@@ -155,6 +155,7 @@
 							</tr>
 						</tfoot>
 					</table>
+				</div>
 			</c:if>
 			<c:if test="${bldg.additionalFeePaymentAccepted}">
 				<div class="row add-border">
@@ -255,9 +256,8 @@
 					<c:out value="${fromStreetLevelWithStairRoom}" default="N/A"></c:out>
 				</div>
 			</div>
-</div>
 
-<%--<c:if test="${bpaApplication.isExistingApprovedPlan}">
+			<%--<c:if test="${bpaApplication.isExistingApprovedPlan}">
                 <div class="row add-border">
                     <div class="col-sm-3 add-margin">
                         <spring:message code="lbl.permt.plan.obtain" />
@@ -296,6 +296,6 @@
                     </div>
                 </div>
             </c:if>--%>
-</c:forEach>
-</c:if>
+		</c:forEach>
+	</c:if>
 </div>
