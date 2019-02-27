@@ -150,6 +150,21 @@ $(document).ready( function () {
 			$('.toggle-madatory').find("span").removeClass( "mandatory" );
 		}
 	});
+	
+	if(!$("input[name='isOnbehalfOfOrganization']:checked").val()){
+		$('#isOnbehalfOfOrganizationNo').attr('checked','checked');
+	}
+	
+	if($("input[name='isOnbehalfOfOrganization']:checked").val() === 'true'){
+		$('#showhide').removeClass('hide');
+		$('.addremoverequired').attr( "required", "true" );
+		$('.toggle-madatory').find("span").addClass( "mandatory" );
+	} else {
+		$('#showhide').addClass('hide');
+		$('.addremoverequired').removeAttr( "required" );
+		$('.toggle-madatory').find("span").removeClass( "mandatory" );
+	}
+	
 	if ($('#invalidBuildingLicensee').val())
 		bootbox.alert($('#invalidBuildingLicensee').val());
 
