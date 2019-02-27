@@ -187,7 +187,7 @@ $(document)
 																data, type,
 																row, meta) {
 															var commonOptions = '<option value="">---Select an Action----</option><option  value=' + viewurl + row.applicationNumber + '>View</option>';
-															if (row.status == 'Registered' && row.isFeeCollected) {
+															if (row.status == 'Created' && row.isFeeCollected) {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ collecturl + row.applicationNumber +
 																		'>Collect Fee</option></select>');

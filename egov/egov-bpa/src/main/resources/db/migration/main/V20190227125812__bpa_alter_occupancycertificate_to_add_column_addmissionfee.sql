@@ -1,0 +1,1 @@
+alter table egbpa_occupancy_certificate add column admissionfeeAmount numeric NOT NULL DEFAULT 0;

@@ -52,6 +52,7 @@ import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
@@ -60,6 +61,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -202,6 +204,7 @@ public class OccupancyCertificateService {
             oc.setDemand(ocBillService.createDemand(oc));
         else
             oc.setDemand(ocBillService.createDemandWhenFeeCollectionNotRequire());
+        oc.setAdmissionfeeAmount(oc.getDemand().getBaseDemand());
         processAndStoreGeneralDocuments(oc);
         List<OCDcrDocuments> ocDcrDocuments; 
         if (oc.getId() == null) {
@@ -212,17 +215,25 @@ public class OccupancyCertificateService {
         }
         processAndStoreNocDocuments(oc);
         if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)
-                && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
-            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(oc.getStateType(), WF_NEW_STATE);
-            if (wfMatrix != null)
+                && (!bpaUtils.logedInuseCitizenOrBusinessUser())) {
+        	
+        	WorkFlowMatrix wfMatrix = null;
+            String currentState = WF_CREATED_STATE;
+            if (oc.getAdmissionfeeAmount() != null
+                    && oc.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0) {
+                wfMatrix = bpaUtils.getWfMatrixByCurrentState(
+                        oc.getStateType(), WF_NEW_STATE);
+                currentState = WF_NEW_STATE;
+            }if (wfMatrix != null)
                 wfBean.setApproverPositionId(bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
                         oc.getParent().getSiteDetail().get(0) != null
                                 && oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
                                         ? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
                                         : null));
-            wfBean.setCurrentState(WF_NEW_STATE);
+            wfBean.setCurrentState(currentState);
             bpaUtils.redirectToBpaWorkFlowForOC(oc, wfBean);
-        } else if (wfBean.getWorkFlowAction() != null
+            
+        }else if (wfBean.getWorkFlowAction() != null
                 && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             oc.setStatus(
                     applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));

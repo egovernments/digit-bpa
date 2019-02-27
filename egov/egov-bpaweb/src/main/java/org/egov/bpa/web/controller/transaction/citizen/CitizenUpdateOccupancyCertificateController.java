@@ -267,7 +267,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)
-                && !bpaUtils.logedInuserIsCitizen()) {
+                && !bpaUtils.logedInuseCitizenOrBusinessUser()) {
             Position pos = positionMasterService.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
             User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
             String message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION, new String[] {

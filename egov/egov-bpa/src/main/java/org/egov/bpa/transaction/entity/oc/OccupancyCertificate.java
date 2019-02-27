@@ -46,6 +46,7 @@
  */
 package org.egov.bpa.transaction.entity.oc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -151,6 +152,8 @@ public class OccupancyCertificate extends StateAware<Position> {
     private Boolean failureInScheduler = false;
 
     private String schedulerFailedRemarks;
+    
+	private BigDecimal admissionfeeAmount;
 
     @Length(min = 1, max = 5000)
     private String townSurveyorRemarks;
@@ -402,6 +405,14 @@ public class OccupancyCertificate extends StateAware<Position> {
     public void setSchedulerFailedRemarks(String schedulerFailedRemarks) {
         this.schedulerFailedRemarks = schedulerFailedRemarks;
     }
+    
+    public BigDecimal getAdmissionfeeAmount() {
+		return admissionfeeAmount;
+	}
+
+	public void setAdmissionfeeAmount(final BigDecimal admissionfeeAmount) {
+		this.admissionfeeAmount = admissionfeeAmount;
+	}
 
     public String getTownSurveyorRemarks() {
         return townSurveyorRemarks;
