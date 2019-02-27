@@ -214,8 +214,10 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
 
         } else if (BpaConstants.WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
         	//For one day permit, position need not be set 
-        	if(!application.getIsOneDayPermitApplication()) 
+        	if(!application.getIsOneDayPermitApplication())  {
         		pos = bpaWorkFlowService.getApproverPositionOfElectionWardByCurrentState(application, BpaConstants.REJECT_BY_CLERK);
+        		ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0).getEmployee();
+        	}
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                     null, additionalRule, BpaConstants.REJECT_BY_CLERK, null);
             BpaStateInfo bpaStateInfo = bpaWorkFlowService.getBpaStateInfo(application.getCurrentState(), application.getStateHistory(), application.getTownSurveyorInspectionRequire(), new BpaStateInfo(), wfmatrix, workFlowAction);
@@ -337,6 +339,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
             if (wfmatrix != null) {
                 BpaStateInfo bpaStateInfo = bpaWorkFlowService.getBpaStateInfo(application.getCurrentState(), application.getStateHistory(), application.getTownSurveyorInspectionRequire(), new BpaStateInfo(), wfmatrix, workFlowAction);
                 BpaStatus status = getStatusByCurrentMatrxiStatus(wfmatrix);
+                ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0).getEmployee();
                 if (status != null)
                     application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
 
