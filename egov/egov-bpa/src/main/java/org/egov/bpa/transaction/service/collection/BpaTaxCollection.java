@@ -230,9 +230,15 @@ public class BpaTaxCollection extends TaxCollection {
                         ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, BpaConstants.WF_NEW_STATE, BpaConstants.BPAFEECOLLECT, null, null);
         }
-        bpaUtils.sendSmsEmailOnCitizenSubmit(application);
-        bpaUtils.updatePortalUserinbox(application,null);
+        LOGGER.info("******** Application : " +application.getApplicationNumber() + " before save ********");
         applicationBpaService.saveAndFlushApplication(application);
+        LOGGER.info("******** Application : " + application.getApplicationNumber() + " after save ********");
+        LOGGER.info("******** Application : " +application.getApplicationNumber() + " before pushing to portal ********");
+        bpaUtils.updatePortalUserinbox(application,null);
+        LOGGER.info("******** Application : " +application.getApplicationNumber() + " after pushing to portal ********");
+        LOGGER.info("******** Application : " +application.getApplicationNumber() + " before sending to sms or email ********");
+        bpaUtils.sendSmsEmailOnCitizenSubmit(application);
+        LOGGER.info("******** Application : " +application.getApplicationNumber() + " after sending to sms or email ********");
     }
 
     @Transactional
