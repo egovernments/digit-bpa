@@ -61,6 +61,9 @@ public class SearchOcSpec {
             Join<OccupancyCertificate, BpaApplication> bpaApplication = root.join("parent");
             Join<BpaApplication, SiteDetail> siteDetailJoin = bpaApplication.join("siteDetail");
             Join<SiteDetail, Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
+            if (requestForm.getApplicationNumber() != null)
+                predicate.getExpressions()
+                                 .add(builder.equal(root.get("applicationNumber"), requestForm.getApplicationNumber()));
             if (requestForm.getApplicantName() != null)
                 predicate.getExpressions()
                         .add(builder.equal(bpaApplication.get("owner").get("name"),
