@@ -54,11 +54,13 @@
 	<c:when test="${isCitizen}"> <!-- for citizen user login -->
 		<div class="col-sm-8 col-sm-offset-2">
 			<div class="checkbox">
-			  <label><form:checkbox path="citizenAccepted" id="citizenAccepted" />
-				<form:errors path="citizenAccepted" cssClass="error-msg" /><span class="mandatory"></span>&nbsp;&nbsp;<spring:message
-			code="lbl.accepted" /></label>
+				<label><form:checkbox path="citizenAccepted"
+				       id="citizenAccepted" /> <form:errors path="citizenAccepted"
+					   cssClass="error-msg" /><span class="mandatory"></span>&nbsp;&nbsp;<spring:message
+					   code="lbl.accepted" /><br>&nbsp;&nbsp;&nbsp;&nbsp;<spring:message
+					   code="lbl.accpeted1" /></label>
 			</div>
-		</div>
+			</div>
 	</c:when>
 		<c:otherwise>
 			<!-- for business user login -->
