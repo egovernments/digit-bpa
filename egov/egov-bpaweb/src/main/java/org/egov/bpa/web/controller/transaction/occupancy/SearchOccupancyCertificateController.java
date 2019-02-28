@@ -43,7 +43,6 @@ import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.WARD;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +62,6 @@ import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.web.support.ui.DataTable;
@@ -74,24 +72,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/application")
 public class SearchOccupancyCertificateController extends BpaGenericApplicationController {
-    
+
     private static final String APPLICATION_HISTORY = "applicationHistory";
-    
+
     @Autowired
     private EmployeeService employeeService;
     @Autowired
     private BoundaryTypeService boundaryTypeService;
     @Autowired
     private CrossHierarchyService crossHierarchyService;
-    @Autowired
-    private BoundaryService boundaryService;
     @Autowired
     private SearchOCService searchOCService;
     @Autowired
@@ -100,26 +96,26 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
     private OCLetterToPartyService lettertoPartyService;
     @Autowired
     private OccupancyCertificateService occupancyCertificateService;
-    
-    
-    @RequestMapping(value = "/occupancy-certificate/search", method = RequestMethod.GET)
+
+    @GetMapping("/occupancy-certificate/search")
     public String showSearchApprovedforFee(final Model model) {
         prepareFormData(model);
+        model.addAttribute("serviceTypeList", serviceTypeService.getOccupancyCertificateRequiredServiceTypes());
         model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
         return "search-occupany-certificate";
     }
-    
-    @RequestMapping(value = "/occupancy-certificate/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+
+    @PostMapping(value = "/occupancy-certificate/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchRegisterStatusMarriageRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         return new DataTable<>(searchOCService.pagedSearch(searchBpaApplicationForm),
                 searchBpaApplicationForm.draw())
-                .toJson(SearchBpaApplicationAdaptor.class);
-    } 
-  
+                        .toJson(SearchBpaApplicationAdaptor.class);
+    }
 
     @GetMapping("/occupancycertificate/viewdetails/{applicationNumber}")
-    public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model, final HttpServletRequest request) {
+    public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model,
+            final HttpServletRequest request) {
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         model.addAttribute("occupancyCertificate", oc);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
@@ -128,10 +124,10 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("inspectionList", inspectionService.findByOcOrderByIdAsc(oc));
         model.addAttribute("letterToPartyList", lettertoPartyService.findAllByOC(oc));
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
-    	return "search-occupancy-certificate-view";
+        return "search-occupancy-certificate-view";
     }
 
-    @RequestMapping(value = "/occupancy-certificate/search/document-scrutiny", method = RequestMethod.GET)
+    @GetMapping("/occupancy-certificate/search/document-scrutiny")
     public String showDocumentScrutinyPendingRecords(final Model model) {
         Set<Boundary> employeeMappedZone = new HashSet<>();
         Set<Boundary> mappedElectionWard = new HashSet<>();
@@ -145,21 +141,21 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
                 mappedElectionWard.add(jurisdiction.getBoundary());
             }
         }
-       for (Boundary boundary : mappedElectionWard) {
-			List<Boundary> b = crossHierarchyService
-					.getParentBoundaryByChildBoundaryAndParentBoundaryType(boundary.getId(), revenueType.getId());
-			revenueWards.addAll(b);
-		}
-        
-		for (Boundary boundary : revenueWards) {
-			employeeMappedZone.add(boundary.getParent());
-			revWards.addAll(boundaryService.getActiveChildBoundariesByBoundaryId(boundary.getParent().getId()));
-			for (Boundary revenue : revWards) {
-				electionWards.addAll(crossHierarchyService
-						.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(WARD,
-								REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
-			}
-		}
+        for (Boundary boundary : mappedElectionWard) {
+            List<Boundary> b = crossHierarchyService
+                    .getParentBoundaryByChildBoundaryAndParentBoundaryType(boundary.getId(), revenueType.getId());
+            revenueWards.addAll(b);
+        }
+
+        for (Boundary boundary : revenueWards) {
+            employeeMappedZone.add(boundary.getParent());
+            revWards.addAll(boundaryService.getActiveChildBoundariesByBoundaryId(boundary.getParent().getId()));
+            for (Boundary revenue : revWards) {
+                electionWards.addAll(crossHierarchyService
+                        .findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(WARD,
+                                REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
+            }
+        }
         model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
@@ -167,13 +163,12 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
         return "search-document-scrutiny-oc";
     }
 
-    @RequestMapping(value = "/occupancy-certificate/search/document-scrutiny", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/occupancy-certificate/search/document-scrutiny", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchDocumentScrutinyPendingRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         return new DataTable<>(searchOCService.searchForDocumentScrutinyPending(searchBpaApplicationForm),
                 searchBpaApplicationForm.draw())
-                .toJson(SearchBpaApplicationAdaptor.class);
+                        .toJson(SearchBpaApplicationAdaptor.class);
     }
-
 
 }

@@ -89,19 +89,8 @@ public class EdcrApplicationController {
     @Autowired
     private EdcrPdfDetailService edcrPdfDetailService;
 
-    /*
-     * @Autowired // private PlanInformationService planInformationService;
-     */
     private void prepareNewForm(Model model, HttpServletRequest request) {
-        // model.addAttribute("planInformations", planInformationService.findAll());
-        List<ServiceType> dcrRequireServices = new ArrayList<>();
-        for (ServiceType serviceType : serviceTypeService.getAllActiveMainServiceTypes()) {
-            if (serviceType.getCode().equals("01") || serviceType.getCode().equals("03")
-                    || serviceType.getCode().equals("04") || serviceType.getCode().equals("06")
-                    || serviceType.getCode().equals("07"))
-                dcrRequireServices.add(serviceType);
-        }
-        model.addAttribute("serviceTypeList", dcrRequireServices);
+        model.addAttribute("serviceTypeList", serviceTypeService.getEDcrRequiredServiceTypes());
         model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
     }
@@ -177,7 +166,7 @@ public class EdcrApplicationController {
         edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         edcrApplicationService.create(edcrApplication);
 
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.edcrapplication.success", null, null));
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(MSG_EDCRAPPLICATION_SUCCESS, null, null));
         return REDIRECT_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
     }
 
@@ -227,7 +216,7 @@ public class EdcrApplicationController {
         edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
 
         edcrApplicationService.update(edcrApplication);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.edcrapplication.success", null, null));
+        redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.edcrapplication.success", null, null));
         return REDIRECT_APPLICATION_RESULT + edcrApplication.getApplicationNumber();
     }
 
