@@ -95,9 +95,9 @@ function loadBoundary() {
 				if(boundaryData[orderArray[i]]['data']!=null && boundaryData[orderArray[i]]['data']!=''){
 					$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
 					if(fromHierarchy.indexOf(displayName) != -1){
-						$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" data-first-option="false" id="'+hierarchy+displayName.replace(/ +/g, "")+'" onChange="crossBoundary(\''+hierarchy+displayName.replace(/ +/g, "")+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="0">select</option></select></div>');
+						$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+hierarchy+displayName.replace(/ +/g, "")+'" onChange="crossBoundary(\''+hierarchy+displayName.replace(/ +/g, "")+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
 					}else {
-						$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" data-first-option="false" id="'+hierarchy+displayName.replace(/ +/g, "")+'"> <option value="0">select</option></select></div>');
+						$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+hierarchy+displayName.replace(/ +/g, "")+'"> <option value="">select</option></select></div>');
 					}
 					if(toHierarchy.indexOf(displayName) == -1){
 						$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
