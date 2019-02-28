@@ -56,6 +56,7 @@ import org.egov.bpa.transaction.entity.LettertoParty;
 import org.egov.bpa.transaction.entity.LettertoPartyDocument;
 import org.egov.bpa.transaction.notice.LetterToPartyFormat;
 import org.egov.bpa.transaction.notice.impl.LetterToPartyCreateFormatImpl;
+import org.egov.bpa.transaction.notice.impl.LetterToPartyReplyFormatImpl;
 import org.egov.bpa.transaction.service.LettertoPartyDocumentService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.utils.BpaConstants;
@@ -277,7 +278,7 @@ public class LetterToPartyController extends BpaGenericApplicationController {
             final HttpSession session) {
         final LettertoParty lettertoParty = lettertoPartyService.findById(new Long(request.getParameter("pathVar")));
         LetterToPartyFormat letterToPartyFormat = (LetterToPartyFormat) specificNoticeService
-                .find(LetterToPartyCreateFormatImpl.class, specificNoticeService.getCityDetails());
+                .find(LetterToPartyReplyFormatImpl.class, specificNoticeService.getCityDetails());
         return getFileAsResponseEntity(lettertoParty.getLpNumber(), letterToPartyFormat.generateNotice(lettertoParty),
                 "lettertopartyreply");
     }
