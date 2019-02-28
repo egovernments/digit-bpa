@@ -211,7 +211,7 @@ $(document).ready(
             var blockTitle;
             var toggleIcon;
             if(noOfBlocks > 1) {
-                blockTitle = 'Block '+name+' Builtup and Carpet Area Details';
+                blockTitle = 'Block - '+name+' Builtup and Carpet Area Details';
                 toggleIcon = '<div class="history-icon toggle-icon'+bldgIdx+'">'+
                     '      <i class="fa fa-angle-up fa-2x"></i></div>';
             } else {
@@ -408,7 +408,7 @@ $(document).ready(
             var blockTitle;
             var toggleIcon;
             if(noOfBlocks > 1) {
-                blockTitle = 'Block '+name+' Builtup and Carpet Area Details';
+                blockTitle = 'Block - '+name+' Builtup and Carpet Area Details';
                 toggleIcon = '<div class="history-icon toggle-icon'+bldgIdx+'">'+
                     '      <i class="fa fa-angle-up fa-2x"></i></div>';
             } else {

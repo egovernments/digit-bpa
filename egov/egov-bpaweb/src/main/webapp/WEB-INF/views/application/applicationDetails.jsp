@@ -60,24 +60,11 @@
 </div>
 <div class="panel-body">
 	<div id="appDet">
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message
-					code="lbl.occupancy" /><span class="mandatory"></span></label>
-			<div class="col-sm-3 add-margin">
-				<select name="permitOccupanciesTemp" multiple
-					id="occupancyapplnlevel"
-					class="form-control occupancies tick-indicator">
-					<c:forEach items="${occupancyList}" var="ocpncy">
-						<option value="${ocpncy.id}" title="${ocpncy.name}"
-							<c:if test="${fn:contains(bpaApplication.permitOccupancies, ocpncy)}"> Selected </c:if>>${ocpncy.name}</option>
-					</c:forEach>
-				</select>
-				<form:errors path="permitOccupanciesTemp"
-					cssClass="add-margin error-msg" />
-			</div>
-				<c:if test="${isEDCRIntegrationRequire eq true}">
+		<c:choose>
+			<c:when test="${isEDCRIntegrationRequire eq true}">
+				<div class="form-group">
 					<div class="edcrApplnDetails">
-						<label class="col-sm-2 control-label text-right"><spring:message
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.edcr.number" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input class="form-control patternvalidation" maxlength="20"
@@ -85,8 +72,42 @@
 							<form:errors path="eDcrNumber" cssClass="add-margin error-msg" />
 						</div>
 					</div>
-				</c:if>
-		</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.occupancy" /><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
+						<select name="permitOccupanciesTemp" multiple
+							id="occupancyapplnlevel"
+							class="form-control occupancies tick-indicator">
+							<c:forEach items="${occupancyList}" var="ocpncy">
+								<option value="${ocpncy.id}" title="${ocpncy.name}"
+									<c:if test="${fn:contains(bpaApplication.permitOccupancies, ocpncy)}"> Selected </c:if>>${ocpncy.name}</option>
+							</c:forEach>
+						</select>
+						<form:errors path="permitOccupanciesTemp"
+							cssClass="add-margin error-msg" />
+					</div>
+				</div>
+			</c:when>
+			<c:otherwise>
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.occupancy" /><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
+						<select name="permitOccupanciesTemp" multiple
+							id="occupancyapplnlevel"
+							class="form-control occupancies tick-indicator">
+							<c:forEach items="${occupancyList}" var="ocpncy">
+								<option value="${ocpncy.id}" title="${ocpncy.name}"
+									<c:if test="${fn:contains(bpaApplication.permitOccupancies, ocpncy)}"> Selected </c:if>>${ocpncy.name}</option>
+							</c:forEach>
+						</select>
+						<form:errors path="permitOccupanciesTemp"
+							cssClass="add-margin error-msg" />
+					</div>
+				</div>
+			</c:otherwise>
+		</c:choose>
+
 		<c:if test="${isOneDayPermitApplicationIntegrationRequired eq true}">
 			<div class="form-group" id="oneDayPermitSec">
 				<label class="col-sm-3 control-label text-right"><spring:message
