@@ -54,7 +54,7 @@
 		<div class="files-upload-container">
 			<div class="files-viewer">
 				<c:choose>
-					<c:when test="${not empty ocInspection.inspection.inspectionSupportDocs}">
+					<c:when test="${not empty ocInspection.inspection.encodedImages}">
 						<c:forEach var="image" items="${ocInspection.inspection.encodedImages}"
 								   varStatus="status1">
 							<c:if test="${image.value ne '' && image.value ne null}">
