@@ -62,5 +62,9 @@ public interface ServiceTypeRepository extends JpaRepository<ServiceType, Long> 
 	List<ServiceType> getServiceTypeByListOfCode(@Param("code") List<String> code);
 	
 	List<ServiceType> findByIsActiveTrueOrderByDescriptionAsc();
+	
+	List<ServiceType> findByIsEdcrMandatoryTrueOrderByIdAsc();
+	
+	List<ServiceType> findByIsOCRequiredTrueOrderByIdAsc();
 
 }

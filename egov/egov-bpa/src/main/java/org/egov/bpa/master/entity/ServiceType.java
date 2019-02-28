@@ -86,6 +86,7 @@ public class ServiceType extends AbstractAuditable {
     private Boolean isAmenity;
     @Column(name = "isBuildingRequired")
     private Boolean isBuildingDetailsRequired;
+    private Boolean isOCRequired;
 
     @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<BpaDocument> document = new ArrayList<>(0);
@@ -221,6 +222,14 @@ public class ServiceType extends AbstractAuditable {
 
     public void setIsBuildingDetailsRequired(Boolean isBuildingDetailsRequired) {
         this.isBuildingDetailsRequired = isBuildingDetailsRequired;
+    }
+
+    public Boolean getIsOCRequired() {
+        return isOCRequired;
+    }
+
+    public void setIsOCRequired(Boolean isOCRequired) {
+        this.isOCRequired = isOCRequired;
     }
 
 }

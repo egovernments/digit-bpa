@@ -77,5 +77,13 @@ public class ServiceTypeService {
     public List<ServiceType> getAllActiveServiceTypes() {
         return serviceTypeRepository.findByIsActiveTrueOrderByDescriptionAsc();
     }
+    
+    public List<ServiceType> getEDcrRequiredServiceTypes() {
+        return serviceTypeRepository.findByIsEdcrMandatoryTrueOrderByIdAsc();
+    }
+    
+    public List<ServiceType> getOccupancyCertificateRequiredServiceTypes() {
+        return serviceTypeRepository.findByIsOCRequiredTrueOrderByIdAsc();
+    }
 
 }

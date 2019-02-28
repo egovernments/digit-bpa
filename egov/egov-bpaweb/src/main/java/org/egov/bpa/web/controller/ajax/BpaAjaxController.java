@@ -459,6 +459,7 @@ public class BpaAjaxController {
                 : applicationBpaService.findByPermitNumber(permitNumber);
         final JsonObject jsonObj = new JsonObject();
         if (application != null) {
+            jsonObj.addProperty("isOcRequire", application.getServiceType().getIsOCRequired());
             jsonObj.addProperty("ocExists",
                     occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get("isExists"));
             jsonObj.addProperty("ocExistsMessage", occupancyCertificateUtils
