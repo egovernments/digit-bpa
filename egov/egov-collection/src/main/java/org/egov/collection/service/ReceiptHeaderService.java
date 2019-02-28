@@ -1151,6 +1151,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 && receiptHeader.getStatus().getCode()
                                         .equals(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED)))
             pushMail(receiptHeader);
+        
+        LOGGER.info("Mail sent from collection system for receipt : " + receiptHeader.getId().toString());
+        LOGGER.info("pushing to elastic index for receipt : " + receiptHeader.getId().toString());
         CollectionIndex collectionIndexObj = collectionIndexUtils.findByReceiptNumber(receiptHeader.getReceiptnumber());
         if (collectionIndexObj != null) {
             collectionIndexObj.setStatus(receiptHeader.getStatus().getDescription());
@@ -1160,6 +1163,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             collectionIndexObj = collectionsUtil.constructCollectionIndex(receiptHeader);
             collectionIndexService.pushCollectionIndex(collectionIndexObj);
         }
+        LOGGER.info("pushing done to elastic index for receipt : " + receiptHeader.getId().toString());
+
     }
 
     private void pushMail(final ReceiptHeader receiptHeader) {
