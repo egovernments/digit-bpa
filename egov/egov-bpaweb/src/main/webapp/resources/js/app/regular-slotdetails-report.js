@@ -78,7 +78,8 @@ $(document)
                                                     return {
                                                         "args": JSON.stringify(args),
                                                         "appointmentDate": $("#fromDate").val(),
-                                                        "zoneId": $("#zone").val()
+                                                        "zoneId": $("#zone").val(),
+                                                        "applicationType": $("#slotApplicationType").val()
                                                     };
                                                 },
 												complete : function() {
@@ -128,6 +129,10 @@ $(document)
 													"sClass" : "text-center"
 												},
 												{
+													"data" : "applicationType",
+													"sClass" : "text-left"
+												},
+												{
 													"data" : "zone",
 													"sClass" : "text-left"
 												},
@@ -152,7 +157,7 @@ $(document)
                                                 },
                                                 {
                                                     "data" : "utilizedScheduledSlots",
-                                                    render : function(data, type, row, meta) {
+                                                   /* render : function(data, type, row, meta) {
                                                         return parseInt(row.utilizedScheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
                                                             + 'applicationType='+applicationType
                                                             + '&'
@@ -167,12 +172,12 @@ $(document)
                                                             + 'electionWardId='
                                                             + '\')" href="javascript:void(0);">'
                                                             + row.utilizedScheduledSlots + '</a>':row.utilizedScheduledSlots;
-                                                    },
+                                                    },*/
                                                     "sClass" : "text-center"
                                                 },
                                                 {
                                                     "data" : "utilizedRescheduledSlots",
-                                                    render : function(data, type, row, meta) {
+                                                    /*render : function(data, type, row, meta) {
                                                         return parseInt(row.utilizedRescheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
                                                             + 'applicationType='+applicationType
                                                             + '&'
@@ -187,7 +192,7 @@ $(document)
                                                             + 'electionWardId='
                                                             + '\')" href="javascript:void(0);">'
                                                             + row.utilizedRescheduledSlots + '</a>':row.utilizedRescheduledSlots;
-                                                    },
+                                                    },*/
                                                     "sClass" : "text-center"
                                                 }],
 													
@@ -199,14 +204,14 @@ $(document)
 															jQuery('#report-footer').show(); 
 														}
 														if (data.length > 0) {
-															updateTotalFooter(4, api);
 															updateTotalFooter(5, api);
 															updateTotalFooter(6, api);
-                                                            updateTotalFooter(7, api);
+															updateTotalFooter(7, api);
+                                                            updateTotalFooter(8, api);
 															}
 													},
 													"aoColumnDefs" : [ {
-														"aTargets" : [4,5,6,7],
+														"aTargets" : [5,6,7,8],
 														"mRender" : function(data, type, full) {
 															return formatNumberInr(data);    
 														}

@@ -48,6 +48,7 @@
 
 package org.egov.bpa.transaction.repository.specs;
 
+import org.egov.bpa.master.entity.enums.SlotMappingApplType;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.dto.SlotDetailsHelper;
 import org.springframework.data.jpa.domain.Specification;
@@ -76,12 +77,15 @@ public final class BpaReportsSearchSpec {
 						.add(builder.isNotNull(root.get("slot").get("electionWard")));
 				predicate.getExpressions()
 						.add(builder.equal(root.get("slot").get("type"),"One Day Permit"));
-			}
-			else if("regular".equals(requestForm.getApplicationType())) {
+			} else if(SlotMappingApplType.ALL_OTHER_SERVICES.name().equals(requestForm.getApplicationType())) {
 				predicate.getExpressions()
 						.add(builder.isNull(root.get("slot").get("electionWard")));
 				predicate.getExpressions().add(builder.equal(root.get("slot").get("type"),"Normal"));
-			}
+			} else if(SlotMappingApplType.OCCUPANCY_CERTIFICATE.name().equals(requestForm.getApplicationType())) {
+                            predicate.getExpressions()
+                                            .add(builder.isNull(root.get("slot").get("electionWard")));
+                            predicate.getExpressions().add(builder.equal(root.get("slot").get("type"),"Occupancy Certificate"));
+                    }
 			query.orderBy(builder.desc(root.get("slot").get("appointmentDate")));
 			query.orderBy(builder.asc(root.get("slot").get("zone")));
 			query.distinct(true);

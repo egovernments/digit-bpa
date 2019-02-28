@@ -40,6 +40,7 @@
 package org.egov.bpa.web.controller.report;
 
 import org.egov.bpa.master.entity.enums.ApplicationType;
+import org.egov.bpa.master.entity.enums.SlotMappingApplType;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.entity.dto.PersonalRegisterHelper;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
@@ -204,6 +205,13 @@ public class BpaReportsController extends BpaGenericApplicationController {
 		prepareFormData(model);
 		model.addAttribute("slotDetailsHelper", new SlotDetailsHelper());
 		model.addAttribute("applicationType", applicationType);
+		List<SlotMappingApplType> slotMappingApplTypes = new ArrayList<>();
+                for (SlotMappingApplType applType : SlotMappingApplType.values())
+                    if (applType.equals(SlotMappingApplType.ONE_DAY_PERMIT))
+                        continue;
+                    else
+                        slotMappingApplTypes.add(applType);
+                model.addAttribute("slotMappingApplTypes", slotMappingApplTypes);
 		model.addAttribute("searchByNoOfDays", BpaConstants.getSearchByNoOfDays());
 		if ("onedaypermit".equals(applicationType))
 			return "search-onedaypermit-slotdetails-report";

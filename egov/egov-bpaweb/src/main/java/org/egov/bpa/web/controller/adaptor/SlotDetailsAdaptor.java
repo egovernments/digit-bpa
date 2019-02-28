@@ -72,6 +72,7 @@ public class SlotDetailsAdaptor implements DataTableJsonAdapter<SlotDetailsHelpe
 			final JsonObject jsonObject = new JsonObject();
 			jsonObject.addProperty("slotId", baseForm.getSlotId());
 			jsonObject.addProperty("slotDetailsId", baseForm.getSlotDetailsId());
+			jsonObject.addProperty("applicationType", baseForm.getApplicationType());
 			jsonObject.addProperty("appointmentDate", DateUtils.toDefaultDateFormat(baseForm.getAppointmentDate()));
 			jsonObject.addProperty("appointmentTime", baseForm.getAppointmentTime());
 			jsonObject.addProperty("electionWard", defaultString(baseForm.getElectionWard(), "N/A"));

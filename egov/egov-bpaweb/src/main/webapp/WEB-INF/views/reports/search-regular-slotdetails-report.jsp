@@ -55,7 +55,7 @@
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"> <spring:message
+						<label class="col-sm-3 control-label text-right"> <spring:message
 								code="lbl.zonal.office"/>
 						</label>
 						<div class="col-sm-3 add-margin">
@@ -88,6 +88,23 @@
 							<form:errors path="byNoOfDays" cssClass="add-margin error-msg"/>
 						</div>
 					</div>--%>
+					
+					<div class="form-group">
+                    <label class="col-sm-3 control-label text-right"><spring:message
+                            code="lbl.applctn.type"/></label>
+                    <div class="col-sm-3 add-margin">
+                        <form:select path="applicationType" data-first-option="false"
+                                     id="slotApplicationType" cssClass="form-control">
+                            <form:option value="">
+                                <spring:message code="lbl.select"/>
+                            </form:option>
+                            <form:options items="${slotMappingApplTypes}" itemLabel="applicationTypeVal"/>
+                        </form:select>
+                    </div> 
+                    </div>
+					
+					
+					
 				</div>
 			</div>
 		</div>
@@ -111,7 +128,8 @@
 			   id="regularApplnsSlotDetailsCount">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.slno"/> </th>
+				    <th><spring:message code="lbl.slno"/> </th>
+				    <th><spring:message code="lbl.applctn.type"/></th>
 					<th><spring:message code="lbl.zonal.office"/></th>
 					<th><spring:message code="lbl.appmnt.date"/></th>
 					<th><spring:message code="lbl.appmnt.time"/></th>
@@ -123,6 +141,7 @@
 			</thead>
 			<tfoot id="report-footer">
 				<tr>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

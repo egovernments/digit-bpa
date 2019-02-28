@@ -232,7 +232,6 @@ public class BpaReportsService {
     }
 
     public Page<SlotDetailsHelper> searchSlotDetails(final SlotDetailsHelper slotDetailsHelper, final String applicationType) {
-        slotDetailsHelper.setApplicationType(applicationType);
         final Pageable pageable = new PageRequest(slotDetailsHelper.pageNumber(),
                 slotDetailsHelper.pageSize(), slotDetailsHelper.orderDir(), slotDetailsHelper.orderBy());
         Page<SlotDetail> slotDetails = slotDetailRepository
@@ -244,6 +243,7 @@ public class BpaReportsService {
         List<SlotDetailsHelper> slotDetailsHelperList = new ArrayList<>();
         for (SlotDetail slotDetail : slotDetails) {
             SlotDetailsHelper slotDetailsHelper = new SlotDetailsHelper();
+            slotDetailsHelper.setApplicationType(slotDetail.getSlot().getType());
             slotDetailsHelper.setSlotId(slotDetail.getSlot().getId());
             slotDetailsHelper.setAppointmentDate(slotDetail.getSlot().getAppointmentDate());
             slotDetailsHelper.setZone(slotDetail.getSlot().getZone().getName());
