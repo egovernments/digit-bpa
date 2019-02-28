@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bparejectionnotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b1715f8d-a189-45c5-a759-a3f04bc5d6b4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -29,26 +30,12 @@
 	</background>
 	<title>
 		<band height="96" splitType="Stretch">
-			<textField>
-				<reportElement x="88" y="40" width="428" height="20" uuid="643ee47d-a84c-4e17-a758-85b3d2fe1503"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["(See Rule 9(1))"]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="88" y="0" width="428" height="20" uuid="ba5c4563-d93c-483f-86e2-5aae2755cd2f"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="88" y="20" width="428" height="20" uuid="9f0f3469-57ed-48f6-83ad-1dfab7d6e41e"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Kerala Building Rule-1984"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="76" width="122" height="20" uuid="097ffb17-4a3c-4452-a196-f15126c79e61"/>
@@ -111,7 +98,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["       Your application, dated "+DateUtils.toDefaultDateFormat($F{applicationDate})+" for permit /Regularization for "+$F{serviceType}.getDescription()+"  in Kozhikode Corporation falling in "+$F{siteDetail}.get(0).getLocationBoundary().getName()+" Village,Revenue Ward "+$F{siteDetail}.get(0).getAdminBoundary().getBoundaryNum()+",Electoral Ward "+$F{siteDetail}.get(0).getElectionBoundary().getBoundaryNum()+",Re-Survey No."+$F{siteDetail}.get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["       Your application, dated "+DateUtils.toDefaultDateFormat($F{applicationDate})+" for permit /Regularization for "+$F{serviceType}.getDescription()+"  in "+$P{ulbName}+" falling in "+$F{siteDetail}.get(0).getLocationBoundary().getName()+" Village,Revenue Ward "+$F{siteDetail}.get(0).getAdminBoundary().getBoundaryNum()+",Electoral Ward "+$F{siteDetail}.get(0).getElectionBoundary().getBoundaryNum()+",Re-Survey No."+$F{siteDetail}.get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>
