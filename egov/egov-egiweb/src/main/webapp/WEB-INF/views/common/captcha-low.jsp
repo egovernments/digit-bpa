@@ -52,7 +52,7 @@
         <i class="fa fa-refresh" id="refresh" style="cursor: pointer" title="Choose a different word"></i>
         <br/><br/>
         <input type='text' class="form-control" name='j_captcha_response' value='' placeholder="Enter the above displayed text"
-               required="required" style="width:95%;margin-left:19px">
+               required="required" autocomplete="false" style="width:95%;margin-left:19px">
         <input type='hidden' name='j_captcha_key' value='' id="captchakey" required="required">
     </div>
 </div>

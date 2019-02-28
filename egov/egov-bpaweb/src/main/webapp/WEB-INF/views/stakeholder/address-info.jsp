@@ -89,7 +89,7 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${address}.areaLocalitySector" id="${address}.areaLocalitySector"
-			type="text" cssClass="form-control is_valid_alphabet inline-elem"
+			type="text" cssClass="form-control inline-elem"
 			placeholder="" maxlength="256" autocomplete="off" required="required" />
 		<form:errors path="${address}.areaLocalitySector"
 			cssClass="add-margin error-msg" />
@@ -99,7 +99,7 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${address}.cityTownVillage" id="${address}.cityTownVillage"
-			type="text" cssClass="form-control is_valid_alphabet inline-elem"
+			type="text" cssClass="form-control inline-elem"
 			placeholder="" maxlength="256" autocomplete="off" required="required" />
 		<form:errors path="${address}.cityTownVillage"
 			cssClass="add-margin error-msg" />
@@ -112,8 +112,8 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${address}.district" id="${address}.district"
-			type="text" cssClass="form-control is_valid_alphabet inline-elem"
-			placeholder="" maxlength="100" autocomplete="off" required="required" />
+			type="text" cssClass="form-control patternvalidation inline-elem"
+			data-pattern="alphanumericspecialcharacters" maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="${address}.district"
 			cssClass="add-margin error-msg" />
 	</div>
@@ -122,8 +122,8 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${address}.state" id="${address}.state"
-			type="text" cssClass="form-control is_valid_alphabet inline-elem"
-			placeholder="" maxlength="100" autocomplete="off" required="required" />
+			type="text" cssClass="form-control patternvalidation inline-elem"
+			data-pattern="alphanumericspecialcharacters" maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="${address}.state"
 			cssClass="add-margin error-msg" />
 	</div>
@@ -135,8 +135,8 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${address}.postOffice" id="${address}.postOffice"
-			type="text" cssClass="form-control inline-elem"
-			placeholder="" maxlength="50" autocomplete="off" required="required" />
+			type="text" cssClass="form-control patternvalidation inline-elem"
+			data-pattern="alphanumericspecialcharacters" maxlength="50" autocomplete="off" required="required" />
 		<form:errors path="${address}.postOffice"
 			cssClass="add-margin error-msg" />
 	</div>

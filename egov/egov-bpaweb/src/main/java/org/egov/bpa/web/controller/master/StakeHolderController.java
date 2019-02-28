@@ -202,8 +202,9 @@ public class StakeHolderController extends GenericWorkFlowController {
 			final Model model, final BindingResult errors, final RedirectAttributes redirectAttributes,
 			HttpServletRequest request) {
 
-	/*	if (!captchaUtils.captchaIsValid(request))
-			errors.reject("captcha.not.valid");*/
+        
+          if (!captchaUtils.captchaIsValid(request)) errors.reject("captcha.not.valid");
+         
 		StakeHolder existingStakeholder = stakeHolderService.validateStakeHolderIsRejected(
 				stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), stakeHolder.getAadhaarNumber(),
 				stakeHolder.getPan(), stakeHolder.getLicenceNumber());

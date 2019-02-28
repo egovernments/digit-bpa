@@ -54,7 +54,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="panel-heading toggle-header custom_form_panel_heading">
 	<div class="panel-title">
-		Boundary Details
+		<spring:message code="lbl.bndry.dtl"/>
 	</div>
 	<div class="history-icon toggle-icon">
 		<i class="fa fa-angle-up fa-2x"></i>
