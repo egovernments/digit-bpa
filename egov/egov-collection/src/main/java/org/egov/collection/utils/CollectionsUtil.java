@@ -1067,4 +1067,11 @@ public class CollectionsUtil {
         return bankBranchArrayList;
     }
 
+    public String getTransactionId(String tnxId, String delimiter) {
+    	
+    	String[] tnxIdSplit = tnxId.split(delimiter);
+    	
+    	return tnxIdSplit.length >= 3 ? tnxIdSplit[1] : tnxId;
+    	
+    }
 }

@@ -14,6 +14,7 @@ import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -36,9 +37,14 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 	@Autowired
 	private CollectionApplicationProperties collectionApplicationProperties;
 
+    @Autowired
+    private CollectionsUtil collectionsUtil;
+    
 	@Override
 	public PaymentRequest createPaymentRequest(ServiceDetails paymentServiceDetails, ReceiptHeader receiptHeader) {
 		LOGGER.debug("inside createPaymentRequest");
+		String cityCode =  ApplicationThreadLocals.getCityCode();
+		
 		final DefaultPaymentRequest paymentRequest = new DefaultPaymentRequest();
 		final BigDecimal amount = receiptHeader.getTotalAmount();
 		final float rupees = Float.parseFloat(amount.toString());
@@ -49,7 +55,9 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 
 		ReqMsgDTO pnbReqMsgDTO = new ReqMsgDTO();
 		pnbReqMsgDTO.setMid(collectionApplicationProperties.pnbMid());
-		pnbReqMsgDTO.setOrderId(receiptHeader.getId().toString());
+		pnbReqMsgDTO.setOrderId(cityCode
+                + CollectionConstants.SEPARATOR_HYPHEN + receiptHeader.getId().toString()
+                + CollectionConstants.SEPARATOR_HYPHEN + receiptHeader.getService().getCode());
 		pnbReqMsgDTO.setTrnAmt(paise.toString());// in paise
 
 		pnbReqMsgDTO.setTrnCurrency(collectionApplicationProperties.pnbTransactionCurrency());
@@ -117,7 +125,9 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 					? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS : objResMsgDTO.getStatusCode());
 			pnbResponse.setErrorDescription(objResMsgDTO.getStatusDesc());
 			pnbResponse.setAdditionalInfo6(objResMsgDTO.getAddField2().replace("-", "").replace("/", ""));
-			pnbResponse.setReceiptId(objResMsgDTO.getOrderId());
+	        String convertedOrderId = collectionsUtil.getTransactionId(objResMsgDTO.getOrderId(), CollectionConstants.SEPARATOR_HYPHEN);
+
+			pnbResponse.setReceiptId(convertedOrderId);
 
                         LOGGER.info("Response message from PNB Payment gateway: Auth Status: " + pnbResponse.getAuthStatus());
                         LOGGER.info("Response message from PNB Payment gateway: Error Description: " + pnbResponse.getErrorDescription());
@@ -154,6 +164,7 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 		final PaymentResponse pnbResponse = new DefaultPaymentResponse();
 		ResMsgDTO pnbResMsgDTO = new ResMsgDTO();
 		AWLMEAPI objAWLMEAPI = new AWLMEAPI();
+
 		try {
 			pnbResMsgDTO = objAWLMEAPI.getTransactionStatus(collectionApplicationProperties.pnbMid(),
 					onlinePayment.getReceiptHeader().getId().toString(), onlinePayment.getTransactionNumber(),
@@ -164,8 +175,10 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 			pnbResponse.setAdditionalInfo6(pnbResMsgDTO.getAddField2().replace("-", "").replace("/", ""));
 			if(pnbResMsgDTO.getOrderId().equalsIgnoreCase("NA"))
 				pnbResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
-			else	
-				pnbResponse.setReceiptId(pnbResMsgDTO.getOrderId());
+			else {	
+		        String convertedOrderId = collectionsUtil.getTransactionId(pnbResMsgDTO.getOrderId(), CollectionConstants.SEPARATOR_HYPHEN);
+				pnbResponse.setReceiptId(convertedOrderId);
+			}
 
 			// Success
 			if (pnbResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
