@@ -249,6 +249,8 @@
 						<spring:message code='lbl.btn.add.row' />
 					</button>
 				</div>
+				<form:hidden path="existingBuildingDetails[${exstBldgCounter.index}].name"/>
+				<form:hidden path="existingBuildingDetails[${exstBldgCounter.index}].number"/>
 				<form:hidden id="existTotalPlintArea${exstBldgCounter.index}"
 					path="existingBuildingDetails[${exstBldgCounter.index}].totalPlintArea" />
 			</div>

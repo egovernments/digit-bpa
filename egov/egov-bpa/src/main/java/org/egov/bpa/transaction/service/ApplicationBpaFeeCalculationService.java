@@ -64,7 +64,7 @@ import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.SubOccupancy;
-import org.egov.commons.service.OccupancyService;
+import org.egov.commons.service.SubOccupancyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,11 +95,9 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
     @Autowired
     private BpaFeeService bpaFeeService;
     @Autowired
-    private ApplicationFeeService applicationFeeService;
-    @Autowired
-    private OccupancyService occupancyService;
-    @Autowired
     private PermitFeeService permitFeeService;
+    @Autowired
+    private SubOccupancyService subOccupancyService;
 
     private PermitFee getbpaFee(final BpaApplication application) {
         PermitFee permitFee = null;
@@ -197,7 +195,7 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
                                     || ("701").equals(bpaFee.getCode())) {
                                 BigDecimal existBldgInputArea = getExistBldgTotalFloorArea(application);
                                 if (selectdOccupancies.size() > 1) {
-                                    List<Occupancy> occupancies = occupancyService.findAllOrderByOrderNumber();
+                                    List<SubOccupancy> occupancies = subOccupancyService.findAllOrderByOrderNumber();
                                     Map<String, Map<Occupancy, BigDecimal>> convertedOccupancies = new ConcurrentHashMap<>();
                                     for (Map.Entry<String, Map<SubOccupancy, BigDecimal>> block : groupBlockOccupancyFloorArea(
                                             application.getBuildingDetail()).entrySet()) {
@@ -206,24 +204,29 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
                                             Map<Occupancy, BigDecimal> convertInner;
                                             String convertedOccu = getOccupancyAsPerFloorArea(blockOccupancy.getKey(),
                                                     blockOccupancy.getValue());
-                                            Optional<Occupancy> occp = occupancies.stream()
+                                            Optional<SubOccupancy> subOccp = occupancies.stream()
                                                     .filter(o -> o.getCode().equals(convertedOccu)).findFirst();
-                                            if (convertedOccupancies.containsKey(block.getKey())) {
-                                                Map<Occupancy, BigDecimal> existOccupancyMap = convertedOccupancies
-                                                        .get(block.getKey());
-                                                if (existOccupancyMap.containsKey(occp.get())) {
-                                                    existOccupancyMap.put(occp.get(), existOccupancyMap.get(occp.get())
-                                                            .add(blockOccupancy.getValue()));
-                                                    convertedOccupancies.put(block.getKey(), existOccupancyMap);
+                                            Occupancy occp = null;
+                                            if(subOccp.isPresent())
+                                                occp = subOccp.get().getOccupancy();
+                                            if(occp != null) {
+                                                if (convertedOccupancies.containsKey(block.getKey())) {
+                                                    Map<Occupancy, BigDecimal> existOccupancyMap = convertedOccupancies
+                                                            .get(block.getKey());
+                                                    if (existOccupancyMap.containsKey(occp)) {
+                                                        existOccupancyMap.put(occp, existOccupancyMap.get(occp)
+                                                                .add(blockOccupancy.getValue()));
+                                                        convertedOccupancies.put(block.getKey(), existOccupancyMap);
+                                                    } else {
+                                                        convertInner = new ConcurrentHashMap<>();
+                                                        convertInner.put(occp, blockOccupancy.getValue());
+                                                        convertedOccupancies.get(block.getKey()).putAll(convertInner);
+                                                    }
                                                 } else {
                                                     convertInner = new ConcurrentHashMap<>();
-                                                    convertInner.put(occp.get(), blockOccupancy.getValue());
-                                                    convertedOccupancies.get(block.getKey()).putAll(convertInner);
+                                                    convertInner.put(occp, blockOccupancy.getValue());
+                                                    convertedOccupancies.put(block.getKey(), convertInner);
                                                 }
-                                            } else {
-                                                convertInner = new ConcurrentHashMap<>();
-                                                convertInner.put(occp.get(), blockOccupancy.getValue());
-                                                convertedOccupancies.put(block.getKey(), convertInner);
                                             }
                                         }
                                     }

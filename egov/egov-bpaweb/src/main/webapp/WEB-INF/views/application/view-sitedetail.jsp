@@ -49,7 +49,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="panel-heading toggle-header custom_form_panel_heading">
@@ -61,9 +61,9 @@
 	</div>
 </div>
 <div class="panel-body display-hide">
-	
+
 	<jsp:include page="view-amenities-details.jsp"></jsp:include>
-	
+
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.zonal.office" />
@@ -124,13 +124,15 @@
 			<c:out value="${bpaApplication.siteDetail[0].subdivisionNumber}"
 				default="N/A"></c:out>
 		</div> --%>
-		<div class="col-sm-3 add-margin">
+		<%-- <div class="col-sm-3 add-margin">
 			<spring:message code="lbl.registrar.office" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.siteDetail[0].registrarOffice.registrarOffice.name}"
 				default="N/A"></c:out>
-		</div>
+		</div> --%>
+	</div>
+	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.nearest.build.no" />
 		</div>
@@ -138,9 +140,7 @@
 			<c:out value="${bpaApplication.siteDetail[0].nearestbuildingnumber}"
 				default="N/A"></c:out>
 		</div>
-	</div>
-	<div class="doorNo">
-		<div class="row add-border">
+		<div class="doorNo">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.addr.dno" />
 			</div>
@@ -232,7 +232,7 @@
 				default="N/A"></c:out>
 		</div>
 	</div> --%>
-	
+
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.town.plan.zone" />
@@ -249,21 +249,25 @@
 				default="N/A"></c:out>
 		</div>
 	</div>
-	
+
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.government.type" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<input type="hidden" id="governmentType" value="${bpaApplication.governmentType}">
-			<c:out value="${bpaApplication.governmentType.governmentTypeVal}" default="N/A"></c:out>
+			<input type="hidden" id="governmentType"
+				value="${bpaApplication.governmentType}">
+			<c:out value="${bpaApplication.governmentType.governmentTypeVal}"
+				default="N/A"></c:out>
 		</div>
 		<div id="isEconomicallyWeakerSec">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.is.econ.weaker.sec" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${bpaApplication.isEconomicallyWeakerSection ? 'YES' : 'NO'}" default="N/A"></c:out>
+				<c:out
+					value="${bpaApplication.isEconomicallyWeakerSection ? 'YES' : 'NO'}"
+					default="N/A"></c:out>
 			</div>
 		</div>
 	</div>

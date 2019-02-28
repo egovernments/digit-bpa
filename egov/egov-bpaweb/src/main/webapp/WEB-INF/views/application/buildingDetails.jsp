@@ -314,6 +314,8 @@
 							code="lbl.change.occupancy.area" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
+						<form:hidden path="buildingDetail[${bldgCounter.index}].name"/>
+						<form:hidden path="buildingDetail[${bldgCounter.index}].number"/>
 						<form:input
 							class="form-control patternvalidation handle-mandatory nonzero clear-values"
 							maxlength="10" data-pattern="decimalvalue"

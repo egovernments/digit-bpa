@@ -97,7 +97,7 @@
 			<form:errors path="siteDetail[0].subdivisionNumber"
 				cssClass="add-margin error-msg" />
 		</div> --%>
-		<label class="col-sm-3 control-label text-right"><spring:message
+		<%-- <label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.registrar.office" /> </label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden path="siteDetail[0].registrarVillageId" id="registrarVillageIdHdn"/>
@@ -111,17 +111,7 @@
 			</select>
 			<form:errors path="siteDetail[0].registrarOffice"
 				cssClass="add-margin error-msg" />
-		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.nearest.build.no" /><span class="mandatory"></span> </label>
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" maxlength="12"
-				required="required" data-pattern="alphanumericspecialcharacters"
-				id="nearestbuildingnumber"
-				path="siteDetail[0].nearestbuildingnumber" />
-			<form:errors path="siteDetail[0].nearestbuildingnumber"
-				cssClass="add-margin error-msg" />
-		</div>
+		</div> --%>
 	</div>
 
 	<div class="form-group">
@@ -135,6 +125,16 @@
 				<form:errors path="siteDetail[0].plotdoornumber"
 					cssClass="add-margin error-msg" />
 			</div>
+		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.nearest.build.no" /><span class="mandatory"></span> </label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" maxlength="12"
+				required="required" data-pattern="alphanumericspecialcharacters"
+				id="nearestbuildingnumber"
+				path="siteDetail[0].nearestbuildingnumber" />
+			<form:errors path="siteDetail[0].nearestbuildingnumber"
+				cssClass="add-margin error-msg" />
 		</div>
 	</div>
 
