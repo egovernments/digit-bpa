@@ -130,7 +130,7 @@
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
-									<form:options items="${occupancyList}" itemValue="id"
+									<form:options items="${subOccupancyList}" itemValue="id"
 										itemLabel="description" />
 								</form:select></td>
 							<td><form:input type="text"
@@ -200,7 +200,7 @@
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${occupancyList}" itemValue="id"
+								<form:options items="${subOccupancyList}" itemValue="id"
 									itemLabel="description" />
 							</form:select></td>
 						<td><form:input type="text"
@@ -262,7 +262,7 @@
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:input
-				class="form-control patternvalidation handle-mandatory nonzero clear-values"
+				class="form-control patternvalidation handle-mandatory decimalfixed nonzero clear-values"
 				maxlength="10" data-pattern="decimalvalue" id="totalPlintArea"
 				path="buildings[0].totalPlinthArea" required="required" />
 			<form:errors path="buildings[0].totalPlinthArea"

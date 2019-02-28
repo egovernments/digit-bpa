@@ -53,6 +53,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
 import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
@@ -86,6 +87,7 @@ import org.egov.bpa.transaction.service.oc.OCInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
+import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.DateUtils;
@@ -135,6 +137,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private OCInspectionService ocInspectionService;
     @Autowired
     private BpaDcrService bpaDcrService;
+    @Autowired
+    protected SubOccupancyService subOccupancyService;
 
     @GetMapping("/occupancy-certificate/update/{applicationNumber}")
     public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
@@ -210,6 +214,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         } else {
             model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }
+        model.addAttribute("subOccupancyList", subOccupancyService.findAll());
         buildAppointmentDetailsOfScrutinyAndInspection(model, oc);
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
         model.addAttribute(APPLICATION_HISTORY,
@@ -217,8 +222,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     }
 
     private void prepareFormData(final OccupancyCertificate oc, final Model model) {
-        model.addAttribute("isEDCRIntegrationRequire",
-                bpaDcrService.isEdcrIntegrationRequireByService(oc.getParent().getServiceType().getCode()));
+        model.addAttribute("isEDCRIntegrationRequire", true);
         model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
         model.addAttribute("stateType", oc.getClass().getSimpleName());
         model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
@@ -263,11 +267,19 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
         OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
-        bpaUtils.updatePortalUserinbox(ocResponse, null);
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)
-                && !bpaUtils.logedInuseCitizenOrBusinessUser()) {
+                && onlinePaymentEnable && bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            return genericBillGeneratorService
+                    .generateBillAndRedirectToCollection(occupancyCertificate, model);
+        } else if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && !bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            if (occupancyCertificate.getAuthorizedToSubmitPlan())
+                wfBean.setApproverComments(AUTH_TO_SUBMIT_PLAN);
+            wfBean.setCurrentState(WF_NEW_STATE);
+            bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, wfBean);
+            ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
             Position pos = positionMasterService.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
             User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
             String message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION, new String[] {
@@ -278,9 +290,6 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 
             message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
             model.addAttribute(MESSAGE, message);
-            if (!bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
-                ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
-            }
         } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
             model.addAttribute(MESSAGE,
                     "Occupancy Certificate  Application is cancelled by applicant itself successfully with application number "
@@ -290,13 +299,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
                     "Occupancy Certificate Application is successfully saved with ApplicationNumber "
                             + ocResponse.getApplicationNumber());
         }
-        if (workFlowAction != null
-                && workFlowAction
-                        .equals(WF_LBE_SUBMIT_BUTTON)
-                && onlinePaymentEnable && bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
-            return genericBillGeneratorService
-                    .generateBillAndRedirectToCollection(occupancyCertificate, model);
-        }
+        bpaUtils.updatePortalUserinbox(ocResponse, null);
         return BPAAPPLICATION_CITIZEN;
     }
 

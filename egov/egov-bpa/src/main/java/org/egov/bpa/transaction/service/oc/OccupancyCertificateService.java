@@ -215,7 +215,7 @@ public class OccupancyCertificateService {
         }
         processAndStoreNocDocuments(oc);
         if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)
-                && (!bpaUtils.logedInuseCitizenOrBusinessUser())) {
+                && !bpaUtils.logedInuseCitizenOrBusinessUser()) {
         	
         	WorkFlowMatrix wfMatrix = null;
             String currentState = WF_CREATED_STATE;
@@ -224,7 +224,8 @@ public class OccupancyCertificateService {
                 wfMatrix = bpaUtils.getWfMatrixByCurrentState(
                         oc.getStateType(), WF_NEW_STATE);
                 currentState = WF_NEW_STATE;
-            }if (wfMatrix != null)
+            } 
+            if (wfMatrix != null)
                 wfBean.setApproverPositionId(bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
                         oc.getParent().getSiteDetail().get(0) != null
                                 && oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
@@ -233,7 +234,7 @@ public class OccupancyCertificateService {
             wfBean.setCurrentState(currentState);
             bpaUtils.redirectToBpaWorkFlowForOC(oc, wfBean);
             
-        }else if (wfBean.getWorkFlowAction() != null
+        } else if (wfBean.getWorkFlowAction() != null
                 && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             oc.setStatus(
                     applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
