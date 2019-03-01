@@ -48,6 +48,7 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
+import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.oc.OCBuilding;
 import org.egov.bpa.transaction.entity.oc.OCExistingBuilding;
@@ -697,5 +698,32 @@ public class BpaUtils {
     public Boolean isApplicationFeeCollectionRequired() {
         return getAppconfigValueByKeyName(PERMIT_APPLN_FEE_COLLECTION_REQUIRED).equalsIgnoreCase(YES);
     }
+    
+	public void saveOrUpdateBoundary(BpaApplication bpaApplication) {
+		SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
+		List<SiteDetail> siteDetails = new ArrayList<>();
+		if (bpaApplication.getAdminBoundary() != null && !bpaApplication.getAdminBoundary().isEmpty()) {
+			siteDetail.setElectionBoundary(
+					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getAdminBoundary())));
+		}
+		if (bpaApplication.getRevenueBoundary() != null && !bpaApplication.getRevenueBoundary().isEmpty()) {
+			siteDetail.setAdminBoundary(
+					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getRevenueBoundary())));
+			bpaApplication.setWardId(Long.valueOf(bpaApplication.getRevenueBoundary()));
+		}
+		if (bpaApplication.getLocationBoundary() != null && !bpaApplication.getLocationBoundary().isEmpty()) {
+			siteDetail.setLocationBoundary(
+					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getLocationBoundary())));
+		}
+		siteDetails.add(siteDetail);
+		bpaApplication.setSiteDetail(siteDetails);
+	}
 
+
+    public void loadBoundary(BpaApplication bpaApplication){
+    	SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
+    	bpaApplication.setAdminBoundary(siteDetail.getElectionBoundary().getId().toString());
+    	bpaApplication.setLocationBoundary(siteDetail.getLocationBoundary().getId().toString());
+    	bpaApplication.setRevenueBoundary(siteDetail.getAdminBoundary().getId().toString());
+    }
 }

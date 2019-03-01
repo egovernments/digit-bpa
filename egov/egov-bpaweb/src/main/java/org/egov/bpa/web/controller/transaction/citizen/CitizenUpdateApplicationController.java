@@ -143,6 +143,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
+        bpaUtils.loadBoundary(application);
         User user = securityUtils.getCurrentUser();
         StakeHolder stkHldr = stakeHolderService.findById(user.getId());
         if (stkHldr != null && StakeHolderStatus.BLOCKED.equals(stkHldr.getStatus())
@@ -285,7 +286,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadViewdata(model, bpaApplication);
         }
-
+        bpaUtils.saveOrUpdateBoundary(bpaApplication);
         String workFlowAction = request.getParameter("workFlowAction");
         Long approvalPosition = 0l;
         final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(),
@@ -385,5 +386,4 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 
         return "redirect:/application/citizen/success/" + bpaApplication.getApplicationNumber();
     }
-
 }

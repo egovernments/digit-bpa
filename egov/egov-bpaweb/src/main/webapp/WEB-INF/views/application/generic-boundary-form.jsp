@@ -62,7 +62,6 @@
 </div>
 <div class="panel-body display-hide" id="boundarydivision" >
 </div>
-
-<script
+<script id="genericBoundry" data-search="${param.boundaryData}"
 	src="<cdn:url value='/resources/js/commonjs/genericBoundary.js?rnd=${app_release_no}'/>"></script>
 

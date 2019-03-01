@@ -522,12 +522,12 @@ public class BpaAjaxController {
 			validBoundaryTypeJsonArray = validBoundaryJson.getJSONArray(heirarchy);
 			for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {
 				boundaryInfoJson = new JSONObject();
-				boundaryInfoJson.put("hierarchy", heirarchy);
+				//boundaryInfoJson.put("hierarchy", heirarchy);
 				boundaryTypeInJson = validBoundaryTypeJsonArray.getJSONObject(i);
 				boundaryArray = new JSONArray();
 				boundaryType = boundaryTypeService
 						.getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeInJson.getString("boundary"), heirarchy);
-				boundaryInfoJson.put("displayName", boundaryTypeInJson.getString("displayName"));
+				//boundaryInfoJson.put("displayName", boundaryTypeInJson.getString("displayName"));
 				for (final Boundary boundary : boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getId())) {
 					boundaryJson = new JSONObject();
 					boundaryJson.put("id", boundary.getId());
@@ -537,7 +537,8 @@ public class BpaAjaxController {
 					boundaryArray.put(boundaryJson);
 				}
 				boundaryInfoJson.put("data", boundaryArray);
-				boundaryDataJson.put(boundaryType.getHierarchyType().getId() + "-" + boundaryType.getHierarchy(), boundaryInfoJson);
+				boundaryDataJson.put(boundaryType.getHierarchyType().getId() + "-" + boundaryType.getHierarchy() + ":"
+						+ heirarchy + ":" + boundaryTypeInJson.getString("displayName"), boundaryInfoJson);
 			}
 		}
 		boundaryOutputJson.put("boundaryData", boundaryDataJson);
@@ -557,22 +558,23 @@ public class BpaAjaxController {
 		String parentBoundaryType = parent.split(":")[1];
 
 		String[] childBoundary = child.split(",");
-
-		for (int i = 0; i < childBoundary.length; i++) {
-			childBoundaries = crossHierarchyService
-					.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(parentBoundaryType,
-							parentHeirarchy, childBoundary[i].split(":")[1], Long.valueOf(selectedParent));
-			boundaryArray = new JSONArray();
-			for (final Boundary boundary : childBoundaries) {
-				boundaryJson = new JSONObject();
-				boundaryJson.put("id", boundary.getId());
-				boundaryJson.put("name", boundary.getName());
-				boundaryJson.put("materialpath", boundary.getMaterializedPath());
-				boundaryArray.put(boundaryJson);
+		if (selectedParent != null && !selectedParent.isEmpty()) {
+			for (int i = 0; i < childBoundary.length; i++) {
+				childBoundaries = crossHierarchyService
+						.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(parentBoundaryType,
+								parentHeirarchy, childBoundary[i].split(":")[1], Long.valueOf(selectedParent));
+				boundaryArray = new JSONArray();
+				for (final Boundary boundary : childBoundaries) {
+					boundaryJson = new JSONObject();
+					boundaryJson.put("id", boundary.getId());
+					boundaryJson.put("name", boundary.getName());
+					boundaryJson.put("materialpath", boundary.getMaterializedPath());
+					boundaryArray.put(boundaryJson);
+				}
+				childBoundaryJson.put(childBoundary[i].split(":")[1], boundaryArray);
 			}
-			childBoundaryJson.put(childBoundary[i].split(":")[1], boundaryArray);
 		}
-		System.out.println("getCrossBoundary--->"+childBoundaryJson.toString());
+		System.out.println("getCrossBoundary--->" + childBoundaryJson.toString());
 		IOUtils.write(childBoundaryJson.toString(), response.getWriter());
 	}
 	
