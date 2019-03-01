@@ -115,12 +115,11 @@ public class SearchOcSpec {
             Join<OCSlot, OccupancyCertificate> certificateJoin = root.join("oc");
             Join<OccupancyCertificate, BpaApplication> applicationJoin = certificateJoin.join("parent");
             Join<BpaApplication, SiteDetail> siteDetailJoin = applicationJoin.join("siteDetail");
-            //requestForm.setToDate(new Date());
             if (requestForm.getToDate() != null) {
                 Join<OCSlot, SlotDetail> slotDetailJoin = root.join("slotDetail");
                 Join<SlotDetail, Slot> slotJoin = slotDetailJoin.join("slot");
                 predicate.getExpressions()
-                        .add(builder.greaterThanOrEqualTo(slotJoin.get("appointmentDate"), requestForm.getToDate()));
+                        .add(builder.equal(slotJoin.get("appointmentDate"), requestForm.getToDate()));
             }
             Join<SiteDetail, Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
             if (requestForm.getElectionWardId() != null)
