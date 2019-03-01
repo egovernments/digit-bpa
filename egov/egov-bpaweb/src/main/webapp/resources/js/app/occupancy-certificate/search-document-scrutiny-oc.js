@@ -65,7 +65,12 @@ $(document)
                 });
             });
             $("#toDate").datepicker().datepicker("setDate", new Date());
-            $("#toDate").prop('disabled', true);
+            if($("#isUnattendedCancelled").val()=='YES'){
+            	$("#toDate").prop('disabled', true);
+            }else{
+            	$("#toDate").prop('disabled', false);
+            }
+            
 
             $('#resetbutton').on('click', function(event) {
                 $(".reset-value").each(function(){
@@ -80,7 +85,11 @@ $(document)
                     $(this).removeAttr("disabled")
                 });
                 callAjaxSearch();
-                $("#toDate").prop('disabled', true);
+                if($("#isUnattendedCancelled").val()=='YES'){
+                	$("#toDate").prop('disabled', true);
+                }else{
+                	$("#toDate").prop('disabled', false);
+                }
             });
 
             function callAjaxSearch() {

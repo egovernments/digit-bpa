@@ -46,6 +46,7 @@
            modelAttribute="searchBpaApplicationForm" id="searchScrutinyApplicationForm"
            cssClass="form-horizontal form-groups-bordered"
            enctype="multipart/form-data">
+           <input type="hidden" id="isUnattendedCancelled" name="isUnattendedCancelled" value="${isUnattendedCancelled}">
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-primary" data-collapsed="0">

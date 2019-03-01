@@ -39,8 +39,11 @@
  */
 package org.egov.bpa.scheduler.oc;
 
+import static org.egov.bpa.utils.BpaConstants.AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_OC;
+
 import org.apache.log4j.Logger;
 import org.egov.bpa.transaction.service.oc.CancelOcApplicationService;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,14 +54,20 @@ public class OcCancelAppointmentJob extends AbstractQuartzJob {
     private static final long serialVersionUID = 10L;
     private static final Logger LOGGER = Logger.getLogger(OcCancelAppointmentJob.class);
 
-    @Autowired
+	@Autowired
+	private BpaUtils bpaUtils;
+
+	@Autowired
     private transient CancelOcApplicationService cancelOcApplicationService;
 
     @Override
     public void executeJob() {
         LOGGER.debug("Entered into OcCancelAppointmentJob.execute");
-
-        cancelOcApplicationService.cancelApplicationsWhenFailedToAttendScrutiny();
+        
+        String isCancelRequired=bpaUtils.getAppconfigValueByKeyName(AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_OC);
+		
+        if(isCancelRequired.equalsIgnoreCase("YES"))
+        	cancelOcApplicationService.cancelApplicationsWhenFailedToAttendScrutiny();
 
         LOGGER.debug("Exting from OcCancelAppointmentJob.execute");
     }

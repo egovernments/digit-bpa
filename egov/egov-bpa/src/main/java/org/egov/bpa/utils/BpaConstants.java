@@ -46,6 +46,8 @@
  */
 package org.egov.bpa.utils;
 
+import static org.egov.bpa.utils.BpaConstants.IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -336,6 +338,7 @@ public class BpaConstants {
     public static final String OCFEECALULATION = "OC_FEE_CALCULATION";
     public static final String IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION = "IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION";
     public static final String DCR_BPA_INTEGRATION_REQUIRE = "DCR_INTEGRATION_REQUIRE_WITH_BPA";
+    public static final String AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_OC = "AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_OC";
     // other
     public static final int SCALING_FACTOR = 2;
     public static final String MESSAGE = "message";

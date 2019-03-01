@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.web.controller.transaction.occupancy;
 
+import static org.egov.bpa.utils.BpaConstants.AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_OC;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.WARD;
@@ -134,6 +135,7 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
         Set<Boundary> electionWards = new HashSet<>();
         Set<Boundary> revenueWards = new HashSet<>();
         Set<Boundary> revWards = new HashSet<>();
+        String isUnattendedCancelled=bpaUtils.getAppconfigValueByKeyName(AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_OC);
         BoundaryType revenueType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
         final Employee employee = employeeService.getEmployeeById(securityUtils.getCurrentUser().getId());
         for (Jurisdiction jurisdiction : employee.getJurisdictions()) {
@@ -160,6 +162,7 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
+        model.addAttribute("isUnattendedCancelled",isUnattendedCancelled);
         return "search-document-scrutiny-oc";
     }
 
