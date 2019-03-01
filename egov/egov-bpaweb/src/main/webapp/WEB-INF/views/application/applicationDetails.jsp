@@ -63,14 +63,14 @@
 		<c:choose>
 			<c:when test="${isEDCRIntegrationRequire eq true}">
 				<div class="form-group">
-					<div class="edcrApplnDetails">
-						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.edcr.number" /> <span class="mandatory"></span> </label>
-						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation" maxlength="20"
-								id="eDcrNumber" path="eDcrNumber" required="required" />
-							<form:errors path="eDcrNumber" cssClass="add-margin error-msg" />
-						</div>
+					<label class="col-sm-3 control-label text-right edcrApplnDetails"><spring:message
+							code="lbl.edcr.number" /> <span class="mandatory"></span> </label>
+					<div class="col-sm-3 add-margin">
+						<form:input
+							class="form-control patternvalidation edcrApplnDetails"
+							maxlength="20" id="eDcrNumber" path="eDcrNumber"
+							required="required" />
+						<form:errors path="eDcrNumber" cssClass="add-margin error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.occupancy" /><span class="mandatory"></span></label>
