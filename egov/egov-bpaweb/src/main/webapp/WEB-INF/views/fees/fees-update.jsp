@@ -40,7 +40,7 @@
 										<th class="text-center"><spring:message
 												code="lbl.fees.type" /></th>
 										<th class="text-center"><spring:message
-												code="lbl.feestype.description" /></th>
+												code="lbl.description" /></th>
 										<th class="text-center"><spring:message
 												code="lbl.feestype.additionaltype" /></th>
 										<th class="text-center"><spring:message code="lbl.amount" /></th>

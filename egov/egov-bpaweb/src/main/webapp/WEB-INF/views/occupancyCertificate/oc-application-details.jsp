@@ -115,25 +115,14 @@
 	</div>
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.is.one.permit" /> </label>
-		<div class="col-sm-3 add-margin">
-			<input type="text" name="applicationType" id="applicationType"
-				class="form-control applicationType resetValues"
-				value="${occupancyCertificate.parent.isOneDayPermitApplication ? 'YES' : 'NO'}"
-				readonly="readonly">
-		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.zonal.office" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="zone" id="zone"
 				class="form-control zone resetValues"
 				value="${occupancyCertificate.parent.siteDetail[0].adminBoundary.parent.name}"
 				readonly="readonly">
-
 		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
+		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.rev.ward" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="" id="revenueWard"
@@ -141,14 +130,23 @@
 				value="${occupancyCertificate.parent.siteDetail[0].adminBoundary.name}"
 				readonly="readonly">
 		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.locality" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="" id="village"
 				class="form-control village resetValues"
 				value="${occupancyCertificate.parent.siteDetail[0].locationBoundary.name}"
 				readonly="readonly">
-
+		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.election.ward" /> </label>
+		<div class="col-sm-3 add-margin">
+			<input type="text" name="" id="revenueWard"
+				class="form-control revenueWard resetValues"
+				value="${occupancyCertificate.parent.siteDetail[0].electionBoundary.name}"
+				readonly="readonly">
 		</div>
 	</div>
 	<div class="form-group">

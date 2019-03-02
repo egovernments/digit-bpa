@@ -44,29 +44,28 @@ $(document).ready(function($) {
  $('#buttonCancel').click(function(e) {
 	 if ($('#citizenViewApplicationForm').valid()) {
 			bootbox
-			.confirm({
+			.dialog({
 				message : $('#cancelAppln').val(),
 				buttons : {
-					'cancel' : {
-						label : 'No',
-						className : 'btn-danger'
-					},
 					'confirm' : {
 						label : 'Yes',
-						className : 'btn-primary'
-					}
-				},
-				callback : function(result) {
-					if (result) {
-						var button=$('#buttonCancel').val();
-						document.getElementById("workFlowAction").value=button;
-						$('.loader-class').modal('show', {
-							backdrop : 'static'
-						});
-						document.forms[0].submit();
-					} else {
-						e.stopPropagation();
-						e.preventDefault();
+						className : 'btn-primary',
+						callback : function(result) {
+							var button=$('#buttonCancel').val();
+							document.getElementById("workFlowAction").value=button;
+							$('.loader-class').modal('show', {
+								backdrop : 'static'
+							});
+							document.forms[0].submit();
+						}
+					},
+					'cancel' : {
+						label : 'No',
+						className : 'btn-danger',
+						callback : function(result) {
+							e.stopPropagation();
+							e.preventDefault();
+						}
 					}
 				}
 			});
@@ -79,29 +78,28 @@ $(document).ready(function($) {
  $('#buttonAccept').click(function (e) {
 	 if ($('#citizenViewApplicationForm').valid() && validateAdditionalConditions()) { 
          bootbox
-             .confirm({
+             .dialog({
                  message: $('#acceptAppln').val() ,
                  buttons: {
+                	 'confirm': {
+                         label: 'Yes',
+                         className: 'btn-primary',
+                         callback: function (result) {
+                        	var button=$('#buttonAccept').val();
+                        	document.getElementById("workFlowAction").value=button;
+     						$('.loader-class').modal('show', {
+     							backdrop : 'static'
+     						});
+     						document.forms[0].submit();
+                         }
+                     },
                      'cancel': {
                          label: 'No',
-                         className: 'btn-danger'
-                     },
-                     'confirm': {
-                         label: 'Yes',
-                         className: 'btn-primary'
-                     }
-                 },
-                 callback: function (result) {
-                     if (result) {
-                    	 var button=$('#buttonAccept').val();
-                    	 document.getElementById("workFlowAction").value=button;
- 						$('.loader-class').modal('show', {
- 							backdrop : 'static'
- 						});
- 						document.forms[0].submit();
-                     } else {
-                         e.stopPropagation();
-                         e.preventDefault();
+                         className: 'btn-danger',
+                         callback: function (result) {
+                             e.stopPropagation();
+                             e.preventDefault();
+                         }
                      }
                  }
              });

@@ -71,7 +71,7 @@ $(document).ready(
             '<th class="text-center">Srl.no</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Floor Description</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Level</th>'+
-            '<th class="text-center dcr-floor-toggle-mandatory">Occupancy</th>'+
+            '<th class="text-center dcr-floor-toggle-mandatory">Sub Occupancy</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Builtup Area (m2)</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Floor Area (m2)</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Carpet Area (m2)</th>'+

@@ -70,7 +70,7 @@
 			<form:input class="form-control patternvalidation" maxlength="72"
 				data-pattern="alphanumericspecialcharacters" data-role="tagsinput" id="reSurveyNumber"
 				path="siteDetail[0].reSurveyNumber" required="required" />
-				<small class="error"><spring:message code="lbl.values.separated.comma"/></small>
+				<small class="text-info view-content"><spring:message code="lbl.values.separated.comma"/></small>
 			<form:errors path="siteDetail[0].reSurveyNumber"
 				cssClass="add-margin error-msg" />
 		</div>
@@ -80,7 +80,7 @@
 			<form:input class="form-control patternvalidation" maxlength="128"
 				data-pattern="alphanumericspecialcharacters" data-role="tagsinput" id="natureofOwnership"
 				path="siteDetail[0].natureofOwnership" required="required" />
-			<small class="error"><spring:message code="lbl.values.separated.comma"/></small>
+			<small class="text-info view-content"><spring:message code="lbl.values.separated.comma"/></small>
 			<form:errors path="siteDetail[0].natureofOwnership"
 				cssClass="add-margin error-msg" />
 		</div>

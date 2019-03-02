@@ -111,25 +111,24 @@ $(document).ready(function ($) {
         if (validateEditFormOnSave(button, validator)) {
             var msg = getValidationMessageOnUpdate();
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#saveApplication').val() + msg,
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            removeDisabledAttribute();
-                            $('#editCitizenApplicationform').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+	                        callback: function (result) {
+	                            removeDisabledAttribute();
+	                            $('#editCitizenApplicationform').trigger('submit');
+	                        }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });
@@ -144,25 +143,24 @@ $(document).ready(function ($) {
         var button = $('#buttonSubmit').val();
         if (validateEditFormOnSubmit(button, validator)) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#submitApplication').val() + msg,
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            removeDisabledAttribute();
-                            $('#editCitizenApplicationform').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                removeDisabledAttribute();
+                                $('#editCitizenApplicationform').trigger('submit');
+                            }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });
@@ -176,30 +174,29 @@ $(document).ready(function ($) {
 
         if ($('#editCitizenApplicationform').valid()) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#cancelApplication').val(),
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            removeDisabledAttribute();
-                            var button = $('#buttonCancel').val();
-                            document.getElementById("workFlowAction").value = button;
-                            $('.loader-class').modal('show', {
-                                backdrop: 'static'
-                            });
-                            document.forms[0].submit();
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                removeDisabledAttribute();
+                                var button = $('#buttonCancel').val();
+                                document.getElementById("workFlowAction").value = button;
+                                $('.loader-class').modal('show', {
+                                    backdrop: 'static'
+                                });
+                                document.forms[0].submit();
+                            }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });

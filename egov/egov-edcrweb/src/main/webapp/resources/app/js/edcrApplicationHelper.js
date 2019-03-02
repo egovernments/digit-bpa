@@ -89,7 +89,7 @@ $(document)
             function getValidationMessageOnSubmit() {
                 var serviceType = $('#serviceType').val();
                 if (serviceType === 'Addition or Extension')
-                    return 'Please confirm, The submitted DXF file for service type addition or extension for building plan scrutiny shall be as per KMBR rules defined as and above date 30th March 2000. Please click Yes to continue or No to cancel the scrutiny.';
+                    return 'Please confirm, The submitted DXF file for service type addition or extension for building plan scrutiny shall be as per rules defined. Please click Yes to continue or No to cancel the scrutiny.';
                 else
                     return 'Are you sure want to submit plan ?';
             }

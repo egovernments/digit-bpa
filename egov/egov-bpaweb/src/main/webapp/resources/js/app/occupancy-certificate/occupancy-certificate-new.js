@@ -146,25 +146,24 @@ jQuery(document).ready(function ($) {
         var button = $('#ocSave').val();
         if (validateFormOnSave(button, validator)) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#saveAppln').val(),
                     buttons: {
+                    	'confirm': {
+                            label: 'Yes',
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                removeDisabledAttribute();
+                                $('#occupancyCertificateForm').trigger('submit');
+                            }
+                        },
                         'cancel': {
                             label: 'No',
-                            className: 'btn-danger'
-                        },
-                        'confirm': {
-                            label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            removeDisabledAttribute();
-                            $('#occupancyCertificateForm').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });
@@ -179,26 +178,26 @@ jQuery(document).ready(function ($) {
         var button = $('#ocSubmit').val();
         if (validateFormOnSubmit(button, validator)) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#submitAppln').val(),
                     buttons: {
+                    	'confirm': {
+                            label: 'Yes',
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                removeDisabledAttribute();
+                                $('#occupancyCertificateForm').trigger('submit');
+                            }
+                        },
                         'cancel': {
                             label: 'No',
-                            className: 'btn-danger'
-                        },
-                        'confirm': {
-                            label: 'Yes',
-                            className: 'btn-primary'
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            removeDisabledAttribute();
-                            $('#occupancyCertificateForm').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
-                        }
+                        
                     }
                 });
         } else {

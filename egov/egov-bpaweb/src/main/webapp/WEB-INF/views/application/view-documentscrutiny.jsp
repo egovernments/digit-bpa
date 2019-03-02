@@ -77,7 +77,7 @@
 			</div>
 			<div class="row add-border">
 				<div class="col-sm-3 add-margin extentOfLand">
-					<spring:message code="lbl.extent.of.land" />
+					<spring:message code="lbl.extentin.sqmts" />
 				</div>
 				<div class="col-sm-3 add-margin areaOfBase">
 					<spring:message code="lbl.area.base" />
@@ -87,27 +87,19 @@
 						value="${bpaApplication.documentScrutiny[0].extentinsqmts}" />
 				</div>
 				<div class="col-sm-3 add-margin">
+					<spring:message code="lbl.deednumber" />
+				</div>
+				<div class="col-sm-3 add-margin view-content">
+					<c:out value="${bpaApplication.documentScrutiny[0].deedNumber}" default="N/A"></c:out>
+				</div>
+				<%-- <div class="col-sm-3 add-margin">
 					<spring:message code="lbl.registraroffice" />
 				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<c:out
 						value="${bpaApplication.documentScrutiny[0].registrarOffice}"
 						default="N/A"></c:out>
-				</div>
-			</div>
-			<div class="row add-border">
-				<div class="col-sm-3 add-margin">
-					<spring:message code="lbl.deednumber" />
-				</div>
-				<div class="col-sm-3 add-margin view-content">
-					<c:out value="${bpaApplication.documentScrutiny[0].deedNumber}" default="N/A"></c:out>
-				</div>
-				<div class="col-sm-3 add-margin">
-					<spring:message code="lbl.taluk" />
-				</div>
-				<div class="col-sm-3 add-margin view-content">
-					<c:out value="${bpaApplication.documentScrutiny[0].taluk}" default="N/A"></c:out>
-				</div>
+				</div> --%>
 			</div>
 			<div class="row add-border">
 				<div class="col-sm-3 add-margin">

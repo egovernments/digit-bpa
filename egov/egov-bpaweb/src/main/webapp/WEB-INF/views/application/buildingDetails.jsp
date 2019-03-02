@@ -87,20 +87,20 @@
 					<thead>
 						<tr>
 							<th class="text-center"><spring:message code="lbl.srl.no" /></th>
-							<th class="text-center floor-toggle-mandatory"><span></span>&nbsp;<spring:message
-									code="lbl.floor.name" /></th>
-							<th class="text-center floor-toggle-mandatory"><span></span>&nbsp;<spring:message
-									code="lbl.floor.level" /></th>
-							<th class="text-center floor-toggle-mandatory"><span></span>&nbsp;<spring:message
-									code="lbl.sub.occupancy" /></th>
-							<th class="text-center floor-toggle-mandatory"><span></span>&nbsp;<spring:message
-									code="lbl.usage" /></th>
-							<th class="text-center floor-toggle-mandatory"><span></span>&nbsp;<spring:message
-									code="lbl.plinth.area" /></th>
-							<th class="text-center floor-toggle-mandatory"><span></span>&nbsp;<spring:message
-									code="lbl.floor.area" /></th>
-							<th class="text-center floor-toggle-mandatory"><span></span>&nbsp;<spring:message
-									code="lbl.carpet.area" /></th>
+							<th class="text-center floor-toggle-mandatory"><spring:message
+									code="lbl.floor.name" />&nbsp;<span></span></th>
+							<th class="text-center floor-toggle-mandatory"><spring:message
+									code="lbl.floor.level" />&nbsp;<span></span></th>
+							<th class="text-center floor-toggle-mandatory"><spring:message
+									code="lbl.sub.occupancy" />&nbsp;<span></span></th>
+							<th class="text-center floor-toggle-mandatory"><spring:message
+									code="lbl.usage" />&nbsp;<span></span></th>
+							<th class="text-center floor-toggle-mandatory"><spring:message
+									code="lbl.plinth.area" />&nbsp;<span></span></th>
+							<th class="text-center floor-toggle-mandatory"><spring:message
+									code="lbl.floor.area" />&nbsp;<span></span></th>
+							<th class="text-center floor-toggle-mandatory"><spring:message
+									code="lbl.carpet.area" />&nbsp;<span></span></th>
 							<th class="text-center"><spring:message code="lbl.action" /><input
 								type="hidden" id="debug" value="${bldg.applicationFloorDetails}"></th>
 						</tr>

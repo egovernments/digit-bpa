@@ -62,17 +62,32 @@ $(document).ready(function () {
     var table1 = tbody1.length ? tbody1 : $('#bpaAdditionalRejectionReasons');
     $(document).on('click',"#addAddnlRejectRow",function () {
         var idx = $(tbody1).find('tr').length;
-        //Add row
-        var row = {
-            'sno': idx + 1,
-            'idx': idx,
-            'permitConditionId': $('#additionalPermitCondition').val(),
-            'applicationId': $('#scrutinyapplicationid').val()
-        };
-        addRowFromObject1(row);
-        patternvalidation();
+        if(validateAdditionalConditionsOrReasonsOnAdd('bpaAdditionalRejectionReasons')) {
+        	//Add row
+            var row = {
+                'sno': idx + 1,
+                'idx': idx,
+                'permitConditionId': $('#additionalPermitCondition').val(),
+                'applicationId': $('#scrutinyapplicationid').val()
+            };
+            addRowFromObject1(row);
+            patternvalidation();
+        }
     });
 
+    function validateAdditionalConditionsOrReasonsOnAdd(tableId){
+    	var isValid=true;
+        $('#'+tableId+' tbody tr').each(function(index){
+        	var additionalPermitCondition  = $(this).find('*[name$="additionalCondition"]').val();
+    	    if(!additionalPermitCondition) { 
+    	    	bootbox.alert($('#valuesCannotEmpty').val());
+    	    	isValid=false;
+    	    	return false;
+    	    } 
+        });
+        return isValid;
+    }
+    
     function addRowFromObject1(rowJsonObj) {
         table1.append(row.compose(rowJsonObj));
     }
@@ -119,24 +134,23 @@ $(document).ready(function () {
         if (action == 'Initiate Rejection') {
             if (validateDocScrutinyForm(validator) && validateRejectionConditions()) {
                 bootbox
-                    .confirm({
+                    .dialog({
                         message: $('#confirmRejection').val(),
                         buttons: {
+                        	'confirm': {
+                                label: 'Yes',
+                                className: 'btn-primary',
+                                callback: function (result) {
+                                    $('#ocDocumentscrutinyform').trigger('submit');
+                                }
+                            },
                             'cancel': {
                                 label: 'No',
-                                className: 'btn-danger'
-                            },
-                            'confirm': {
-                                label: 'Yes',
-                                className: 'btn-primary'
-                            }
-                        },
-                        callback: function (result) {
-                            if (result) {
-                                $('#ocDocumentscrutinyform').trigger('submit');
-                            } else {
-                                e.stopPropagation();
-                                e.preventDefault();
+                                className: 'btn-danger',
+                                callback: function (result) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                }
                             }
                         }
                     });
@@ -147,24 +161,23 @@ $(document).ready(function () {
         } else if (action == 'Forward') {
             if (validateDocScrutinyForm(validator)) {
                 bootbox
-                    .confirm({
+                    .dialog({
                         message: $('#forwardApplication').val(),
                         buttons: {
-                            'cancel': {
-                                label: 'No',
-                                className: 'btn-danger'
-                            },
                             'confirm': {
                                 label: 'Yes',
-                                className: 'btn-primary'
-                            }
-                        },
-                        callback: function (result) {
-                            if (result) {
-                                $('#ocDocumentscrutinyform').trigger('submit');
-                            } else {
-                                e.stopPropagation();
-                                e.preventDefault();
+                                className: 'btn-primary',
+                                callback: function (result) {
+                                    $('#ocDocumentscrutinyform').trigger('submit');
+                                }
+                            },
+                            'cancel': {
+                                label: 'No',
+                                className: 'btn-danger',
+                                callback: function (result) {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                }
                             }
                         }
                     });

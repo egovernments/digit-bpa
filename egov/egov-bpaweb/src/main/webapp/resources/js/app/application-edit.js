@@ -65,15 +65,17 @@ jQuery(document)
 
             $('#addAddnlPermitRow').click(function () {
                 var idx = $(tbody).find('tr').length;
-                //Add row
-                var row = {
-                    'sno': idx + 1,
-                    'idx': idx,
-                    'permitConditionId': $('#additionalPermitCondition').val(),
-                    'applicationId': $('#applicationId').val()
-                };
-                addRowFromObject(row);
-                patternvalidation();
+                if(validateAdditionalConditionsOrReasonsOnAdd('bpaAdditionalPermitConditions')) {
+	                //Add row
+	                var row = {
+	                    'sno': idx + 1,
+	                    'idx': idx,
+	                    'permitConditionId': $('#additionalPermitCondition').val(),
+	                    'applicationId': $('#applicationId').val()
+	                };
+	                addRowFromObject(row);
+	                patternvalidation();
+                }
             });
 
             var tbody1 = $('#bpaAdditionalRejectionReasons').children('tbody');
@@ -83,16 +85,31 @@ jQuery(document)
                 '<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalRejectReasonsTemp[{{idx}}].additionalPermitCondition"/></td>';
             $('#addAddnlRejectRow').click(function () {
                 var idx = $(tbody1).find('tr').length;
-                //Add row
-                var row = {
-                    'sno': idx + 1,
-                    'idx': idx,
-                    'permitConditionId': $('#additionalPermitCondition').val(),
-                    'applicationId': $('#scrutinyapplicationid').val()
-                };
-                addRowFromObject1(row);
-                patternvalidation();
+                if(validateAdditionalConditionsOrReasonsOnAdd('bpaAdditionalRejectionReasons')) {
+                	//Add row
+                    var row = {
+                        'sno': idx + 1,
+                        'idx': idx,
+                        'permitConditionId': $('#additionalPermitCondition').val(),
+                        'applicationId': $('#scrutinyapplicationid').val()
+                    };
+                    addRowFromObject1(row);
+                    patternvalidation();
+                }
             });
+            
+            function validateAdditionalConditionsOrReasonsOnAdd(tableId){
+            	var isValid=true;
+                $('#'+tableId+' tbody tr').each(function(index){
+                	var additionalPermitCondition  = $(this).find('*[name$="additionalPermitCondition"]').val();
+            	    if(!additionalPermitCondition) { 
+            	    	bootbox.alert($('#valuesCannotEmpty').val());
+            	    	isValid=false;
+            	    	return false;
+            	    } 
+                });
+                return isValid;
+            }
 
             function addRowFromObject(rowJsonObj) {
                 table.append(row.compose(rowJsonObj));
@@ -243,25 +260,25 @@ jQuery(document)
                             $('#Reject').attr('formnovalidate', 'true');
                             if (validateOnReject(true) && validateForm(validator)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#rejectAppln').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#viewBpaApplicationForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
-                                            }
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+		                                            $('#viewBpaApplicationForm').trigger('submit');
+		                                        }
+                                                
+                                            },
+		                                    'cancel': {
+		                                        label: 'No',
+		                                        className: 'btn-danger',
+		                                        callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
+		                                    }
                                         }
                                     });
                             } else {
@@ -272,24 +289,25 @@ jQuery(document)
                             $('#Initiate Rejection').attr('formnovalidate', 'true');
                             if (validateOnReject(true) && validateForm(validator)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#intiateRejectionAppln').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#viewBpaApplicationForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                	e.stopPropagation();
+                                                    e.preventDefault();
+                                                   // $('#viewBpaApplicationForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                                label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -300,24 +318,23 @@ jQuery(document)
                         } else if (action == 'Revert') {
                             if (validateOnRevert() && validateForm(validator)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#sendBackApplnPreOfficial').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#viewBpaApplicationForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#viewBpaApplicationForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                                label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -328,24 +345,23 @@ jQuery(document)
                         } else if (action == 'Approve') {
                             if (validateOnApproveAndForward(validator, action)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#approveAppln').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#viewBpaApplicationForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#viewBpaApplicationForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                                label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -356,26 +372,25 @@ jQuery(document)
                         } else if (action == 'Forward') {
                             if (validateOnApproveAndForward(validator, action) && validateAdditionalConditionsOnFwd()) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#forwardAppln').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#viewBpaApplicationForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                                label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#viewBpaApplicationForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
-                                            }
-                                        }
                                     });
                             } else {
                                 e.preventDefault();
@@ -385,24 +400,23 @@ jQuery(document)
                             $('#Generate Permit Order').attr('formnovalidate', 'true');
                             if (validateOnApproveAndForward(validator, action)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#generatePermitOrder').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#viewBpaApplicationForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#viewBpaApplicationForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                                label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -413,24 +427,23 @@ jQuery(document)
                         } else if (action == 'Generate Rejection Notice') {
                             if (validateOnReject(false) && validateOnApproveAndForward(validator, action)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#generateRejectNotice').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#viewBpaApplicationForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#viewBpaApplicationForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                            	label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });

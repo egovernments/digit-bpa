@@ -77,7 +77,7 @@
 						varStatus="status">
 						<tr>
 							<td><c:out value="${status.index+1}"></c:out></td>
-							<td><c:out value="${doc.nocDocument.checklist.description}"></c:out>
+							<td style="font-size: 100%;"><c:out value="${doc.nocDocument.checklist.description}"></c:out>
 								<c:if test="${doc.nocDocument.checklist.isMandatory}">
 									<span class="mandatory"></span>
 								</c:if></td>

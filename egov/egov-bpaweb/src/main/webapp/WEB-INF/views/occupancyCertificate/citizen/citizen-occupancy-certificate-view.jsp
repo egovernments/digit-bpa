@@ -154,10 +154,10 @@
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="../inspection/oc-view-inspection-details.jsp"></jsp:include>
 						</div>
-						<div class="panel panel-primary" data-collapsed="0">
+						<%-- <div class="panel panel-primary" data-collapsed="0">
 							<jsp:include
 								page="../inspection/oc-view-town-surveyor-remarks.jsp"></jsp:include>
-						</div>
+						</div> --%>
 					</div>
 				</c:if>
 				<c:if

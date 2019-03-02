@@ -68,7 +68,7 @@
         <tr>
             <th width="2%"><spring:message code="lbl.srl.no"/></th>
             <th width="50%"><spring:message code="lbl.description"/></th>
-            <th width="9%"><spring:message code="lbl.isrequired"/></th>
+            <th width="9%"><spring:message code="lbl.is.applicable"/></th>
             <th><spring:message code="lbl.remarks"/></th>
         </tr>
         </thead>

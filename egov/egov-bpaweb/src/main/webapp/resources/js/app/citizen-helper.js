@@ -210,25 +210,24 @@ jQuery(document).ready(function ($) {
         var button = $('#bpaSave').val();
         if (validateFormOnSave(button, validator)) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#saveApplication').val() + msg,
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            removeDisabledAttribute();
-                            $('#newCitizenApplicationform').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                removeDisabledAttribute();
+                                $('#newCitizenApplicationform').trigger('submit');
+                            }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });
@@ -244,25 +243,24 @@ jQuery(document).ready(function ($) {
         var button = $('#bpaCreate').val();
         if (validateFormOnSubmit(button, validator)) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#submitApplication').val() + msg,
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            removeDisabledAttribute();
-                            $('#newCitizenApplicationform').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                removeDisabledAttribute();
+                                $('#newCitizenApplicationform').trigger('submit');
+                            }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });

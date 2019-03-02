@@ -65,7 +65,7 @@
 						data-pattern="alphabetspecialcharacters" data-role="tagsinput"
 						maxlength="100" id="name" path="owner.name" cols="5" rows="3"
 						required="required" />
-			<small class=""> <spring:message code="lbl.names.separated.comma" /></small>
+			<small class="text-info view-content"> <spring:message code="lbl.names.separated.comma" /></small>
 			<form:errors path="owner.name" cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
@@ -85,7 +85,7 @@
 			<form:input class="form-control patternvalidation"
 						data-pattern="number" maxlength="10" id="mobileNumber"
 						path="owner.user.mobileNumber" required="required" />
-			<spring:message code="lbl.sms.send" /> <span class=""></span>
+			<small class="text-info view-content"> <spring:message code="lbl.sms.send" /></small>
 			<form:errors path="owner.user.mobileNumber" cssClass="add-margin error-msg" />
 		</div>
 
@@ -94,7 +94,7 @@
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control " maxlength="128" onblur=""
 						id="emailId" name="emailId" path="owner.emailId" />
-			<spring:message code="lbl.email.send" /> <span class=""></span>
+			<small class="text-info view-content"> <spring:message code="lbl.email.send" /></small>
 			<form:errors path="owner.emailId" cssClass="add-margin error-msg" />
 		</div>
 	</div>

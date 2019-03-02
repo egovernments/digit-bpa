@@ -124,7 +124,7 @@
 						<div class="form-group">
 
 							<label class="col-sm-3 control-label text-right extentOfLand"><spring:message
-									code="lbl.extent.of.land" /></label> <label
+									code="lbl.extentin.sqmts" /></label> <label
 								class="col-sm-3 control-label text-right areaOfBase"><spring:message
 									code="lbl.area.base" /> </label>
 							<div class="col-sm-3 add-margin">
@@ -146,7 +146,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
+							<%-- <label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.registraroffice" /></label>
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
@@ -155,8 +155,8 @@
 									value="${bpaApplication.siteDetail[0].registrarOffice.registrarOffice.name}" />
 								<form:errors path="documentScrutiny[0].registrarOffice"
 									cssClass="add-margin error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
+							</div> --%>
+							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.nature.of.ownership" /></label>
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
@@ -167,10 +167,19 @@
 								<form:errors path="documentScrutiny[0].natureofOwnership"
 									cssClass="add-margin error-msg" />
 							</div>
+							<label class="col-sm-2 control-label text-right"><spring:message
+									code="lbl.district" /></label>
+							<div class="col-sm-3 add-margin">
+								<form:input class="form-control patternvalidation"
+									maxlength="120" data-pattern="alphanumeric" id="district"
+									path="documentScrutiny[0].district" readonly="true"
+									value="${bpaApplication.siteDetail[0].postalAddress.district}" />
+								<form:errors path="documentScrutiny[0].district"
+									cssClass="add-margin error-msg" />
+							</div>
 						</div>
 
-						<div class="form-group"></div>
-						<div class="form-group">
+						<%-- <div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.taluk" /></label>
 							<div class="col-sm-3 add-margin">
@@ -192,7 +201,7 @@
 								<form:errors path="documentScrutiny[0].district"
 									cssClass="add-margin error-msg" />
 							</div>
-						</div>
+						</div> --%>
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.detailof.neigbour" /></label>
@@ -339,7 +348,8 @@
 		<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
 		<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>
 		<input type="hidden" id="intiateRejectionAppln" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
-		<input type="hidden" id="forwardAppln" value="<spring:message code='msg.confirm.forward.application' />" />		
+		<input type="hidden" id="forwardAppln" value="<spring:message code='msg.confirm.forward.application' />" />
+		<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
 </div>
 
 <link rel="stylesheet" href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">

@@ -65,8 +65,8 @@
 		<thead>
 		<tr>
 			<th><spring:message code="lbl.srl.no" /></th>
-			<th><spring:message code="lbl.isrequired" /></th>
-			<th><spring:message code="lbl.condition" /></th>
+			<th><spring:message code="lbl.select" /></th>
+			<th><spring:message code="lbl.description" /></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -140,7 +140,7 @@
 		<thead>
 		<tr>
 			<th><spring:message code="lbl.srl.no" /></th>
-			<th><spring:message code="lbl.condition" /></th>
+			<th><spring:message code="lbl.select" /></th>
 		</tr>
 		</thead>
 		<tbody>

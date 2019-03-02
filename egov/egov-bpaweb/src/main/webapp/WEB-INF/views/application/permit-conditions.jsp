@@ -51,26 +51,21 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<div class="panel-heading toggle-header custom_form_panel_heading">
-	<div class="panel-title">
-		<spring:message code="lbl.permit.conditions" />
-	</div>
-</div>
 <div class="panel-body" id="permitConditions">
 	<c:if
 			test="${bpaApplication.serviceType.code ne '14' && bpaApplication.serviceType.code ne '15'}">
 		<div class="panel-heading">
-			<div class="panel-title"><spring:message code="lbl.permit.conditions.type1" /></div>
+			<div class="panel-title"><spring:message code="lbl.permit.conditions.noc" /></div>
 		</div>
 		<table class="table table-bordered  multiheadertbl"
 			   id="bpaDynamicPermitConditions">
 			<thead>
 			<tr>
 				<th><spring:message code="lbl.srl.no" /></th>
-				<th><spring:message code="lbl.isrequired" /></th>
-				<th><spring:message code="lbl.condition" /></th>
-				<th>Order No./Vide No.</th>
-				<th>Date</th>
+				<th><spring:message code="lbl.select" /></th>
+				<th><spring:message code="lbl.description" /></th>
+				<th><spring:message code="lbl.order.vide.no" /></th>
+				<th><spring:message code="lbl.date" /></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -158,15 +153,15 @@
 			</tbody>
 		</table>
 		<div class="panel-heading">
-			<div class="panel-title"><spring:message code="lbl.permit.conditions.type11" /></div>
+			<div class="panel-title"><spring:message code="lbl.permit.conditions.gen" /></div>
 		</div>
 		<table class="table table-bordered  multiheadertbl"
 			   id="bpaStaticPermitConditions">
 			<thead>
 			<tr>
 				<th><spring:message code="lbl.srl.no" /></th>
-				<th><spring:message code="lbl.isrequired" /></th>
-				<th><spring:message code="lbl.condition" /></th>
+				<th><spring:message code="lbl.select" /></th>
+				<th><spring:message code="lbl.description" /></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -244,7 +239,7 @@
 		<thead>
 		<tr>
 			<th><spring:message code="lbl.srl.no" /></th>
-			<th><spring:message code="lbl.condition" /></th>
+			<th><spring:message code="lbl.select" /></th>
 		</tr>
 		</thead>
 		<tbody>

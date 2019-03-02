@@ -206,7 +206,7 @@
 							<jsp:include
 								page="../occupancyCertificate/inspection/oc-view-inspection-details.jsp"></jsp:include>
 						</div>
-						<c:if test="${null ne occupancyCertificate.townSurveyorRemarks}">
+						<%-- <c:if test="${null ne occupancyCertificate.townSurveyorRemarks}">
 							<c:if
 								test="${'Town Surveyor Inspected' eq occupancyCertificate.status.code}">
 								<input type="hidden" id="viewTsRemarks" value="true">
@@ -215,17 +215,17 @@
 								<jsp:include
 									page="../occupancyCertificate/inspection/oc-view-town-surveyor-remarks.jsp"></jsp:include>
 							</div>
-						</c:if>
+						</c:if> --%>
 					</div>
 				</c:if>
-				<c:if test="${captureTSRemarks}">
+				<%-- <c:if test="${captureTSRemarks}">
 					<div id="ts-remarks" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include
 								page="../occupancyCertificate/inspection/oc-town-surveyor-remarks.jsp"></jsp:include>
 						</div>
 					</div>
-				</c:if>
+				</c:if> --%>
 				<c:if test="${not empty letterToPartyList}">
 					<div id="view-lp" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
@@ -384,6 +384,7 @@
 	<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
 	<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
 	<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>
+	<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
 </div>
 
 <script

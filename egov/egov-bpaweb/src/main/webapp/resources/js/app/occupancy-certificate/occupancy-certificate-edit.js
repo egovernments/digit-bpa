@@ -65,17 +65,32 @@ jQuery(document)
             var table = tbody.length ? tbody : $('#bpaAdditionalRejectionReasons');
             $('#addAddnlRejectRow').click(function () {
                 var idx = $(tbody).find('tr').length;
-                //Add row
-                var row = {
-                    'sno': idx + 1,
-                    'idx': idx,
-                    'permitConditionId': $('#additionalPermitCondition').val(),
-                    'applicationId': $('#scrutinyapplicationid').val()
-                };
-                addRowFromObject(row);
-                patternvalidation();
+                if(validateAdditionalConditionsOrReasonsOnAdd('bpaAdditionalRejectionReasons')) {
+                	//Add row
+                    var row = {
+                        'sno': idx + 1,
+                        'idx': idx,
+                        'permitConditionId': $('#additionalPermitCondition').val(),
+                        'applicationId': $('#scrutinyapplicationid').val()
+                    };
+                    addRowFromObject(row);
+                    patternvalidation();
+                }
             });
 
+            function validateAdditionalConditionsOrReasonsOnAdd(tableId){
+            	var isValid=true;
+                $('#'+tableId+' tbody tr').each(function(index){
+                	var additionalPermitCondition  = $(this).find('*[name$="additionalCondition"]').val();
+            	    if(!additionalPermitCondition) { 
+            	    	bootbox.alert($('#valuesCannotEmpty').val());
+            	    	isValid=false;
+            	    	return false;
+            	    } 
+                });
+                return isValid;
+            }
+            
             function addRowFromObject(rowJsonObj) {
                 table.append(row.compose(rowJsonObj));
             }
@@ -152,24 +167,23 @@ jQuery(document)
                             $('#Reject').attr('formnovalidate', 'true');
                             if (validateForm(validator) && validateOnReject(true)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#rejectAppln').val(),
                                         buttons: {
+                                        	'confirm': {
+                                                label: 'Yes',
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#occupancyCertificateUpdateForm').trigger('submit');
+                                                }
+                                            },
                                             'cancel': {
                                                 label: 'No',
-                                                className: 'btn-danger'
-                                            },
-                                            'confirm': {
-                                                label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#occupancyCertificateUpdateForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -180,24 +194,23 @@ jQuery(document)
                         } else if (action === 'Initiate Rejection') {
                             if (validateForm(validator) && validateOnReject(true)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#intiateRejectionAppln').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#occupancyCertificateUpdateForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#occupancyCertificateUpdateForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                                label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -208,24 +221,23 @@ jQuery(document)
                         } else if (action === 'Revert') {
                             if (validateForm(validator) && validateOnRevert()) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#sendBackApplnPreOfficial').val(),
                                         buttons: {
-                                            'cancel': {
-                                                label: 'No',
-                                                className: 'btn-danger'
-                                            },
                                             'confirm': {
                                                 label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#occupancyCertificateUpdateForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#occupancyCertificateUpdateForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                                label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -236,24 +248,23 @@ jQuery(document)
                         } else if (action === 'Approve') {
                             if (validateOnApproveAndForward(validator, action)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#approveAppln').val(),
                                         buttons: {
+                                        	'confirm': {
+                                                label: 'Yes',
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#occupancyCertificateUpdateForm').trigger('submit');
+                                                }
+                                            },
                                             'cancel': {
                                                 label: 'No',
-                                                className: 'btn-danger'
-                                            },
-                                            'confirm': {
-                                                label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#occupancyCertificateUpdateForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -264,24 +275,23 @@ jQuery(document)
                         } else if (action === 'Forward') {
                             if (validateOnApproveAndForward(validator, action) && validateAdditionalConditionsOnFwd()) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#forwardAppln').val(),
                                         buttons: {
+                                        	'confirm': {
+                                                label: 'Yes',
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#occupancyCertificateUpdateForm').trigger('submit');
+                                                }
+                                            },
                                             'cancel': {
                                                 label: 'No',
-                                                className: 'btn-danger'
-                                            },
-                                            'confirm': {
-                                                label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#occupancyCertificateUpdateForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -293,24 +303,23 @@ jQuery(document)
                             $('#Generate Occupancy Certificate').attr('formnovalidate', 'true');
                             if (validateOnApproveAndForward(validator, action)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#generateOccpancyCerti').val(),
                                         buttons: {
+                                        	'confirm': {
+                                                label: 'Yes',
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#occupancyCertificateUpdateForm').trigger('submit');
+                                                }
+                                            },
                                             'cancel': {
                                                 label: 'No',
-                                                className: 'btn-danger'
-                                            },
-                                            'confirm': {
-                                                label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#occupancyCertificateUpdateForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });
@@ -321,24 +330,23 @@ jQuery(document)
                         } else if (action === 'Generate Rejection Notice') {
                             if (validateOnApproveAndForward(validator, action) && validateOnReject(false)) {
                                 bootbox
-                                    .confirm({
+                                    .dialog({
                                         message: $('#generateRejectNotice').val(),
                                         buttons: {
+                                        	'confirm': {
+                                                label: 'Yes',
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#occupancyCertificateUpdateForm').trigger('submit');
+                                                }
+                                            },
                                             'cancel': {
                                                 label: 'No',
-                                                className: 'btn-danger'
-                                            },
-                                            'confirm': {
-                                                label: 'Yes',
-                                                className: 'btn-primary'
-                                            }
-                                        },
-                                        callback: function (result) {
-                                            if (result) {
-                                                $('#occupancyCertificateUpdateForm').trigger('submit');
-                                            } else {
-                                                e.stopPropagation();
-                                                e.preventDefault();
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
                                             }
                                         }
                                     });

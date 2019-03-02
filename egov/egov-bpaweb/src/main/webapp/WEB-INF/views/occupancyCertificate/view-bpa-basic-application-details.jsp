@@ -103,31 +103,31 @@
 	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.build.plan.permission.date"/>
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-            <fmt:formatDate value="${occupancyCertificate.parent.planPermissionDate}" pattern="dd/MM/yyyy" var="planPermissionDate" />
-			<c:out value="${planPermissionDate}" default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.is.one.permit"/>
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.parent.isOneDayPermitApplication ?  'YES' : 'NO'}"></c:out>
-		</div>
-	</div>
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.occupancy"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${occupancyCertificate.parent.occupanciesName}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.build.plan.permission.date"/>
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+            <fmt:formatDate value="${occupancyCertificate.parent.planPermissionDate}" pattern="dd/MM/yyyy" var="planPermissionDate" />
+			<c:out value="${planPermissionDate}" default="N/A"></c:out>
+		</div>
+	</div>
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.service.type"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${occupancyCertificate.parent.serviceType.description}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.amenity.type"/>
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${occupancyCertificate.parent.amenityName ne '' ?  occupancyCertificate.parent.amenityName : 'N/A'}"></c:out>
 		</div>
 	</div>
 
@@ -161,7 +161,7 @@
 		</div>
 	</div>
 
-	<div class="row add-border">
+	<%-- <div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.amenity.type"/>
 		</div>
@@ -173,6 +173,6 @@
 					target="popup" class="btn btn-primary" onclick="window.open('/bpa/application/details-view/by-permit-number/${occupancyCertificate.parent.planPermissionNumber}','popup','width=1100,height=700'); return false;"
 					class="btn btn-primary"><spring:message code="lbl.bpa.appln.dtls"/></a>
 		</div>
-	</div>
+	</div> --%>
 </div>
 
