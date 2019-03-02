@@ -50,14 +50,7 @@ $(document)
     .ready(
         function () {
 
-            $('#fileTrigger').click(function () {
-                $('.upload-msg').addClass('hide');
-                $("#myfile").trigger('click');
-                this.blur();
-                this.focus();
-            });
-
-            $('#myfile').change(function () {
+            $(document).on('change', '#myfile', function () {
                 var fileformat = ['dxf'];
                 var ext = $(this).val().split('.').pop();
                 var fileInput = $(this);
@@ -87,11 +80,19 @@ $(document)
                     }
                 }
             });
+            
+            $('#fileTrigger').click(function () {
+                $('.upload-msg').addClass('hide');
+                $("#myfile").trigger('click');
+                this.blur();
+                this.focus();
+            });
 
             $('#fileDelete').click(function () {
                 $('.fileSection').find('p').addClass('hide');
                 $('#fileTrigger').show();
                 $('.fileActions').addClass('hide');
+                $('#myfile').val([]);
             });
 
             $('#fileUpload').click(function () {

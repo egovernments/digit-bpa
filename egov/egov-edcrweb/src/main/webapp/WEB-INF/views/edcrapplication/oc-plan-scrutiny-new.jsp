@@ -77,14 +77,7 @@
 		</form:form>
 	</div>
 </div>
-<script type="text/javascript">
-	var messages = new Array();
-	<c:forEach var="key" items="${keys}">messages["<spring:message text='${key}' javaScriptEscape='true'/>"] = "<spring:message code='${key}' javaScriptEscape='true' />";
-	</c:forEach>
-</script>
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/i18n/jquery.i18n.properties.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<c:url value='/resources/app/js/edcrApplicationHelper.js'/>"></script>
 <script type="text/javascript"
 	src="<c:url value='/resources/app/js/edcr-upload-helper.js'/>"></script>
+<script type="text/javascript"
+	src="<c:url value='/resources/app/js/edcrApplicationHelper.js'/>"></script>

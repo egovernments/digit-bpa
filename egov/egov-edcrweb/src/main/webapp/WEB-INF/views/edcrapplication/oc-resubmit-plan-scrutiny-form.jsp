@@ -76,7 +76,7 @@
 				<div class="row hide fileActions">
 					<div class="col-md-6">
 						<button type="button" id="fileDelete"
-							class="btn btn-primary fullWidth">
+							class="btn btn-danger btn-sm">
 							<i class="fa fa-trash-o"></i> &nbsp;
 							<spring:message code="lbl.delete" />
 						</button>
@@ -100,14 +100,12 @@
 				id="applicationNumber" value="${edcrApplication.applicationNumber}"
 				required="required">
 		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
+		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.permit.no" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="hidden" name="applicationType" id="applnType"
-				value="${edcrApplication.applicationType}"> <input type="hidden"
-				id="applicationType"
+				value="${edcrApplication.applicationType}"> <input
+				type="hidden" id="applicationType"
 				value="${edcrApplication.applicationType.applicationTypeVal}">
 			<input type="text" name="planPermitNumber"
 				class="form-control resetValues" id="planPermitNumber"

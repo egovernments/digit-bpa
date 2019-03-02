@@ -91,33 +91,32 @@ $(document)
                 if (serviceType === 'Addition or Extension')
                     return 'Please confirm, The submitted DXF file for service type addition or extension for building plan scrutiny shall be as per KMBR rules defined as and above date 30th March 2000. Please click Yes to continue or No to cancel the scrutiny.';
                 else
-                    return 'Please confirm, do you really want to submit plan ?';
+                    return 'Are you sure want to submit plan ?';
             }
 
             // New Upload EDCR Form Submit
             $('#buttonSubmit').click(function (e) {
                 if (validateNewPlanScrutiny()) {
                     bootbox
-                        .confirm({
+                        .dialog({
                             message: getValidationMessageOnSubmit(),
                             buttons: {
-                                'cancel': {
-                                    label: 'No',
-                                    className: 'btn-danger'
-                                },
                                 'confirm': {
                                     label: 'Yes',
-                                    className: 'btn-primary'
+                                    className: 'btn-primary',
+                                    callback: function (result) {
+                                        $('#edcrApplicationform').trigger('submit');
+                                    }
+                                },
+                                'cancel': {
+                                    label: 'No',
+                                    className: 'btn-danger',
+                                    callback: function (result) {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                    }
                                 }
                             },
-                            callback: function (result) {
-                                if (result) {
-                                    $('#edcrApplicationform').trigger('submit');
-                                } else {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                }
-                            }
                         });
                 } else {
                     e.preventDefault();
@@ -129,24 +128,23 @@ $(document)
             $('#reUploadSubmit').click(function (e) {
                 if (validateResubmitPlanScrutiny()) {
                     bootbox
-                        .confirm({
+                        .dialog({
                             message: getValidationMessageOnSubmit(),
                             buttons: {
-                                'cancel': {
-                                    label: 'No',
-                                    className: 'btn-danger'
-                                },
                                 'confirm': {
                                     label: 'Yes',
-                                    className: 'btn-primary'
-                                }
-                            },
-                            callback: function (result) {
-                                if (result) {
-                                    $('#edcrReuploadform').trigger('submit');
-                                } else {
-                                    e.stopPropagation();
-                                    e.preventDefault();
+                                    className: 'btn-primary',
+                                    callback: function (result) {
+                                    	$('#edcrReuploadform').trigger('submit');
+                                    }
+                                },
+                                'cancel': {
+                                    label: 'No',
+                                    className: 'btn-danger',
+                                    callback: function (result) {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                    }
                                 }
                             }
                         });

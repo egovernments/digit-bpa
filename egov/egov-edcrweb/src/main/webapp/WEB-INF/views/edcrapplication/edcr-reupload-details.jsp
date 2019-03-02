@@ -69,7 +69,7 @@
                 </button>
                 <div class="row hide fileActions">
                     <div class="col-md-6">
-                        <button type="button" id="fileDelete" class="btn btn-primary fullWidth">
+                        <button type="button" id="fileDelete" class="btn btn-danger btn-sm">
                             <i class="fa fa-trash-o"></i> &nbsp;<spring:message code="lbl.delete"/>
                         </button>
                     </div>
