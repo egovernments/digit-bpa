@@ -82,7 +82,10 @@ import static org.egov.bpa.utils.BpaConstants.MESSAGE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
+import static org.egov.bpa.utils.BpaConstants.WF_DOC_SCRUTINY_SCHEDLE_PEND;
+import static org.egov.bpa.utils.BpaConstants.WF_DOC_VERIFY_PEND;
 import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_INIT_AUTO_RESCHDLE;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_STATE;
@@ -211,14 +214,13 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                     || (!actions.isEmpty() && actions.contains(WF_APPROVE_BUTTON)))
                 buildApplicationPermitConditions(application, model);
 
-            if (bpaUtils.isDocScrutinyIntegrationRequired() && application.getState() != null
-                    && application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) &&
-                    application.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
+            if (application.getState() != null
+                    && application.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
                 return APPLICATION_VIEW;
-            else if (bpaUtils.isDocScrutinyIntegrationRequired() && application.getState() != null
-                    && application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
-                    application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
-                    || application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED))
+            else if (application.getState() != null
+                    && application.getState().getNextAction().equalsIgnoreCase(WF_DOC_SCRUTINY_SCHEDLE_PEND) 
+                    || application.getState().getNextAction().equalsIgnoreCase(WF_DOC_VERIFY_PEND)
+                    || application.getState().getNextAction().equalsIgnoreCase(WF_INIT_AUTO_RESCHDLE))
                 return DOCUMENTSCRUTINY_FORM;
         }
         return APPLICATION_VIEW;

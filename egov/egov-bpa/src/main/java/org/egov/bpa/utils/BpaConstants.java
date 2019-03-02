@@ -145,6 +145,9 @@ public class BpaConstants {
     public static final String FWD_TO_AE_FOR_APPROVAL = "Forwarded to Assistant Engineer For Approval";
     public static final String FWD_TO_CLERK_PENDING = "Forward to section clerk is pending";
     public static final String FORWARDED_TO_CLERK = "Forwarded to section clerk";
+    public static final String WF_DOC_SCRUTINY_SCHEDLE_PEND = "Document Scrutiny Scheduling Pending";
+    public static final String WF_DOC_VERIFY_PEND = "Document verification pending";
+    public static final String WF_INIT_AUTO_RESCHDLE = "Initiated For Auto Rescheduling Appointment";
     // application status constants
     public static final String APPROVED = "Approved";
     public static final String APPLICATION_STATUS_APPROVED = APPROVED;

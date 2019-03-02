@@ -74,7 +74,10 @@ import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
 import static org.egov.bpa.utils.BpaConstants.GENERATE_OCCUPANCY_CERTIFICATE;
 import static org.egov.bpa.utils.BpaConstants.OCREJECTIONFILENAME;
+import static org.egov.bpa.utils.BpaConstants.WF_DOC_SCRUTINY_SCHEDLE_PEND;
+import static org.egov.bpa.utils.BpaConstants.WF_DOC_VERIFY_PEND;
 import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_INIT_AUTO_RESCHDLE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
@@ -185,14 +188,12 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         prepareFormData(oc, model);
         loadData(oc, model);
         getActionsForOCApplication(model, oc);
-        if (occupancyCertificateUtils.isDocScrutinyIntegrationRequiredForOc() && oc.getState() != null
-                && oc.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED)
-                && oc.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
+        if (oc.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
             return OCCUPANCY_CERTIFICATE_VIEW;
-        else if (occupancyCertificateUtils.isDocScrutinyIntegrationRequiredForOc() && oc.getState() != null
-                && oc.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
-                oc.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
-                || oc.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED))
+        else if (oc.getState() != null
+                && oc.getState().getNextAction().equalsIgnoreCase(WF_DOC_SCRUTINY_SCHEDLE_PEND)
+                || oc.getState().getNextAction().equalsIgnoreCase(WF_DOC_VERIFY_PEND)
+                || oc.getState().getNextAction().equalsIgnoreCase(WF_INIT_AUTO_RESCHDLE))
             return "oc-document-scrutiny-form";
 
         return OCCUPANCY_CERTIFICATE_VIEW;
