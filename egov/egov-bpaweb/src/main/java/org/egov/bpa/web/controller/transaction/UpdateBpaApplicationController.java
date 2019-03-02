@@ -49,7 +49,6 @@ package org.egov.bpa.web.controller.transaction;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DIGI_SIGNED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
@@ -150,7 +149,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UpdateBpaApplicationController extends BpaGenericApplicationController {
 
     public static final String COMMON_ERROR = "common-error";
-    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
     private static final String WORK_FLOW_ACTION = "workFlowAction";
     private static final String AMOUNT_RULE = "amountRule";
     private static final String APPRIVALPOSITION = "approvalPosition";
@@ -200,19 +198,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
         buildRejectionReasons(model, application);
         model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
-
-        if (APPLICATION_STATUS_CREATED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())) {
-            if (applicationBpaService.applicationinitiatedByNonEmployee(application)
-                    && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
-                model.addAttribute(COLLECT_FEE_VALIDATE,
-                        messageSource.getMessage("msg.collect.applnfees.toprocess.appln", null, null));
-            } else
-                model.addAttribute(COLLECT_FEE_VALIDATE, "");
-        }
-
         if (application != null) {
             loadFormData(model, application);
             Map<String, Object> attributes = model.asMap();

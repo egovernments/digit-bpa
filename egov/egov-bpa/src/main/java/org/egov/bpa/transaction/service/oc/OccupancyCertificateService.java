@@ -45,6 +45,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
@@ -198,8 +199,13 @@ public class OccupancyCertificateService {
         if (oc.getApplicationNumber() == null)
             oc.setApplicationNumber(applicationNumberGenerator.generate());
         oc.setApplicationType("Occupancy Certificate");
-        final BpaStatus bpaStatus = applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED);
-        oc.setStatus(bpaStatus);
+        if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)) {
+            final BpaStatus bpaStatus = applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_SUBMITTED);
+            oc.setStatus(bpaStatus);
+        } else {
+            final BpaStatus bpaStatus = applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED);
+            oc.setStatus(bpaStatus);
+        }
         if (occupancyCertificateUtils.isApplicationFeeCollectionRequired())
             oc.setDemand(ocBillService.createDemand(oc));
         else

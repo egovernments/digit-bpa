@@ -46,6 +46,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
 import static org.egov.bpa.utils.BpaConstants.BPAFEETYPE;
 import static org.egov.bpa.utils.BpaConstants.BPAREGISTRATIONFEETYPE;
@@ -54,8 +55,6 @@ import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
-import static org.egov.bpa.utils.BpaConstants.MESSAGE;
-import static org.egov.bpa.utils.BpaConstants.RECENT_DCRRULE_AMENDMENTDAYS;
 import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
@@ -75,7 +74,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +83,6 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -137,7 +134,6 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -264,8 +260,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (!application.getBuildingDetail().isEmpty())
             application.setTotalBuiltUpArea(bpaUtils.getBlockWiseOccupancyAndBuiltupArea(application.getBuildingDetail())
                     .entrySet().stream().map(Map.Entry::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
-        final BpaStatus bpaStatus = getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED);
-        application.setStatus(bpaStatus);
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
+            final BpaStatus bpaStatus = getStatusByCodeAndModuleType(APPLICATION_STATUS_SUBMITTED);
+            application.setStatus(bpaStatus);
+        } else {
+            final BpaStatus bpaStatus = getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED);
+            application.setStatus(bpaStatus);
+        }
         setSource(application);
         Long approvalPosition = null;
         if (bpaUtils.isApplicationFeeCollectionRequired())

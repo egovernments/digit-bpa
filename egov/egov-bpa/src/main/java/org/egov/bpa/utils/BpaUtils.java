@@ -6,6 +6,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECT_CLERK;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
 import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
@@ -20,11 +21,11 @@ import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
 import static org.egov.bpa.utils.BpaConstants.LPREPLYRECEIVED;
 import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_APPLN_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
+import static org.egov.bpa.utils.BpaConstants.PERMIT_APPLN_FEE_COLLECTION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.REGULAR_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_PERMIT_FEE_COLL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.YES;
-import static org.egov.bpa.utils.BpaConstants.PERMIT_APPLN_FEE_COLLECTION_REQUIRED;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -96,6 +97,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class BpaUtils {
+    private static final String APPLICATION_FEE_PAYMENT_PENDING = "Application fee payment pending";
+
+    private static final String SUCCESS = "Success";
+
     private static final Logger LOG = getLogger(BpaUtils.class);
 
     private static final String CLOSED = "Closed";
@@ -228,6 +233,11 @@ public class BpaUtils {
     public void updatePortalUserinbox(final BpaApplication application, final User additionalPortalInboxUser) {
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
+        String status;
+        if(APPLICATION_STATUS_SUBMITTED.equals(application.getStatus().getCode()) && checkAnyTaxIsPendingToCollect(application.getDemand()))
+            status = APPLICATION_FEE_PAYMENT_PENDING;
+        else 
+            status = application.getStatus().getDescription();
         if ((application.getState() != null && (CLOSED.equals(application.getState().getValue())
                 || WF_END_ACTION.equals(application.getState().getValue())))
                 || (application.getStatus() != null
@@ -236,7 +246,7 @@ public class BpaUtils {
         String url = "/bpa/application/citizen/update/" + application.getApplicationNumber();
         if (application.getStatus() != null)
             portalInboxService.updateInboxMessage(application.getApplicationNumber(), module.getId(),
-                    application.getStatus().getDescription(), isResolved, new Date(), application.getState(),
+                    status, isResolved, new Date(), application.getState(),
                     additionalPortalInboxUser, application.getPlanPermissionNumber(), url);
     }
 
@@ -248,14 +258,17 @@ public class BpaUtils {
             status = "To be submitted";
         } else if (null != application.getStatus().getDescription()
                 && WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            status = application.getStatus().getDescription();
+            if(checkAnyTaxIsPendingToCollect(application.getDemand()))
+                status = APPLICATION_FEE_PAYMENT_PENDING;
+            else
+                status = application.getStatus().getDescription();
         }
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
         String url = "/bpa/application/citizen/update/" + application.getApplicationNumber();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, application.getOwner().getName(),
                 application.getServiceType().getDescription(), application.getApplicationNumber(),
-                application.getPlanPermissionNumber(), application.getId(), "Success", "Success", url, isResolved,
+                application.getPlanPermissionNumber(), application.getId(), SUCCESS, SUCCESS, url, isResolved,
                 status, new Date(), application.getState(), portalInboxUser);
 
         final PortalInbox portalInbox = portalInboxBuilder.build();
@@ -270,14 +283,17 @@ public class BpaUtils {
             status = "To be submitted";
         } else if (null != oc.getStatus().getDescription()
                 && WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            status = oc.getStatus().getDescription();
+            if(checkAnyTaxIsPendingToCollect(oc.getDemand()))
+                status = APPLICATION_FEE_PAYMENT_PENDING;
+            else
+                status = oc.getStatus().getDescription();
         }
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
         String url = "/bpa/application/citizen/occupancy-certificate/update/" + oc.getApplicationNumber();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, oc.getParent().getOwner().getName(),
                 oc.getApplicationType(), oc.getApplicationNumber(),
-                oc.getOccupancyCertificateNumber(), oc.getId(), "Success", "Success", url, isResolved,
+                oc.getOccupancyCertificateNumber(), oc.getId(), SUCCESS, SUCCESS, url, isResolved,
                 status, new Date(), oc.getState(), portalInboxUser);
 
         final PortalInbox portalInbox = portalInboxBuilder.build();
@@ -288,6 +304,11 @@ public class BpaUtils {
     public void updatePortalUserinbox(final OccupancyCertificate oc, final User additionalPortalInboxUser) {
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
+        String status;
+        if(APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode()) && checkAnyTaxIsPendingToCollect(oc.getDemand()))
+            status = APPLICATION_FEE_PAYMENT_PENDING;
+        else 
+            status = oc.getStatus().getDescription();
         if ((oc.getState() != null && (CLOSED.equals(oc.getState().getValue())
                 || WF_END_ACTION.equals(oc.getState().getValue())))
                 || (oc.getStatus() != null
@@ -296,7 +317,7 @@ public class BpaUtils {
         String url = "/bpa/application/citizen/occupancy-certificate/update/" + oc.getApplicationNumber();
         if (oc.getStatus() != null)
             portalInboxService.updateInboxMessage(oc.getApplicationNumber(), module.getId(),
-                    oc.getStatus().getDescription(), isResolved, new Date(), oc.getState(),
+                    status, isResolved, new Date(), oc.getState(),
                     additionalPortalInboxUser, oc.getOccupancyCertificateNumber(), url);
     }
 

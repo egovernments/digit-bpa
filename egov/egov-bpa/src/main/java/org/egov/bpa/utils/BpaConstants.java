@@ -180,6 +180,7 @@ public class BpaConstants {
     // Sms And Email Code For New Connection
     public static final String SMSEMAILTYPENEWBPAREGISTERED = "newbparegistered";
     public static final String APPLICATION_STATUS_CREATED = "Created";
+    public static final String APPLICATION_STATUS_SUBMITTED = "Submitted";
     public static final String SMSEMAILTYPELETTERTOPARTY = "Letter To Party";
     // Letter to party related constants
     public static final String LETTERTOPARTY_NUMBER_SEQ = "SEQ_BPA_LP_";

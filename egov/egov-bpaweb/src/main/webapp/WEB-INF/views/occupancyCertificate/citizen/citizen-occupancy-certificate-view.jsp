@@ -203,7 +203,7 @@
 						<input type="hidden" id="onlinePaymentEnable"
 							value="${onlinePaymentEnable}">
 						<c:if
-							test="${onlinePaymentEnable && isFeeCollected && occupancyCertificate.status.code eq 'Approved' }">
+							test="${onlinePaymentEnable && isFeeCollected && (occupancyCertificate.status.code eq 'Submitted' || occupancyCertificate.status.code eq 'Approved') }">
 							<td><a
 								href="/bpa/application/occupancy-certificate/generate-bill/${occupancyCertificate.applicationNumber}"
 								class="btn btn-primary"> Pay Fee Online </a>&nbsp;</td>

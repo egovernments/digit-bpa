@@ -199,12 +199,6 @@
 											 value="Save"><spring:message code='lbl.btn.accpt' /></form:button>&nbsp;
 							</c:if>
 						</td>
-						<td>
-							<c:if test="${citizenOrBusinessUser && bpaApplication.id != null && bpaApplication.state == null && bpaApplication.status.code ne 'Cancelled'}">
-							<form:button type="button" id="buttonCancel" class="btn btn-danger"
-										 value="Cancel Application"> <spring:message code='lbl.btn.cancel.application' /> </form:button>
-							</c:if>
-						</td>
 						<c:if test="${ mode eq 'showRescheduleToCitizen'}">
 							<td> <a
 									href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
@@ -230,7 +224,7 @@
 							</td>
 						</c:if>
 						<input type="hidden" id="onlinePaymentEnable" value="${onlinePaymentEnable}">
-						<c:if test="${onlinePaymentEnable && isFeeCollected && (bpaApplication.status.code eq 'Registered' || bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Approved') }">
+						<c:if test="${onlinePaymentEnable && isFeeCollected && (bpaApplication.status.code eq 'Submitted' || bpaApplication.status.code eq 'Approved') }">
 							<td> <a	href="/bpa/application/bpageneratebill/${bpaApplication.applicationNumber}" class="btn btn-primary">
 								<spring:message code='lbl.btn.pay.fee.online' />
 							</a>&nbsp;
@@ -245,6 +239,12 @@
 								</a>&nbsp;
 							</td> 
 						</c:if>
+						<td>
+							<c:if test="${citizenOrBusinessUser && bpaApplication.id != null && bpaApplication.state == null && bpaApplication.status.code ne 'Cancelled'}">
+							<form:button type="button" id="buttonCancel" class="btn btn-danger"
+										 value="Cancel Application"> <spring:message code='lbl.btn.cancel.application' /> </form:button>&nbsp;
+							</c:if>
+						</td>
 						<c:if test="${bpaApplication.status.code eq 'Order Issued to Applicant' }">
 							<td>
 								<a href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}"

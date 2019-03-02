@@ -53,6 +53,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
@@ -205,7 +206,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         }
         model.addAttribute("inspectionList", ocInspectionService.findByOcOrderByIdAsc(oc));
         model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
-        if (APPLICATION_STATUS_APPROVED.equals(oc.getStatus().getCode())
+        if (APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode())
+                || APPLICATION_STATUS_APPROVED.equals(oc.getStatus().getCode())
                 && bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
             model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
             String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
@@ -267,6 +269,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
         OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
+        bpaUtils.updatePortalUserinbox(ocResponse, null);
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)
@@ -299,7 +302,6 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
                     "Occupancy Certificate Application is successfully saved with ApplicationNumber "
                             + ocResponse.getApplicationNumber());
         }
-        bpaUtils.updatePortalUserinbox(ocResponse, null);
         return BPAAPPLICATION_CITIZEN;
     }
 

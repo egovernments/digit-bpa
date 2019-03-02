@@ -176,7 +176,7 @@ $(document)
 																data, type,
 																row, meta) {
 															
-															if ((row.status == 'Approved' || row.status == 'Registered' || row.status == 'Created') && row.isFeeCollected) {
+															if ((row.status == 'Approved' || row.status == 'Registered' || row.status == 'Submitted') && row.isFeeCollected) {
 																return '<button type="button" class="btn btn-xs btn-secondary dropchange pull-left" value='
 																+ collecturl
 																+ row.applicationNumber

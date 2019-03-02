@@ -43,9 +43,9 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
@@ -71,6 +71,7 @@ import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
 import org.egov.bpa.transaction.entity.LettertoParty;
@@ -147,7 +148,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         User user = securityUtils.getCurrentUser();
         StakeHolder stkHldr = stakeHolderService.findById(user.getId());
         if (stkHldr != null && StakeHolderStatus.BLOCKED.equals(stkHldr.getStatus())
-                && APPLICATION_STATUS_CREATED.equals(application.getStatus().getCode())) {
+                && (APPLICATION_STATUS_CREATED.equals(application.getStatus().getCode())
+                        || APPLICATION_STATUS_SUBMITTED.equals(application.getStatus().getCode()))) {
             model.addAttribute(MESSAGE,
                     messageSource.getMessage("msg.stakeholder.license.blocked",
                             new String[] { ApplicationThreadLocals.getMunicipalityName() }, null));
@@ -177,7 +179,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         model.addAttribute("stateType", application.getClass().getSimpleName());
         model.addAttribute("isEDCRIntegrationRequire",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
-        model.addAttribute("loadingFloorDetailsFromEdcrRequire", bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
+        model.addAttribute("loadingFloorDetailsFromEdcrRequire",
+                bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
         if (application.getIsOneDayPermitApplication()) {
             model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
         } else
@@ -201,25 +204,23 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
             model.addAttribute("mode", "showLPDetails");
         buildAppointmentDetailsOfScutinyAndInspection(model, application);
-        if(bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode())) {
+        if (bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode())) {
             model.addAttribute("subOccupancyList", subOccupancyService.findAll());
-        } else  {
+        } else {
             List<SubOccupancy> subOccupancies = new ArrayList<>();
-            if(!application.getPermitOccupancies().isEmpty()) {
-                for(Occupancy occ : application.getPermitOccupancies())
+            if (!application.getPermitOccupancies().isEmpty()) {
+                for (Occupancy occ : application.getPermitOccupancies())
                     subOccupancies.addAll(occ.getSubOccupancies());
             }
             model.addAttribute("subOccupancyList", subOccupancies);
             List<Usage> usages = new ArrayList<>();
-            for(SubOccupancy subOcc : subOccupancies)
+            for (SubOccupancy subOcc : subOccupancies)
                 usages.addAll(subOcc.getUsages());
             model.addAttribute("usageList", usages);
         }
-        
+
         Boolean isCitizen = (Boolean) model.asMap().get(IS_CITIZEN);
-        if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())
+        if (APPLICATION_STATUS_SUBMITTED.equals(application.getStatus().getCode())
                 || APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())) {
             if (applicationBpaService.applicationinitiatedByNonEmployee(application)
                     && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
@@ -327,7 +328,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
 
-        if (workFlowAction != null && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction))
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
+            final BpaStatus bpaStatus = applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_SUBMITTED);
+            bpaApplication.setStatus(bpaStatus);
+        } else if (workFlowAction != null && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction))
             bpaApplication.setStatus(applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
 
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)

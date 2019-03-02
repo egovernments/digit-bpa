@@ -223,7 +223,7 @@ public class OccupancyCertificateTaxCollection extends TaxCollection {
     @Transactional
     public void updateOCApplication(final EgDemand demand) {
         final OccupancyCertificate oc = occupancyCertificateService.findByDemand(demand);
-        if (oc.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CREATED)) {
+        if (oc.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_SUBMITTED)) {
             bpaUtils.redirectToBpaWorkFlowForOC(oc,
                     getWorkflowBean(BpaConstants.WF_NEW_STATE, BpaConstants.BPAFEECOLLECT, null, null));
         }

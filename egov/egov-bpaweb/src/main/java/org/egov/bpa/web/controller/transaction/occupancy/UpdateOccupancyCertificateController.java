@@ -50,7 +50,6 @@ package org.egov.bpa.web.controller.transaction.occupancy;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_HISTORY;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
@@ -156,7 +155,6 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     private static final String MESSAGE = "message";
     private static final String COMMON_ERROR = "common-error";
     private static final String ADDITIONALRULE = "additionalRule";
-    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
     private static final String APPRIVALPOSITION = "approvalPosition";
     private static final String PDFEXTN = ".pdf";
 
@@ -321,17 +319,6 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
             model.addAttribute("createlettertoparty", true);
         }
 
-        if (APPLICATION_STATUS_CREATED.equals(oc.getStatus().getCode())
-                || APPLICATION_STATUS_REGISTERED.equals(oc.getStatus().getCode())
-                || APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
-                || APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())) {
-            if (bpaUtils.applicationInitiatedByNonEmployee(oc.getCreatedBy())
-                    && bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
-                model.addAttribute(COLLECT_FEE_VALIDATE,
-                        messageSource.getMessage("msg.collect.applnfees.toprocess.appln", null, null));
-            } else
-                model.addAttribute(COLLECT_FEE_VALIDATE, "");
-        }
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         if (APPLICATION_STATUS_NOCUPDATED.equals(oc.getStatus().getCode())
                 || APPLICATION_STATUS_APPROVED.equals(oc.getStatus().getCode())) {

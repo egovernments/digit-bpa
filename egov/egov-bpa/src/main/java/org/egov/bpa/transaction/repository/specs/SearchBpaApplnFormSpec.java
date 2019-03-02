@@ -50,7 +50,7 @@ package org.egov.bpa.transaction.repository.specs;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_ORDER_ISSUED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
@@ -99,7 +99,7 @@ public final class SearchBpaApplnFormSpec {
         return (root, query, builder) -> {
             final Predicate predicate = builder.conjunction();
             predicate.getExpressions()
-                    .add(root.get(STATUS).get("code").in(APPLICATION_STATUS_CREATED, APPLICATION_STATUS_REGISTERED,
+                    .add(root.get(STATUS).get("code").in(APPLICATION_STATUS_SUBMITTED, APPLICATION_STATUS_REGISTERED,
                             APPLICATION_STATUS_APPROVED));
             Join<BpaApplication, EgDemand> demandJoin = root.join("demand");
             predicate.getExpressions().add(builder.lessThan(demandJoin.get("amtCollected"), demandJoin.get("baseDemand")));
