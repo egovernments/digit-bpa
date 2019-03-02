@@ -93,30 +93,27 @@
 <body class="page-body index"
 	style="height: 580px; background: #F8F9F9;">
 	<div class="page-container">
-
 		<div class="main-content">
-			<div class="navbar-header col-md-8 col-xs-8">
-				<%-- <a class="navbar-brand" href="javascript:void(0);">
+			<nav class="navbar transparent">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<%-- <a class="navbar-brand" href="javascript:void(0);">
 					<img src="https://www.egovernments.org/wp-content/uploads/2018/11/Logo-2.png" style="background-color:#3b73af" height="90">
 						</a> --%>
-				<div>
-					<span class="title2"
-						style="color: black; font-family: OpenSans; font-size: 30px"><b>${sessionScope.citymunicipalityname}</b></span>
-				</div>
-
-			</div>
-			<div class="nav-right-menu col-md-4 col-xs-4">
-				<ul class="hr-menu text-right">
-					<li class="ico-menu"><a href="http://www.egovernments.org"
-						data-strwindname="egovsite" class="open-popup"> <img
+						<div>
+							<span class="title2"
+								style="color: black; font-family: OpenSans; font-size: 30px"><b>${sessionScope.citymunicipalityname}</b></span>
+						</div>
+					</div>
+					<div class="navbar-right">
+						<a href="http://www.egovernments.org" data-strwindname="egovsite"
+							class="open-popup"> <img
 							src="<cdn:url value='/resources/global/images/egov_logo_tr_h.png'/>"
 							title="Powered by eGovernments" height="64" alt="">
-					</a></li>
-				</ul>
-			</div>
-
-
-			<div style="color: white; height: 80px"></div>
+						</a>
+					</div>
+				</div>
+			</nav>
 
 			<div class="row top-space">
 				<div class="text-center error-msg">
@@ -160,43 +157,30 @@
 							&nbsp;<br> <input type="text"
 								placeholder="Enter application number" id="appsearchtxt"
 								style="padding: 2px 5px; height: 30px; font-size: 14px; border: 0; padding-left: 0; border-bottom: 1px solid #D0D2D7; outline: none; box-shadow: none; width: initial;">
-							<button class="btn-custom" id="appsearch"
-								style="padding: 4px 5px; border-radius: 4px; font-size: 14px; vertical-align: sub;">
+							<button class="btn btn-custom btn-small" id="appsearch" style="font-size: 12px;">
 								<spring:message code="btn.lbl.search" />
 							</button>
 						</div>
 						<div class="error-msg search-error-msg display-hide"
 							style="padding-left: 65px;">Application number is mandatory</div>
 					</div>
-					<div class="col-md-6 side-space login-form-licensee"">
-						<img
-							src="<cdn:url value='/resources/guide/assets/digit_dcr_glow_logo.png'/>"
-							height="128"
-							style="position: relative; right: 37px; bottom: -10px;">
-
-						<div class="col-md-9 "
-							style="margin: 20px 0px; left: -80px; bottom: 52px">
-
-							<div class="community-card"
-								style="background: white; color: black; padding: 30px; height: 123px; width: 410px">
-								<div class="text-center page-desc-title"
-									style="position: relative; bottom: 22px">Building
-									Planning Approval</div>
-								<div class="page-desc-details"
-									style="bottom: 25px; position: relative;">
-									<b>Citizens, ULB officials, and other stakeholders can
+					<div class="col-md-12 community-card transparent text-center">
+					<img src="<cdn:url value='/resources/guide/assets/digit_dcr_glow_logo.png'/>" height=128>
+					</div>
+					<div class="col-md-12  community-card" style="position: relative; top: -60px;">
+						
+								<h6 class="text-center view-content">Building
+									Planning Approval</h6>
+								<p class="text-justify view-content">
+									Citizens, ULB officials, and other stakeholders can
 										submit and track applications in real time and obtain
-										approvals without having to physically visit an office.</b>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-3 "></div>
+										approvals without having to physically visit an office.
+								</p>
 					</div>
 				</div>
 
-
-				<div class="col-md-6 side-space login-form-licensee"
-					style="position: relative; left: 63px; top: 60px">
+				<div class="col-md-6 side-space login-form-licensee">
+					<!-- style="position: relative; left: 63px; top: 60px" -->
 
 					<div class="signin-formcontent signin-section">
 						<form method="post" role="form" id="signform"
