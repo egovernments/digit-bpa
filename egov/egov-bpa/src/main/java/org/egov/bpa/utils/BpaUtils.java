@@ -701,7 +701,7 @@ public class BpaUtils {
             List<BuildingDetail> bpaBuildings) {
         Map<Integer, HashMap<Integer, BigDecimal>> bpaMap = new HashMap<>();
         for (BuildingDetail bpaBuilding : bpaBuildings) {
-            HashMap<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
+            HashMap<Integer, BigDecimal> map = new HashMap<>();
             for (ApplicationFloorDetail bpaFloor : bpaBuilding.getApplicationFloorDetails())
                 map.put(bpaFloor.getFloorNumber(), bpaFloor.getFloorArea());
             bpaMap.put(bpaBuilding.getNumber(), map);
@@ -743,8 +743,8 @@ public class BpaUtils {
 
     public void loadBoundary(BpaApplication bpaApplication){
     	SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
-    	bpaApplication.setAdminBoundary(siteDetail.getElectionBoundary().getId().toString());
-    	bpaApplication.setLocationBoundary(siteDetail.getLocationBoundary().getId().toString());
-    	bpaApplication.setRevenueBoundary(siteDetail.getAdminBoundary().getId().toString());
+    	bpaApplication.setAdminBoundary(String.valueOf(siteDetail.getElectionBoundary().getId()));
+    	bpaApplication.setLocationBoundary(String.valueOf(siteDetail.getLocationBoundary().getId()));
+    	bpaApplication.setRevenueBoundary(String.valueOf(siteDetail.getAdminBoundary().getId()));
     }
 }
