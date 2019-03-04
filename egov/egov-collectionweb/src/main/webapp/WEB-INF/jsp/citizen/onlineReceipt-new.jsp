@@ -426,7 +426,7 @@ function onLoad(){
 
 				<div class="subheadnew">
 					<span class="complaintmsg"><s:text
-							name="onlineReceipts.payyourtax" /></span>
+							name="onlineReceipts.payfeetext" /></span>
 					<div class="dottedgridlarge2"></div>
 				</div>
 
@@ -435,9 +435,9 @@ function onLoad(){
 						<div class="rbcontent4">
 							<div class="containerformsg1">
 
-								<div class="text-left margin-5">
-									<s:text name="onlineReceipts.paytaxtext" />
-								</div>
+								<%-- <div class="text-left margin-5">
+									<s:text name="onlineReceipts.payfeetext" />
+								</div> --%>
 								<table width="100%" border="0" cellspacing="0" cellpadding="0"
 									id="billsheaderinfotable">
 									<s:hidden name="collectXML" id="collectXML"
@@ -499,7 +499,7 @@ function onLoad(){
 														</td>
 														<th class="bluebgheadtd" width="10%"><div
 																align="right">
-																<s:text name="onlineReceipts.demand" />
+																<s:text name="onlineReceipts.amount" />
 															</div>
 														</td>
 														<!--td class="head" width="19%" ><s:text name="onlineReceipts.collectedamount"/></td-->
