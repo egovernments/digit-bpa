@@ -743,8 +743,8 @@ public class BpaUtils {
 
     public void loadBoundary(BpaApplication bpaApplication){
     	SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
-    	bpaApplication.setAdminBoundary(String.valueOf(siteDetail.getElectionBoundary().getId()));
-    	bpaApplication.setLocationBoundary(String.valueOf(siteDetail.getLocationBoundary().getId()));
-    	bpaApplication.setRevenueBoundary(String.valueOf(siteDetail.getAdminBoundary().getId()));
+    	bpaApplication.setAdminBoundary(siteDetail.getElectionBoundary() == null ? "" : String.valueOf(siteDetail.getElectionBoundary().getId()));
+    	bpaApplication.setLocationBoundary(siteDetail.getLocationBoundary() == null ? "" : String.valueOf(siteDetail.getLocationBoundary().getId()));
+    	bpaApplication.setRevenueBoundary(siteDetail.getAdminBoundary() == null ? "" : String.valueOf(siteDetail.getAdminBoundary().getId()));
     }
 }
