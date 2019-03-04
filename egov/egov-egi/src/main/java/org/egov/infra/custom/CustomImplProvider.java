@@ -124,7 +124,7 @@ public class CustomImplProvider {
 			} else if (gradeBean != null) {
 				bean = gradeBean;
 				LOG.debug("Returning ulb implementation for service " + parentClazz + " : "
-						+ districtBean.getClass().getName());
+						+ gradeBean.getClass().getName());
 			} else if (stateBean != null) {
 				bean = stateBean;
 			}
