@@ -38,46 +38,49 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="panel-heading custom_form_panel_heading">
-    <div class="panel-title">
-        <spring:message code="title.block.occupancy.usage"/>
-    </div>
+	<div class="panel-title">
+		<spring:message code="title.block.occupancy.usage" />
+	</div>
 </div>
 <div class="panel-body">
-    <c:if test="${not empty bpaApplication.buildingSubUsages}">
-        <table class="table table-bordered multiheadertbl"
-               id="planScrutinyDetails">
-            <thead>
-            <tr>
-                <th class="text-center" width="9%"><spring:message code="lbl.block.no"/></th>
-                <th><spring:message code="lbl.sub.occupancy"/></th>
-                <th><spring:message code="lbl.usage"/></th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach items="${bpaApplication.buildingSubUsages}" var="subUsage" varStatus="counter">
-                <c:forEach items="${subUsage.subUsageDetails}" var="subUsageDtl" varStatus="counter">
-                    <tr>
-                        <td class="view-content text-center" style="font-size: 97%;"><c:out
-                                value="${subUsage.blockNumber}" default="N/A"/></td>
-                        <td class="view-content" style="font-size: 97%;"><c:out
-                                value="${subUsageDtl.mainUsage.description}"
-                                default="N/A"/></td>
-                         <td class="view-content" style="font-size: 97%;">
-                         <c:forEach items="${subUsageDtl.subUsages}" var="usage">
-                         <c:out value="${usage.name}" default="N/A"/>,
-                         </c:forEach>
-                         </td> 
-                    </tr>
-                </c:forEach>
-            </c:forEach>
-            </tbody>
-        </table>
-    </c:if>
+	<c:if test="${not empty bpaApplication.buildingSubUsages}">
+		<table class="table table-bordered multiheadertbl"
+			id="planScrutinyDetails">
+			<thead>
+				<tr>
+					<th class="text-center" width="9%"><spring:message
+							code="lbl.block.no" /></th>
+					<th><spring:message code="lbl.sub.occupancy" /></th>
+					<th><spring:message code="lbl.usage" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach items="${bpaApplication.buildingSubUsages}"
+					var="subUsage" varStatus="counter">
+					<c:forEach items="${subUsage.subUsageDetails}" var="subUsageDtl"
+						varStatus="counter">
+						<tr>
+							<td class="view-content text-center" style="font-size: 97%;"><c:out
+									value="${subUsage.blockNumber}" default="N/A" /></td>
+							<td class="view-content" style="font-size: 97%;"><c:out
+									value="${subUsageDtl.mainUsage.description}" default="N/A" /></td>
+							<td class="view-content" style="font-size: 97%;"><c:forEach
+									items="${subUsageDtl.subUsages}" var="usage"
+									varStatus="status">
+									<c:out value="${usage.name}" default="N/A" />
+                         		<c:if test="${!status.last}">,</c:if>
+								</c:forEach></td>
+						</tr>
+					</c:forEach>
+				</c:forEach>
+			</tbody>
+		</table>
+	</c:if>
 </div>
