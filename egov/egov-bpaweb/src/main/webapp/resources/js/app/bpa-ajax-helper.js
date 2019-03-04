@@ -742,6 +742,7 @@ $(document).ready(
 	                $('#applicationNumber').val(response.applicationNumber);
 	                $('#planPermissionNumber').val(response.planPermissionNumber);
 	                $('#zone').val(response.zone);
+	                $('#electionWard').val(response.electionWard);
 	                $('#revenueWard').val(response.revenueWard);
 	                $('#resurveyNumber').val(response.reSurveyNumber);
 	                $('#village').val(response.village);
