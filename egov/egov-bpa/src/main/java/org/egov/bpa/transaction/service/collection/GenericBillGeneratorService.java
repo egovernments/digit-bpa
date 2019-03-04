@@ -87,7 +87,10 @@ public class GenericBillGeneratorService {
         model.addAttribute("collectxml", s);
         model.addAttribute("citizenrole", getCitizenUserRole());
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        String enableOrDisableStakHolderPayOnline = bpaUtils.getAppconfigValueByKeyName("BUILDING_LICENSEE_REG_FEE_REQUIRED");
         model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+        model.addAttribute("stakHolderOnlinePaymentEnable", (enableOrDisableStakHolderPayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+
         return "collecttax-redirection";
     }
 

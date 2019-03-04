@@ -62,7 +62,31 @@
 		var collectXML = '${collectxml}';
 		var citizenRole = '${citizenrole}';
 		var onlinePaymentEnable = '${onlinePaymentEnable}';
+		var stakeHolderOnlinePaymentEnable = '${stakHolderOnlinePaymentEnable}';
 		if (citizenRole == 'true' && onlinePaymentEnable == 'true') {
+			jQuery('<form>.').attr({
+				method : 'post',
+				action : '/collection/citizen/onlineReceipt-newform.action',
+				target : '_self'
+			}).append(jQuery('<input>').attr({
+				type : 'hidden',
+				id : 'collectXML',
+				name : 'collectXML',
+				value : collectXML
+			})).appendTo(document.body).submit();
+		} else {
+			jQuery('<form>.').attr({
+				action : '/collection/receipts/receipt-newform.action',
+				target : '_self'
+			}).append(jQuery('<input>').attr({
+				type : 'hidden',
+				id : 'collectXML',
+				name : 'collectXML',
+				value : collectXML
+			})).appendTo(document.body).submit();
+		}
+
+		if (citizenRole == 'true' && stakeHolderOnlinePaymentEnable == 'true') {
 			jQuery('<form>.').attr({
 				method : 'post',
 				action : '/collection/citizen/onlineReceipt-newform.action',
