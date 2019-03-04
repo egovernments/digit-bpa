@@ -350,6 +350,9 @@
 		<input type="hidden" id="intiateRejectionAppln" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
 		<input type="hidden" id="forwardAppln" value="<spring:message code='msg.confirm.forward.application' />" />
 		<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
+		<input type="hidden" id="validateConditionOrReason" value="<spring:message code='msg.validate.condition.cannot.empty' />" />
+				
+
 </div>
 
 <link rel="stylesheet" href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">

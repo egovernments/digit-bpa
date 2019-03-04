@@ -80,7 +80,7 @@ $(document).ready(function () {
         $('#'+tableId+' tbody tr').each(function(index){
         	var additionalPermitCondition  = $(this).find('*[name$="additionalPermitCondition"]').val();
     	    if(!additionalPermitCondition) { 
-    	    	bootbox.alert($('#valuesCannotEmpty').val());
+    	    	bootbox.alert($('#validateConditionOrReason').val());
     	    	isValid=false;
     	    	return false;
     	    } 
@@ -239,4 +239,5 @@ function validateDocScrutinyForm(validator) {
         validator.focusInvalid();
         return false;
     }
+    
 }
