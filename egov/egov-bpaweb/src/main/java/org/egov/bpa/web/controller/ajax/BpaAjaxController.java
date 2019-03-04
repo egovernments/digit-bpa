@@ -522,12 +522,10 @@ public class BpaAjaxController {
 			validBoundaryTypeJsonArray = validBoundaryJson.getJSONArray(heirarchy);
 			for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {
 				boundaryInfoJson = new JSONObject();
-				//boundaryInfoJson.put("hierarchy", heirarchy);
 				boundaryTypeInJson = validBoundaryTypeJsonArray.getJSONObject(i);
 				boundaryArray = new JSONArray();
 				boundaryType = boundaryTypeService
 						.getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeInJson.getString("boundary"), heirarchy);
-				//boundaryInfoJson.put("displayName", boundaryTypeInJson.getString("displayName"));
 				for (final Boundary boundary : boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getId())) {
 					boundaryJson = new JSONObject();
 					boundaryJson.put("id", boundary.getId());

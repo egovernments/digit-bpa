@@ -238,7 +238,7 @@ function crossBoundaryNew(selectedBndryId, fromHeirarchy, toHeirarchy) {
 			var toHeirarchyArray = toHeirarchy.split(',');
 			for (var i = 0; i < toHeirarchyArray.length; i++) {
 				$("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, "")).empty()
-				.append('<option value="0">select</option></select>');
+				.append('<option value="">select</option></select>');
 				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[1]], function(index, value) {
 					$($("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
 				});
@@ -268,7 +268,7 @@ function crossBoundaryModify(selectedBoundary, fromHeirarchy, toHeirarchy) {
 			var toHeirarchyArray = toHeirarchy.split(',');
 			for (var i = 0; i < toHeirarchyArray.length; i++) {
 				$("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, "")).empty()
-				.append('<option value="0">select</option></select>');
+				.append('<option value="">select</option></select>');
 				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[1]], function(index, value) {
 					$($("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
 				});
