@@ -46,28 +46,25 @@
  */
 package org.egov.edcr.autonumber.impl;
 
-import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
-import org.egov.edcr.entity.EdcrApplication;
-import org.egov.edcr.utility.DcrConstants;
-import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
-import org.egov.infra.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import java.time.LocalDateTime;
+
+import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
+import org.egov.edcr.entity.EdcrApplication;
+import org.egov.infra.utils.DateUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DcrApplicationNumberGeneratorImpl implements DcrApplicationNumberGenerator {
 
-    @Autowired
-    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
-
     @Override
     public String generateEdcrApplicationNumber(final EdcrApplication edcrApplication) {
-        final String sequenceName = DcrConstants.SEQ_ECDR_APPLICATIONNO;
-        return String.format(
-                "%s%06d", new StringBuilder().append("DCR")
-                        .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear()),
-                genericSequenceNumberGenerator.getNextSequence(sequenceName));
+		  return String.format( "%s", new StringBuilder().append("DCR")
+				  .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear())
+		  .append(upperCase(randomAlphanumeric(5))));
+		 
+		 
     }
 }

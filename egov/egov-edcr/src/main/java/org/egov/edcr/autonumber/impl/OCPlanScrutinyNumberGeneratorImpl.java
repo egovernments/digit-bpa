@@ -46,26 +46,22 @@
  */
 package org.egov.edcr.autonumber.impl;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.upperCase;
+
 import java.time.LocalDateTime;
 
 import org.egov.edcr.autonumber.OCPlanScrutinyNumberGenerator;
-import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OCPlanScrutinyNumberGeneratorImpl implements OCPlanScrutinyNumberGenerator {
 
-    @Autowired
-    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
-
     @Override
     public String generateEdcrApplicationNumber() {
-        final String sequenceName = "SEQ_OC_PLAN_SCRUTINYNO";
-        return String.format(
-                "%s%06d", new StringBuilder().append("OCDCR")
-                        .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear()),
-                genericSequenceNumberGenerator.getNextSequence(sequenceName));
+    	return String.format( "%s", new StringBuilder().append("OCDCR")
+				  .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear())
+		  .append(upperCase(randomAlphanumeric(5))));
     }
 }
