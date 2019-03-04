@@ -129,17 +129,13 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
 		ReportOutput reportOutput = new ReportOutput();
 		InspectionNotice notice;
 		if (inspection != null) {
-			notice = inspectionNoticeService.findByRefNumberAndInspectionNumber(
-					inspection.getApplication().getApplicationNumber(), inspection.getInspectionNumber());
-			if (notice != null) {
-				final FileStoreMapper fmp = notice.getNoticeFileStore();
-				Path path = fileStoreService.fetchAsPath(fmp.getFileStoreId(), APPLICATION_MODULE_TYPE);
-				try {
-					reportOutput.setReportOutputData(Files.readAllBytes(path));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else {
+            /*
+             * notice = inspectionNoticeService.findByRefNumberAndInspectionNumber(
+             * inspection.getApplication().getApplicationNumber(), inspection.getInspectionNumber()); if (notice != null) { final
+             * FileStoreMapper fmp = notice.getNoticeFileStore(); Path path = fileStoreService.fetchAsPath(fmp.getFileStoreId(),
+             * APPLICATION_MODULE_TYPE); try { reportOutput.setReportOutputData(Files.readAllBytes(path)); } catch (IOException e)
+             * { e.printStackTrace(); } } else {
+             */
 				InputStream reportOutputStream = buildReportParameters(inspection);
 
 				final String fileName = inspection.getApplication().getApplicationNumber() + "_"
@@ -161,7 +157,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
+			//}
 		}
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
@@ -372,7 +368,6 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
 			frb.addColumn(builtUpArea);
 			frb.addColumn(floorArea);
 			frb.addColumn(carpetArea);
-
 			frb.setMargins(0, 0, 0, 0);
 			frb.setUseFullPageWidth(true);
 			frb.setTitle(title);

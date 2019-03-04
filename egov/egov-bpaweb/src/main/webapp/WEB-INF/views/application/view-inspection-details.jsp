@@ -52,9 +52,9 @@
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.slno" /></th>
-				<th><spring:message code="lbl.inspn.no"/></th>
-				<th><spring:message code="lbl.inspn.date"/></th>
-				<th><spring:message code="lbl.action"/></th>
+				<th><spring:message code="lbl.inspn.no" /></th>
+				<th><spring:message code="lbl.inspn.date" /></th>
+				<th><spring:message code="lbl.action" /></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -63,23 +63,33 @@
 					<c:forEach items="${inspectionList}" var="inspn" varStatus="status">
 						<tr id="lprow">
 							<td align="center" class="view-content" style="font-size: 90%;">${status.index+1}</td>
-							<td align="center" class="view-content" style="font-size: 90%;"> <c:out value="${inspn.inspectionNumber}" /></td>
 							<td align="center" class="view-content" style="font-size: 90%;">
-								<fmt:formatDate value="${inspn.inspectionDate}" pattern="dd/MM/yyyy" var="inspectionDate"/>
-								<c:out value="${inspectionDate}" /></td>
-							<td align="center"  style="font-size: 90%;">
-								<a class="view-content" style="cursor: pointer; font-size: 15px;" onclick="window.open('/bpa/application/showinspectiondetails/${inspn.id}','view','width=600, height=400,scrollbars=yes')">
-									<i class="fa fa-eye" aria-hidden="true"> <spring:message code="lbl.view"/></i>
-								</a>
-								<a href="/bpa/application/inspectionreport?pathVar=${inspn.id}">
-									<i class="fa fa-print" aria-hidden="true"></i> <spring:message code="lbl.print"/>
-								</a>
+								<c:out value="${inspn.inspectionNumber}" />
 							</td>
+							<td align="center" class="view-content" style="font-size: 90%;">
+								<fmt:formatDate value="${inspn.inspectionDate}"
+									pattern="dd/MM/yyyy" var="inspectionDate" /> <c:out
+									value="${inspectionDate}" />
+							</td>
+							<td align="center" style="font-size: 90%;"><a
+								href="/bpa/application/showinspectiondetails/${inspn.id}"
+								target="popup"
+								onclick="/bpa/application/showinspectiondetails/${inspn.id}','popup','width=600,height=400'); return false;">
+									<i class="fa fa-eye" aria-hidden="true"><spring:message
+											code='lbl.view' /></i>
+							</a> <a href="/bpa/application/inspectionreport?pathVar=${inspn.id}"
+								target="popup"
+								onclick="/bpa/application/inspectionreport?pathVar=${inspn.id}','popup','width=600,height=400'); return false;">
+									<i class="fa fa-print" aria-hidden="true"></i> <spring:message
+										code="lbl.print" />
+							</a></td>
 						</tr>
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
-					<div class="col-md-12 col-xs-6  panel-title"><spring:message code="lbl.no.inspection.details.found" /></div>
+					<div class="col-md-12 col-xs-6  panel-title">
+						<spring:message code="lbl.no.inspection.details.found" />
+					</div>
 				</c:otherwise>
 			</c:choose>
 		</tbody>
