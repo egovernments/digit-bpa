@@ -517,7 +517,9 @@ public class BpaAjaxController {
 		JSONObject boundaryConfigJson = new JSONObject(boundaryConfiguration.getValue());
 		JSONObject validBoundaryJson = (JSONObject) boundaryConfigJson.get("validBoundary");
 		JSONObject crossBoundaryJson = (JSONObject) boundaryConfigJson.get("crossBoundary");
-		boundaryOutputJson.put("crossBoundary", crossBoundaryJson);
+		if (crossBoundaryJson.length() != 0) {
+			boundaryOutputJson.put("crossBoundary", crossBoundaryJson);
+		}
 		for (final String heirarchy : validBoundaryJson.keySet()) {
 			validBoundaryTypeJsonArray = validBoundaryJson.getJSONArray(heirarchy);
 			for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {

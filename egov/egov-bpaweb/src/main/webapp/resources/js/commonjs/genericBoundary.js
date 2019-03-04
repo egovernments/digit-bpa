@@ -85,8 +85,8 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 	var orderArray = [];
 	var tempArray = [];
 	var orderMap = new Map(); 
-	var fromHierarchy;
-	var toHierarchy;
+	var fromHierarchy='';
+	var toHierarchy='';
 	var displayName;
 	var hierarchy;
 	var hierarchyNumber;
@@ -146,12 +146,13 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 	var orderArray = [];
 	var tempArray = [];
 	var orderMap = new Map(); 
-	var fromHierarchy;
-	var toHierarchy;
+	var fromHierarchy='';
+	var toHierarchy='';
 	var displayName;
 	var hierarchy;
 	var hierarchyNumber;
 	var boundaryType;
+	var revenueBoundaryId;
 	var adminBoundaryId;
 	var locationBoundaryId;
 	var tempId = [];
@@ -201,7 +202,7 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 				}
 				if(hierarchy=='REVENUE'){
 					document.getElementById(domOptionId).name="revenueBoundary";
-					document.getElementById(domOptionId).value=selectedRevenueBoundary;
+					revenueBoundaryId=domOptionId;
 				}
 				if(hierarchy=='LOCATION'){
 					document.getElementById(domOptionId).name="locationBoundary";
@@ -210,9 +211,17 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 				}
 			}
     	}
-		crossBoundaryModify(selectedRevenueBoundary, fromHierarchy, toHierarchy);
-		document.getElementById(adminBoundaryId).value=selectedAdminBoundary;
-		document.getElementById(locationBoundaryId).value=selectedLocationBoundary;
+		if(crosslinkConfig!=null && crosslinkConfig!=''){
+			crossBoundaryModify(selectedRevenueBoundary, fromHierarchy, toHierarchy);
+		}
+		
+		if(revenueBoundaryId!=null && revenueBoundaryId!='')
+			document.getElementById(revenueBoundaryId).value=selectedRevenueBoundary;
+		if(adminBoundaryId!=null && adminBoundaryId!='')
+			document.getElementById(adminBoundaryId).value=selectedAdminBoundary;
+		if(locationBoundaryId!=null && locationBoundaryId!='')
+			document.getElementById(locationBoundaryId).value=selectedLocationBoundary;
+		
 		while(parentId==''){
 			parentId = findParentById(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary);
 			var domId = findDomIdByParent(genericBoundaryConfigData['boundaryData'], parentId);
