@@ -53,11 +53,13 @@ import java.util.Optional;
 
 import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeDetail;
+import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.service.BpaFeeCommonService;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
-import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
 import org.egov.bpa.transaction.service.oc.OccupancyFeeService;
 import org.egov.bpa.utils.BpaConstants;
@@ -86,6 +88,9 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
 
     @Autowired
     protected BpaFeeService bpaFeeService;
+    
+    @Autowired
+    protected BpaFeeCommonService bpaFeeCommonService;
 
     // .setScale(0, BigDecimal.ROUND_HALF_UP)
 
@@ -136,8 +141,7 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
     }
 
     public void calculateFeeByServiceType(OccupancyCertificate oc, BigDecimal deviatedArea, OccupancyFee ocFee) {
-        BigDecimal feeAmount;
-        for (BpaFee bpaFee : bpaFeeService.getActiveOCSanctionFeeForListOfServices(oc.getParent().getServiceType().getId())) {
+        for (BpaFeeMapping bpaFee : bpaFeeCommonService.getOCFeeForListOfServices(oc.getParent().getServiceType().getId())) {
             List<Occupancy> selectdOccupancies = oc.getParent().getPermitOccupancies();
             String occupancy;
             if (selectdOccupancies.size() == 1
@@ -149,9 +153,10 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
                 occupancy = OTHERS;
             // set occupancy type and get fee
             // and calculate amount.
-            feeAmount = getBpaFeeObjByOccupancyType(bpaFee.getCode(), occupancy,
-                    bpaFee);
-            BigDecimal amount = deviatedArea.multiply(feeAmount).multiply(BigDecimal.valueOf(3));
+			/*
+			 * feeAmount = getBpaFeeObjByOccupancyType(bpaFee.getCode(), occupancy, bpaFee);
+			 */
+            BigDecimal amount = deviatedArea.multiply(BigDecimal.valueOf(bpaFee.getAmount())).multiply(BigDecimal.valueOf(3));
             ocFee.getApplicationFee()
                     .addApplicationFeeDetail(buildApplicationFeeDetail(bpaFee, ocFee.getApplicationFee(), amount));
         }
@@ -172,17 +177,18 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
                     break;
                 } else {
                     rate = BigDecimal.valueOf(feeDetail.getAmount());
+                    
                 }
             }
         }
         return rate;
     }
 
-    private ApplicationFeeDetail buildApplicationFeeDetail(final BpaFee bpaFee, final ApplicationFee applicationFee,
+    private ApplicationFeeDetail buildApplicationFeeDetail(final BpaFeeMapping bpaFee, final ApplicationFee applicationFee,
             BigDecimal amount) {
         ApplicationFeeDetail feeDetail = new ApplicationFeeDetail();
         feeDetail.setAmount(amount.setScale(0, BigDecimal.ROUND_HALF_UP));
-        feeDetail.setBpaFee(bpaFee);
+        feeDetail.setBpaFeeMapping(bpaFee);
         feeDetail.setApplicationFee(applicationFee);
         return feeDetail;
     }

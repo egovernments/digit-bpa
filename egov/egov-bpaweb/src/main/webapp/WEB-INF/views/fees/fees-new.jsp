@@ -144,13 +144,24 @@
 									code="lbl.fees.category" /><span class="mandatory"></span>
 							</label>
 							<div class="col-sm-3 add-margin">
-								<form:input type="text" id="category" readonly="true"
+								<%-- <form:input type="text" id="category" readonly="true"
 									value="${category}" path="bpaFeeCommon.category"
 									cssClass="form-control category" />
 								<form:errors path="bpaFeeCommon.category"
 									cssClass="add-margin error-msg" />
-								<%-- 						   <format:input type="hidden"	value="${category}" id="category" path="bpaFeeCommon.category" />
+														   <format:input type="hidden"	value="${category}" id="category" path="bpaFeeCommon.category" />
  --%>
+							
+							<form:select path="bpaFeeCommon.category"
+														id="category"
+														cssClass="form-control category" required="required">
+														<form:option value="">
+															<spring:message code="lbl.select" />
+														</form:option>
+														<form:options items="${categories}" itemValue="idType"
+															itemLabel="code" />
+													</form:select> <form:errors path="bpaFeeCommon.category"
+														cssClass="add-margin error-msg" />
 							</div>
 
 						</div>

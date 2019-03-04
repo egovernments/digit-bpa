@@ -56,8 +56,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.egov.bpa.autonumber.BpaBillReferenceNumberGenerator;
-import org.egov.bpa.master.entity.BpaFeeDetail;
+import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.StakeHolder;
+import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.repository.StakeHolderRepository;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.utils.BpaConstants;
@@ -153,12 +154,12 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
                     moduleService.getModuleByName(moduleName), date, installmentType);
     }
 
-    public Criteria getBpaFeeCriteria(List<Long> amenityList, final String feeType) {
-        return bpaDemandService.createCriteriaforFeeAmount(amenityList, feeType);
+    public Criteria getBpaFeeCriteria(List<Long> amenityList, final String feeType, FeeSubType feeSubType) {
+        return bpaDemandService.createCriteriaforApplicationFeeAmount(amenityList, feeType, feeSubType);
     }
 
     public Criteria getRegistrationFeeCriteria(final String feeType) {
-        return bpaDemandService.createCriteriaforRegistrationFeeAmount(feeType);
+        return bpaDemandService.createCriteriaforRegistrationFee(feeType);
     }
 
     private EgDemandDetails createDemandDetails(final BigDecimal amount, final String demandReason,
@@ -195,10 +196,10 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
                 feeDetails.put(feeDetail.getBpafee().getCode(), BigDecimal.valueOf(feeDetail.getAmount()));
             }
         }*/
-        Criteria feeCrit = getRegistrationFeeCriteria( BpaConstants.BPAREGISTRATIONFEETYPE );
-        List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
-        for (final BpaFeeDetail feeDetail : bpaFeeDetails) {
-            feeDetails.put(feeDetail.getBpafee().getCode(), BigDecimal.valueOf(feeDetail.getAmount()));
+        Criteria feeCrit = getRegistrationFeeCriteria( BpaConstants.BPA_REGISTRATION_FEE );
+        List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+        for (final BpaFeeMapping feeMap : bpaFeeMap) {
+            feeDetails.put(feeMap.getBpaFeeCommon().getCode(), BigDecimal.valueOf(feeMap.getAmount()));
         }
         
         /*List<BpaFee> bpaRegistrationFees = bpaFeeService
@@ -207,13 +208,16 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
         feeDetails.put(bpaRegistrationFees.get(0).getCode(), bpaRegistrationFees.get(0).getFeeAmount());*/
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
-            for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())
+            for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet()) {
+            	registrationfeeAmount=demandReason.getValue().setScale(0, BigDecimal.ROUND_HALF_UP);
                 dmdDetailSet.add(createDemandDetails(registrationfeeAmount, demandReason.getKey(), installment));
+            }
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
-            egDemand.setBaseDemand(registrationfeeAmount);
+            egDemand.setBaseDemand(registrationfeeAmount);     
+
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());
         }

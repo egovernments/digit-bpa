@@ -58,6 +58,10 @@ public class ServiceTypeService {
         return serviceTypeRepository.findAll();
     }
     
+    public ServiceType findById(Long id) {
+        return serviceTypeRepository.findOne(id);
+    }
+    
     public List<ServiceType> getAllActiveMainServiceTypes() {
         return serviceTypeRepository.getAllActiveMainServiceTypes();
     }

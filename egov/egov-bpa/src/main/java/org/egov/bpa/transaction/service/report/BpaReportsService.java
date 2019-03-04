@@ -332,9 +332,9 @@ public class BpaReportsService {
                 BigDecimal otherFee = BigDecimal.ZERO;
                 for (ApplicationFeeDetail appFeeDtl : application.getPermitFee().get(0).getApplicationFee()
                         .getApplicationFeeDetail()) {
-                    if (appFeeDtl.getBpaFee().getDescription().equalsIgnoreCase(BPA_ADDITIONAL_FEE))
+                    if (appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getDescription().equalsIgnoreCase(BPA_ADDITIONAL_FEE))
                         additionalFee = appFeeDtl.getAmount();
-                    else if (appFeeDtl.getBpaFee().getDescription().equalsIgnoreCase(BPA_OTHER_FEE))
+                    else if (appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getDescription().equalsIgnoreCase(BPA_OTHER_FEE))
                         otherFee = appFeeDtl.getAmount();
                     else {
                         permitFee = permitFee.add(appFeeDtl.getAmount());

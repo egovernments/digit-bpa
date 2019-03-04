@@ -142,13 +142,13 @@
 								varStatus="status">
 								<div class="form-group">
 									<div class="col-sm-5 add-margin check-text text-right">
-										<c:out value="${docs.bpaFee.description}" />
+										<c:out value="${docs.bpaFeeMapping.bpaFeeCommon.description}" />
 										<form:hidden id="applicationFeeDetail${status.index}id"
 											path="applicationFee.applicationFeeDetail[${status.index}].id"
 											value="${docs.id}" />
-										<form:hidden id="applicationFeeDetail${status.index}bpaFee"
-											path="applicationFee.applicationFeeDetail[${status.index}].bpaFee"
-											value="${docs.bpaFee.id}" />
+										<form:hidden id="applicationFeeDetail${status.index}bpaFeeMapping"
+											path="applicationFee.applicationFeeDetail[${status.index}].bpaFeeMapping"
+											value="${docs.bpaFeeMapping.id}" />
 										<form:hidden
 											id="applicationFeeDetail${status.index}applicationFee"
 											path="applicationFee.applicationFeeDetail[${status.index}].applicationFee"
@@ -158,7 +158,7 @@
 									<div class="col-sm-2 add-margin text-right">
 										<c:choose>
 											<c:when
-												test="${docs.bpaFee.description eq 'Other Fees'}">
+												test="${docs.bpaFeeMapping.bpaFeeCommon.description eq 'Other Fees'}">
 												<input type="hidden" id="currentPermitFee" value="${docs.amount}">
 												<form:input class="form-control patternvalidation text-right otherFees"
 													data-pattern="number" maxlength="10"

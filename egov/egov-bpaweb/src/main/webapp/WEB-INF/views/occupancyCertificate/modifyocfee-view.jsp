@@ -148,7 +148,7 @@
                                            items="${occupancyFee.applicationFee.applicationFeeDetail}"
                                            varStatus="status">
                                     <tr>
-                                        <td class="text-left view-content"><c:out value="${docs.bpaFee.description}"/></td>
+                                        <td class="text-left view-content"><c:out value="${docs.bpaFeeMapping.bpaFeeCommon.description}"/></td>
                                         <td class="text-right view-content"><c:set var="totalAmount"
                                                                                    value="${totalAmount + docs.amount}"/>
                                             <fmt:formatNumber type="number" maxFractionDigits="2" value="${docs.amount}"/>

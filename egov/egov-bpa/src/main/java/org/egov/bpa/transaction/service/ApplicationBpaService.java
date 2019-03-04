@@ -48,8 +48,6 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
-import static org.egov.bpa.utils.BpaConstants.BPAFEETYPE;
-import static org.egov.bpa.utils.BpaConstants.BPAREGISTRATIONFEETYPE;
 import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
@@ -63,6 +61,10 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
+import static org.egov.bpa.utils.BpaConstants.ROOF_CONVERSION;
+import static org.egov.bpa.utils.BpaConstants.SHUTTER_DOOR_CONVERSION;
+import static org.egov.bpa.utils.BpaConstants.WELL;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayInputStream;
@@ -87,12 +89,14 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
-import org.egov.bpa.master.entity.BpaFeeDetail;
+import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.service.BpaSchemeLandUsageService;
 import org.egov.bpa.master.service.CheckListDetailService;
 import org.egov.bpa.master.service.PostalAddressService;
 import org.egov.bpa.master.service.RegistrarOfficeVillageService;
+import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.ApplicationDocument;
@@ -105,6 +109,7 @@ import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
 import org.egov.bpa.transaction.entity.DCRDocument;
 import org.egov.bpa.transaction.entity.PermitFee;
+import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.StoreDCRFiles;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
@@ -157,7 +162,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class ApplicationBpaService extends GenericBillGeneratorService {
 
-    private static final Logger LOG = getLogger(BpaUtils.class);
+    private static final String APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION = "Application Fees for Shutter or Door conversion";
+	private static final String APPLICATION_FEES_FOR_ROOF_CONVERSION = "Application Fees for Roof conversion";
+	private static final String APPLICATION_FEES_FOR_COMPOUND_WALL = "Application Fees for compound wall";
+	private static final String APPLICATION_FEES_FOR_AMENITIES = "Application Fees for Amenities";
+	private static final String APPLICATION_FEES_FOR_WELL_CONSTURCTION = "Application Fees for Well consturction";
+	private static final Logger LOG = getLogger(BpaUtils.class);
     private static final String APPLICATION_STATUS = "application.status";
     private static final String NOC_UPDATION_IN_PROGRESS = "NOC updation in progress";
     public static final String UNCHECKED = "unchecked";
@@ -234,6 +244,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private MessageSource bpaMessageSource;
     @Autowired
     private PermitFeeRepository permitFeeRepository;
+    @Autowired
+    private ServiceTypeService serviceTypeService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -546,9 +558,25 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     public BigDecimal setAdmissionFeeAmountForRegistrationWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
         BigDecimal admissionfeeAmount;
-        if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired())
+        String feeType;
+        if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired()) {
+        	String serviceTyp =serviceTypeService.findById(serviceType).getDescription();
+    	if(serviceTyp.equals(WELL))
+    		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+    	else if(serviceTyp.equals(BpaConstants.AMENITIES))
+    		feeType=APPLICATION_FEES_FOR_AMENITIES;
+    	else if(serviceTyp.equals(COMPOUND_WALL))
+    		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
+    	else if(serviceTyp.equals(ROOF_CONVERSION))
+    		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
+    	else if(serviceTyp.equals(SHUTTER_DOOR_CONVERSION))
+    		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+    	else
+    		feeType=BpaConstants.BPA_APP_FEE;
+    	
             admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
-                    BPAFEETYPE);
+            		feeType,FeeSubType.APPLICATION_FEE);
+        }
         else
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;
@@ -558,14 +586,14 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         BigDecimal admissionfeeAmount;
         if (serviceType != null)
             admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
-                    BPAREGISTRATIONFEETYPE);
+            		BpaConstants.BPA_REGISTRATION_FEE, FeeSubType.APPLICATION_FEE);
         else
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;
     }
 
     private BigDecimal getTotalFeeAmountByPassingServiceTypeandArea(final Long serviceTypeId, List<ServiceType> amenityList,
-            final String feeType) {
+            final String feeType, final FeeSubType feeSubType) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         List<Long> serviceTypeList = new ArrayList<>();
         serviceTypeList.add(serviceTypeId);
@@ -573,11 +601,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             serviceTypeList.add(temp.getId());
         }
         if (serviceTypeId != null) {
-            final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeList, feeType);
+            final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeList, feeType, feeSubType);
             @SuppressWarnings(UNCHECKED)
-            final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
-            for (final BpaFeeDetail feeDetail : bpaFeeDetails)
-                totalAmount = totalAmount.add(BigDecimal.valueOf(feeDetail.getAmount()));
+            final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            for (final BpaFeeMapping feeMap : bpaFeeMap)
+                totalAmount = totalAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
         } else
             throw new ApplicationRuntimeException("Service Type Id is mandatory.");
 
@@ -586,15 +614,29 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     public BigDecimal getTotalFeeAmountByPassingServiceTypeAndAmenities(List<Long> serviceTypeIds) {
         BigDecimal totalAmount = BigDecimal.ZERO;
-        if (!serviceTypeIds.isEmpty()) {
-            final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, BPAFEETYPE);
-            @SuppressWarnings(UNCHECKED)
-            final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
-            for (final BpaFeeDetail feeDetail : bpaFeeDetails)
-                totalAmount = totalAmount.add(BigDecimal.valueOf(feeDetail.getAmount()));
-        } else
-            throw new ApplicationRuntimeException("Service Type Id is mandatory.");
-
+        String feeType;
+        for (Long serviceTypeId  : serviceTypeIds) {
+        	String serviceType =serviceTypeService.findById(serviceTypeId).getDescription();
+        	if(serviceType.equals(WELL))
+        		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+        	else if(serviceType.equals(BpaConstants.AMENITIES))
+        		feeType=APPLICATION_FEES_FOR_AMENITIES;
+        	else if(serviceType.equals(COMPOUND_WALL))
+        		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
+        	else if(serviceType.equals(ROOF_CONVERSION))
+        		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
+        	else if(serviceType.equals(SHUTTER_DOOR_CONVERSION))
+        		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+        	else
+        		feeType=BpaConstants.BPA_APP_FEE;
+        	
+        	 final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, feeType, FeeSubType.APPLICATION_FEE);
+             @SuppressWarnings(UNCHECKED)
+             final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+             for (final BpaFeeMapping feeMap : bpaFeeMap)
+                 totalAmount = totalAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+        }
+        
         return totalAmount;
     }
 

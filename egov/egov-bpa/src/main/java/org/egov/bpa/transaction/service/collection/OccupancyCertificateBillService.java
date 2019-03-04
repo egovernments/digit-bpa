@@ -39,10 +39,28 @@
  */
 package org.egov.bpa.transaction.service.collection;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import org.egov.bpa.autonumber.BpaBillReferenceNumberGenerator;
 import org.egov.bpa.master.entity.BpaFee;
-import org.egov.bpa.master.entity.BpaFeeDetail;
+import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.entity.enums.FeeSubType;
+import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -72,22 +90,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 @Service
 @Transactional(readOnly = true)
 public class OccupancyCertificateBillService extends BillServiceInterface {
@@ -108,6 +110,8 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
     private ApplicationContext context;
     @Autowired
     protected BpaFeeService bpaFeeService;
+    @Autowired
+    private BpaFeeMappingService bpaFeeMappingService;
     @Autowired
     private BpaDemandService bpaDemandService;
     @Autowired
@@ -154,8 +158,8 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
                     moduleService.getModuleByName(moduleName), date, installmentType);
     }
 
-    public Criteria getBpaFeeCriteria(List<Long> amenityList, final String feeType) {
-        return bpaDemandService.createCriteriaforFeeAmount(amenityList, feeType);
+    public Criteria getBpaFeeCriteria(List<Long> amenityList, final String feeType, FeeSubType feeSubType) {
+        return bpaDemandService.createCriteriaforApplicationFeeAmount(amenityList, feeType, feeSubType);
     }
 
     private EgDemandDetails createDemandDetails(final BigDecimal amount, final String demandReason,
@@ -185,16 +189,16 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
             for (ServiceType serviceType : oc.getParent().getApplicationAmenity()) {
                 serviceTypeList.add(serviceType.getId());
             }
-            Criteria feeCrit = getBpaFeeCriteria(serviceTypeList, BpaConstants.BPAFEETYPE);
-            List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
-            for (final BpaFeeDetail feeDetail : bpaFeeDetails) {
-                feeDetails.put(feeDetail.getBpafee().getCode(), BigDecimal.valueOf(feeDetail.getAmount()));
+            Criteria feeCrit = getBpaFeeCriteria(serviceTypeList, BpaConstants.OC_FEE, FeeSubType.SANCTION_FEE);
+            List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            for (final BpaFeeMapping feeMap : bpaFeeMap) {
+                feeDetails.put(feeMap.getBpaFeeCommon().getCode(), BigDecimal.valueOf(feeMap.getAmount()));
             }
         }
-        List<BpaFee> bpaAdmissionFees = bpaFeeService
-                .getAllActiveSanctionFeesByServiceId(oc.getParent().getServiceType().getId(), BpaConstants.BPAFEETYPE);
+        List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
+        		.getOCFeeForListOfServices(oc.getParent().getServiceType().getId(), BpaConstants.BPA_APP_FEE);
 
-        feeDetails.put(bpaAdmissionFees.get(0).getCode(), oc.getParent().getAdmissionfeeAmount());
+        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), oc.getParent().getAdmissionfeeAmount());
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())

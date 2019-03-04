@@ -85,6 +85,11 @@ public class BpaConstants {
     public static final String NEW_CONSTRUCTION = "New Construction";
     public static final String TOWER_CONSTRUCTION = "Tower Construction";
     public static final String POLE_STRUCTURES = "Pole Structures";
+    public static final String WELL = "Well";
+    public static final String COMPOUND_WALL = "Compound Wall";
+    public static final String SHUTTER_DOOR_CONVERSION = "Shutter or Door Conversion/Erection under rule 100 or 101";
+    public static final String ROOF_CONVERSION = "Roof Conversion under rule 100 or 101";
+
     // user type constants
     public static final String ROLE_CITIZEN = "CITIZEN";
     public static final String USERNAME_ANONYMOUS = "anonymous";
@@ -227,9 +232,12 @@ public class BpaConstants {
     public static final String BPASTATUS_MODULETYPE_REGISTRATIONFEE = "APPLICATIONFEE";
     public static final String BPASTATUS_REGISTRATIONFEE_APPROVED = APPROVED;
     public static final String BPA_ADM_FEE = "Application Fee";
+    public static final String BPA_APP_FEE = "Application Fees";
     public static final String BPA_ADDITIONAL_FEE = "Additional Fees";
     public static final String BPA_OTHER_FEE = "Other Fees";
     public static final String BPA_PERMIT_FEE = "Permit Fees";
+    public static final String BPA_DEMOLITION_FEE = "Demolition Fees";
+    public static final String BPA_LAND_DEVELOPMENT_CHARGES = "Land Development Charges";
     public static final String BPA_WELL_FEE = "Charges for Well";
     public static final String BPA_COMPOUND_FEE = "Charges for Compound Wall";
     public static final String STATE_LOGO_PATH = "/egi/resources/global/images/kerala_govt_logo.png";
@@ -245,6 +253,10 @@ public class BpaConstants {
     public static final String BPA_DEFAULT_FUND_SRC_CODE = "BPA_DEFAULT_FUND_SRC_CODE";
     public static final String BPA_PERMIT_FEE_COLLECTED = "BPA Permit fees collected";
     public static final String PERMIT_APPLN_FEE_COLLECTION_REQUIRED = "PERMITAPPLNFEECOLLECTIONREQUIRED";
+    public static final String BPA_REGISTRATION_FEE = "Registration Fees";
+    public static final String OC_FEE = "Occupancy Certificate Fees";
+
+
     
     // designation constants
     public static final String DESIGNATION_AEE = "Assistant executive engineer";
@@ -254,19 +266,23 @@ public class BpaConstants {
     public static final String DESIGNATION_TOWN_SURVEYOR = "Town Surveyor";
     public static final String DESIGNATION_OVERSEER = "Town Planning Building Overseer";
     // occupancy type constants
-    /*
-     * public static final String THATCHED_TILED_HOUSE = "Thatched / Tiled House"; public static final String
-     * MERCANTILE_COMMERCIAL = "Mercantile / Commercial"; public static final String INDUSTRIAL = "Industrial"; public static
-     * final String RESIDENTIAL = "Residential"; public static final String MIXED_OCCUPANCY = "Mixed";
-     */
+    
+      public static final String BPA_THATCHED_TILED_HOUSE = "Thatched / Tiled House"; 
+      public static final String   BPA_MERCANTILE_COMMERCIAL = "Mercantile / Commercial"; 
+      public static final String BPA_INDUSTRIAL = "Industrial"; 
+      public static   final String BPA_RESIDENTIAL = "Residential"; 
+      public static final String BPA_MIXED_OCCUPANCY = "Mixed";
+     
 
     // Occupancy Constants
-    public static final String MIXED_OCCUPANCY = "15";
-    public static final String INDUSTRIAL = "G1";
-    public static final String MERCANTILE_COMMERCIAL = "F";
+	
+      public static final String MIXED_OCCUPANCY = "15";
+      public static final String INDUSTRIAL = "G1";
+      public static final String MERCANTILE_COMMERCIAL = "F";
 
-    public static final String THATCHED_TILED_HOUSE = "14";
-    public static final String RESIDENTIAL = "A";
+      public static final String THATCHED_TILED_HOUSE = "14";
+      public static final String RESIDENTIAL = "A";
+    
     public static final String RESIDENTIAL_A1 = "A1";
     public static final String SPECIAL_RESIDENTIAL = "A2";
     public static final String HOSTEL_EDUCATIONAL = "A3";
@@ -357,6 +373,10 @@ public class BpaConstants {
     public static final String AUTH_TO_SUBMIT_PLAN = "This application requires signed plan documents for document scrutiny";
     public static final String SHTR_DOOR_FEE = "Charges for Shutter or Door Conversion";
     public static final String ROOF_CNVRSN_FEE = "Charges for Roof Conversion";
+    public static final String TOWER_CONSTRUCTION_FEE = "Charges for Tower Construction";
+    public static final String POLE_CONSTRUCTION_FEE = "Charges for Pole Structures";
+    public static final String SANCTION_FEE = "Sanction Fee";
+
 
     // Occupancy certificate related
     public static final String CREATE_ADDITIONAL_RULE_CREATE_OC = "OCCUPANCYCERTIFICATE";
@@ -371,6 +391,9 @@ public class BpaConstants {
 
     public static final String BPA_MODULE_NAME = "BPA";
     public static final String GENERIC_BOUNDARY_CONFIGURATION_KEY="BPA_GENERIC_BOUNDARY_CONFIGURATION";
+    
+
+
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {

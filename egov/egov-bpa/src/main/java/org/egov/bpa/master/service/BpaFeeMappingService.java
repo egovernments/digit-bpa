@@ -44,9 +44,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.entity.enums.FeeApplicationType;
+import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.repository.BpaFeeMappingRepository;
+import org.egov.bpa.utils.BpaConstants;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +91,66 @@ public class BpaFeeMappingService {
 	@Transactional
 	public List<BpaFeeMapping> save(final List<BpaFeeMapping> feeMapList) {
 		return bpaFeeMappingRepository.save(feeMapList);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BpaFeeMapping> getSanctionFeeForListOfServices(Long serviceType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeObj")
+				.createAlias("bpaFeeObj.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.feeSubType", FeeSubType.SANCTION_FEE));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.applicationType", FeeApplicationType.PERMIT_APPLICATION));
+
+		return feeCrit.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BpaFeeMapping> getPermitFeeForListOfServices(Long serviceType, String feeType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeObj")
+				.createAlias("bpaFeeObj.bpaFeeCommon","bpaFeeCommon").createAlias("bpaFeeObj.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.feeSubType", FeeSubType.SANCTION_FEE));
+		feeCrit.add(Restrictions.ilike("bpaFeeCommon.name", feeType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.applicationType", FeeApplicationType.PERMIT_APPLICATION));
+
+		return feeCrit.list();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<BpaFeeMapping> getFeeForListOfServices(Long serviceType, String feeType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeObj")
+				.createAlias("bpaFeeObj.bpaFeeCommon","bpaFeeCommon").createAlias("bpaFeeObj.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.feeSubType", FeeSubType.APPLICATION_FEE));
+		feeCrit.add(Restrictions.ilike("bpaFeeCommon.name", feeType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.applicationType", FeeApplicationType.PERMIT_APPLICATION));
+
+		return feeCrit.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BpaFeeMapping> getOCFeeForListOfServices(Long serviceType, String feeType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeObj")
+				.createAlias("bpaFeeObj.bpaFeeCommon","bpaFeeCommon").createAlias("bpaFeeObj.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.feeSubType", FeeSubType.APPLICATION_FEE));
+		feeCrit.add(Restrictions.ilike("bpaFeeCommon.name", feeType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
+
+		return feeCrit.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BpaFeeMapping> getOCSanctionFeeForListOfServices(Long serviceType, String feeType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeObj")
+				.createAlias("bpaFeeObj.bpaFeeCommon","bpaFeeCommon").createAlias("bpaFeeObj.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.feeSubType", FeeSubType.SANCTION_FEE));
+		feeCrit.add(Restrictions.ilike("bpaFeeCommon.name", feeType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
+
+		return feeCrit.list();
 	}
 
 }

@@ -47,12 +47,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.master.entity.BpaFee;
+import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
-import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.repository.PermitFeeRepository;
 import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
@@ -61,8 +62,8 @@ import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
 import org.egov.bpa.transaction.service.PermitFeeService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
-import org.egov.bpa.transaction.service.oc.OccupancyFeeService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.bpa.transaction.service.oc.OccupancyFeeService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.demand.model.EgDemand;
@@ -101,6 +102,8 @@ public class UpdateOccupancyCertificateFeeController {
     private AppConfigValueService appConfigValuesService;
     @Autowired
     protected BpaFeeService bpaFeeService;
+    @Autowired
+    protected BpaFeeMappingService bpaFeeMappingService;
     @Autowired
     private BpaStatusService bpaStatusService;
     @Autowired
@@ -152,9 +155,9 @@ public class UpdateOccupancyCertificateFeeController {
             // check fee calculate first time or update ? Check inspection is captured for existing application ?
 
             // Get all sanction fee by service type
-            List<BpaFee> bpaSanctionFees = bpaFeeService
-                    .getAllActiveSanctionFeesByServiceId(ocFee.getOc()
-                    		.getParent().getServiceType().getId(),BpaConstants.OCFEETYPE_SANCTIONFEE);
+            List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService
+                    .getOCSanctionFeeForListOfServices(ocFee.getOc()
+                    		.getParent().getServiceType().getId(),BpaConstants.OC_FEE);
             String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
             model.addAttribute("sanctionFees", bpaSanctionFees);
             model.addAttribute("feeCalculationMode", feeCalculationMode);
@@ -180,10 +183,10 @@ public class UpdateOccupancyCertificateFeeController {
                                     BpaConstants.APPROVED));
                 	ocFee.getApplicationFee().setFeeDate(new Date());
 
-                    for (BpaFee bpaFee : bpaSanctionFees) {
+                    for (BpaFeeMapping bpaFee : bpaSanctionFees) {
                         ApplicationFeeDetail applicationDtl = new ApplicationFeeDetail();
                         applicationDtl.setApplicationFee(ocFee.getApplicationFee());
-                        applicationDtl.setBpaFee(bpaFee);
+                        applicationDtl.setBpaFeeMapping(bpaFee);
                         applicationDtl.setAmount(BigDecimal.ZERO);
                         ocFee.getApplicationFee().addApplicationFeeDetail(applicationDtl);
                     }

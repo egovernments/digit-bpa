@@ -55,6 +55,7 @@ import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.demand.dao.DemandGenericDao;
+import org.egov.demand.dao.EgReasonCategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -96,6 +97,9 @@ public class BpaFeeController {
 
 	@Autowired
 	private MessageSource messageSource;
+	
+	@Autowired
+	private EgReasonCategoryDao egReasonCategoryDAO;
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String createFees(final Model model) {
@@ -194,11 +198,11 @@ public class BpaFeeController {
 	}
 
 	public void loadForm(final Model model) {
-		model.addAttribute("category", demadGenericDao.getReasonCategoryByCode(CATEGORY_FEE).getCode());
 		model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveServiceTypes());
-		model.addAttribute("applicationTypes", Arrays.asList(FeeApplicationType.values()));
+		model.addAttribute("applicationTypes", bpaFeeCommonService.getFeeAppTypes());
 		model.addAttribute("calculationTypes", Arrays.asList(CalculationType.values()));
-		model.addAttribute("feeSubTypes", Arrays.asList(FeeSubType.values()));
+		model.addAttribute("feeSubTypes", bpaFeeCommonService.getFeeSubTypes());
+		model.addAttribute("categories", egReasonCategoryDAO.findAll());
 	}
 
 }

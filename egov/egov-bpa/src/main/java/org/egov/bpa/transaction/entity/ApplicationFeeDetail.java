@@ -43,6 +43,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.BpaFee;
+import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
@@ -64,9 +65,9 @@ public class ApplicationFeeDetail extends AbstractAuditable {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "bpaFee")
+    @JoinColumn(name = "bpaFeeMapping")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    private BpaFee bpaFee;
+    private BpaFeeMapping bpaFeeMapping;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicationFee")
@@ -85,14 +86,6 @@ public class ApplicationFeeDetail extends AbstractAuditable {
         this.id = id;
     }
 
-    public BpaFee getBpaFee() {
-        return bpaFee;
-    }
-
-    public void setBpaFee(final BpaFee bpaFee) {
-        this.bpaFee = bpaFee;
-    }
-
     public ApplicationFee getApplicationFee() {
         return applicationFee;
     }
@@ -108,5 +101,13 @@ public class ApplicationFeeDetail extends AbstractAuditable {
     public void setAmount(final BigDecimal amount) {
         this.amount = amount;
     }
+
+	public BpaFeeMapping getBpaFeeMapping() {
+		return bpaFeeMapping;
+	}
+
+	public void setBpaFeeMapping(BpaFeeMapping bpaFeeMapping) {
+		this.bpaFeeMapping = bpaFeeMapping;
+	}
 
 }

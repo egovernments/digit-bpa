@@ -40,7 +40,7 @@
 package org.egov.bpa.master.entity.enums;
 
 public enum CalculationType {
-	AUTO("Auto"), MANUAL("Manual"), OVERRIDE("Override");
+	AUTO("Auto"), MANUAL("Manual"), FIXED("Fixed"), OVERRIDE("Override");
     
     private final String fixedAmountVal;
 

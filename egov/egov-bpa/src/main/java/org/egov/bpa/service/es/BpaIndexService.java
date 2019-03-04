@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.bpa.entity.es.BpaIndex;
 import org.egov.bpa.master.entity.BpaFee;
+import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.repository.es.BpaIndexRepository;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -135,20 +136,20 @@ public class BpaIndexService {
 				!bpaApplication.getPermitFee().get(0).getApplicationFee().getApplicationFeeDetail().isEmpty()) {
 			for (ApplicationFeeDetail appFeeDetail : bpaApplication.getPermitFee().get(0).getApplicationFee()
 					.getApplicationFeeDetail()) {
-				BpaFee bpaFee = appFeeDetail.getBpaFee();
-				if (bpaFee.getDescription().equals(BPA_PERMIT_FEE)) {
+				BpaFeeMapping bpaFee = appFeeDetail.getBpaFeeMapping();
+				if (bpaFee.getBpaFeeCommon().getDescription().equals(BPA_PERMIT_FEE)) {
 					bpaIndex.setPermitFee(appFeeDetail.getAmount());
-				} else if (bpaFee.getDescription().equals(BPA_ADDITIONAL_FEE)) {
+				} else if (bpaFee.getBpaFeeCommon().getDescription().equals(BPA_ADDITIONAL_FEE)) {
 					bpaIndex.setAdditionalFee(appFeeDetail.getAmount());
-				} else if (bpaFee.getDescription().equals(BPA_WELL_FEE)) {
+				} else if (bpaFee.getBpaFeeCommon().getDescription().equals(BPA_WELL_FEE)) {
 					bpaIndex.setWellCharges(appFeeDetail.getAmount());
-				} else if (bpaFee.getDescription().equals(BPA_COMPOUND_FEE)) {
+				} else if (bpaFee.getBpaFeeCommon().getDescription().equals(BPA_COMPOUND_FEE)) {
 					bpaIndex.setCompoundWellCharges(appFeeDetail.getAmount());
-				} else if (bpaFee.getDescription().equals(SHTR_DOOR_FEE)) {
+				} else if (bpaFee.getBpaFeeCommon().getDescription().equals(SHTR_DOOR_FEE)) {
 					bpaIndex.setShutterOrDoorConversionCharges(appFeeDetail.getAmount());
-				} else if (bpaFee.getDescription().equals(ROOF_CNVRSN_FEE)) {
+				} else if (bpaFee.getBpaFeeCommon().getDescription().equals(ROOF_CNVRSN_FEE)) {
 					bpaIndex.setRoofConversionCharges(appFeeDetail.getAmount());
-				} else if (bpaFee.getDescription().equals(BPA_OTHER_FEE)) {
+				} else if (bpaFee.getBpaFeeCommon().getDescription().equals(BPA_OTHER_FEE)) {
 					bpaIndex.setOtherFee(appFeeDetail.getAmount());
 				}
 			}

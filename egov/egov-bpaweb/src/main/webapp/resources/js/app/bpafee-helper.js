@@ -41,7 +41,9 @@
 jQuery(document)
 		.ready(
 				function($) {
-
+					//$('#category').val(2);
+					
+					$('#category').prop('selectedIndex',2);
 					accountDetailGlcode_initialize();
 
 					var deletedId = [];

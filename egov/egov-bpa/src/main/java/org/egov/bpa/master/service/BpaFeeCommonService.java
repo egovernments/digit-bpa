@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.master.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,12 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeCommon;
 import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.entity.enums.ApplicationType;
+import org.egov.bpa.master.entity.enums.FeeApplicationType;
+import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.repository.BpaFeeCommonRepository;
 import org.egov.bpa.utils.BpaConstants;
 import org.hibernate.Criteria;
@@ -84,6 +89,20 @@ public class BpaFeeCommonService {
 		return bpaFeeCommonRepository.save(bpaFeeCommon);
 	}
 
+    public List<FeeSubType> getFeeSubTypes() {
+        List<FeeSubType> feeSubTypes = new ArrayList<>();
+        for (FeeSubType feeSubType : FeeSubType.values())
+        	feeSubTypes.add(feeSubType);
+        return feeSubTypes;
+    }
+    
+    public List<FeeApplicationType> getFeeAppTypes() {
+        List<FeeApplicationType> appTypes = new ArrayList<>();
+        for (FeeApplicationType appType : FeeApplicationType.values())
+        	appTypes.add(appType);
+        return appTypes;
+    }
+    
 	public void validateFeeList(final BpaFeeMapping bpaFeeMap, final BindingResult errors) {
 		List<BpaFeeCommon> bpaFeeCommon = findByName(bpaFeeMap.getBpaFeeCommon().getName());
 		if (!bpaFeeCommon.isEmpty())
@@ -105,6 +124,29 @@ public class BpaFeeCommonService {
 			}
 
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BpaFeeMapping> getOCSanctionFeeForListOfServices(Long serviceType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpafeeMap")
+				.createAlias("bpafeeMap.bpaFeeCommon", "bpaFeeObj")
+				.createAlias("bpafeeMap.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpafeeMap.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
+		feeCrit.add(Restrictions.eq("bpafeeMap.feeSubType",FeeSubType.SANCTION_FEE));
+		feeCrit.add(Restrictions.ilike("bpaFeeObj.name", BpaConstants.OC_FEE));
+		return feeCrit.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BpaFeeMapping> getOCFeeForListOfServices(Long serviceType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpafeeMap")
+				.createAlias("bpafeeMap.bpaFeeCommon", "bpaFeeObj")
+				.createAlias("bpafeeMap.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpafeeMap.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
+		feeCrit.add(Restrictions.eq("bpafeeMap.feeSubType",FeeSubType.SANCTION_FEE));
+		return feeCrit.list();
 	}
 
 	public List<BpaFeeCommon> findByName(final String name) {

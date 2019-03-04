@@ -56,10 +56,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.egov.bpa.autonumber.BpaBillReferenceNumberGenerator;
-import org.egov.bpa.master.entity.BpaFee;
-import org.egov.bpa.master.entity.BpaFeeDetail;
+import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.entity.enums.FeeSubType;
+import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.BpaFeeService;
+import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -88,10 +90,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
+import static org.egov.bpa.utils.BpaConstants.ROOF_CONVERSION;
+import static org.egov.bpa.utils.BpaConstants.SHUTTER_DOOR_CONVERSION;
+import static org.egov.bpa.utils.BpaConstants.WELL;
+
 @Service
 @Transactional(readOnly = true)
 public class ApplicationBpaBillService extends BillServiceInterface {
-
+    private static final String APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION = "Application Fees for Shutter or Door conversion";
+    private static final String APPLICATION_FEES_FOR_ROOF_CONVERSION = "Application Fees for Roof conversion";
+    private static final String APPLICATION_FEES_FOR_COMPOUND_WALL = "Application Fees for compound wall";
+    private static final String APPLICATION_FEES_FOR_AMENITIES = "Application Fees for Amenities";
+	private static final String APPLICATION_FEES_FOR_WELL_CONSTURCTION = "Application Fees for Well consturction";
     private static final String ISDEBIT = "N";
 
     @Autowired
@@ -115,10 +126,15 @@ public class ApplicationBpaBillService extends BillServiceInterface {
 
     @Autowired
     protected BpaFeeService bpaFeeService;
+    
+    @Autowired
+    private BpaFeeMappingService bpaFeeMappingService;
     @Autowired
     private BpaDemandService bpaDemandService;
     @Autowired
     private ApplicationBpaService applicationBpaService;
+    @Autowired
+    private ServiceTypeService serviceTypeService;
 
     @Transactional
     public String generateBill(final BpaApplication application) {
@@ -159,8 +175,8 @@ public class ApplicationBpaBillService extends BillServiceInterface {
                     moduleService.getModuleByName(moduleName), date, installmentType);
     }
 
-    public Criteria getBpaFeeCriteria(List<Long> amenityList, final String feeType) {
-        return bpaDemandService.createCriteriaforFeeAmount(amenityList, feeType);
+    public Criteria getBpaFeeCriteria(List<Long> amenityList, final String feeType, final FeeSubType feeSubType) {
+        return bpaDemandService.createCriteriaforApplicationFeeAmount(amenityList, feeType, feeSubType);
     }
 
     public EgDemand createDemandWhenFeeCollectionNotRequire() {
@@ -194,6 +210,7 @@ public class ApplicationBpaBillService extends BillServiceInterface {
 
         final Map<String, BigDecimal> feeDetails = new HashMap<>();
         EgDemand egDemand = null;
+        String feeType;
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
         // Not updating demand amount collected for new connection as per the
@@ -203,20 +220,36 @@ public class ApplicationBpaBillService extends BillServiceInterface {
             for (ServiceType serviceType : application.getApplicationAmenity()) {
                 serviceTypeList.add(serviceType.getId());
             }
-            Criteria feeCrit = getBpaFeeCriteria(serviceTypeList, BpaConstants.BPAFEETYPE);
-            List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
-            for (final BpaFeeDetail feeDetail : bpaFeeDetails) {
-                feeDetails.put(feeDetail.getBpafee().getCode(), BigDecimal.valueOf(feeDetail.getAmount()));
+            
+            for(Long serviceTypeId : serviceTypeList) {
+            	String serviceTyp =serviceTypeService.findById(serviceTypeId).getDescription();
+            	if(serviceTyp.equals(WELL))
+            		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+            	else if(serviceTyp.equals(BpaConstants.AMENITIES))
+            		feeType=APPLICATION_FEES_FOR_AMENITIES;
+            	else if(serviceTyp.equals(COMPOUND_WALL))
+            		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
+            	else if(serviceTyp.equals(ROOF_CONVERSION))
+            		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
+            	else if(serviceTyp.equals(SHUTTER_DOOR_CONVERSION))
+            		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+            	else
+            		feeType=BpaConstants.BPA_APP_FEE;
+            Criteria feeCrit = getBpaFeeCriteria(serviceTypeList, feeType, FeeSubType.APPLICATION_FEE);
+            List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            for (final BpaFeeMapping feeMap : bpaFeeMap) {
+                feeDetails.put(feeMap.getBpaFeeCommon().getCode()+"-"+feeMap.getServiceType().getDescription(), BigDecimal.valueOf(feeMap.getAmount()));
+            }
             }
         }
-        List<BpaFee> bpaAdmissionFees = bpaFeeService
-                .getAllActiveSanctionFeesByServiceId(application.getServiceType().getId(), BpaConstants.BPAFEETYPE);
+        List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
+                .getFeeForListOfServices(application.getServiceType().getId(), BpaConstants.BPA_APP_FEE);
 
-        feeDetails.put(bpaAdmissionFees.get(0).getCode(), application.getAdmissionfeeAmount());
+        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode()+"-"+bpaAdmissionFees.get(0).getServiceType().getDescription(), application.getAdmissionfeeAmount());
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())
-                dmdDetailSet.add(createDemandDetails(feeDetails.get(demandReason.getKey()), demandReason.getKey(), installment));
+                dmdDetailSet.add(createDemandDetails(feeDetails.get(demandReason.getKey()), demandReason.getKey().split("-")[0], installment));
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);

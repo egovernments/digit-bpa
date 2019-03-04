@@ -42,6 +42,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.commons.CChartOfAccounts;
+import org.egov.demand.model.EgReasonCategory;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
@@ -70,8 +71,9 @@ public class BpaFeeCommon extends AbstractAuditable {
     @NotNull
     @Length(min = 1, max = 256)
     private String description;
-  
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category")
+    private EgReasonCategory category;
 
 	public Long getId() {
 		return id;
@@ -113,11 +115,11 @@ public class BpaFeeCommon extends AbstractAuditable {
 		this.description = description;
 	}
 
-	public String getCategory() {
+	public EgReasonCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(EgReasonCategory category) {
 		this.category = category;
 	}
 

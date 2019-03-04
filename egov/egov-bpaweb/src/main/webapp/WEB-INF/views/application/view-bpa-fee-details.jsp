@@ -76,7 +76,7 @@
                        varStatus="counter">
                 <tr>
                     <td class="text-center view-content"><c:out value="${counter.index+1}"/></td>
-                    <td id="description" class="view-content"><c:out value="${feeType.bpaFee.description}"/></td>
+                    <td id="description" class="view-content"><c:out value="${feeType.bpaFeeMapping.bpaFeeCommon.description}"/></td>
                     <td class="text-right view-content"><c:set var="totalAmount"
                                                                value="${totalAmount + feeType.amount}"/>
                         <fmt:formatNumber type="number" maxFractionDigits="2" value="${feeType.amount}"/>

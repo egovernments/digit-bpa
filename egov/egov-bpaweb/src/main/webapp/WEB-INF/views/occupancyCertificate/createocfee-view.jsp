@@ -139,10 +139,10 @@
 								varStatus="status">
 								<div class="form-group">
 									<div class="col-sm-5 add-margin check-text text-right">
-										<c:out value="${docs.bpaFee.description}" />
-										<form:hidden id="applicationFeeDetail${status.index}bpaFee"
-											path="applicationFee.applicationFeeDetail[${status.index}].bpaFee"
-											value="${docs.bpaFee.id}" />
+										<c:out value="${docs.bpaFeeMapping.bpaFeeCommon.description}" />
+										<form:hidden id="applicationFeeDetail${status.index}bpaFeeMapping"
+											path="applicationFee.applicationFeeDetail[${status.index}].bpaFeeMapping"
+											value="${docs.bpaFeeMapping.id}" />
 										<form:hidden
 											id="applicationFeeDetail${status.index}applicationFee"
 											path="applicationFee.applicationFeeDetail[${status.index}].applicationFee"

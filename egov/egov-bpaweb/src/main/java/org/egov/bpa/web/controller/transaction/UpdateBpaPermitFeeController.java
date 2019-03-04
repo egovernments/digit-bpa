@@ -47,6 +47,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.BpaFee;
+import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
@@ -98,6 +100,8 @@ public class UpdateBpaPermitFeeController {
     @Autowired
     protected BpaFeeService bpaFeeService;
     @Autowired
+    private BpaFeeMappingService bpaFeeMappingService;
+    @Autowired
     private BpaStatusService bpaStatusService;
     @Autowired
     protected ApplicationFeeService applicationFeeService;
@@ -142,8 +146,8 @@ public class UpdateBpaPermitFeeController {
             // check fee calculate first time or update ? Check inspection is captured for existing application ?
 
             // Get all sanction fee by service type
-            List<BpaFee> bpaSanctionFees = bpaFeeService
-                    .getAllActiveSanctionFeesByServiceId(permitFee.getApplication().getServiceType().getId(),BpaConstants.FEETYPE_SANCTIONFEE);
+            List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService
+                    .getPermitFeeForListOfServices(permitFee.getApplication().getServiceType().getId(),BpaConstants.BPA_PERMIT_FEE);
 
             String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.BPAFEECALULATION);
             model.addAttribute("sanctionFees", bpaSanctionFees);
@@ -164,10 +168,10 @@ public class UpdateBpaPermitFeeController {
                                     BpaConstants.BPASTATUS_REGISTRATIONFEE_APPROVED));
                 	permitFee.getApplicationFee().setFeeDate(new Date());
 
-                    for (BpaFee bpaFee : bpaSanctionFees) {
+                    for (BpaFeeMapping bpaFee : bpaSanctionFees) {
                         ApplicationFeeDetail applicationDtl = new ApplicationFeeDetail();
                         applicationDtl.setApplicationFee(permitFee.getApplicationFee());
-                        applicationDtl.setBpaFee(bpaFee);
+                        applicationDtl.setBpaFeeMapping(bpaFee);
                         applicationDtl.setAmount(BigDecimal.ZERO);
                         permitFee.getApplicationFee().addApplicationFeeDetail(applicationDtl);
                     }
