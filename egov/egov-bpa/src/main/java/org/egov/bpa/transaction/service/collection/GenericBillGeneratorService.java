@@ -72,25 +72,23 @@ public class GenericBillGeneratorService {
 
     @Transactional
     public String generateBillAndRedirectToCollection(final BpaApplication application, final Model model) {
-        return buildAndRedirectToCollection(model, applicationBpaBillService.generateBill(application));
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        return buildAndRedirectToCollection(model, applicationBpaBillService.generateBill(application), enableOrDisablePayOnline);
     }
 
     @Transactional
     public String generateBillAndRedirectToCollection(final OccupancyCertificate oc, final Model model) {
-        return buildAndRedirectToCollection(model, occupancyCertificateBillService.generateBill(oc));
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        return buildAndRedirectToCollection(model, occupancyCertificateBillService.generateBill(oc), enableOrDisablePayOnline);
     }
 
-    private String buildAndRedirectToCollection(Model model, String s) {
+    private String buildAndRedirectToCollection(Model model, String s, String onlineEnabled) {
         if (ApplicationThreadLocals.getUserId() == null)
             if (securityUtils.getCurrentUser().getUsername().equals(BpaConstants.USERNAME_ANONYMOUS))
                 ApplicationThreadLocals.setUserId(userService.getUserByUsername(BpaConstants.USERNAME_ANONYMOUS).getId());
         model.addAttribute("collectxml", s);
         model.addAttribute("citizenrole", getCitizenUserRole());
-        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
-        //String enableOrDisableStakHolderPayOnline = bpaUtils.getAppconfigValueByKeyName("BUILDING_LICENSEE_REG_FEE_REQUIRED");
-        model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
-        //model.addAttribute("stakHolderOnlinePaymentEnable", (enableOrDisableStakHolderPayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
-
+        model.addAttribute("onlinePaymentEnable", (onlineEnabled.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
         return "collecttax-redirection";
     }
 
@@ -115,7 +113,8 @@ public class GenericBillGeneratorService {
     
     @Transactional
     public String generateBillAndRedirectToCollection(final StakeHolder stakeHolder, final Model model) {
-        return buildAndRedirectToCollection(model, stakeHolderBpaBillService.generateBill(stakeHolder));
+        String enableOrDisableStakHolderPayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLESTACKEHOLDERREGFEE);
+        return buildAndRedirectToCollection(model, stakeHolderBpaBillService.generateBill(stakeHolder), enableOrDisableStakHolderPayOnline);
     }
 
 }

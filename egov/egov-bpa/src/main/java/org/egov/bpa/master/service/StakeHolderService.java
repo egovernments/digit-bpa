@@ -216,8 +216,7 @@ public class StakeHolderService {
 					if (wfmatrix.getCurrentState().equalsIgnoreCase(BpaConstants.WF_NEW_STATE)
 							&& wfmatrix.getNextAction().equalsIgnoreCase("END")) {
 						List<AppConfigValues> appConfigValueList = appConfigValueService.
-								getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME,
-								"BUILDING_LICENSEE_REG_FEE_REQUIRED");
+								getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDERREGFEE);
 						String	appConfigValue	="NO";
 						if(!appConfigValueList.isEmpty())
 						{
@@ -273,8 +272,7 @@ public class StakeHolderService {
 					.withOwner(ownerPos).withOwner(ownerUser).withNextAction(null)
 					.withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
 			List<AppConfigValues> appConfigValueList = appConfigValueService.
-					getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME,
-					"BUILDING_LICENSEE_REG_FEE_REQUIRED");
+					getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDERREGFEE);
 			String	appConfigValue	="NO";
 			if(!appConfigValueList.isEmpty())
 			{
@@ -655,7 +653,7 @@ public class StakeHolderService {
 			stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
 			setActiveToStakeholder(stakeHolder);
 			/*List<AppConfigValues> appConfigValueList = appConfigValueService
-					.getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
+					.getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDER_ONLINEPAYMENT);
 			if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
 				stakeHolder.setDemand(stakeHolderBpaBillService.createDemand(stakeHolder));
 				stakeHolder.setStatus(StakeHolderStatus.PAYMENT_PENDING);

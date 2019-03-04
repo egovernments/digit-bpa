@@ -337,6 +337,7 @@ public class BpaConstants {
     public static final String EXTENTINSQMTS = "extentinsqmts";
     // portal related constants
     public static final String ENABLEONLINEPAYMENT = "BPA_ONLINE_PAY";
+    public static final String ENABLESTACKEHOLDERREGFEE = "BUILDING_LICENSEE_REG_FEE_REQUIRED";
     public static final String BPA_CITIZENACCEPTANCE_CHECK = "BPA_CITIZENACCEPTANCE_CHECK";
     public static final String DISCLIMER_MESSAGE_ONSAVE = "\n   Acceptance of building permit application in the system and DCR checking process does not confer a claim for building permit approval.";
     public static final String DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE = "\n   Acceptance of one day building permit application in the system and DCR checking process does not confer a claim for building permit approval.\n\n";
