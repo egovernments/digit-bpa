@@ -99,30 +99,13 @@ public class OccupancyCertificateUtils {
     public boolean isOCInspectionSchedulingIntegrationRequired() {
         return getAppConfigValueByKeyName(OC_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED).equalsIgnoreCase(YES);
     }
-
-    public Map<String, String> checkIsEdcrUsedWithAnyOCApplication(final String eDcrNumber) {
-        Map<String, String> eDcrApplicationDetails = new HashMap<>();
-        List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByEdcrNumber(eDcrNumber);
-        if (occupancyCertificates.isEmpty() || !occupancyCertificates.isEmpty() && null == occupancyCertificates.get(0).getState()
-                || BpaConstants.APPLICATION_STATUS_CANCELLED.equals(occupancyCertificates.get(0).getStatus().getCode())) {
-            eDcrApplicationDetails.put("isExists", "false");
-            eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
-        } else {
-            String message = bpaMessageSource.getMessage("msg.dcr.exist.with.appln",
-                    new String[] { securityUtils.getCurrentUser().getName(), occupancyCertificates.get(0).geteDcrNumber(),
-                            occupancyCertificates.get(0).getApplicationNumber() },
-                    null);
-            eDcrApplicationDetails.put("isExists", "true");
-            eDcrApplicationDetails.put("applnNoUsedEdcr", occupancyCertificates.get(0).getApplicationNumber());
-            eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
-        }
-        return eDcrApplicationDetails;
-    }
     
     public Map<String, String> checkIsPermitNumberUsedWithAnyOCApplication(final String permitNumber) {
         Map<String, String> ocApplicationDetails = new HashMap<>();
-        OccupancyCertificate occupancyCertificate = occupancyCertificateService.findByPermitNumber(permitNumber);
-        if (occupancyCertificate==null) {
+        List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByPermitNumber(permitNumber);
+        OccupancyCertificate occupancyCertificate = occupancyCertificates.isEmpty() ? null:occupancyCertificates.get(0);
+        if (occupancyCertificate==null || 
+        		(occupancyCertificate != null && occupancyCertificate.getStatus().getCode().equalsIgnoreCase("Cancelled"))) {
         	ocApplicationDetails.put("isExists", "false");
         	ocApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
         } else {

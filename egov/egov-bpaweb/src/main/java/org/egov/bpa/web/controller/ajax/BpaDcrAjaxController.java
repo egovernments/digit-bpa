@@ -75,7 +75,7 @@ public class BpaDcrAjaxController {
     @GetMapping(value = "/validate/occupancy-certificate/edcrno-used", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, String> checkDCRIsUsedWithAnyOccupancyCertificateAppln(@RequestParam final String eDcrNumber) {
-        return occupancyCertificateUtils.checkIsEdcrUsedWithAnyOCApplication(eDcrNumber);
+        return bpaDcrService.checkIsEdcrUsedWithAnyOCApplication(eDcrNumber, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
     }
 
     @GetMapping(value = "/validate/edcr-expiry", produces = MediaType.APPLICATION_JSON_VALUE)

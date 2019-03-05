@@ -459,11 +459,11 @@ public class BpaAjaxController {
                 : applicationBpaService.findByPermitNumber(permitNumber);
         final JsonObject jsonObj = new JsonObject();
         if (application != null) {
+        	Map<String, String> ocApplicationDetails = occupancyCertificateUtils
+                    .checkIsPermitNumberUsedWithAnyOCApplication(permitNumber);
             jsonObj.addProperty("isOcRequire", application.getServiceType().getIsOCRequired());
-            jsonObj.addProperty("ocExists",
-                    occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get("isExists"));
-            jsonObj.addProperty("ocExistsMessage", occupancyCertificateUtils
-                    .checkIsPermitNumberUsedWithAnyOCApplication(permitNumber).get(BpaConstants.MESSAGE));
+            jsonObj.addProperty("ocExists",ocApplicationDetails.get("isExists"));
+            jsonObj.addProperty("ocExistsMessage", ocApplicationDetails.get(BpaConstants.MESSAGE));
             jsonObj.addProperty("id", application.getId());
             jsonObj.addProperty("stakeholderId", application.getStakeHolder().get(0).getId());
             jsonObj.addProperty("occupancy", application.getOccupanciesName());

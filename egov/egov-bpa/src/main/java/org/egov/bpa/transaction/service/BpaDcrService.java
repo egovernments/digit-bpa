@@ -53,10 +53,14 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -65,6 +69,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+
+import bsh.StringUtil;
 
 @Service
 public class BpaDcrService {
@@ -84,9 +90,13 @@ public class BpaDcrService {
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
+    private OccupancyCertificateUtils occupancyCertificateUtils;
+    @Autowired
     private ServiceTypeService serviceTypeService;
     @Autowired
     private DcrRestService dcrRestService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
 
     public Map<String, String> checkIsEdcrUsedInBpaApplication(final String eDcrNumber) {
         Map<String, String> eDcrApplicationDetails = new HashMap<>();
@@ -153,5 +163,46 @@ public class BpaDcrService {
             }
         }
         return eDcrExpiryDetails;
+    }
+    
+    public Map<String, String> checkIsEdcrUsedWithAnyOCApplication(final String eDcrNumber,HttpServletRequest request) {
+        Map<String, String> eDcrApplicationDetails = new HashMap<>();
+        List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByEdcrNumber(eDcrNumber);
+        if(occupancyCertificates.isEmpty()){
+        	 String planpermissionno=dcrRestService.getEdcrPlanPermissionNo(eDcrNumber,request);
+        	 if(StringUtils.isNotBlank(planpermissionno)){
+        		 eDcrApplicationDetails=occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(planpermissionno);
+        	 String message = bpaMessageSource.getMessage("msg.dcr.exist.with.appln",
+                     new String[] { securityUtils.getCurrentUser().getName(), eDcrNumber,
+                    		 eDcrApplicationDetails.get("applnNoUsedEdcr") },
+                     null);
+        	 eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
+        	 return eDcrApplicationDetails;
+        	 }
+        }else if (occupancyCertificates.isEmpty() || !occupancyCertificates.isEmpty() && !isOCInProgress(occupancyCertificates.get(0))
+                || BpaConstants.APPLICATION_STATUS_CANCELLED.equals(occupancyCertificates.get(0).getStatus().getCode())) {
+            eDcrApplicationDetails.put("isExists", "false");
+            eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
+        } else {
+            String message = bpaMessageSource.getMessage("msg.dcr.exist.with.appln",
+                    new String[] { securityUtils.getCurrentUser().getName(), occupancyCertificates.get(0).geteDcrNumber(),
+                            occupancyCertificates.get(0).getApplicationNumber() },
+                    null);
+            eDcrApplicationDetails.put("isExists", "true");
+            eDcrApplicationDetails.put("applnNoUsedEdcr", occupancyCertificates.get(0).getApplicationNumber());
+            eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
+        }
+        return eDcrApplicationDetails;
+    }
+    
+    public boolean isOCInProgress(OccupancyCertificate occupancyCertificate){
+    	boolean inProgress = false;
+    	if(occupancyCertificate.getState() == null 
+    			&& (BpaConstants.APPLICATION_STATUS_SUBMITTED.equals(occupancyCertificate.getStatus().getCode())
+    				|| BpaConstants.APPLICATION_STATUS_CREATED.equals(occupancyCertificate.getStatus().getCode())))
+    		inProgress = true;
+    	else if(occupancyCertificate.getState().isInprogress())
+    		inProgress = true;
+    	return inProgress;
     }
 }

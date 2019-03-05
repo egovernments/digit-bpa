@@ -187,7 +187,7 @@ public class OccupancyCertificateService {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
     }
     
-    public OccupancyCertificate findByPermitNumber(String permitNumber) {
+    public List<OccupancyCertificate> findByPermitNumber(String permitNumber) {
         return occupancyCertificateRepository.findByPermitNumber(permitNumber);
     }
     @Transactional

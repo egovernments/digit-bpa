@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.web.utils.WebUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -48,5 +49,14 @@ public class DcrRestService {
         final String url = String.format(EDCR_CREATED_DATE, WebUtils.extractRequestDomainURL(request, false));
 
         return restTemplate.getForObject(url, Date.class, dcrNumber);
+    }
+    
+    private static final String EDCR_PPNO = "%s/edcr/rest/plan-permission-no/by-edcr-number/{dcrNumber}";
+    public String getEdcrPlanPermissionNo(@PathVariable final String dcrNumber, final HttpServletRequest request){
+    	 final RestTemplate restTemplate = new RestTemplate();
+
+         final String url = String.format(EDCR_PPNO, WebUtils.extractRequestDomainURL(request, false));
+
+         return restTemplate.getForObject(url, String.class, dcrNumber);
     }
 }

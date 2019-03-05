@@ -121,4 +121,13 @@ public class EdcrRestController {
 			return applicationDetail.getCreatedDate();
 		return null;
 	}
+    
+    @GetMapping(value = "/rest/plan-permission-no/by-edcr-number/{dcrNumber}")
+    @ResponseBody
+    public String getEdcrPlanPermissionNo(@PathVariable final String dcrNumber) {
+    	EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
+    	if(applicationDetail != null)
+    		return applicationDetail.getApplication().getPlanPermitNumber();
+    	return null;
+    }
 }
