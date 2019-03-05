@@ -78,13 +78,13 @@
 									itemLabel="code" />
 							</form:select>
 						</div>
-						<%-- <label class="col-sm-3 control-label">
+						<label class="col-sm-3 control-label">
                             <spring:message code="lbl.fees.name"/>
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:input path="bpaFeeCommon.name" id="name" class="form-control" disabled="true"/>
-                        </div> --%>
-					</div>
+                        </div> 
+                      </div>
 				</div>
 			</div>
 			<div class="form-group">
