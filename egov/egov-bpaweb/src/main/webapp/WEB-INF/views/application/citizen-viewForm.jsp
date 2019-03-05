@@ -134,7 +134,7 @@
 					<div class="panel panel-primary buildingdetails" data-collapsed="0">
 						<jsp:include page="view-building-details.jsp" />
 					</div>
-					<c:if test="${(isCitizen && validateCitizenAcceptance && !citizenDisclaimerAccepted)}">
+					<c:if test="${(isCitizen && validateCitizenAcceptance && (bpaApplication.status.code ne 'Cancelled') && !citizenDisclaimerAccepted)}">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="disclaimer.jsp" />
 						</div>
@@ -194,7 +194,7 @@
 				<table>
 					<tr>
 					    <td>
-							<c:if test="${isCitizen && validateCitizenAcceptance && !citizenDisclaimerAccepted}">
+							<c:if test="${isCitizen && validateCitizenAcceptance && (bpaApplication.status.code ne 'Cancelled') && !citizenDisclaimerAccepted}">
 								<form:button type="button" id="buttonAccept" class="btn btn-primary"
 											 value="Save"><spring:message code='lbl.btn.accpt' /></form:button>&nbsp;
 							</c:if>
