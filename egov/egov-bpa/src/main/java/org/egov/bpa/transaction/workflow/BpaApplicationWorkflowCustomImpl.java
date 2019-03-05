@@ -147,9 +147,8 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
             if (wfmatrix != null) {
                 if (pos == null) {
                     SiteDetail siteDetail = application.getSiteDetail().get(0);
-                    pos = bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),
-                            siteDetail != null && siteDetail.getElectionBoundary() != null
-                            ? siteDetail.getElectionBoundary().getId() : null);
+					pos = bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),
+							bpaUtils.getBoundaryForWorkflow(siteDetail).getId());
                     List<Assignment> assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date());
                     if(!assignments.isEmpty())
                         ownerUser = assignments.get(0).getEmployee();

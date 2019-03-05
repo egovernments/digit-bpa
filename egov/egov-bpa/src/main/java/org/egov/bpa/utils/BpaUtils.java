@@ -145,6 +145,8 @@ public class BpaUtils {
     private CollectionIntegrationService collectionIntegrationService;
 
     private String fileStoreDir;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     public BpaUtils(@Value("${filestore.base.dir}") String fileStoreDir) {
@@ -409,8 +411,8 @@ public class BpaUtils {
         final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
         Long approvalPositionId = approvalPosition;
         if (approvalPosition == null) {
-            approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    application.getSiteDetail().get(0).getElectionBoundary().getId());
+			approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+					getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
         }
         if (applicationWorkflowCustomDefaultImpl != null)
             if (LETTERTOPARTYINITIATE.equals(currentState))
@@ -448,8 +450,8 @@ public class BpaUtils {
         final OccupancyCertificateWorkflowCustomDefaultImpl ocWorkflowCustomDefaultImpl = getInitialisedWorkFlowBeanForOC();
         Long approvalPositionId = wfBean.getApproverPositionId();
         if (wfBean.getApproverPositionId() == null)
-            approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    oc.getParent().getSiteDetail().get(0).getElectionBoundary().getId());
+			approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+					getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId());
         wfBean.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE_OC);
         wfBean.setApproverPositionId(approvalPositionId);
         if (ocWorkflowCustomDefaultImpl != null)
@@ -747,4 +749,20 @@ public class BpaUtils {
     	bpaApplication.setLocationBoundary(siteDetail.getLocationBoundary() == null ? "" : String.valueOf(siteDetail.getLocationBoundary().getId()));
     	bpaApplication.setRevenueBoundary(siteDetail.getAdminBoundary() == null ? "" : String.valueOf(siteDetail.getAdminBoundary().getId()));
     }
+    
+	public Boundary getBoundaryForWorkflow(SiteDetail siteDetail) {
+		Boundary workFlowBoundary = null;
+		String workflowBoundary = appConfigValuesService.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME,
+				BpaConstants.WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY).get(0).getValue();
+		if (workflowBoundary != null && !workflowBoundary.isEmpty()) {
+			if (workflowBoundary.equals("ADMINISTRATION")) {
+				workFlowBoundary = siteDetail.getElectionBoundary();
+			} else if (workflowBoundary.equals("REVENUE")) {
+				workFlowBoundary = siteDetail.getAdminBoundary();
+			} else {
+				workFlowBoundary = siteDetail.getLocationBoundary();
+			}
+		}
+		return workFlowBoundary;
+	}
 }

@@ -278,8 +278,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             if (workFlowAction.equalsIgnoreCase(WF_INITIATE_REJECTION_BUTTON) && bpaApplication.getIsOneDayPermitApplication()
                     && (bpaApplication.getCurrentState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
                             || bpaApplication.getCurrentState().getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED))) {
-                approvalPosition = bpaUtils.getUserPositionIdByZone(DESIGNATION_AE,
-                        bpaApplication.getSiteDetail().get(0).getElectionBoundary().getId());
+				approvalPosition = bpaUtils.getUserPositionIdByZone(DESIGNATION_AE,
+						bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
             } else
                 approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
             List<Assignment> assignments;
@@ -609,9 +609,13 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
         model.addAttribute("currentState", application.getCurrentState().getValue());
         model.addAttribute(BPA_APPLICATION, application);
-        model.addAttribute("electionBoundary", application.getSiteDetail().get(0).getElectionBoundary().getId());
-        model.addAttribute("electionBoundaryName", application.getSiteDetail().get(0).getElectionBoundary().getName());
-        model.addAttribute("revenueBoundaryName", application.getSiteDetail().get(0).getAdminBoundary().getName());
+		model.addAttribute("workFlowBoundary", bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+		model.addAttribute("electionBoundary", application.getSiteDetail().get(0).getElectionBoundary() != null
+				? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
+        model.addAttribute("electionBoundaryName", application.getSiteDetail().get(0).getElectionBoundary() != null
+				? application.getSiteDetail().get(0).getElectionBoundary().getName() : "");
+        model.addAttribute("revenueBoundaryName", application.getSiteDetail().get(0).getAdminBoundary() != null
+				? application.getSiteDetail().get(0).getAdminBoundary().getName() : "");
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
         model.addAttribute("checkListDetailList", checkListDetailService
                 .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));

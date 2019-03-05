@@ -98,7 +98,7 @@ $(document).ready(function()
 			data: {
 				approvalDesignation : $('#approvalDesignation option:selected').val(),
 				approvalDepartment : $('#approvalDepartment option:selected').val(),
-				boundaryId :$('#electionBoundary').val()
+				boundaryId :$('#workFlowBoundary').val()
 			},
 			dataType: "json",
 			success: function (response) {

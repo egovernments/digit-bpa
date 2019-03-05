@@ -232,11 +232,8 @@ public class OccupancyCertificateService {
                 currentState = WF_NEW_STATE;
             } 
             if (wfMatrix != null)
-                wfBean.setApproverPositionId(bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                        oc.getParent().getSiteDetail().get(0) != null
-                                && oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-                                        ? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
-                                        : null));
+				wfBean.setApproverPositionId(bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+						bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId()));
             wfBean.setCurrentState(currentState);
             bpaUtils.redirectToBpaWorkFlowForOC(oc, wfBean);
             

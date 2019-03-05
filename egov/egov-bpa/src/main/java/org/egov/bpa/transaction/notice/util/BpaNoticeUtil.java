@@ -379,8 +379,10 @@ public class BpaNoticeUtil {
         reportParams.put("amenities", StringUtils.isBlank(amenities) ? "N/A" : amenities);
         reportParams.put("occupancy", bpaApplication.getOccupanciesName());
         if (!bpaApplication.getSiteDetail().isEmpty()) {
-            reportParams.put("electionWard", bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName());
-            reportParams.put("revenueWard", bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName());
+            reportParams.put("electionWard", bpaApplication.getSiteDetail().get(0).getElectionBoundary() != null
+    				? bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName() : "");
+            reportParams.put("revenueWard", bpaApplication.getSiteDetail().get(0).getAdminBoundary() != null
+    				? bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName() : "");
             reportParams.put("landExtent", bpaApplication.getSiteDetail().get(0).getExtentinsqmts().setScale(2,
                     BigDecimal.ROUND_HALF_UP));
             reportParams.put("buildingNo", bpaApplication.getSiteDetail().get(0).getPlotnumber() == null

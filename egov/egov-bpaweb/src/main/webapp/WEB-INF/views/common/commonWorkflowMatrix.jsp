@@ -74,6 +74,7 @@
             <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
                 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
             <form:hidden path="" id="electionBoundary" value="${electionBoundary}"/>
+            <form:hidden path="" id="workFlowBoundary" value="${workFlowBoundary}"/>
             <form:hidden path="" id="revenueBoundaryName" value="${revenueBoundaryName}"/>
             <form:hidden path="" id="electionBoundaryName" value="${electionBoundaryName}"/>
             <form:hidden path="" id="defaultDepartment" value="${bpaPrimaryDept}"/>

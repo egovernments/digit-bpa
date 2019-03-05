@@ -293,11 +293,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(),
                 bpaApplication.getStateType(), WF_NEW_STATE);
         if (wfMatrix != null)
-            approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    bpaApplication.getSiteDetail().get(0) != null
-                            && bpaApplication.getSiteDetail().get(0).getElectionBoundary() != null
-                                    ? bpaApplication.getSiteDetail().get(0).getElectionBoundary().getId()
-                                    : null);
+			approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+					bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
         if (workFlowAction != null
                 && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (approvalPosition == 0 || approvalPosition == null)) {

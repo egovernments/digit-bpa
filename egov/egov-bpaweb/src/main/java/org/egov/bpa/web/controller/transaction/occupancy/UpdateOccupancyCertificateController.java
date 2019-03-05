@@ -357,9 +357,13 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("pendingActions", workflowContainer.getPendingActions());
         model.addAttribute("currentState", oc.getCurrentState().getValue());
         model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
-        model.addAttribute("electionBoundary", oc.getParent().getSiteDetail().get(0).getElectionBoundary().getId());
-        model.addAttribute("electionBoundaryName", oc.getParent().getSiteDetail().get(0).getElectionBoundary().getName());
-        model.addAttribute("revenueBoundaryName", oc.getParent().getSiteDetail().get(0).getAdminBoundary().getName());
+        model.addAttribute("workFlowBoundary", bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId());
+		model.addAttribute("electionBoundary", oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
+				? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getId() : null);
+		model.addAttribute("electionBoundaryName", oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
+				? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getName() : "");
+		model.addAttribute("revenueBoundaryName", oc.getParent().getSiteDetail().get(0).getAdminBoundary() != null
+				? oc.getParent().getSiteDetail().get(0).getAdminBoundary().getName() : "");
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
         model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
         model.addAttribute("loginUser", securityUtils.getCurrentUser());

@@ -392,7 +392,7 @@ public class BpaConstants {
 
     public static final String BPA_MODULE_NAME = "BPA";
     public static final String GENERIC_BOUNDARY_CONFIGURATION_KEY="BPA_GENERIC_BOUNDARY_CONFIGURATION";
-    
+    public static final String WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY="BPA_WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY";
 
 
 

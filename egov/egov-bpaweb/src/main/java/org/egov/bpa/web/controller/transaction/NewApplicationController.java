@@ -113,10 +113,8 @@ public class NewApplicationController extends BpaGenericApplicationController {
 
         final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(), bpaApplication.getStateType(), BpaConstants.WF_NEW_STATE);
         if (wfmatrix != null)
-            userPosition = bpaUtils.getUserPositionIdByZone(wfmatrix.getNextDesignation(),
-                    bpaApplication.getSiteDetail().get(0) != null
-                            && bpaApplication.getSiteDetail().get(0).getElectionBoundary() != null ? bpaApplication
-                                    .getSiteDetail().get(0).getElectionBoundary().getId() : null);
+			userPosition = bpaUtils.getUserPositionIdByZone(wfmatrix.getNextDesignation(),
+					bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
         if (userPosition == 0 || userPosition == null) {
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             return redirectOnValidationFailure(model);

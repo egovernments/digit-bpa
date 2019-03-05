@@ -62,11 +62,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaUtils;
-import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -373,25 +371,20 @@ public class BpaWorkFlowService {
         return json == null || json.get(REVERTED_BY) == null ? EMPTY : json.get(REVERTED_BY).toString();
     }
 
-    public Position getApproverPositionOfElectionWardByCurrentState(final BpaApplication application, final String currentState) {
-        WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
-                application.getStateType(), currentState);
-        return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
-                application.getSiteDetail().get(0) != null
-                        && application.getSiteDetail().get(0).getElectionBoundary() != null
-                                ? application.getSiteDetail().get(0).getElectionBoundary().getId()
-                                : null);
-    }
+	public Position getApproverPositionOfElectionWardByCurrentState(final BpaApplication application,
+			final String currentState) {
+		WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
+				application.getStateType(), currentState);
+		return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
+				bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+	}
 
-    public Position getApproverPositionOfElectionWardByCurrentStateForOC(final OccupancyCertificate oc,
-            final String currentState) {
-        WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(oc.getStateType(), currentState);
-        SiteDetail siteDetail = oc.getParent().getSiteDetail().get(0);
-        return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
-                siteDetail != null && siteDetail.getElectionBoundary() != null
-                        ? siteDetail.getElectionBoundary().getId()
-                        : null);
-    }
+	public Position getApproverPositionOfElectionWardByCurrentStateForOC(final OccupancyCertificate oc,
+			final String currentState) {
+		WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(oc.getStateType(), currentState);
+		return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
+				bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId());
+	}
 
     public BigDecimal getAmountRuleByServiceType(final BpaApplication application) {
         BigDecimal amountRule = BigDecimal.ONE;

@@ -81,7 +81,6 @@ import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OCAppointmentScheduleService;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
@@ -116,12 +115,10 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private static final String WORK_FLOW_ACTION = "workFlowAction";
     private static final String TRUE = "TRUE";
     private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
-    private static final String IS_CITIZEN = "isCitizen";
     private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
     private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
     private static final String MESSAGE = "message";
     private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
-    private static final String COMMON_ERROR = "common-error";
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
     @Autowired
@@ -136,8 +133,6 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private OCLetterToPartyService ocLetterToPartyService;
     @Autowired
     private OCInspectionService ocInspectionService;
-    @Autowired
-    private BpaDcrService bpaDcrService;
     @Autowired
     protected SubOccupancyService subOccupancyService;
 
@@ -255,11 +250,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
                         .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
         final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
         if (wfMatrix != null)
-            userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    occupancyCertificate.getParent().getSiteDetail().get(0) != null
-                            && occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-                                    ? occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
-                                    : null);
+			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+					bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
         if (citizenOrBusinessUser && workFlowAction != null
                 && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (userPosition == 0 || userPosition == null)) {

@@ -168,11 +168,8 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
                         .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
         final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
         if (wfMatrix != null)
-            userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    occupancyCertificate.getParent().getSiteDetail().get(0) != null
-                            && occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-                                    ? occupancyCertificate.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
-                                    : null);
+			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+					bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
         if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (userPosition == 0 || userPosition == null)) {
             model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);

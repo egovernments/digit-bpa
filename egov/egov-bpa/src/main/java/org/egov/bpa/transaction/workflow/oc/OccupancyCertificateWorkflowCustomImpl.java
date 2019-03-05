@@ -157,10 +157,8 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
             if (wfMatrix != null) {
                 if (pos == null) {
                     SiteDetail siteDetail = oc.getParent().getSiteDetail().get(0);
-                    pos = bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
-                            siteDetail.getElectionBoundary() != null
-                                    ? siteDetail.getElectionBoundary().getId()
-                                    : null);
+					pos = bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
+							bpaUtils.getBoundaryForWorkflow(siteDetail).getId());
                     List<Assignment> assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date());
                     if (!assignments.isEmpty())
                         ownerUser = assignments.get(0).getEmployee();
