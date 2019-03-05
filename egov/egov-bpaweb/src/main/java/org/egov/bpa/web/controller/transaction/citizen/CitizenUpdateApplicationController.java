@@ -320,11 +320,15 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 
         if (!bpaApplication.getApplicationDocument().isEmpty())
             applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-
-        bpaApplication.getApplicationAmenity().clear();
-        bpaApplication.setApplicationAmenity(bpaApplication.getApplicationAmenityTemp());
-        bpaApplication.getPermitOccupancies().clear();
-        bpaApplication.setPermitOccupancies(bpaApplication.getPermitOccupanciesTemp());
+        if(!bpaApplication.getApplicationAmenityTemp().isEmpty()) {
+            bpaApplication.getApplicationAmenity().clear();
+            bpaApplication.setApplicationAmenity(bpaApplication.getApplicationAmenityTemp());
+        }
+        
+        if(!bpaApplication.getPermitOccupanciesTemp().isEmpty()) {
+            bpaApplication.getPermitOccupancies().clear();
+            bpaApplication.setPermitOccupancies(bpaApplication.getPermitOccupanciesTemp());
+        }
         bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
 
