@@ -367,8 +367,10 @@ public class CollectionsUtil {
             // allowed.
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
-        } else
+        } else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
+        }
         return collectionsModeNotAllowed;
     }
 
