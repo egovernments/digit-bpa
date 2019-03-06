@@ -58,6 +58,6 @@ public class EisConstants {
 	public static final String BOUNDARY_TYPE_CITY = "City";
 	public static final String HIERARCHY_TYPE_ADMIN = "ADMINISTRATION";
 	public static final Boolean IS_PRIMARY_TRUE = true;
-	
-	
+	public static final String EGMODULE_NAME = "EIS";
+	public static final String EMPLOYEE_JURISDICTION_HIERARCHY="EIS_EMPLOYEE_JURISDICTION_HIERARCHY";
 }

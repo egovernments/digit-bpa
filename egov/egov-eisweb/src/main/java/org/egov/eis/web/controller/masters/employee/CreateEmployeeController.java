@@ -47,6 +47,13 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
+import static org.egov.eis.utils.constants.EisConstants.EMPLOYEE_JURISDICTION_HIERARCHY;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -56,6 +63,7 @@ import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.service.EmployeeService;
+import org.egov.eis.utils.EisUtils;
 import org.egov.eis.utils.constants.EisConstants;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -70,10 +78,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Arrays;
 
 @Controller
 @RequestMapping(value = "/employee")
@@ -96,6 +100,8 @@ public class CreateEmployeeController {
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
     @Autowired
     private AccountDetailKeyService accountDetailKeyService;
+    @Autowired
+    private EisUtils eisUtils;
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String createForm(final Model model) {
@@ -150,15 +156,16 @@ public class CreateEmployeeController {
         return "employee-success";
     }
 
-    private void setDropDownValues(final Model model) {
-        model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
-        model.addAttribute("department", departmentService.getAllDepartments());
-        model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
-        model.addAttribute("fundList", employeeService.getAllFunds());
-        model.addAttribute("functionaryList", employeeService.getAllFunctionaries());
-        model.addAttribute("functionList", employeeService.getAllFunctions());
-        model.addAttribute("gradeList", employeeService.getAllGrades());
-        model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName("ADMINISTRATION"));
-    }
+	private void setDropDownValues(final Model model) {
+		model.addAttribute("employeeStatus", Arrays.asList(EmployeeStatus.values()));
+		model.addAttribute("department", departmentService.getAllDepartments());
+		model.addAttribute("employeeTypes", employeeTypeRepository.findAll());
+		model.addAttribute("fundList", employeeService.getAllFunds());
+		model.addAttribute("functionaryList", employeeService.getAllFunctionaries());
+		model.addAttribute("functionList", employeeService.getAllFunctions());
+		model.addAttribute("gradeList", employeeService.getAllGrades());
+		model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName(
+				eisUtils.getAppconfigValueByKeyName(EMPLOYEE_JURISDICTION_HIERARCHY)));
+	}
 
 }
