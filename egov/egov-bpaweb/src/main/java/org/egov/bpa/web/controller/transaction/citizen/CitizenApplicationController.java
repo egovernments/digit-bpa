@@ -336,6 +336,10 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
         Map<String, String> eDcrApplDetails = bpaDcrService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
+        if(eDcrApplDetails.get("isExists") == "true"){
+        	model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
+        	return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
+        }
         boolean isEdcrIntegrationRequire = bpaDcrService.isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode());
         if (isEdcrIntegrationRequire && !eDcrApplDetails.isEmpty() && eDcrApplDetails.get("isExists").equals("true")) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);

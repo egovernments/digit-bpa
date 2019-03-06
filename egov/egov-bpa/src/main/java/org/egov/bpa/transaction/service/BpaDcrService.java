@@ -99,19 +99,25 @@ public class BpaDcrService {
     public Map<String, String> checkIsEdcrUsedInBpaApplication(final String eDcrNumber) {
         Map<String, String> eDcrApplicationDetails = new HashMap<>();
         List<BpaApplication> bpaApplications = applicationBpaService.findApplicationByEDCRNumber(eDcrNumber);
-        if (bpaApplications.isEmpty() || !bpaApplications.isEmpty() && null == bpaApplications.get(0).getState()
-                && BpaConstants.APPLICATION_STATUS_CANCELLED.equals(bpaApplications.get(0).getStatus().getCode())) {
+        if (bpaApplications.isEmpty()) {
             eDcrApplicationDetails.put(IS_EXISTS, FALSE);
             eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
-        } else {
-            String message = bpaMessageSource.getMessage("msg.dcr.exist.with.appln",
-                    new String[] { securityUtils.getCurrentUser().getName(), bpaApplications.get(0).geteDcrNumber(),
-                            bpaApplications.get(0).getApplicationNumber() },
-                    null);
-            eDcrApplicationDetails.put(IS_EXISTS, TRUE);
-            eDcrApplicationDetails.put("applnNoUsedEdcr", bpaApplications.get(0).getApplicationNumber());
-            eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
-        }
+		} else {
+			if (bpaApplications.get(0)!=null && bpaApplications.get(0).getStatus()!=null && 
+					BpaConstants.APPLICATION_STATUS_CANCELLED
+					.equals(bpaApplications.get(0).getStatus().getCode())) {
+				eDcrApplicationDetails.put(IS_EXISTS, FALSE);
+				eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
+			} else {
+				String message = bpaMessageSource.getMessage(
+						"msg.dcr.exist.with.appln", new String[] { securityUtils.getCurrentUser().getName(),
+								bpaApplications.get(0).geteDcrNumber(), bpaApplications.get(0).getApplicationNumber() },
+						null);
+				eDcrApplicationDetails.put(IS_EXISTS, TRUE);
+				eDcrApplicationDetails.put("applnNoUsedEdcr", bpaApplications.get(0).getApplicationNumber());
+				eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
+			}
+		}
         return eDcrApplicationDetails;
     }
 
@@ -177,7 +183,9 @@ public class BpaDcrService {
         	 eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
         	 return eDcrApplicationDetails;
         	 }
-        }else if (occupancyCertificates.isEmpty() || !occupancyCertificates.isEmpty() && !isOCInProgress(occupancyCertificates.get(0))
+        	 eDcrApplicationDetails.put("isExists", "false");
+             eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
+        }else if (!occupancyCertificates.isEmpty() && !isOCInProgress(occupancyCertificates.get(0))
                 || BpaConstants.APPLICATION_STATUS_CANCELLED.equals(occupancyCertificates.get(0).getStatus().getCode())) {
             eDcrApplicationDetails.put("isExists", "false");
             eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
@@ -199,8 +207,9 @@ public class BpaDcrService {
     			&& (BpaConstants.APPLICATION_STATUS_SUBMITTED.equals(occupancyCertificate.getStatus().getCode())
     				|| BpaConstants.APPLICATION_STATUS_CREATED.equals(occupancyCertificate.getStatus().getCode())))
     		inProgress = true;
-    	else if(occupancyCertificate.getState().isInprogress())
+    	else if(occupancyCertificate.getState() != null && occupancyCertificate.getState().isInprogress())
     		inProgress = true;
     	return inProgress;
     }
+    
 }

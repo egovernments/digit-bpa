@@ -58,7 +58,8 @@ public interface OccupancyCertificateRepository
 
 	OccupancyCertificate findByApplicationNumber(String applicationNumber);
 
-	List<OccupancyCertificate> findByEDcrNumber(String edcrNumber);
+	@Query("select occupancycertificate from OccupancyCertificate occupancycertificate where occupancycertificate.eDcrNumber in :edcrNumber order by id desc")
+	List<OccupancyCertificate> findByEDcrNumber(@Param("edcrNumber") String edcrNumber);
 
 	@Query("select occupancycertificate from OccupancyCertificate occupancycertificate where occupancycertificate.status in :status order by createddate asc")
 	List<OccupancyCertificate> findByStatusListOrderByCreatedDateAsc(@Param("status") List<BpaStatus> listOfBpaStatus);
