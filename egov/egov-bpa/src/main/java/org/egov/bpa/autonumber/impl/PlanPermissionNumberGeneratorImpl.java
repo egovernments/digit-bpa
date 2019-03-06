@@ -46,6 +46,8 @@
  */
 package org.egov.bpa.autonumber.impl;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.upperCase;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 
 import java.time.LocalDateTime;
@@ -53,6 +55,7 @@ import java.time.LocalDateTime;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,15 +64,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlanPermissionNumberGeneratorImpl implements PlanPermissionNumberGenerator {
 
-    @Autowired
-    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
-
     @Override
     public String generatePlanPermissionNumber(final ServiceType serviceType) {
-        final String sequenceName = BpaConstants.BPA_PLANPERMNO_SEQ;
-        return String.format(
-                "%s%06d", new StringBuilder().append(APPLICATION_MODULE_TYPE)
-                        .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear()),
-                genericSequenceNumberGenerator.getNextSequence(sequenceName));
+        String cityCode = ApplicationThreadLocals.getCityCode();
+        return String.format( "%s", new StringBuilder().append("BPA").append(cityCode)
+				  .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear())
+		  .append(upperCase(randomAlphanumeric(5))));
     }
 }

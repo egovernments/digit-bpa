@@ -38,27 +38,25 @@
  */
 package org.egov.bpa.autonumber.impl;
 
-import org.egov.bpa.autonumber.OccupancyCertificateNumberGenerator;
-import org.egov.bpa.utils.BpaConstants;
-import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
-import org.egov.infra.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import java.time.LocalDateTime;
 
+import org.egov.bpa.autonumber.OccupancyCertificateNumberGenerator;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
+import org.springframework.stereotype.Service;
+
 @Service
 public class OccupancyCertificateNumberGeneratorImpl implements OccupancyCertificateNumberGenerator {
-    @Autowired
-    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateOccupancyCertificateNumber() {
-        final String sequenceName = BpaConstants.BPA_OC_NUMBER_SEQ;
-        return String.format(
-                "%s%06d", new StringBuilder().append("OC")
-                        .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear()),
-                genericSequenceNumberGenerator.getNextSequence(sequenceName));
+    	String cityCode = ApplicationThreadLocals.getCityCode();
+        return String.format( "%s", new StringBuilder().append("OC").append(cityCode)
+				  .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear())
+		  .append(upperCase(randomAlphanumeric(5))));
     }
 }
 
