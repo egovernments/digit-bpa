@@ -46,6 +46,13 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
+				<div class="panel-title text-center no-float">
+				<c:if test="${not empty feeNotDefined}">
+					<strong class="error-msg">${feeNotDefined}</strong>
+				</c:if>
+			</div>
+		</div>
+		
 		<form:form role="form" action="../update-submit" method="post"
 			modelAttribute="occupancyCertificate"
 			id="occupancyCertificateUpdateForm"

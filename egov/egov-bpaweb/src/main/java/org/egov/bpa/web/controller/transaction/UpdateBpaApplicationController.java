@@ -112,6 +112,7 @@ import org.egov.bpa.master.service.PermitConditionsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.LettertoParty;
+import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
@@ -123,6 +124,8 @@ import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
+import org.egov.bpa.transaction.service.PermitFeeService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -181,7 +184,9 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private CustomImplProvider specificNoticeService;
     @Autowired
     private BpaDcrService bpaDcrService;
-
+    @Autowired
+    protected PermitFeeService permitFeeService;
+    
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -192,27 +197,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         final BpaApplication application = getBpaApplication(applicationNumber);
         prepareActions(model, application);
         loadCommonApplicationDetails(model, application);
-        if (!application.getIsOneDayPermitApplication()
-                && (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())
-                        || APPLICATION_STATUS_FIELD_INS.equals(application.getStatus().getCode())
-                        || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode()))) {
-            model.addAttribute("createlettertoparty", true);
-        }
-
         buildRejectionReasons(model, application);
         model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
         if (application != null) {
             loadFormData(model, application);
-            Map<String, Object> attributes = model.asMap();
-            List<String> actions = Collections.emptyList();
-            if (!attributes.isEmpty())
-                actions = attributes.get("validActionList") == null ? Collections.emptyList()
-                        : (List<String>) attributes.get("validActionList");
-
-            if ((APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
-                    || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode()))
-                    || (!actions.isEmpty() && actions.contains(WF_APPROVE_BUTTON)))
-                buildApplicationPermitConditions(application, model);
 
             if (application.getState() != null
                     && application.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
@@ -340,6 +328,21 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
         String approvalComent = request.getParameter(APPROVAL_COMENT);
+        
+        String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.BPAFEECALULATION);
+
+        if(WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction) 
+        		&& feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
+        	List<PermitFee> permitFeeList = permitFeeService
+                    .getPermitFeeListByApplicationId(bpaApplication.getId());
+        	if(permitFeeList.size() == 0 || permitFeeList ==null) {
+        		model.addAttribute("feeNotDefined", "Please enter fee to proceed");
+        		loadFormData(model, bpaApplication);
+                loadCommonApplicationDetails(model, bpaApplication);
+            	return APPLICATION_VIEW;
+        	}
+        }
+        	
         if (WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
             StateHistory<Position> stateHistory = bpaApplication.getStateHistory().stream()
                     .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
@@ -625,6 +628,25 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 application.getServiceType().getId(), application.getApplicationAmenity()));
         model.addAttribute("isEDCRIntegrationRequire",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
+        Map<String, Object> attributes = model.asMap();
+        List<String> actions = Collections.emptyList();
+        if (!attributes.isEmpty())
+            actions = attributes.get("validActionList") == null ? Collections.emptyList()
+                    : (List<String>) attributes.get("validActionList");
+
+        if ((APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+                || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode()))
+                || (!actions.isEmpty() && actions.contains(WF_APPROVE_BUTTON)))
+            buildApplicationPermitConditions(application, model);
+        
+        prepareActions(model, application);
+        if (!application.getIsOneDayPermitApplication()
+                && (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())
+                        || APPLICATION_STATUS_FIELD_INS.equals(application.getStatus().getCode())
+                        || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode()))) {
+            model.addAttribute("createlettertoparty", true);
+        }
+
     }
 
     private void loadCommonApplicationDetails(Model model, BpaApplication application) {

@@ -74,6 +74,7 @@ import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
 import static org.egov.bpa.utils.BpaConstants.GENERATE_OCCUPANCY_CERTIFICATE;
 import static org.egov.bpa.utils.BpaConstants.OCREJECTIONFILENAME;
+import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_DOC_SCRUTINY_SCHEDLE_PEND;
 import static org.egov.bpa.utils.BpaConstants.WF_DOC_VERIFY_PEND;
 import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
@@ -105,6 +106,7 @@ import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
@@ -113,6 +115,7 @@ import org.egov.bpa.transaction.service.oc.OCInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.bpa.transaction.service.oc.OccupancyFeeService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
@@ -179,7 +182,9 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     private CustomImplProvider specificNoticeService;
     @Autowired
     private BpaDcrService bpaDcrService;
-
+    @Autowired
+    protected OccupancyFeeService occupancyFeeService;
+    
     @GetMapping("/update/{applicationNumber}")
     public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model,
             final HttpServletRequest request) {
@@ -461,6 +466,21 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         wfBean.setAmountRule(amountRule);
         Position pos = null;
         Long approvalPosition = null;
+        String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
+
+        if(WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()) 
+        		&& feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
+        	List<OccupancyFee> permitFeeList = occupancyFeeService
+                    .getOCFeeListByApplicationId(occupancyCertificate.getId());
+        	if(permitFeeList.size() == 0 || permitFeeList ==null) {
+        		model.addAttribute("feeNotDefined", "Please enter fee to proceed");
+        		 setCityName(model, request);
+        	     prepareFormData(occupancyCertificate, model);
+        	     loadData(occupancyCertificate, model);
+        	     getActionsForOCApplication(model, occupancyCertificate);
+            	return OCCUPANCY_CERTIFICATE_VIEW;
+        	}
+        }
         if (StringUtils.isNotBlank(request.getParameter(APPRIVALPOSITION))
                 && !WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 && !GENERATEREJECTNOTICE.equalsIgnoreCase(wfBean.getWorkFlowAction())) {

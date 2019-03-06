@@ -171,7 +171,7 @@
 						<label class="col-sm-3 control-label text-center"><spring:message
 								code="lbl.modify.ocfee.reason" /><span class="mandatory"></span></label>
 						<div class="col-sm-7 add-margin text-left">
-							<c:out value="${oc.applicationFee.modifyFeeReason}"
+							<c:out value="${occupancyFee.applicationFee.modifyFeeReason}"
 								   default="N/A"></c:out>
 						</div>
 					</div>
