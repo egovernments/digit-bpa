@@ -7,7 +7,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<field name="isSubmitted" class="java.lang.Boolean"/>
 	<field name="remarks" class="java.lang.String"/>
-	<field name="checklistDetail" class="org.egov.bpa.master.entity.CheckListDetail"/>
+	<field name="serviceChecklist" class="org.egov.bpa.master.entity.ChecklistServiceTypeMapping"/>
 	<field name="isRequested" class="java.lang.Boolean"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -73,7 +73,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{checklistDetail}.getDescription()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{serviceChecklist}.getChecklist().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="350" y="0" width="190" height="25" isPrintWhenDetailOverflows="true" uuid="13dc2290-7c7c-4dde-bfda-fe0a699c8446">
