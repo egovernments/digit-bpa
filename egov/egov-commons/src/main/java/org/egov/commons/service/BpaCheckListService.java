@@ -50,6 +50,7 @@ package org.egov.commons.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.entity.bpa.Checklist;
@@ -91,8 +92,9 @@ public class BpaCheckListService {
 	
     @Transactional
     public List<Checklist> save(final List<Checklist> checklists) {
+    	 Random rand = new Random(); 
 		for (Checklist checklist : checklists){
-			checklist.setCode(StringUtils.substring(checklist.getChecklistType().getCode(), 0, 3).concat("-"));
+			checklist.setCode(StringUtils.substring(checklist.getChecklistType().getCode(), 0, 3).concat("-").concat(String.valueOf(rand.nextInt(100))));
 		}
         return bpaCheckListRepository.save(checklists);
     }

@@ -151,9 +151,9 @@
                         </div>
                         <div class="col-sm-4 view-content">
                             <spring:message code="lbl.attachdocument"/>
-                            <div class="add-margin error-msg">
-                                <font size="2"> <spring:message code="lbl.mesg.document"/>
-                                </font>
+                            <div class="add-margin">
+                                <small class="text-info view-content"> <spring:message code="lbl.mesg.document" />
+									</small>
                             </div>
                         </div>
                     </div>
@@ -163,15 +163,15 @@
                                        varStatus="status">
                                 <div class="form-group">
                                     <div class="col-sm-2 add-margin check-text">
-                                        <c:out value="${lpdoc.checklistDetail.description}"/>
+                                        <c:out value="${lpdoc.serviceChecklist.checklist.description}"/>
+                                        <form:hidden
+                                                id="lettertoPartyDocument${status.index}serviceChecklist"
+                                                path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
+                                                value="${lpdoc.serviceChecklist.id}"/>
                                         <form:hidden
                                                 id="lettertoPartyDocument${status.index}checklistDetail"
-                                                path="letterToParty.letterToPartyDocuments[${status.index}].checklistDetail"
-                                                value="${lpdoc.checklistDetail.id}"/>
-                                        <form:hidden
-                                                id="lettertoPartyDocument${status.index}checklistDetail"
-                                                path="letterToParty.letterToPartyDocuments[${status.index}].checklistDetail.isMandatory"
-                                                value="${lpdoc.checklistDetail.isMandatory}"/>
+                                                path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist.mandatory"
+                                                value="${lpdoc.serviceChecklist.mandatory}"/>
                                     </div>
 
                                     <div class="col-sm-2 add-margin">

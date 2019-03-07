@@ -70,7 +70,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
-import org.egov.bpa.transaction.entity.ApplicationNocDocument;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.SiteDetail;
@@ -300,9 +300,11 @@ public class BpaReportsService {
             bpaRegister.setAddress(application.getOwner().getAddress());
             for (SiteDetail siteDetail : application.getSiteDetail()) {
                 bpaRegister.setSurveyNumber(siteDetail.getReSurveyNumber());
-                bpaRegister.setVillage(siteDetail.getLocationBoundary() == null ? "" : siteDetail.getLocationBoundary().getName());
+                bpaRegister
+                        .setVillage(siteDetail.getLocationBoundary() == null ? "" : siteDetail.getLocationBoundary().getName());
                 bpaRegister.setRevenueWard(siteDetail.getAdminBoundary() == null ? "" : siteDetail.getAdminBoundary().getName());
-                bpaRegister.setElectionWard(siteDetail.getElectionBoundary() == null ? "" : siteDetail.getElectionBoundary().getName());
+                bpaRegister.setElectionWard(
+                        siteDetail.getElectionBoundary() == null ? "" : siteDetail.getElectionBoundary().getName());
             }
             bpaRegister.setNatureOfOccupancy(application.getOccupanciesName());
             if (!application.getBuildingDetail().isEmpty()
@@ -407,9 +409,12 @@ public class BpaReportsService {
     private String getNocDetails(final BpaApplication application) {
         StringBuilder nocDetails = new StringBuilder();
         int additionalOrder = 1;
-        for (ApplicationNocDocument nocDoc : application.getApplicationNOCDocument()) {
-            nocDetails.append(String.valueOf(additionalOrder) + ") " + nocDoc.getChecklist().getDescription() + " : "
-                    + (nocDoc.getNocStatus() != null ? nocDoc.getNocStatus().getNocStatusVal() : "N/A") + "\n");
+        for (PermitNocDocument nocDoc : application.getPermitNocDocuments()) {
+            nocDetails.append(String.valueOf(additionalOrder) + ") "
+                    + nocDoc.getNocDocument().getServiceChecklist().getChecklist().getDescription() + " : "
+                    + (nocDoc.getNocDocument().getNocStatus() != null ? nocDoc.getNocDocument().getNocStatus().getNocStatusVal()
+                            : "N/A")
+                    + "\n");
             additionalOrder++;
         }
         return nocDetails.toString();

@@ -83,16 +83,16 @@ public class LetterToPartyCommon extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ_OC_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "inspection")
 	private InspectionCommon inspection;
 
 	@Length(min = 1, max = 32)
 	private String acknowledgementNumber;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "egbpa_lp_reason_common", joinColumns = @JoinColumn(name = "lettertoparty"), inverseJoinColumns = @JoinColumn(name = "lpreason"))
-	private List<LpReason> lpReason;
+	private List<LpReason> lpReason = new ArrayList<>();
 
 	@Length(min = 1, max = 128)
 	private String lpNumber;
@@ -100,7 +100,7 @@ public class LetterToPartyCommon extends AbstractAuditable {
 	@Temporal(TemporalType.DATE)
 	private Date letterDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "scheduledby")
 	private User scheduledBy;
 
@@ -143,7 +143,7 @@ public class LetterToPartyCommon extends AbstractAuditable {
 	private String pendingAction;
 
 	@OrderBy("id ASC")
-	@OneToMany(mappedBy = "letterToParty", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "letterToParty", cascade = CascadeType.ALL)
 	private List<LetterToPartyDocumentCommon> letterToPartyDocuments = new ArrayList<>(0);
 
 	@ManyToOne(cascade = CascadeType.ALL)

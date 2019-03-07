@@ -71,15 +71,15 @@
 				varStatus="status">
 				<div class="form-group">
 					<div class="col-sm-5 add-margin check-text text-left">
-						<c:out value="${docs.checkListDetail.description}" />
+						<c:out value="${docs.serviceChecklist.checklist.description}" />
 						<form:hidden
-							id="inspection.docketDetailLocList${status.index}checkListDetail.id"
-							path="inspection.docketDetailLocList[${status.index}].checkListDetail.id"
-							value="${docs.checkListDetail.id}" />
+							id="inspection.docketDetailLocList${status.index}serviceChecklist"
+							path="inspection.docketDetailLocList[${status.index}].serviceChecklist"
+							value="${docs.serviceChecklist.id}" />
 						<form:hidden
-							id="inspection.docketDetailLocList${status.index}checkListDetail.description"
-							path="inspection.docketDetailLocList[${status.index}].checkListDetail.description"
-							value="${docs.checkListDetail.description}" />
+							id="inspection.docketDetailLocList${status.index}serviceChecklist.checklist.description"
+							path="inspection.docketDetailLocList[${status.index}].serviceChecklist.checklist.description"
+							value="${docs.serviceChecklist.checklist.description}" />
 					</div>
 
 					<div class="col-sm-3 add-margin text-left">

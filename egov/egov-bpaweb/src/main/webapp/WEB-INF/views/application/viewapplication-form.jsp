@@ -69,12 +69,12 @@
                             code='lbl.document.scrutiny'/></a></li>
                 </c:if>
 
-                <c:if test="${not empty bpaApplication.applicationNOCDocument}">
+                <c:if test="${not empty bpaApplication.permitNocDocuments}">
                     <li><a data-toggle="tab" href="#noc-info" data-tabidx=3><spring:message
                             code='lbl.noc.details'/></a></li>
                 </c:if>
 
-                <c:if test="${not empty bpaApplication.inspections}">
+                <c:if test="${not empty bpaApplication.permitInspections}">
                     <li><a data-toggle="tab" href="#view-inspection" data-tabidx=4><spring:message
                             code='lbl.inspection.appln'/></a></li>
                 </c:if>
@@ -89,7 +89,7 @@
             </ul>
             <div class="tab-content">
                 <div id="document-info" class="tab-pane fade">
-                    <c:if test="${not empty  bpaApplication.getDcrDocuments()}">
+                    <c:if test="${not empty  bpaApplication.permitDcrDocuments}">
                         <div class="panel panel-primary dcrDocuments" data-collapsed="0">
                             <jsp:include page="view-dcr-documentdetails.jsp"></jsp:include>
                         </div>
@@ -143,14 +143,14 @@
                         </div>
                     </div>
                 </c:if>
-                <c:if test="${not empty bpaApplication.applicationNOCDocument}">
+                <c:if test="${not empty bpaApplication.permitNocDocuments}">
                     <div id="noc-info" class="tab-pane fade">
                         <div class="panel panel-primary" data-collapsed="0">
                             <jsp:include page="view-noc-document.jsp"></jsp:include>
                         </div>
                     </div>
                 </c:if>
-                <c:if test="${not empty bpaApplication.inspections}">
+                <c:if test="${not empty bpaApplication.permitInspections}">
                     <div id="view-inspection" class="tab-pane fade">
                         <div class="panel panel-primary" data-collapsed="0">
                             <jsp:include page="view-inspection-details.jsp"></jsp:include>

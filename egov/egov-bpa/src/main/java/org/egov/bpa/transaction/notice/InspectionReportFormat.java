@@ -46,12 +46,12 @@
  */
 package org.egov.bpa.transaction.notice;
 
-import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.infra.reporting.engine.ReportOutput;
 
 @FunctionalInterface
 public interface InspectionReportFormat {
 
-    ReportOutput generateNotice(final Inspection inspection);
+    ReportOutput generateNotice(final PermitInspection inspection);
 
 }

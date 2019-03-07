@@ -65,7 +65,7 @@
 						varStatus="status">
 						<tr>
 							<td class="view-content text-center" style="font-size: 97%;"><c:out value="${status.index+1}" /></td>
-							<td class="view-content" style="font-size: 97%;"><c:out value="${docs.document.checklistDetail.description}"
+							<td class="view-content" style="font-size: 97%;"><c:out value="${docs.document.serviceChecklist.checklist.description}"
 									default="N/A" /></td>
 							<td class="view-content" style="font-size: 97%;"><c:out value="${docs.document.remarks}" default="N/A" /></td>
 							<td class="view-content" style="font-size: 97%;"><c:set value="false" var="isDocFound"></c:set> <c:forEach

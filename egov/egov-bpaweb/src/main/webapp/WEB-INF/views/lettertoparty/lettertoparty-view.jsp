@@ -58,26 +58,26 @@
                         <spring:message code="lbl.lpNumber"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">
-                        <c:out value="${lettertoParty.lpNumber}" default="N/A"></c:out>
+                        <c:out value="${permitLetterToParty.letterToParty.lpNumber}" default="N/A"></c:out>
                     </div>
                     <%-- <c:if test="${lettertoParty.sentDate !=null }"> --%>
                     <div class="col-sm-3 add-margin">
                         <spring:message code="lbl.lpsentdate"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">
-                        <fmt:formatDate value="${lettertoParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
+                        <fmt:formatDate value="${permitLetterToParty.letterToParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
                         <c:out value="${sentDate}" default="N/A"></c:out>
                     </div>
                     <%-- </c:if> --%>
-                    <input type="hidden" id='lettertoParty' name="lettertoParty"
-                           value="${lettertoParty.id}">
+                    <input type="hidden" id='lettertoParty' name="permitLetterToParty"
+                           value="${permitLetterToParty.id}">
                 </div>
                 <div class="row add-border">
                     <div class="col-sm-3 add-margin">
                         <spring:message code="lbl.lpreason"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">
-                        <c:forEach items="${lettertoParty.lpReason}" var="lpReason"
+                        <c:forEach items="${permitLetterToParty.letterToParty.lpReason}" var="lpReason"
                                    varStatus="status">
                             <c:out value="${lpReason.description}"/>
                             <c:if test="${!status.last}">,</c:if>
@@ -90,28 +90,28 @@
                         <spring:message code="lbl.lpdescription"/>
                     </div>
                     <div class="col-sm-9 add-margin view-content text-justify">
-                        <c:out value="${lettertoParty.lpDesc}" default="N/A"></c:out>
+                        <c:out value="${permitLetterToParty.letterToParty.lpDesc}" default="N/A"></c:out>
                     </div>
                 </div>
 
                 <div class="row add-border">
-                    <c:if test="${lettertoParty.replyDate !=null }">
+                    <c:if test="${permitLetterToParty.letterToParty.replyDate !=null }">
                         <div class="col-sm-3 add-margin">
                             <spring:message code="lbl.lpreplydate"/>
                         </div>
                         <div class="col-sm-3 add-margin view-content">
-                            <fmt:formatDate value="${lettertoParty.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
+                            <fmt:formatDate value="${permitLetterToParty.letterToParty.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
                             <c:out value="${replyDate}" default="N/A"></c:out>
                         </div>
                     </c:if>
                 </div>
                 <div class="row add-border">
-                    <c:if test="${lettertoParty.lpReplyRemarks !=null }">
+                    <c:if test="${permitLetterToParty.letterToParty.lpReplyRemarks !=null }">
                         <div class="col-sm-3 add-margin">
                             <spring:message code="lbl.lpReplyRemarks"/>
                         </div>
                         <div class="col-sm-9 add-margin view-content text-justify">
-                            <c:out value="${lettertoParty.lpReplyRemarks}" default="N/A"></c:out>
+                            <c:out value="${permitLetterToParty.letterToParty.lpReplyRemarks}" default="N/A"></c:out>
                         </div>
                     </c:if>
                 </div>
@@ -141,10 +141,10 @@
                                 <c:forEach items="${lettertopartydocList}" var="docs"
                                            varStatus="status">
                                     <tr>
-                                        <td class="view-content" style="font-size: 97%;"><c:out value="${docs.checklistDetail.description}"
+                                        <td class="view-content" style="font-size: 97%;"><c:out value="${docs.serviceChecklist.checklist.description}"
                                                                         default="N/A"/></td>
 
-                                        <td class="view-content" style="font-size: 97%;"><c:out value="${docs.isrequested ? 'Yes' : 'No'}"/></td>
+                                        <td class="view-content" style="font-size: 97%;"><c:out value="${docs.isRequested ? 'Yes' : 'No'}"/></td>
                                         <td class="view-content text-justify" style="font-size: 97%;"><c:out value="${docs.remarks}" default="N/A"/></td>
                                         <td class="view-content" style="font-size: 97%;"><c:set value="false" var="isDocFound"></c:set>
                                             <c:forEach items="${docs.getSupportDocs()}" var="file" varStatus="loop">

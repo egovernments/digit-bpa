@@ -47,18 +47,13 @@
 
 package org.egov.bpa.transaction.entity.oc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -71,86 +66,47 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OCInspection.SEQ_INSPECTION, sequenceName = OCInspection.SEQ_INSPECTION, allocationSize = 1)
 public class OCInspection extends AbstractAuditable {
 
-	protected static final String SEQ_INSPECTION = "SEQ_EGBPA_OC_INSPECTION";
-	private static final long serialVersionUID = -3889308488871083896L;
+    protected static final String SEQ_INSPECTION = "SEQ_EGBPA_OC_INSPECTION";
+    private static final long serialVersionUID = -3889308488871083896L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "inspection", nullable = false)
-	private InspectionCommon inspection;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "inspection", nullable = false)
+    private InspectionCommon inspection;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "occupancyCertificate", nullable = false)
-	private OccupancyCertificate oc;
-	
-	@OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<OCPlanScrutinyChecklist> planScrutinyChecklist = new ArrayList<>(0);
-	@OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<OCPlanScrutinyChecklist> planScrutinyChecklistForDrawing = new ArrayList<>(0);
-	
-	private transient List<OCPlanScrutinyChecklist> planScrutinyChecklistTemp = new ArrayList<>(0);
-	private transient List<OCPlanScrutinyChecklist> planScrutinyChecklistForDrawingTemp = new ArrayList<>(0);
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "occupancyCertificate", nullable = false)
+    private OccupancyCertificate oc;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public List<OCPlanScrutinyChecklist> getPlanScrutinyChecklistTemp() {
-		return planScrutinyChecklistTemp;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
 
-	public void setPlanScrutinyChecklistTemp(List<OCPlanScrutinyChecklist> planScrutinyChecklistTemp) {
-		this.planScrutinyChecklistTemp = planScrutinyChecklistTemp;
-	}
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
 
-	public List<OCPlanScrutinyChecklist> getPlanScrutinyChecklistForDrawingTemp() {
-		return planScrutinyChecklistForDrawingTemp;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setPlanScrutinyChecklistForDrawingTemp(List<OCPlanScrutinyChecklist> planScrutinyChecklistForDrawingTemp) {
-		this.planScrutinyChecklistForDrawingTemp = planScrutinyChecklistForDrawingTemp;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
-	public InspectionCommon getInspection() {
-		return inspection;
-	}
-
-	public void setInspection(InspectionCommon inspection) {
-		this.inspection = inspection;
-	}
-
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
-
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
-
-	public List<OCPlanScrutinyChecklist> getPlanScrutinyChecklist() {
-		return planScrutinyChecklist;
-	}
-
-	public void setPlanScrutinyChecklist(List<OCPlanScrutinyChecklist> planScrutinyChecklist) {
-		this.planScrutinyChecklist = planScrutinyChecklist;
-	}
-
-	public List<OCPlanScrutinyChecklist> getPlanScrutinyChecklistForDrawing() {
-		return planScrutinyChecklistForDrawing;
-	}
-
-	public void setPlanScrutinyChecklistForDrawing(List<OCPlanScrutinyChecklist> planScrutinyChecklistForDrawing) {
-		this.planScrutinyChecklistForDrawing = planScrutinyChecklistForDrawing;
-	}
 }

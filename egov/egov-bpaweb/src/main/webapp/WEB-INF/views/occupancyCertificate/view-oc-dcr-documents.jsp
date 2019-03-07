@@ -65,7 +65,7 @@
                            varStatus="dcrStatus">
                     <tr>
                         <td class="view-content text-center" style="font-size: 97%;"><c:out value="${dcrStatus.index+1}"/></td>
-                        <td class="view-content" style="font-size: 97%;"><c:out value="${dcrDoc.dcrDocument.checklistDtl.description}"
+                        <td class="view-content" style="font-size: 97%;"><c:out value="${dcrDoc.dcrDocument.serviceChecklist.checklist.description}"
                                    default="N/A"/></td>
                         <td class="view-content text-justify" style="font-size: 97%;"><c:out value="${dcrDoc.dcrDocument.remarks}" default="N/A"/></td>
                         <td class="view-content" style="font-size: 97%;"><c:set value="false" var="isDocFound"></c:set>

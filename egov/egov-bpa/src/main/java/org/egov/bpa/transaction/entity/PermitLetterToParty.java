@@ -27,9 +27,9 @@
            or trademarks of eGovernments Foundation.
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.entity;
+package org.egov.bpa.transaction.entity;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -41,37 +41,30 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.bpa.transaction.entity.common.LetterToPartyCommon;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "EGBPA_MSTR_DOCUMENT")
-@SequenceGenerator(name = BpaDocument.SEQ_DOCUMENT, sequenceName = BpaDocument.SEQ_DOCUMENT, allocationSize = 1)
-public class BpaDocument extends AbstractAuditable {
+@Table(name = "egbpa_permit_letter_to_party")
+@SequenceGenerator(name = PermitLetterToParty.SEQ_LETTERTOPARTY, sequenceName = PermitLetterToParty.SEQ_LETTERTOPARTY, allocationSize = 1)
+public class PermitLetterToParty extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_DOCUMENT = "SEQ_EGBPA_MSTR_DOCUMENT";
+    public static final String SEQ_LETTERTOPARTY = "seq_egbpa_permit_letter_to_party";
 
     @Id
-    @GeneratedValue(generator = SEQ_DOCUMENT, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
     private Long id;
-
     @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "application")
+    private BpaApplication application;
+    
     @NotNull
-    @Length(min = 1, max = 256)
-    private String description;
-
-    private Boolean isActive;
-
-    private Boolean isMandatory;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "serviceType")
-    private ServiceType serviceType;
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "letterToParty")
+    private LetterToPartyCommon letterToParty;
+    
     @Override
     public Long getId() {
         return id;
@@ -82,44 +75,21 @@ public class BpaDocument extends AbstractAuditable {
         this.id = id;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
+    public BpaApplication getApplication() {
+        return application;
     }
 
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
+    public void setApplication(BpaApplication application) {
+        this.application = application;
     }
 
-    public Boolean getIsMandatory() {
-        return isMandatory;
+    public LetterToPartyCommon getLetterToParty() {
+        return letterToParty;
     }
 
-    public void setIsMandatory(final Boolean isMandatory) {
-        this.isMandatory = isMandatory;
+    public void setLetterToParty(LetterToPartyCommon letterToParty) {
+        this.letterToParty = letterToParty;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public ServiceType getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(final ServiceType serviceType) {
-        this.serviceType = serviceType;
-    }
-
+    
 }

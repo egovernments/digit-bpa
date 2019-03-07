@@ -46,19 +46,19 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-				<div class="panel-title text-center no-float">
-				<c:if test="${not empty feeNotDefined}">
-					<strong class="error-msg">${feeNotDefined}</strong>
-				</c:if>
-			</div>
+		<div class="panel-title text-center no-float">
+			<c:if test="${not empty feeNotDefined}">
+				<strong class="error-msg">${feeNotDefined}</strong>
+			</c:if>
 		</div>
-		
+
 		<form:form role="form" action="../update-submit" method="post"
 			modelAttribute="occupancyCertificate"
 			id="occupancyCertificateUpdateForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden"  id="feeCalculationMode" value="${feeCalculationMode}"/>
+			<input type="hidden" id="feeCalculationMode"
+				value="${feeCalculationMode}" />
 
 			<c:if
 				test="${isFeeCollected && occupancyCertificate.status.code eq 'Approved'}">
@@ -244,7 +244,7 @@
 				<c:if test="${not empty occupancyCertificate.occupancyFee}">
 					<div id="view-fee" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="view-oc-fee-details.jsp"></jsp:include>						
+							<jsp:include page="view-oc-fee-details.jsp"></jsp:include>
 						</div>
 					</div>
 				</c:if>
@@ -252,34 +252,43 @@
 
 			<div class="text-center">
 
-                <c:if test="${mode eq 'newappointment'}">
-                    <a
-                            href="/bpa/application/occupancy-certificate/schedule-appointment/${occupancyCertificate.applicationNumber}"
-                            class="btn btn-primary"> <spring:message code='lbl.btn.new.appointment'/> </a>
-                </c:if>
-
-                <c:if test="${mode eq 'captureInspection'}">
-                    <a
-                            target="popup" class="btn btn-primary"
-                            onclick="window.open('/bpa/application/occupancy-certificate/create-inspection/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
-                            class="btn btn-primary"> <spring:message code='lbl.btn.inspection.details'/> </a>
-                    <c:if test="${isInspnRescheduleEnabled eq true}">
-                        <a
-                                href="/bpa/application/occupancy-certificate/reschedule-appointment/${scheduleType}/${occupancyCertificate.applicationNumber}"
-                                class="btn btn-primary"> <spring:message code='lbl.btn.reschedule.appointment'/> </a>
-                    </c:if>
-                </c:if>
-
-                <c:if test="${mode eq 'captureAdditionalInspection'}">
-                    <a
-                            target="popup" class="btn btn-primary"
-                            onclick="window.open('/bpa/application/occupancy-certificate/create-inspection/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
-                            class="btn btn-primary"> <spring:message code='lbl.btn.inspection.details'/> </a>
-                </c:if>
-                <c:if test="${mode eq 'initiatedForApproval' && (feeCalculationMode eq 'MANUAL' || (feeCalculationMode ne 'MANUAL' && not empty occupancyCertificate.occupancyFee)) }">
+				<c:if test="${mode eq 'newappointment'}">
 					<a
-							href="/bpa/occupancy-certificate/fee/calculateFee/${occupancyCertificate.applicationNumber}"
-							class="btn btn-primary"> <spring:message code="lbl.btn.modify.fee"/> </a>
+						href="/bpa/application/occupancy-certificate/schedule-appointment/${occupancyCertificate.applicationNumber}"
+						class="btn btn-primary"> <spring:message
+							code='lbl.btn.new.appointment' />
+					</a>
+				</c:if>
+
+				<c:if test="${mode eq 'captureInspection'}">
+					<a target="popup" class="btn btn-primary"
+						onclick="window.open('/bpa/application/occupancy-certificate/create-inspection/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
+						class="btn btn-primary"> <spring:message
+							code='lbl.btn.inspection.details' />
+					</a>
+					<c:if test="${isInspnRescheduleEnabled eq true}">
+						<a
+							href="/bpa/application/occupancy-certificate/reschedule-appointment/${scheduleType}/${occupancyCertificate.applicationNumber}"
+							class="btn btn-primary"> <spring:message
+								code='lbl.btn.reschedule.appointment' />
+						</a>
+					</c:if>
+				</c:if>
+
+				<c:if test="${mode eq 'captureAdditionalInspection'}">
+					<a target="popup" class="btn btn-primary"
+						onclick="window.open('/bpa/application/occupancy-certificate/create-inspection/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
+						class="btn btn-primary"> <spring:message
+							code='lbl.btn.inspection.details' />
+					</a>
+				</c:if>
+				<c:if
+					test="${mode eq 'initiatedForApproval' && (feeCalculationMode eq 'MANUAL' || (feeCalculationMode ne 'MANUAL' && not empty occupancyCertificate.occupancyFee)) }">
+					<a
+						href="/bpa/occupancy-certificate/fee/calculateFee/${occupancyCertificate.applicationNumber}"
+						class="btn btn-primary"> <spring:message
+							code="lbl.btn.modify.fee" />
+					</a>
 
 				</c:if>
 				<c:if
@@ -288,110 +297,148 @@
 						class="btn btn-primary" />
 				</c:if>
 
-                <c:if test="${createlettertoparty}">
-                    <a
-                            href="/bpa/occupancy-certificate/letter-to-party/create/${occupancyCertificate.applicationNumber}"
-                            target="_self" class="btn btn-primary"> <spring:message code='lbl.btn.letter.to.party'/> </a>
-                </c:if>
-            </div>
-            <br>
-            <c:if test="${isTSInspectionRequired eq true}">
+				<c:if test="${createlettertoparty}">
+					<a
+						href="/bpa/occupancy-certificate/letter-to-party/create/${occupancyCertificate.applicationNumber}"
+						target="_self" class="btn btn-primary"> <spring:message
+							code='lbl.btn.letter.to.party' />
+					</a>
+				</c:if>
+			</div>
+			<br>
+			<c:if test="${isTSInspectionRequired eq true}">
 
-                <div class="panel panel-primary" data-collapsed="0" id="townSurveyorInspectionDiv">
-                    <div class="panel-heading toggle-header custom_form_panel_heading">
-                        <div class="panel-title">
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <label class="view-content">
-                            &nbsp;&nbsp;&nbsp;<form:checkbox path="townSurveyorInspectionRequire"
-                                                             id="townSurveyorInspectionRequire"/>
-                            &nbsp;&nbsp;&nbsp;<spring:message
-                                code="lbl.ts.inspn.requr"/>
-                        </label>
-                    </div>
-                </div>
-            </c:if>
+				<div class="panel panel-primary" data-collapsed="0"
+					id="townSurveyorInspectionDiv">
+					<div class="panel-heading toggle-header custom_form_panel_heading">
+						<div class="panel-title"></div>
+					</div>
+					<div class="panel-body">
+						<label class="view-content"> &nbsp;&nbsp;&nbsp;<form:checkbox
+								path="townSurveyorInspectionRequire"
+								id="townSurveyorInspectionRequire" /> &nbsp;&nbsp;&nbsp;<spring:message
+								code="lbl.ts.inspn.requr" />
+						</label>
+					</div>
+				</div>
+			</c:if>
 
-            <c:choose>
-                <c:when
-                        test="${isFeeCollected && occupancyCertificate.status.code eq 'Approved'}">
-                    <div class="buttonbottom" align="center">
-                        <input type="button" name="button2" value="Close"
-                               class="btn btn-default" onclick="window.close();"/>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <c:choose>
-                        <c:when
-                                test="${ (citizenOrBusinessUser && occupancyCertificate.id !=null) || occupancyCertificate.state.value eq 'LP Created' || occupancyCertificate.state.value eq 'LP Reply Received'}">
-                            <div class="buttonbottom" align="center">
-                                <form:button type="submit" id="buttonSubmit"
-                                             class="btn btn-primary" value="Forward"><spring:message code='lbl.btn.forward'/></form:button>
-                                <input type="button" name="button2" value="Close"
-                                       class="btn btn-default" onclick="window.close();"/>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            <c:if test="${occupancyCertificate.status.code ne 'Digitally signed'}">
-                                <jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-                            </c:if>
-                            <div class="buttonbottom" align="center">
-                                <jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
-                </c:otherwise>
-            </c:choose>
-        </form:form>
-    </div>
+			<c:choose>
+				<c:when
+					test="${isFeeCollected && occupancyCertificate.status.code eq 'Approved'}">
+					<div class="buttonbottom" align="center">
+						<input type="button" name="button2" value="Close"
+							class="btn btn-default" onclick="window.close();" />
+					</div>
+				</c:when>
+				<c:otherwise>
+					<c:choose>
+						<c:when
+							test="${ (citizenOrBusinessUser && occupancyCertificate.id !=null) || occupancyCertificate.state.value eq 'LP Created' || occupancyCertificate.state.value eq 'LP Reply Received'}">
+							<div class="buttonbottom" align="center">
+								<form:button type="submit" id="buttonSubmit"
+									class="btn btn-primary" value="Forward">
+									<spring:message code='lbl.btn.forward' />
+								</form:button>
+								<input type="button" name="button2" value="Close"
+									class="btn btn-default" onclick="window.close();" />
+							</div>
+						</c:when>
+						<c:otherwise>
+							<c:if
+								test="${occupancyCertificate.status.code ne 'Digitally signed'}">
+								<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+							</c:if>
+							<div class="buttonbottom" align="center">
+								<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+							</div>
+						</c:otherwise>
+					</c:choose>
+				</c:otherwise>
+			</c:choose>
+		</form:form>
+	</div>
 </div>
 
-<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-     aria-hidden="true" id="commentsModal">
-    <div class="modal-dialog" role="document">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold alert alert-info"><spring:message code='lbl.reason.for.revert'/></h4>
-            </div>
-            <div class="modal-body mx-3">
-                <div id="showCommentsModal" class="md-form mb-5"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal"><spring:message code='lbl.close'/></button>
-            </div>
-        </div>
-    </div>
-    <input type="hidden" id="rejectAppln" value="<spring:message code='msg.confirm.reject.appln' />" />
-	<input type="hidden" id="intiateRejectionAppln" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
-	<input type="hidden" id="sendBackApplnPreOfficial" value="<spring:message code='msg.confirm.sendback.previous.approved.official' />" />
-	<input type="hidden" id="approveAppln" value="<spring:message code='msg.confirm.approve.appln' />" />
-	<input type="hidden" id="forwardAppln" value="<spring:message code='msg.confirm.forward.application' />" />
-	<input type="hidden" id="generateOccpancyCerti" value="<spring:message code='msg.confirm.generate.occupancy.certificate' />" />
-	<input type="hidden" id="generateRejectNotice" value="<spring:message code='msg.confirm.generate.rejection.notice' />" />
-	<input type="hidden" id="townsurvFieldInspeRequest" value="<spring:message code='msg.validate.townsurveyor.filedinspec.request' />" />
-	<input type="hidden" id="townsurvFieldInspeRequired" value="<spring:message code='msg.validate.townsurveyor.fieldinspec.required' />" />
-	<input type="hidden" id="townsurvCommentsRequired" value="<spring:message code='msg.validate.comments.reqfor.townsurveyor' />" />
-	<input type="hidden" id="rejectionReasonMandatory" value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
-	<input type="hidden" id="rejectionCommentsRequired" value="<spring:message code='msg.validate.enter.rejection.comments' />" />
-	<input type="hidden" id="applnSendbackCommentsRequired" value="<spring:message code='msg.validate.comments.required.toappln.sentback' />" />
-	<input type="hidden" id="feeAmount" value="<spring:message code='msg.validation.feeamount'/>"/>
-	<input type="hidden" id="incrFeeamtTopOfsysCalcFee" value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>"/>
-	<input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
-	<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
-	<input type="hidden" id="typeOfMsg" value="<spring:message code='msg.vlaidate.typeof' />"/>
-	<input type="hidden" id="permissibleAreaForFloor1" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />"/>
-	<input type="hidden" id="permissibleAreaForFloor2" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />"/>
-	<input type="hidden" id="builtupAndCarpetDetails" value="<spring:message code='msg.tittle.builtup.carpet.details' />"/>
-	<input type="hidden" id="blockMsg" value="<spring:message code='msg.tittle.blockmsg' />"/>
-	<input type="hidden" id="buildScrutinyNumber" value="<spring:message code='msg.validate.building.scrutiny.number' />"/>
-	<input type="hidden" id="buildingPlanApplnForServiceType" value="<spring:message code='msg.validate.buildingplan.applnfor.servicetype' />"/>
-	<input type="hidden" id="buildServiceType" value="<spring:message code='msg.validate.building.servicetype' />"/>
-	<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
-	<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
-	<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>
-	<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
+	aria-labelledby="myLargeModalLabel" aria-hidden="true"
+	id="commentsModal">
+	<div class="modal-dialog" role="document">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header text-center">
+				<h4 class="modal-title w-100 font-weight-bold alert alert-info">
+					<spring:message code='lbl.reason.for.revert' />
+				</h4>
+			</div>
+			<div class="modal-body mx-3">
+				<div id="showCommentsModal" class="md-form mb-5"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">
+					<spring:message code='lbl.close' />
+				</button>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="rejectAppln"
+		value="<spring:message code='msg.confirm.reject.appln' />" /> <input
+		type="hidden" id="intiateRejectionAppln"
+		value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
+	<input type="hidden" id="sendBackApplnPreOfficial"
+		value="<spring:message code='msg.confirm.sendback.previous.approved.official' />" />
+	<input type="hidden" id="approveAppln"
+		value="<spring:message code='msg.confirm.approve.appln' />" /> <input
+		type="hidden" id="forwardAppln"
+		value="<spring:message code='msg.confirm.forward.application' />" />
+	<input type="hidden" id="generateOccpancyCerti"
+		value="<spring:message code='msg.confirm.generate.occupancy.certificate' />" />
+	<input type="hidden" id="generateRejectNotice"
+		value="<spring:message code='msg.confirm.generate.rejection.notice' />" />
+	<input type="hidden" id="townsurvFieldInspeRequest"
+		value="<spring:message code='msg.validate.townsurveyor.filedinspec.request' />" />
+	<input type="hidden" id="townsurvFieldInspeRequired"
+		value="<spring:message code='msg.validate.townsurveyor.fieldinspec.required' />" />
+	<input type="hidden" id="townsurvCommentsRequired"
+		value="<spring:message code='msg.validate.comments.reqfor.townsurveyor' />" />
+	<input type="hidden" id="rejectionReasonMandatory"
+		value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
+	<input type="hidden" id="rejectionCommentsRequired"
+		value="<spring:message code='msg.validate.enter.rejection.comments' />" />
+	<input type="hidden" id="applnSendbackCommentsRequired"
+		value="<spring:message code='msg.validate.comments.required.toappln.sentback' />" />
+	<input type="hidden" id="feeAmount"
+		value="<spring:message code='msg.validation.feeamount'/>" /> <input
+		type="hidden" id="incrFeeamtTopOfsysCalcFee"
+		value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>" />
+	<input type="hidden" id="floorareaValidate"
+		value="<spring:message code='msg.validate.floorarea' />" /> <input
+		type="hidden" id="carpetareaValidate"
+		value="<spring:message code='msg.validate.carpetarea' />" /> <input
+		type="hidden" id="typeOfMsg"
+		value="<spring:message code='msg.vlaidate.typeof' />" /> <input
+		type="hidden" id="permissibleAreaForFloor1"
+		value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />" />
+	<input type="hidden" id="permissibleAreaForFloor2"
+		value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />" />
+	<input type="hidden" id="builtupAndCarpetDetails"
+		value="<spring:message code='msg.tittle.builtup.carpet.details' />" />
+	<input type="hidden" id="blockMsg"
+		value="<spring:message code='msg.tittle.blockmsg' />" /> <input
+		type="hidden" id="buildScrutinyNumber"
+		value="<spring:message code='msg.validate.building.scrutiny.number' />" />
+	<input type="hidden" id="buildingPlanApplnForServiceType"
+		value="<spring:message code='msg.validate.buildingplan.applnfor.servicetype' />" />
+	<input type="hidden" id="buildServiceType"
+		value="<spring:message code='msg.validate.building.servicetype' />" />
+	<input type="hidden" id="forBuildScrutinyNumber"
+		value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />" />
+	<input type="hidden" id="floorDetailsNotExtracted"
+		value="<spring:message code='msg.validate.floordetsil.not.extracted' />" />
+	<input type="hidden" id="existingBuildDetailsNotPresent"
+		value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />
+	<input type="hidden" id="valuesCannotEmpty"
+		value="<spring:message code='msg.validate.values.cannot.empty' />" />
 </div>
 
 <script

@@ -47,89 +47,107 @@
 
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.bpa.master.entity.enums.Directions;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.springframework.web.multipart.MultipartFile;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egbpa_inspection_common_files")
 @SequenceGenerator(name = InspectionFilesCommon.SEQ_COMMON_DOCUMENT, sequenceName = InspectionFilesCommon.SEQ_COMMON_DOCUMENT, allocationSize = 1)
 public class InspectionFilesCommon extends AbstractAuditable {
 
-	public static final String SEQ_COMMON_DOCUMENT = "seq_egbpa_inspection_common_files";
-	private static final long serialVersionUID = -7913915173561192911L;
+    public static final String SEQ_COMMON_DOCUMENT = "seq_egbpa_inspection_common_files";
+    private static final long serialVersionUID = -7913915173561192911L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_COMMON_DOCUMENT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_COMMON_DOCUMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "filestoreid")
-	private FileStoreMapper fileStoreMapper;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "inspectionid", nullable = false)
+    private InspectionCommon inspection;
 
-	@Enumerated(EnumType.STRING)
-	private Directions direction;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "servicechecklist", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "inspectionid", nullable = false)
-	private InspectionCommon inspection;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "egbpa_site_inspection_images", joinColumns = @JoinColumn(name = "inspectiondocument"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    private Set<FileStoreMapper> images = Collections.emptySet();
 
-	private transient MultipartFile file;
+    private transient MultipartFile[] files;
+    private transient Map<Long, List<String>> encodedImages = new HashMap<>();
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public FileStoreMapper getFileStoreMapper() {
-		return fileStoreMapper;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
 
-	public void setFileStoreMapper(FileStoreMapper fileStoreMapper) {
-		this.fileStoreMapper = fileStoreMapper;
-	}
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
 
-	public Directions getDirection() {
-		return direction;
-	}
+    public ChecklistServiceTypeMapping getServiceChecklist() {
+        return serviceChecklist;
+    }
 
-	public void setDirection(Directions direction) {
-		this.direction = direction;
-	}
+    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
+    }
 
-	public InspectionCommon getInspection() {
-		return inspection;
-	}
+    public Set<FileStoreMapper> getImages() {
+        return images;
+    }
 
-	public void setInspection(InspectionCommon inspection) {
-		this.inspection = inspection;
-	}
+    public void setImages(Set<FileStoreMapper> images) {
+        this.images = images;
+    }
 
-	public MultipartFile getFile() {
-		return file;
-	}
+    public MultipartFile[] getFiles() {
+        return files;
+    }
 
-	public void setFile(MultipartFile file) {
-		this.file = file;
-	}
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
+
+    public Map<Long, List<String>> getEncodedImages() {
+        return encodedImages;
+    }
+
+    public void setEncodedImages(Map<Long, List<String>> encodedImages) {
+        this.encodedImages = encodedImages;
+    }
+
 }

@@ -70,35 +70,33 @@
         <tbody>
         <c:choose>
             <c:when
-                    test="${not empty ocInspection.planScrutinyChecklistForDrawingTemp}">
+                    test="${not empty ocInspection.inspection.planScrutinyChecklistForDrawingTemp}">
                 <c:forEach var="planScrutinyDraw"
-                           items="${ocInspection.planScrutinyChecklistForDrawingTemp}"
+                           items="${ocInspection.inspection.planScrutinyChecklistForDrawingTemp}"
                            varStatus="planScrutinyDrawStatus">
                     <tr>
-                        <td><form:hidden
-                                path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].inspection"
-                                value="${ocInspection.id}"/> <form:hidden
-                                path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].orderNumber"
+                        <td> <form:hidden
+                                path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].orderNumber"
                                 value="${planScrutinyDrawStatus.index+1}"/> <form:hidden
-                                path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].checklistDetail"
-                                value="${planScrutinyDraw.checklistDetail.id}"/><form:hidden
-                                path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyChecklistType"
+                                path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].serviceChecklist"
+                                value="${planScrutinyDraw.serviceChecklist.id}"/><form:hidden
+                                path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyChecklistType"
                                 value="DRAWING_DETAILS"/> <c:out
                                 value="${planScrutinyDrawStatus.index+1}"></c:out></td>
                         <td class="view-content" style="font-size: 100%;"><c:out
-                                value="${planScrutinyDraw.checklistDetail.description}"></c:out></td>
+                                value="${planScrutinyDraw.serviceChecklist.checklist.description}"></c:out></td>
                         <td class="view-content">
                             <c:forEach items="${planScrutinyValues}" var="scrutinyVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-                                                  name="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyValue"
+                                                  name="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyValue"
                                             <c:if test="${scrutinyVal eq planScrutinyDraw.scrutinyValue}"> checked="checked" </c:if> />${scrutinyVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </td>
                         <td><form:textarea
-                                path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
+                                path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
                                 class="form-control remarks" rows="3" maxlength="1024"/></td>
                     </tr>
                 </c:forEach>
@@ -107,30 +105,29 @@
                 <c:forEach var="planScrutinyDraw"
                            items="${planScrutinyChecklistForDrawing}" varStatus="planScrutinyDrawStatus">
                     <tr>
-                        <td><form:hidden
-                                path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].inspection"/>
+                        <td>
                             <form:hidden
-                                    path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].orderNumber"
+                                    path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].orderNumber"
                                     value="${planScrutinyDrawStatus.index+1}"/><form:hidden
-                                    path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].checklistDetail"
+                                    path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].serviceChecklist"
                                     value="${planScrutinyDraw.id}"/><form:hidden
-                                    path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyChecklistType"
+                                    path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyChecklistType"
                                     value="DRAWING_DETAILS"/> <c:out
                                     value="${planScrutinyDrawStatus.index+1}"></c:out></td>
                         <td class="view-content" style="font-size: 100%;"><c:out
-                                value="${planScrutinyDraw.description}"></c:out>
+                                value="${planScrutinyDraw.checklist.description}"></c:out>
                         <td class="view-content">
                             <c:forEach items="${planScrutinyValues}" var="scrutinyVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-                                                  name="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyValue"
+                                                  name="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyValue"
                                             <c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </td>
                         <td><form:textarea
-                                path="planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
+                                path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
                                 class="form-control remarks" rows="3" maxlength="1024"/></td>
                     </tr>
                 </c:forEach>

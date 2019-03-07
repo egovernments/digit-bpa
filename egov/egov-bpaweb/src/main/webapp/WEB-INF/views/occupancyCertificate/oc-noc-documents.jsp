@@ -77,8 +77,8 @@
 						varStatus="status">
 						<tr>
 							<td><c:out value="${status.index+1}"></c:out></td>
-							<td style="font-size: 100%;"><c:out value="${doc.nocDocument.checklist.description}"></c:out>
-								<c:if test="${doc.nocDocument.checklist.isMandatory}">
+							<td style="font-size: 100%;"><c:out value="${doc.nocDocument.serviceChecklist.checklist.description}"></c:out>
+								<c:if test="${doc.nocDocument.serviceChecklist.mandatory}">
 									<span class="mandatory"></span>
 								</c:if></td>
 							<td>
@@ -142,7 +142,7 @@
 							</td>
 							<td>
 								<div class="files-upload-container" data-file-max-size="5"
-									<c:if test="${doc.nocDocument.checklist.isMandatory eq true && fn:length(doc.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
+									<c:if test="${doc.nocDocument.serviceChecklist.mandatory eq true && fn:length(doc.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
 									data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 									<div class="files-viewer">
 

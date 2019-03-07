@@ -50,9 +50,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.master.entity.CheckListDetail;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.LpReason;
-import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.LpReasonService;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
@@ -126,7 +126,7 @@ public class OccupancyCertificateLetterToPartyController {
     @Autowired
     private LpReasonService lpReasonService;
     @Autowired
-    private CheckListDetailService checkListDetailService;
+    private ChecklistServicetypeMappingService checklistServicetypeService;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -145,8 +145,8 @@ public class OccupancyCertificateLetterToPartyController {
         return lpReasonService.findAll();
     }
 
-    public List<CheckListDetail> getCheckListDetailList(final Long serviceTypeId) {
-        return checkListDetailService.findActiveCheckListByServiceType(serviceTypeId, OC_LTP_CHECKLIST);
+    public List<ChecklistServiceTypeMapping> getCheckListDetailList(final Long serviceTypeId) {
+        return checklistServicetypeService.findByActiveByServiceTypeAndChecklist(serviceTypeId, OC_LTP_CHECKLIST);
     }
 
     @GetMapping("/create/{applicationNumber}")

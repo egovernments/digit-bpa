@@ -71,18 +71,22 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.master.entity.CheckListDetail;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
-import org.egov.bpa.transaction.entity.ApplicationDocument;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
-import org.egov.bpa.transaction.entity.ApplicationNocDocument;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
-import org.egov.bpa.transaction.entity.DCRDocument;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
+import org.egov.bpa.transaction.entity.PermitDcrDocument;
+import org.egov.bpa.transaction.entity.PermitDocument;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
+import org.egov.bpa.transaction.entity.common.DcrDocument;
+import org.egov.bpa.transaction.entity.common.GeneralDocument;
+import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.BpaDcrService;
@@ -143,6 +147,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private BpaDcrService bpaDcrService;
     @Autowired
     protected SubOccupancyService subOccupancyService;
+    @Autowired
+    private ChecklistServicetypeMappingService checklistServiceTypeService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -186,39 +192,45 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         model.addAttribute("checkListDetailList",
                 checkListDetailService.findActiveCheckListByServiceType(bpaApplication.getServiceType().getId(),
                         CHECKLIST_TYPE));
-        List<CheckListDetail> checkListDetail = checkListDetailService.findActiveCheckListByServiceType(
-                bpaApplication.getServiceType().getId(),
-                CHECKLIST_TYPE);
+        List<ChecklistServiceTypeMapping> list = checklistServiceTypeService
+                .findByActiveChecklistAndServiceType(bpaApplication.getServiceType().getDescription(), CHECKLIST_TYPE);
         model.addAttribute("subOccupancyList", subOccupancyService.findAllOrderByOrderNumber());
-        List<ApplicationDocument> appDocList = new ArrayList<>();
-        for (CheckListDetail checkdet : checkListDetail) {
-            ApplicationDocument appdoc = new ApplicationDocument();
-            appdoc.setChecklistDetail(checkdet);
-            appDocList.add(appdoc);
+        List<PermitDocument> appDocList = new ArrayList<>();
+        for (ChecklistServiceTypeMapping chklistServiceType : list) {
+            PermitDocument permitDoc = new PermitDocument();
+            GeneralDocument documentsCommon = new GeneralDocument();
+            documentsCommon.setServiceChecklist(chklistServiceType);
+            permitDoc.setDocument(documentsCommon);
+            appDocList.add(permitDoc);
         }
-        List<CheckListDetail> dcrCheckListDetail = checkListDetailService
-                .findActiveCheckListByServiceType(bpaApplication.getServiceType().getId(), DCR_CHECKLIST);
-        if (bpaApplication.getDcrDocuments().isEmpty()) {
-            for (CheckListDetail dcrChkDetails : dcrCheckListDetail) {
-                DCRDocument dcrDocument = new DCRDocument();
-                dcrDocument.setApplication(bpaApplication);
-                dcrDocument.setChecklistDtl(dcrChkDetails);
-                bpaApplication.getDcrDocuments().add(dcrDocument);
+        List<ChecklistServiceTypeMapping> dcrCheckListDetail = checklistServiceTypeService
+                .findByActiveChecklistAndServiceType(bpaApplication.getServiceType().getDescription(), DCR_CHECKLIST);
+        if (bpaApplication.getPermitDcrDocuments().isEmpty()) {
+            for (ChecklistServiceTypeMapping dcrChkDetails : dcrCheckListDetail) {
+                PermitDcrDocument permitDcrDocument = new PermitDcrDocument();
+                DcrDocument dcrDocument = new DcrDocument();
+                dcrDocument.setServiceChecklist(dcrChkDetails);
+                permitDcrDocument.setApplication(bpaApplication);
+                permitDcrDocument.setDcrDocument(dcrDocument);
+                bpaApplication.getPermitDcrDocuments().add(permitDcrDocument);
             }
         }
 
-        if (bpaApplication.getApplicationNOCDocument().isEmpty()) {
-            for (CheckListDetail chckListDetail : checkListDetailService
-                    .findActiveCheckListByServiceType(bpaApplication.getServiceType().getId(), CHECKLIST_TYPE_NOC)) {
-                ApplicationNocDocument nocDocument = new ApplicationNocDocument();
-                nocDocument.setChecklist(chckListDetail);
-                nocDocument.setApplication(bpaApplication);
-                bpaApplication.getApplicationNOCDocument().add(nocDocument);
+        if (bpaApplication.getPermitNocDocuments().isEmpty()) {
+            List<ChecklistServiceTypeMapping> checklistServicetypeList = checklistServiceTypeService
+                    .findByActiveChecklistAndServiceType(bpaApplication.getServiceType().getDescription(), CHECKLIST_TYPE_NOC);
+            for (ChecklistServiceTypeMapping serviceChklist : checklistServicetypeList) {
+                PermitNocDocument permitNocDocument = new PermitNocDocument();
+                NocDocument nocDocument = new NocDocument();
+                nocDocument.setServiceChecklist(serviceChklist);
+                permitNocDocument.setApplication(bpaApplication);
+                permitNocDocument.setNocDocument(nocDocument);
+                bpaApplication.getPermitNocDocuments().add(permitNocDocument);
             }
         }
         model.addAttribute("applicationDocumentList", appDocList);
         getDcrDocumentsUploadMode(model);
-        if(!bpaDcrService.isEdcrIntegrationRequireByService(serviceCode)) {
+        if (!bpaDcrService.isEdcrIntegrationRequireByService(serviceCode)) {
             BuildingDetail bldg = new BuildingDetail();
             bldg.setName("0");
             bldg.setNumber(0);
@@ -328,7 +340,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
             final HttpServletRequest request, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
-        
+
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
@@ -336,11 +348,12 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
         Map<String, String> eDcrApplDetails = bpaDcrService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
-        if(eDcrApplDetails.get("isExists") == "true"){
-        	model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
-        	return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
+        if (eDcrApplDetails.get("isExists") == "true") {
+            model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
+            return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
-        boolean isEdcrIntegrationRequire = bpaDcrService.isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode());
+        boolean isEdcrIntegrationRequire = bpaDcrService
+                .isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode());
         if (isEdcrIntegrationRequire && !eDcrApplDetails.isEmpty() && eDcrApplDetails.get("isExists").equals("true")) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
@@ -348,8 +361,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
-        
-        if(isEdcrIntegrationRequire) {
+
+        if (isEdcrIntegrationRequire) {
             bpaApplication.getBuildingDetail().clear();
             for (BuildingDetail bldg : bpaApplication.getBuildingDetailFromEdcr()) {
                 List<BuildingDetail> bldgDetails = new ArrayList<>();
@@ -373,7 +386,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 }
             }
         }
-        
+
         applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
         bpaUtils.saveOrUpdateBoundary(bpaApplication);
         /*
@@ -396,8 +409,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(),
                 bpaApplication.getStateType(), WF_NEW_STATE);
         if (wfMatrix != null)
-			approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
+            approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
         if (citizenOrBusinessUser && workFlowAction != null
                 && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (approvalPosition == 0 || approvalPosition == null)) {
@@ -510,5 +523,5 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         model.addAttribute("bpaApplication", application);
         return "application-status";
     }
-    
+
 }

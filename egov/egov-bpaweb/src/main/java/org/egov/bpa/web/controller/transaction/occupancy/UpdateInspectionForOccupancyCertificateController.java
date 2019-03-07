@@ -49,7 +49,7 @@ import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
-import org.egov.bpa.transaction.service.oc.OCPlanScrutinyChecklistService;
+import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OcConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
@@ -71,7 +71,7 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 	private OCInspectionService ocInspectionService;
 	
 	@Autowired
-	private OCPlanScrutinyChecklistService OCPlanScrutinyChecklistService;
+	private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
 
 	@GetMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
 	public String editInspectionAppointment(
@@ -101,7 +101,7 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		final List<DocketDetailCommon> docketDetailList = ocInspectionService.buildDocketDetail(ocInspection.getInspection());
 		for (final DocketDetailCommon docketDet : ocInspection.getInspection().getDocket().get(0).getDocketDetail())
 			for (final DocketDetailCommon tempLoc : docketDetailList)
-				if (docketDet.getCheckListDetail().getId().equals(tempLoc.getCheckListDetail().getId())) {
+				if (docketDet.getServiceChecklist().getId().equals(tempLoc.getServiceChecklist().getId())) {
 					docketDet.setValue(tempLoc.getValue());
 					docketDet.setRemarks(tempLoc.getRemarks());
 					docketDetailTempList.add(docketDet);
@@ -120,20 +120,17 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		}
 		if (ocInspection != null)
 			ocInspection.getInspection().setInspectionDate(new Date());
-		ocInspection.getInspection().setEncodedImages(ocInspectionService.prepareImagesForView(ocInspection));
+		//ocInspection.getInspection().setEncodedImages(ocInspectionService.prepareImagesForView(ocInspection));
 		ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
 		model.addAttribute("ocInspection", ocInspection);
 		model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
 		model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
 		model.addAttribute("planScrutinyValues", ChecklistValues.values());
 
-		ocInspection.setPlanScrutinyChecklistTemp(OCPlanScrutinyChecklistService
-				.findByInspectionAndScrutinyChecklistType(ocInspection, ScrutinyChecklistType.RULE_VALIDATION));
-		if (ocInspection.getPlanScrutinyChecklistTemp().isEmpty())
-			ocInspection.setPlanScrutinyChecklist(OCPlanScrutinyChecklistService
-					.findByInspectionAndScrutinyChecklistType(ocInspection, ScrutinyChecklistType.COMBINED));
-		ocInspection.setPlanScrutinyChecklistForDrawingTemp(OCPlanScrutinyChecklistService
-				.findByInspectionAndScrutinyChecklistType(ocInspection, ScrutinyChecklistType.DRAWING_DETAILS));
+		ocInspection.getInspection().setPlanScrutinyChecklistForRuleTemp(planScrutinyChecklistService
+				.findByInspectionAndScrutinyChecklistType(ocInspection.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
+		ocInspection.getInspection().setPlanScrutinyChecklistForDrawingTemp(planScrutinyChecklistService
+				.findByInspectionAndScrutinyChecklistType(ocInspection.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS));
 
 	}
 

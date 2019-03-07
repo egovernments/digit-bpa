@@ -69,9 +69,9 @@
 			<spring:message code="lbl.remarks"/>
 		</label>
 		<label class="col-sm-6 ">
-			<spring:message code="lbl.attachdocument"/><span class="error-msg"> (<spring:message code="lbl.supp.doc.types"/>)</span>
+			<spring:message code="lbl.attachdocument"/><span class="text-info view-content"> (<spring:message code="lbl.supp.doc.types"/>)</span>
 			<br>
-			<small class="error-msg"><spring:message
+			<small class="text-info view-content"><spring:message
 					code="lbl.mesg.document"/></small>
 		</label>
 	</div>
@@ -80,22 +80,22 @@
 		<c:forEach var="docs" items="${applicationDocumentList}"
 			varStatus="status">
 			<div class="row">
-				<div class="col-sm-3 add-margin <c:if test="${docs.checklistDetail.description eq 'One day permit agreement'}">document-desc</c:if>">
-					<c:out value="${docs.checklistDetail.description}"></c:out>
+				<div class="col-sm-3 add-margin <c:if test="${docs.document.serviceChecklist.checklist.description eq 'One day permit agreement'}">document-desc</c:if>">
+					<c:out value="${docs.document.serviceChecklist.checklist.description}"></c:out>
 					<span ></span>
-					<c:if test="${docs.checklistDetail.isMandatory}">
+					<c:if test="${docs.document.serviceChecklist.mandatory}">
 						<span class="mandatory"></span>
 					</c:if>
-					<form:hidden id="applicationDocument${status.index}id"
-						path="applicationDocument[${status.index}].id" value="${docs.id}" />
-					<form:hidden id="applicationDocument${status.index}checklistDetail"
-						path="applicationDocument[${status.index}].checklistDetail"
-						value="${docs.checklistDetail.id}" />
+					<form:hidden id="permitDocuments${status.index}id"
+						path="permitDocuments[${status.index}].id" value="${docs.id}" />
+					<form:hidden id="permitDocuments${status.index}serviceChecklist"
+						path="permitDocuments[${status.index}].document.serviceChecklist"
+						value="${docs.document.serviceChecklist.id}" />
 				</div>
 
 				<%--<div class="col-sm-2 add-margin">
-					<form:checkbox id="applicationDocument${status.index}issubmitted"
-						path="applicationDocument[${status.index}].issubmitted"
+					<form:checkbox id="permitDocuments${status.index}issubmitted"
+						path="permitDocuments[${status.index}].issubmitted"
 						value="${docs.issubmitted}" />
 				</div>--%>
 
@@ -103,21 +103,21 @@
 
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="applicationDocument${status.index}remarks"
-						path="applicationDocument[${status.index}].remarks"
+						id="permitDocuments${status.index}remarks"
+						path="permitDocuments[${status.index}].document.remarks"
 						value="{docs.remarks}" />
-					<form:errors path="applicationDocument[${status.index}].remarks"
+					<form:errors path="permitDocuments[${status.index}].document.remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 
 				<div class="col-sm-6 add-margin">
-					<div class="files-upload-container <c:if test="${docs.checklistDetail.description eq 'One day permit agreement'}">documentRequire</c:if>"
+					<div class="files-upload-container <c:if test="${docs.document.serviceChecklist.checklist.description eq 'One day permit agreement'}">documentRequire</c:if>"
 					    data-file-max-size="5"
-					    <c:if test="${docs.checklistDetail.isMandatory eq true && fn:length(docs.getOrderedSupportDocs()) eq 0}">required</c:if>
+					    <c:if test="${docs.document.serviceChecklist.mandatory eq true && fn:length(docs.document.getOrderedSupportDocs()) eq 0}">required</c:if>
 						data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 						<div class="files-viewer">
 
-							<c:forEach items="${docs.getOrderedSupportDocs()}" var="file" varStatus="status1">
+							<c:forEach items="${docs.document.getOrderedSupportDocs()}" var="file" varStatus="status1">
 								<div class="file-viewer" data-toggle="tooltip"
 									data-placement="top" title="${file.fileName}">
 									<a class="download" target="_blank"
@@ -155,7 +155,7 @@
 
 							<a href="javascript:void(0);" class="file-add"
 								data-unlimited-files="true"
-								data-file-input-name="applicationDocument[${status.index}].files">
+								data-file-input-name="permitDocuments[${status.index}].document.files">
 								<i class="fa fa-plus"></i>
 							</a>
 

@@ -102,7 +102,7 @@
 					</div>
 				</div>
 				<div id="document-info" class="tab-pane fade">
-					<c:if test="${not empty  bpaApplication.getDcrDocuments()}">
+					<c:if test="${not empty  bpaApplication.permitDcrDocuments}">
 						<div class="panel panel-primary dcrDocuments" data-collapsed="0">
 							<jsp:include page="view-dcr-documentdetails.jsp"></jsp:include>
 						</div>

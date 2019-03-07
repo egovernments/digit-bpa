@@ -61,18 +61,18 @@
 		</thead>
 		<tbody>
 			<c:choose>
-				<c:when test="${not empty  bpaApplication.applicationDocument}">
-					<c:forEach items="${bpaApplication.applicationDocument}" var="docs"
+				<c:when test="${not empty  bpaApplication.permitDocuments}">
+					<c:forEach items="${bpaApplication.permitDocuments}" var="docs"
 						varStatus="status">
 						<tr>
 							<td class="view-content text-center" style="font-size: 97%;"><c:out value="${status.index+1}" /></td>
-							<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${docs.checklistDetail.description}"
+							<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${docs.document.serviceChecklist.checklist.description}"
 									default="N/A" /></td>
 							<%--<td><c:out value="${docs.issubmitted ? 'Yes' : 'No'}"
 									default="N/A"></c:out></td>--%>
-							<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${docs.remarks}" default="N/A" /></td>
+							<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${docs.document.remarks}" default="N/A" /></td>
 							<td class="view-content" style="font-size: 97%;"><c:set value="false" var="isDocFound"></c:set> <c:forEach
-									var="bpadoc" items="${docs.getOrderedSupportDocs()}" varStatus="loop">
+									var="bpadoc" items="${docs.document.getOrderedSupportDocs()}" varStatus="loop">
 									<c:if test="${bpadoc.fileStoreId ne null}">
 										<c:set value="true" var="isDocFound"></c:set>
 										<a target="_blank" href="/bpa/application/downloadfile/${bpadoc.fileStoreId}"

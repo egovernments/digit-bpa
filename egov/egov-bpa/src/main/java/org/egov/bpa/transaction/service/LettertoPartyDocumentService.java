@@ -31,8 +31,8 @@ package org.egov.bpa.transaction.service;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.LettertoParty;
-import org.egov.bpa.transaction.entity.LettertoPartyDocument;
+import org.egov.bpa.transaction.entity.PermitLetterToParty;
+import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.egov.bpa.transaction.repository.LettertoPartyDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,17 +49,20 @@ public class LettertoPartyDocumentService {
         this.lettertoPartyDocumentRepository = lettertoPartyDocumentRepository;
     }
 
-    public List<LettertoPartyDocument> findByLettertoPartyOrderByIdAsc(LettertoParty lettertoParty) {
-        return lettertoPartyDocumentRepository.findByLettertoPartyOrderByIdAsc(lettertoParty);
+    public List<LetterToPartyDocumentCommon> findByLettertoPartyOrderByIdAsc(PermitLetterToParty lettertoParty) {
+        return lettertoPartyDocumentRepository.findByLetterToPartyOrderByIdAsc(lettertoParty.getLetterToParty());
     }
 
-    public List<LettertoPartyDocument> findByIsrequestedTrueAndLettertoPartyOrderByIdAsc(LettertoParty lettertoParty) {
-        return lettertoPartyDocumentRepository.findByIsrequestedTrueAndLettertoPartyOrderByIdAsc(lettertoParty);
+    public List<LetterToPartyDocumentCommon> findByIsrequestedTrueAndLettertoPartyOrderByIdAsc(
+            PermitLetterToParty lettertoParty) {
+        return lettertoPartyDocumentRepository
+                .findByIsRequestedTrueAndLetterToPartyOrderByIdAsc(lettertoParty.getLetterToParty());
     }
 
-    public List<LettertoPartyDocument> findByIsrequestedTrueAndIssubmittedTrueAndLettertoPartyOrderByIdAsc(
-            LettertoParty lettertoParty) {
-        return lettertoPartyDocumentRepository.findByIsrequestedTrueAndIssubmittedTrueAndLettertoPartyOrderByIdAsc(lettertoParty);
+    public List<LetterToPartyDocumentCommon> findByIsrequestedTrueAndIssubmittedTrueAndLettertoPartyOrderByIdAsc(
+            PermitLetterToParty lettertoParty) {
+        return lettertoPartyDocumentRepository
+                .findByIsRequestedTrueAndIsSubmittedTrueAndLetterToPartyOrderByIdAsc(lettertoParty.getLetterToParty());
     }
 
 }

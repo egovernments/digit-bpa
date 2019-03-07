@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <form:form role="form" action="/bpa/lettertoparty/update" method="post"
-	modelAttribute="lettertoParty" id="lettertoPartyform"
+	modelAttribute="permitLetterToParty" id="lettertoPartyform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
@@ -61,15 +61,15 @@
 								<spring:message code="lbl.lpNumber" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${lettertoParty.lpNumber}"></c:out>
+								<c:out value="${permitLetterToParty.letterToParty.lpNumber}"></c:out>
 							</div>
 							<form:hidden path="application" id="applicationId"
 								value="${application.id}" />
 
-							<form:hidden path="letterDate" id="letterDate"
+							<form:hidden path="letterToParty.letterDate" id="letterDate"
 								value="${letterDate}" />
-							<input type="hidden" id='lettertoParty' name="lettertoParty"
-								value="${lettertoParty.id}">
+							<input type="hidden" id='lettertoParty' name="permitLetterToParty"
+								value="${permitLetterToParty.id}">
 						</div>
 						<div class="form-group">
 							<div class="col-sm-3 add-margin">
@@ -77,22 +77,22 @@
 								<span class="mandatory"></span>
 							</div>
 							<div class="col-sm-3 add-margin">
-								<form:select path="lpReason" data-first-option="false"
+								<form:select path="letterToParty.lpReason" data-first-option="false"
 									id="lpReason" cssClass="form-control tick-indicator" multiple="true" required="required">
 									<form:options items="${lpReasonList}" itemValue="id"
 										itemLabel="description" />
 								</form:select>
-								<form:errors path="lpReason" cssClass="add-margin error-msg" />
+								<form:errors path="letterToParty.lpReason" cssClass="add-margin error-msg" />
 							</div>
 
 							<div class="row add-border">
 								<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.lpdescription" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:textarea path="lpDesc"
+									<form:textarea path="letterToParty.lpDesc"
 										class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters"
 										rows="5" id="lpDesc" maxlength="1016"/>
-									<form:errors path="lpDesc" cssClass="error-msg" />
+									<form:errors path="letterToParty.lpDesc" cssClass="error-msg" />
 								</div>
 							</div>
 						</div>
@@ -101,15 +101,15 @@
 								<spring:message code="lbl.lpsentdate" /><span class="mandatory"></span>
 							</div>
 							<div class="col-sm-3 add-margin">
-								<form:input path="sentDate" class="form-control datepicker"
+								<form:input path="letterToParty.sentDate" class="form-control datepicker"
 									data-date-end-date="0d" id="sentDate"
 									data-inputmask="'mask': 'd/m/y'"  required="required" />
-								<form:errors path="sentDate" cssClass="add-margin error-msg" /> 
+								<form:errors path="letterToParty.sentDate" cssClass="add-margin error-msg" /> 
 							</div>
 						</div>
 
 						<c:choose>
-							<c:when test="${!lettertoPartyDocument.isEmpty()}">
+							<c:when test="${!letterToPartyDocuments.isEmpty()}">
 								<div class="panel-heading custom_form_panel_heading">
 									<div class="panel-title">
 										<spring:message code="lbl.encloseddocuments" />
@@ -142,48 +142,48 @@
 								<c:forEach var="lpdoc" items="${lettertopartydocList}"
 									varStatus="status">
 									<form:hidden
-										path="lettertoPartyDocument[${status.index}].lettertoParty"
-										id="lettertopartyId" value="${lettertoParty.id}" />
+										path="letterToParty.letterToPartyDocuments[${status.index}].letterToParty.id"
+										id="lettertopartyId" value="${permitLetterToParty.letterToParty.id}" />
 									<form:hidden
-										path="lettertoPartyDocument[${status.index}].checklistDetail"
+										path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
 										id="checklist" value="${doc.id}" />
 											<div class="form-group">
 												<div class="col-sm-3 add-margin check-text">
 													<c:forEach var="chk" items="${checkListDetailList}">
-														<c:if test="${lpdoc.checklistDetail.id == chk.id}">
-															<c:out value="${chk.description}" />
+														<c:if test="${lpdoc.serviceChecklist.id == chk.id}">
+															<c:out value="${lpdoc.serviceChecklist.checklist.description}" />
 															<form:hidden
-																id="lettertoPartyDocument${status.index}checklistDetail"
-																path="lettertoPartyDocument[${status.index}].checklistDetail"
+																id="letterToPartyDocuments${status.index}serviceChecklist"
+																path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
 																value="${chk.id}" />
 															<form:hidden
-																id="lettertoPartyDocument${status.index}checklistDetail"
-																path="lettertoPartyDocument[${status.index}].checklistDetail.isMandatory"
-																value="${chk.isMandatory}" />
+																id="letterToPartyDocuments${status.index}serviceChecklist"
+																path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist.mandatory"
+																value="${chk.mandatory}" />
 														</c:if>
 													</c:forEach>
 												</div>
 												<div class="col-sm-2 add-margin text-center">
 													<form:checkbox
-														id="lettertoPartyDocument${status.index}isrequested"
-														path="lettertoPartyDocument[${status.index}].isrequested"
-														value="lettertoPartyDocument${status.index}isrequested" disabled="true"/>
+														id="letterToPartyDocuments${status.index}isRequested"
+														path="letterToParty.letterToPartyDocuments[${status.index}].isRequested"
+														value="letterToPartyDocuments${status.index}isRequested" disabled="true"/>
 												</div>
 												<%--<div class="col-sm-2 add-margin text-center">
 													<form:checkbox
-														id="lettertoPartyDocument${status.index}issubmitted"
-														path="lettertoPartyDocument[${status.index}].issubmitted"
-														value="lettertoPartyDocument${status.index}issubmitted" />
+														id="letterToPartyDocuments${status.index}issubmitted"
+														path="letterToParty.letterToPartyDocuments[${status.index}].issubmitted"
+														value="letterToPartyDocuments${status.index}issubmitted" />
 												</div>--%>
 
 												<div class="col-sm-7 add-margin">
 													<form:textarea class="form-control patternvalidation"
 																   data-pattern="alphanumericspecialcharacters" maxlength="248"
-														id="lettertoPartyDocument${status.index}remarks"
-														path="lettertoPartyDocument[${status.index}].remarks" />
+														id="letterToPartyDocuments${status.index}remarks"
+														path="letterToParty.letterToPartyDocuments[${status.index}].remarks" />
 													<c:out value="${doc.id}"></c:out>
 													<form:errors
-														path="lettertoPartyDocument[${status.index}].remarks"
+														path="letterToParty.letterToPartyDocuments[${status.index}].remarks"
 														cssClass="add-margin error-msg" />
 												</div>
 
@@ -191,17 +191,17 @@
 													<c:choose>
 														<c:when test="${chk.isMandatory}">
 															<input type="file" id="file${status.index}id"
-																name="lettertoPartyDocument[${status.index}].files"
+																name="letterToPartyDocuments[${status.index}].files"
 																class="file-ellipsis upload-file" required="required">
 														</c:when>
 														<c:otherwise>
 															<input type="file" id="file${status.index}id"
-																name="lettertoPartyDocument[${status.index}].files"
+																name="letterToPartyDocuments[${status.index}].files"
 																class="file-ellipsis upload-file">
 														</c:otherwise>
 													</c:choose>
 													<form:errors
-														path="lettertoPartyDocument[${status.index}].files"
+														path="letterToParty.letterToPartyDocuments[${status.index}].files"
 														cssClass="add-margin error-msg" />
 												</div>--%>
 

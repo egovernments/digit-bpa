@@ -69,7 +69,7 @@
 				items="${occupancyCertificate.getNocDocuments()}" varStatus="status">
 				<tr>
 					<td class="view-content text-center" style="font-size: 97%;"><c:out value="${status.index+1}"></c:out></td>
-					<td class="view-content" style="font-size: 97%;"><c:out value="${nocDoc.nocDocument.checklist.description}" default="N/A"></c:out></td>
+					<td class="view-content" style="font-size: 97%;"><c:out value="${nocDoc.nocDocument.serviceChecklist.checklist.description}" default="N/A"></c:out></td>
 					<td class="view-content" style="font-size: 97%;"><c:out value="${nocDoc.nocDocument.natureOfRequest}" default="N/A"></c:out></td>
 					<td class="view-content" style="font-size: 97%;"><c:if test="${nocDoc.nocDocument.letterSentOn eq null}"> <c:out value="N/A"></c:out></c:if> <fmt:formatDate value="${nocDoc.nocDocument.letterSentOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
 					<td class="view-content" style="font-size: 97%;"><c:if test="${nocDoc.nocDocument.replyReceivedOn eq null}"> <c:out value="N/A"></c:out></c:if><fmt:formatDate value="${nocDoc.nocDocument.replyReceivedOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>

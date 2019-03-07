@@ -44,7 +44,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <form:form role="form" action="/bpa/lettertoparty/update" method="post"
-	modelAttribute="lettertoParty" id="lettertoPartyform"
+	modelAttribute="permitLetterToParty" id="lettertoPartyform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
@@ -62,30 +62,31 @@
 								<spring:message code="lbl.lpNumber" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${lettertoParty.lpNumber}"></c:out>
+								<c:out value="${permitLetterToParty.letterToParty.lpNumber}"></c:out>
 							</div>
 							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.lp.date" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate value="${lettertoParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate" />
+								<fmt:formatDate value="${permitLetterToParty.letterToParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate" />
 								<c:out value="${letterDate}"></c:out>
 							</div>
 							
 							<form:hidden path="application" id="applicationId"
 								value="${application.id}" />
 
-							<form:hidden path="letterDate" id="letterDate"
+							<form:hidden path="letterToParty.letterDate" id="letterDate"
 								value="${letterDate}" />
-							<input type="hidden" id='lettertoParty' name="lettertoParty"
-								value="${lettertoParty.id}">
+								<form:hidden path="id" value="${permitLetterToParty.id}" />
+							<input type="hidden" id='lettertoParty' name="permitLetterToParty"
+								value="${permitLetterToParty.id}">
 						</div>
 						<div class="row add-border">
 							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.lpreason" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:forEach items="${lettertoParty.lpReason}" var="lpReason"
+								<c:forEach items="${permitLetterToParty.letterToParty.lpReason}" var="lpReason"
 									varStatus="status">
 									<c:out value="${lpReason.description}" />
 									<c:if test="${!status.last}">,</c:if>
@@ -95,7 +96,7 @@
 								<spring:message	code="lbl.lpdescription" />
 							</div>	
 								<div class="col-sm-3 add-margin view-content">
-									<c:out value="${lettertoParty.lpDesc}" />
+									<c:out value="${permitLetterToParty.letterToParty.lpDesc}" />
 								</div>
 						</div>
 						<div class="row add-border">
@@ -103,7 +104,7 @@
 								<spring:message code="lbl.lastreplydate" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate value="${lettertoParty.lastReplyDate}" pattern="dd/MM/yyyy" var="lastReplyDate" />
+								<fmt:formatDate value="${permitLetterToParty.letterToParty.lastReplyDate}" pattern="dd/MM/yyyy" var="lastReplyDate" />
 								<c:out value="${lastReplyDate}"></c:out>
 							</div>
 						</div>
@@ -112,10 +113,10 @@
 								<spring:message code="lbl.lpsentdate" /><span class="mandatory"></span>
 							</div>
 							<div class="col-sm-3 add-margin">
-								<form:input path="sentDate" class="form-control datepicker"
+								<form:input path="letterToParty.sentDate" class="form-control datepicker"
 									data-date-end-date="0d" id="sentDate"
 									data-inputmask="'mask': 'd/m/y'"  required="required" />
-								<form:errors path="sentDate" cssClass="add-margin error-msg" /> 
+								<form:errors path="letterToParty.sentDate" cssClass="add-margin error-msg" /> 
 							</div>
 						</div>
 					</div>

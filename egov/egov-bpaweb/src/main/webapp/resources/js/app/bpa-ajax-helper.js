@@ -529,7 +529,7 @@ $(document).ready(
 	    $
 	        .each(
 	            response,
-	            function(index, checklist) {
+	            function(index, serviceChecklist) {
 	                $('#ocDocumentsBody')
 	                    .append(
 	                        '<div class="form-group">'
@@ -537,28 +537,28 @@ $(document).ready(
 	                        + index
 	                        + '" name="documents['
 	                        + index
-	                        + '].document.checklistDetail" value="'
-	                        + checklist.id
+	                        + '].document.serviceChecklist" value="'
+	                        + serviceChecklist.id
 	                        + '">'
 	                        + '<input type="hidden" name="documents['
 	                        + index
-	                        + '].document.checklistDetail.isMandatory" value="'
-	                        + checklist.isMandatory
+	                        + '].document.serviceChecklist.mandatory" value="'
+	                        + serviceChecklist.mandatory
 	                        + '">'
 	                        + '<input type="hidden" name="documents['
 	                        + index
-	                        + '].document.checklistDetail.description" value="'
-	                        + checklist.description
+	                        + '].document.serviceChecklist.checklist.description" value="'
+	                        + serviceChecklist.checklistDesc
 	                        + '">'
-	                        + checklist.description
-	                        + (checklist.isMandatory ? '<span class="mandatory"></span>'
+	                        + serviceChecklist.checklistDesc
+	                        + (serviceChecklist.mandatory ? '<span class="mandatory"></span>'
 	                        : '')
 	                        + '</div>'
 	                        + '<div class="col-sm-3 add-margin "><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="256" name="documents['
 	                        + index
 	                        + '].document.remarks" /></div>'
 	                        + '<div class="col-sm-6 add-margin "><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
-	                        + (checklist.isMandatory ? "required"
+	                        + (serviceChecklist.mandatory ? "required"
 	                        : '')
 	                        + '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="documents['
 	                        + index
@@ -573,11 +573,11 @@ $(document).ready(
 	    $
 	        .each(
 	            response,
-	            function(index, checklist) {
+	            function(index, serviceChecklist) {
 	            	var auto = $('#dcrDocsAutoPopulate').val();
 	            	var manual = $('#dcrDocsManuallyUpload').val();
 	            	var override = $('#dcrDocsAutoPopulateAndManuallyUpload').val();
-	            	var splittedChklistDesc = checklist.description.split(" ");
+	            	var splittedChklistDesc = serviceChecklist.checklistDesc.split(" ");
 	            	var checklistName = splittedChklistDesc.join("_");
 	            	
 	            	var whenAuto = '<div class="col-sm-6 add-margin autoPopulateDcrDocs"><div class="files-viewer '
@@ -588,7 +588,7 @@ $(document).ready(
 	            		+checklistName
 	            		+'_fileStoreIds" > </div> </div>';
 	            	var whenManualOrOverride = '<div class="col-sm-6 add-margin "><div class="files-upload-container" data-allowed-extenstion="pdf" '
-                        + (checklist.isMandatory ? "required"
+                        + (serviceChecklist.mandatory ? "required"
     	                        : '')
     	                        + '> <div class="files-viewer '
     	                        +checklistName
@@ -611,21 +611,21 @@ $(document).ready(
 	                        '<div class="form-group">'
 	                        + '<div class="col-sm-3 add-margin check-text"> <input type="hidden" name="dcrDocuments['
 	                        + index
-	                        + '].dcrDocument.checklistDtl" value="'
-	                        + checklist.id
+	                        + '].dcrDocument.serviceChecklist" value="'
+	                        + serviceChecklist.id
 	                        + '">'
 	                        + '<input type="hidden" name="dcrDocuments['
 	                        + index
-	                        + '].dcrDocument.checklistDtl.isMandatory" value="'
-	                        + checklist.isMandatory
+	                        + '].dcrDocument.serviceChecklist.mandatory" value="'
+	                        + serviceChecklist.mandatory
 	                        + '">'
 	                        + '<input type="hidden" name="dcrDocuments['
 	                        + index
-	                        + '].dcrDocument.checklistDtl.description" value="'
-	                        + checklist.description
+	                        + '].dcrDocument.serviceChecklist.checklist.description" value="'
+	                        + serviceChecklist.checklistDesc
 	                        + '">'
-	                        + checklist.description
-	                        + (checklist.isMandatory ? '<span class="mandatory"></span>'
+	                        + serviceChecklist.checklistDesc
+	                        + (serviceChecklist.mandatory ? '<span class="mandatory"></span>'
 	                        : '')
 	                        + '</div>'
 	                        + '<div class="col-sm-3 add-margin "><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="256" name="dcrDocuments['
@@ -642,28 +642,28 @@ $(document).ready(
 	    $
 	        .each(
 	            response,
-	            function(index, checklist) {
+	            function(index, serviceChecklist) {
 	                $('#ocNOCDocumentsBody')
 	                    .append(
 	                        '<tr>'
 	                        + '<td>'
 							+ parseInt(index + 1)
 	                        + '</td>'
-	                        + '<td> <input type="hidden"'
+	                        + '<td style="font-size: 100%;"> <input type="hidden"'
 	                        + 'checklistDetail" name="nocDocuments['
 	                        + index
-	                        + '].nocDocument.checklist" value="'
-	                        + checklist.id
+	                        + '].nocDocument.serviceChecklist" value="'
+	                        + serviceChecklist.id
 	                        + '">'
 	                        + '<input type="hidden"'
 	                        + index
 	                        + 'checklistDetail" name="nocDocuments['
 	                        + index
-	                        + '].nocDocument.checklist.isMandatory" value="'
-	                        +  checklist.isMandatory
+	                        + '].nocDocument.serviceChecklist.mandatory" value="'
+	                        +  serviceChecklist.mandatory
 	                        + '">'
-	                        + checklist.description
-	                        + (checklist.isMandatory ? '<span class="mandatory"></span>'
+	                        + serviceChecklist.checklistDesc
+	                        + (serviceChecklist.mandatory ? '<span class="mandatory"></span>'
 	                        : '')
 	                        + '</td>'
 	                        + '<td><div class="input-group"><textarea class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters" maxlength="1000"'
@@ -705,7 +705,7 @@ $(document).ready(
 	                        + 'remarks" data-header="Remarks"><span'
 	                        + ' class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span></div></td>'
 	                        + '<td><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
-	                        + (checklist.isMandatory ? "required"
+	                        + (serviceChecklist.mandatory ? "required"
 	                        : '')
 	                        + '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="nocDocuments['
 	                        + index

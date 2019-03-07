@@ -64,10 +64,10 @@
 						<tr id="lprow">
 							<td align="center" class="view-content" style="font-size: 90%;">${status.index+1}</td>
 							<td align="center" class="view-content" style="font-size: 90%;">
-								<c:out value="${inspn.inspectionNumber}" />
+								<c:out value="${inspn.inspection.inspectionNumber}" />
 							</td>
 							<td align="center" class="view-content" style="font-size: 90%;">
-								<fmt:formatDate value="${inspn.inspectionDate}"
+								<fmt:formatDate value="${inspn.inspection.inspectionDate}"
 									pattern="dd/MM/yyyy" var="inspectionDate" /> <c:out
 									value="${inspectionDate}" />
 							</td>

@@ -65,15 +65,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailLocList${status.index}checkListDetail.id"
-						path="docketDetailLocList[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailLocList${status.index}serviceChecklist.id"
+						path="inspection.docketDetailLocList[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailLocList${status.index}checkListDetail.description"
-						path="docketDetailLocList[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailLocList${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailLocList[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 
 				<div class="col-sm-3 add-margin text-left">
@@ -82,7 +82,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}"
-                                                  name="docketDetailLocList[${status.index}].value"
+                                                  name="inspection.docketDetailLocList[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -92,23 +92,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}"
-                                                  name="docketDetailLocList[${status.index}].value"
+                                                  name="inspection.docketDetailLocList[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailLocList[${status.index}].value"
+					<form:errors path="inspection.docketDetailLocList[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailLocList${status.index}remarks" rows="3"
-						path="docketDetailLocList[${status.index}].remarks" />
+						id="inspection.docketDetailLocList${status.index}remarks" rows="3"
+						path="inspection.docketDetailLocList[${status.index}].remarks" />
 
-					<form:errors path="docketDetailLocList[${status.index}].remarks"
+					<form:errors path="inspection.docketDetailLocList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -117,7 +117,7 @@
 </c:choose>
 
 <c:choose>
-	<c:when test="${!docketDetailMeasumentList.isEmpty()}">
+	<c:when test="${!docketDetailMeasurementList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
 			<div class="panel-title"><spring:message code="lbl.meas.plot"/></div>
 		</div>
@@ -128,19 +128,19 @@
 				<spring:message code="lbl.remarks" />
 			</div>
 		</div>
-		<c:forEach var="docs" items="${docketDetailMeasumentList}"
+		<c:forEach var="docs" items="${docketDetailMeasurementList}"
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailMeasumentList${status.index}checkListDetail.id"
-						path="docketDetailMeasumentList[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailMeasurementList${status.index}serviceChecklist"
+						path="inspection.docketDetailMeasurementList[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailMeasumentList${status.index}checkListDetail.description"
-						path="docketDetailMeasumentList[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailMeasurementList${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailMeasurementList[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -148,7 +148,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailMeasumentList[${status.index}].value"
+                                                  name="inspection.docketDetailMeasurementList[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -158,7 +158,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailMeasumentList[${status.index}].value"
+                                                  name="inspection.docketDetailMeasurementList[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -166,16 +166,16 @@
                         </c:otherwise>
                     </c:choose>
 
-					<form:errors path="docketDetailMeasumentList[${status.index}].value"
+					<form:errors path="inspection.docketDetailMeasurementList[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailMeasumentList${status.index}remarks" rows="3"
-						path="docketDetailMeasumentList[${status.index}].remarks" />
+						id="inspection.docketDetailMeasurementList${status.index}remarks" rows="3"
+						path="inspection.docketDetailMeasurementList[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailMeasumentList[${status.index}].remarks"
+						path="inspection.docketDetailMeasurementList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -199,15 +199,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailAccessList${status.index}checkListDetail.id"
-						path="docketDetailAccessList[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailAccessList${status.index}serviceChecklist"
+						path="inspection.docketDetailAccessList[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailAccessList${status.index}checkListDetail.description"
-						path="docketDetailAccessList[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailAccessList${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailAccessList[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -215,7 +215,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailAccessList[${status.index}].value"
+                                                  name="inspection.docketDetailAccessList[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -225,24 +225,24 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailAccessList[${status.index}].value"
+                                                  name="inspection.docketDetailAccessList[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailAccessList[${status.index}].value"
+					<form:errors path="inspection.docketDetailAccessList[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailAccessList${status.index}remarks" rows="3"
-						path="docketDetailAccessList[${status.index}].remarks" />
+						id="inspection.docketDetailAccessList${status.index}remarks" rows="3"
+						path="inspection.docketDetailAccessList[${status.index}].remarks" />
 
-					<form:errors path="docketDetailAccessList[${status.index}].remarks"
+					<form:errors path="inspection.docketDetailAccessList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -252,7 +252,7 @@
 
 
 <c:choose>
-	<c:when test="${!docketDetlSurroundingPlotList.isEmpty()}">
+	<c:when test="${!docketDetailSurroundingPlotList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
 			<div class="panel-title"><spring:message code="lbl.surrnd.plot"/></div>
 		</div>
@@ -263,19 +263,19 @@
 				<spring:message code="lbl.remarks" />
 			</div>
 		</div>
-		<c:forEach var="docs" items="${docketDetlSurroundingPlotList}"
+		<c:forEach var="docs" items="${docketDetailSurroundingPlotList}"
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetlSurroundingPlotList${status.index}checkListDetail.id"
-						path="docketDetlSurroundingPlotList[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailSurroundingPlotList${status.index}serviceChecklist"
+						path="inspection.docketDetailSurroundingPlotList[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetlSurroundingPlotList${status.index}checkListDetail.description"
-						path="docketDetlSurroundingPlotList[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailSurroundingPlotList${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailSurroundingPlotList[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -283,7 +283,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetlSurroundingPlotList[${status.index}].value"
+                                                  name="inspection.docketDetailSurroundingPlotList[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -293,23 +293,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                             <div class="radio">
                                 <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                              name="docketDetlSurroundingPlotList[${status.index}].value"
+                                              name="inspection.docketDetailSurroundingPlotList[${status.index}].value"
                                         <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                 </label>
                             </div>
                         </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetlSurroundingPlotList[${status.index}].value"
+					<form:errors path="inspection.docketDetailSurroundingPlotList[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetlSurroundingPlotList${status.index}remarks" rows="3"
-						path="docketDetlSurroundingPlotList[${status.index}].remarks" />
+						id="inspection.docketDetailSurroundingPlotList${status.index}remarks" rows="3"
+						path="inspection.docketDetailSurroundingPlotList[${status.index}].remarks" />
 					<form:errors
-						path="docketDetlSurroundingPlotList[${status.index}].remarks"
+						path="inspection.docketDetailSurroundingPlotList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -334,15 +334,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailLandTypeList${status.index}checkListDetail.id"
-						path="docketDetailLandTypeList[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailLandTypeList${status.index}serviceChecklist"
+						path="inspection.docketDetailLandTypeList[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailLandTypeList${status.index}checkListDetail.description"
-						path="docketDetailLandTypeList[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailLandTypeList${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailLandTypeList[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -350,7 +350,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailLandTypeList[${status.index}].value"
+                                                  name="inspection.docketDetailLandTypeList[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -360,23 +360,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailLandTypeList[${status.index}].value"
+                                                  name="inspection.docketDetailLandTypeList[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailLandTypeList[${status.index}].value"
+					<form:errors path="inspection.docketDetailLandTypeList[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailLandTypeList${status.index}remarks" rows="3"
-						path="docketDetailLandTypeList[${status.index}].remarks" />
+						id="inspection.docketDetailLandTypeList${status.index}remarks" rows="3"
+						path="inspection.docketDetailLandTypeList[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailLandTypeList[${status.index}].remarks"
+						path="inspection.docketDetailLandTypeList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -400,15 +400,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailProposedWorkList${status.index}checkListDetail.id"
-						path="docketDetailProposedWorkList[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailProposedWorkList${status.index}serviceChecklist"
+						path="inspection.docketDetailProposedWorkList[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailProposedWorkList${status.index}checkListDetail.description"
-						path="docketDetailProposedWorkList[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailProposedWorkList${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailProposedWorkList[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -416,7 +416,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailProposedWorkList[${status.index}].value"
+                                                  name="inspection.docketDetailProposedWorkList[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -426,23 +426,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailProposedWorkList[${status.index}].value"
+                                                  name="inspection.docketDetailProposedWorkList[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailProposedWorkList[${status.index}].value"
+					<form:errors path="inspection.docketDetailProposedWorkList[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailProposedWorkList${status.index}remarks" rows="3"
-						path="docketDetailProposedWorkList[${status.index}].remarks" />
+						id="inspection.docketDetailProposedWorkList${status.index}remarks" rows="3"
+						path="inspection.docketDetailProposedWorkList[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailProposedWorkList[${status.index}].remarks"
+						path="inspection.docketDetailProposedWorkList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -467,15 +467,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailWorkAsPerPlanList${status.index}checkListDetail.id"
-						path="docketDetailWorkAsPerPlanList[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailWorkAsPerPlanList${status.index}serviceChecklist"
+						path="inspection.docketDetailWorkAsPerPlanList[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailWorkAsPerPlanList${status.index}checkListDetail.description"
-						path="docketDetailWorkAsPerPlanList[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailWorkAsPerPlanList${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailWorkAsPerPlanList[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -483,7 +483,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailWorkAsPerPlanList[${status.index}].value"
+                                                  name="inspection.docketDetailWorkAsPerPlanList[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -493,23 +493,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailWorkAsPerPlanList[${status.index}].value"
+                                                  name="inspection.docketDetailWorkAsPerPlanList[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailWorkAsPerPlanList[${status.index}].value"
+					<form:errors path="inspection.docketDetailWorkAsPerPlanList[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailWorkAsPerPlanList${status.index}remarks" rows="3"
-						path="docketDetailWorkAsPerPlanList[${status.index}].remarks" />
+						id="inspection.docketDetailWorkAsPerPlanList${status.index}remarks" rows="3"
+						path="inspection.docketDetailWorkAsPerPlanList[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailWorkAsPerPlanList[${status.index}].remarks"
+						path="inspection.docketDetailWorkAsPerPlanList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -533,15 +533,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailHgtAbuttRoadList${status.index}checkListDetail.id"
-						path="docketDetailHgtAbuttRoadList[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailHgtAbuttRoadList${status.index}serviceChecklist"
+						path="inspection.docketDetailHgtAbuttRoadList[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailHgtAbuttRoadList${status.index}checkListDetail.description"
-						path="docketDetailHgtAbuttRoadList[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailHgtAbuttRoadList${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailHgtAbuttRoadList[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -549,7 +549,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailHgtAbuttRoadList[${status.index}].value"
+                                                  name="inspection.docketDetailHgtAbuttRoadList[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -559,23 +559,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailHgtAbuttRoadList[${status.index}].value"
+                                                  name="inspection.docketDetailHgtAbuttRoadList[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailHgtAbuttRoadList[${status.index}].value"
+					<form:errors path="inspection.docketDetailHgtAbuttRoadList[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailHgtAbuttRoadList${status.index}remarks" rows="3"
-						path="docketDetailHgtAbuttRoadList[${status.index}].remarks" />
+						id="inspection.docketDetailHgtAbuttRoadList${status.index}remarks" rows="3"
+						path="inspection.docketDetailHgtAbuttRoadList[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailHgtAbuttRoadList[${status.index}].remarks"
+						path="inspection.docketDetailHgtAbuttRoadList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -599,15 +599,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailAreaLoc${status.index}checkListDetail.id"
-						path="docketDetailAreaLoc[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailAreaLoc${status.index}serviceChecklist"
+						path="inspection.docketDetailAreaLoc[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailAreaLoc${status.index}checkListDetail.description"
-						path="docketDetailAreaLoc[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailAreaLoc${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailAreaLoc[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -615,7 +615,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailAreaLoc[${status.index}].value"
+                                                  name="inspection.docketDetailAreaLoc[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -625,24 +625,24 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailAreaLoc[${status.index}].value"
+                                                  name="inspection.docketDetailAreaLoc[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailAreaLoc[${status.index}].value"
+					<form:errors path="inspection.docketDetailAreaLoc[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailAreaLoc${status.index}remarks" rows="3"
-						path="docketDetailAreaLoc[${status.index}].remarks" />
+						id="inspection.docketDetailAreaLoc${status.index}remarks" rows="3"
+						path="inspection.docketDetailAreaLoc[${status.index}].remarks" />
 
 					<form:errors
-						path="docketDetailAreaLoc[${status.index}].remarks"
+						path="inspection.docketDetailAreaLoc[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -666,15 +666,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailLengthOfCompWall${status.index}checkListDetail.id"
-						path="docketDetailLengthOfCompWall[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailLengthOfCompWall${status.index}serviceChecklist"
+						path="inspection.docketDetailLengthOfCompWall[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailLengthOfCompWall${status.index}checkListDetail.description"
-						path="docketDetailLengthOfCompWall[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailLengthOfCompWall${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailLengthOfCompWall[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -682,7 +682,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailLengthOfCompWall[${status.index}].value"
+                                                  name="inspection.docketDetailLengthOfCompWall[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -692,23 +692,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailLengthOfCompWall[${status.index}].value"
+                                                  name="inspection.docketDetailLengthOfCompWall[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailLengthOfCompWall[${status.index}].value"
+					<form:errors path="inspection.docketDetailLengthOfCompWall[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailLengthOfCompWall${status.index}remarks" rows="3"
-						path="docketDetailLengthOfCompWall[${status.index}].remarks" />
+						id="inspection.docketDetailLengthOfCompWall${status.index}remarks" rows="3"
+						path="inspection.docketDetailLengthOfCompWall[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailLengthOfCompWall[${status.index}].remarks"
+						path="inspection.docketDetailLengthOfCompWall[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -732,15 +732,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailNumberOfWell${status.index}checkListDetail.id"
-						path="docketDetailNumberOfWell[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailNumberOfWell${status.index}serviceChecklist"
+						path="inspection.docketDetailNumberOfWell[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailNumberOfWell${status.index}checkListDetail.description"
-						path="docketDetailNumberOfWell[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailNumberOfWell${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailNumberOfWell[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -748,7 +748,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailNumberOfWell[${status.index}].value"
+                                                  name="inspection.docketDetailNumberOfWell[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -758,23 +758,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailNumberOfWell[${status.index}].value"
+                                                  name="inspection.docketDetailNumberOfWell[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailNumberOfWell[${status.index}].value"
+					<form:errors path="inspection.docketDetailNumberOfWell[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailNumberOfWell${status.index}remarks" rows="3"
-						path="docketDetailNumberOfWell[${status.index}].remarks" />
+						id="inspection.docketDetailNumberOfWell${status.index}remarks" rows="3"
+						path="inspection.docketDetailNumberOfWell[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailNumberOfWell[${status.index}].remarks"
+						path="inspection.docketDetailNumberOfWell[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -798,15 +798,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailShutter${status.index}checkListDetail.id"
-						path="docketDetailShutter[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailShutter${status.index}serviceChecklist"
+						path="inspection.docketDetailShutter[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailShutter${status.index}checkListDetail.description"
-						path="docketDetailShutter[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailShutter${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailShutter[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -814,7 +814,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailShutter[${status.index}].value"
+                                                  name="inspection.docketDetailShutter[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -824,23 +824,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailShutter[${status.index}].value"
+                                                  name="inspection.docketDetailShutter[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailShutter[${status.index}].value"
+					<form:errors path="inspection.docketDetailShutter[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="docketDetailShutter${status.index}remarks" rows="3"
-						path="docketDetailShutter[${status.index}].remarks" />
+						id="inspection.docketDetailShutter${status.index}remarks" rows="3"
+						path="inspection.docketDetailShutter[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailShutter[${status.index}].remarks"
+						path="inspection.docketDetailShutter[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -864,15 +864,15 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-left">
-					<c:out value="${docs.checkListDetail.description}" />
+					<c:out value="${docs.serviceChecklist.checklist.description}" />
 					<form:hidden
-						id="docketDetailRoofConversion${status.index}checkListDetail.id"
-						path="docketDetailRoofConversion[${status.index}].checkListDetail.id"
-						value="${docs.checkListDetail.id}" />
+						id="inspection.docketDetailRoofConversion${status.index}serviceChecklist"
+						path="inspection.docketDetailRoofConversion[${status.index}].serviceChecklist"
+						value="${docs.serviceChecklist.id}" />
 					<form:hidden
-						id="docketDetailRoofConversion${status.index}checkListDetail.description"
-						path="docketDetailRoofConversion[${status.index}].checkListDetail.description"
-						value="${docs.checkListDetail.description}" />
+						id="inspection.docketDetailRoofConversion${status.index}serviceChecklist.checklist.description"
+						path="inspection.docketDetailRoofConversion[${status.index}].serviceChecklist.checklist.description"
+						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 				<div class="col-sm-3 add-margin text-left">
                     <c:choose>
@@ -880,7 +880,7 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailRoofConversion[${status.index}].value"
+                                                  name="inspection.docketDetailRoofConversion[${status.index}].value"
                                             <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
@@ -890,23 +890,23 @@
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
                                 <div class="radio">
                                     <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
-                                                  name="docketDetailRoofConversion[${status.index}].value"
+                                                  name="inspection.docketDetailRoofConversion[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
                                 </div>
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
-					<form:errors path="docketDetailRoofConversion[${status.index}].value"
+					<form:errors path="inspection.docketDetailRoofConversion[${status.index}].value"
 								 cssClass="add-margin error-msg"/>
 				</div>
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphabetspecialcharacters" maxlength="255"
-						id="docketDetailRoofConversion${status.index}remarks" rows="3"
-						path="docketDetailRoofConversion[${status.index}].remarks" />
+						id="inspection.docketDetailRoofConversion${status.index}remarks" rows="3"
+						path="inspection.docketDetailRoofConversion[${status.index}].remarks" />
 					<form:errors
-						path="docketDetailRoofConversion[${status.index}].remarks"
+						path="inspection.docketDetailRoofConversion[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
 				</div>
 			</div>
@@ -917,22 +917,22 @@
 	<%--<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.dimensionofplot" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:radiobutton path="boundaryDrawingSubmitted" value="true" checked="checked"/>
+		<form:radiobutton path="inspection.boundaryDrawingSubmitted" value="true" checked="checked"/>
 		<spring:message code="lbl.yes" />
-		<form:radiobutton path="boundaryDrawingSubmitted" value="false" />
+		<form:radiobutton path="inspection.boundaryDrawingSubmitted" value="false" />
 		<spring:message code="lbl.no" />
-		<form:errors path="boundaryDrawingSubmitted"
+		<form:errors path="inspection.boundaryDrawingSubmitted"
 			cssClass="add-margin error-msg" />
 	</div>--%>
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.righttomake.construction" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:radiobutton path="rightToMakeConstruction" value="true"
+		<form:radiobutton path="inspection.rightToMakeConstruction" value="true"
 			checked="checked" />
 		<spring:message code="lbl.yes" />
-		<form:radiobutton path="rightToMakeConstruction" value="false" />
+		<form:radiobutton path="inspection.rightToMakeConstruction" value="false" />
 		<spring:message code="lbl.no" />
-		<form:errors path="rightToMakeConstruction"
+		<form:errors path="inspection.rightToMakeConstruction"
 			cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -942,17 +942,17 @@
 			code="lbl.typeofland" /></label>
 	<div class="col-sm-3 add-margin">
 		<form:input class="form-control patternvalidation" maxlength="120"
-			data-pattern="alphanumeric" id="typeofLand" path="typeofLand" />
-		<form:errors path="typeofLand" cssClass="add-margin error-msg" />
+			data-pattern="alphanumeric" id="inspection.typeofLand" path="inspection.typeofLand" />
+		<form:errors path="inspection.typeofLand" cssClass="add-margin error-msg" />
 	</div> --%>
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.ins.remarks" /></label>
 	<div class="col-sm-6 add-margin text-left">
 		<form:textarea class="form-control patternvalidation"
 			data-pattern="alphanumericspecialcharacters" maxlength="1000"
-			id="inspectionRemarks" rows="3" path="inspectionRemarks" />
+			id="inspection.inspectionRemarks" rows="3" path="inspection.inspectionRemarks" />
 
-		<form:errors path="inspectionRemarks" cssClass="add-margin error-msg" />
+		<form:errors path="inspection.inspectionRemarks" cssClass="add-margin error-msg" />
 	</div>
 </div>
 </div>

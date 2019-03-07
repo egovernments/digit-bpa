@@ -68,7 +68,7 @@
                 <h3 class = "panel-title">Note :</h3>
             </div>
             <div class = "panel-body view-content">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <spring:message code="lbl.document.scrutiny.note"/>
+                <spring:message code="lbl.document.scrutiny.note"/>
             </div>
         </div>
     </c:if>
@@ -82,39 +82,39 @@
         <label class="col-sm-6 ">
             <spring:message code="lbl.attachdocument"/>
             <c:if test="${dcrDocsManuallyUpload eq true || dcrDocsAutoPopulateAndManuallyUpload eq true}">
-                <span class="error-msg"> <spring:message code="lbl.pdf.files.allowed"/> </span>
+                <span class="text-info view-content"> <spring:message code="lbl.pdf.files.allowed"/> </span>
                 <br>
-                <small class="error-msg"><spring:message code="lbl.mesg.document1"/></small>
+                <small class="text-info view-content"><spring:message code="lbl.mesg.document1"/></small>
             </c:if>
         </label>
     </div>
-    <c:forEach items="${bpaApplication.getDcrDocuments()}" var="dcrDocument" varStatus="dcrDocStatus">
+    <c:forEach items="${bpaApplication.getPermitDcrDocuments()}" var="permitDcrDoc" varStatus="dcrDocStatus">
         <div class="row">
             <div class="col-sm-3 add-margin">
-                <c:out value="${dcrDocument.checklistDtl.description}"></c:out>
-                <c:if test="${dcrDocument.checklistDtl.isMandatory}">
+                <c:out value="${permitDcrDoc.dcrDocument.serviceChecklist.checklist.description}"></c:out>
+                <c:if test="${permitDcrDoc.dcrDocument.serviceChecklist.mandatory}">
                     <span class="mandatory"></span>
                 </c:if>
-                <form:hidden path="dcrDocuments[${dcrDocStatus.index}].checklistDtl"
-                             value="${dcrDocument.checklistDtl.id}"/>
+                <form:hidden path="permitDcrDocuments[${dcrDocStatus.index}].dcrDocument.serviceChecklist"
+                             value="${permitDcrDoc.dcrDocument.serviceChecklist.id}"/>
             </div>
 
             <div class="col-sm-3 add-margin">
                 <form:textarea class="form-control patternvalidation"
                                data-pattern="alphanumericspecialcharacters" maxlength="500"
-                               path="dcrDocuments[${dcrDocStatus.index}].remarks"
-                               value="${dcrDocument.remarks}"/>
-                <form:errors path="dcrDocuments[${dcrDocStatus.index}].remarks"
+                               path="permitDcrDocuments[${dcrDocStatus.index}].dcrDocument.remarks"
+                               value="${permitDcrDoc.dcrDocument.remarks}"/>
+                <form:errors path="permitDcrDocuments[${dcrDocStatus.index}].dcrDocument.remarks"
                              cssClass="add-margin error-msg"/>
             </div>
-            <c:set var="splittedString" value="${fn:split(dcrDocument.checklistDtl.description, ' ')}"/>
+            <c:set var="splittedString" value="${fn:split(permitDcrDoc.dcrDocument.serviceChecklist.checklist.description, ' ')}"/>
             <c:set var="checklistName" value="${fn:join(splittedString, '_')}"/>
             <c:if test="${dcrDocsAutoPopulate eq true && dcrDocsManuallyUpload ne true && dcrDocsAutoPopulateAndManuallyUpload ne true}">
                 <div class="col-sm-6 add-margin autoPopulateDcrDocs">
                     <c:choose>
-                        <c:when test="${fn:length(dcrDocument.getOrderedDcrAttachments()) gt 0}">
+                        <c:when test="${fn:length(permitDcrDoc.dcrDocument.getOrderedDcrAttachments()) gt 0}">
                             <div class="files-viewer ${checklistName}">
-                                <c:forEach items="${dcrDocument.getOrderedDcrAttachments()}" var="file"
+                                <c:forEach items="${permitDcrDoc.dcrDocument.getOrderedDcrAttachments()}" var="file"
                                            varStatus="status1">
                                     <div class="file-viewer" data-toggle="tooltip"
                                          data-placement="top" title="${file.fileStoreMapper.fileName}">
@@ -128,7 +128,7 @@
                         </c:when>
                         <c:otherwise>
                             <div class="files-viewer ${checklistName}">
-                                <form:hidden path="dcrDocuments[${dcrDocStatus.index}].fileStoreIds" id="fileStoreIds"
+                                <form:hidden path="permitDcrDocuments[${dcrDocStatus.index}].dcrDocument.fileStoreIds" id="fileStoreIds"
                                              cssClass="${checklistName}_fileStoreIds"></form:hidden>
                             </div>
                         </c:otherwise>
@@ -138,13 +138,13 @@
 
             <c:if test="${dcrDocsManuallyUpload eq true || dcrDocsAutoPopulateAndManuallyUpload eq true || (dcrDocsAutoPopulate eq false && dcrDocsManuallyUpload eq false && dcrDocsAutoPopulateAndManuallyUpload eq false)}">
                 <div class="col-sm-6 add-margin">
-                    <div class="files-upload-container <c:if test="${dcrDocument.checklistDtl.isMandatory eq true && fn:length(dcrDocument.getOrderedDcrAttachments()) eq 0}">mandatory-dcr-doc</c:if>"
+                    <div class="files-upload-container <c:if test="${permitDcrDoc.dcrDocument.serviceChecklist.mandatory eq true && fn:length(permitDcrDoc.dcrDocument.getOrderedDcrAttachments()) eq 0}">mandatory-dcr-doc</c:if>"
                          data-file-max-size="20"
-                         <c:if test="${dcrDocument.checklistDtl.isMandatory eq true && fn:length(dcrDocument.getOrderedDcrAttachments()) eq 0}">required</c:if>
+                         <c:if test="${permitDcrDoc.dcrDocument.serviceChecklist.mandatory eq true && fn:length(permitDcrDoc.dcrDocument.getOrderedDcrAttachments()) eq 0}">required</c:if>
                          data-allowed-extenstion="pdf">
                         <div class="files-viewer ${checklistName}">
-                            <c:if test="${fn:length(dcrDocument.getOrderedDcrAttachments()) gt 0}">
-                                <c:forEach items="${dcrDocument.getOrderedDcrAttachments()}" var="file"
+                            <c:if test="${fn:length(permitDcrDoc.dcrDocument.getOrderedDcrAttachments()) gt 0}">
+                                <c:forEach items="${permitDcrDoc.dcrDocument.getOrderedDcrAttachments()}" var="file"
                                            varStatus="status1">
                                     <div class="file-viewer" data-toggle="tooltip"
                                          data-placement="top" title="${file.fileStoreMapper.fileName}">
@@ -155,11 +155,11 @@
                                     </div>
                                 </c:forEach>
                             </c:if>
-                            <form:hidden path="dcrDocuments[${dcrDocStatus.index}].fileStoreIds"
+                            <form:hidden path="permitDcrDocuments[${dcrDocStatus.index}].dcrDocument.fileStoreIds"
                                          cssClass="${checklistName}_fileStoreIds dcrFileStoreIds"></form:hidden>
                             <a href="javascript:void(0);" class="file-add"
                                data-unlimited-files="true"
-                               data-file-input-name="dcrDocuments[${dcrDocStatus.index}].files">
+                               data-file-input-name="permitDcrDocuments[${dcrDocStatus.index}].dcrDocument.files">
                                 <i class="fa fa-plus"></i>
                             </a>
 

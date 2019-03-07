@@ -144,7 +144,7 @@
                                        varStatus="status">
                                 <tr>
                                     <td class="view-content" style="font-size: 97%;"><c:out
-                                            value="${docs.checklistDetail.description}"
+                                            value="${docs.serviceChecklist.checklist.description}"
                                             default="N/A"/></td>
 
                                     <td class="view-content" style="font-size: 97%;"><c:out

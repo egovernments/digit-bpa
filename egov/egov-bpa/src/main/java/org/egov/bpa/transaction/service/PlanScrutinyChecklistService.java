@@ -39,7 +39,7 @@
  */
 package org.egov.bpa.transaction.service;
 
-import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.bpa.transaction.entity.PlanScrutinyChecklist;
 import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.repository.PlanScrutinyChecklistRepository;
@@ -56,7 +56,7 @@ public class PlanScrutinyChecklistService {
 	@Autowired
 	private PlanScrutinyChecklistRepository planScrutinyChecklistRepository;
 
-	public List<PlanScrutinyChecklist> findByInspectionAndScrutinyChecklistType(final Inspection inspection, final ScrutinyChecklistType type) {
+	public List<PlanScrutinyChecklist> findByInspectionAndScrutinyChecklistType(final PermitInspection inspection, final ScrutinyChecklistType type) {
 		return planScrutinyChecklistRepository.findByInspectionAndScrutinyChecklistTypeOrderByIdAsc(inspection, type);
 	}
 

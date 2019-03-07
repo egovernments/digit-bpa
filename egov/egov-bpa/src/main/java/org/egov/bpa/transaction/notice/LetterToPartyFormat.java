@@ -46,12 +46,12 @@
  */
 package org.egov.bpa.transaction.notice;
 
-import org.egov.bpa.transaction.entity.LettertoParty;
+import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.infra.reporting.engine.ReportOutput;
 
 @FunctionalInterface
 public interface LetterToPartyFormat {
 
-    ReportOutput generateNotice(final LettertoParty letterToParty);
+    ReportOutput generateNotice(final PermitLetterToParty letterToParty);
 
 }

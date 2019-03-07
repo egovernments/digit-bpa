@@ -107,7 +107,7 @@
 					<li><a data-toggle="tab" href="#doc-scrnty" data-tabidx=2><spring:message
 							code='lbl.document.scrutiny' /></a></li>
 				</c:if>
-				<c:if test="${not empty bpaApplication.inspections}">
+				<c:if test="${not empty bpaApplication.permitInspections}">
 					<li><a data-toggle="tab" href="#view-inspection" data-tabidx=3><spring:message
 							code='lbl.inspection.appln' /></a></li>
 				</c:if>
@@ -119,7 +119,7 @@
 					<li><a data-toggle="tab" href="#checklist-info" data-tabidx=5><spring:message
 							code='lbl.noc.doc.details' /></a></li>
 				</c:if>
-				<c:if test="${!showUpdateNoc && not empty bpaApplication.applicationNOCDocument}">
+				<c:if test="${!showUpdateNoc && not empty bpaApplication.permitNocDocuments}">
 					<li><a data-toggle="tab" href="#noc-info" data-tabidx=5><spring:message
 							code='lbl.noc.details' /></a></li>
 				</c:if>
@@ -181,7 +181,7 @@
 					</c:if>
 				</div>
 				<div id="document-info" class="tab-pane fade">
-					<c:if test="${not empty  bpaApplication.getDcrDocuments()}">
+					<c:if test="${not empty  bpaApplication.permitDcrDocuments}">
 						<div class="panel panel-primary dcrDocuments" data-collapsed="0">
 							<jsp:include page="view-dcr-documentdetails.jsp"></jsp:include>
 						</div>
@@ -197,7 +197,7 @@
 						</div>
 					</div>
 				</c:if>
-				<c:if test="${not empty bpaApplication.inspections}">
+				<c:if test="${not empty bpaApplication.permitInspections}">
 					<div id="view-inspection" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="view-inspection-details.jsp"></jsp:include>
@@ -219,7 +219,7 @@
 						</div>
 					</div>
 				</c:if>
-				<c:if test="${!showUpdateNoc && not empty bpaApplication.applicationNOCDocument}">
+				<c:if test="${!showUpdateNoc && not empty bpaApplication.permitNocDocuments}">
 					<div id="noc-info" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="view-noc-document.jsp"></jsp:include>

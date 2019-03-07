@@ -47,8 +47,10 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -56,8 +58,8 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.bpa.autonumber.InspectionNumberGenerator;
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.transaction.entity.common.DocketCommon;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
@@ -67,181 +69,185 @@ import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.repository.oc.OCInspectionRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 
-
 @Service
 @Transactional(readOnly = true)
 public class OCInspectionService {
 
-	private static final Logger LOGGER = Logger.getLogger(OCInspectionService.class);
+    private static final Logger LOGGER = Logger.getLogger(OCInspectionService.class);
 
-	@Autowired
-	private CheckListDetailService checkListDetailService;
-	@Autowired
-	private AutonumberServiceBeanResolver beanResolver;
-	@PersistenceContext
-	private EntityManager entityManager;
-	@Autowired
-	private OCInspectionRepository inspectionRepository;
-	@Autowired
-	private FileStoreService fileStoreService;
-	@Autowired
-	private SecurityUtils securityUtils;
-	@Autowired
-	private ApplicationBpaService applicationBpaService;
-	
-	@Autowired
-	private OCPlanScrutinyChecklistService ocPlanScrutinyChecklistService;
+    @Autowired
+    private ChecklistServicetypeMappingService checklistServicetypeMappingService;
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private OCInspectionRepository inspectionRepository;
+    @Autowired
+    private FileStoreService fileStoreService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private ApplicationBpaService applicationBpaService;
+    @Autowired
+    private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Transactional
-	public OCInspection save(final OCInspection ocInspection) {
-		InspectionCommon inspection = ocInspection.getInspection();
-		if(inspection.getId() == null) {
-			inspection.setInspectionNumber(generateInspectionNumber());
-			inspection.setInspectedBy(securityUtils.getCurrentUser());
-		}
-		if (inspection.getInspectionDate() == null)
-			inspection.setInspectionDate(new Date());
-		buildInspectionFiles(inspection);
-		buildPlanScrutinyChecklistItems(ocInspection);
-		//inspection.getPlanScrutinyChecklist().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
-		inspection.getDocket().get(0).setInspection(inspection);
-		buildDocketDetails(ocInspection.getInspection().getDocket().get(0));
-		return inspectionRepository.save(ocInspection);
-	}
-	
-	private void buildPlanScrutinyChecklistItems(final OCInspection inspection) {
-		if(!inspection.getPlanScrutinyChecklistTemp().isEmpty() && !inspection.getPlanScrutinyChecklistForDrawingTemp().isEmpty()) {
-			ocPlanScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklist());
-			ocPlanScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklistForDrawing());
-			inspection.getPlanScrutinyChecklist().clear();
-			inspection.getPlanScrutinyChecklistForDrawing().clear();
-			inspection.setPlanScrutinyChecklist(inspection.getPlanScrutinyChecklistTemp());
-			inspection.setPlanScrutinyChecklistForDrawing(inspection.getPlanScrutinyChecklistForDrawingTemp());
-			inspection.getPlanScrutinyChecklist().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
-			inspection.getPlanScrutinyChecklistForDrawing().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
-		}
-	}
+    @Transactional
+    public OCInspection save(final OCInspection ocInspection) {
+        InspectionCommon inspection = ocInspection.getInspection();
+        if (inspection.getId() == null) {
+            inspection.setInspectionNumber(generateInspectionNumber());
+            inspection.setInspectedBy(securityUtils.getCurrentUser());
+        }
+        if (inspection.getInspectionDate() == null)
+            inspection.setInspectionDate(new Date());
+        buildInspectionFiles(inspection);
+        buildPlanScrutinyChecklistItems(ocInspection);
+        inspection.getDocket().get(0).setInspection(inspection);
+        buildDocketDetails(ocInspection.getInspection().getDocket().get(0));
+        return inspectionRepository.save(ocInspection);
+    }
 
-	public OCInspection findById(Long id) {
-		return inspectionRepository.findOne(id);
-	}
+    private void buildPlanScrutinyChecklistItems(final OCInspection inspection) {
+        if (!inspection.getInspection().getPlanScrutinyChecklistForRuleTemp().isEmpty()
+                && !inspection.getInspection().getPlanScrutinyChecklistForDrawingTemp().isEmpty()) {
+            planScrutinyChecklistService.delete(inspection.getInspection().getPlanScrutinyChecklistForRule());
+            planScrutinyChecklistService.delete(inspection.getInspection().getPlanScrutinyChecklistForDrawing());
+            inspection.getInspection().getPlanScrutinyChecklistForRule().clear();
+            inspection.getInspection().getPlanScrutinyChecklistForDrawing().clear();
+            inspection.getInspection()
+                    .setPlanScrutinyChecklistForRule(inspection.getInspection().getPlanScrutinyChecklistForRuleTemp());
+            inspection.getInspection()
+                    .setPlanScrutinyChecklistForDrawing(inspection.getInspection().getPlanScrutinyChecklistForDrawingTemp());
+            inspection.getInspection().getPlanScrutinyChecklistForRule()
+                    .forEach(planScrutiny -> planScrutiny.setInspection(inspection.getInspection()));
+            inspection.getInspection().getPlanScrutinyChecklistForDrawing()
+                    .forEach(planScrutiny -> planScrutiny.setInspection(inspection.getInspection()));
+        }
+    }
 
-	public OCInspection findByOcApplicationNoAndInspectionNo(String applicationNo, String inspectionNo) {
-		return inspectionRepository.findByOc_ApplicationNumberAndInspection_InspectionNumber(applicationNo, inspectionNo);
-	}
+    public OCInspection findById(Long id) {
+        return inspectionRepository.findOne(id);
+    }
 
-	private void buildInspectionFiles(InspectionCommon inspection) {
-		if(!inspection.getInspectionSupportDocs().isEmpty())
-			for (InspectionFilesCommon filesCommon : inspection.getInspectionSupportDocs()) {
-				if (filesCommon.getFile() != null && filesCommon.getFile().getSize() > 0) {
-					filesCommon.setFileStoreMapper(applicationBpaService.addToFileStore(filesCommon.getFile()));
-				} else if(filesCommon.getFileStoreMapper() != null) {
-					filesCommon.setFileStoreMapper(filesCommon.getFileStoreMapper());
-				}
-				filesCommon.setInspection(inspection);
-			}
-	}
+    public OCInspection findByOcApplicationNoAndInspectionNo(String applicationNo, String inspectionNo) {
+        return inspectionRepository.findByOc_ApplicationNumberAndInspection_InspectionNumber(applicationNo, inspectionNo);
+    }
 
-	public List<OCInspection> findByIdOrderByIdAsc(final Long id) {
-		return inspectionRepository.findByIdOrderByIdAsc(id);
-	}
+    private void buildInspectionFiles(InspectionCommon inspection) {
+        if (!inspection.getInspectionSupportDocs().isEmpty())
+            for (InspectionFilesCommon filesCommon : inspection.getInspectionSupportDocs()) {
+                filesCommon.setInspection(inspection);
+                buildInspectionFiles(filesCommon);
+            }
+    }
 
-	public List<OCInspection> findByOcOrderByIdAsc(final OccupancyCertificate oc) {
-		return inspectionRepository.findByOcOrderByIdDesc(oc);
-	}
+    private void buildInspectionFiles(final InspectionFilesCommon inspectionFiles) {
+        if (inspectionFiles.getFiles() != null && inspectionFiles.getFiles().length > 0) {
+            Set<FileStoreMapper> existingFiles = new HashSet<>();
+            existingFiles.addAll(inspectionFiles.getImages());
+            existingFiles.addAll(applicationBpaService.addToFileStore(inspectionFiles.getFiles()));
+            inspectionFiles.setImages(existingFiles);
+        }
+    }
 
-	private String generateInspectionNumber() {
-		final InspectionNumberGenerator inspectionNUmber = beanResolver
-				.getAutoNumberServiceFor(InspectionNumberGenerator.class);
-		return inspectionNUmber.generateInspectionNumber("INSP");
-	}
+    public List<OCInspection> findByIdOrderByIdAsc(final Long id) {
+        return inspectionRepository.findByIdOrderByIdAsc(id);
+    }
 
-	public DocketCommon buildDocketDetails(final DocketCommon docket) {
-		for (final DocketDetailCommon dd : docket.getDocketDetail()) {
-			final CheckListDetail chkListDtl = checkListDetailService.findOne(dd.getCheckListDetail().getId());
-			dd.setCheckListDetail(chkListDtl);
-			dd.setDocket(docket);
-		}
-		return docket;
-	}
+    public List<OCInspection> findByOcOrderByIdAsc(final OccupancyCertificate oc) {
+        return inspectionRepository.findByOcOrderByIdDesc(oc);
+    }
 
-	public List<DocketCommon> buildDocDetFromUI(final OCInspection ocInspection) {
-		List<DocketCommon> docket = new ArrayList<>();
-		DocketCommon docObject = new DocketCommon();
-		docObject.setInspection(ocInspection.getInspection());
-		final List<DocketDetailCommon> docketDetailList = buildDocketDetail(ocInspection.getInspection());
-		docObject.setDocketDetail(docketDetailList);
-		docket.add(docObject);
-		return docket;
-	}
+    private String generateInspectionNumber() {
+        final InspectionNumberGenerator inspectionNUmber = beanResolver
+                .getAutoNumberServiceFor(InspectionNumberGenerator.class);
+        return inspectionNUmber.generateInspectionNumber("INSP");
+    }
 
-	public List<DocketDetailCommon> buildDocketDetail(final InspectionCommon inspection) {
-		final List<DocketDetailCommon> docketDetailList = new ArrayList<>();
-		docketDetailList.addAll(inspection.getDocketDetailLocList());
-		return docketDetailList;
-	}
+    public DocketCommon buildDocketDetails(final DocketCommon docket) {
+        for (final DocketDetailCommon dd : docket.getDocketDetail()) {
+            final ChecklistServiceTypeMapping chkListDtl = checklistServicetypeMappingService
+                    .load(dd.getServiceChecklist().getId());
+            dd.setServiceChecklist(chkListDtl);
+            dd.setDocket(docket);
+        }
+        return docket;
+    }
 
-	@SuppressWarnings("unchecked")
-	public void buildDocketDetailList(InspectionCommon inspection) {
-		Criteria criteriaLocation = getCheckListByServiceAndType(OC_INSPECTION);
-		List<CheckListDetail> inspectionCheckList = criteriaLocation.list();
-		List<DocketDetailCommon> docketTempLocList = inspectionCheckList.stream()
-				.map(chkListDtl -> new DocketDetailCommon(chkListDtl)).collect(Collectors.toList());
-		inspection.setDocketDetailLocList(docketTempLocList);
-	}
+    public List<DocketCommon> buildDocDetFromUI(final OCInspection ocInspection) {
+        List<DocketCommon> docket = new ArrayList<>();
+        DocketCommon docObject = new DocketCommon();
+        docObject.setInspection(ocInspection.getInspection());
+        final List<DocketDetailCommon> docketDetailList = buildDocketDetail(ocInspection.getInspection());
+        docObject.setDocketDetail(docketDetailList);
+        docket.add(docObject);
+        return docket;
+    }
 
-	public Criteria getCheckListByServiceAndType(final String checkListTypeVal) {
+    public List<DocketDetailCommon> buildDocketDetail(final InspectionCommon inspection) {
+        final List<DocketDetailCommon> docketDetailList = new ArrayList<>();
+        docketDetailList.addAll(inspection.getDocketDetailLocList());
+        return docketDetailList;
+    }
 
-		final Criteria checkListDet = getCurrentSession().createCriteria(CheckListDetail.class, "checklistdet");
-		checkListDet.createAlias("checklistdet.checkList", "checkList");
-		checkListDet.add(Restrictions.eq("checkList.checklistType", checkListTypeVal));
-		return checkListDet;
-	}
+    public void buildDocketDetailList(InspectionCommon inspection, final Long serviceTypeId) {
+        List<ChecklistServiceTypeMapping> inspectionCheckList = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, OC_INSPECTION);
+        List<DocketDetailCommon> docketTempLocList = inspectionCheckList.stream()
+                .map(serviceChecklist -> new DocketDetailCommon(serviceChecklist)).collect(Collectors.toList());
+        inspection.setDocketDetailLocList(docketTempLocList);
+    }
 
-	public void buildDocketDetailForModifyAndViewList(final InspectionCommon inspection, final Model model) {
-		if (inspection != null && !inspection.getDocket().isEmpty())
-			for (final DocketDetailCommon docketDet : inspection.getDocket().get(0).getDocketDetail()) {
-				String checkListType = docketDet.getCheckListDetail().getCheckList().getChecklistType();
-				if (OC_INSPECTION.equals(checkListType))
-					inspection.getDocketDetailLocList().add(docketDet);
-			}
-		model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
-	}
+    public void buildDocketDetailForModifyAndViewList(final InspectionCommon inspection, final Model model) {
+        if (inspection != null && !inspection.getDocket().isEmpty())
+            for (final DocketDetailCommon docketDet : inspection.getDocket().get(0).getDocketDetail()) {
+                String checkListType = docketDet.getServiceChecklist().getChecklist().getChecklistType().getCode();
+                if (OC_INSPECTION.equals(checkListType))
+                    inspection.getDocketDetailLocList().add(docketDet);
+            }
+        model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
+    }
 
-	public Map<Long, String> prepareImagesForView(final OCInspection ocInspection) {
-		Map<Long, String> imageMap = new HashMap<>();
-		if (!ocInspection.getInspection().getInspectionSupportDocs().isEmpty())
-			ocInspection.getInspection().getInspectionSupportDocs().forEach(
-					imageFileDoc -> {
-						try {
-							if (imageFileDoc.getFileStoreMapper() != null) {
-								final File file = fileStoreService.fetch(imageFileDoc.getFileStoreMapper().getFileStoreId(),
-										BpaConstants.FILESTORE_MODULECODE);
-								if (file != null)
-									imageMap.put(imageFileDoc.getId(), Base64.getEncoder().encodeToString(
-											FileCopyUtils.copyToByteArray(file)));
-							}
-						} catch (final IOException e) {
-							LOGGER.error("Error while preparing the images for view", e);
-						}
-					});
-		return imageMap;
-	}
+    public Map<Long, List<String>> prepareImagesForView(final OCInspection ocInspection) {
+        Map<Long, List<String>> imageMap = new HashMap<>();
+        if (!ocInspection.getInspection().getInspectionSupportDocs().isEmpty())
+            ocInspection.getInspection().getInspectionSupportDocs().forEach(
+                    docketFile -> {
+                        if (docketFile != null) {
+                            List<String> images = new ArrayList<>();
+                            docketFile.getImages().forEach(
+                                    imageFilestore -> {
+                                        final File file = fileStoreService.fetch(imageFilestore.getFileStoreId(),
+                                                BpaConstants.FILESTORE_MODULECODE);
+                                        if (file != null) {
+                                            try {
+                                                images.add(Base64.getEncoder().encodeToString(
+                                                        FileCopyUtils.copyToByteArray(file)));
+                                            } catch (final IOException e) {
+                                                LOGGER.error("Error while preparing the images for view", e);
+                                            }
+                                        }
+                                    });
+                            imageMap.put(docketFile.getId(), images);
+                        }
+                    });
+        return imageMap;
+    }
 
 }

@@ -47,7 +47,7 @@
 
 package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.transaction.entity.common.DocumentsCommon;
+import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.CascadeType;
@@ -77,7 +77,7 @@ public class OCDocuments extends AbstractAuditable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@NotNull
 	@JoinColumn(name = "document", nullable = false)
-	private DocumentsCommon document;
+	private GeneralDocument document;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@Valid
@@ -95,11 +95,11 @@ public class OCDocuments extends AbstractAuditable {
 		this.id = id;
 	}
 
-	public DocumentsCommon getDocument() {
+	public GeneralDocument getDocument() {
 		return document;
 	}
 
-	public void setDocument(DocumentsCommon document) {
+	public void setDocument(GeneralDocument document) {
 		this.document = document;
 	}
 

@@ -30,7 +30,7 @@
 package org.egov.bpa.transaction.repository;
 
 
-import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.bpa.transaction.entity.PlanScrutinyChecklist;
 import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,6 +40,6 @@ import java.util.List;
 
 @Repository
 public interface PlanScrutinyChecklistRepository extends JpaRepository<PlanScrutinyChecklist, Long> {
-	List<PlanScrutinyChecklist> findByInspectionAndScrutinyChecklistTypeOrderByIdAsc(Inspection inspection, ScrutinyChecklistType scrutinyChecklistType);
+	List<PlanScrutinyChecklist> findByInspectionAndScrutinyChecklistTypeOrderByIdAsc(PermitInspection inspection, ScrutinyChecklistType scrutinyChecklistType);
 
 }

@@ -69,12 +69,13 @@ import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
-import org.egov.bpa.transaction.entity.LettertoParty;
+import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
@@ -134,6 +135,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private BpaDcrService bpaDcrService;
     @Autowired
     private SubOccupancyService subOccupancyService;
+    @Autowired
+    private ChecklistServicetypeMappingService checklistServieTypeServcie;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -179,8 +182,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         model.addAttribute("stateType", application.getClass().getSimpleName());
         model.addAttribute("isEDCRIntegrationRequire",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
-        model.addAttribute("loadingFloorDetailsFromEdcrRequire",
-                bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
+        model.addAttribute("loadingFloorDetailsFromEdcrRequire", bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
         if (application.getIsOneDayPermitApplication()) {
             model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
         } else
@@ -188,33 +190,33 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         model.addAttribute(BPA_APPLICATION, application);
         model.addAttribute("currentState",
                 application.getCurrentState() == null ? "" : application.getCurrentState().getValue());
-        model.addAttribute("nocCheckListDetails", checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE_NOC));
-        model.addAttribute("checkListDetailList", checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));
-        model.addAttribute("applicationDocumentList", application.getApplicationDocument());
+        model.addAttribute("nocCheckListDetails", checklistServieTypeServcie.findByActiveChecklistAndServiceType(
+                application.getServiceType().getDescription(), CHECKLIST_TYPE_NOC));
+        model.addAttribute("checkListDetailList", checklistServieTypeServcie
+                .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), CHECKLIST_TYPE));
+        model.addAttribute("applicationDocumentList", application.getPermitDocuments());
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
         model.addAttribute("isReconciliationInProgress",
                 bpaUtils.checkIsReconciliationInProgress(application.getApplicationNumber()));
-        List<LettertoParty> lettertoPartyList = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
+        List<PermitLetterToParty> lettertoPartyList = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
         model.addAttribute("lettertopartylist", lettertoPartyList);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
-        if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
+        if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getLetterToParty().getSentDate() != null)
             model.addAttribute("mode", "showLPDetails");
         buildAppointmentDetailsOfScutinyAndInspection(model, application);
-        if (bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode())) {
+        if(bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode())) {
             model.addAttribute("subOccupancyList", subOccupancyService.findAll());
-        } else {
+        } else  {
             List<SubOccupancy> subOccupancies = new ArrayList<>();
-            if (!application.getPermitOccupancies().isEmpty()) {
-                for (Occupancy occ : application.getPermitOccupancies())
+            if(!application.getPermitOccupancies().isEmpty()) {
+                for(Occupancy occ : application.getPermitOccupancies())
                     subOccupancies.addAll(occ.getSubOccupancies());
             }
             model.addAttribute("subOccupancyList", subOccupancies);
             List<Usage> usages = new ArrayList<>();
-            for (SubOccupancy subOcc : subOccupancies)
+            for(SubOccupancy subOcc : subOccupancies)
                 usages.addAll(subOcc.getUsages());
             model.addAttribute("usageList", usages);
         }
@@ -261,7 +263,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                         messageSource.getMessage("msg.appointment.details.for.docscrutiny", null, null));
             }
         } else if (APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())
-                && application.getInspections().isEmpty()) {
+                && application.getPermitInspections().isEmpty()) {
             List<BpaAppointmentSchedule> appointmentScheduledList = bpaAppointmentScheduleService.findByApplication(application,
                     AppointmentSchedulePurpose.INSPECTION);
             if (!appointmentScheduledList.isEmpty()) {
@@ -315,7 +317,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             return loadViewdata(model, bpaApplication);
         }
 
-        if (!bpaApplication.getApplicationDocument().isEmpty())
+        if (!bpaApplication.getPermitDocuments().isEmpty())
             applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
         if(!bpaApplication.getApplicationAmenityTemp().isEmpty()) {
             bpaApplication.getApplicationAmenity().clear();

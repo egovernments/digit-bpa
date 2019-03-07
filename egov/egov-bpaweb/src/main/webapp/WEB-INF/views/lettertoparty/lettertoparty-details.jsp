@@ -72,20 +72,20 @@
 					<tr id="lprow">
 						<td align="center" class="view-content" style="font-size: 90%;">${status.index+1}</td>
 						<td align="center" class="view-content" style="font-size: 90%;"><span class="bold">
-							<c:out value="${inspn.lpNumber}"/></span></td>
+							<c:out value="${inspn.letterToParty.lpNumber}"/></span></td>
 						<td align="center" class="view-content" style="font-size: 90%;"><span class="bold">
-							<fmt:formatDate value="${inspn.letterDate}" pattern="dd/MM/yyyy" var="letterDate"/>
+							<fmt:formatDate value="${inspn.letterToParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate"/>
 								<c:out value="${letterDate}"/></span></td>
 						<td class="view-content" style="font-size: 90%;"><span class="bold"> <c:forEach
-								items="${inspn.lpReason}" var="lpReason" varStatus="status">
+								items="${inspn.letterToParty.lpReason}" var="lpReason" varStatus="status">
 							<c:out value="${lpReason.description}"/>
 							<c:if test="${!status.last}">,</c:if>
 						</c:forEach>
 							</span></td>
 						<td align="center" class="view-content" style="font-size: 90%;">
 							<c:choose>
-								<c:when test="${inspn.sentDate !=null }">
-									<fmt:formatDate value="${inspn.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
+								<c:when test="${inspn.letterToParty.sentDate !=null }">
+									<fmt:formatDate value="${inspn.letterToParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
 									<c:out value="${sentDate}"></c:out>
 								</c:when>
 								<c:otherwise>
@@ -98,7 +98,7 @@
 						</td>
 						<td align="center" class="view-content" style="font-size: 90%;">
 							<c:choose>
-								<c:when test="${inspn.sentDate !=null }">
+								<c:when test="${inspn.letterToParty.sentDate !=null }">
 									LP Sent
 								</c:when>
 								<c:otherwise>
@@ -115,14 +115,14 @@
 							</a>
 						</td>
 						<td align="center" class="view-content" style="font-size: 90%;">
-							<c:if test="${inspn.sentDate !=null }">
-								<fmt:formatDate value="${inspn.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
+							<c:if test="${inspn.letterToParty.sentDate !=null }">
+								<fmt:formatDate value="${inspn.letterToParty.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
 								<c:out value="${replyDate eq null ? 'N/A' : replyDate}"></c:out>
 							</c:if>
 						</td>
 						<td align="center" class="view-content" style="font-size: 90%;">
 							<c:choose>
-								<c:when test="${inspn.replyDate !=null }">
+								<c:when test="${inspn.letterToParty.replyDate !=null }">
 									LP Reply Received
 								</c:when>
 								<c:otherwise>

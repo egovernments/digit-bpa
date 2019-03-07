@@ -53,12 +53,7 @@
 
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title">
-        <c:if test="${modePSC eq 'combined'}">
-            <spring:message code="lbl.pln.scrty.rule.val"/>
-        </c:if>
-        <c:if test="${modePSC eq 'separate'}">
-            <spring:message code="lbl.pln.scrty.rule"/>
-        </c:if>
+           <spring:message code="lbl.pln.scrty.rule"/>
     </div>
 </div>
 <div class="panel-body">
@@ -74,11 +69,11 @@
         </thead>
         <tbody>
         <c:forEach var="planScrutiny"
-                   items="${ocInspection.planScrutinyChecklist}"
+                   items="${ocInspection.inspection.planScrutinyChecklistForRule}"
                    varStatus="planScrutinyStatus">
             <tr>
                 <td class="view-content" style="font-size: 97%;"><c:out value="${planScrutinyStatus.index+1}"/></td>
-                <td class="view-content text-justify" style="font-size: 97%;"><c:out value="${planScrutiny.checklistDetail.description}"/></td>
+                <td class="view-content text-justify" style="font-size: 97%;"><c:out value="${planScrutiny.serviceChecklist.checklist.description}"/></td>
                 <td class="view-content" style="font-size: 97%;"><c:out value="${planScrutiny.scrutinyValue.checkListVal}" default="N/A"/></td>
                 <td class="view-content text-justify" style="font-size: 97%;"><c:out value="${planScrutiny.remarks}" default="N/A"/></td>
             </tr>

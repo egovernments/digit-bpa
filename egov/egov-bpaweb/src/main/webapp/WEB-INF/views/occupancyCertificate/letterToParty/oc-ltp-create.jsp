@@ -124,22 +124,22 @@
                                        varStatus="status">
                                 <div class="form-group">
                                     <div class="col-sm-3 add-margin check-text">
-                                        <c:out value="${docs.description}"></c:out>
-                                        <c:if test="${docs.isMandatory}">
+                                        <c:out value="${docs.checklist.description}"></c:out>
+                                        <c:if test="${docs.mandatory}">
                                             <span class="mandatory"></span>
                                         </c:if>
                                         <form:hidden
-                                                id="letterToPartyDocument${status.index}checklistDetail.id"
-                                                path="letterToParty.letterToPartyDocuments[${status.index}].checklistDetail"
+                                                id="letterToPartyDocument${status.index}serviceChecklist.id"
+                                                path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
                                                 value="${docs.id}"/>
                                         <form:hidden
                                                 id="lettertoPartyDocument${status.index}checklistDetail"
-                                                path="letterToParty.letterToPartyDocuments[${status.index}].checklistDetail.isMandatory"
-                                                value="${docs.isMandatory}"/>
+                                                path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist.mandatory"
+                                                value="${docs.mandatory}"/>
                                         <form:hidden
                                                 id="lettertoPartyDocument${status.index}checklistDetail.description"
-                                                path="letterToParty.letterToPartyDocuments[${status.index}].checklistDetail.description"
-                                                value="${docs.description}"/>
+                                                path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist.checklist.description"
+                                                value="${docs.checklist.description}"/>
                                     </div>
 
                                     <div class="col-sm-3 add-margin">

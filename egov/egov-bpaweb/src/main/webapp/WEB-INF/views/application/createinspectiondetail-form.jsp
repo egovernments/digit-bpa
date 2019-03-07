@@ -47,13 +47,13 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="" method="post"
-			modelAttribute="inspection" id="documentscrutinyform"
+			modelAttribute="permitInspection" id="permitCreateInspectionForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" id="id" name="id" value="${bpaApplication.id}" />
+			<input type="hidden" id="id" name="application" value="${bpaApplication.id}" />
 			<input type="hidden" name="applicationNumber" id="applicationNumber"
 				value="${applicationNumber}">
-			<input type="hidden" name="inspectionDate" id="inspectionDate"
+			<input type="hidden" name="inspection.inspectionDate" id="inspectionDate"
 				value="${inspectionDate}">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"

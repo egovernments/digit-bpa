@@ -62,7 +62,7 @@
 				varStatus="status">
 				<div class="form-group">
 					<div class="col-sm-4">
-						<c:out value="${docs.checklistDetail.description}" />
+						<c:out value="${docs.serviceChecklist.checklist.description}" />
 					</div>
 					<div class="col-sm-4">
 						<c:out value="${docs.remarks}" />

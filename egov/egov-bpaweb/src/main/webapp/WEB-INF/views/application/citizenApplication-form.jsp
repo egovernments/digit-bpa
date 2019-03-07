@@ -46,7 +46,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-		<div class="text-left error-msg col-sm-12" style="font-size: 14px;">
+		<div class="text-left text-info view-content col-sm-12" style="font-size: 14px;">
 			<span class="applicantname"> <spring:message
 					code="lbl.applicant.name" /> : <span id="applicantName"></span>
 			</span>
@@ -170,14 +170,14 @@
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="dcrDocuments">
-							<jsp:include page="bpa-dcr-documents.jsp"></jsp:include>
+							<jsp:include page="permit-dcr-documents.jsp"></jsp:include>
 						</div>
-						<jsp:include page="bpaDocumentDetails.jsp"></jsp:include>
+						<jsp:include page="permit-general-documents.jsp"></jsp:include>
 					</div>
 				</div>
 				<div id="noc-document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="noc-document-updation.jsp"></jsp:include>
+						<jsp:include page="permit-noc-documents.jsp"></jsp:include>
 					</div>
 				</div>
 			</div>

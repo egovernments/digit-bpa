@@ -47,21 +47,22 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form role="form" action="" method="post"
-			modelAttribute="inspection" id="documentscrutinyform"
+			modelAttribute="permitInspection" id="documentscrutinyform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<input type="hidden" id="bpaApplicationid" name="bpaApplicationid" value="${bpaApplication.id}" />
-			<input type="hidden" id="id" name="id" value="${inspection.id}" />
-			<input type="hidden" name="inspection" value="${inspection.id}" />
+			<form:hidden path="id" value="${permitInspection.id}"/>
+			<input type="hidden" name="permitInspection" value="${permitInspection.id}" />
+			<form:hidden path="inspection.id" value="${permitInspection.inspection.id}"/>
+			<form:hidden path="application" value="${bpaApplication.id}"/>
 			<form:hidden
 				id="docketId"
-				path="docket[0].id" value="${inspection.docket[0].id}" />
+				path="inspection.docket[0].id" value="${permitInspection.inspection.docket[0].id}" />
 			<input type="hidden" id="mode" name="mode" value="${mode}" />
 			<input type="hidden" name="applicationNumber" id="applicationNumber"
 				value="${applicationNumber}">
 			<input type="hidden" name="inspectionDate" id="inspectionDate"
 				value="${inspectionDate}">
-			<form:hidden id="deletedFilestoreIds" path="deletedDocketDetailsFilestoreIds" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
 									  href="#inspn-details" data-tabidx=0><spring:message
@@ -93,7 +94,7 @@
 							<jsp:include page="plan-scrutiny-checklist-rule.jsp"></jsp:include>
 						</div>
 					</div>
-					<c:if test="${not empty inspection.planScrutinyChecklistForDrawing}">
+					<c:if test="${not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
 						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body custom-form ">
 								<jsp:include page="plan-scrutiny-checklist-drawing.jsp"></jsp:include>

@@ -60,17 +60,17 @@
         </thead>
         <tbody>
         <c:choose>
-            <c:when test="${not empty  bpaApplication.getDcrDocuments()}">
-                <c:forEach items="${bpaApplication.getDcrDocuments()}" var="dcrDocument"
+            <c:when test="${not empty  bpaApplication.getPermitDcrDocuments()}">
+                <c:forEach items="${bpaApplication.getPermitDcrDocuments()}" var="permitDcr"
                            varStatus="dcrStatus">
                     <tr>
                         <td class="view-content text-center" style="font-size: 97%;"><c:out value="${dcrStatus.index+1}"/></td>
-                        <td class="view-content" style="font-size: 97%;"><c:out value="${dcrDocument.checklistDtl.description}"
+                        <td class="view-content" style="font-size: 97%;"><c:out value="${permitDcr.dcrDocument.serviceChecklist.checklist.description}"
                                    default="N/A"/></td>
-                        <td class="view-content text-justify" style="font-size: 97%;"><c:out value="${dcrDocument.remarks}" default="N/A"/></td>
+                        <td class="view-content text-justify" style="font-size: 97%;"><c:out value="${permitDcr.dcrDocument.remarks}" default="N/A"/></td>
                         <td class="view-content" style="font-size: 97%;"><c:set value="false" var="isDocFound"></c:set>
                             <c:forEach
-                                    var="dcrFile" items="${dcrDocument.getOrderedDcrAttachments()}" varStatus="dcrLoop">
+                                    var="dcrFile" items="${permitDcr.dcrDocument.getOrderedDcrAttachments()}" varStatus="dcrLoop">
                                 <c:if test="${dcrFile.fileStoreMapper.fileStoreId ne null}">
                                     <c:set value="true" var="isDocFound"></c:set>
                                     <a target="_blank"

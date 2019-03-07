@@ -37,12 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.entity;
+package org.egov.bpa.transaction.entity.common;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,53 +54,53 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "egbpa_dcr_document")
-@SequenceGenerator(name = StoreDCRFiles.SEQ_DCR_DOCUMENT, sequenceName = StoreDCRFiles.SEQ_DCR_DOCUMENT, allocationSize = 1)
-public class StoreDCRFiles {
+@Table(name = "egbpa_dcr_document_files")
+@SequenceGenerator(name = StoreDcrFiles.SEQ_CMN_DCR_FILES, sequenceName = StoreDcrFiles.SEQ_CMN_DCR_FILES, allocationSize = 1)
+public class StoreDcrFiles {
 
-	public static final String SEQ_DCR_DOCUMENT = "seq_egbpa_dcr_document";
-	@Id
-	@GeneratedValue(generator = SEQ_DCR_DOCUMENT, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "dcrdocument", nullable = false)
-	private DCRDocument dcrDocument;
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "filestore", nullable = false)
-	private FileStoreMapper fileStoreMapper;
-	private boolean isAutoPopulated = false;
+    public static final String SEQ_CMN_DCR_FILES = "seq_egbpa_dcr_document_files";
+    @Id
+    @GeneratedValue(generator = SEQ_CMN_DCR_FILES, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "dcrdocument", nullable = false)
+    private DcrDocument dcrDocument;
+    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "filestore", nullable = false)
+    private FileStoreMapper fileStoreMapper;
+    private boolean isAutoPopulated = false;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public DCRDocument getDcrDocument() {
-		return dcrDocument;
-	}
+    public DcrDocument getDcrDocument() {
+        return dcrDocument;
+    }
 
-	public void setDcrDocument(DCRDocument dcrDocument) {
-		this.dcrDocument = dcrDocument;
-	}
+    public void setDcrDocument(DcrDocument dcrDocument) {
+        this.dcrDocument = dcrDocument;
+    }
 
-	public FileStoreMapper getFileStoreMapper() {
-		return fileStoreMapper;
-	}
+    public FileStoreMapper getFileStoreMapper() {
+        return fileStoreMapper;
+    }
 
-	public void setFileStoreMapper(FileStoreMapper fileStoreMapper) {
-		this.fileStoreMapper = fileStoreMapper;
-	}
+    public void setFileStoreMapper(FileStoreMapper fileStoreMapper) {
+        this.fileStoreMapper = fileStoreMapper;
+    }
 
-	public boolean isAutoPopulated() {
-		return isAutoPopulated;
-	}
+    public boolean isAutoPopulated() {
+        return isAutoPopulated;
+    }
 
-	public void setAutoPopulated(boolean autoPopulated) {
-		isAutoPopulated = autoPopulated;
-	}
+    public void setAutoPopulated(boolean autoPopulated) {
+        isAutoPopulated = autoPopulated;
+    }
 }

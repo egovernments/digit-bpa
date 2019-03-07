@@ -42,18 +42,18 @@ package org.egov.bpa.transaction.repository;
 import java.util.List;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.PermitInspection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InspectionRepository extends JpaRepository<Inspection, Long> {
+public interface InspectionRepository extends JpaRepository<PermitInspection, Long> {
 
     
-    List<Inspection> findByApplicationOrderByIdDesc(BpaApplication bpaApplication);
+    List<PermitInspection> findByApplicationOrderByIdDesc(BpaApplication bpaApplication);
 
     
-    List<Inspection> findByIdOrderByIdAsc(Long id);
+    List<PermitInspection> findByIdOrderByIdAsc(Long id);
 
 
 }

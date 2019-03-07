@@ -45,97 +45,93 @@
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <div class="panel-heading custom_form_panel_heading">
-    <div class="panel-title">
-        <spring:message code="lbl.pln.scrty.rule"/>
-    </div>
+	<div class="panel-title">
+		<spring:message code="lbl.pln.scrty.rule" />
+	</div>
 </div>
 <div class="panel-body">
-    <table class="table table-bordered  multiheadertbl"
-           id="planScrutinyDetails">
-        <thead>
-        <tr>
-            <th width="2%"><spring:message code="lbl.srl.no"/></th>
-            <th width="50%"><spring:message code="lbl.description"/></th>
-            <th width="13%"><spring:message code="lbl.is.applicable"/></th>
-            <th><spring:message code="lbl.remarks"/></th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:choose>
-            <c:when
-                    test="${not empty inspection.planScrutinyChecklistTemp}">
-                <c:forEach var="planScrutiny"
-                           items="${inspection.planScrutinyChecklistTemp}"
-                           varStatus="planScrutinyStatus">
-                    <tr>
-                        <td><form:hidden
-                                path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].inspection"
-                                value="${inspection.id}"/> <form:hidden
-                                path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].orderNumber"
-                                value="${planScrutinyStatus.index+1}"/> <form:hidden
-                                path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].checklistDetail"
-                                value="${planScrutiny.checklistDetail.id}"/><form:hidden
-                                path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].scrutinyChecklistType"
-                                value="RULE_VALIDATION"/> <c:out
-                                value="${planScrutinyStatus.index+1}"></c:out></td>
-                        <td class="view-content" style="font-size: 100%;"><c:out
-                                value="${planScrutiny.checklistDetail.description}"></c:out></td>
-                        <td class="view-content">
-                            <c:forEach items="${planScrutinyValues}" var="scrutinyVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-                                                  name="planScrutinyChecklistTemp[${planScrutinyStatus.index}].scrutinyValue"
-                                            <c:if test="${scrutinyVal eq planScrutiny.scrutinyValue}"> checked="checked" </c:if> />${scrutinyVal}
-                                    </label>
-                                </div>
-                            </c:forEach>
-                        </td>
-                        <td><form:textarea
-                                path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].remarks"
-                                class="form-control remarks" rows="3" maxlength="1024"/></td>
-                    </tr>
-                </c:forEach>
-            </c:when>
-            <c:otherwise>
-                <c:forEach var="planScrutiny"
-                           items="${planScrutinyCheckList}" varStatus="planScrutinyStatus">
-                    <tr>
-                        <td><form:hidden
-                                path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].inspection"/>
-                            <form:hidden
-                                    path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].orderNumber"
-                                    value="${planScrutinyStatus.index+1}"/><form:hidden
-                                    path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].checklistDetail"
-                                    value="${planScrutiny.id}"/><form:hidden
-                                    path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].scrutinyChecklistType"
-                                    value="RULE_VALIDATION"/> <c:out
-                                    value="${planScrutinyStatus.index+1}"></c:out></td>
-                        <td class="view-content" style="font-size: 100%;"><c:out
-                                value="${planScrutiny.description}"></c:out>
-                        <td class="view-content">
-                            <c:forEach items="${planScrutinyValues}" var="scrutinyVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-                                                  name="planScrutinyChecklistTemp[${planScrutinyStatus.index}].scrutinyValue"
-                                            <c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
-                                    </label>
-                                </div>
-                            </c:forEach>
-                        </td>
-                        <td><form:textarea
-                                path="planScrutinyChecklistTemp[${planScrutinyStatus.index}].remarks"
-                                class="form-control remarks" rows="3" maxlength="1024"/></td>
-                    </tr>
-                </c:forEach>
-            </c:otherwise>
-        </c:choose>
-        </tbody>
-    </table>
+	<table class="table table-bordered  multiheadertbl"
+		id="planScrutinyDetails">
+		<thead>
+			<tr>
+				<th width="2%"><spring:message code="lbl.srl.no" /></th>
+				<th width="50%"><spring:message code="lbl.description" /></th>
+				<th width="13%"><spring:message code="lbl.is.applicable" /></th>
+				<th><spring:message code="lbl.remarks" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:choose>
+				<c:when
+					test="${not empty permitInspection.inspection.planScrutinyChecklistForRuleTemp}">
+					<c:forEach var="planScrutiny"
+						items="${permitInspection.inspection.planScrutinyChecklistForRuleTemp}"
+						varStatus="planScrutinyStatus">
+						<tr>
+							<td> <form:hidden
+									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].orderNumber"
+									value="${planScrutinyStatus.index+1}" /> <form:hidden
+									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].serviceChecklist"
+									value="${planScrutiny.serviceChecklist.id}" /> <form:hidden
+									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].scrutinyChecklistType"
+									value="RULE_VALIDATION" /> <c:out
+									value="${planScrutinyStatus.index+1}"></c:out></td>
+							<td class="view-content" style="font-size: 100%;"><c:out
+									value="${planScrutiny.serviceChecklist.checklist.description}"></c:out></td>
+							<td class="view-content"><c:forEach
+									items="${planScrutinyValues}" var="scrutinyVal">
+									<div class="radio">
+										<label><input type="radio" value="${scrutinyVal}"
+											class="scrutinyValue"
+											name="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].scrutinyValue"
+											<c:if test="${scrutinyVal eq planScrutiny.scrutinyValue}"> checked="checked" </c:if> />${scrutinyVal}
+										</label>
+									</div>
+								</c:forEach></td>
+							<td><form:textarea
+									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].remarks"
+									class="form-control remarks" rows="3" maxlength="1024" /></td>
+						</tr>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<c:forEach var="planScrutiny" items="${planScrutinyCheckList}"
+						varStatus="planScrutinyStatus">
+						<tr>
+							<td><form:hidden
+									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].orderNumber"
+									value="${planScrutinyStatus.index+1}" /> <form:hidden
+									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].serviceChecklist"
+									value="${planScrutiny.id}" /> <form:hidden
+									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].scrutinyChecklistType"
+									value="RULE_VALIDATION" /> <c:out
+									value="${planScrutinyStatus.index+1}"></c:out></td>
+							<td class="view-content" style="font-size: 100%;"><c:out
+									value="${planScrutiny.checklist.description}"></c:out>
+							<td class="view-content"><c:forEach
+									items="${planScrutinyValues}" var="scrutinyVal">
+									<div class="radio">
+										<label><input type="radio" value="${scrutinyVal}"
+											class="scrutinyValue"
+											name="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].scrutinyValue"
+											<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
+										</label>
+									</div>
+								</c:forEach></td>
+							<td><form:textarea
+									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].remarks"
+									class="form-control remarks" rows="3" maxlength="1024" /></td>
+						</tr>
+					</c:forEach>
+				</c:otherwise>
+			</c:choose>
+		</tbody>
+	</table>
 </div>

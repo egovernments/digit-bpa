@@ -78,11 +78,11 @@
 							<jsp:include page="oc-inspection-detail-form.jsp"></jsp:include>
 						</div>
 					</div>
-					<div class="panel panel-primary" data-collapsed="0">
+					<%-- <div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
 							<jsp:include page="oc-upload-inspection-images.jsp"></jsp:include>
 						</div>
-					</div>
+					</div> --%>
 				</div>
 				<div id="oc-plan-scrutiny-chklist" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">

@@ -134,21 +134,21 @@
                                         path="letterToParty.letterToPartyDocuments[${status.index}].letterToParty"
                                         id="lettertopartyId" value="${ocLetterToParty.letterToParty.id}"/>--%>
                                 <form:hidden
-                                        path="letterToParty.letterToPartyDocuments[${status.index}].checklistDetail"
+                                        path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
                                         id="checklist" value="${doc.id}"/>
                                 <div class="form-group">
                                     <div class="col-sm-3 add-margin check-text">
                                         <c:forEach var="chk" items="${checkListDetailList}">
-                                            <c:if test="${lpdoc.checklistDetail.id == chk.id}">
-                                                <c:out value="${chk.description}"/>
+                                            <c:if test="${lpdoc.serviceChecklist.id == chk.id}">
+                                                <c:out value="${chk.checklist.description}"/>
                                                 <form:hidden
-                                                        id="lettertoPartyDocument${status.index}checklistDetail"
-                                                        path="letterToParty.letterToPartyDocuments[${status.index}].checklistDetail"
+                                                        id="lettertoPartyDocument${status.index}serviceChecklist"
+                                                        path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
                                                         value="${chk.id}"/>
                                                 <form:hidden
-                                                        id="lettertoPartyDocument${status.index}checklistDetail"
-                                                        path="letterToParty.letterToPartyDocuments[${status.index}].checklistDetail.isMandatory"
-                                                        value="${chk.isMandatory}"/>
+                                                        id="lettertoPartyDocument${status.index}serviceChecklist"
+                                                        path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist.mandatory"
+                                                        value="${chk.mandatory}"/>
                                             </c:if>
                                         </c:forEach>
                                     </div>

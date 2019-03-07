@@ -97,9 +97,9 @@
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="dcrDocuments">
-							<jsp:include page="bpa-dcr-documents.jsp"></jsp:include>
+							<jsp:include page="permit-dcr-documents.jsp"></jsp:include>
 						</div>
-						<jsp:include page="bpaDocumentDetails.jsp"></jsp:include>
+						<jsp:include page="permit-general-documents.jsp"></jsp:include>
 					</div>
 				</div>
 				<div id="appliccation-info" class="tab-pane fade in active">
@@ -168,7 +168,7 @@
 				</div>
 				<div id="noc-document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="noc-document-updation.jsp"></jsp:include>
+						<jsp:include page="permit-noc-documents.jsp"></jsp:include>
 					</div>
 				</div>
 			</div>

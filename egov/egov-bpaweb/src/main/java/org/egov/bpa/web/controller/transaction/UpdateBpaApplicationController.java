@@ -111,8 +111,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.service.PermitConditionsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
-import org.egov.bpa.transaction.entity.LettertoParty;
 import org.egov.bpa.transaction.entity.PermitFee;
+import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
@@ -186,7 +186,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private BpaDcrService bpaDcrService;
     @Autowired
     protected PermitFeeService permitFeeService;
-    
+
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -206,7 +206,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                     && application.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
                 return APPLICATION_VIEW;
             else if (application.getState() != null
-                    && application.getState().getNextAction().equalsIgnoreCase(WF_DOC_SCRUTINY_SCHEDLE_PEND) 
+                    && application.getState().getNextAction().equalsIgnoreCase(WF_DOC_SCRUTINY_SCHEDLE_PEND)
                     || application.getState().getNextAction().equalsIgnoreCase(WF_DOC_VERIFY_PEND)
                     || application.getState().getNextAction().equalsIgnoreCase(WF_INIT_AUTO_RESCHDLE))
                 return DOCUMENTSCRUTINY_FORM;
@@ -266,8 +266,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             if (workFlowAction.equalsIgnoreCase(WF_INITIATE_REJECTION_BUTTON) && bpaApplication.getIsOneDayPermitApplication()
                     && (bpaApplication.getCurrentState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
                             || bpaApplication.getCurrentState().getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED))) {
-				approvalPosition = bpaUtils.getUserPositionIdByZone(DESIGNATION_AE,
-						bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
+                approvalPosition = bpaUtils.getUserPositionIdByZone(DESIGNATION_AE,
+                        bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
             } else
                 approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
             List<Assignment> assignments;
@@ -278,7 +278,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(approvalPosition, new Date());
             Position pos = assignments.get(0).getPosition();
             User user = assignments.get(0).getEmployee();
-            if (!bpaApplication.getApplicationDocument().isEmpty())
+            if (!bpaApplication.getPermitDocuments().isEmpty())
                 applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
             BpaApplication bpaAppln = applicationBpaService.updateApplication(bpaApplication, approvalPosition, workFlowAction,
                     amountRule);
@@ -328,21 +328,22 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
         String approvalComent = request.getParameter(APPROVAL_COMENT);
-        
-        String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.BPAFEECALULATION);
 
-        if(WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction) 
-        		&& feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
-        	List<PermitFee> permitFeeList = permitFeeService
+        String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
+                BpaConstants.BPAFEECALULATION);
+
+        if (WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)
+                && feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
+            List<PermitFee> permitFeeList = permitFeeService
                     .getPermitFeeListByApplicationId(bpaApplication.getId());
-        	if(permitFeeList.size() == 0 || permitFeeList ==null) {
-        		model.addAttribute("feeNotDefined", "Please enter fee to proceed");
-        		loadFormData(model, bpaApplication);
+            if (permitFeeList.isEmpty() || permitFeeList == null) {
+                model.addAttribute("feeNotDefined", "Please enter fee to proceed");
+                loadFormData(model, bpaApplication);
                 loadCommonApplicationDetails(model, bpaApplication);
-            	return APPLICATION_VIEW;
-        	}
+                return APPLICATION_VIEW;
+            }
         }
-        	
+
         if (WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
             StateHistory<Position> stateHistory = bpaApplication.getStateHistory().stream()
                     .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
@@ -365,10 +366,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             pos = bpaApplication.getCurrentState().getPreviousOwner();
             approvalPosition = bpaApplication.getCurrentState().getPreviousOwner().getId();
         } else if (FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(bpaApplication.getState().getNextAction())) {
-            List<LettertoParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(bpaApplication);
+            List<PermitLetterToParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(bpaApplication);
             StateHistory<Position> stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(
                     bpaApplication.getStateHistory(),
-                    lettertoParties.get(0).getStateForOwnerPosition());
+                    lettertoParties.get(0).getLetterToParty().getStateForOwnerPosition());
             approvalPosition = stateHistory.getOwnerPosition().getId();
         } else if (StringUtils.isNotBlank(request.getParameter(APPRIVALPOSITION))
                 && !WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
@@ -384,7 +385,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 approvalPosition = pos.getId();
             }
         }
-        if (!bpaApplication.getApplicationDocument().isEmpty())
+        if (!bpaApplication.getPermitDocuments().isEmpty())
             applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
 
         if (bpaApplication.getCurrentState().getValue().equals(WF_NEW_STATE))
@@ -499,24 +500,24 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 && hasInspectionStatus && hasInspectionPendingAction
                 && purposeInsList.isEmpty()) {
             mode = "newappointment";
-        } else if (hasInspectionPendingAction && hasInspectionStatus && application.getInspections().isEmpty()) {
+        } else if (hasInspectionPendingAction && hasInspectionStatus && application.getPermitInspections().isEmpty()) {
             mode = "captureInspection";
             model.addAttribute("isInspnRescheduleEnabled", hasOneDayPermitRequireInspectionScheduling(application)
                     || hasRegularPermitRequireInspectionScheduling(application));
             scheduleType = AppointmentSchedulePurpose.INSPECTION;
         } else if ((hasInspectionPendingAction && hasInspectionStatus)
-                || isAfterTSInspection && !application.getInspections().isEmpty()) {
+                || isAfterTSInspection && !application.getPermitInspections().isEmpty()) {
             mode = "modifyInspection";
             scheduleType = AppointmentSchedulePurpose.INSPECTION;
         } else if (FORWARDED_TO_NOC_UPDATE.equalsIgnoreCase(pendingAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus)) {
             model.addAttribute("showUpdateNoc", true);
         } else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(pendingAction)
-                && !application.getInspections().isEmpty())
+                && !application.getPermitInspections().isEmpty())
             mode = "initiatedForApproval";
 
         // To show/hide TS inspection required checkbox
-        if (!application.getIsOneDayPermitApplication() && !application.getInspections().isEmpty()
+        if (!application.getIsOneDayPermitApplication() && !application.getPermitInspections().isEmpty()
                 && ((hasInspectionStatus && hasInspectionPendingAction)
                         || (FIELD_INSPECTION_COMPLETED.equalsIgnoreCase(currentStateValue)
                                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus))))
@@ -558,7 +559,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         } else {
             model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
             workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
-            List<LettertoParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
+            List<PermitLetterToParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
 
             if (application.getState() != null
                     && application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
@@ -573,7 +574,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                             && !APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                             && !lettertoParties.isEmpty()
                             && APPLICATION_STATUS_NOCUPDATED
-                                    .equals(lettertoParties.get(0).getCurrentApplnStatus().getCode())) {
+                                    .equals(lettertoParties.get(0).getLetterToParty().getCurrentApplnStatus().getCode())) {
                 workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceType(application));
                 workflowContainer.setPendingActions(application.getState().getNextAction());
             } else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
@@ -612,17 +613,20 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
         model.addAttribute("currentState", application.getCurrentState().getValue());
         model.addAttribute(BPA_APPLICATION, application);
-		model.addAttribute("workFlowBoundary", bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
-		model.addAttribute("electionBoundary", application.getSiteDetail().get(0).getElectionBoundary() != null
-				? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
+        model.addAttribute("workFlowBoundary", bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+        model.addAttribute("electionBoundary", application.getSiteDetail().get(0).getElectionBoundary() != null
+                ? application.getSiteDetail().get(0).getElectionBoundary().getId()
+                : null);
         model.addAttribute("electionBoundaryName", application.getSiteDetail().get(0).getElectionBoundary() != null
-				? application.getSiteDetail().get(0).getElectionBoundary().getName() : "");
+                ? application.getSiteDetail().get(0).getElectionBoundary().getName()
+                : "");
         model.addAttribute("revenueBoundaryName", application.getSiteDetail().get(0).getAdminBoundary() != null
-				? application.getSiteDetail().get(0).getAdminBoundary().getName() : "");
+                ? application.getSiteDetail().get(0).getAdminBoundary().getName()
+                : "");
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
         model.addAttribute("checkListDetailList", checkListDetailService
                 .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));
-        model.addAttribute("applicationDocumentList", application.getApplicationDocument());
+        model.addAttribute("applicationDocumentList", application.getPermitDocuments());
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
         model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
@@ -638,7 +642,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode()))
                 || (!actions.isEmpty() && actions.contains(WF_APPROVE_BUTTON)))
             buildApplicationPermitConditions(application, model);
-        
+
         prepareActions(model, application);
         if (!application.getIsOneDayPermitApplication()
                 && (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())

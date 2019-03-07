@@ -59,7 +59,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.bpa.transaction.entity.common.DCRDocumentCommon;
+import org.egov.bpa.transaction.entity.common.DcrDocument;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -77,7 +77,7 @@ public class OCDcrDocuments extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "dcrDocument", nullable = false)
-    private DCRDocumentCommon dcrDocument;
+    private DcrDocument dcrDocument;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     @NotNull
@@ -94,11 +94,11 @@ public class OCDcrDocuments extends AbstractAuditable {
         this.id = id;
     }
 
-    public DCRDocumentCommon getDcrDocument() {
+    public DcrDocument getDcrDocument() {
         return dcrDocument;
     }
 
-    public void setDcrDocument(DCRDocumentCommon dcrDocument) {
+    public void setDcrDocument(DcrDocument dcrDocument) {
         this.dcrDocument = dcrDocument;
     }
 

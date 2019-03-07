@@ -44,7 +44,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <form:form role="form" action="/bpa/lettertoparty/create" method="post"
-		   modelAttribute="lettertoParty" id="lettertoPartyform"
+		   modelAttribute="permitLetterToParty" id="lettertoPartyform"
 		   cssClass="form-horizontal form-groups-bordered"
 		   enctype="multipart/form-data">
 	<div class="row">
@@ -65,33 +65,33 @@
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.lpreason"/><span class="mandatory"></span> </label>
 							<div class="col-sm-3 add-margin">
-								<form:select path="lpReason" data-first-option="false"
+								<form:select path="letterToParty.lpReason" data-first-option="false"
 											 id="lpReason" cssClass="form-control tick-indicator" multiple="true"
 											 required="required">
 									<form:options items="${lpReasonList}" itemValue="id"
 												  itemLabel="description"/>
 								</form:select>
-								<form:errors path="lpReason" cssClass="error-msg"/>
+								<form:errors path="letterToParty.lpReason" cssClass="error-msg"/>
 							</div>
 
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.lpdescription"/><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
-								<form:textarea path="lpDesc"
+								<form:textarea path="letterToParty.lpDesc"
 											   class="form-control patternvalidation"
 											   data-pattern="alphanumericspecialcharacters"
 											   maxlength="1016" rows="5" id="lpDesc" required="required"/>
-								<form:errors path="lpDesc" cssClass="error-msg"/>
+								<form:errors path="letterToParty.lpDesc" cssClass="error-msg"/>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.lastreplydate"/></label>
 							<div class="col-sm-3 add-margin">
-								<form:input path="lastReplyDate" class="form-control datepicker"
+								<form:input path="letterToParty.lastReplyDate" class="form-control datepicker"
 											data-date-start-date="0d" id="lastReplyDate"
 											data-inputmask="'mask': 'd/m/y'"/>
-								<form:errors path="lastReplyDate"
+								<form:errors path="letterToParty.lastReplyDate"
 											 cssClass="add-margin error-msg"/>
 							</div>
 						</div>
@@ -124,29 +124,28 @@
 									   varStatus="status">
 								<div class="form-group">
 									<div class="col-sm-3 add-margin check-text">
-										<c:out value="${docs.description}"></c:out>
-										<c:if test="${docs.isMandatory}">
+										<c:out value="${docs.checklist.description}"></c:out>
+										<c:if test="${docs.mandatory}">
 											<span class="mandatory"></span>
 										</c:if>
 										<form:hidden
-												id="lettertoPartyDocument${status.index}checklistDetail.id"
-												path="lettertoPartyDocument[${status.index}].checklistDetail"
+												id="letterToParty.letterToPartyDocuments${status.index}serviceChecklist.id"
+												path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
 												value="${docs.id}"/>
 										<form:hidden
-												id="lettertoPartyDocument${status.index}checklistDetail"
-												path="lettertoPartyDocument[${status.index}].checklistDetail.isMandatory"
-												value="${docs.isMandatory}"/>
+												id="letterToParty.letterToPartyDocuments${status.index}serviceChecklist"
+												path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist.mandatory"
+												value="${docs.mandatory}"/>
 										<form:hidden
-												id="lettertoPartyDocument${status.index}checklistDetail.description"
-												path="lettertoPartyDocument[${status.index}].checklistDetail.description"
-												value="${docs.description}"/>
+												id="letterToParty.letterToPartyDocuments${status.index}serviceChecklist.checklist.description"
+												path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist.checklist.description"
+												value="${docs.checklist.description}"/>
 									</div>
 
 									<div class="col-sm-3 add-margin">
 										<form:checkbox
-												id="lettertoPartyDocument${status.index}isrequested"
-												path="lettertoPartyDocument[${status.index}].isrequested"
-												value="lettertoPartyDocument${status.index}isrequested"
+												id="letterToParty.letterToPartyDocuments${status.index}isrequested"
+												path="letterToParty.letterToPartyDocuments[${status.index}].isRequested"
 												class="requested"/>
 									</div>
 
@@ -154,10 +153,10 @@
 
 										<form:textarea class="form-control patternvalidation"
 													   data-pattern="alphanumericspecialcharacters" maxlength="248"
-													   id="lettertoPartyDocument${status.index}remarks" rows="3"
-													   path="lettertoPartyDocument[${status.index}].remarks"/>
+													   id="letterToParty.letterToPartyDocuments${status.index}remarks" rows="3"
+													   path="letterToParty.letterToPartyDocuments[${status.index}].remarks"/>
 										<form:errors
-												path="lettertoPartyDocument[${status.index}].remarks"
+												path="letterToParty.letterToPartyDocuments[${status.index}].remarks"
 												cssClass="add-margin error-msg"/>
 									</div>
 								</div>

@@ -65,28 +65,28 @@
 				<th class="nocStatusHeader hide"><spring:message
 						code="lbl.noc.status" /></th>
 				<th><spring:message code="lbl.remarks" /></th>
-				<th><spring:message code="lbl.attachdocument" /><br>(<spring:message
-						code="lbl.mesg.document" />)</th>
+				<th><spring:message code="lbl.attachdocument" /><br><small><spring:message
+						code="lbl.mesg.document" /></small></th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach var="doc"
-				items="${bpaApplication.getApplicationNOCDocument()}"
+				items="${bpaApplication.getPermitNocDocuments()}"
 				varStatus="status">
 				<form:hidden
-					path="applicationNOCDocument[${status.index}].application"
-					id="applicationNOCDocument${status.index}.application"
+					path="permitNocDocuments[${status.index}].application"
+					id="permitNocDocuments${status.index}.application"
 					value="${bpaApplication.id}" />
 				<form:hidden
-					path="applicationNOCDocument[${status.index}].checklist"
-					class="checklist" value="${doc.checklist.id}" />
-				<form:hidden id="applicationNOCDocument${status.index}.id"
-					path="applicationNOCDocument[${status.index}].id" value="${doc.id}" />
+					path="permitNocDocuments[${status.index}].nocDocument.serviceChecklist"
+					class="checklist" value="${doc.nocDocument.serviceChecklist.id}" />
+				<form:hidden id="permitNocDocuments${status.index}.id"
+					path="permitNocDocuments[${status.index}].id" value="${doc.id}" />
 				<tr>
 					<td><c:out value="${status.index+1}"></c:out></td>
 					<td style="font-size: 100%;"><c:out
-							value="${doc.checklist.description}"></c:out> <c:if
-							test="${doc.checklist.isMandatory}">
+							value="${doc.nocDocument.serviceChecklist.checklist.description}"></c:out> <c:if
+							test="${doc.nocDocument.serviceChecklist.mandatory}">
 							<span class="mandatory"></span>
 						</c:if></td>
 					<td>
@@ -94,14 +94,14 @@
 						<div class="input-group">
 							<form:textarea
 								class="form-control patternvalidation textarea-content"
+								id="permitNocDocuments${status.index}natureOfRequest"
 								data-pattern="alphanumericspecialcharacters" maxlength="999"
-								id="applicationNOCDocument${status.index}natureOfRequest"
-								path="applicationNOCDocument[${status.index}].natureOfRequest" />
+								path="permitNocDocuments[${status.index}].nocDocument.natureOfRequest" />
 							<form:errors
-								path="applicationNOCDocument[${status.index}].natureOfRequest"
+								path="permitNocDocuments[${status.index}].nocDocument.natureOfRequest"
 								cssClass="add-margin error-msg" />
 							<span class="input-group-addon showModal"
-								data-assign-to="applicationNOCDocument${status.index}natureOfRequest"
+								data-assign-to="permitNocDocuments${status.index}natureOfRequest"
 								data-header="Nature Of NOC Request"><span
 								class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span>
 						</div>
@@ -109,18 +109,18 @@
 					<td class="hide"><form:input
 							class="form-control datepicker letterSentOn" maxlength="50"
 							data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"
-							path="applicationNOCDocument[${status.index}].letterSentOn" /> <form:errors
-							path="applicationNOCDocument[${status.index}].letterSentOn"
+							path="permitNocDocuments[${status.index}].nocDocument.letterSentOn" /> <form:errors
+							path="permitNocDocuments[${status.index}].nocDocument.letterSentOn"
 							cssClass="add-margin error-msg" /></td>
 					<td class="hide"><form:input
 							class="form-control datepicker replyReceivedOn" maxlength="50"
 							data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"
-							path="applicationNOCDocument[${status.index}].replyReceivedOn" />
+							path="permitNocDocuments[${status.index}].nocDocument.replyReceivedOn" />
 						<form:errors
-							path="applicationNOCDocument[${status.index}].replyReceivedOn"
+							path="permitNocDocuments[${status.index}].nocDocument.replyReceivedOn"
 							cssClass="add-margin error-msg" /></td>
 					<td class="hide"><form:select
-							path="applicationNOCDocument[${status.index}].nocStatus"
+							path="permitNocDocuments[${status.index}].nocDocument.nocStatus"
 							cssClass="form-control nocStatus"
 							cssErrorClass="form-control error">
 							<form:option value="">
@@ -128,33 +128,33 @@
 							</form:option>
 							<form:options items="${nocStatusList}" itemLabel="nocStatusVal" />
 						</form:select> <form:errors
-							path="applicationNOCDocument[${status.index}].nocStatus"
+							path="permitNocDocuments[${status.index}].nocDocument.nocStatus"
 							cssClass="error-msg" /></td>
 					<td>
 						<div class="input-group">
 							<form:textarea
 								class="form-control patternvalidation textarea-content nocRemarks"
 								data-pattern="alphanumericspecialcharacters"
-								data-input-element="applicationNOCDocument${status.index}remarks"
+								data-input-element="permitNocDocuments${status.index}remarks"
 								maxlength="999"
-								id="applicationNOCDocument${status.index}remarks"
-								path="applicationNOCDocument[${status.index}].remarks" />
+								id="permitNocDocuments${status.index}remarks"
+								path="permitNocDocuments[${status.index}].nocDocument.remarks" />
 							<form:errors
-								path="applicationNOCDocument[${status.index}].remarks"
+								path="permitNocDocuments[${status.index}].nocDocument.remarks"
 								cssClass="add-margin error-msg" />
 							<span class="input-group-addon showModal"
-								data-assign-to="applicationNOCDocument${status.index}remarks"
+								data-assign-to="permitNocDocuments${status.index}remarks"
 								data-header="Remarks"><span
 								class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span>
 						</div>
 					</td>
 					<td>
 						<div class="files-upload-container" data-file-max-size="5"
-							<c:if test="${docs.checklist.isMandatory eq true && fn:length(docs.getNocSupportDocs()) eq 0}">required</c:if>
+							<c:if test="${docs.nocDocument.serviceChecklistMapping.isMandatory eq true && fn:length(docs.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
 							data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 							<div class="files-viewer">
 
-								<c:forEach items="${doc.getNocSupportDocs()}" var="file"
+								<c:forEach items="${doc.nocDocument.getNocSupportDocs()}" var="file"
 									varStatus="status1">
 									<div class="file-viewer" data-toggle="tooltip"
 										data-placement="top" title="${file.fileName}">
@@ -192,7 +192,7 @@
 
 								<a href="javascript:void(0);" class="file-add"
 									data-unlimited-files="true"
-									data-file-input-name="applicationNOCDocument[${status.index}].files">
+									data-file-input-name="permitNocDocuments[${status.index}].nocDocument.files">
 									<i class="fa fa-plus"></i>
 								</a>
 

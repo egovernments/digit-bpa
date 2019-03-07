@@ -46,7 +46,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <form:form role="form" action="/bpa/lettertoparty/lettertopartyreply"
-	method="post" modelAttribute="lettertoParty" id="lettertoPartyReplyform"
+	method="post" modelAttribute="permitLetterToParty" id="lettertoPartyReplyform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
@@ -64,29 +64,31 @@
 							<spring:message code="lbl.lpNumber" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<c:out value="${lettertoParty.lpNumber}"></c:out>
+							<c:out value="${permitLetterToParty.letterToParty.lpNumber}"></c:out>
 						</div>
 						<div class="col-sm-2 add-margin">
 							<spring:message code="lbl.letterdate" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<fmt:formatDate value="${lettertoParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate" />
+							<fmt:formatDate value="${permitLetterToParty.letterToParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate" />
 							<c:out value="${letterDate}"></c:out>
 						</div>
 						<form:hidden path="application" id="applicationId"
 							value="${application.id}" />
 
-						<form:hidden path="letterDate" id="letterDate"
+						<form:hidden path="letterToParty.letterDate" id="letterDate"
 							value="${letterDate}" />
-						<input type="hidden" id='lettertoParty' name="lettertoParty"
-							value="${lettertoParty.id}">
+							<input type="hidden" name="id"
+							value="${permitLetterToParty.id}">
+						<input type="hidden" id='lettertoParty' name="permitLetterToParty"
+							value="${permitLetterToParty.id}">
 					</div>
 					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.lpreason" />
 						</div>
 						<div class="col-sm-3 add-margin  view-content">
-							<c:forEach items="${lettertoParty.lpReason}" var="lpReason"
+							<c:forEach items="${permitLetterToParty.letterToParty.lpReason}" var="lpReason"
 								varStatus="status">
 								<c:out value="${lpReason.description}" />
 								<c:if test="${!status.last}">,</c:if>
@@ -96,10 +98,10 @@
 							<spring:message code="lbl.lpsentdate" />
 						</div>
 						<div class="col-sm-3 add-margin  view-content">
-							<fmt:formatDate value="${lettertoParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate" />
+							<fmt:formatDate value="${permitLetterToParty.letterToParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate" />
 							<c:out value="${sentDate}"></c:out>
 						</div>
-						<form:hidden path="sentDate" id="sentDate" value="${sentDate}" />
+						<form:hidden path="letterToParty.sentDate" id="sentDate" value="${sentDate}" />
 					</div>
 					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
@@ -115,18 +117,18 @@
 							<spring:message code="lbl.lpreplydate" /><span class="mandatory"></span>
 						</div>
 						<div class="col-sm-3 add-margin">
-							<form:input path="replyDate" class="form-control datepicker"
+							<form:input path="letterToParty.replyDate" class="form-control datepicker"
 								data-date-end-date="0d" id="replyDate"
 								data-inputmask="'mask': 'd/m/y'" required="required" />
-							<form:errors path="replyDate" cssClass="add-margin error-msg" />
+							<form:errors path="letterToParty.replyDate" cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 										code="lbl.lpReplyRemarks" /></label>
 								<div class="col-sm-3 add-margin">
-									<form:textarea path="lpReplyRemarks"
+									<form:textarea path="letterToParty.lpReplyRemarks"
 										class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters"
 										rows="5" id="lpDesc" maxlength="1016" />
-									<form:errors path="lpReplyRemarks" cssClass="error-msg" />
+									<form:errors path="letterToParty.lpReplyRemarks" cssClass="error-msg" />
 								</div>
 					</div>
 				</div>
@@ -156,9 +158,9 @@
 							</div>
 							<div class="col-sm-4 view-content">
 								<spring:message code="lbl.attachdocument" />
-								<div class="add-margin error-msg">
-									<font size="2"> <spring:message code="lbl.mesg.document" />
-									</font>
+								<div class="add-margin">
+									<small class="text-info view-content"> <spring:message code="lbl.mesg.document" />
+									</small>
 								</div>
 							</div>
 						</div>
@@ -167,51 +169,50 @@
 						<c:forEach var="lpdoc" items="${lettertopartydocList}"
 							varStatus="status">
 							<form:hidden
-								path="lettertoPartyDocument[${status.index}].lettertoParty"
-								id="lettertopartyId" value="${lettertoParty.id}" />
+								path="letterToParty.letterToPartyDocuments[${status.index}].letterToParty.id"
+								id="lettertopartyId" value="${permitLetterToParty.letterToParty.id}" />
 							<form:hidden
-								path="lettertoPartyDocument[${status.index}].checklistDetail"
-								id="checklist" value="${doc.id}" />
+								path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
+								id="checklist" value="${doc.serviceChecklist.id}" />
 									<div class="form-group">
 										<div class="col-sm-2 add-margin check-text">
-											<c:out value="${lpdoc.checklistDetail.description}" />
+											<c:out value="${lpdoc.serviceChecklist.checklist.description}" />
 											<form:hidden
-												id="lettertoPartyDocument${status.index}checklistDetail"
-												path="lettertoPartyDocument[${status.index}].checklistDetail"
-												value="${lpdoc.checklistDetail.id}" />
+												id="letterToPartyDocuments${status.index}serviceChecklist"
+												path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist"
+												value="${lpdoc.serviceChecklist.id}" />
 											<form:hidden
-												id="lettertoPartyDocument${status.index}checklistDetail"
-												path="lettertoPartyDocument[${status.index}].checklistDetail.isMandatory"
-												value="${lpdoc.checklistDetail.isMandatory}" />
+												id="letterToPartyDocuments${status.index}serviceChecklist"
+												path="letterToParty.letterToPartyDocuments[${status.index}].serviceChecklist.mandatory"
+												value="${lpdoc.serviceChecklist.mandatory}" />
 										</div>
 										<div class="col-sm-2 add-margin">
 											<form:checkbox
-												id="lettertoPartyDocument${status.index}isrequested"
-												path="lettertoPartyDocument[${status.index}].isrequested"
-												value="lettertoPartyDocument${status.index}isrequested"
+												id="letterToPartyDocuments${status.index}isRequested"
+												path="letterToParty.letterToPartyDocuments[${status.index}].isRequested"
 												disabled="true" />
 										</div>
 										<%--<div class="col-sm-2 add-margin text-center">
 											<form:checkbox
-												id="lettertoPartyDocument${status.index}issubmitted"
-												path="lettertoPartyDocument[${status.index}].issubmitted"
-												value="lettertoPartyDocument${status.index}issubmitted" />
+												id="letterToPartyDocuments${status.index}issubmitted"
+												path="letterToParty.letterToPartyDocuments[${status.index}].issubmitted"
+												value="letterToPartyDocuments${status.index}issubmitted" />
 										</div>--%>
 
 										<div class="col-sm-4 add-margin">
 											<form:textarea class="form-control patternvalidation"
 												data-pattern="alphanumericspecialcharacters" maxlength="248"
-												id="lettertoPartyDocument${status.index}remarks" rows="3"
-												path="lettertoPartyDocument[${status.index}].remarks" />
+												id="letterToPartyDocuments${status.index}remarks" rows="3"
+												path="letterToParty.letterToPartyDocuments[${status.index}].remarks" />
 											<form:errors
-												path="lettertoPartyDocument[${status.index}].remarks"
+												path="letterToParty.letterToPartyDocuments[${status.index}].remarks"
 												cssClass="add-margin error-msg" />
 										</div>
 
 										<div class="col-sm-4 add-margin">
 												<div class="files-upload-container"
 													 data-file-max-size="5"
-													 <c:if test="${lpdoc.isrequested eq true && fn:length(lpdoc.getSupportDocs()) eq 0}">required</c:if>
+													 <c:if test="${lpdoc.isRequested eq true && fn:length(lpdoc.getSupportDocs()) eq 0}">required</c:if>
 													 data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 													<div class="files-viewer">
 
@@ -253,7 +254,7 @@
 
 														<a href="javascript:void(0);" class="file-add"
 														   data-unlimited-files="true"
-														   data-file-input-name="lettertoPartyDocument[${status.index}].files">
+														   data-file-input-name="letterToParty.letterToPartyDocuments[${status.index}].files">
 															<i class="fa fa-plus"></i>
 														</a>
 

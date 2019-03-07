@@ -47,11 +47,6 @@
 
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.bpa.transaction.entity.enums.ChecklistValues;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -65,6 +60,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.transaction.entity.enums.ChecklistValues;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_DOCKET_DETAIL_COMMON")
@@ -98,13 +98,13 @@ public class DocketDetailCommon extends AbstractAuditable {
     @JoinColumn(name = "docket", nullable = false)
     private DocketCommon docket;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @NotNull
-    @JoinColumn(name = "checklistdetail", nullable = false)
-    private CheckListDetail checkListDetail;
+    @JoinColumn(name = "serviceChecklist", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
 
-    public DocketDetailCommon(CheckListDetail checkListDetail) {
-        this.checkListDetail = checkListDetail;
+    public DocketDetailCommon(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
     }
 
     public DocketDetailCommon() {
@@ -161,11 +161,12 @@ public class DocketDetailCommon extends AbstractAuditable {
         this.docket = docket;
     }
 
-    public CheckListDetail getCheckListDetail() {
-        return checkListDetail;
+    public ChecklistServiceTypeMapping getServiceChecklist() {
+        return serviceChecklist;
     }
 
-    public void setCheckListDetail(CheckListDetail checkListDetail) {
-        this.checkListDetail = checkListDetail;
+    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
     }
+
 }

@@ -73,7 +73,7 @@
 			</div>
 			<div class="panel-body view-content">
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All drawings shall
-				be prepared, incorporating the details specified as per KMBR 1999
+				be prepared, incorporating the details specified as per rule book
 				and related amendments, including specifications on paper size and
 				scale conventions. Keep a blank space of not less than 10 cm x 10
 				cm, on the bottom right corner of every drawing for validation
@@ -100,13 +100,13 @@
 				var="dcrDoc" varStatus="dcrDocStatus">
 				<div class="row">
 					<div class="col-sm-3 add-margin">
-						<c:out value="${dcrDoc.dcrDocument.checklistDtl.description}"></c:out>
-						<c:if test="${dcrDoc.dcrDocument.checklistDtl.isMandatory}">
+						<c:out value="${dcrDoc.dcrDocument.serviceChecklist.checklist.description}"></c:out>
+						<c:if test="${dcrDoc.dcrDocument.serviceChecklist.mandatory}">
 							<span class="mandatory"></span>
 						</c:if>
 						<form:hidden
-							path="dcrDocuments[${dcrDocStatus.index}].dcrDocument.checklistDtl"
-							value="${dcrDoc.dcrDocument.checklistDtl.id}" />
+							path="dcrDocuments[${dcrDocStatus.index}].dcrDocument.serviceChecklist"
+							value="${dcrDoc.dcrDocument.serviceChecklist.id}" />
 					</div>
 
 					<div class="col-sm-3 add-margin">
@@ -119,7 +119,7 @@
 							cssClass="add-margin error-msg" />
 					</div>
 					<c:set var="splittedString"
-						value="${fn:split(dcrDoc.dcrDocument.checklistDtl.description, ' ')}" />
+						value="${fn:split(dcrDoc.dcrDocument.serviceChecklist.checklist.description, ' ')}" />
 					<c:set var="checklistName" value="${fn:join(splittedString, '_')}" />
 					<c:if
 						test="${dcrDocsAutoPopulate eq true && dcrDocsManuallyUpload ne true && dcrDocsAutoPopulateAndManuallyUpload ne true}">
@@ -156,9 +156,9 @@
 						test="${dcrDocsManuallyUpload eq true || dcrDocsAutoPopulateAndManuallyUpload eq true || (dcrDocsAutoPopulate eq false && dcrDocsManuallyUpload eq false && dcrDocsAutoPopulateAndManuallyUpload eq false)}">
 						<div class="col-sm-6 add-margin">
 							<div
-								class="files-upload-container <c:if test="${dcrDoc.dcrDocument.checklistDtl.isMandatory eq true && fn:length(dcrDoc.dcrDocument.getOrderedDcrAttachments()) eq 0}">mandatory-dcr-doc</c:if>"
+								class="files-upload-container <c:if test="${dcrDoc.dcrDocument.serviceChecklist.mandatory eq true && fn:length(dcrDoc.dcrDocument.getOrderedDcrAttachments()) eq 0}">mandatory-dcr-doc</c:if>"
 								data-file-max-size="20"
-								<c:if test="${dcrDoc.dcrDocument.checklistDtl.isMandatory eq true && fn:length(dcrDoc.dcrDocument.getOrderedDcrAttachments()) eq 0}">required</c:if>
+								<c:if test="${dcrDoc.dcrDocument.serviceChecklist.mandatory eq true && fn:length(dcrDoc.dcrDocument.getOrderedDcrAttachments()) eq 0}">required</c:if>
 								data-allowed-extenstion="pdf">
 								<div class="files-viewer ${checklistName}">
 									<c:if

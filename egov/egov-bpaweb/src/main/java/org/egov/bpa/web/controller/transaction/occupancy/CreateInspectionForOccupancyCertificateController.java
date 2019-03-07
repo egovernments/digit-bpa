@@ -40,6 +40,7 @@
 package org.egov.bpa.web.controller.transaction.occupancy;
 
 import org.egov.bpa.master.entity.enums.Directions;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
@@ -72,6 +73,8 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 	private OCInspectionService ocInspectionService;
 	@Autowired
 	private OccupancyCertificateService occupancyCertificateService;
+	@Autowired
+	private ChecklistServicetypeMappingService checklistServicetypeService;
 
 	@GetMapping("/create-inspection/{applicationNumber}")
 	public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
@@ -105,19 +108,18 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 		InspectionCommon inspectionCommon = new InspectionCommon();
 		for (Directions d : Directions.values()) {
 			InspectionFilesCommon inspectionFilesCommon = new InspectionFilesCommon();
-			inspectionFilesCommon.setDirection(d);
 			inspectionFilesCommon.setInspection(inspectionCommon);
 			inspectionCommon.getInspectionSupportDocs().add(inspectionFilesCommon);
 		}
 		inspectionCommon.setInspectionDate(new Date());
-		ocInspectionService.buildDocketDetailList(inspectionCommon);
+		ocInspectionService.buildDocketDetailList(inspectionCommon, oc.getParent().getServiceType().getId());
 		ocInspection.setInspection(inspectionCommon);
 		ocInspection.setOc(oc);
 		model.addAttribute("ocInspection", ocInspection);
 		model.addAttribute("docketDetailLocList", inspectionCommon.getDocketDetailLocList());
-		model.addAttribute("planScrutinyCheckList", checkListDetailService.findActiveCheckListByChecklistTypeAndOrderById("OCPLANSCRUTINYRULE"));
+		model.addAttribute("planScrutinyCheckList", checklistServicetypeService.findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCPLANSCRUTINYRULE"));
 		model.addAttribute("planScrutinyValues", ChecklistValues.values());
-		model.addAttribute("planScrutinyChecklistForDrawing", checkListDetailService.findActiveCheckListByChecklistTypeAndOrderById("OCPLANSCRUTINYDRAWING"));
+		model.addAttribute("planScrutinyChecklistForDrawing", checklistServicetypeService.findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCPLANSCRUTINYDRAWING"));
 		model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
 		model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
 	}

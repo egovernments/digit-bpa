@@ -43,7 +43,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
@@ -52,81 +51,81 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "eg_checklist")
 @SequenceGenerator(name = Checklist.SEQ_CHECKLIST, sequenceName = Checklist.SEQ_CHECKLIST, allocationSize = 1)
 public class Checklist extends AbstractAuditable {
-	
-	public Checklist(){
-		
-	}
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_CHECKLIST = "seq_eg_checklist";
-	@Id
-	@GeneratedValue(generator = SEQ_CHECKLIST, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_CHECKLIST = "seq_eg_checklist";
+    @Id
+    @GeneratedValue(generator = SEQ_CHECKLIST, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	private String code;
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@Length(min = 1, max = 256)
-	private String description;
+    @Length(min = 1, max = 256)
+    private String description;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "checklisttypeid")
-	private ChecklistType checklistType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "checklisttypeid")
+    private ChecklistType checklistType;
 
-	private transient List<Checklist> checklistTemp = new ArrayList<>();
+    private transient List<Checklist> checklistTemp = new ArrayList<>();
 
-	@Transient
-	private Long srlNo;
+    @Transient
+    private Long srlNo;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    public Checklist() {
+        // Invariant
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Long getSrlNo() {
-		return srlNo;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public void setSrlNo(final Long srlNo) {
-		this.srlNo = srlNo;
-	}
+    public Long getSrlNo() {
+        return srlNo;
+    }
 
-	public ChecklistType getChecklistType() {
-		return checklistType;
-	}
+    public void setSrlNo(final Long srlNo) {
+        this.srlNo = srlNo;
+    }
 
-	public void setChecklistType(ChecklistType checklistType) {
-		this.checklistType = checklistType;
-	}
+    public ChecklistType getChecklistType() {
+        return checklistType;
+    }
 
-	public List<Checklist> getChecklistTemp() {
-		return checklistTemp;
-	}
+    public void setChecklistType(ChecklistType checklistType) {
+        this.checklistType = checklistType;
+    }
 
-	public void setChecklistTemp(List<Checklist> checklistTemp) {
-		this.checklistTemp = checklistTemp;
-	}
+    public List<Checklist> getChecklistTemp() {
+        return checklistTemp;
+    }
+
+    public void setChecklistTemp(List<Checklist> checklistTemp) {
+        this.checklistTemp = checklistTemp;
+    }
 
 }

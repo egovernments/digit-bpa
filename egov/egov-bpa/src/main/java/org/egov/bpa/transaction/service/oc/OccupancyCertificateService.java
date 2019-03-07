@@ -83,16 +83,16 @@ import org.egov.bpa.autonumber.OccupancyCertificateNumberGenerator;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
-import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.service.es.OccupancyCertificateIndexService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.WorkflowBean;
-import org.egov.bpa.transaction.entity.common.DCRDocumentCommon;
-import org.egov.bpa.transaction.entity.common.DocumentsCommon;
-import org.egov.bpa.transaction.entity.common.NocDocumentsCommon;
-import org.egov.bpa.transaction.entity.common.StoreDCRFilesCommon;
+import org.egov.bpa.transaction.entity.common.DcrDocument;
+import org.egov.bpa.transaction.entity.common.GeneralDocument;
+import org.egov.bpa.transaction.entity.common.NocDocument;
+import org.egov.bpa.transaction.entity.common.StoreDcrFiles;
 import org.egov.bpa.transaction.entity.oc.OCBuilding;
 import org.egov.bpa.transaction.entity.oc.OCDcrDocuments;
 import org.egov.bpa.transaction.entity.oc.OCDocuments;
@@ -141,7 +141,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class OccupancyCertificateService {
-	
+
     private static final String NOC_UPDATION_IN_PROGRESS = "NOC updation in progress";
     private static final String APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION = "Application Fees for Shutter or Door conversion";
 	private static final String APPLICATION_FEES_FOR_ROOF_CONVERSION = "Application Fees for Roof conversion";
@@ -161,7 +161,7 @@ public class OccupancyCertificateService {
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
-    private CheckListDetailService checkListDetailService;
+    private ChecklistServicetypeMappingService checklistServicetypeMappingService;
     @Autowired
     private OccupancyCertificateUtils occupancyCertificateUtils;
     @PersistenceContext
@@ -179,7 +179,7 @@ public class OccupancyCertificateService {
     @Autowired
     private FileStoreService fileStoreService;
     @Autowired
-    private OCNoticeConditionsService  ocNoticeConditionsService;
+    private OCNoticeConditionsService ocNoticeConditionsService;
     @Autowired
     private OccupancyCertificateFeeCalculation occupancyCertificateFeeCalculation;
     @Autowired
@@ -204,6 +204,7 @@ public class OccupancyCertificateService {
     public List<OccupancyCertificate> findByPermitNumber(String permitNumber) {
         return occupancyCertificateRepository.findByPermitNumber(permitNumber);
     }
+
     @Transactional
     public OccupancyCertificate saveOrUpdate(final OccupancyCertificate oc, final WorkflowBean wfBean) {
         buildProposedAndExistingBuildings(oc);
@@ -226,7 +227,7 @@ public class OccupancyCertificateService {
             oc.setDemand(ocBillService.createDemandWhenFeeCollectionNotRequire());
         oc.setAdmissionfeeAmount(oc.getDemand().getBaseDemand());
         processAndStoreGeneralDocuments(oc);
-        List<OCDcrDocuments> ocDcrDocuments; 
+        List<OCDcrDocuments> ocDcrDocuments;
         if (oc.getId() == null) {
             ocDcrDocuments = oc.getDcrDocuments();
             oc.getDcrDocuments().forEach(dcrDocument -> dcrDocument.setOc(oc));
@@ -236,21 +237,21 @@ public class OccupancyCertificateService {
         processAndStoreNocDocuments(oc);
         if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)
                 && !bpaUtils.logedInuseCitizenOrBusinessUser()) {
-        	
-        	WorkFlowMatrix wfMatrix = null;
+
+            WorkFlowMatrix wfMatrix = null;
             String currentState = WF_CREATED_STATE;
             if (oc.getAdmissionfeeAmount() != null
                     && oc.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0) {
                 wfMatrix = bpaUtils.getWfMatrixByCurrentState(
                         oc.getStateType(), WF_NEW_STATE);
                 currentState = WF_NEW_STATE;
-            } 
+            }
             if (wfMatrix != null)
-				wfBean.setApproverPositionId(bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-						bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId()));
+                                wfBean.setApproverPositionId(bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                                                bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId()));
             wfBean.setCurrentState(currentState);
             bpaUtils.redirectToBpaWorkFlowForOC(oc, wfBean);
-            
+
         } else if (wfBean.getWorkFlowAction() != null
                 && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             oc.setStatus(
@@ -300,11 +301,10 @@ public class OccupancyCertificateService {
     public OccupancyCertificate update(final OccupancyCertificate oc, final WorkflowBean wfBean) {
         if (WF_APPROVE_BUTTON.equals(wfBean.getWorkFlowAction())) {
             oc.setApprovalDate(new Date());
-            
-            /*TODO: To be configurable,
-             * Need to generate new number
-             * or permit application plan permission number
-             * to be used as occupancy certificate number
+
+            /*
+             * TODO: To be configurable, Need to generate new number or permit application plan permission number to be used as
+             * occupancy certificate number
              */
             oc.setOccupancyCertificateNumber(generateOccupancyCertificateNumber());
             OccupancyCertificateNoticesFormat ocNoticeFeature = (OccupancyCertificateNoticesFormat) specificNoticeService
@@ -323,21 +323,22 @@ public class OccupancyCertificateService {
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(oc.getState().getValue())) {
         	String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
-            		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
-        	OccupancyFee ocFee = new OccupancyFee();
-			try {
-				ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(oc);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if(!ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
-        	ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(ocFee.getApplicationFee());
-            ocFee.setApplicationFee(applicationFee);
-            ocFeeRepository.save(ocFee);
-        	oc.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(ocFee.getApplicationFee(), ocFee.getOc().getDemand()));
-       
-			}
-		  }
+                    feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
+                OccupancyFee ocFee = new OccupancyFee();
+                try {
+                    ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(oc);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (!ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
+                    ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(ocFee.getApplicationFee());
+                    ocFee.setApplicationFee(applicationFee);
+                    ocFeeRepository.save(ocFee);
+                    oc.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(ocFee.getApplicationFee(),
+                            ocFee.getOc().getDemand()));
+
+                }
+            }
         }
         if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
@@ -387,7 +388,7 @@ public class OccupancyCertificateService {
         oc.setRejectionReasons(oc.getRejectionReasonsTemp());
         oc.setAdditionalNoticeConditions(additionalRejectReasons);
     }
-    
+
     public void validateProposedAndExistingBuildings(final OccupancyCertificate oc) {
         for (OCBuilding bldg : oc.getBuildingDetailFromEdcr()) {
             List<OCBuilding> bldgDetails = new ArrayList<>();
@@ -417,9 +418,9 @@ public class OccupancyCertificateService {
                 && null == oc.getDocuments().get(0).getId())
             oc.getDocuments().forEach(ocDocuments -> {
                 ocDocuments.setOc(oc);
-                DocumentsCommon documentsCommon = ocDocuments.getDocument();
-                documentsCommon.setChecklistDetail(
-                        checkListDetailService.load(ocDocuments.getDocument().getChecklistDetail().getId()));
+                GeneralDocument documentsCommon = ocDocuments.getDocument();
+                documentsCommon.setServiceChecklist(
+                        checklistServicetypeMappingService.load(ocDocuments.getDocument().getServiceChecklist().getId()));
                 documentsCommon.setCreatedUser(securityUtils.getCurrentUser());
                 buildGeneralFiles(documentsCommon);
                 ocDocuments.setDocument(documentsCommon);
@@ -429,7 +430,7 @@ public class OccupancyCertificateService {
                 buildGeneralFiles(ocDocuments.getDocument());
     }
 
-    private void buildGeneralFiles(final DocumentsCommon commonDoc) {
+    private void buildGeneralFiles(final GeneralDocument commonDoc) {
         if (commonDoc.getFiles() != null && commonDoc.getFiles().length > 0) {
             Set<FileStoreMapper> existingFiles = new HashSet<>();
             existingFiles.addAll(commonDoc.getSupportDocs());
@@ -444,9 +445,9 @@ public class OccupancyCertificateService {
                 && null == oc.getNocDocuments().get(0).getId())
             oc.getNocDocuments().forEach(nocDocument -> {
                 nocDocument.setOc(oc);
-                NocDocumentsCommon nocDocumentsCommon = nocDocument.getNocDocument();
-                nocDocumentsCommon.setChecklist(
-                        checkListDetailService.load(nocDocumentsCommon.getChecklist().getId()));
+                NocDocument nocDocumentsCommon = nocDocument.getNocDocument();
+                nocDocumentsCommon.setServiceChecklist(
+                        checklistServicetypeMappingService.load(nocDocumentsCommon.getServiceChecklist().getId()));
                 nocDocumentsCommon.setCreatedUser(securityUtils.getCurrentUser());
                 buildNocFiles(nocDocumentsCommon);
                 nocDocument.setNocDocument(nocDocumentsCommon);
@@ -456,7 +457,7 @@ public class OccupancyCertificateService {
                 buildNocFiles(nocDocument.getNocDocument());
     }
 
-    private void buildNocFiles(final NocDocumentsCommon nocDoc) {
+    private void buildNocFiles(final NocDocument nocDoc) {
         if (nocDoc.getFiles() != null && nocDoc.getFiles().length > 0) {
             Set<FileStoreMapper> existingFiles = new HashSet<>();
             existingFiles.addAll(nocDoc.getNocSupportDocs());
@@ -465,23 +466,23 @@ public class OccupancyCertificateService {
             nocDoc.setSubmitted(true);
         }
     }
-    
+
     private List<OCDcrDocuments> persistApplnDCRDocuments(final OccupancyCertificate oc, List<OCDcrDocuments> ocDcrDocuments) {
         List<OCDcrDocuments> dcrDocuments = new ArrayList<>();
         if (!ocDcrDocuments.isEmpty() && null == ocDcrDocuments.get(0).getId())
             for (final OCDcrDocuments ocDcrDocument : ocDcrDocuments) {
                 ocDcrDocument.setOc(oc);
-                DCRDocumentCommon dcrDocumentCommon = ocDcrDocument.getDcrDocument();
-                dcrDocumentCommon.setChecklistDtl(
-                        checkListDetailService.load(dcrDocumentCommon.getChecklistDtl().getId()));
-                DCRDocumentCommon dcrDocRes = buildAutoPopulatedDCRFiles(dcrDocumentCommon);
+                DcrDocument dcrDocumentCommon = ocDcrDocument.getDcrDocument();
+                dcrDocumentCommon.setServiceChecklist(
+                        checklistServicetypeMappingService.load(dcrDocumentCommon.getServiceChecklist().getId()));
+                DcrDocument dcrDocRes = buildAutoPopulatedDCRFiles(dcrDocumentCommon);
                 buildDCRFiles(dcrDocRes);
                 ocDcrDocument.setDcrDocument(dcrDocRes);
                 dcrDocuments.add(ocDcrDocument);
             }
         else
             for (final OCDcrDocuments dcrDocument : ocDcrDocuments) {
-                DCRDocumentCommon dcrDocumentRes = buildAutoPopulatedDCRFiles(dcrDocument.getDcrDocument());
+                DcrDocument dcrDocumentRes = buildAutoPopulatedDCRFiles(dcrDocument.getDcrDocument());
                 buildDCRFiles(dcrDocumentRes);
                 dcrDocument.setDcrDocument(dcrDocumentRes);
                 dcrDocuments.add(dcrDocument);
@@ -490,13 +491,13 @@ public class OccupancyCertificateService {
     }
 
     // Will save manually uploaded dcr document pdf's
-    private DCRDocumentCommon buildDCRFiles(DCRDocumentCommon dcrDocument) {
-        Set<StoreDCRFilesCommon> storeDCRFiles = new HashSet<>();
+    private DcrDocument buildDCRFiles(DcrDocument dcrDocument) {
+        Set<StoreDcrFiles> storeDCRFiles = new HashSet<>();
         storeDCRFiles.addAll(dcrDocument.getDcrAttachments());
         if (dcrDocument.getFiles() != null && dcrDocument.getFiles().length > 0) {
             for (MultipartFile file : dcrDocument.getFiles()) {
                 if (!file.isEmpty()) {
-                    StoreDCRFilesCommon storeDCRFile = new StoreDCRFilesCommon();
+                    StoreDcrFiles storeDCRFile = new StoreDcrFiles();
                     storeDCRFile.setDcrDocument(dcrDocument);
                     storeDCRFile.setFileStoreMapper(applicationBpaService.addToFileStore(file));
                     storeDCRFile.setAutoPopulated(false);
@@ -510,8 +511,8 @@ public class OccupancyCertificateService {
     }
 
     // Will save auto populated dcr document pdf's from dcr system
-    private DCRDocumentCommon buildAutoPopulatedDCRFiles(DCRDocumentCommon dcrDocumentCommon) {
-        Set<StoreDCRFilesCommon> storeDCRFiles = new HashSet<>();
+    private DcrDocument buildAutoPopulatedDCRFiles(DcrDocument dcrDocumentCommon) {
+        Set<StoreDcrFiles> storeDCRFiles = new HashSet<>();
         storeDCRFiles.addAll(dcrDocumentCommon.getDcrAttachments());
         if (dcrDocumentCommon.getFileStoreIds() != null && dcrDocumentCommon.getFileStoreIds().length > 0) {
             for (String fileStoreId : dcrDocumentCommon.getFileStoreIds()) {
@@ -526,7 +527,7 @@ public class OccupancyCertificateService {
                     } catch (IOException e) {
                         throw new ApplicationRuntimeException("Error occurred, while saving dcr documents!!!!!!", e);
                     }
-                    StoreDCRFilesCommon storeDCRFile = new StoreDCRFilesCommon();
+                    StoreDcrFiles storeDCRFile = new StoreDcrFiles();
                     storeDCRFile.setDcrDocument(dcrDocumentCommon);
                     storeDCRFile.setFileStoreMapper(savedFileStoreMapper);
                     storeDCRFile.setAutoPopulated(true);
@@ -579,16 +580,16 @@ public class OccupancyCertificateService {
     public List<OccupancyCertificate> findByStatusListOrderByCreatedDate(List<BpaStatus> listOfBpaStatus) {
         return occupancyCertificateRepository.findByStatusListOrderByCreatedDateAsc(listOfBpaStatus);
     }
-    
+
     private void appendQrCodeWithDcrDocumentsForOc(OccupancyCertificate oc) {
         List<OCDcrDocuments> dcrDocuments = ocDcrDocumentRepository.findByOc(oc);
         for (OCDcrDocuments dcrDocument : dcrDocuments) {
-            DCRDocumentCommon ocDcrDocument = dcrDocument.getDcrDocument();
-			if(ocDcrDocument != null) {
-            for (StoreDCRFilesCommon file : ocDcrDocument.getDcrAttachments()) {
-                bpaUtils.addQrCodeToOcPdfDocuments(file.getFileStoreMapper(), oc);
+            DcrDocument ocDcrDocument = dcrDocument.getDcrDocument();
+            if (ocDcrDocument != null) {
+                for (StoreDcrFiles file : ocDcrDocument.getDcrAttachments()) {
+                    bpaUtils.addQrCodeToOcPdfDocuments(file.getFileStoreMapper(), oc);
+                }
             }
-        }
         }
     }
 }

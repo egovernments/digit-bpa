@@ -57,5 +57,13 @@ public interface ChecklistServiceTypeMappingRepository extends JpaRepository<Che
 	List<ChecklistServiceTypeMapping> findByChecklist(@Param("checklistType") String checklistType);
 
 	@Query("from ChecklistServiceTypeMapping cstm where cstm.checklist.checklistType.description = :checklistType and cstm.serviceType.description = :serviceType")
-	List<ChecklistServiceTypeMapping> findByServiceTypeAndChecklist(@Param("serviceType") String serviceType,@Param("checklistType") String checklistType);
+	List<ChecklistServiceTypeMapping> findByServiceTypeAndChecklistType(@Param("serviceType") String serviceType,@Param("checklistType") String checklistType);
+
+	@Query("from ChecklistServiceTypeMapping cstm where cstm.checklist.checklistType.code = :checklistType and cstm.serviceType.description = :serviceType and cstm.required is true order by cstm.mandatory desc, cstm.checklist.description asc")
+	List<ChecklistServiceTypeMapping> findByActiveChecklistAndServiceType(@Param("checklistType") String checklistType, @Param("serviceType") String serviceType);
+	@Query("from ChecklistServiceTypeMapping cstm where cstm.checklist.checklistType.code = :checklistType and cstm.serviceType.id = :serviceTypeId and cstm.required is true order by cstm.mandatory desc, cstm.checklist.description asc")
+        List<ChecklistServiceTypeMapping> findByActiveByServiceTypeAndChecklist(@Param("serviceTypeId") Long serviceTypeId, @Param("checklistType") String checklistType);
+	
+	@Query("from ChecklistServiceTypeMapping cstm where cstm.checklist.checklistType.code = :checklistType")
+        List<ChecklistServiceTypeMapping> findByChecklistTypeCode(@Param("checklistType") String checklistType);
 }

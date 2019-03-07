@@ -77,7 +77,7 @@ public class PlanScrutinyChecklist extends AbstractAuditable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@NotNull
 	@JoinColumn(name = "inspection", nullable = false)
-	private Inspection inspection;
+	private PermitInspection inspection;
 	@ManyToOne(cascade = CascadeType.ALL)
 	@NotNull
 	@JoinColumn(name = "checklistdetail", nullable = false)
@@ -99,11 +99,11 @@ public class PlanScrutinyChecklist extends AbstractAuditable {
 		this.id = id;
 	}
 
-	public Inspection getInspection() {
+	public PermitInspection getInspection() {
 		return inspection;
 	}
 
-	public void setInspection(Inspection inspection) {
+	public void setInspection(PermitInspection inspection) {
 		this.inspection = inspection;
 	}
 

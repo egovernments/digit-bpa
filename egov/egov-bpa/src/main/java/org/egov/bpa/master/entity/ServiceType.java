@@ -29,22 +29,15 @@
  */
 package org.egov.bpa.master.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.bpa.transaction.entity.BpaNoc;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
@@ -87,12 +80,6 @@ public class ServiceType extends AbstractAuditable {
     @Column(name = "isBuildingRequired")
     private Boolean isBuildingDetailsRequired;
     private Boolean isOCRequired;
-
-    @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<BpaDocument> document = new ArrayList<>(0);
-
-    @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<BpaNoc> noc = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -190,14 +177,6 @@ public class ServiceType extends AbstractAuditable {
 
     public void setBuildingPlanApproval(final Boolean buildingPlanApproval) {
         this.buildingPlanApproval = buildingPlanApproval;
-    }
-
-    public List<BpaDocument> getDocument() {
-        return document;
-    }
-
-    public List<BpaNoc> getNoc() {
-        return noc;
     }
 
     public Boolean getIsAmenity() {

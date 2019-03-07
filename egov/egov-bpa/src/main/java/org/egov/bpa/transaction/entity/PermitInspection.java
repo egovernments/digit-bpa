@@ -2,7 +2,7 @@
  * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *  Copyright (C) <2018>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -44,17 +44,11 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.bpa.transaction.entity.enums.ChecklistValues;
-import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -64,86 +58,52 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.bpa.transaction.entity.common.InspectionCommon;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 @Entity
-@Table(name = "egbpa_oc_plan_scrutiny_checklist")
-@SequenceGenerator(name = OCPlanScrutinyChecklist.SEQ_PLAN_SCRUTINY, sequenceName = OCPlanScrutinyChecklist.SEQ_PLAN_SCRUTINY, allocationSize = 1)
-public class OCPlanScrutinyChecklist extends AbstractAuditable {
+@Table(name = "EGBPA_PERMIT_INSPECTION")
+@SequenceGenerator(name = PermitInspection.SEQ_INSPECTION, sequenceName = PermitInspection.SEQ_INSPECTION, allocationSize = 1)
+public class PermitInspection extends AbstractAuditable {
 
-	public static final String SEQ_PLAN_SCRUTINY = "seq_egbpa_oc_plan_scrutiny_checklist";
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue(generator = SEQ_PLAN_SCRUTINY, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "inspection", nullable = false)
-	private OCInspection inspection;
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
-	@JoinColumn(name = "checklistdetail", nullable = false)
-	private CheckListDetail checklistDetail;
-	@Enumerated(EnumType.ORDINAL)
-	private ChecklistValues scrutinyValue;
-	@Enumerated(EnumType.STRING)
-	private ScrutinyChecklistType scrutinyChecklistType;
-	private String remarks;
-	private Integer orderNumber;
+    public static final String SEQ_INSPECTION = "SEQ_EGBPA_PERMIT_INSPECTION";
+    private static final long serialVersionUID = 3078684328383202788L;
+    @Id
+    @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "inspection", nullable = false)
+    private InspectionCommon inspection;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public OCInspection getInspection() {
-		return inspection;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setInspection(OCInspection inspection) {
-		this.inspection = inspection;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
 
-	public CheckListDetail getChecklistDetail() {
-		return checklistDetail;
-	}
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
 
-	public void setChecklistDetail(CheckListDetail checklistDetail) {
-		this.checklistDetail = checklistDetail;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public ChecklistValues getScrutinyValue() {
-		return scrutinyValue;
-	}
-
-	public void setScrutinyValue(ChecklistValues scrutinyValue) {
-		this.scrutinyValue = scrutinyValue;
-	}
-
-	public ScrutinyChecklistType getScrutinyChecklistType() {
-		return scrutinyChecklistType;
-	}
-
-	public void setScrutinyChecklistType(ScrutinyChecklistType scrutinyChecklistType) {
-		this.scrutinyChecklistType = scrutinyChecklistType;
-	}
-
-	public String getRemarks() {
-		return remarks;
-	}
-
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
-
-	public Integer getOrderNumber() {
-		return orderNumber;
-	}
-
-	public void setOrderNumber(Integer orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
 }

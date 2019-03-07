@@ -69,12 +69,12 @@
         </thead>
         <tbody>
         <c:forEach var="planScrutiny"
-                   items="${ocInspection.planScrutinyChecklistForDrawing}"
+                   items="${ocInspection.inspection.planScrutinyChecklistForDrawing}"
                    varStatus="planScrutinyStatus">
             <tr>
                 <td class="view-content" style="font-size: 97%;"><c:out value="${planScrutinyStatus.index+1}"/></td>
                 <td class="view-content text-justify" style="font-size: 97%;"><c:out
-                        value="${planScrutiny.checklistDetail.description}"/></td>
+                        value="${planScrutiny.serviceChecklist.checklist.description}"/></td>
                 <td class="view-content" style="font-size: 97%;"><c:out
                         value="${planScrutiny.scrutinyValue.checkListVal}" default="N/A"/></td>
                 <td class="view-content text-justify" style="font-size: 97%;"><c:out value="${planScrutiny.remarks}"

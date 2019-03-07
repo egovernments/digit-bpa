@@ -55,12 +55,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.LpReason;
-import org.egov.bpa.transaction.entity.LettertoParty;
-import org.egov.bpa.transaction.entity.LettertoPartyDocument;
+import org.egov.bpa.transaction.entity.PermitLetterToParty;
+import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.egov.bpa.transaction.notice.LetterToPartyFormat;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.common.entity.bpa.Checklist;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -89,7 +89,7 @@ public class LetterToPartyCreateFormatImpl implements LetterToPartyFormat {
     private CityService cityService;
 
     @Override
-    public ReportOutput generateNotice(LettertoParty letterToParty) {
+    public ReportOutput generateNotice(PermitLetterToParty letterToParty) {
 
         ReportRequest reportInput = null;
         ReportOutput reportOutput;
@@ -104,14 +104,14 @@ public class LetterToPartyCreateFormatImpl implements LetterToPartyFormat {
         return reportOutput;
     }
 
-    public Map<String, Object> buildReportParameters(final LettertoParty lettertoParty) {
+    public Map<String, Object> buildReportParameters(final PermitLetterToParty lettertoParty) {
         final Map<String, Object> reportParams = new HashMap<>();
         Boolean checkListPresent = Boolean.FALSE;
-        List<CheckListDetail> chkList = new ArrayList<>();
-        for (LettertoPartyDocument document : lettertoParty.getLettertoPartyDocument()) {
-            if (!isEmpty(document.getChecklistDetail()) && document.getIsrequested() == Boolean.TRUE
-                    && document.getChecklistDetail().getDescription() != null) {
-                chkList.add(document.getChecklistDetail());
+        List<Checklist> chkList = new ArrayList<>();
+        for (LetterToPartyDocumentCommon document : lettertoParty.getLetterToParty().getLetterToPartyDocuments()) {
+            if (!isEmpty(document.getServiceChecklist()) && document.getIsRequested().equals(Boolean.TRUE)
+                    && document.getServiceChecklist().getChecklist() != null) {
+                chkList.add(document.getServiceChecklist().getChecklist());
             }
             checkListPresent = chkList.isEmpty() ? Boolean.FALSE : Boolean.TRUE;
         }
@@ -121,7 +121,7 @@ public class LetterToPartyCreateFormatImpl implements LetterToPartyFormat {
         reportParams.put("cityName", ApplicationThreadLocals.getCityName());
         reportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         reportParams.put("lpReason",
-                lettertoParty.getLpReason().stream().map(LpReason::getDescription).collect(Collectors.joining(",")));
+                lettertoParty.getLetterToParty().getLpReason().stream().map(LpReason::getDescription).collect(Collectors.joining(",")));
         return reportParams;
     }
 }

@@ -68,6 +68,12 @@ public class ChecklistServiceTypeMappingController {
 	public String createServiceTypeChecklistMapping(
 			@ModelAttribute("checklistServicetype") final ChecklistServiceTypeMapping checklistServiceType,
 			final Model model, final HttpServletRequest request, final RedirectAttributes redirectAttributes,final BindingResult errors) {
+		if(checklisterviceTypeService.validateChecklistServiceTypeAlreadyExist(checklistServiceType)){
+          model.addAttribute("message", "Checklist Type And ServiceType Mapping Already Exists.");
+          model.addAttribute("serviceType", checklistServiceType.getMappingList().get(0).getServiceType());
+  		  model.addAttribute("checklistType", checklistServiceType.getMappingList().get(0).getChecklist().getChecklistType());
+			return "servicetype-checklist-mapping-create";
+		}
 		checklisterviceTypeService.save(checklistServiceType.getMappingList());
 		redirectAttributes.addFlashAttribute("message",
 				messageSource.getMessage("msg.create.checklist.servicetype.mapping.success", null, null));

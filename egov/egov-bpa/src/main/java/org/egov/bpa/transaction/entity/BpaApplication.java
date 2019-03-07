@@ -211,15 +211,15 @@ public class BpaApplication extends StateAware<Position> {
     private List<AutoDcrMap> autoDcr = new ArrayList<>();
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ApplicationDocument> applicationDocument = new ArrayList<>(0);
+    private List<PermitDocument> permitDocuments = new ArrayList<>(0);
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ApplicationNocDocument> applicationNOCDocument = new ArrayList<>(0);
+    private List<PermitNocDocument> permitNocDocuments = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("id DESC ")
-    private List<Inspection> inspections = new ArrayList<>();
+    private List<PermitInspection> permitInspections = new ArrayList<>();
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<LettertoParty> lettertoParty = new ArrayList<>();
+    private List<PermitLetterToParty> permitLetterToParties = new ArrayList<>();
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PermitFee> permitFee = new ArrayList<>();
@@ -254,7 +254,7 @@ public class BpaApplication extends StateAware<Position> {
     private Set<FileStoreMapper> tsInspnSupportDocs = Collections.emptySet();
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<DCRDocument> dcrDocuments = new ArrayList<>(0);
+    private List<PermitDcrDocument> permitDcrDocuments = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BuildingSubUsage> buildingSubUsages = new ArrayList<>(0);
 
@@ -468,12 +468,20 @@ public class BpaApplication extends StateAware<Position> {
         this.autoDcr = autoDcr;
     }
 
-    public List<Inspection> getInspections() {
-        return inspections;
+    public List<PermitInspection> getPermitInspections() {
+        return permitInspections;
     }
 
-    public void setInspections(final List<Inspection> inspections) {
-        this.inspections = inspections;
+    public void setPermitInspections(List<PermitInspection> permitInspections) {
+        this.permitInspections = permitInspections;
+    }
+
+    public List<PermitLetterToParty> getPermitLetterToParties() {
+        return permitLetterToParties;
+    }
+
+    public void setPermitLetterToParties(List<PermitLetterToParty> permitLetterToParties) {
+        this.permitLetterToParties = permitLetterToParties;
     }
 
     public List<DocumentHistory> getDocumentHistory() {
@@ -490,14 +498,6 @@ public class BpaApplication extends StateAware<Position> {
 
     public void setPermittedFloorDetail(final List<PermittedFloorDetail> permittedFloorDetail) {
         this.permittedFloorDetail = permittedFloorDetail;
-    }
-
-    public List<LettertoParty> getLettertoParty() {
-        return lettertoParty;
-    }
-
-    public void setLettertoParty(final List<LettertoParty> lettertoParty) {
-        this.lettertoParty = lettertoParty;
     }
 
     public List<PermitFee> getPermitFee() {
@@ -556,32 +556,32 @@ public class BpaApplication extends StateAware<Position> {
         this.buildingDetail = buildingDetail;
     }
 
-    public List<ApplicationDocument> getApplicationDocument() {
-        return applicationDocument;
+    public List<PermitDocument> getPermitDocuments() {
+        return permitDocuments;
     }
 
-    public void setApplicationDocument(final List<ApplicationDocument> applicationDocument) {
-        this.applicationDocument = applicationDocument;
+    public void setPermitDocuments(List<PermitDocument> permitDocuments) {
+        this.permitDocuments = permitDocuments;
     }
 
-    public void addApplicationDocument(final ApplicationDocument nocDocument) {
+    public List<PermitNocDocument> getPermitNocDocuments() {
+        return permitNocDocuments;
+    }
+    
+    public void addPermitDocument(final PermitDocument nocDocument) {
         nocDocument.setApplication(this);
-        getApplicationDocument().add(nocDocument);
+        getPermitDocuments().add(nocDocument);
     }
 
-    public List<ApplicationNocDocument> getApplicationNOCDocument() {
-        return applicationNOCDocument;
+    public void setPermitNocDocuments(List<PermitNocDocument> permitNocDocuments) {
+        this.permitNocDocuments = permitNocDocuments;
     }
 
-    public void setApplicationNOCDocument(final List<ApplicationNocDocument> applicationNOCDocument) {
-        this.applicationNOCDocument = applicationNOCDocument;
-    }
-
-    public void addApplicationNocDocument(final ApplicationNocDocument nocDocument) {
+    public void addPermitNocDocument(final PermitNocDocument nocDocument) {
         nocDocument.setApplication(this);
-        getApplicationNOCDocument().add(nocDocument);
+        getPermitNocDocuments().add(nocDocument);
     }
-
+    
     public Date getBuildingPlanApprovalDate() {
         return buildingPlanApprovalDate;
     }
@@ -987,12 +987,13 @@ public class BpaApplication extends StateAware<Position> {
         this.totalBuiltUpArea = totalBuiltUpArea;
     }
 
-    public List<DCRDocument> getDcrDocuments() {
-        return dcrDocuments;
+
+    public List<PermitDcrDocument> getPermitDcrDocuments() {
+        return permitDcrDocuments;
     }
 
-    public void setDcrDocuments(List<DCRDocument> dcrDocuments) {
-        this.dcrDocuments = dcrDocuments;
+    public void setPermitDcrDocuments(List<PermitDcrDocument> permitDcrDocuments) {
+        this.permitDcrDocuments = permitDcrDocuments;
     }
 
     public List<BuildingSubUsage> getBuildingSubUsages() {

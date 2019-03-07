@@ -31,17 +31,17 @@ package org.egov.bpa.transaction.repository;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.LettertoParty;
-import org.egov.bpa.transaction.entity.LettertoPartyDocument;
+import org.egov.bpa.transaction.entity.common.LetterToPartyCommon;
+import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LettertoPartyDocumentRepository extends JpaRepository<LettertoPartyDocument, Long> {
-    List<LettertoPartyDocument> findByLettertoPartyOrderByIdAsc(LettertoParty lettertoParty);
+public interface LettertoPartyDocumentRepository extends JpaRepository<LetterToPartyDocumentCommon, Long> {
+    List<LetterToPartyDocumentCommon> findByLetterToPartyOrderByIdAsc(LetterToPartyCommon lettertoParty);
 
-    List<LettertoPartyDocument> findByIsrequestedTrueAndLettertoPartyOrderByIdAsc(LettertoParty lettertoParty);
+    List<LetterToPartyDocumentCommon> findByIsRequestedTrueAndLetterToPartyOrderByIdAsc(LetterToPartyCommon lettertoParty);
 
-    List<LettertoPartyDocument> findByIsrequestedTrueAndIssubmittedTrueAndLettertoPartyOrderByIdAsc(LettertoParty lettertoParty);
+    List<LetterToPartyDocumentCommon> findByIsRequestedTrueAndIsSubmittedTrueAndLetterToPartyOrderByIdAsc(LetterToPartyCommon lettertoParty);
 
 }

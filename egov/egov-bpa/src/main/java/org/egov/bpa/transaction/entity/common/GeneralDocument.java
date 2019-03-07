@@ -47,48 +47,68 @@
 
 package org.egov.bpa.transaction.entity.common;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Table(name = "EGBPA_DOCKET_CONSTRNSTAGE_COMMON")
-@SequenceGenerator(name = DocketConstructionStageCommon.SEQ_DOCKETCONSTRSTAGE, sequenceName = DocketConstructionStageCommon.SEQ_DOCKETCONSTRSTAGE, allocationSize = 1)
-public class DocketConstructionStageCommon extends AbstractAuditable {
+@Table(name = "egbpa_general_document")
+@SequenceGenerator(name = GeneralDocument.SEQ_COMMON_DOCUMENT, sequenceName = GeneralDocument.SEQ_COMMON_DOCUMENT, allocationSize = 1)
+public class GeneralDocument extends AbstractAuditable {
 
-    public static final String SEQ_DOCKETCONSTRSTAGE = "SEQ_EGBPA_DOCKET_CONSTRNSTAGE_COMMON";
-    private static final long serialVersionUID = 6802467030155457623L;
+    public static final String SEQ_COMMON_DOCUMENT = "seq_egbpa_general_document";
+    private static final long serialVersionUID = 8833590155845005135L;
 
     @Id
-    @GeneratedValue(generator = SEQ_DOCKETCONSTRSTAGE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_COMMON_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Length(min = 1, max = 32)
-    private String value;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "egbpa_general_document_files", joinColumns = @JoinColumn(name = "documentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "servicechecklist", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
+
+    @Temporal(value = TemporalType.DATE)
+    private Date submissionDate;
+
+    private Boolean isSubmitted;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "createduser")
+    private User createdUser;
 
     @Length(min = 1, max = 256)
     private String remarks;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "docket")
-    @NotNull
-    private DocketCommon docket;
-
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "checklistDetail", nullable = false)
-    private ChecklistServiceTypeMapping serviceChecklist;
+    private transient MultipartFile[] files;
 
     @Override
     public Long getId() {
@@ -96,32 +116,48 @@ public class DocketConstructionStageCommon extends AbstractAuditable {
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
-    public String getValue() {
-        return value;
+    public MultipartFile[] getFiles() {
+        return files;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setFiles(final MultipartFile[] files) {
+        this.files = files;
+    }
+
+    public Date getSubmissionDate() {
+        return submissionDate;
+    }
+
+    public void setSubmissionDate(final Date submissionDate) {
+        this.submissionDate = submissionDate;
+    }
+
+    public Boolean getSubmitted() {
+        return isSubmitted;
+    }
+
+    public void setSubmitted(Boolean submitted) {
+        isSubmitted = submitted;
+    }
+
+    public User getCreatedUser() {
+        return createdUser;
+    }
+
+    public void setCreatedUser(User createdUser) {
+        this.createdUser = createdUser;
     }
 
     public String getRemarks() {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public void setRemarks(final String remarks) {
         this.remarks = remarks;
-    }
-
-    public DocketCommon getDocket() {
-        return docket;
-    }
-
-    public void setDocket(DocketCommon docket) {
-        this.docket = docket;
     }
 
     public ChecklistServiceTypeMapping getServiceChecklist() {
@@ -131,4 +167,20 @@ public class DocketConstructionStageCommon extends AbstractAuditable {
     public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
         this.serviceChecklist = serviceChecklist;
     }
+
+    public Set<FileStoreMapper> getSupportDocs() {
+        return supportDocs;
+    }
+
+    public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
+        this.supportDocs = supportDocs;
+    }
+
+    public Set<FileStoreMapper> getOrderedSupportDocs() {
+        return this.supportDocs
+                .stream()
+                .sorted(Comparator.comparing(FileStoreMapper::getId))
+                .collect(Collectors.toSet());
+    }
+
 }

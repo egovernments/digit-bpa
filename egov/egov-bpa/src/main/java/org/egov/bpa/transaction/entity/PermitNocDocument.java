@@ -37,13 +37,10 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.entity.common;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
+package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,54 +50,53 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.bpa.transaction.entity.common.NocDocument;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 @Entity
-@Table(name = "egbpa_dcr_files_common")
-@SequenceGenerator(name = StoreDCRFilesCommon.SEQ_CMN_DCR_FILES, sequenceName = StoreDCRFilesCommon.SEQ_CMN_DCR_FILES, allocationSize = 1)
-public class StoreDCRFilesCommon {
+@Table(name = "egbpa_permit_noc_document")
+@SequenceGenerator(name = PermitNocDocument.SEQ_EGBPA_NOC_DOCUMENT, sequenceName = PermitNocDocument.SEQ_EGBPA_NOC_DOCUMENT, allocationSize = 1)
+public class PermitNocDocument extends AbstractAuditable {
 
-    public static final String SEQ_CMN_DCR_FILES = "seq_egbpa_dcr_files_common";
+    public static final String SEQ_EGBPA_NOC_DOCUMENT = "seq_egbpa_permit_noc_document";
+    private static final long serialVersionUID = -5625450672698620264L;
+
     @Id
-    @GeneratedValue(generator = SEQ_CMN_DCR_FILES, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGBPA_NOC_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @NotNull
-    @JoinColumn(name = "dcrdocument", nullable = false)
-    private DCRDocumentCommon dcrDocument;
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
+    @ManyToOne(cascade = CascadeType.ALL)
     @NotNull
-    @JoinColumn(name = "filestore", nullable = false)
-    private FileStoreMapper fileStoreMapper;
-    private boolean isAutoPopulated = false;
+    @JoinColumn(name = "nocDocument", nullable = false)
+    private NocDocument nocDocument;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
-    public DCRDocumentCommon getDcrDocument() {
-        return dcrDocument;
+    public BpaApplication getApplication() {
+        return application;
     }
 
-    public void setDcrDocument(DCRDocumentCommon dcrDocument) {
-        this.dcrDocument = dcrDocument;
+    public void setApplication(BpaApplication application) {
+        this.application = application;
     }
 
-    public FileStoreMapper getFileStoreMapper() {
-        return fileStoreMapper;
+    public NocDocument getNocDocument() {
+        return nocDocument;
     }
 
-    public void setFileStoreMapper(FileStoreMapper fileStoreMapper) {
-        this.fileStoreMapper = fileStoreMapper;
+    public void setNocDocument(NocDocument nocDocument) {
+        this.nocDocument = nocDocument;
     }
 
-    public boolean isAutoPopulated() {
-        return isAutoPopulated;
-    }
-
-    public void setAutoPopulated(boolean autoPopulated) {
-        isAutoPopulated = autoPopulated;
-    }
 }

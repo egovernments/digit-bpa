@@ -81,9 +81,9 @@
 			varStatus="status">
 			<div class="row">
 				<div class="col-sm-3 add-margin">
-					<c:out value="${docs.document.checklistDetail.description}"></c:out>
+					<c:out value="${docs.document.serviceChecklist.checklist.description}"></c:out>
 					<span ></span>
-					<c:if test="${docs.document.checklistDetail.isMandatory}">
+					<c:if test="${docs.document.serviceChecklist.mandatory}">
 						<span class="mandatory"></span>
 					</c:if>
 					<form:hidden id="documents${status.index}id"
@@ -108,9 +108,9 @@
 				</div>
 
 				<div class="col-sm-6 add-margin">
-					<div class="files-upload-container <c:if test="${docs.document.checklistDetail.description eq 'Land Tax Receipt' || docs.document.checklistDetail.description eq 'One day permit agreement'}">documentRequire</c:if>"
+					<div class="files-upload-container <c:if test="${docs.document.serviceChecklist.checklist.description eq 'Land Tax Receipt' || docs.document.serviceChecklist.checklist.description eq 'One day permit agreement'}">documentRequire</c:if>"
 					    data-file-max-size="5"
-					    <c:if test="${docs.document.checklistDetail.isMandatory eq true && fn:length(docs.document.getOrderedSupportDocs()) eq 0}">required</c:if>
+					    <c:if test="${docs.document.serviceChecklist.mandatory eq true && fn:length(docs.document.getOrderedSupportDocs()) eq 0}">required</c:if>
 						data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 						<div class="files-viewer">
 

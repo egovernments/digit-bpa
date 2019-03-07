@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.master.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -50,40 +51,65 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
 public class ChecklistServicetypeMappingService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
-	
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
     @Autowired
     private ChecklistServiceTypeMappingRepository mappingRepository;
 
     @Transactional
-	public void save(List<ChecklistServiceTypeMapping> mappings) {
-		mappingRepository.save(mappings);
-	}
+    public void save(List<ChecklistServiceTypeMapping> mappings) {
+        mappingRepository.save(mappings);
+    }
 
-	public List<org.egov.bpa.master.entity.ChecklistServiceTypeMapping> searchChecklistServicetypeMapping(
-			ChecklistServiceTypeMapping checklistServiceTypeMapping) {
+    public List<org.egov.bpa.master.entity.ChecklistServiceTypeMapping> searchChecklistServicetypeMapping(
+            ChecklistServiceTypeMapping checklistServiceTypeMapping) {
 
-		if (checklistServiceTypeMapping.getChecklistType() != null
-				&& checklistServiceTypeMapping.getServiceType() != null) {
-			return mappingRepository.findByServiceTypeAndChecklist(checklistServiceTypeMapping.getServiceType().getDescription(),
-					checklistServiceTypeMapping.getChecklistType().getDescription());
-		}
-		if (checklistServiceTypeMapping.getChecklistType() != null)
-			return mappingRepository.findByChecklist(checklistServiceTypeMapping.getChecklistType().getDescription());
-		else if (checklistServiceTypeMapping.getServiceType() != null)
-			return mappingRepository.findByServiceType(checklistServiceTypeMapping.getServiceType());
+        if (checklistServiceTypeMapping.getChecklistType() != null
+                && checklistServiceTypeMapping.getServiceType() != null) {
+            return mappingRepository.findByServiceTypeAndChecklistType(
+                    checklistServiceTypeMapping.getServiceType().getDescription(),
+                    checklistServiceTypeMapping.getChecklistType().getDescription());
+        }
+        if (checklistServiceTypeMapping.getChecklistType() != null)
+            return mappingRepository.findByChecklist(checklistServiceTypeMapping.getChecklistType().getDescription());
+        else if (checklistServiceTypeMapping.getServiceType() != null)
+            return mappingRepository.findByServiceType(checklistServiceTypeMapping.getServiceType());
 
-		return null;
-	}
+        return Collections.emptyList();
+    }
+
+    public List<ChecklistServiceTypeMapping> findByActiveChecklistAndServiceType(String serviceType, String checklistType) {
+        return mappingRepository.findByActiveChecklistAndServiceType(checklistType, serviceType);
+    }
+
+    public List<ChecklistServiceTypeMapping> findByActiveByServiceTypeAndChecklist(Long serviceType, String checklistType) {
+        return mappingRepository.findByActiveByServiceTypeAndChecklist(serviceType, checklistType);
+    }
+
+    public boolean validateChecklistServiceTypeAlreadyExist(ChecklistServiceTypeMapping checklistServiceType) {
+        List<ChecklistServiceTypeMapping> list = mappingRepository.findByServiceTypeAndChecklistType(
+                checklistServiceType.getMappingList().get(0).getServiceType().getDescription(),
+                checklistServiceType.getMappingList().get(0).getChecklist().getChecklistType().getDescription());
+        return !list.isEmpty();
+    }
+
+    public ChecklistServiceTypeMapping load(Long id) {
+        return mappingRepository.getOne(id);
+    }
+    
+    public List<ChecklistServiceTypeMapping> findByChecklistTypeCode(String checklistTypeCode) {
+        return mappingRepository.findByChecklistTypeCode(checklistTypeCode);
+    }
 
 }

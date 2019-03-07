@@ -39,10 +39,11 @@
  */
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -59,26 +60,26 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Table(name = "egbpa_dcr_document_common")
-@SequenceGenerator(name = DCRDocumentCommon.SEQ_APPLN_DCR_DOCUMENT, sequenceName = DCRDocumentCommon.SEQ_APPLN_DCR_DOCUMENT, allocationSize = 1)
-public class DCRDocumentCommon extends AbstractAuditable {
+@Table(name = "egbpa_dcr_document")
+@SequenceGenerator(name = DcrDocument.SEQ_APPLN_DCR_DOCUMENT, sequenceName = DcrDocument.SEQ_APPLN_DCR_DOCUMENT, allocationSize = 1)
+public class DcrDocument extends AbstractAuditable {
 
     private static final long serialVersionUID = -4967429196646450211L;
-    public static final String SEQ_APPLN_DCR_DOCUMENT = "seq_egbpa_dcr_document_common";
+    public static final String SEQ_APPLN_DCR_DOCUMENT = "seq_egbpa_dcr_document";
     @Id
     @GeneratedValue(generator = SEQ_APPLN_DCR_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @ManyToOne
     @NotNull
-    @JoinColumn(name = "checklistDtl", nullable = false)
-    private CheckListDetail checklistDtl;
+    @JoinColumn(name = "servicechecklist", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
     @Temporal(value = TemporalType.DATE)
     private Date submissionDate;
     private Boolean isSubmitted;
@@ -86,7 +87,7 @@ public class DCRDocumentCommon extends AbstractAuditable {
     private String remarks;
     @OrderBy("id ASC")
     @OneToMany(mappedBy = "dcrDocument", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<StoreDCRFilesCommon> dcrAttachments = Collections.emptySet();
+    private Set<StoreDcrFiles> dcrAttachments = Collections.emptySet();
     private transient MultipartFile[] files;
     private transient String[] fileStoreIds;
 
@@ -100,12 +101,12 @@ public class DCRDocumentCommon extends AbstractAuditable {
         this.id = id;
     }
 
-    public CheckListDetail getChecklistDtl() {
-        return checklistDtl;
+    public ChecklistServiceTypeMapping getServiceChecklist() {
+        return serviceChecklist;
     }
 
-    public void setChecklistDtl(CheckListDetail checklistDtl) {
-        this.checklistDtl = checklistDtl;
+    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
     }
 
     public String getRemarks() {
@@ -132,17 +133,17 @@ public class DCRDocumentCommon extends AbstractAuditable {
         isSubmitted = submitted;
     }
 
-    public Set<StoreDCRFilesCommon> getDcrAttachments() {
+    public Set<StoreDcrFiles> getDcrAttachments() {
         return dcrAttachments;
     }
 
-    public Set<StoreDCRFilesCommon> getOrderedDcrAttachments() {
+    public Set<StoreDcrFiles> getOrderedDcrAttachments() {
         return this.dcrAttachments.stream()
-                .sorted(Comparator.comparing(StoreDCRFilesCommon::getId))
+                .sorted(Comparator.comparing(StoreDcrFiles::getId))
                 .collect(Collectors.toSet());
     }
 
-    public void setDcrAttachments(Set<StoreDCRFilesCommon> dcrAttachments) {
+    public void setDcrAttachments(Set<StoreDcrFiles> dcrAttachments) {
         this.dcrAttachments = dcrAttachments;
     }
 

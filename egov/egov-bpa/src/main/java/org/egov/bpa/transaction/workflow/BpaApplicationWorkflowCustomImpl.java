@@ -42,7 +42,7 @@ package org.egov.bpa.transaction.workflow;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.entity.LettertoParty;
+import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.service.BpaStatusService;
@@ -252,6 +252,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
             }
         } else if (BpaConstants.LPCREATED.equalsIgnoreCase(workFlowAction)) {
+            System.out.println(application.getStateType());
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null, additionalRule,
                     BpaConstants.LPCREATED, null);
             application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
@@ -261,13 +262,13 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                        .withDateInfo(currentDate.toDate()).withOwner(application.getState().getOwnerPosition()).withOwner(application.getState().getOwnerUser())
                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
         } else if (BpaConstants.LPREPLYRECEIVED.equalsIgnoreCase(workFlowAction)) {
-            List<LettertoParty> letterToParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
-            StateHistory<Position> stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(application.getStateHistory(), letterToParties.get(0).getStateForOwnerPosition());
+            List<PermitLetterToParty> letterToParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
+            StateHistory<Position> stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(application.getStateHistory(), letterToParties.get(0).getLetterToParty().getStateForOwnerPosition());
             wfmatrix = workFlowMatrixService.getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(application.getStateHistory()));
             if(null == wfmatrix)
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null, additionalRule,
-                        letterToParties.get(0).getCurrentStateValueOfLP(), null);
-            application.setStatus(letterToParties.get(0).getCurrentApplnStatus());
+                        letterToParties.get(0).getLetterToParty().getCurrentStateValueOfLP(), null);
+            application.setStatus(letterToParties.get(0).getLetterToParty().getCurrentApplnStatus());
             application.transition().progressWithStateCopy()
                        .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                        .withComments(approvalComent).withStateValue(wfmatrix.getNextState())

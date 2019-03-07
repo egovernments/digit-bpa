@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.egov.bpa.master.entity.CheckListDetail;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.LpReason;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
@@ -96,11 +96,11 @@ public class OccupancyLetterToPartyReplyFormatImpl implements OccupancyLetterToP
     public Map<String, Object> buildReportParameters(final OCLetterToParty ocLettertoParty) {
         final Map<String, Object> reportParams = new HashMap<>();
         Boolean checkListPresent = Boolean.FALSE;
-        List<CheckListDetail> chkList = new ArrayList<>();
+        List<ChecklistServiceTypeMapping> chkList = new ArrayList<>();
         for (LetterToPartyDocumentCommon document : ocLettertoParty.getLetterToParty().getLetterToPartyDocuments()) {
-            if (!isEmpty(document.getChecklistDetail()) && document.getIsRequested() == Boolean.TRUE
-                    && document.getChecklistDetail().getDescription() != null) {
-                chkList.add(document.getChecklistDetail());
+            if (!isEmpty(document.getServiceChecklist()) && document.getIsRequested().equals(Boolean.TRUE)
+                    && document.getServiceChecklist().getChecklist().getDescription() != null) {
+                chkList.add(document.getServiceChecklist());
             }
             checkListPresent = chkList.isEmpty() ? Boolean.FALSE : Boolean.TRUE;
         }

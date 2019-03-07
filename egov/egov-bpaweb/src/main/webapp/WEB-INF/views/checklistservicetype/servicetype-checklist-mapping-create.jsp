@@ -62,10 +62,18 @@
 						<spring:message code="lbl.checklist.servicetype.main.title" />
 					</div>
 				</div>
-				<div class="panel-body">
-					<div class="form-group">
+				<div class="col-md-12 col-xs-6  panel-title">
 					Service Type : ${serviceType.description} </br> </br> Checklist Type : ${checklistType.description}
 					</br> </br>
+				</div>
+				
+			    <div class="panel-body">
+					<div class="panel-title text-center no-float error-msg">
+						<strong>${message}</strong>
+					</div>
+				</div>
+				
+				<div class="panel-body">
                     <table class="table table-bordered table-hover multiheadertbl">
 							<thead>
 								<tr>
@@ -75,7 +83,9 @@
 								</tr>
 							</thead>
 							<tbody>
-							 <c:if test="${not empty checklists}">
+
+						  <c:choose>
+                             <c:when test="${not empty checklists}">
 								<c:forEach items="${checklists}" var="checklist" varStatus="vs">
 									<tr>
 										<td class="form-control">${checklist.description}</td>
@@ -97,10 +107,14 @@
 										</div>
 									</tr>
 								</c:forEach>
-								</c:if>
-								<c:if test="${empty checklists}">
-									No Checklists found for selected checklist type
-								</c:if>
+							 </c:when>
+									<c:otherwise>
+									<c:if test="${empty message}">
+										<div class="col-md-12 col-xs-6  panel-title">
+										No Checklists found for selected checklist type</div>
+										</c:if>
+									</c:otherwise>
+							</c:choose>
 							</tbody>
 						</table>
 						<div class="text-center">
@@ -112,11 +126,9 @@
 							<a href='javascript:void(0)' class='btn btn-default'
 								onclick='self.close()'><spring:message code='lbl.close' /></a>
 						</div>
-					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </form:form>
-
 

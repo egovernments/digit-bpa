@@ -53,11 +53,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title"><spring:message code="lbl.bpa.appln.dtls"/></div>
+<div class="panel-heading toggle-header custom_form_panel_heading">
+	<div class="panel-title">
+		<div class="panel-title"><spring:message code="lbl.bpa.appln.dtls"/></div>
+	</div>
+	<div class="history-icon toggle-icon">
+		<i class="fa fa-angle-up fa-2x"></i>
+	</div>
 </div>
 
-<div class="panel-body">
+<div class="panel-body display-hide">
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.plan.permission.no"/>

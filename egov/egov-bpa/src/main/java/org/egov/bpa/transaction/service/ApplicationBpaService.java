@@ -93,23 +93,26 @@ import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.service.BpaSchemeLandUsageService;
-import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.PostalAddressService;
 import org.egov.bpa.master.service.RegistrarOfficeVillageService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.Applicant;
-import org.egov.bpa.transaction.entity.ApplicationDocument;
 import org.egov.bpa.transaction.entity.ApplicationFee;
-import org.egov.bpa.transaction.entity.ApplicationNocDocument;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
-import org.egov.bpa.transaction.entity.DCRDocument;
+import org.egov.bpa.transaction.entity.PermitDcrDocument;
+import org.egov.bpa.transaction.entity.PermitDocument;
 import org.egov.bpa.transaction.entity.PermitFee;
-import org.egov.bpa.transaction.entity.StoreDCRFiles;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
+import org.egov.bpa.transaction.entity.common.DcrDocument;
+import org.egov.bpa.transaction.entity.common.GeneralDocument;
+import org.egov.bpa.transaction.entity.common.NocDocument;
+import org.egov.bpa.transaction.entity.common.StoreDcrFiles;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
 import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
@@ -162,11 +165,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class ApplicationBpaService extends GenericBillGeneratorService {
 
     private static final String APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION = "Application Fees for Shutter or Door conversion";
-	private static final String APPLICATION_FEES_FOR_ROOF_CONVERSION = "Application Fees for Roof conversion";
-	private static final String APPLICATION_FEES_FOR_COMPOUND_WALL = "Application Fees for compound wall";
-	private static final String APPLICATION_FEES_FOR_AMENITIES = "Application Fees for Amenities";
-	private static final String APPLICATION_FEES_FOR_WELL_CONSTURCTION = "Application Fees for Well consturction";
-	private static final Logger LOG = getLogger(BpaUtils.class);
+    private static final String APPLICATION_FEES_FOR_ROOF_CONVERSION = "Application Fees for Roof conversion";
+    private static final String APPLICATION_FEES_FOR_COMPOUND_WALL = "Application Fees for compound wall";
+    private static final String APPLICATION_FEES_FOR_AMENITIES = "Application Fees for Amenities";
+    private static final String APPLICATION_FEES_FOR_WELL_CONSTURCTION = "Application Fees for Well consturction";
+    private static final Logger LOG = getLogger(BpaUtils.class);
     private static final String APPLICATION_STATUS = "application.status";
     private static final String NOC_UPDATION_IN_PROGRESS = "NOC updation in progress";
     public static final String UNCHECKED = "unchecked";
@@ -195,7 +198,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Autowired
     private FileStoreService fileStoreService;
     @Autowired
-    private CheckListDetailService checkListDetailService;
+    private ChecklistServicetypeMappingService checklistServicetypeMappingService;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -262,7 +265,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.setApplicationNumber(applicationNumberGenerator.generate());
         // buildRegistrarOfficeForVillage(application);
         persistBpaNocDocuments(application);
-        application.setDcrDocuments(persistApplnDCRDocuments(application));
+        List<PermitDcrDocument> permitDcrDocuments = application.getPermitDcrDocuments();
+        application.getPermitDcrDocuments().forEach(dcrDocument -> dcrDocument.setApplication(application));
         buildBuildingSubUsage(application);
         /*
          * if (bpaApplicationValidationService.isEdcrInetgrationRequired(application.getServiceType().getCode(),
@@ -296,12 +300,14 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 currentState = WF_NEW_STATE;
             }
             if (wfMatrix != null)
-				approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-						bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+                approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                        bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, currentState, null, null,
                     null);
         }
         BpaApplication bpaApplicationResponse = applicationBpaRepository.saveAndFlush(application);
+        application.setPermitDcrDocuments(persistApplnDCRDocuments(permitDcrDocuments));
+        applicationBpaRepository.save(bpaApplicationResponse);
         bpaIndexService.updateIndexes(bpaApplicationResponse);
         return bpaApplicationResponse;
     }
@@ -400,7 +406,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         buildBuildingSubUsage(application);
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
-        application.setDcrDocuments(persistApplnDCRDocuments(application));
+        application.setPermitDcrDocuments(persistApplnDCRDocuments(application.getPermitDcrDocuments()));
         // persistPostalAddress(application);
         // buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
@@ -457,7 +463,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public BpaApplication updateApplication(final BpaApplication application, Long approvalPosition,
             String workFlowAction, BigDecimal amountRule) throws IOException {
         application.setSentToPreviousOwner(false);
-        application.setDcrDocuments(persistApplnDCRDocuments(application));
+        application.setPermitDcrDocuments(persistApplnDCRDocuments(application.getPermitDcrDocuments()));
         persistBpaNocDocuments(application);
         buildExistingAndProposedBuildingDetails(application);
         // persistPostalAddress(application);
@@ -536,11 +542,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     private void appendQrCodeWithDcrDocuments(BpaApplication application) {
-        List<DCRDocument> dcrDocuments = dcrDocumentRepository.findByApplication(application);
-        for (DCRDocument dcrDocument : dcrDocuments) {
+        List<PermitDcrDocument> dcrDocuments = dcrDocumentRepository.findByApplication(application);
+        for (PermitDcrDocument dcrDocument : dcrDocuments) {
             if (LOG.isInfoEnabled())
                 LOG.info("#### Dcr Document ####", dcrDocument.getId());
-            for (StoreDCRFiles file : dcrDocument.getDcrAttachments()) {
+            for (StoreDcrFiles file : dcrDocument.getDcrDocument().getDcrAttachments()) {
                 if (LOG.isInfoEnabled())
                     LOG.info("#### file ####", file.getId());
                 bpaUtils.addQrCodeToPdfDocuments(file.getFileStoreMapper(), application);
@@ -549,65 +555,65 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     public void persistOrUpdateApplicationDocument(final BpaApplication bpaApplication) {
-        processAndStoreApplicationDocuments(bpaApplication);
+        processAndStoreGeneralDocuments(bpaApplication);
     }
 
     public BigDecimal setAdmissionFeeAmountForRegistrationWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
         BigDecimal admissionfeeAmount;
         String feeType;
         if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired()) {
-        	String serviceTyp =serviceTypeService.findById(serviceType).getDescription();
-    	if(serviceTyp.equals(WELL))
-    		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
-    	else if(serviceTyp.equals(BpaConstants.AMENITIES))
-    		feeType=APPLICATION_FEES_FOR_AMENITIES;
-    	else if(serviceTyp.equals(COMPOUND_WALL))
-    		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
-    	else if(serviceTyp.equals(ROOF_CONVERSION))
-    		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
-    	else if(serviceTyp.equals(SHUTTER_DOOR_CONVERSION))
-    		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
-    	else
-    		feeType=BpaConstants.BPA_APP_FEE;
-    	
+            String serviceTyp = serviceTypeService.findById(serviceType).getDescription();
+            if (serviceTyp.equals(WELL))
+                feeType = APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+            else if (serviceTyp.equals(BpaConstants.AMENITIES))
+                feeType = APPLICATION_FEES_FOR_AMENITIES;
+            else if (serviceTyp.equals(COMPOUND_WALL))
+                feeType = APPLICATION_FEES_FOR_COMPOUND_WALL;
+            else if (serviceTyp.equals(ROOF_CONVERSION))
+                feeType = APPLICATION_FEES_FOR_ROOF_CONVERSION;
+            else if (serviceTyp.equals(SHUTTER_DOOR_CONVERSION))
+                feeType = APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+            else
+                feeType = BpaConstants.BPA_APP_FEE;
+
             admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
-            		feeType,FeeSubType.APPLICATION_FEE);
-        }
-        else
+                    feeType, FeeSubType.APPLICATION_FEE);
+        } else
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;
     }
-        
+
     public BigDecimal setAdmissionFeeAmountWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
         BigDecimal admissionfeeAmount = BigDecimal.ZERO;
         String feeType;
         if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired()) {
-        	Criteria feeCrit = bpaDemandService.createCriteriaforApplicationFee(serviceType, BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
-        	final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            Criteria feeCrit = bpaDemandService.createCriteriaforApplicationFee(serviceType, BpaConstants.BPA_APP_FEE,
+                    FeeSubType.APPLICATION_FEE);
+            final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
             for (final BpaFeeMapping feeMap : bpaFeeMap)
-            	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
-            for(ServiceType serviceTyp : amenityList) {
-        	String serviceName =serviceTypeService.findById(serviceTyp.getId()).getDescription();
-		    	if(serviceName.equals(WELL))
-		    		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
-		    	else if(serviceName.equals(COMPOUND_WALL))
-		    		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
-		    	else if(serviceName.equals(ROOF_CONVERSION))
-		    		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
-		    	else if(serviceName.equals(SHUTTER_DOOR_CONVERSION))
-		    		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
-		    	else
-		    		feeType=BpaConstants.BPA_APP_FEE;
-		    	
-              Criteria amenityCrit = bpaDemandService.createCriteriaforApplicationFee(serviceTyp.getId(), feeType, FeeSubType.APPLICATION_FEE);
-              final List<BpaFeeMapping> amenityMap = amenityCrit.list();
-              for (final BpaFeeMapping feeMap : amenityMap)
-              	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+                admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+            for (ServiceType serviceTyp : amenityList) {
+                String serviceName = serviceTypeService.findById(serviceTyp.getId()).getDescription();
+                if (serviceName.equals(WELL))
+                    feeType = APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+                else if (serviceName.equals(COMPOUND_WALL))
+                    feeType = APPLICATION_FEES_FOR_COMPOUND_WALL;
+                else if (serviceName.equals(ROOF_CONVERSION))
+                    feeType = APPLICATION_FEES_FOR_ROOF_CONVERSION;
+                else if (serviceName.equals(SHUTTER_DOOR_CONVERSION))
+                    feeType = APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+                else
+                    feeType = BpaConstants.BPA_APP_FEE;
+
+                Criteria amenityCrit = bpaDemandService.createCriteriaforApplicationFee(serviceTyp.getId(), feeType,
+                        FeeSubType.APPLICATION_FEE);
+                final List<BpaFeeMapping> amenityMap = amenityCrit.list();
+                for (final BpaFeeMapping feeMap : amenityMap)
+                    admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
             }
-        }
-        else
+        } else
             admissionfeeAmount = BigDecimal.ZERO;
-        
+
         return admissionfeeAmount;
     }
 
@@ -615,7 +621,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         BigDecimal admissionfeeAmount;
         if (serviceType != null)
             admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
-            		BpaConstants.BPA_REGISTRATION_FEE, FeeSubType.APPLICATION_FEE);
+                    BpaConstants.BPA_REGISTRATION_FEE, FeeSubType.APPLICATION_FEE);
         else
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;
@@ -644,28 +650,29 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public BigDecimal getTotalFeeAmountByPassingServiceTypeAndAmenities(List<Long> serviceTypeIds) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         String feeType;
-        for (Long serviceTypeId  : serviceTypeIds) {
-        	String serviceType =serviceTypeService.findById(serviceTypeId).getDescription();
-        	if(serviceType.equals(WELL))
-        		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
-        	else if(serviceType.equals(BpaConstants.AMENITIES))
-        		feeType=APPLICATION_FEES_FOR_AMENITIES;
-        	else if(serviceType.equals(COMPOUND_WALL))
-        		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
-        	else if(serviceType.equals(ROOF_CONVERSION))
-        		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
-        	else if(serviceType.equals(SHUTTER_DOOR_CONVERSION))
-        		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
-        	else
-        		feeType=BpaConstants.BPA_APP_FEE;
-        	
-        	 final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, feeType, FeeSubType.APPLICATION_FEE);
-             @SuppressWarnings(UNCHECKED)
-             final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
-             for (final BpaFeeMapping feeMap : bpaFeeMap)
-                 totalAmount = totalAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+        for (Long serviceTypeId : serviceTypeIds) {
+            String serviceType = serviceTypeService.findById(serviceTypeId).getDescription();
+            if (serviceType.equals(WELL))
+                feeType = APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+            else if (serviceType.equals(BpaConstants.AMENITIES))
+                feeType = APPLICATION_FEES_FOR_AMENITIES;
+            else if (serviceType.equals(COMPOUND_WALL))
+                feeType = APPLICATION_FEES_FOR_COMPOUND_WALL;
+            else if (serviceType.equals(ROOF_CONVERSION))
+                feeType = APPLICATION_FEES_FOR_ROOF_CONVERSION;
+            else if (serviceType.equals(SHUTTER_DOOR_CONVERSION))
+                feeType = APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+            else
+                feeType = BpaConstants.BPA_APP_FEE;
+
+            final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, feeType,
+                    FeeSubType.APPLICATION_FEE);
+            @SuppressWarnings(UNCHECKED)
+            final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            for (final BpaFeeMapping feeMap : bpaFeeMap)
+                totalAmount = totalAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
         }
-        
+
         return totalAmount;
     }
 
@@ -689,82 +696,91 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return applicationBpaRepository.findByPlanPermissionNumber(permitNumber);
     }
 
-    private void processAndStoreNocDocuments(final BpaApplication bpaApplication) {
-        final User user = securityUtils.getCurrentUser();
-        if (!bpaApplication.getApplicationNOCDocument().isEmpty()
-                && null == bpaApplication.getApplicationNOCDocument().get(0).getId())
-            for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument()) {
-                nocDocument.setChecklist(
-                        checkListDetailService.load(nocDocument.getChecklist().getId()));
-                nocDocument.setApplication(bpaApplication);
-                nocDocument.setCreateduser(user);
-                buildNocFiles(nocDocument);
-            }
+    private void processAndStoreNocDocuments(final BpaApplication application) {
+        if (!application.getPermitNocDocuments().isEmpty()
+                && null == application.getPermitNocDocuments().get(0).getId())
+            application.getPermitNocDocuments().forEach(nocDocument -> {
+                nocDocument.setApplication(application);
+                NocDocument nocDocumentsCommon = nocDocument.getNocDocument();
+                nocDocumentsCommon.setServiceChecklist(
+                        checklistServicetypeMappingService.load(nocDocumentsCommon.getServiceChecklist().getId()));
+                nocDocumentsCommon.setCreatedUser(securityUtils.getCurrentUser());
+                buildNocFiles(nocDocumentsCommon);
+                nocDocument.setNocDocument(nocDocumentsCommon);
+            });
         else
-            for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument())
-                buildNocFiles(nocDocument);
+            for (final PermitNocDocument nocDocument : application.getPermitNocDocuments())
+                buildNocFiles(nocDocument.getNocDocument());
     }
 
-    private void buildNocFiles(ApplicationNocDocument nocDocument) {
-        if (nocDocument.getFiles() != null && nocDocument.getFiles().length > 0) {
+    private void buildNocFiles(final NocDocument nocDoc) {
+        if (nocDoc.getFiles() != null && nocDoc.getFiles().length > 0) {
             Set<FileStoreMapper> existingFiles = new HashSet<>();
-            existingFiles.addAll(nocDocument.getNocSupportDocs());
-            existingFiles.addAll(addToFileStore(nocDocument.getFiles()));
-            nocDocument.setNocSupportDocs(existingFiles);
-            nocDocument.setIssubmitted(true);
+            existingFiles.addAll(nocDoc.getNocSupportDocs());
+            existingFiles.addAll(addToFileStore(nocDoc.getFiles()));
+            nocDoc.setNocSupportDocs(existingFiles);
+            nocDoc.setSubmitted(true);
         }
     }
 
-    private void processAndStoreApplicationDocuments(final BpaApplication bpaApplication) {
-        if (!bpaApplication.getApplicationDocument().isEmpty() && null == bpaApplication.getApplicationDocument().get(0).getId())
-            for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
-                applicationDocument.setChecklistDetail(
-                        checkListDetailService.load(applicationDocument.getChecklistDetail().getId()));
-                applicationDocument.setApplication(bpaApplication);
-                buildApplicationDocFiles(applicationDocument);
-            }
+    private void processAndStoreGeneralDocuments(final BpaApplication application) {
+        if (!application.getPermitDocuments().isEmpty()
+                && null == application.getPermitDocuments().get(0).getId())
+            application.getPermitDocuments().forEach(document -> {
+                document.setApplication(application);
+                GeneralDocument documentsCommon = document.getDocument();
+                documentsCommon.setServiceChecklist(
+                        checklistServicetypeMappingService.load(document.getDocument().getServiceChecklist().getId()));
+                documentsCommon.setCreatedUser(securityUtils.getCurrentUser());
+                buildGeneralFiles(documentsCommon);
+                document.setDocument(documentsCommon);
+            });
         else
-            for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
-                buildApplicationDocFiles(applicationDocument);
-            }
+            for (final PermitDocument ocDocuments : application.getPermitDocuments())
+                buildGeneralFiles(ocDocuments.getDocument());
     }
 
-    private void buildApplicationDocFiles(ApplicationDocument applicationDocument) {
-        if (applicationDocument.getFiles() != null && applicationDocument.getFiles().length > 0) {
+    private void buildGeneralFiles(final GeneralDocument commonDoc) {
+        if (commonDoc.getFiles() != null && commonDoc.getFiles().length > 0) {
             Set<FileStoreMapper> existingFiles = new HashSet<>();
-            existingFiles.addAll(applicationDocument.getSupportDocs());
-            existingFiles.addAll(addToFileStore(applicationDocument.getFiles()));
-            applicationDocument.setSupportDocs(existingFiles);
-            applicationDocument.setIssubmitted(true);
+            existingFiles.addAll(commonDoc.getSupportDocs());
+            existingFiles.addAll(addToFileStore(commonDoc.getFiles()));
+            commonDoc.setSupportDocs(existingFiles);
+            commonDoc.setSubmitted(true);
         }
     }
 
-    private List<DCRDocument> persistApplnDCRDocuments(final BpaApplication application) {
-        List<DCRDocument> dcrDocuments = new ArrayList<>();
-        if (!application.getDcrDocuments().isEmpty() && null == application.getDcrDocuments().get(0).getId())
-            for (final DCRDocument dcrDocument : application.getDcrDocuments()) {
-                dcrDocument.setApplication(application);
-                DCRDocument dcrDocumentRes = buildAutoPopualtedDCRFiles(dcrDocument);
+    private List<PermitDcrDocument> persistApplnDCRDocuments(final List<PermitDcrDocument> uploadDcrDocuments) {
+        List<PermitDcrDocument> permitDcrDocuments = new ArrayList<>();
+        if (!uploadDcrDocuments.isEmpty() && null == uploadDcrDocuments.get(0).getId())
+            for (final PermitDcrDocument permitDcrDoc : uploadDcrDocuments) {
+                DcrDocument dcrDocument = permitDcrDoc.getDcrDocument();
+                dcrDocument.setServiceChecklist(
+                        checklistServicetypeMappingService.load(dcrDocument.getServiceChecklist().getId()));
+                DcrDocument dcrDocumentRes = buildAutoPopualtedDCRFiles(dcrDocument);
                 buildDCRFiles(dcrDocumentRes);
-                dcrDocuments.add(dcrDocumentRes);
+                permitDcrDoc.setDcrDocument(dcrDocumentRes);
+                permitDcrDocuments.add(permitDcrDoc);
             }
         else
-            for (final DCRDocument dcrDocument : application.getDcrDocuments()) {
-                DCRDocument dcrDocumentRes = buildAutoPopualtedDCRFiles(dcrDocument);
+            for (final PermitDcrDocument permitDcrDoc : uploadDcrDocuments) {
+                DcrDocument dcrDocumentRes = buildAutoPopualtedDCRFiles(permitDcrDoc.getDcrDocument());
                 buildDCRFiles(dcrDocumentRes);
-                dcrDocuments.add(dcrDocumentRes);
+                permitDcrDoc.setDcrDocument(dcrDocumentRes);
+                permitDcrDocuments.add(permitDcrDoc);
             }
-        return dcrDocuments;
+        return permitDcrDocuments;
     }
 
     // Will save manually uploaded dcr document pdf's
-    private DCRDocument buildDCRFiles(DCRDocument dcrDocument) {
-        Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
+    private DcrDocument buildDCRFiles(DcrDocument dcrDocument) {
+        Set<StoreDcrFiles> storeDCRFiles = new HashSet<>();
         storeDCRFiles.addAll(dcrDocument.getDcrAttachments());
-        if (dcrDocument.getFiles() != null && dcrDocument.getFiles().length > 0) {
+        if (dcrDocument.getFiles() != null
+                && dcrDocument.getFiles().length > 0) {
             for (MultipartFile file : dcrDocument.getFiles()) {
                 if (!file.isEmpty()) {
-                    StoreDCRFiles storeDCRFile = new StoreDCRFiles();
+                    StoreDcrFiles storeDCRFile = new StoreDcrFiles();
                     storeDCRFile.setDcrDocument(dcrDocument);
                     storeDCRFile.setFileStoreMapper(addToFileStore(file));
                     storeDCRFile.setAutoPopulated(false);
@@ -778,10 +794,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     // Will save auto populated dcr document pdf's from dcr system
-    private DCRDocument buildAutoPopualtedDCRFiles(DCRDocument dcrDocument) {
-        Set<StoreDCRFiles> storeDCRFiles = new HashSet<>();
+    private DcrDocument buildAutoPopualtedDCRFiles(DcrDocument dcrDocument) {
+        Set<StoreDcrFiles> storeDCRFiles = new HashSet<>();
         storeDCRFiles.addAll(dcrDocument.getDcrAttachments());
-        if (dcrDocument.getFileStoreIds() != null && dcrDocument.getFileStoreIds().length > 0) {
+        if (dcrDocument.getFileStoreIds() != null &&
+                dcrDocument.getFileStoreIds().length > 0) {
             for (String fileStoreId : dcrDocument.getFileStoreIds()) {
                 if (!fileStoreId.isEmpty()) {
                     Path file = fileStoreService.fetchAsPath(fileStoreId, "Digit DCR");
@@ -790,11 +807,12 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                     try {
                         savedFileStoreMapper = fileStoreService.store(new ByteArrayInputStream(Files.readAllBytes(file)),
                                 fileStoreMapper.isPresent() ? fileStoreMapper.get().getFileName() : file.toFile().getName(),
-                                "application/pdf", FILESTORE_MODULECODE);
+                                "application/pdf",
+                                FILESTORE_MODULECODE);
                     } catch (IOException e) {
                         throw new ApplicationRuntimeException("Error occurred, while saving dcr documents!!!!!!", e);
                     }
-                    StoreDCRFiles storeDCRFile = new StoreDCRFiles();
+                    StoreDcrFiles storeDCRFile = new StoreDcrFiles();
                     storeDCRFile.setDcrDocument(dcrDocument);
                     storeDCRFile.setFileStoreMapper(savedFileStoreMapper);
                     storeDCRFile.setAutoPopulated(true);
@@ -802,6 +820,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 }
             }
         }
+
         if (!storeDCRFiles.isEmpty())
             dcrDocument.setDcrAttachments(storeDCRFiles);
         return dcrDocument;

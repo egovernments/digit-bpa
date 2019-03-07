@@ -39,8 +39,10 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.PermitInspection;
+import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.utils.BpaConstants;
@@ -60,69 +62,77 @@ import java.util.Date;
 @Controller
 @RequestMapping(value = "/application")
 public class InspectionController extends BpaGenericApplicationController {
-	private static final String CREATEINSPECTIONDETAIL_FORM = "createinspectiondetail-form";
+    private static final String CREATEINSPECTIONDETAIL_FORM = "createinspectiondetail-form";
 
-	@Autowired
-	private InspectionService inspectionService;
+    @Autowired
+    private InspectionService inspectionService;
+    @Autowired
+    private ChecklistServicetypeMappingService checklistServicetypeMappingService;
 
-	@RequestMapping(value = "/createinspectiondetails/{applicationNumber}", method = RequestMethod.GET)
-	public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
-		final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-		Position ownerPosition = application.getCurrentState().getOwnerPosition();
-		if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
-			return COMMON_ERROR;
-		loadApplication(model, application);
-		return CREATEINSPECTIONDETAIL_FORM;
-	}
+    @RequestMapping(value = "/createinspectiondetails/{applicationNumber}", method = RequestMethod.GET)
+    public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
+        final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        Position ownerPosition = application.getCurrentState().getOwnerPosition();
+        if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
+            return COMMON_ERROR;
+        loadApplication(model, application);
+        return CREATEINSPECTIONDETAIL_FORM;
+    }
 
-	@RequestMapping(value = "/createinspectiondetails/{applicationNumber}", method = RequestMethod.POST)
-	public String createInspection(@Valid @ModelAttribute final Inspection inspection,
-								   @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
-		BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-		if (resultBinder.hasErrors()) {
-			loadApplication(model, application);
-			return CREATEINSPECTIONDETAIL_FORM;
-		}
-		Position ownerPosition = application.getCurrentState().getOwnerPosition();
-		if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
-			return COMMON_ERROR;
-		inspection.setDocket(inspectionService.buildDocDetFromUI(inspection));
-		final Inspection savedInspection = inspectionService.save(inspection, application);
-		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
-		return "redirect:/application/view-inspection/" + savedInspection.getId();
-	}
+    @RequestMapping(value = "/createinspectiondetails/{applicationNumber}", method = RequestMethod.POST)
+    public String createInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection inspection,
+            @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+        BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        if (resultBinder.hasErrors()) {
+            loadApplication(model, application);
+            return CREATEINSPECTIONDETAIL_FORM;
+        }
+        Position ownerPosition = application.getCurrentState().getOwnerPosition();
+        if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
+            return COMMON_ERROR;
+        inspection.getInspection().setDocket(inspectionService.buildDocDetFromUI(inspection));
+        final PermitInspection savedInspection = inspectionService.save(inspection, application);
+        model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
+        return "redirect:/application/view-inspection/" + savedInspection.getId();
+    }
 
-	private void loadApplication(final Model model, final BpaApplication application) {
+    private void loadApplication(final Model model, final BpaApplication application) {
 
-		if (application != null && application.getState() != null
-			&& application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
-			prepareWorkflowDataForInspection(model, application);
-			model.addAttribute("loginUser", securityUtils.getCurrentUser());
-			model.addAttribute(BpaConstants.APPLICATION_HISTORY,
-					workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(), application.getStateHistory()));
-		}
-		final Inspection inspection = new Inspection();
-		inspection.setInspectionDate(new Date());
-		inspectionService.buildDocketDetailList(inspection);
-		model.addAttribute("inspection", inspection);
-		model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
-		model.addAttribute("docketDetailMeasumentList", inspection.getDocketDetailMeasumentList());
-		model.addAttribute("docketDetailAccessList", inspection.getDocketDetailAccessList());
-		model.addAttribute("docketDetlSurroundingPlotList", inspection.getDocketDetlSurroundingPlotList());
-		model.addAttribute("docketDetailLandTypeList", inspection.getDocketDetailLandTypeList());
-		model.addAttribute("docketDetailProposedWorkList", inspection.getDocketDetailProposedWorkList());
-		model.addAttribute("docketDetailWorkAsPerPlanList", inspection.getDocketDetailWorkAsPerPlanList());
-		model.addAttribute("docketDetailHgtAbuttRoadList", inspection.getDocketDetailHgtAbuttRoadList());
-		model.addAttribute("docketDetailAreaLoc", inspection.getDocketDetailAreaLoc());
-		model.addAttribute("docketDetailLengthOfCompWall", inspection.getDocketDetailLengthOfCompWall());
-		model.addAttribute("docketDetailNumberOfWell", inspection.getDocketDetailNumberOfWell());
-		model.addAttribute("docketDetailErectionTower", inspection.getDocketDetailErectionTower());
-		model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
-		model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
-		model.addAttribute("planScrutinyCheckList", checkListDetailService.findActiveCheckListByChecklistTypeAndOrderById("PLANSCRUTINY"));
-		model.addAttribute("planScrutinyChecklistForDrawing", checkListDetailService.findActiveCheckListByChecklistTypeAndOrderById("PLANSCRUTINYDRAWING"));
-		model.addAttribute("planScrutinyValues", ChecklistValues.values());
-		model.addAttribute(BpaConstants.BPA_APPLICATION, application);
-	}
+        if (application != null && application.getState() != null
+                && application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
+            prepareWorkflowDataForInspection(model, application);
+            model.addAttribute("loginUser", securityUtils.getCurrentUser());
+            model.addAttribute(BpaConstants.APPLICATION_HISTORY,
+                    workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
+                            application.getStateHistory()));
+        }
+        final PermitInspection permitInspn = new PermitInspection();
+        InspectionCommon inspection = new InspectionCommon();
+        inspection.setInspectionDate(new Date());
+        permitInspn.setApplication(application);
+        permitInspn.setInspection(inspection);
+        Long ServiceTypeId = application.getServiceType().getId();
+        inspectionService.buildDocketDetailList(permitInspn, ServiceTypeId);
+        model.addAttribute("permitInspection", permitInspn);
+        model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
+        model.addAttribute("docketDetailMeasurementList", inspection.getDocketDetailMeasurementList());
+        model.addAttribute("docketDetailAccessList", inspection.getDocketDetailAccessList());
+        model.addAttribute("docketDetailSurroundingPlotList", inspection.getDocketDetailSurroundingPlotList());
+        model.addAttribute("docketDetailLandTypeList", inspection.getDocketDetailLandTypeList());
+        model.addAttribute("docketDetailProposedWorkList", inspection.getDocketDetailProposedWorkList());
+        model.addAttribute("docketDetailWorkAsPerPlanList", inspection.getDocketDetailWorkAsPerPlanList());
+        model.addAttribute("docketDetailHgtAbuttRoadList", inspection.getDocketDetailHgtAbuttRoadList());
+        model.addAttribute("docketDetailAreaLoc", inspection.getDocketDetailAreaLoc());
+        model.addAttribute("docketDetailLengthOfCompWall", inspection.getDocketDetailLengthOfCompWall());
+        model.addAttribute("docketDetailNumberOfWell", inspection.getDocketDetailNumberOfWell());
+        model.addAttribute("docketDetailErectionTower", inspection.getDocketDetailErectionTower());
+        model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
+        model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
+        model.addAttribute("planScrutinyCheckList", checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(ServiceTypeId, "PLANSCRUTINY"));
+        model.addAttribute("planScrutinyChecklistForDrawing",
+                checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(ServiceTypeId, "PLANSCRUTINYDRAWING"));
+        model.addAttribute("planScrutinyValues", ChecklistValues.values());
+        model.addAttribute(BpaConstants.BPA_APPLICATION, application);
+    }
 
 }

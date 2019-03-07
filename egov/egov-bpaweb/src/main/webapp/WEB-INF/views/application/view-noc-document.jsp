@@ -66,17 +66,17 @@
 		<tbody>
 
 			<c:forEach var="nocdoc"
-				items="${bpaApplication.applicationNOCDocument}" varStatus="status">
+				items="${bpaApplication.permitNocDocuments}" varStatus="status">
 				<tr>
 					<td class="view-content text-center" style="font-size: 97%;"><c:out value="${status.index+1}"></c:out></td>
-					<td class="view-content" style="font-size: 97%;"><c:out value="${nocdoc.checklist.description}" default="N/A"></c:out></td>
-					<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${nocdoc.natureOfRequest}" default="N/A"></c:out></td>
-					<td class="view-content" style="font-size: 97%;"><c:if test="${nocdoc.letterSentOn eq null}"> <c:out value="N/A"></c:out></c:if> <fmt:formatDate value="${nocdoc.letterSentOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
-					<td class="view-content" style="font-size: 97%;"><c:if test="${nocdoc.replyReceivedOn eq null}"> <c:out value="N/A"></c:out></c:if><fmt:formatDate value="${nocdoc.replyReceivedOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
-					<td class="view-content" style="font-size: 97%;"><c:out value="${nocdoc.nocStatus.nocStatusVal}" default="N/A"></c:out></td>
-					<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${nocdoc.remarks}" default="N/A"></c:out></td>
+					<td class="view-content" style="font-size: 97%;"><c:out value="${nocdoc.nocDocument.serviceChecklist.checklist.description}" default="N/A"></c:out></td>
+					<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${nocdoc.nocDocument.natureOfRequest}" default="N/A"></c:out></td>
+					<td class="view-content" style="font-size: 97%;"><c:if test="${nocdoc.nocDocument.letterSentOn eq null}"> <c:out value="N/A"></c:out></c:if> <fmt:formatDate value="${nocdoc.nocDocument.letterSentOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
+					<td class="view-content" style="font-size: 97%;"><c:if test="${nocdoc.nocDocument.replyReceivedOn eq null}"> <c:out value="N/A"></c:out></c:if><fmt:formatDate value="${nocdoc.nocDocument.replyReceivedOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
+					<td class="view-content" style="font-size: 97%;"><c:out value="${nocdoc.nocDocument.nocStatus.nocStatusVal}" default="N/A"></c:out></td>
+					<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${nocdoc.nocDocument.remarks}" default="N/A"></c:out></td>
 					<td class="view-content" style="font-size: 97%;"><c:set value="false" var="isDocFound"></c:set> <c:forEach
-							var="bpanoc" items="${nocdoc.nocSupportDocs}" varStatus="loop">
+							var="bpanoc" items="${nocdoc.nocDocument.nocSupportDocs}" varStatus="loop">
 						<c:if test="${bpanoc.fileStoreId ne null}">
 							<c:set value="true" var="isDocFound"></c:set>
 							<a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"

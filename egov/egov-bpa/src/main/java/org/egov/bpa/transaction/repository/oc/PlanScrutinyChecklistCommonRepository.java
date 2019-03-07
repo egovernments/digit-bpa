@@ -29,17 +29,17 @@
  */
 package org.egov.bpa.transaction.repository.oc;
 
-
 import java.util.List;
 
+import org.egov.bpa.transaction.entity.common.InspectionCommon;
+import org.egov.bpa.transaction.entity.common.PlanScrutinyChecklistCommon;
 import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
-import org.egov.bpa.transaction.entity.oc.OCInspection;
-import org.egov.bpa.transaction.entity.oc.OCPlanScrutinyChecklist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OCPlanScrutinyChecklistRepository extends JpaRepository<OCPlanScrutinyChecklist, Long> {
-	List<OCPlanScrutinyChecklist> findByInspectionAndScrutinyChecklistTypeOrderByIdAsc(OCInspection inspection, ScrutinyChecklistType scrutinyChecklistType);
+public interface PlanScrutinyChecklistCommonRepository extends JpaRepository<PlanScrutinyChecklistCommon, Long> {
+    List<PlanScrutinyChecklistCommon> findByInspectionAndScrutinyChecklistTypeOrderByIdAsc(InspectionCommon inspection,
+            ScrutinyChecklistType scrutinyChecklistType);
 
 }

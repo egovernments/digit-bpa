@@ -53,6 +53,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -65,10 +67,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.transaction.entity.enums.NocStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -76,47 +78,55 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Table(name = "egbpa_lp_document_common")
-@SequenceGenerator(name = LetterToPartyDocumentCommon.SEQ_LETTERTOPARTYDOCUMENT, sequenceName = LetterToPartyDocumentCommon.SEQ_LETTERTOPARTYDOCUMENT, allocationSize = 1)
-public class LetterToPartyDocumentCommon extends AbstractAuditable {
+@Table(name = "egbpa_noc_document")
+@SequenceGenerator(name = NocDocument.SEQ_EGBPA_NOC_DOCUMENT, sequenceName = NocDocument.SEQ_EGBPA_NOC_DOCUMENT, allocationSize = 1)
+public class NocDocument extends AbstractAuditable {
 
-    public static final String SEQ_LETTERTOPARTYDOCUMENT = "seq_egbpa_lp_document_common";
-    private static final long serialVersionUID = 3665580365090675067L;
+    public static final String SEQ_EGBPA_NOC_DOCUMENT = "seq_egbpa_noc_document";
+    private static final long serialVersionUID = 6711740700667429211L;
 
     @Id
-    @GeneratedValue(generator = SEQ_LETTERTOPARTYDOCUMENT, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EGBPA_NOC_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "egbpa_lp_files_common", joinColumns = @JoinColumn(name = "lpDocument"), inverseJoinColumns = @JoinColumn(name = "filestore"))
-    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
-
-    private transient MultipartFile[] files;
+    @JoinTable(name = "egbpa_noc_document_files", joinColumns = @JoinColumn(name = "nocdocument"), inverseJoinColumns = @JoinColumn(name = "filestore"))
+    private Set<FileStoreMapper> nocSupportDocs = Collections.emptySet();
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "serviceChecklist", nullable = false)
+    @JoinColumn(name = "servicechecklist", nullable = false)
     private ChecklistServiceTypeMapping serviceChecklist;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
-    @NotNull
-    @JoinColumn(name = "lettertoParty", nullable = false)
-    private LetterToPartyCommon letterToParty;
 
     @Temporal(value = TemporalType.DATE)
     private Date submissionDate;
 
-    private Boolean isSubmitted;
-
-    private Boolean isRequested;
+    private Boolean isSubmitted = false;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "createduser")
+    @JoinColumn(name = "createdUser")
     private User createdUser;
 
-    @Length(min = 1, max = 256)
+    @Length(min = 1, max = 1000)
     private String remarks;
+
+    @Length(min = 1, max = 1000)
+    private String natureOfRequest;
+
+    @Temporal(value = TemporalType.DATE)
+    private Date letterSentOn;
+
+    @Temporal(value = TemporalType.DATE)
+    private Date replyReceivedOn;
+
+    private Boolean rejection = false;
+
+    private Boolean notApplicable = false;
+
+    @Enumerated(EnumType.STRING)
+    private NocStatus nocStatus;
+
+    private transient MultipartFile[] files;
 
     @Override
     public Long getId() {
@@ -128,12 +138,12 @@ public class LetterToPartyDocumentCommon extends AbstractAuditable {
         this.id = id;
     }
 
-    public Set<FileStoreMapper> getSupportDocs() {
-        return supportDocs;
+    public Set<FileStoreMapper> getNocSupportDocs() {
+        return nocSupportDocs;
     }
 
-    public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
-        this.supportDocs = supportDocs;
+    public void setNocSupportDocs(Set<FileStoreMapper> nocSupportDocs) {
+        this.nocSupportDocs = nocSupportDocs;
     }
 
     public MultipartFile[] getFiles() {
@@ -152,14 +162,6 @@ public class LetterToPartyDocumentCommon extends AbstractAuditable {
         this.serviceChecklist = serviceChecklist;
     }
 
-    public LetterToPartyCommon getLetterToParty() {
-        return letterToParty;
-    }
-
-    public void setLetterToParty(LetterToPartyCommon letterToParty) {
-        this.letterToParty = letterToParty;
-    }
-
     public Date getSubmissionDate() {
         return submissionDate;
     }
@@ -168,20 +170,12 @@ public class LetterToPartyDocumentCommon extends AbstractAuditable {
         this.submissionDate = submissionDate;
     }
 
-    public Boolean getIsSubmitted() {
+    public Boolean getSubmitted() {
         return isSubmitted;
     }
 
-    public void setIsSubmitted(Boolean isSubmitted) {
-        this.isSubmitted = isSubmitted;
-    }
-
-    public Boolean getIsRequested() {
-        return isRequested;
-    }
-
-    public void setIsRequested(Boolean isRequested) {
-        this.isRequested = isRequested;
+    public void setSubmitted(Boolean submitted) {
+        isSubmitted = submitted;
     }
 
     public User getCreatedUser() {
@@ -198,5 +192,53 @@ public class LetterToPartyDocumentCommon extends AbstractAuditable {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public String getNatureOfRequest() {
+        return natureOfRequest;
+    }
+
+    public void setNatureOfRequest(String natureOfRequest) {
+        this.natureOfRequest = natureOfRequest;
+    }
+
+    public Date getLetterSentOn() {
+        return letterSentOn;
+    }
+
+    public void setLetterSentOn(Date letterSentOn) {
+        this.letterSentOn = letterSentOn;
+    }
+
+    public Date getReplyReceivedOn() {
+        return replyReceivedOn;
+    }
+
+    public void setReplyReceivedOn(Date replyReceivedOn) {
+        this.replyReceivedOn = replyReceivedOn;
+    }
+
+    public Boolean getRejection() {
+        return rejection;
+    }
+
+    public void setRejection(Boolean rejection) {
+        this.rejection = rejection;
+    }
+
+    public Boolean getNotApplicable() {
+        return notApplicable;
+    }
+
+    public void setNotApplicable(Boolean notApplicable) {
+        this.notApplicable = notApplicable;
+    }
+
+    public NocStatus getNocStatus() {
+        return nocStatus;
+    }
+
+    public void setNocStatus(NocStatus nocStatus) {
+        this.nocStatus = nocStatus;
     }
 }

@@ -47,9 +47,11 @@
 
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -64,331 +66,319 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_INSPECTION_COMMON")
 @SequenceGenerator(name = InspectionCommon.SEQ_INSPECTION, sequenceName = InspectionCommon.SEQ_INSPECTION, allocationSize = 1)
 public class InspectionCommon extends AbstractAuditable {
 
-	public static final String SEQ_INSPECTION = "SEQ_EGBPA_INSPECTION_COMMON";
-	private static final long serialVersionUID = -6537197288191260269L;
+    public static final String SEQ_INSPECTION = "SEQ_EGBPA_INSPECTION_COMMON";
+    private static final long serialVersionUID = -6537197288191260269L;
+
+    @Id
+    @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @Length(min = 1, max = 64)
+    private String inspectionNumber;
+
+    @Temporal(value = TemporalType.DATE)
+    private Date inspectionDate;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent")
+    private InspectionCommon parent;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "inspectedby")
+    private User inspectedBy;
+
+    private Boolean isInspected;
+
+    @Length(min = 1, max = 1000)
+    private String inspectionRemarks;
+
+    private boolean boundaryDrawingSubmitted;
+
+    private boolean rightToMakeConstruction;
+
+    @Length(min = 1, max = 128)
+    private String typeofLand;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "inspection")
+    private List<DocketCommon> docket = new ArrayList<>();
+
+    @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL)
+    private List<InspectionFilesCommon> inspectionSupportDocs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PlanScrutinyChecklistCommon> planScrutinyChecklistForRule = new ArrayList<>(0);
+
+    @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PlanScrutinyChecklistCommon> planScrutinyChecklistForDrawing = new ArrayList<>(0);
+
+    private transient List<DocketDetailCommon> docketDetailLocList = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailAccessList = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailSurroundingPlotList = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailLandTypeList = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailProposedWorkList = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailWorkAsPerPlanList = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailHgtAbuttRoadList = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailMeasurementList = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailAreaLoc = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailLengthOfCompWall = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailNumberOfWell = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailErectionTower = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailShutter = new ArrayList<>();
+    private transient List<DocketDetailCommon> docketDetailRoofConversion = new ArrayList<>();
+    private transient List<PlanScrutinyChecklistCommon> planScrutinyChecklistForRuleTemp = new ArrayList<>(0);
+    private transient List<PlanScrutinyChecklistCommon> planScrutinyChecklistForDrawingTemp = new ArrayList<>(0);
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getInspectionNumber() {
+        return inspectionNumber;
+    }
+
+    public void setInspectionNumber(String inspectionNumber) {
+        this.inspectionNumber = inspectionNumber;
+    }
+
+    public Date getInspectionDate() {
+        return inspectionDate;
+    }
+
+    public void setInspectionDate(Date inspectionDate) {
+        this.inspectionDate = inspectionDate;
+    }
+
+    public InspectionCommon getParent() {
+        return parent;
+    }
+
+    public void setParent(InspectionCommon parent) {
+        this.parent = parent;
+    }
+
+    public User getInspectedBy() {
+        return inspectedBy;
+    }
+
+    public void setInspectedBy(User inspectedBy) {
+        this.inspectedBy = inspectedBy;
+    }
 
-	@Id
-	@GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    public Boolean getInspected() {
+        return isInspected;
+    }
 
-	@Length(min = 1, max = 64)
-	private String inspectionNumber;
+    public void setInspected(Boolean inspected) {
+        isInspected = inspected;
+    }
 
-	@Temporal(value = TemporalType.DATE)
-	private Date inspectionDate;
+    public String getInspectionRemarks() {
+        return inspectionRemarks;
+    }
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "parent")
-	private InspectionCommon parent;
+    public void setInspectionRemarks(String inspectionRemarks) {
+        this.inspectionRemarks = inspectionRemarks;
+    }
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "inspectedby")
-	private User inspectedBy;
+    public List<DocketCommon> getDocket() {
+        return docket;
+    }
 
-	private Boolean isInspected;
+    public void setDocket(List<DocketCommon> docket) {
+        this.docket = docket;
+    }
 
-	@Length(min = 1, max = 1000)
-	private String inspectionRemarks;
+    public List<InspectionFilesCommon> getInspectionSupportDocs() {
+        return inspectionSupportDocs;
+    }
 
-	private Boolean isPostponed;
+    public void setInspectionSupportDocs(List<InspectionFilesCommon> inspectionSupportDocs) {
+        this.inspectionSupportDocs = inspectionSupportDocs;
+    }
 
-	@Length(min = 1, max = 256)
-	private String postponementReason;
+    public boolean isBoundaryDrawingSubmitted() {
+        return boundaryDrawingSubmitted;
+    }
 
-	@Temporal(value = TemporalType.DATE)
-	private Date postponedDate;
+    public void setBoundaryDrawingSubmitted(boolean boundaryDrawingSubmitted) {
+        this.boundaryDrawingSubmitted = boundaryDrawingSubmitted;
+    }
 
-	private boolean boundaryDrawingSubmitted;
+    public boolean isRightToMakeConstruction() {
+        return rightToMakeConstruction;
+    }
 
-	private boolean rightToMakeConstruction;
+    public void setRightToMakeConstruction(boolean rightToMakeConstruction) {
+        this.rightToMakeConstruction = rightToMakeConstruction;
+    }
 
-	@Length(min = 1, max = 128)
-	private String typeofLand;
+    public String getTypeofLand() {
+        return typeofLand;
+    }
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "inspection")
-	private List<DocketCommon> docket = new ArrayList<>();
+    public void setTypeofLand(String typeofLand) {
+        this.typeofLand = typeofLand;
+    }
 
-	@OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL)
-	private List<InspectionFilesCommon> inspectionSupportDocs = new ArrayList<>();
+    public List<DocketDetailCommon> getDocketDetailLocList() {
+        return docketDetailLocList;
+    }
 
-	@OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<PlanScrutinyChecklistCommon> planScrutinyChecklist = new ArrayList<>(0);
+    public void setDocketDetailLocList(List<DocketDetailCommon> docketDetailLocList) {
+        this.docketDetailLocList = docketDetailLocList;
+    }
 
-	private transient List<DocketDetailCommon> docketDetailLocList = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailAccessList = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailSurroundingPlotList = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailLandTypeList = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailProposedWorkList = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailWorkAsPerPlanList = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailHgtAbuttRoadList = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailMeasurementList = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailAreaLoc = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailLengthOfCompWall = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailNumberOfWell = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailErectionTower = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailShutter = new ArrayList<>();
-	private transient List<DocketDetailCommon> docketDetailRoofConversion = new ArrayList<>();
-	private transient Map<Long, String> encodedImages = new HashMap<>();
+    public List<DocketDetailCommon> getDocketDetailAccessList() {
+        return docketDetailAccessList;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    public void setDocketDetailAccessList(List<DocketDetailCommon> docketDetailAccessList) {
+        this.docketDetailAccessList = docketDetailAccessList;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public List<DocketDetailCommon> getDocketDetailSurroundingPlotList() {
+        return docketDetailSurroundingPlotList;
+    }
 
-	public String getInspectionNumber() {
-		return inspectionNumber;
-	}
+    public void setDocketDetailSurroundingPlotList(List<DocketDetailCommon> docketDetailSurroundingPlotList) {
+        this.docketDetailSurroundingPlotList = docketDetailSurroundingPlotList;
+    }
 
-	public void setInspectionNumber(String inspectionNumber) {
-		this.inspectionNumber = inspectionNumber;
-	}
+    public List<DocketDetailCommon> getDocketDetailLandTypeList() {
+        return docketDetailLandTypeList;
+    }
 
-	public Date getInspectionDate() {
-		return inspectionDate;
-	}
+    public void setDocketDetailLandTypeList(List<DocketDetailCommon> docketDetailLandTypeList) {
+        this.docketDetailLandTypeList = docketDetailLandTypeList;
+    }
 
-	public void setInspectionDate(Date inspectionDate) {
-		this.inspectionDate = inspectionDate;
-	}
+    public List<DocketDetailCommon> getDocketDetailProposedWorkList() {
+        return docketDetailProposedWorkList;
+    }
 
-	public InspectionCommon getParent() {
-		return parent;
-	}
+    public void setDocketDetailProposedWorkList(List<DocketDetailCommon> docketDetailProposedWorkList) {
+        this.docketDetailProposedWorkList = docketDetailProposedWorkList;
+    }
 
-	public void setParent(InspectionCommon parent) {
-		this.parent = parent;
-	}
+    public List<DocketDetailCommon> getDocketDetailWorkAsPerPlanList() {
+        return docketDetailWorkAsPerPlanList;
+    }
 
-	public User getInspectedBy() {
-		return inspectedBy;
-	}
+    public void setDocketDetailWorkAsPerPlanList(List<DocketDetailCommon> docketDetailWorkAsPerPlanList) {
+        this.docketDetailWorkAsPerPlanList = docketDetailWorkAsPerPlanList;
+    }
 
-	public void setInspectedBy(User inspectedBy) {
-		this.inspectedBy = inspectedBy;
-	}
+    public List<DocketDetailCommon> getDocketDetailHgtAbuttRoadList() {
+        return docketDetailHgtAbuttRoadList;
+    }
 
-	public Boolean getInspected() {
-		return isInspected;
-	}
+    public void setDocketDetailHgtAbuttRoadList(List<DocketDetailCommon> docketDetailHgtAbuttRoadList) {
+        this.docketDetailHgtAbuttRoadList = docketDetailHgtAbuttRoadList;
+    }
 
-	public void setInspected(Boolean inspected) {
-		isInspected = inspected;
-	}
+    public List<DocketDetailCommon> getDocketDetailMeasurementList() {
+        return docketDetailMeasurementList;
+    }
 
-	public String getInspectionRemarks() {
-		return inspectionRemarks;
-	}
+    public void setDocketDetailMeasurementList(List<DocketDetailCommon> docketDetailMeasurementList) {
+        this.docketDetailMeasurementList = docketDetailMeasurementList;
+    }
 
-	public void setInspectionRemarks(String inspectionRemarks) {
-		this.inspectionRemarks = inspectionRemarks;
-	}
+    public List<DocketDetailCommon> getDocketDetailAreaLoc() {
+        return docketDetailAreaLoc;
+    }
 
-	public Boolean getPostponed() {
-		return isPostponed;
-	}
+    public void setDocketDetailAreaLoc(List<DocketDetailCommon> docketDetailAreaLoc) {
+        this.docketDetailAreaLoc = docketDetailAreaLoc;
+    }
 
-	public void setPostponed(Boolean postponed) {
-		isPostponed = postponed;
-	}
+    public List<DocketDetailCommon> getDocketDetailLengthOfCompWall() {
+        return docketDetailLengthOfCompWall;
+    }
 
-	public String getPostponementReason() {
-		return postponementReason;
-	}
+    public void setDocketDetailLengthOfCompWall(List<DocketDetailCommon> docketDetailLengthOfCompWall) {
+        this.docketDetailLengthOfCompWall = docketDetailLengthOfCompWall;
+    }
 
-	public void setPostponementReason(String postponementReason) {
-		this.postponementReason = postponementReason;
-	}
+    public List<DocketDetailCommon> getDocketDetailNumberOfWell() {
+        return docketDetailNumberOfWell;
+    }
 
-	public Date getPostponedDate() {
-		return postponedDate;
-	}
+    public void setDocketDetailNumberOfWell(List<DocketDetailCommon> docketDetailNumberOfWell) {
+        this.docketDetailNumberOfWell = docketDetailNumberOfWell;
+    }
 
-	public void setPostponedDate(Date postponedDate) {
-		this.postponedDate = postponedDate;
-	}
+    public List<DocketDetailCommon> getDocketDetailErectionTower() {
+        return docketDetailErectionTower;
+    }
 
-	public List<DocketCommon> getDocket() {
-		return docket;
-	}
+    public void setDocketDetailErectionTower(List<DocketDetailCommon> docketDetailErectionTower) {
+        this.docketDetailErectionTower = docketDetailErectionTower;
+    }
 
-	public void setDocket(List<DocketCommon> docket) {
-		this.docket = docket;
-	}
+    public List<DocketDetailCommon> getDocketDetailShutter() {
+        return docketDetailShutter;
+    }
 
-	public List<InspectionFilesCommon> getInspectionSupportDocs() {
-		return inspectionSupportDocs;
-	}
+    public void setDocketDetailShutter(List<DocketDetailCommon> docketDetailShutter) {
+        this.docketDetailShutter = docketDetailShutter;
+    }
 
-	public void setInspectionSupportDocs(List<InspectionFilesCommon> inspectionSupportDocs) {
-		this.inspectionSupportDocs = inspectionSupportDocs;
-	}
+    public List<DocketDetailCommon> getDocketDetailRoofConversion() {
+        return docketDetailRoofConversion;
+    }
 
-	public boolean isBoundaryDrawingSubmitted() {
-		return boundaryDrawingSubmitted;
-	}
+    public void setDocketDetailRoofConversion(List<DocketDetailCommon> docketDetailRoofConversion) {
+        this.docketDetailRoofConversion = docketDetailRoofConversion;
+    }
 
-	public void setBoundaryDrawingSubmitted(boolean boundaryDrawingSubmitted) {
-		this.boundaryDrawingSubmitted = boundaryDrawingSubmitted;
-	}
+    public List<PlanScrutinyChecklistCommon> getPlanScrutinyChecklistForRule() {
+        return planScrutinyChecklistForRule;
+    }
 
-	public boolean isRightToMakeConstruction() {
-		return rightToMakeConstruction;
-	}
+    public void setPlanScrutinyChecklistForRule(List<PlanScrutinyChecklistCommon> planScrutinyChecklistForRule) {
+        this.planScrutinyChecklistForRule = planScrutinyChecklistForRule;
+    }
 
-	public void setRightToMakeConstruction(boolean rightToMakeConstruction) {
-		this.rightToMakeConstruction = rightToMakeConstruction;
-	}
+    public List<PlanScrutinyChecklistCommon> getPlanScrutinyChecklistForDrawing() {
+        return planScrutinyChecklistForDrawing;
+    }
 
-	public String getTypeofLand() {
-		return typeofLand;
-	}
+    public void setPlanScrutinyChecklistForDrawing(List<PlanScrutinyChecklistCommon> planScrutinyChecklistForDrawing) {
+        this.planScrutinyChecklistForDrawing = planScrutinyChecklistForDrawing;
+    }
 
-	public void setTypeofLand(String typeofLand) {
-		this.typeofLand = typeofLand;
-	}
+    public List<PlanScrutinyChecklistCommon> getPlanScrutinyChecklistForRuleTemp() {
+        return planScrutinyChecklistForRuleTemp;
+    }
 
-	public List<DocketDetailCommon> getDocketDetailLocList() {
-		return docketDetailLocList;
-	}
+    public void setPlanScrutinyChecklistForRuleTemp(List<PlanScrutinyChecklistCommon> planScrutinyChecklistForRuleTemp) {
+        this.planScrutinyChecklistForRuleTemp = planScrutinyChecklistForRuleTemp;
+    }
 
-	public void setDocketDetailLocList(List<DocketDetailCommon> docketDetailLocList) {
-		this.docketDetailLocList = docketDetailLocList;
-	}
+    public List<PlanScrutinyChecklistCommon> getPlanScrutinyChecklistForDrawingTemp() {
+        return planScrutinyChecklistForDrawingTemp;
+    }
 
-	public List<DocketDetailCommon> getDocketDetailAccessList() {
-		return docketDetailAccessList;
-	}
+    public void setPlanScrutinyChecklistForDrawingTemp(List<PlanScrutinyChecklistCommon> planScrutinyChecklistForDrawingTemp) {
+        this.planScrutinyChecklistForDrawingTemp = planScrutinyChecklistForDrawingTemp;
+    }
 
-	public void setDocketDetailAccessList(List<DocketDetailCommon> docketDetailAccessList) {
-		this.docketDetailAccessList = docketDetailAccessList;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailSurroundingPlotList() {
-		return docketDetailSurroundingPlotList;
-	}
-
-	public void setDocketDetailSurroundingPlotList(List<DocketDetailCommon> docketDetailSurroundingPlotList) {
-		this.docketDetailSurroundingPlotList = docketDetailSurroundingPlotList;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailLandTypeList() {
-		return docketDetailLandTypeList;
-	}
-
-	public void setDocketDetailLandTypeList(List<DocketDetailCommon> docketDetailLandTypeList) {
-		this.docketDetailLandTypeList = docketDetailLandTypeList;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailProposedWorkList() {
-		return docketDetailProposedWorkList;
-	}
-
-	public void setDocketDetailProposedWorkList(List<DocketDetailCommon> docketDetailProposedWorkList) {
-		this.docketDetailProposedWorkList = docketDetailProposedWorkList;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailWorkAsPerPlanList() {
-		return docketDetailWorkAsPerPlanList;
-	}
-
-	public void setDocketDetailWorkAsPerPlanList(List<DocketDetailCommon> docketDetailWorkAsPerPlanList) {
-		this.docketDetailWorkAsPerPlanList = docketDetailWorkAsPerPlanList;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailHgtAbuttRoadList() {
-		return docketDetailHgtAbuttRoadList;
-	}
-
-	public void setDocketDetailHgtAbuttRoadList(List<DocketDetailCommon> docketDetailHgtAbuttRoadList) {
-		this.docketDetailHgtAbuttRoadList = docketDetailHgtAbuttRoadList;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailMeasurementList() {
-		return docketDetailMeasurementList;
-	}
-
-	public void setDocketDetailMeasurementList(List<DocketDetailCommon> docketDetailMeasurementList) {
-		this.docketDetailMeasurementList = docketDetailMeasurementList;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailAreaLoc() {
-		return docketDetailAreaLoc;
-	}
-
-	public void setDocketDetailAreaLoc(List<DocketDetailCommon> docketDetailAreaLoc) {
-		this.docketDetailAreaLoc = docketDetailAreaLoc;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailLengthOfCompWall() {
-		return docketDetailLengthOfCompWall;
-	}
-
-	public void setDocketDetailLengthOfCompWall(List<DocketDetailCommon> docketDetailLengthOfCompWall) {
-		this.docketDetailLengthOfCompWall = docketDetailLengthOfCompWall;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailNumberOfWell() {
-		return docketDetailNumberOfWell;
-	}
-
-	public void setDocketDetailNumberOfWell(List<DocketDetailCommon> docketDetailNumberOfWell) {
-		this.docketDetailNumberOfWell = docketDetailNumberOfWell;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailErectionTower() {
-		return docketDetailErectionTower;
-	}
-
-	public void setDocketDetailErectionTower(List<DocketDetailCommon> docketDetailErectionTower) {
-		this.docketDetailErectionTower = docketDetailErectionTower;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailShutter() {
-		return docketDetailShutter;
-	}
-
-	public void setDocketDetailShutter(List<DocketDetailCommon> docketDetailShutter) {
-		this.docketDetailShutter = docketDetailShutter;
-	}
-
-	public List<DocketDetailCommon> getDocketDetailRoofConversion() {
-		return docketDetailRoofConversion;
-	}
-
-	public void setDocketDetailRoofConversion(List<DocketDetailCommon> docketDetailRoofConversion) {
-		this.docketDetailRoofConversion = docketDetailRoofConversion;
-	}
-
-	public Map<Long, String> getEncodedImages() {
-		return encodedImages;
-	}
-
-	public void setEncodedImages(Map<Long, String> encodedImages) {
-		this.encodedImages = encodedImages;
-	}
-
-	public List<PlanScrutinyChecklistCommon> getPlanScrutinyChecklist() {
-		return planScrutinyChecklist;
-	}
-
-	public void setPlanScrutinyChecklist(List<PlanScrutinyChecklistCommon> planScrutinyChecklist) {
-		this.planScrutinyChecklist = planScrutinyChecklist;
-	}
 }

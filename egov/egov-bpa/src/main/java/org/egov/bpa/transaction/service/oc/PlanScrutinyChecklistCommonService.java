@@ -41,27 +41,28 @@ package org.egov.bpa.transaction.service.oc;
 
 import java.util.List;
 
+import org.egov.bpa.transaction.entity.common.InspectionCommon;
+import org.egov.bpa.transaction.entity.common.PlanScrutinyChecklistCommon;
 import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
-import org.egov.bpa.transaction.entity.oc.OCInspection;
-import org.egov.bpa.transaction.entity.oc.OCPlanScrutinyChecklist;
-import org.egov.bpa.transaction.repository.oc.OCPlanScrutinyChecklistRepository;
+import org.egov.bpa.transaction.repository.oc.PlanScrutinyChecklistCommonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class OCPlanScrutinyChecklistService {
+public class PlanScrutinyChecklistCommonService {
 
-	@Autowired
-	private OCPlanScrutinyChecklistRepository planScrutinyChecklistRepository;
+    @Autowired
+    private PlanScrutinyChecklistCommonRepository planScrutinyChecklistRepository;
 
-	public List<OCPlanScrutinyChecklist> findByInspectionAndScrutinyChecklistType(final OCInspection inspection, final ScrutinyChecklistType type) {
-		return planScrutinyChecklistRepository.findByInspectionAndScrutinyChecklistTypeOrderByIdAsc(inspection, type);
-	}
+    public List<PlanScrutinyChecklistCommon> findByInspectionAndScrutinyChecklistType(final InspectionCommon inspection,
+            final ScrutinyChecklistType type) {
+        return planScrutinyChecklistRepository.findByInspectionAndScrutinyChecklistTypeOrderByIdAsc(inspection, type);
+    }
 
-	public void delete(List<OCPlanScrutinyChecklist> planScrutinyChecklists) {
-		planScrutinyChecklistRepository.deleteInBatch(planScrutinyChecklists);
-	}
+    public void delete(List<PlanScrutinyChecklistCommon> planScrutinyChecklists) {
+        planScrutinyChecklistRepository.deleteInBatch(planScrutinyChecklists);
+    }
 
 }

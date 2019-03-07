@@ -39,33 +39,6 @@
  */
 package org.egov.bpa.transaction.service;
 
-import org.apache.log4j.Logger;
-import org.egov.bpa.autonumber.InspectionNumberGenerator;
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.bpa.master.service.CheckListDetailService;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.Docket;
-import org.egov.bpa.transaction.entity.DocketDetail;
-import org.egov.bpa.transaction.entity.Inspection;
-import org.egov.bpa.transaction.repository.InspectionRepository;
-import org.egov.bpa.utils.BpaConstants;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,354 +50,385 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.log4j.Logger;
+import org.egov.bpa.autonumber.InspectionNumberGenerator;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
+import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.PermitInspection;
+import org.egov.bpa.transaction.entity.common.DocketCommon;
+import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
+import org.egov.bpa.transaction.entity.common.InspectionCommon;
+import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
+import org.egov.bpa.transaction.repository.InspectionRepository;
+import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
+
 @Service
 @Transactional(readOnly = true)
 public class InspectionService {
 
-	private static final Logger LOGGER = Logger.getLogger(InspectionService.class);
+    private static final Logger LOGGER = Logger.getLogger(InspectionService.class);
 
-	@Autowired
-	private CheckListDetailService checkListDetailService;
-	@Autowired
-	private AutonumberServiceBeanResolver beanResolver;
-	@Autowired
-	private UserService userService;
-	@PersistenceContext
-	private EntityManager entityManager;
-	@Autowired
-	private InspectionRepository inspectionRepository;
-	@Autowired
-	private FileStoreService fileStoreService;
-	@Autowired
-	private ApplicationBpaService applicationBpaService;
-	@Autowired
-	private PlanScrutinyChecklistService planScrutinyChecklistService;
-	
-	public Inspection findById(Long id)
-	{
-	    return inspectionRepository.getOne(id);
-	}
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @Autowired
+    private ChecklistServicetypeMappingService checklistServicetypeMappingService;
+    @Autowired
+    private AutonumberServiceBeanResolver beanResolver;
+    @Autowired
+    private UserService userService;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private InspectionRepository inspectionRepository;
+    @Autowired
+    private FileStoreService fileStoreService;
+    @Autowired
+    private ApplicationBpaService applicationBpaService;
+    @Autowired
+    private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
 
-	@Transactional
-	public Inspection save(final Inspection inspection, final BpaApplication application) {
-		User currentUser = null;
-		if (inspection.getId() == null) {
-			if (ApplicationThreadLocals.getUserId() != null)
-				currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
+    public PermitInspection findById(Long id) {
+        return inspectionRepository.getOne(id);
+    }
 
-			inspection.setInspectedBy(currentUser);
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-			inspection.setInspectionNumber(generateInspectionNumber());
-		}
-		if (inspection.getInspectionDate() == null)
-			inspection.setInspectionDate(new Date());
-		buildInspectionFiles(inspection);
-		buildPlanScrutinyChecklistItems(inspection);
-		inspection.setApplication(application);
-		inspection.getDocket().get(0).setInspection(inspection);
-		buildDocketDetails(inspection.getDocket().get(0));
-		return inspectionRepository.save(inspection);
-	}
+    @Transactional
+    public PermitInspection save(final PermitInspection permitInspn, final BpaApplication application) {
+        User currentUser = null;
+        if (permitInspn.getId() == null) {
+            if (ApplicationThreadLocals.getUserId() != null)
+                currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
 
-	private void buildPlanScrutinyChecklistItems(final Inspection inspection) {
-		if(!inspection.getPlanScrutinyChecklistTemp().isEmpty() && !inspection.getPlanScrutinyChecklistForDrawingTemp().isEmpty()) {
-			planScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklist());
-			planScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklistForDrawing());
-			inspection.getPlanScrutinyChecklist().clear();
-			inspection.getPlanScrutinyChecklistForDrawing().clear();
-			inspection.setPlanScrutinyChecklist(inspection.getPlanScrutinyChecklistTemp());
-			inspection.setPlanScrutinyChecklistForDrawing(inspection.getPlanScrutinyChecklistForDrawingTemp());
-			inspection.getPlanScrutinyChecklist().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
-			inspection.getPlanScrutinyChecklistForDrawing().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
-		}
-	}
+            permitInspn.getInspection().setInspectedBy(currentUser);
 
-	private void buildInspectionFiles(Inspection inspection) {
-		if (inspection.getFiles() != null && inspection.getFiles().length > 0) {
-			Set<FileStoreMapper> existingInsnFiles = new HashSet<>();
-			existingInsnFiles.addAll(inspection.getInspectionSupportDocs());
-			existingInsnFiles.addAll(applicationBpaService.addToFileStore(inspection.getFiles()));
-			inspection.setInspectionSupportDocs(existingInsnFiles);
-		}
-	}
+            permitInspn.getInspection().setInspectionNumber(generateInspectionNumber());
+        }
+        if (permitInspn.getInspection().getInspectionDate() == null)
+            permitInspn.getInspection().setInspectionDate(new Date());
+        buildInspectionFiles(permitInspn.getInspection());
+        buildPlanScrutinyChecklistItems(permitInspn);
+        permitInspn.setApplication(application);
+        permitInspn.getInspection().getDocket().get(0).setInspection(permitInspn.getInspection());
+        buildDocketDetails(permitInspn.getInspection().getDocket().get(0));
+        return inspectionRepository.save(permitInspn);
+    }
 
-	public List<Inspection> findByIdOrderByIdAsc(final Long id) {
-		return inspectionRepository.findByIdOrderByIdAsc(id);
-	}
+    private void buildPlanScrutinyChecklistItems(final PermitInspection permitInspn) {
+        InspectionCommon inspection = permitInspn.getInspection();
+        if (!inspection.getPlanScrutinyChecklistForRuleTemp().isEmpty()
+                && !inspection.getPlanScrutinyChecklistForDrawingTemp().isEmpty()) {
+            planScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklistForRule());
+            planScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklistForDrawing());
+            inspection.getPlanScrutinyChecklistForRule().clear();
+            inspection.getPlanScrutinyChecklistForDrawing().clear();
+            inspection.setPlanScrutinyChecklistForRule(inspection.getPlanScrutinyChecklistForRuleTemp());
+            inspection.setPlanScrutinyChecklistForDrawing(inspection.getPlanScrutinyChecklistForDrawingTemp());
+            inspection.getPlanScrutinyChecklistForRule().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
+            inspection.getPlanScrutinyChecklistForDrawing().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
+        }
+    }
 
-	public List<Inspection> findByBpaApplicationOrderByIdAsc(final BpaApplication application) {
-		return inspectionRepository.findByApplicationOrderByIdDesc(application);
-	}
+    private void buildInspectionFiles(InspectionCommon inspection) {
+        if (!inspection.getInspectionSupportDocs().isEmpty())
+            for (InspectionFilesCommon filesCommon : inspection.getInspectionSupportDocs()) {
+                filesCommon.setInspection(inspection);
+                buildInspectionFiles(filesCommon);
+            }
+    }
 
-	private String generateInspectionNumber() {
-		final InspectionNumberGenerator inspectionNUmber = beanResolver
-				.getAutoNumberServiceFor(InspectionNumberGenerator.class);
-		return inspectionNUmber.generateInspectionNumber("INSP");
-	}
+    private void buildInspectionFiles(final InspectionFilesCommon inspectionFiles) {
+        if (inspectionFiles.getFiles() != null && inspectionFiles.getFiles().length > 0) {
+            Set<FileStoreMapper> existingFiles = new HashSet<>();
+            existingFiles.addAll(inspectionFiles.getImages());
+            existingFiles.addAll(applicationBpaService.addToFileStore(inspectionFiles.getFiles()));
+            inspectionFiles.setImages(existingFiles);
+        }
+    }
 
-	public Docket buildDocketDetails(final Docket docket) {
-		for (final DocketDetail dd : docket.getDocketDetail()) {
-			final CheckListDetail checkdet = checkListDetailService.findOne(dd.getCheckListDetail().getId());
-			dd.setCheckListDetail(checkdet);
-			dd.setDocket(docket);
-		}
-		return docket;
+    public List<PermitInspection> findByIdOrderByIdAsc(final Long id) {
+        return inspectionRepository.findByIdOrderByIdAsc(id);
+    }
 
-	}
+    public List<PermitInspection> findByBpaApplicationOrderByIdAsc(final BpaApplication application) {
+        return inspectionRepository.findByApplicationOrderByIdDesc(application);
+    }
 
-	public List<Docket> buildDocDetFromUI(final Inspection inspection) {
-		List<Docket> docket = new ArrayList<>();
-		Docket docObject = new Docket();
-		final List<DocketDetail> docketDetailList = buildDocketDetail(inspection);
-		docObject.setDocketDetail(docketDetailList);
-		docket.add(docObject);
-		return docket;
-	}
+    private String generateInspectionNumber() {
+        final InspectionNumberGenerator inspectionNUmber = beanResolver
+                .getAutoNumberServiceFor(InspectionNumberGenerator.class);
+        return inspectionNUmber.generateInspectionNumber("INSP");
+    }
 
-	public List<DocketDetail> buildDocketDetail(final Inspection inspection) {
-		final List<DocketDetail> docketDetailList = new ArrayList<>();
-		docketDetailList.addAll(inspection.getDocketDetailLocList());
-		docketDetailList.addAll(inspection.getDocketDetailMeasumentList());
-		docketDetailList.addAll(inspection.getDocketDetailAccessList());
-		docketDetailList.addAll(inspection.getDocketDetlSurroundingPlotList());
-		docketDetailList.addAll(inspection.getDocketDetailLandTypeList());
-		docketDetailList.addAll(inspection.getDocketDetailProposedWorkList());
-		docketDetailList.addAll(inspection.getDocketDetailWorkAsPerPlanList());
-		docketDetailList.addAll(inspection.getDocketDetailHgtAbuttRoadList());
-		docketDetailList.addAll(inspection.getDocketDetailAreaLoc());
-		docketDetailList.addAll(inspection.getDocketDetailLengthOfCompWall());
-		docketDetailList.addAll(inspection.getDocketDetailNumberOfWell());
-		docketDetailList.addAll(inspection.getDocketDetailErectionTower());
-		docketDetailList.addAll(inspection.getDocketDetailShutter());
-		docketDetailList.addAll(inspection.getDocketDetailRoofConversion());
-		return docketDetailList;
-	}
+    public DocketCommon buildDocketDetails(final DocketCommon docket) {
+        for (final DocketDetailCommon dd : docket.getDocketDetail()) {
+            final ChecklistServiceTypeMapping checkdet = checklistServicetypeMappingService
+                    .load(dd.getServiceChecklist().getId());
+            dd.setServiceChecklist(checkdet);
+            dd.setDocket(docket);
+        }
+        return docket;
 
-	@SuppressWarnings("unchecked")
-	public void buildDocketDetailList(Inspection inspection) {
-		List<DocketDetail> docketTempLocList = new ArrayList<>();
-		List<DocketDetail> docketTempMeasumentList = new ArrayList<>();
-		List<DocketDetail> docketTempAccessList = new ArrayList<>();
-		List<DocketDetail> docketTempSurroundingList = new ArrayList<>();
-		List<DocketDetail> docketTempLandList = new ArrayList<>();
-		List<DocketDetail> docketTempProposedWorkList = new ArrayList<>();
-		List<DocketDetail> docketTempWorkAsPerPlanList = new ArrayList<>();
-		List<DocketDetail> docketTempAbbuteRoadList = new ArrayList<>();
-		List<DocketDetail> docketTempAreaLoc = new ArrayList<>();
-		List<DocketDetail> docketTempLengthOfCompoundWall = new ArrayList<>();
-		List<DocketDetail> docketTempNumberofWell = new ArrayList<>();
-		List<DocketDetail> docketTempShutter = new ArrayList<>();
-		List<DocketDetail> docketTempErectionofTower = new ArrayList<>();
-		List<DocketDetail> docketTempRoofConv = new ArrayList<>();
-		Criteria criteriaLoc = getCheckListByServiceAndType(BpaConstants.INSPECTIONLOCATION);
-		Criteria criteriaMeasur = getCheckListByServiceAndType(BpaConstants.INSPECTIONMEASUREMENT);
-		Criteria criteriaAccess = getCheckListByServiceAndType(BpaConstants.INSPECTIONACCESS);
-		Criteria criteriaSurrounding = getCheckListByServiceAndType(BpaConstants.INSPECTIONSURROUNDING);
-		Criteria criteriaTypeofLand = getCheckListByServiceAndType(BpaConstants.INSPECTIONTYPEOFLAND);
-		Criteria criteriaProposedStage = getCheckListByServiceAndType(BpaConstants.INSPECTIONPROPOSEDSTAGEWORK);
-		Criteria criteriaWorkPerPlan = getCheckListByServiceAndType(BpaConstants.INSPECTIONWORKCOMPLETEDPERPLAN);
-		Criteria criteriaHgtAbutRoad = getCheckListByServiceAndType(BpaConstants.INSPECTIONHGTBUILDABUTROAD);
-		Criteria criteriaAreaLoc = getCheckListByServiceAndType(BpaConstants.INSPECTIONAREALOC);
-		Criteria criteriaLengthOfCompoundWall = getCheckListByServiceAndType(BpaConstants.INSPECTIONLENGTHOFCOMPOUNDWALL);
-		Criteria criteriaNumberofWell = getCheckListByServiceAndType(BpaConstants.INSPECTIONNUMBEROFWELLS);
-		Criteria criteriaShutter = getCheckListByServiceAndType(BpaConstants.INSPECTIONSHUTTER);
-		Criteria criteriaErectionofTower = getCheckListByServiceAndType(BpaConstants.INSPECTIONERECTIONOFTOWER);
-		Criteria criteriaRoofConv = getCheckListByServiceAndType(BpaConstants.INSPECTIONROOFCONVERSION);
-		List<CheckListDetail> inspectionCheckList = criteriaLoc.list();
-		List<CheckListDetail> inspectionCheckList2 = criteriaMeasur.list();
-		List<CheckListDetail> inspectionCheckList3 = criteriaAccess.list();
-		List<CheckListDetail> inspectionCheckList4 = criteriaSurrounding.list();
-		List<CheckListDetail> inspectionCheckList5 = criteriaTypeofLand.list();
-		List<CheckListDetail> inspectionCheckList6 = criteriaProposedStage.list();
-		List<CheckListDetail> inspectionCheckList7 = criteriaWorkPerPlan.list();
-		List<CheckListDetail> inspectionCheckList8 = criteriaHgtAbutRoad.list();
-		List<CheckListDetail> inspectionCheckAreaLoc = criteriaAreaLoc.list();
-		List<CheckListDetail> inspectionCheckLenCompound = criteriaLengthOfCompoundWall.list();
-		List<CheckListDetail> inspectionCheckNumberofWell = criteriaNumberofWell.list();
-		List<CheckListDetail> inspectionCheckErectionOfTower = criteriaErectionofTower.list();
-		List<CheckListDetail> inspectionCheckShutter = criteriaShutter.list();
-		List<CheckListDetail> inspectionCheckRoofCnv = criteriaRoofConv.list();
+    }
 
-		for (final CheckListDetail checkDet : inspectionCheckList) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempLocList.add(docdet);
-		}
-		for (final CheckListDetail checkDet : inspectionCheckList2) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempMeasumentList.add(docdet);
-		}
-		for (final CheckListDetail checkDet : inspectionCheckList3) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempAccessList.add(docdet);
-		}
+    public List<DocketCommon> buildDocDetFromUI(final PermitInspection inspection) {
+        List<DocketCommon> docket = new ArrayList<>();
+        DocketCommon docObject = new DocketCommon();
+        final List<DocketDetailCommon> docketDetailList = buildDocketDetail(inspection.getInspection());
+        docObject.setDocketDetail(docketDetailList);
+        docket.add(docObject);
+        return docket;
+    }
 
-		for (final CheckListDetail checkDet : inspectionCheckList4) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempSurroundingList.add(docdet);
-		}
-		for (final CheckListDetail checkDet : inspectionCheckList5) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempLandList.add(docdet);
-		}
+    public List<DocketDetailCommon> buildDocketDetail(final InspectionCommon inspection) {
+        final List<DocketDetailCommon> docketDetailList = new ArrayList<>();
+        docketDetailList.addAll(inspection.getDocketDetailLocList());
+        docketDetailList.addAll(inspection.getDocketDetailMeasurementList());
+        docketDetailList.addAll(inspection.getDocketDetailAccessList());
+        docketDetailList.addAll(inspection.getDocketDetailSurroundingPlotList());
+        docketDetailList.addAll(inspection.getDocketDetailLandTypeList());
+        docketDetailList.addAll(inspection.getDocketDetailProposedWorkList());
+        docketDetailList.addAll(inspection.getDocketDetailWorkAsPerPlanList());
+        docketDetailList.addAll(inspection.getDocketDetailHgtAbuttRoadList());
+        docketDetailList.addAll(inspection.getDocketDetailAreaLoc());
+        docketDetailList.addAll(inspection.getDocketDetailLengthOfCompWall());
+        docketDetailList.addAll(inspection.getDocketDetailNumberOfWell());
+        docketDetailList.addAll(inspection.getDocketDetailErectionTower());
+        docketDetailList.addAll(inspection.getDocketDetailShutter());
+        docketDetailList.addAll(inspection.getDocketDetailRoofConversion());
+        return docketDetailList;
+    }
 
-		for (final CheckListDetail checkDet : inspectionCheckList6) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempProposedWorkList.add(docdet);
-		}
+    public void buildDocketDetailList(PermitInspection inspection, Long serviceTypeId) {
+        List<DocketDetailCommon> docketTempLocList = new ArrayList<>();
+        List<DocketDetailCommon> docketTempMeasumentList = new ArrayList<>();
+        List<DocketDetailCommon> docketTempAccessList = new ArrayList<>();
+        List<DocketDetailCommon> docketTempSurroundingList = new ArrayList<>();
+        List<DocketDetailCommon> docketTempLandList = new ArrayList<>();
+        List<DocketDetailCommon> docketTempProposedWorkList = new ArrayList<>();
+        List<DocketDetailCommon> docketTempWorkAsPerPlanList = new ArrayList<>();
+        List<DocketDetailCommon> docketTempAbbuteRoadList = new ArrayList<>();
+        List<DocketDetailCommon> docketTempAreaLoc = new ArrayList<>();
+        List<DocketDetailCommon> docketTempLengthOfCompoundWall = new ArrayList<>();
+        List<DocketDetailCommon> docketTempNumberofWell = new ArrayList<>();
+        List<DocketDetailCommon> docketTempShutter = new ArrayList<>();
+        List<DocketDetailCommon> docketTempErectionofTower = new ArrayList<>();
+        List<DocketDetailCommon> docketTempRoofConv = new ArrayList<>();
+        List<ChecklistServiceTypeMapping> inspectionCheckLocation = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONLOCATION);
+        List<ChecklistServiceTypeMapping> inspectionCheckMeasurement = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONMEASUREMENT);
+        List<ChecklistServiceTypeMapping> inspectionCheckAccess = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONACCESS);
+        List<ChecklistServiceTypeMapping> inspectionCheckSurround = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONSURROUNDING);
+        List<ChecklistServiceTypeMapping> inspectionCheckTypeOfLand = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONTYPEOFLAND);
+        List<ChecklistServiceTypeMapping> inspectionCheckPropsedStageWork = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONPROPOSEDSTAGEWORK);
+        List<ChecklistServiceTypeMapping> inspectionCheckWorkCmpltdPlan = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONWORKCOMPLETEDPERPLAN);
+        List<ChecklistServiceTypeMapping> inspectionCheckHgtAbutRoad = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONHGTBUILDABUTROAD);
+        List<ChecklistServiceTypeMapping> inspectionCheckAreaLoc = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONAREALOC);
+        List<ChecklistServiceTypeMapping> inspectionCheckLenCompound = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONLENGTHOFCOMPOUNDWALL);
+        List<ChecklistServiceTypeMapping> inspectionCheckNumberofWell = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONNUMBEROFWELLS);
+        List<ChecklistServiceTypeMapping> inspectionCheckErectionOfTower = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONERECTIONOFTOWER);
+        List<ChecklistServiceTypeMapping> inspectionCheckShutter = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONSHUTTER);
+        List<ChecklistServiceTypeMapping> inspectionCheckRoofCnv = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.INSPECTIONROOFCONVERSION);
 
-		for (final CheckListDetail checkDet : inspectionCheckList7) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempWorkAsPerPlanList.add(docdet);
-		}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckLocation) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempLocList.add(docdet);
+        }
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckMeasurement) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempMeasumentList.add(docdet);
+        }
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckAccess) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempAccessList.add(docdet);
+        }
 
-		for (final CheckListDetail checkDet : inspectionCheckList8) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempAbbuteRoadList.add(docdet);
-		}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckSurround) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempSurroundingList.add(docdet);
+        }
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckTypeOfLand) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempLandList.add(docdet);
+        }
 
-		for (final CheckListDetail checkDet : inspectionCheckAreaLoc) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempAreaLoc.add(docdet);
-		}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckPropsedStageWork) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempProposedWorkList.add(docdet);
+        }
 
-		for (final CheckListDetail checkDet : inspectionCheckLenCompound) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempLengthOfCompoundWall.add(docdet);
-		}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckWorkCmpltdPlan) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempWorkAsPerPlanList.add(docdet);
+        }
 
-		for (final CheckListDetail checkDet : inspectionCheckNumberofWell) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempNumberofWell.add(docdet);
-		}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckHgtAbutRoad) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempAbbuteRoadList.add(docdet);
+        }
 
-		for (final CheckListDetail checkDet : inspectionCheckErectionOfTower) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempErectionofTower.add(docdet);
-		}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckAreaLoc) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempAreaLoc.add(docdet);
+        }
 
-		for (final CheckListDetail checkDet : inspectionCheckRoofCnv) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempRoofConv.add(docdet);
-		}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckLenCompound) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempLengthOfCompoundWall.add(docdet);
+        }
 
-		for (final CheckListDetail checkDet : inspectionCheckShutter) {
-			final DocketDetail docdet = createDocketDetailObject(checkDet);
-			docketTempShutter.add(docdet);
-		}
-		inspection.setDocketDetailLocList(docketTempLocList);
-		inspection.setDocketDetailMeasumentList(docketTempMeasumentList);
-		inspection.setDocketDetailAccessList(docketTempAccessList);
-		inspection.setDocketDetlSurroundingPlotList(docketTempSurroundingList);
-		inspection.setDocketDetailLandTypeList(docketTempLandList);
-		inspection.setDocketDetailProposedWorkList(docketTempProposedWorkList);
-		inspection.setDocketDetailWorkAsPerPlanList(docketTempWorkAsPerPlanList);
-		inspection.setDocketDetailHgtAbuttRoadList(docketTempAbbuteRoadList);
-		inspection.setDocketDetailAreaLoc(docketTempAreaLoc);
-		inspection.setDocketDetailLengthOfCompWall(docketTempLengthOfCompoundWall);
-		inspection.setDocketDetailNumberOfWell(docketTempNumberofWell);
-		inspection.setDocketDetailErectionTower(docketTempErectionofTower);
-		inspection.setDocketDetailShutter(docketTempShutter);
-		inspection.setDocketDetailRoofConversion(docketTempRoofConv);
-	}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckNumberofWell) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempNumberofWell.add(docdet);
+        }
 
-	private DocketDetail createDocketDetailObject(final CheckListDetail checkDet) {
-		final DocketDetail docdet = new DocketDetail();
-		docdet.setCheckListDetail(checkDet);
-		return docdet;
-	}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckErectionOfTower) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempErectionofTower.add(docdet);
+        }
 
-	public Criteria getCheckListByServiceAndType(final String checkListTypeVal) {
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckRoofCnv) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempRoofConv.add(docdet);
+        }
 
-		final Criteria checkListDet = getCurrentSession().createCriteria(CheckListDetail.class, "checklistdet");
-		checkListDet.createAlias("checklistdet.checkList", "checkList");
-		checkListDet.add(Restrictions.eq("checkList.checklistType", checkListTypeVal));
-		return checkListDet;
-	}
+        for (final ChecklistServiceTypeMapping checkDet : inspectionCheckShutter) {
+            final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+            docketTempShutter.add(docdet);
+        }
+        InspectionCommon inspectionCommon = inspection.getInspection();
+        inspectionCommon.setDocketDetailLocList(docketTempLocList);
+        inspectionCommon.setDocketDetailMeasurementList(docketTempMeasumentList);
+        inspectionCommon.setDocketDetailAccessList(docketTempAccessList);
+        inspectionCommon.setDocketDetailSurroundingPlotList(docketTempSurroundingList);
+        inspectionCommon.setDocketDetailLandTypeList(docketTempLandList);
+        inspectionCommon.setDocketDetailProposedWorkList(docketTempProposedWorkList);
+        inspectionCommon.setDocketDetailWorkAsPerPlanList(docketTempWorkAsPerPlanList);
+        inspectionCommon.setDocketDetailHgtAbuttRoadList(docketTempAbbuteRoadList);
+        inspectionCommon.setDocketDetailAreaLoc(docketTempAreaLoc);
+        inspectionCommon.setDocketDetailLengthOfCompWall(docketTempLengthOfCompoundWall);
+        inspectionCommon.setDocketDetailNumberOfWell(docketTempNumberofWell);
+        inspectionCommon.setDocketDetailErectionTower(docketTempErectionofTower);
+        inspectionCommon.setDocketDetailShutter(docketTempShutter);
+        inspectionCommon.setDocketDetailRoofConversion(docketTempRoofConv);
+    }
 
-	public void setDocketDetList(final List<DocketDetail> docketTempList, final CheckListDetail checkDet) {
-		final DocketDetail docdet = createDocketDetailObject(checkDet);
-		docketTempList.add(docdet);
-	}
+    private DocketDetailCommon createDocketDetailObject(final ChecklistServiceTypeMapping checkDet) {
+        final DocketDetailCommon docdet = new DocketDetailCommon();
+        docdet.setServiceChecklist(checkDet);
+        return docdet;
+    }
 
-	public void buildDocketDetailForModifyAndViewList(final Inspection inspection, final Model model) {
-		if (inspection != null && !inspection.getDocket().isEmpty())
-			for (final DocketDetail docketDet : inspection.getDocket().get(0).getDocketDetail()) {
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType().equals(BpaConstants.INSPECTIONLOCATION))
-					inspection.getDocketDetailLocList().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType().equals(BpaConstants.INSPECTIONMEASUREMENT))
-					inspection.getDocketDetailMeasumentList().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType().equals(BpaConstants.INSPECTIONACCESS))
-					inspection.getDocketDetailAccessList().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType().equals(BpaConstants.INSPECTIONSURROUNDING))
-					inspection.getDocketDetlSurroundingPlotList().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType().equals(BpaConstants.INSPECTIONTYPEOFLAND))
-					inspection.getDocketDetailLandTypeList().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONPROPOSEDSTAGEWORK))
-					inspection.getDocketDetailProposedWorkList().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONWORKCOMPLETEDPERPLAN))
-					inspection.getDocketDetailWorkAsPerPlanList().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONHGTBUILDABUTROAD))
-					inspection.getDocketDetailHgtAbuttRoadList().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONAREALOC))
-					inspection.getDocketDetailAreaLoc().add(docketDet);
+    public void setDocketDetList(final List<DocketDetailCommon> docketTempList, final ChecklistServiceTypeMapping checkDet) {
+        final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
+        docketTempList.add(docdet);
+    }
 
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONLENGTHOFCOMPOUNDWALL))
-					inspection.getDocketDetailLengthOfCompWall().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONNUMBEROFWELLS))
-					inspection.getDocketDetailNumberOfWell().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONSHUTTER))
-					inspection.getDocketDetailShutter().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONERECTIONOFTOWER))
-					inspection.getDocketDetailErectionTower().add(docketDet);
-				if (docketDet.getCheckListDetail().getCheckList().getChecklistType()
-							 .equals(BpaConstants.INSPECTIONROOFCONVERSION))
-					inspection.getDocketDetailRoofConversion().add(docketDet);
-			}
-		model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
-		model.addAttribute("docketDetailMeasumentList", inspection.getDocketDetailMeasumentList());
-		model.addAttribute("docketDetailAccessList", inspection.getDocketDetailAccessList());
-		model.addAttribute("docketDetlSurroundingPlotList", inspection.getDocketDetlSurroundingPlotList());
-		model.addAttribute("docketDetailLandTypeList", inspection.getDocketDetailLandTypeList());
-		model.addAttribute("docketDetailProposedWorkList", inspection.getDocketDetailProposedWorkList());
-		model.addAttribute("docketDetailWorkAsPerPlanList", inspection.getDocketDetailWorkAsPerPlanList());
-		model.addAttribute("docketDetailHgtAbuttRoadList", inspection.getDocketDetailHgtAbuttRoadList());
-		model.addAttribute("docketDetailAreaLoc", inspection.getDocketDetailAreaLoc());
-		model.addAttribute("docketDetailLengthOfCompWall", inspection.getDocketDetailLengthOfCompWall());
-		model.addAttribute("docketDetailNumberOfWell", inspection.getDocketDetailNumberOfWell());
-		model.addAttribute("docketDetailErectionTower", inspection.getDocketDetailErectionTower());
-		model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
-		model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
-	}
+    public void buildDocketDetailForModifyAndViewList(final PermitInspection permitInspn, final Model model) {
+        if (permitInspn != null && !permitInspn.getInspection().getDocket().isEmpty()) {
+            InspectionCommon inspection = permitInspn.getInspection();
+            for (final DocketDetailCommon docketDet : inspection.getDocket().get(0).getDocketDetail()) {
+                String checklisType = docketDet.getServiceChecklist().getChecklist().getChecklistType().getCode();
+                if (checklisType.equals(BpaConstants.INSPECTIONLOCATION))
+                    inspection.getDocketDetailLocList().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONMEASUREMENT))
+                    inspection.getDocketDetailMeasurementList().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONACCESS))
+                    inspection.getDocketDetailAccessList().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONSURROUNDING))
+                    inspection.getDocketDetailSurroundingPlotList().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONTYPEOFLAND))
+                    inspection.getDocketDetailLandTypeList().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONPROPOSEDSTAGEWORK))
+                    inspection.getDocketDetailProposedWorkList().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONWORKCOMPLETEDPERPLAN))
+                    inspection.getDocketDetailWorkAsPerPlanList().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONHGTBUILDABUTROAD))
+                    inspection.getDocketDetailHgtAbuttRoadList().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONAREALOC))
+                    inspection.getDocketDetailAreaLoc().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONLENGTHOFCOMPOUNDWALL))
+                    inspection.getDocketDetailLengthOfCompWall().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONNUMBEROFWELLS))
+                    inspection.getDocketDetailNumberOfWell().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONSHUTTER))
+                    inspection.getDocketDetailShutter().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONERECTIONOFTOWER))
+                    inspection.getDocketDetailErectionTower().add(docketDet);
+                if (checklisType.equals(BpaConstants.INSPECTIONROOFCONVERSION))
+                    inspection.getDocketDetailRoofConversion().add(docketDet);
+            }
+            model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
+            model.addAttribute("docketDetailMeasumentList", inspection.getDocketDetailMeasurementList());
+            model.addAttribute("docketDetailAccessList", inspection.getDocketDetailAccessList());
+            model.addAttribute("docketDetlSurroundingPlotList", inspection.getDocketDetailSurroundingPlotList());
+            model.addAttribute("docketDetailLandTypeList", inspection.getDocketDetailLandTypeList());
+            model.addAttribute("docketDetailProposedWorkList", inspection.getDocketDetailProposedWorkList());
+            model.addAttribute("docketDetailWorkAsPerPlanList", inspection.getDocketDetailWorkAsPerPlanList());
+            model.addAttribute("docketDetailHgtAbuttRoadList", inspection.getDocketDetailHgtAbuttRoadList());
+            model.addAttribute("docketDetailAreaLoc", inspection.getDocketDetailAreaLoc());
+            model.addAttribute("docketDetailLengthOfCompWall", inspection.getDocketDetailLengthOfCompWall());
+            model.addAttribute("docketDetailNumberOfWell", inspection.getDocketDetailNumberOfWell());
+            model.addAttribute("docketDetailErectionTower", inspection.getDocketDetailErectionTower());
+            model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
+            model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
+        }
+    }
 
-	public Map<Long, String> prepareImagesForView(final Inspection inspection) {
-		Map<Long, String> imageMap = new HashMap<>();
-		if (!inspection.getInspectionSupportDocs().isEmpty())
-			inspection.getInspectionSupportDocs().forEach(
-					docketFileStoreObj -> {
-						try {
-							if (docketFileStoreObj != null) {
-								final File file = fileStoreService.fetch(docketFileStoreObj.getFileStoreId(),
-										BpaConstants.FILESTORE_MODULECODE);
-								if (file != null)
-									imageMap.put(docketFileStoreObj.getId(), Base64.getEncoder().encodeToString(
-											FileCopyUtils.copyToByteArray(file)));
-							}
-						} catch (final IOException e) {
-							LOGGER.error("Error while preparing the images for view", e);
-						}
-					});
-		return imageMap;
-	}
+    public Map<Long, List<String>> prepareImagesForView(final PermitInspection permitInspn) {
+        Map<Long, List<String>> imageMap = new HashMap<>();
+        if (!permitInspn.getInspection().getInspectionSupportDocs().isEmpty())
+            permitInspn.getInspection().getInspectionSupportDocs().forEach(
+                    docketFile -> {
+                        if (docketFile != null) {
+                            List<String> images = new ArrayList<>();
+                            docketFile.getImages().forEach(
+                                    imageFilestore -> {
+                                        final File file = fileStoreService.fetch(imageFilestore.getFileStoreId(),
+                                                BpaConstants.FILESTORE_MODULECODE);
+                                        if (file != null) {
+                                            try {
+                                                images.add(Base64.getEncoder().encodeToString(
+                                                        FileCopyUtils.copyToByteArray(file)));
+                                            } catch (final IOException e) {
+                                                LOGGER.error("Error while preparing the images for view", e);
+                                            }
+                                        }
+                                    });
+                            imageMap.put(docketFile.getId(), images);
+                        }
+                    });
+        return imageMap;
+    }
 
 }

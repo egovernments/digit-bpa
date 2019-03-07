@@ -48,13 +48,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.egov.bpa.transaction.entity.DocketDetail;
-import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.PermitInspection;
+import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.notice.InspectionReportFormat;
 import org.egov.bpa.transaction.notice.impl.InspectionReportFormatImpl;
 import org.egov.bpa.transaction.service.InspectionService;
-import org.egov.bpa.transaction.service.PlanScrutinyChecklistService;
+import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +73,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/application")
 public class ViewInspectionController {
+    private static final String PERMIT_INSPECTION = "permitInspection";
+
     private static final String SHOW_INSPECTION_DETAILS = "show-inspection-details";
 
     private static final String INSPECTION_RESULT = "inspection-details-result";
@@ -83,39 +85,38 @@ public class ViewInspectionController {
     @Autowired
     private InspectionService inspectionService;
     @Autowired
-    private PlanScrutinyChecklistService planScrutinyChecklistService;
+    private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
     @Autowired
     private CustomImplProvider specificNoticeService;
 
     @RequestMapping(value = "/view-inspection/{id}", method = RequestMethod.GET)
     public String viewInspection(@PathVariable final Long id, final Model model) {
-        final List<Inspection> inspection = inspectionService.findByIdOrderByIdAsc(id);
-        List<DocketDetail> dockeDetList = new ArrayList<>();
-        if (!inspection.isEmpty())
-            dockeDetList = inspection.get(0).getDocket().get(0).getDocketDetail();
+        final List<PermitInspection> permitInspn = inspectionService.findByIdOrderByIdAsc(id);
+        List<DocketDetailCommon> dockeDetList = new ArrayList<>();
+        if (!permitInspn.isEmpty())
+            dockeDetList = permitInspn.get(0).getInspection().getDocket().get(0).getDocketDetail();
         model.addAttribute("docketDetail", dockeDetList);
-        Inspection inspectionObj = inspection.get(0);
-        model.addAttribute("inspection", inspection.get(0));
+        PermitInspection inspectionObj = permitInspn.get(0);
+        model.addAttribute(PERMIT_INSPECTION, inspectionObj);
         model.addAttribute("message", "Inspection Saved Successfully");
         inspectionService.buildDocketDetailForModifyAndViewList(inspectionObj, model);
-        inspectionObj.setEncodedImages(inspectionService.prepareImagesForView(inspectionObj));
-        model.addAttribute("inspection", inspectionObj);
+        // inspectionObj.setEncodedImages(inspectionService.prepareImagesForView(inspectionObj));
+        model.addAttribute(PERMIT_INSPECTION, inspectionObj);
         buildPlanScrutinyChecklistDetails(inspectionObj, model);
         return INSPECTION_RESULT;
     }
 
     @RequestMapping(value = "/showinspectiondetails/{id}", method = RequestMethod.GET)
     public String showInspectionDetails(@PathVariable final Long id, final Model model) {
-        final List<Inspection> inspection = inspectionService.findByIdOrderByIdAsc(id);
-        List<DocketDetail> dockeDetList = new ArrayList<>();
-        if (!inspection.isEmpty())
-            dockeDetList = inspection.get(0).getDocket().get(0).getDocketDetail();
+        final List<PermitInspection> permitInspn = inspectionService.findByIdOrderByIdAsc(id);
+        List<DocketDetailCommon> dockeDetList = new ArrayList<>();
+        if (!permitInspn.isEmpty())
+            dockeDetList = permitInspn.get(0).getInspection().getDocket().get(0).getDocketDetail();
         model.addAttribute("docketDetail", dockeDetList);
-        Inspection inspectionObj = inspection.get(0);
-        model.addAttribute("inspection", inspection.get(0));
+        PermitInspection inspectionObj = permitInspn.get(0);
         inspectionService.buildDocketDetailForModifyAndViewList(inspectionObj, model);
-        inspectionObj.setEncodedImages(inspectionService.prepareImagesForView(inspectionObj));
-        model.addAttribute("inspection", inspectionObj);
+        // inspectionObj.setEncodedImages(inspectionService.prepareImagesForView(inspectionObj));
+        model.addAttribute(PERMIT_INSPECTION, inspectionObj);
         buildPlanScrutinyChecklistDetails(inspectionObj, model);
         return SHOW_INSPECTION_DETAILS;
     }
@@ -124,10 +125,11 @@ public class ViewInspectionController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> generateLettertoPartyCreate(final HttpServletRequest request,
             final HttpSession session) {
-        final Inspection inspection = inspectionService.findById(new Long(request.getParameter("pathVar")));
+        final PermitInspection inspection = inspectionService.findById(new Long(request.getParameter("pathVar")));
         InspectionReportFormat inspectionReportFormat = (InspectionReportFormat) specificNoticeService
                 .find(InspectionReportFormatImpl.class, specificNoticeService.getCityDetails());
-        return getFileAsResponseEntity(inspection.getInspectionNumber(), inspectionReportFormat.generateNotice(inspection),
+        return getFileAsResponseEntity(inspection.getInspection().getInspectionNumber(),
+                inspectionReportFormat.generateNotice(inspection),
                 "inspectionreport");
     }
 
@@ -143,19 +145,13 @@ public class ViewInspectionController {
                 .body(new InputStreamResource(reportOutput.asInputStream()));
     }
 
-    private void buildPlanScrutinyChecklistDetails(Inspection inspectionObj, Model model) {
-        inspectionObj.getPlanScrutinyChecklist().clear();
-        inspectionObj.setPlanScrutinyChecklist(planScrutinyChecklistService
-                .findByInspectionAndScrutinyChecklistType(inspectionObj, ScrutinyChecklistType.RULE_VALIDATION));
-        model.addAttribute("modePSC", "separate");
-        if (inspectionObj.getPlanScrutinyChecklist().isEmpty()) {
-            model.addAttribute("modePSC", "combined");
-            inspectionObj.setPlanScrutinyChecklist(planScrutinyChecklistService
-                    .findByInspectionAndScrutinyChecklistType(inspectionObj, ScrutinyChecklistType.COMBINED));
-        }
-        inspectionObj.getPlanScrutinyChecklistForDrawing().clear();
-        inspectionObj.setPlanScrutinyChecklistForDrawing(planScrutinyChecklistService
-                .findByInspectionAndScrutinyChecklistType(inspectionObj, ScrutinyChecklistType.DRAWING_DETAILS));
+    private void buildPlanScrutinyChecklistDetails(PermitInspection permitInspn, Model model) {
+        permitInspn.getInspection().getPlanScrutinyChecklistForRule().clear();
+        permitInspn.getInspection().setPlanScrutinyChecklistForRule(planScrutinyChecklistService
+                .findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
+        permitInspn.getInspection().getPlanScrutinyChecklistForDrawing().clear();
+        permitInspn.getInspection().setPlanScrutinyChecklistForDrawing(planScrutinyChecklistService
+                .findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS));
     }
 
 }

@@ -57,7 +57,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.BpaScheme;
 import org.egov.bpa.master.entity.BpaSchemeLandUsage;
-import org.egov.bpa.master.entity.CheckListDetail;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.PostalAddress;
 import org.egov.bpa.master.entity.RegistrarOfficeVillage;
 import org.egov.bpa.master.entity.ServiceType;
@@ -65,7 +65,7 @@ import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.SlotMappingApplType;
 import org.egov.bpa.master.service.BpaSchemeService;
-import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.PostalAddressService;
 import org.egov.bpa.master.service.RegistrarOfficeVillageService;
 import org.egov.bpa.master.service.ServiceTypeService;
@@ -110,6 +110,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -153,7 +155,7 @@ public class BpaAjaxController {
     @Autowired
     private ApplicationBpaFeeCalculationService permitFeeCalculationService;
     @Autowired
-    private CheckListDetailService checkListDetailService;
+    private ChecklistServicetypeMappingService checklistServicetypeMappingService;
     @Autowired
     private OccupancyCertificateUtils occupancyCertificateUtils;
     @Autowired
@@ -497,9 +499,20 @@ public class BpaAjaxController {
 
     @GetMapping(value = "/application/getdocumentlistbyservicetype", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<CheckListDetail> getDocumentsByServiceType(@RequestParam final Long serviceType,
-            @RequestParam final String checklistType) {
-        return checkListDetailService.findActiveCheckListByServiceType(serviceType, checklistType);
+    public void getDocumentsByServiceType(@RequestParam final Long serviceType,
+            @RequestParam final String checklistType, final HttpServletResponse response) throws IOException {
+        final List<JsonObject> jsonObjects = new ArrayList<>();
+        checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceType, checklistType).stream().forEach(servicecklst -> {
+            final JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("id", servicecklst.getId());
+            jsonObj.addProperty("checklistId", servicecklst.getChecklist().getId());
+            jsonObj.addProperty("checklistDesc", servicecklst.getChecklist().getDescription());
+            jsonObj.addProperty("checklistType", servicecklst.getChecklist().getChecklistType().getCode());
+            jsonObj.addProperty("serviceId", servicecklst.getServiceType().getId());
+            jsonObj.addProperty("mandatory", servicecklst.isMandatory());
+            jsonObjects.add(jsonObj);
+        });
+        IOUtils.write(jsonObjects.toString(), response.getWriter());
     }
 
 	@GetMapping(value = "/boundary/ajax-boundary-configuration", produces = MediaType.APPLICATION_JSON_VALUE)

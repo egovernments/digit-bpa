@@ -81,7 +81,7 @@
                             <div class="col-sm-3 add-margin">
                                 <spring:message code="lbl.ins.remarks"/>
                             </div>
-                            <div class="col-sm-2 add-margin view-content">
+                            <div class="col-sm-9 add-margin view-content">
                                 <c:out value="${ocInspection.inspection.inspectionRemarks}" default="N/A"></c:out>
                             </div>
                         </div>
@@ -92,7 +92,7 @@
                             <div class="col-sm-3 add-margin view-content">
                                 <div class="panel-title"><spring:message code="lbl.doc.provided"/></div>
                             </div>
-                            <div class="col-sm-3 add-margin view-content">
+                            <div class="col-sm-4 add-margin view-content">
                                 <div class="panel-title"><spring:message code="lbl.remarks"/></div>
                             </div>
                         </div>
@@ -107,13 +107,13 @@
                                            varStatus="counter">
                                     <div class="row add-border">
                                         <div class="col-sm-5 add-margin view-content">
-                                            <c:out value="${doc.checkListDetail.description}" default="N/A"></c:out>
+                                            <c:out value="${doc.serviceChecklist.checklist.description}" default="N/A"></c:out>
                                         </div>
                                         <div class="col-sm-3 add-margin view-content">
                                             <c:out value="${doc.value.checkListVal}"
                                                    default="N/A"></c:out>
                                         </div>
-                                        <div class="col-sm-3 add-margin view-content">
+                                        <div class="col-sm-4 add-margin view-content">
                                             <c:out value="${doc.remarks}" default="N/A"></c:out>
                                         </div>
                                     </div>
@@ -122,11 +122,11 @@
                         </c:when>
                     </c:choose>
 				</div>
-                <div class="panel panel-primary" data-collapsed="0">
+                <%-- <div class="panel panel-primary" data-collapsed="0">
                     <div class="panel-body custom-form ">
                         <jsp:include page="view-oc-inspection-images.jsp"></jsp:include>
                     </div>
-                </div>
+                </div> --%>
             </div>
 			<div id="oc-plan-scrutiny" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">

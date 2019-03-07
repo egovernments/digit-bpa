@@ -65,7 +65,7 @@
 									  data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
 						code='title.documentdetail' /></a></li>
-				<c:if test="${not empty bpaApplication.applicationNOCDocument}">
+				<c:if test="${not empty bpaApplication.permitNocDocuments}">
 					<li><a data-toggle="tab" href="#noc-info" data-tabidx=2><spring:message
 							code='lbl.noc.details' /></a></li>
 				</c:if>
@@ -110,7 +110,7 @@
 					</div>
 				</div>
 				<div id="document-info" class="tab-pane fade">
-					<c:if test="${not empty  bpaApplication.getDcrDocuments()}">
+					<c:if test="${not empty  bpaApplication.permitDcrDocuments}">
 						<div class="panel panel-primary dcrDocuments" data-collapsed="0">
 							<jsp:include page="view-dcr-documentdetails.jsp"></jsp:include>
 						</div>
@@ -119,7 +119,7 @@
 						<jsp:include page="view-bpaDocumentdetails.jsp"></jsp:include>
 					</div>
 				</div>
-				<c:if test="${ not empty bpaApplication.applicationNOCDocument}">
+				<c:if test="${ not empty bpaApplication.permitNocDocuments}">
 					<div id="noc-info" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="view-noc-document.jsp"></jsp:include>

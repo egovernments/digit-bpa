@@ -70,17 +70,17 @@
 					<tr id="lprow">
 						<td align="center" class="view-content" style="font-size: 90%;">${status.index+1}</td>
 						<td align="center" class="view-content" style="font-size: 90%;"><span class="bold">
-							<c:out value="${inspn.lpNumber}"/></span></td>
+							<c:out value="${inspn.letterToParty.lpNumber}"/></span></td>
 						<td align="center" class="view-content" style="font-size: 90%;"><span class="bold">
-								<fmt:formatDate value="${inspn.letterDate}" pattern="dd/MM/yyyy" var="letterDate"/>
+								<fmt:formatDate value="${inspn.letterToParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate"/>
 								<c:out value="${letterDate}" default="N/A"/></span></td>
 						<td class="view-content" style="font-size: 90%;"><c:forEach
-								items="${inspn.lpReason}" var="lpReason" varStatus="status">
+								items="${inspn.letterToParty.lpReason}" var="lpReason" varStatus="status">
 							<c:out value="${lpReason.description}" default="N/A"/>
 							<c:if test="${!status.last}">,</c:if>
 						</c:forEach></td>
 						<td align="center" class="view-content" style="font-size: 90%;">
-							<fmt:formatDate value="${inspn.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
+							<fmt:formatDate value="${inspn.letterToParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
 							<c:out value="${sentDate}" default="N/A"></c:out>
 						</td>
 
@@ -91,7 +91,7 @@
 							</a>
 						</td>
 						<td align="center" class="view-content" style="font-size: 90%;">
-							<fmt:formatDate value="${inspn.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
+							<fmt:formatDate value="${inspn.letterToParty.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
 							<c:out value="${replyDate}" default="N/A"></c:out>
 						</td>
 

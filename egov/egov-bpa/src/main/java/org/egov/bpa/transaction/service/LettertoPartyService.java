@@ -35,7 +35,7 @@ import java.util.List;
 import org.egov.bpa.autonumber.LettertoPartyNumberGenerator;
 import org.egov.bpa.autonumber.LettertoPartyReplyAckNumberGenerator;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.LettertoParty;
+import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.repository.LettertoPartyRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
@@ -44,6 +44,8 @@ import org.egov.commons.service.FinancialYearService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class LettertoPartyService {
+    private static final Logger LOG = LoggerFactory.getLogger(LettertoPartyService.class);
 
     private static final String LETTER_TO_PARTY_INITIATE = "Letter to party initiate";
     static final String LPCHK = "lp";
@@ -74,24 +77,24 @@ public class LettertoPartyService {
     }
 
     @Transactional
-    public LettertoParty save(final LettertoParty lettertoParty, final Long approverPosition) {
-        if (lettertoParty.getLpNumber() == null || "".equals(lettertoParty.getLpNumber())) {
-            lettertoParty.setLetterDate(new Date());
-            lettertoParty.setLpNumber(generateLettertpPartyNumber());
-            bpaUtils.redirectToBpaWorkFlow(approverPosition, lettertoParty.getApplication(), BpaConstants.LETTERTOPARTYINITIATE,
+    public PermitLetterToParty save(final PermitLetterToParty permitLTP, final Long approverPosition) {
+        if (permitLTP.getLetterToParty().getLpNumber() == null || "".equals(permitLTP.getLetterToParty().getLpNumber())) {
+            permitLTP.getLetterToParty().setLetterDate(new Date());
+            permitLTP.getLetterToParty().setLpNumber(generateLettertpPartyNumber());
+            bpaUtils.redirectToBpaWorkFlow(approverPosition, permitLTP.getApplication(), BpaConstants.LETTERTOPARTYINITIATE,
                     LETTER_TO_PARTY_INITIATE, BpaConstants.LETTERTOPARTYINITIATE, null);
-            bpaSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(lettertoParty.getApplication());
+            bpaSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(permitLTP.getApplication());
         }
 
-        if (lettertoParty.getReplyDate() != null) {
-            lettertoParty.setAcknowledgementNumber(generateLettertpPartyReplyAck());
-            bpaUtils.redirectToBpaWorkFlow(lettertoParty.getApplication().getState().getOwnerPosition().getId(),
-                    lettertoParty.getApplication(), BpaConstants.LPCREATED,
+        if (permitLTP.getLetterToParty().getReplyDate() != null) {
+            permitLTP.getLetterToParty().setAcknowledgementNumber(generateLettertpPartyReplyAck());
+            bpaUtils.redirectToBpaWorkFlow(permitLTP.getApplication().getState().getOwnerPosition().getId(),
+                    permitLTP.getApplication(), BpaConstants.LPCREATED,
                     BpaConstants.LPREPLYRECEIVED, BpaConstants.LPCREATED, null);
-            lettertoParty.getApplication().setStatus(bpaStatusService
+            permitLTP.getApplication().setStatus(bpaStatusService
                     .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, BpaConstants.LETTERTOPARTY_REPLY_RECEIVED));
         }
-        return lettertoPartyRepository.save(lettertoParty);
+        return lettertoPartyRepository.save(permitLTP);
     }
 
     public String generateLettertpPartyNumber() {
@@ -102,7 +105,7 @@ public class LettertoPartyService {
         return lettertoPartyNumberGenerator.generateLettertoPartyNumber(financialYearRange);
     }
 
-    public LettertoParty findById(final Long id) {
+    public PermitLetterToParty findById(final Long id) {
         return lettertoPartyRepository.findOne(id);
     }
 
@@ -119,7 +122,7 @@ public class LettertoPartyService {
         return docSrcuityUserPos;
     }
 
-    public List<LettertoParty> findByBpaApplicationOrderByIdDesc(final BpaApplication application) {
+    public List<PermitLetterToParty> findByBpaApplicationOrderByIdDesc(final BpaApplication application) {
         return lettertoPartyRepository.findByApplicationOrderByIdDesc(application);
     }
 
