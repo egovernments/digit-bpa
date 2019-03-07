@@ -98,24 +98,27 @@ public class BpaDcrService {
 
     public Map<String, String> checkIsEdcrUsedInBpaApplication(final String eDcrNumber) {
         Map<String, String> eDcrApplicationDetails = new HashMap<>();
-        List<BpaApplication> bpaApplications = applicationBpaService.findApplicationByEDCRNumber(eDcrNumber);
-        if (bpaApplications.isEmpty()) {
-            eDcrApplicationDetails.put(IS_EXISTS, FALSE);
-            eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
-		} else {
-			if (bpaApplications.get(0)!=null && bpaApplications.get(0).getStatus()!=null && 
-					BpaConstants.APPLICATION_STATUS_CANCELLED
-					.equals(bpaApplications.get(0).getStatus().getCode())) {
+		if (eDcrNumber != null) {
+			List<BpaApplication> bpaApplications = applicationBpaService.findApplicationByEDCRNumber(eDcrNumber);
+			if (bpaApplications.isEmpty()) {
 				eDcrApplicationDetails.put(IS_EXISTS, FALSE);
 				eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
 			} else {
-				String message = bpaMessageSource.getMessage(
-						"msg.dcr.exist.with.appln", new String[] { securityUtils.getCurrentUser().getName(),
-								bpaApplications.get(0).geteDcrNumber(), bpaApplications.get(0).getApplicationNumber() },
-						null);
-				eDcrApplicationDetails.put(IS_EXISTS, TRUE);
-				eDcrApplicationDetails.put("applnNoUsedEdcr", bpaApplications.get(0).getApplicationNumber());
-				eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
+				if (bpaApplications.get(0) != null && bpaApplications.get(0).getStatus() != null
+						&& BpaConstants.APPLICATION_STATUS_CANCELLED
+								.equals(bpaApplications.get(0).getStatus().getCode())) {
+					eDcrApplicationDetails.put(IS_EXISTS, FALSE);
+					eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
+				} else {
+					String message = bpaMessageSource.getMessage("msg.dcr.exist.with.appln",
+							new String[] { securityUtils.getCurrentUser().getName(),
+									bpaApplications.get(0).geteDcrNumber(),
+									bpaApplications.get(0).getApplicationNumber() },
+							null);
+					eDcrApplicationDetails.put(IS_EXISTS, TRUE);
+					eDcrApplicationDetails.put("applnNoUsedEdcr", bpaApplications.get(0).getApplicationNumber());
+					eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
+				}
 			}
 		}
         return eDcrApplicationDetails;
