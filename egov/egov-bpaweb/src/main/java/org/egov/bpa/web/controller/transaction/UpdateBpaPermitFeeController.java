@@ -46,7 +46,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.BpaFeeService;
@@ -142,12 +141,10 @@ public class UpdateBpaPermitFeeController {
         PermitFee permitFee = getBpaApplication(applicationNumber);
         if (permitFee != null && permitFee.getApplication() != null) {
             loadViewdata(model, permitFee);
-
-            // check fee calculate first time or update ? Check inspection is captured for existing application ?
-
+            
             // Get all sanction fee by service type
             List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService
-                    .getPermitFeeForListOfServices(permitFee.getApplication().getServiceType().getId(),BpaConstants.BPA_PERMIT_FEE);
+                    .getSanctionFeeForListOfServices(permitFee.getApplication().getServiceType().getId());
 
             String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.BPAFEECALULATION);
             model.addAttribute("sanctionFees", bpaSanctionFees);

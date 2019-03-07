@@ -238,23 +238,23 @@ public class ApplicationBpaBillService extends BillServiceInterface {
             Criteria feeCrit = getBpaFeeCriteria(serviceTypeList, feeType, FeeSubType.APPLICATION_FEE);
             List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
             for (final BpaFeeMapping feeMap : bpaFeeMap) {
-                feeDetails.put(feeMap.getBpaFeeCommon().getCode()+"-"+feeMap.getServiceType().getDescription(), BigDecimal.valueOf(feeMap.getAmount()));
+                feeDetails.put(feeMap.getBpaFeeCommon().getCode(), BigDecimal.valueOf(feeMap.getAmount()));
             }
             }
         }
         List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
                 .getFeeForListOfServices(application.getServiceType().getId(), BpaConstants.BPA_APP_FEE);
 
-        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode()+"-"+bpaAdmissionFees.get(0).getServiceType().getDescription(), application.getAdmissionfeeAmount());
+        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), application.getAdmissionfeeAmount());
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())
-                dmdDetailSet.add(createDemandDetails(feeDetails.get(demandReason.getKey()), demandReason.getKey().split("-")[0], installment));
+                dmdDetailSet.add(createDemandDetails(feeDetails.get(demandReason.getKey()), demandReason.getKey(), installment));
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
-            egDemand.setBaseDemand(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+            egDemand.setBaseDemand(applicationBpaService.setAdmissionFeeAmountWithAmenities(
                     application.getServiceType().getId(), application.getApplicationAmenity()));
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());

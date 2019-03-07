@@ -155,7 +155,7 @@
 											value="${docs.id}" />
 										<form:hidden id="applicationFeeDetail${status.index}bpaFeeMapping"
 											path="applicationFee.applicationFeeDetail[${status.index}].bpaFeeMapping"
-											value="${docs.bpaFeeMapping.bpaFeeCommon.id}" />
+											value="${docs.bpaFeeMapping.id}" />
 										<form:hidden
 											id="applicationFeeDetail${status.index}applicationFee"
 											path="applicationFee.applicationFeeDetail[${status.index}].applicationFee"

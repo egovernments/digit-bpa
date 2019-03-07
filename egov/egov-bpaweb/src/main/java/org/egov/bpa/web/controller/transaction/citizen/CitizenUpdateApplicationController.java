@@ -199,7 +199,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         List<LettertoParty> lettertoPartyList = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
         model.addAttribute("lettertopartylist", lettertoPartyList);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
-        model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+        model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
         if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
             model.addAttribute("mode", "showLPDetails");

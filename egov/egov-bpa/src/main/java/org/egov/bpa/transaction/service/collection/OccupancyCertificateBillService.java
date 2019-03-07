@@ -159,7 +159,7 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
     }
 
     public Criteria getBpaFeeCriteria(List<Long> amenityList, final String feeType, FeeSubType feeSubType) {
-        return bpaDemandService.createCriteriaforApplicationFeeAmount(amenityList, feeType, feeSubType);
+        return bpaDemandService.createCriteriaforOCApplicationFeeAmount(amenityList, feeType, feeSubType);
     }
 
     private EgDemandDetails createDemandDetails(final BigDecimal amount, final String demandReason,
@@ -189,7 +189,7 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
             for (ServiceType serviceType : oc.getParent().getApplicationAmenity()) {
                 serviceTypeList.add(serviceType.getId());
             }
-            Criteria feeCrit = getBpaFeeCriteria(serviceTypeList, BpaConstants.OC_FEE, FeeSubType.SANCTION_FEE);
+            Criteria feeCrit = getBpaFeeCriteria(serviceTypeList, BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
             List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
             for (final BpaFeeMapping feeMap : bpaFeeMap) {
                 feeDetails.put(feeMap.getBpaFeeCommon().getCode(), BigDecimal.valueOf(feeMap.getAmount()));
@@ -207,7 +207,7 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
-            egDemand.setBaseDemand(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+            egDemand.setBaseDemand(applicationBpaService.setOCAdmissionFeeAmountWithAmenities(
                     oc.getParent().getServiceType().getId(), oc.getParent().getApplicationAmenity()));
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());

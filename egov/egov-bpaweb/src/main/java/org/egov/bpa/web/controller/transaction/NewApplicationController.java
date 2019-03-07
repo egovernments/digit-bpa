@@ -134,7 +134,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
         applicationStakeHolders.add(applicationStakeHolder);
         bpaApplication.setStakeHolder(applicationStakeHolders);
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountWithAmenities(
                 bpaApplication.getServiceType().getId(), new ArrayList<ServiceType>()));
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);

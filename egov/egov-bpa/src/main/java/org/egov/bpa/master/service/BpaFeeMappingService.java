@@ -152,5 +152,16 @@ public class BpaFeeMappingService {
 
 		return feeCrit.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BpaFeeMapping> getOCSFeeForListOfServices(Long serviceType) {
+		final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeObj")
+				.createAlias("bpaFeeObj.serviceType", "servicetypeObj");
+		feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.feeSubType", FeeSubType.SANCTION_FEE));
+		feeCrit.add(Restrictions.eq("bpaFeeObj.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
+
+		return feeCrit.list();
+	}
 
 }

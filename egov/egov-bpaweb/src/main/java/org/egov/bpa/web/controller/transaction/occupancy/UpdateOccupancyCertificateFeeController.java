@@ -156,8 +156,8 @@ public class UpdateOccupancyCertificateFeeController {
 
             // Get all sanction fee by service type
             List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService
-                    .getOCSanctionFeeForListOfServices(ocFee.getOc()
-                    		.getParent().getServiceType().getId(),BpaConstants.OC_FEE);
+                    .getOCSFeeForListOfServices(ocFee.getOc()
+                    		.getParent().getServiceType().getId());
             String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
             model.addAttribute("sanctionFees", bpaSanctionFees);
             model.addAttribute("feeCalculationMode", feeCalculationMode);

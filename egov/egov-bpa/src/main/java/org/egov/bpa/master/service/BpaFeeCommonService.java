@@ -47,10 +47,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeCommon;
 import org.egov.bpa.master.entity.BpaFeeMapping;
-import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.entity.enums.FeeApplicationType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.repository.BpaFeeCommonRepository;

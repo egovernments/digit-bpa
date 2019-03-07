@@ -577,6 +577,73 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;
     }
+        
+    public BigDecimal setAdmissionFeeAmountWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
+        BigDecimal admissionfeeAmount = BigDecimal.ZERO;
+        String feeType;
+        if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired()) {
+        	Criteria feeCrit = bpaDemandService.createCriteriaforApplicationFee(serviceType, BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
+        	final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            for (final BpaFeeMapping feeMap : bpaFeeMap)
+            	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+            for(ServiceType serviceTyp : amenityList) {
+        	String serviceName =serviceTypeService.findById(serviceTyp.getId()).getDescription();
+		    	if(serviceName.equals(WELL))
+		    		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+		    	else if(serviceName.equals(COMPOUND_WALL))
+		    		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
+		    	else if(serviceName.equals(ROOF_CONVERSION))
+		    		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
+		    	else if(serviceName.equals(SHUTTER_DOOR_CONVERSION))
+		    		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+		    	else
+		    		feeType=BpaConstants.BPA_APP_FEE;
+		    	
+              Criteria amenityCrit = bpaDemandService.createCriteriaforApplicationFee(serviceTyp.getId(), feeType, FeeSubType.APPLICATION_FEE);
+              final List<BpaFeeMapping> amenityMap = amenityCrit.list();
+              for (final BpaFeeMapping feeMap : amenityMap)
+              	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+            }
+        }
+        else
+            admissionfeeAmount = BigDecimal.ZERO;
+        
+        return admissionfeeAmount;
+    }
+    
+    public BigDecimal setOCAdmissionFeeAmountWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
+        BigDecimal admissionfeeAmount = BigDecimal.ZERO;
+        String feeType;
+        if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired()) {
+        	Criteria feeCrit = bpaDemandService.createCriteriaforApplicationFee(serviceType, BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
+        	final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            for (final BpaFeeMapping feeMap : bpaFeeMap)
+            	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+            for(ServiceType serviceTyp : amenityList) {
+        	String serviceName =serviceTypeService.findById(serviceTyp.getId()).getDescription();
+		    	if(serviceName.equals(WELL))
+		    		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+		    	else if(serviceName.equals(COMPOUND_WALL))
+		    		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
+		    	else if(serviceName.equals(ROOF_CONVERSION))
+		    		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
+		    	else if(serviceName.equals(SHUTTER_DOOR_CONVERSION))
+		    		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+		    	else
+		    		feeType=BpaConstants.BPA_APP_FEE;
+		    	
+              Criteria amenityCrit = bpaDemandService.createCriteriaforOCApplicationFee(serviceTyp.getId(), feeType, FeeSubType.APPLICATION_FEE);
+              final List<BpaFeeMapping> amenityMap = amenityCrit.list();
+              for (final BpaFeeMapping feeMap : amenityMap)
+              	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+            }
+        }
+        else
+            admissionfeeAmount = BigDecimal.ZERO;
+        
+        return admissionfeeAmount;
+    }
+
 
     public BigDecimal setRegistrationAmountForRegistrationWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
         BigDecimal admissionfeeAmount;

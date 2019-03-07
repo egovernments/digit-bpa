@@ -52,6 +52,7 @@ import javax.persistence.PersistenceContext;
 import org.egov.bpa.master.entity.BpaFeeCommon;
 import org.egov.bpa.master.entity.BpaFeeDetail;
 import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.entity.enums.FeeApplicationType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
@@ -345,6 +346,22 @@ public class BpaDemandService {
             feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType)); 
         
         feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
+        feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.PERMIT_APPLICATION));
+
+        return feeCrit;
+    }
+   
+    public Criteria createCriteriaforApplicationFee(Long serviceType, final String feeType, final FeeSubType feeSubType) {
+
+        final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
+                .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
+        feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+        if (feeType != null)
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType)); 
+        
+        feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
+        feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.PERMIT_APPLICATION));
+
 
         return feeCrit;
     }
@@ -371,4 +388,34 @@ public class BpaDemandService {
 
         return feeCrit;
     }
+    
+    public Criteria createCriteriaforOCApplicationFeeAmount(List<Long> serviceTypeList, final String feeType, final FeeSubType feeSubType) {
+
+        final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
+                .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
+        feeCrit.add(Restrictions.in("servicetypeObj.id", serviceTypeList));
+        if (feeType != null)
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType)); 
+        
+        feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
+        feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
+
+        return feeCrit;
+    }
+    
+    public Criteria createCriteriaforOCApplicationFee(Long serviceType, final String feeType, final FeeSubType feeSubType) {
+
+        final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
+                .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
+        feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+        if (feeType != null)
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType)); 
+        
+        feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
+        feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
+
+
+        return feeCrit;
+    }
+    
 }

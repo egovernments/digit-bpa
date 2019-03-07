@@ -434,7 +434,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             }
         }
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountWithAmenities(
                 bpaApplication.getServiceType().getId(), new ArrayList<>()));
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);

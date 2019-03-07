@@ -624,7 +624,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));
         model.addAttribute("applicationDocumentList", application.getApplicationDocument());
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
-        model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+        model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
         model.addAttribute("isEDCRIntegrationRequire",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
