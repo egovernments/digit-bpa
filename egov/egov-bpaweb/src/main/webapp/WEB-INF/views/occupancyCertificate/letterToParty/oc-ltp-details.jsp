@@ -113,7 +113,7 @@
                             </c:choose>
                         </td>
                         <td align="center" class="view-content" style="font-size: 90%;">
-                            <a style="cursor: pointer; font-size: 12px;"
+                            <a style="cursor: pointer; font-size: 12px;" class="open-popup"
                                href="/bpa/occupancy-certificate/letter-to-party/print/lp/${applicationNumber}/${ltp.letterToParty.lpNumber}">
                                 <i class="fa fa-print" aria-hidden="true"></i>
                                 <spring:message code="lbl.print"/>
@@ -140,7 +140,7 @@
                             </c:choose>
                         </td>
                         <td align="center" class="view-content" style="font-size: 90%;">
-                            <a style="cursor: pointer; font-size: 12px;"
+                            <a style="cursor: pointer; font-size: 12px;" class="open-popup"
                                href="/bpa/occupancy-certificate/letter-to-party/print/lpreply/${applicationNumber}/${ltp.letterToParty.lpNumber}">
                                 <i class="fa fa-print" aria-hidden="true"></i>
                                 <spring:message code="lbl.print"/>
