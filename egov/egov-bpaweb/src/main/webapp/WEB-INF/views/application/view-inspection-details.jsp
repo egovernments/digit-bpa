@@ -72,14 +72,12 @@
 									value="${inspectionDate}" />
 							</td>
 							<td align="center" style="font-size: 90%;"><a
-								href="/bpa/application/showinspectiondetails/${inspn.id}"
-								target="popup"
-								onclick="/bpa/application/showinspectiondetails/${inspn.id}','popup','width=600,height=400'); return false;">
-									<i class="fa fa-eye" aria-hidden="true"><spring:message
+								style="cursor: pointer; font-size: 12px;" class="open-popup"
+								href="/bpa/application/showinspectiondetails/${inspn.id}"> <i
+									class="fa fa-eye" aria-hidden="true"><spring:message
 											code='lbl.view' /></i>
-							</a> <a href="/bpa/application/inspectionreport?pathVar=${inspn.id}"
-								target="popup"
-								onclick="/bpa/application/inspectionreport?pathVar=${inspn.id}','popup','width=600,height=400'); return false;">
+							</a>&nbsp; <a style="cursor: pointer; font-size: 12px;" class="open-popup"
+								href="/bpa/application/inspectionreport?pathVar=${inspn.id}">
 									<i class="fa fa-print" aria-hidden="true"></i> <spring:message
 										code="lbl.print" />
 							</a></td>

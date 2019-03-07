@@ -17,18 +17,10 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="lpNumber" class="java.lang.String"/>
-	<field name="letterDate" class="java.util.Date"/>
 	<field name="application" class="org.egov.bpa.transaction.entity.BpaApplication">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="sentDate" class="java.util.Date"/>
-	<field name="lpDesc" class="java.lang.String"/>
-	<field name="lpReason" class="org.egov.bpa.master.entity.LpReason"/>
-	<field name="replyDate" class="java.util.Date"/>
-	<field name="acknowledgementNumber" class="java.lang.String"/>
-	<field name="lettertoPartyDocument" class="java.util.Collection"/>
-	<field name="lpReplyRemarks" class="java.lang.String"/>
+	<field name="letterToParty" class="org.egov.bpa.transaction.entity.common.LetterToPartyCommon"/>
 	<background>
 		<band height="100" splitType="Stretch"/>
 	</background>
@@ -72,7 +64,7 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{acknowledgementNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{letterToParty}.getAcknowledgementNumber()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="156" y="108" width="142" height="27" uuid="9cfd5e71-9d9f-4068-8591-6331a7944db6"/>
@@ -87,7 +79,7 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{sentDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{letterToParty}.getSentDate()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="108" width="142" height="27" uuid="d6adf61d-6c64-470c-b6cb-ebc1fe0e28d3"/>
@@ -102,7 +94,7 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{lpNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{letterToParty}.getLpNumber()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="156" y="135" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="104a7d6b-303e-49a5-86ad-734af5d7d94c"/>
@@ -174,7 +166,7 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{replyDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{letterToParty}.getReplyDate()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="298" y="108" width="120" height="27" uuid="d8e689eb-c180-4ddf-98a8-794bb217ed14"/>
@@ -203,7 +195,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA[$F{lpDesc}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{letterToParty}.getLpDesc()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="14" y="9" width="142" height="27" isPrintWhenDetailOverflows="true" uuid="c3f59be5-ff0e-4033-962c-c418e7487152"/>
@@ -230,7 +222,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA[$F{lpReplyRemarks}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{letterToParty}.getLpReplyRemarks()]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="70">
@@ -239,7 +231,7 @@
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="15" y="10" width="545" height="51" isRemoveLineWhenBlank="true" uuid="488747bf-e344-4532-8f25-d6e603f717ea">
 					<printWhenExpression><![CDATA[$P{checkListPresent}]]></printWhenExpression>
 				</reportElement>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{lettertoPartyDocument}, false)]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{letterToParty}.getLetterToPartyDocuments(), false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("lp_reply_checklist.jasper")]]></subreportExpression>
 			</subreport>
 		</band>

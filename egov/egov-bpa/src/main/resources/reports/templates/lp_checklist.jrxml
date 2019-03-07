@@ -5,10 +5,10 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<field name="issubmitted" class="java.lang.Boolean"/>
+	<field name="isSubmitted" class="java.lang.Boolean"/>
 	<field name="remarks" class="java.lang.String"/>
-	<field name="checklistDetail" class="org.egov.bpa.master.entity.CheckListDetail"/>
-	<field name="isrequested" class="java.lang.Boolean"/>
+	<field name="serviceChecklist" class="org.egov.bpa.master.entity.ChecklistServiceTypeMapping"/>
+	<field name="isRequested" class="java.lang.Boolean"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -57,10 +57,10 @@
 	</columnHeader>
 	<detail>
 		<band height="25">
-			<printWhenExpression><![CDATA[$F{isrequested}== true]]></printWhenExpression>
+			<printWhenExpression><![CDATA[$F{isRequested}== true]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="0" width="200" height="25" isPrintWhenDetailOverflows="true" uuid="2d7b7d58-4b7a-4cec-b0c7-4018e7b40653">
-					<printWhenExpression><![CDATA[$F{isrequested}== true]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{isRequested}== true]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2">
 					<pen lineWidth="0.0"/>
@@ -73,11 +73,11 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{checklistDetail}.getDescription()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{serviceChecklist}.getChecklist().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="200" y="0" width="340" height="25" isPrintWhenDetailOverflows="true" uuid="13dc2290-7c7c-4dde-bfda-fe0a699c8446">
-					<printWhenExpression><![CDATA[$F{isrequested}== true]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{isRequested}== true]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="0" leftPadding="3" bottomPadding="0" rightPadding="0">
 					<pen lineWidth="0.0"/>

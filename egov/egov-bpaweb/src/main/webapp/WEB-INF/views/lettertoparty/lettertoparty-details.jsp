@@ -102,14 +102,14 @@
 									LP Sent
 								</c:when>
 								<c:otherwise>
-									<a style="cursor: pointer; font-size: 12px;" href="/bpa/lettertoparty/update/${bpaApplication.applicationNumber}">
+									<a style="cursor: pointer; font-size: 12px;"  href="/bpa/lettertoparty/update/${bpaApplication.applicationNumber}">
 										<i class="fa fa-edit" aria-hidden="true"></i> Modify
 									</a>
 								</c:otherwise>
 							</c:choose>
 						</td>
 						<td align="center" class="view-content" style="font-size: 90%;">
-							<a style="cursor: pointer; font-size: 12px;" href="/bpa/lettertoparty/lettertopartyprint/lp?pathVar=${inspn.id}">
+							<a style="cursor: pointer; font-size: 12px;" class="open-popup" href="/bpa/lettertoparty/lettertopartyprint/lp?pathVar=${inspn.id}">
 								<i class="fa fa-print" aria-hidden="true"></i>
 								<spring:message code="lbl.print"/>
 							</a>
@@ -133,7 +133,7 @@
 							</c:choose>
 						</td>
 						<td align="center" class="view-content" style="font-size: 90%;">
-							<a style="cursor: pointer; font-size: 12px;" href="/bpa/lettertoparty/lettertopartyprint/lpreply?pathVar=${inspn.id}">
+							<a style="cursor: pointer; font-size: 12px;" class="open-popup" href="/bpa/lettertoparty/lettertopartyprint/lpreply?pathVar=${inspn.id}">
 								<i class="fa fa-print" aria-hidden="true"></i>
 								<spring:message code="lbl.print"/>
 							</a>

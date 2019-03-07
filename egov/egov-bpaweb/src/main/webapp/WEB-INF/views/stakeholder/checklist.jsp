@@ -67,11 +67,11 @@
 		   <spring:message code="lbl.documentname" />
 		 </label>
 		<label class="col-sm-8 ">
-		<spring:message code="lbl.attachdocument" /><span class="error-msg">
+		<spring:message code="lbl.attachdocument" /><span class="text-info view-content">
 		 (
 		<spring:message code="lbl.supp.doc.types"/>
 		)</span>
-		<br> <small class="error-msg"><spring:message
+		<br> <small class="text-info view-content"><spring:message
 				code="lbl.mesg.document" /></small>
 	</label>
 	</div>

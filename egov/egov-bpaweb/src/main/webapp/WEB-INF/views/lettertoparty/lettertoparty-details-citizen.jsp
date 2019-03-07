@@ -45,82 +45,97 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="panel-heading">
-	<div class="panel-title"> <spring:message code="lbl.tittle.letter.toparty.raisedby.officials"/> </div>
+	<div class="panel-title">
+		<spring:message code="lbl.tittle.letter.toparty.raisedby.officials" />
+	</div>
 </div>
 
 <div class="panel-body custom">
-	<table class="table table-bordered  multiheadertbl" id="vacantLandTable">
+	<table class="table table-bordered  multiheadertbl"
+		id="vacantLandTable">
 		<thead>
-		<tr>
-			<th><spring:message code="lbl.slno"/></th>
-			<th><spring:message code="lbl.lp.no"/></th>
-			<th><spring:message code="lbl.lp.date"/></th>
-			<th><spring:message code="lbl.lp.reason"/></th>
-			<th><spring:message code="lbl.lp.sentdate"/></th>
-			<th><spring:message code="lbl.lpprint"/></th>
-			<th><spring:message code="lbl.lpreplydate"/></th>
-			<th><spring:message code="lbl.lpreply.print"/></th>
-			<th><spring:message code="lbl.action"/></th>
-		</tr>
+			<tr>
+				<th><spring:message code="lbl.slno" /></th>
+				<th><spring:message code="lbl.lp.no" /></th>
+				<th><spring:message code="lbl.lp.date" /></th>
+				<th><spring:message code="lbl.lp.reason" /></th>
+				<th><spring:message code="lbl.lp.sentdate" /></th>
+				<th><spring:message code="lbl.lpprint" /></th>
+				<th><spring:message code="lbl.lpreplydate" /></th>
+				<th><spring:message code="lbl.lpreply.print" /></th>
+				<th><spring:message code="lbl.action" /></th>
+			</tr>
 		</thead>
 		<tbody>
-		<c:choose>
-			<c:when test="${not empty lettertopartylist}">
-				<c:forEach items="${lettertopartylist}" var="inspn" varStatus="status">
-					<tr id="lprow">
-						<td align="center" class="view-content" style="font-size: 90%;">${status.index+1}</td>
-						<td align="center" class="view-content" style="font-size: 90%;"><span class="bold">
-							<c:out value="${inspn.letterToParty.lpNumber}"/></span></td>
-						<td align="center" class="view-content" style="font-size: 90%;"><span class="bold">
-								<fmt:formatDate value="${inspn.letterToParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate"/>
-								<c:out value="${letterDate}" default="N/A"/></span></td>
-						<td class="view-content" style="font-size: 90%;"><c:forEach
-								items="${inspn.letterToParty.lpReason}" var="lpReason" varStatus="status">
-							<c:out value="${lpReason.description}" default="N/A"/>
-							<c:if test="${!status.last}">,</c:if>
-						</c:forEach></td>
-						<td align="center" class="view-content" style="font-size: 90%;">
-							<fmt:formatDate value="${inspn.letterToParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
-							<c:out value="${sentDate}" default="N/A"></c:out>
-						</td>
+			<c:choose>
+				<c:when test="${not empty lettertopartylist}">
+					<c:forEach items="${lettertopartylist}" var="inspn"
+						varStatus="status">
+						<tr id="lprow">
+							<td align="center" class="view-content" style="font-size: 90%;">${status.index+1}</td>
+							<td align="center" class="view-content" style="font-size: 90%;"><span
+								class="bold"> <c:out
+										value="${inspn.letterToParty.lpNumber}" /></span></td>
+							<td align="center" class="view-content" style="font-size: 90%;"><span
+								class="bold"> <fmt:formatDate
+										value="${inspn.letterToParty.letterDate}" pattern="dd/MM/yyyy"
+										var="letterDate" /> <c:out value="${letterDate}" default="N/A" /></span></td>
+							<td class="view-content" style="font-size: 90%;"><c:forEach
+									items="${inspn.letterToParty.lpReason}" var="lpReason"
+									varStatus="status">
+									<c:out value="${lpReason.description}" default="N/A" />
+									<c:if test="${!status.last}">,</c:if>
+								</c:forEach></td>
+							<td align="center" class="view-content" style="font-size: 90%;">
+								<fmt:formatDate value="${inspn.letterToParty.sentDate}"
+									pattern="dd/MM/yyyy" var="sentDate" /> <c:out
+									value="${sentDate}" default="N/A"></c:out>
+							</td>
 
-						<td align="center" class="view-content" style="font-size: 90%;">
-							<a href="/bpa/lettertoparty/lettertopartyprint/lp?pathVar=${inspn.id}">
-								<i class="fa fa-print" aria-hidden="true"></i>
-								<spring:message code="lbl.print"/>
+							<td align="center" class="view-content" style="font-size: 90%;">
+								<a style="cursor: pointer; font-size: 12px;" class="open-popup"
+								href="/bpa/lettertoparty/lettertopartyprint/lp?pathVar=${inspn.id}">
+									<i class="fa fa-print" aria-hidden="true"></i> <spring:message
+										code="lbl.print" />
 							</a>
-						</td>
-						<td align="center" class="view-content" style="font-size: 90%;">
-							<fmt:formatDate value="${inspn.letterToParty.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
-							<c:out value="${replyDate}" default="N/A"></c:out>
-						</td>
+							</td>
+							<td align="center" class="view-content" style="font-size: 90%;">
+								<fmt:formatDate value="${inspn.letterToParty.replyDate}"
+									pattern="dd/MM/yyyy" var="replyDate" /> <c:out
+									value="${replyDate}" default="N/A"></c:out>
+							</td>
 
-						<td align="center" class="view-content" style="font-size: 90%;">
-							<a style="cursor: pointer; font-size: 12px;" href="/bpa/lettertoparty/lettertopartyprint/lpreply?pathVar=${inspn.id}">
-								<i class="fa fa-print" aria-hidden="true"></i>
-								<spring:message code="lbl.print"/>
+							<td align="center" class="view-content" style="font-size: 90%;">
+								<a style="cursor: pointer; font-size: 12px;" class="open-popup"
+								href="/bpa/lettertoparty/lettertopartyprint/lpreply?pathVar=${inspn.id}">
+									<i class="fa fa-print" aria-hidden="true"></i> <spring:message
+										code="lbl.print" />
 							</a>
-						</td>
-						<td align="center" class="view-content" style="font-size: 90%;"><a
-								style="cursor: pointer; font-size: 14px;" onclick="window.open('/bpa/lettertoparty/viewdetails/lpreply/${inspn.id}','view','width=600, height=400,scrollbars=yes')">
-							<i class="fa fa-eye" aria-hidden="true"> <spring:message
-									code="lbl.view"/></i>
-						</a></td>
-					</tr>
-				</c:forEach>
-			</c:when>
-			<c:otherwise>
-				<div class="col-md-12 col-xs-6  panel-title">
-					<spring:message code="lbl.no.lp"/>
-				</div>
-			</c:otherwise>
-		</c:choose>
+							</td>
+							<td align="center" class="view-content" style="font-size: 90%;"><a
+								style="cursor: pointer; font-size: 14px;"
+								onclick="window.open('/bpa/lettertoparty/viewdetails/lpreply/${inspn.id}','view','width=600, height=400,scrollbars=yes')">
+									<i class="fa fa-eye" aria-hidden="true"> <spring:message
+											code="lbl.view" /></i>
+							</a></td>
+						</tr>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<div class="col-md-12 col-xs-6  panel-title">
+						<spring:message code="lbl.no.lp" />
+					</div>
+				</c:otherwise>
+			</c:choose>
 		</tbody>
 	</table>
-<input type="hidden" id="lpReplyDateGreaterThanPartySentDate" value="<spring:message code='msg.validate.lpreplydate.greaterthan.party.sentdate'/>"/>
-<input type="hidden" id="updateLpSentDate" value="<spring:message code='msg.validate.update.lpsent.date'/>"/>
-<input type="hidden" id="partSentDateGreaterThanLpDate" value="<spring:message code='msg.validate.party.sentdate.greaterthan.lpdate'/>"/>
+	<input type="hidden" id="lpReplyDateGreaterThanPartySentDate"
+		value="<spring:message code='msg.validate.lpreplydate.greaterthan.party.sentdate'/>" />
+	<input type="hidden" id="updateLpSentDate"
+		value="<spring:message code='msg.validate.update.lpsent.date'/>" /> <input
+		type="hidden" id="partSentDateGreaterThanLpDate"
+		value="<spring:message code='msg.validate.party.sentdate.greaterthan.lpdate'/>" />
 </div>
 <script
-		src="<cdn:url value='/resources/js/app/lettertoparty.js?rnd=${app_release_no}'/> "></script>
+	src="<cdn:url value='/resources/js/app/lettertoparty.js?rnd=${app_release_no}'/> "></script>
 
