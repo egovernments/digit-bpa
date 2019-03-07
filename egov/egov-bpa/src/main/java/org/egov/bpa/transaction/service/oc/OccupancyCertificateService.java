@@ -47,10 +47,14 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
+import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
+import static org.egov.bpa.utils.BpaConstants.ROOF_CONVERSION;
+import static org.egov.bpa.utils.BpaConstants.SHUTTER_DOOR_CONVERSION;
+import static org.egov.bpa.utils.BpaConstants.WELL;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
@@ -76,7 +80,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.bpa.autonumber.OccupancyCertificateNumberGenerator;
+import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.service.es.OccupancyCertificateIndexService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.BpaStatus;
@@ -135,7 +143,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class OccupancyCertificateService {
 	
     private static final String NOC_UPDATION_IN_PROGRESS = "NOC updation in progress";
-
+    private static final String APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION = "Application Fees for Shutter or Door conversion";
+	private static final String APPLICATION_FEES_FOR_ROOF_CONVERSION = "Application Fees for Roof conversion";
+	private static final String APPLICATION_FEES_FOR_COMPOUND_WALL = "Application Fees for compound wall";
+	private static final String APPLICATION_FEES_FOR_WELL_CONSTURCTION = "Application Fees for Well consturction";
+	
     @Autowired
     private BpaUtils bpaUtils;
     @Autowired
@@ -182,6 +194,8 @@ public class OccupancyCertificateService {
     private CustomImplProvider specificNoticeService;
     @Autowired
     private OCDcrDocumentRepository ocDcrDocumentRepository;
+    @Autowired
+    private ServiceTypeService serviceTypeService;
     
     public List<OccupancyCertificate> findByEdcrNumber(String edcrNumber) {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
@@ -247,6 +261,39 @@ public class OccupancyCertificateService {
         occupancyCertificateRepository.save(ocResult);
         occupancyCertificateIndexService.updateOccupancyIndex(oc);
         return ocResult;
+    }
+    
+    public BigDecimal setOCAdmissionFeeAmountWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
+        BigDecimal admissionfeeAmount = BigDecimal.ZERO;
+        String feeType;
+        if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired()) {
+        	Criteria feeCrit = bpaDemandService.createCriteriaforApplicationFee(serviceType, BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
+        	final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            for (final BpaFeeMapping feeMap : bpaFeeMap)
+            	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+            for(ServiceType serviceTyp : amenityList) {
+        	String serviceName =serviceTypeService.findById(serviceTyp.getId()).getDescription();
+		    	if(serviceName.equals(WELL))
+		    		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+		    	else if(serviceName.equals(COMPOUND_WALL))
+		    		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
+		    	else if(serviceName.equals(ROOF_CONVERSION))
+		    		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
+		    	else if(serviceName.equals(SHUTTER_DOOR_CONVERSION))
+		    		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+		    	else
+		    		feeType=BpaConstants.BPA_APP_FEE;
+		    	
+              Criteria amenityCrit = bpaDemandService.createCriteriaforOCApplicationFee(serviceTyp.getId(), feeType, FeeSubType.APPLICATION_FEE);
+              final List<BpaFeeMapping> amenityMap = amenityCrit.list();
+              for (final BpaFeeMapping feeMap : amenityMap)
+              	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+            }
+        }
+        else
+            admissionfeeAmount = BigDecimal.ZERO;
+        
+        return admissionfeeAmount;
     }
 
     @Transactional

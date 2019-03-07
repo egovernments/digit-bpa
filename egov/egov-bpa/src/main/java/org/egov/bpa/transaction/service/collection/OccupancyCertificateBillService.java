@@ -207,7 +207,7 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
-            egDemand.setBaseDemand(applicationBpaService.setOCAdmissionFeeAmountWithAmenities(
+            egDemand.setBaseDemand(occupancyCertificateService.setOCAdmissionFeeAmountWithAmenities(
                     oc.getParent().getServiceType().getId(), oc.getParent().getApplicationAmenity()));
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());
