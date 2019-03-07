@@ -10,24 +10,23 @@ $(document)
             $('#btnApprove').click(function (e) {
                 if ($('#stakeHolder').valid()) {
                     bootbox
-                        .confirm({
+                        .dialog({
                             message: $('#confirmApproveAppln').val(),
                             buttons: {
-                                'cancel': {
-                                    label: 'No',
-                                    className: 'btn-danger'
-                                },
                                 'confirm': {
                                     label: 'Yes',
-                                    className: 'btn-primary'
-                                }
-                            },
-                            callback: function (result) {
-                                if (result) {
-                                    formSubmit($('#btnApprove').val());
-                                } else {
-                                    e.stopPropagation();
-                                    e.preventDefault();
+                                    className: 'btn-primary',
+                                    callback: function (result) {
+                                        formSubmit($('#btnApprove').val());
+                                    }
+                                },
+                                'cancel': {
+                                    label: 'No',
+                                    className: 'btn-danger',
+                                    callback: function (result) {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                    }
                                 }
                             }
                         });
@@ -41,24 +40,23 @@ $(document)
             $('#btnReject').click(function (e) {
                 if ($('#stakeHolder').valid() && validateComments('rejection')) {
                     bootbox
-                        .confirm({
+                        .dialog({
                             message: $('#rejectAppln').val(),
                             buttons: {
-                                'cancel': {
-                                    label: 'No',
-                                    className: 'btn-danger'
-                                },
                                 'confirm': {
                                     label: 'Yes',
-                                    className: 'btn-primary'
-                                }
-                            },
-                            callback: function (result) {
-                                if (result) {
-                                    formSubmit($('#btnReject').val());
-                                } else {
-                                    e.stopPropagation();
-                                    e.preventDefault();
+                                    className: 'btn-primary',
+                                    callback: function (result) {
+                                        formSubmit($('#btnReject').val());
+                                    }
+                                },
+                                'cancel': {
+                                    label: 'No',
+                                    className: 'btn-danger',
+                                    callback: function (result) {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                    }
                                 }
                             }
                         });
@@ -80,25 +78,24 @@ $(document)
             $('#btnBlock').click(function (e) {
                 if ($('#stakeHolder').valid() && validateComments('block')) {
                     bootbox
-                        .confirm({
+                        .dialog({
                             message: $('#confirmBlockLicense').val(),
                             buttons: {
-                                'cancel': {
-                                    label: 'No',
-                                    className: 'btn-danger'
-                                },
                                 'confirm': {
                                     label: 'Yes',
-                                    className: 'btn-primary'
-                                }
-                            },
-                            callback: function (result) {
-                                if (result) {
-                                    formSubmit($('#btnBlock').val());
-                                } else {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                }
+                                    className: 'btn-primary',
+                                    callback: function (result) {
+                                        formSubmit($('#btnBlock').val());
+                                    }
+                                },
+                                'cancel': {
+                                    label: 'No',
+                                    className: 'btn-danger',
+                                    callback: function (result) {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                    }
+                                },
                             }
                         });
                 } else {

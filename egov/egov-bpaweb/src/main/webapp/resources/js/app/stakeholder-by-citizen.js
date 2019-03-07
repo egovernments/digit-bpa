@@ -77,24 +77,23 @@ $(document).ready(function () {
     $('#buttonSubmit').click(function (e) {
         if (validateForm(validator)) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#confirmSubmitAppln').val(),
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            $('#stakeHolderByCitizenform').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                $('#stakeHolderByCitizenform').trigger('submit');
+                            }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });

@@ -101,25 +101,24 @@ $(document).ready( function () {
     $('#btnUnblock').click(function (e) {
         if (validateUpdateStakeholderForm(validator) && validateComments('unblock')) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#unblockLicense').val(),
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            $('#workFlowAction').val($('#btnUnblock').val());
-                            $('#stakeHolderUpdateform').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                $('#workFlowAction').val($('#btnUnblock').val());
+                                $('#stakeHolderUpdateform').trigger('submit');
+                            }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });
@@ -132,25 +131,24 @@ $(document).ready( function () {
     $('#btnBlock').click(function (e) {
         if (validateUpdateStakeholderForm(validator) && validateComments('block')) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#blockLicense').val(),
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            $('#workFlowAction').val($('#btnBlock').val());
-                            $('#stakeHolderUpdateform').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                $('#workFlowAction').val($('#btnBlock').val());
+                                $('#stakeHolderUpdateform').trigger('submit');
+                            }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });
@@ -163,25 +161,24 @@ $(document).ready( function () {
     $('#buttonUpdate').click(function (e) {
         if (validateUpdateStakeholderForm(validator)) {
             bootbox
-                .confirm({
+                .dialog({
                     message: $('#updateLicenseInfo').val(),
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
                         'confirm': {
                             label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            $('#workFlowAction').val($('#buttonUpdate').val());
-                            $('#stakeHolderUpdateform').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-primary',
+                            callback: function (result) {
+                                $('#workFlowAction').val($('#buttonUpdate').val());
+                                $('#stakeHolderUpdateform').trigger('submit');
+                            }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                $('#workFlowAction').val($('#buttonUpdate').val());
+                                $('#stakeHolderUpdateform').trigger('submit');
+                            }
                         }
                     }
                 });
