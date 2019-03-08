@@ -230,7 +230,7 @@
 					<input type="hidden" id="showUpdateNoc" value="${showUpdateNoc}">
 					<div id="checklist-info" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="noc-document-updation.jsp"></jsp:include>
+							<jsp:include page="permit-noc-documents.jsp"></jsp:include>
 						</div>
 					</div>
 				</c:if>
