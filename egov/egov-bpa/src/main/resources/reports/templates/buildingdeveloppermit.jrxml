@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-12-18T12:25:27 -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingpermit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="576a1e58-ecb3-4d56-971a-5d1fe019af29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -53,21 +52,7 @@
 	<title>
 		<band height="142" splitType="Stretch">
 			<textField>
-				<reportElement x="64" y="10" width="386" height="20" uuid="0c350090-2eb2-4cb8-a172-f52fdc4324ba"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["APPENDIX C"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="64" y="30" width="386" height="20" uuid="860ffd1a-527b-4be5-aeaf-3e6dab016dad"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="12" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["[See Rule 6 (7)]"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="64" y="50" width="386" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="0" y="50" width="552" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>

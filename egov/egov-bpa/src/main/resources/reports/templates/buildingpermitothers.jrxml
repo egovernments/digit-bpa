@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-12-12T15:37:53 -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingpermitothers" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="576a1e58-ecb3-4d56-971a-5d1fe019af29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -75,16 +74,9 @@
 		</band>
 	</background>
 	<title>
-		<band height="127" splitType="Stretch">
+		<band height="105" splitType="Stretch">
 			<textField>
-				<reportElement x="88" y="41" width="370" height="30" uuid="860ffd1a-527b-4be5-aeaf-3e6dab016dad"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Kerala Municipal Building Rules"+ "\n"+ "APPENDIX C, [See Rule 11 (3)]"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="88" y="70" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="88" y="45" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true" isUnderline="false"/>
 				</textElement>
@@ -105,14 +97,14 @@
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="21" y="10" width="100" height="100" uuid="430badee-7a36-40e8-b783-daddf3e57830">
+				<reportElement mode="Transparent" x="21" y="4" width="100" height="100" uuid="430badee-7a36-40e8-b783-daddf3e57830">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="88" y="89" width="370" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
+				<reportElement x="88" y="66" width="370" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
 					<printWhenExpression><![CDATA[!$P{subHeaderTitle}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -121,7 +113,7 @@
 				<textFieldExpression><![CDATA[$P{subHeaderTitle}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="1" y="107" width="553" height="20" uuid="16cedec8-4f3e-47e8-8ce1-eb3792a04df6">
+				<reportElement stretchType="RelativeToBandHeight" x="1" y="84" width="553" height="20" uuid="16cedec8-4f3e-47e8-8ce1-eb3792a04df6">
 					<printWhenExpression><![CDATA[!$P{subheader}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -183,18 +175,18 @@
 				<textFieldExpression><![CDATA[$P{applicantName} + " , " + "\n" + $P{applicantAddress} + " , " + "\n" + "Mobile number : " + $P{mobileNo} + " ."]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="33" splitType="Stretch">
+		<band height="64" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="3" width="555" height="30" uuid="cfd11764-e10d-43b9-9f31-2192c95e330b"/>
-				<textElement textAlignment="Justified">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="3" width="555" height="57" uuid="cfd11764-e10d-43b9-9f31-2192c95e330b"/>
+				<textElement>
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Permission is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Permission is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy "]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="135" splitType="Stretch">
+		<band height="118" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="22" width="250" height="14" uuid="35c0eb78-58ae-4429-8398-8ab10410815e"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="25" width="250" height="14" uuid="35c0eb78-58ae-4429-8398-8ab10410815e"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -208,7 +200,7 @@
 				<textFieldExpression><![CDATA[$P{electionWard}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="50" width="250" height="14" uuid="cd03de86-548d-4f1c-8d3a-0fbc0af3d594"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="53" width="250" height="14" uuid="cd03de86-548d-4f1c-8d3a-0fbc0af3d594"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -222,7 +214,7 @@
 				<textFieldExpression><![CDATA[$P{village}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="36" width="250" height="14" uuid="b3f29603-357c-4852-b40b-63f19a69ddba"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="39" width="250" height="14" uuid="b3f29603-357c-4852-b40b-63f19a69ddba"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -236,7 +228,7 @@
 				<textFieldExpression><![CDATA[$P{surveyNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="78" width="250" height="14" uuid="217e18e4-c870-4075-a605-3e719ffcd672"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="67" width="250" height="14" uuid="217e18e4-c870-4075-a605-3e719ffcd672"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -250,7 +242,7 @@
 				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="92" width="250" height="14" uuid="6a0af1bd-6841-415a-ad31-d0d6c1d01db6"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="81" width="250" height="14" uuid="6a0af1bd-6841-415a-ad31-d0d6c1d01db6"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -264,7 +256,7 @@
 				<textFieldExpression><![CDATA[$P{landExtent} + " Sq.Mtrs"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="106" width="250" height="14" uuid="3b691739-39a5-40ee-a202-f5de41659f88"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="95" width="250" height="14" uuid="3b691739-39a5-40ee-a202-f5de41659f88"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -278,21 +270,7 @@
 				<textFieldExpression><![CDATA[$P{nearestBuildingNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="64" width="250" height="14" uuid="6dcfa0bf-4cf5-4671-b0a5-c1ab82dfb298"/>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{taluk}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="8" width="250" height="14" uuid="306e232b-e96f-4bb9-bc43-95d5dd325a47"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="11" width="250" height="14" uuid="306e232b-e96f-4bb9-bc43-95d5dd325a47"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -306,7 +284,7 @@
 				<textFieldExpression><![CDATA[$P{revenueWard}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="8" width="140" height="14" uuid="6a51cb90-94b4-487c-9120-0469bb8f7254"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="11" width="140" height="14" uuid="6a51cb90-94b4-487c-9120-0469bb8f7254"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -319,7 +297,7 @@
 				<textFieldExpression><![CDATA["Revenue Ward"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="22" width="140" height="14" uuid="7420abf7-4af3-4022-9c7e-9ed06afedc00"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="25" width="140" height="14" uuid="7420abf7-4af3-4022-9c7e-9ed06afedc00"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -332,7 +310,7 @@
 				<textFieldExpression><![CDATA["Election Ward"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="36" width="140" height="14" uuid="a4d99eb9-4a61-4799-8ab9-22036aafeda8"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="39" width="140" height="14" uuid="a4d99eb9-4a61-4799-8ab9-22036aafeda8"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -345,7 +323,7 @@
 				<textFieldExpression><![CDATA["Survey/Resurvey Number"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="50" width="140" height="14" uuid="9db734a2-7eae-4d2f-b977-451ca76b2f0c"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="53" width="140" height="14" uuid="9db734a2-7eae-4d2f-b977-451ca76b2f0c"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -356,24 +334,10 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Village"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Locality"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="64" width="140" height="14" uuid="72ab94c9-bd3a-4405-b883-1650845f1f20"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Taluk"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="78" width="140" height="14" uuid="3c5ee10e-b893-4573-b530-744dfc7f7932"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="67" width="140" height="14" uuid="3c5ee10e-b893-4573-b530-744dfc7f7932"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -387,7 +351,7 @@
 				<textFieldExpression><![CDATA["District"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="92" width="140" height="14" uuid="97f838c4-e841-4d1b-a5fd-371cdafe96f7"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="81" width="140" height="14" uuid="97f838c4-e841-4d1b-a5fd-371cdafe96f7"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -401,7 +365,7 @@
 				<textFieldExpression><![CDATA["Extend Of Land"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="106" width="140" height="14" uuid="ea8ecd39-9889-4a25-887d-91527e4cfbd6"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="95" width="140" height="14" uuid="ea8ecd39-9889-4a25-887d-91527e4cfbd6"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -449,7 +413,7 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("existingblockdetailssubreport.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="76">
+		<band height="58">
 			<printWhenExpression><![CDATA[new Boolean($F{existingBuildingDetails}.size()!= 0)]]></printWhenExpression>
 			<staticText>
 				<reportElement x="8" y="18" width="105" height="20" uuid="026b696b-0513-4a3a-87cf-e645e31804af">
@@ -569,7 +533,7 @@
 			</subreport>
 		</band>
 		<band height="57">
-			<printWhenExpression><![CDATA[new Boolean($F{buildingDetail}.size()!= 0)]]></printWhenExpression>
+			<printWhenExpression><![CDATA[new Boolean($F{existingBuildingDetails}.size()!= 0)]]></printWhenExpression>
 			<staticText>
 				<reportElement x="8" y="17" width="105" height="20" uuid="b1829889-ffab-44a9-8996-2687e182c990">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>

@@ -76,7 +76,7 @@
 	<title>
 		<band height="127" splitType="Stretch">
 			<textField>
-				<reportElement x="88" y="70" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="88" y="56" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true" isUnderline="false"/>
 				</textElement>
@@ -87,7 +87,7 @@
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ulbName} + "\n" + $P{cityName}]]></textFieldExpression>
 			</textField>
 			<image>
 				<reportElement x="453" y="10" width="70" height="70" uuid="ac206e46-6930-479b-88cd-c4a07891707f">
@@ -104,7 +104,7 @@
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="88" y="89" width="370" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
+				<reportElement x="88" y="83" width="370" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
 					<printWhenExpression><![CDATA[!$P{subHeaderTitle}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
