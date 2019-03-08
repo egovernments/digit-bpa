@@ -202,68 +202,8 @@
 									cssClass="add-margin error-msg" />
 							</div>
 						</div> --%>
-						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.detailof.neigbour" /></label>
-							<div class="col-sm-3 add-margin">
-								<c:forEach items="${documentScrutinyValues}" var="scrutinyVal">
-									<div class="radio">
-										<label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-													  name="documentScrutiny[0].docScrutiny.neighbourOwnerDtlSubmitted"
-												<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
-										</label>
-									</div>
-								</c:forEach>
-								<form:errors
-									path="documentScrutiny[0].docScrutiny.neighbourOwnerDtlSubmitted"
-									cssClass="add-margin error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.various.doc.matching" /></label>
-							<div class="col-sm-3 add-margin">
-								<c:forEach items="${documentScrutinyValues}" var="scrutinyVal">
-									<div class="radio">
-										<label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-													  name="documentScrutiny[0].docScrutiny.whetherDocumentMatch"
-												<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
-										</label>
-									</div>
-								</c:forEach>
-								<form:errors path="documentScrutiny[0].docScrutiny.whetherDocumentMatch"
-									cssClass="add-margin error-msg" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.alldocument.attached" /></label>
-							<div class="col-sm-3 add-margin">
-								<c:forEach items="${documentScrutinyValues}" var="scrutinyVal">
-									<div class="radio">
-										<label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-													  name="documentScrutiny[0].docScrutiny.whetherAllDocAttached"
-												<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
-										</label>
-									</div>
-								</c:forEach>
-								<form:errors path="documentScrutiny[0].docScrutiny.whetherAllDocAttached"
-									cssClass="add-margin error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.allpage.attached" /></label>
-							<div class="col-sm-3 add-margin">
-								<c:forEach items="${documentScrutinyValues}" var="scrutinyVal">
-									<div class="radio">
-										<label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-													  name="documentScrutiny[0].docScrutiny.whetherAllPageOfDocAttached"
-												<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
-										</label>
-									</div>
-								</c:forEach>
-								<form:errors
-									path="documentScrutiny[0].docScrutiny.whetherAllPageOfDocAttached"
-									cssClass="add-margin error-msg" />
-							</div>
-						</div>
+						
+						<jsp:include page="permit-document-scrutiny-checklist.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="rejection-reasons.jsp"></jsp:include>

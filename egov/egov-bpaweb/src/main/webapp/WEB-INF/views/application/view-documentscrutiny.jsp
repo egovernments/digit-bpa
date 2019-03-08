@@ -109,42 +109,7 @@
 					<c:out value="${bpaApplication.documentScrutiny[0].docScrutiny.district}" default="N/A"></c:out>
 				</div>
 			</div>
-			<div class="row add-border">
-				<div class="col-sm-3 add-margin">
-					<spring:message code="lbl.detailof.neigbour" />
-				</div>
-				<div class="col-sm-3 add-margin view-content">
-					<c:out
-							value="${bpaApplication.documentScrutiny[0].docScrutiny.neighbourOwnerDtlSubmitted.checkListVal}"
-							default="N/A"></c:out>
-				</div>
-				<div class="col-sm-3 add-margin">
-					<spring:message code="lbl.various.doc.matching" />
-				</div>
-				<div class="col-sm-3 add-margin view-content">
-					<c:out
-							value="${bpaApplication.documentScrutiny[0].docScrutiny.whetherDocumentMatch.checkListVal}"
-							default="N/A"></c:out>
-				</div>
-			</div>
-			<div class="row add-border">
-				<div class="col-sm-3 add-margin">
-					<spring:message code="lbl.alldocument.attached" />
-				</div>
-				<div class="col-sm-3 add-margin view-content">
-					<c:out
-						value="${bpaApplication.documentScrutiny[0].docScrutiny.whetherAllDocAttached.checkListVal}"
-						default="N/A"></c:out>
-				</div>
-				<div class="col-sm-3 add-margin">
-					<spring:message code="lbl.allpage.attached" />
-				</div>
-				<div class="col-sm-3 add-margin view-content">
-					<c:out
-						value="${bpaApplication.documentScrutiny[0].docScrutiny.whetherAllPageOfDocAttached.checkListVal}"
-						default="N/A"></c:out>
-				</div>
-			</div>
+			<jsp:include page="view-permit-doc-scrutiny-checklist.jsp"></jsp:include>
 		</div>
 	</div>
 </div>

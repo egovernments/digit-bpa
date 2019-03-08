@@ -184,7 +184,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     private BpaDcrService bpaDcrService;
     @Autowired
     protected OccupancyFeeService occupancyFeeService;
-    
+
     @GetMapping("/update/{applicationNumber}")
     public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model,
             final HttpServletRequest request) {
@@ -363,12 +363,15 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("currentState", oc.getCurrentState().getValue());
         model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
         model.addAttribute("workFlowBoundary", bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId());
-		model.addAttribute("electionBoundary", oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-				? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getId() : null);
-		model.addAttribute("electionBoundaryName", oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-				? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getName() : "");
-		model.addAttribute("revenueBoundaryName", oc.getParent().getSiteDetail().get(0).getAdminBoundary() != null
-				? oc.getParent().getSiteDetail().get(0).getAdminBoundary().getName() : "");
+        model.addAttribute("electionBoundary", oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
+                ? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
+                : null);
+        model.addAttribute("electionBoundaryName", oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
+                ? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getName()
+                : "");
+        model.addAttribute("revenueBoundaryName", oc.getParent().getSiteDetail().get(0).getAdminBoundary() != null
+                ? oc.getParent().getSiteDetail().get(0).getAdminBoundary().getName()
+                : "");
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
         model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
         model.addAttribute("loginUser", securityUtils.getCurrentUser());
@@ -419,6 +422,9 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         Position pos = null;
         Long approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
         wfBean.setApproverPositionId(approvalPosition);
+        occupancyCertificate.getDocumentScrutinies().get(0).getDocScrutiny().getDocumentScrutinyChecklists().forEach(
+                docScrutiny -> docScrutiny
+                        .setDocumentScrutiny(occupancyCertificate.getDocumentScrutinies().get(0).getDocScrutiny()));
         OccupancyCertificate ocResponse = occupancyCertificateService.update(occupancyCertificate, wfBean);
         bpaUtils.updatePortalUserinbox(ocResponse, null);
 
@@ -466,20 +472,21 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         wfBean.setAmountRule(amountRule);
         Position pos = null;
         Long approvalPosition = null;
-        String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
+        String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
+                BpaConstants.OCFEECALULATION);
 
-        if(WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()) 
-        		&& feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
-        	List<OccupancyFee> permitFeeList = occupancyFeeService
+        if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
+                && feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
+            List<OccupancyFee> permitFeeList = occupancyFeeService
                     .getOCFeeListByApplicationId(occupancyCertificate.getId());
-        	if(permitFeeList.size() == 0 || permitFeeList ==null) {
-        		model.addAttribute("feeNotDefined", "Please enter fee to proceed");
-        		 setCityName(model, request);
-        	     prepareFormData(occupancyCertificate, model);
-        	     loadData(occupancyCertificate, model);
-        	     getActionsForOCApplication(model, occupancyCertificate);
-            	return OCCUPANCY_CERTIFICATE_VIEW;
-        	}
+            if (permitFeeList.size() == 0 || permitFeeList == null) {
+                model.addAttribute("feeNotDefined", "Please enter fee to proceed");
+                setCityName(model, request);
+                prepareFormData(occupancyCertificate, model);
+                loadData(occupancyCertificate, model);
+                getActionsForOCApplication(model, occupancyCertificate);
+                return OCCUPANCY_CERTIFICATE_VIEW;
+            }
         }
         if (StringUtils.isNotBlank(request.getParameter(APPRIVALPOSITION))
                 && !WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())

@@ -74,7 +74,6 @@ import javax.validation.Valid;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
-import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -147,8 +146,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private BpaDcrService bpaDcrService;
     @Autowired
     protected SubOccupancyService subOccupancyService;
-    @Autowired
-    private ChecklistServicetypeMappingService checklistServiceTypeService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -189,9 +186,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         model.addAttribute("isEDCRIntegrationRequire",
                 bpaDcrService.isEdcrIntegrationRequireByService(serviceCode));
         model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
-        model.addAttribute("checkListDetailList",
-                checkListDetailService.findActiveCheckListByServiceType(bpaApplication.getServiceType().getId(),
-                        CHECKLIST_TYPE));
         List<ChecklistServiceTypeMapping> list = checklistServiceTypeService
                 .findByActiveChecklistAndServiceType(bpaApplication.getServiceType().getDescription(), CHECKLIST_TYPE);
         model.addAttribute("subOccupancyList", subOccupancyService.findAllOrderByOrderNumber());

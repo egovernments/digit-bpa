@@ -62,7 +62,6 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS;
 import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_AE;
@@ -108,6 +107,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.service.PermitConditionsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
@@ -226,6 +226,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("showDcrDocuments",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
         model.addAttribute("documentScrutinyValues", ChecklistValues.values());
+        List<ChecklistServiceTypeMapping> docScrutnyChklist = checklistServiceTypeService
+                .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), "PERMITDOCSCRTNY");
+        model.addAttribute("documentScrutinyChecklist", docScrutnyChklist);
+        model.addAttribute("planScrutinyValues", ChecklistValues.values());
         model.addAttribute("loginUser", securityUtils.getCurrentUser());
         getDcrDocumentsUploadMode(model);
         return CREATEDOCUMENTSCRUTINY_FORM;
@@ -280,6 +284,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             User user = assignments.get(0).getEmployee();
             if (!bpaApplication.getPermitDocuments().isEmpty())
                 applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
+            bpaApplication.getDocumentScrutiny().get(0).getDocScrutiny().getDocumentScrutinyChecklists().forEach(
+                    docScrutiny -> docScrutiny.setDocumentScrutiny(bpaApplication.getDocumentScrutiny().get(0).getDocScrutiny()));
             BpaApplication bpaAppln = applicationBpaService.updateApplication(bpaApplication, approvalPosition, workFlowAction,
                     amountRule);
             String message;
@@ -624,8 +630,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 ? application.getSiteDetail().get(0).getAdminBoundary().getName()
                 : "");
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
-        model.addAttribute("checkListDetailList", checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));
         model.addAttribute("applicationDocumentList", application.getPermitDocuments());
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
         model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountWithAmenities(

@@ -81,7 +81,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.entity.enums.SlotMappingApplType;
 import org.egov.bpa.master.service.BpaSchemeService;
-import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.ConstructionStagesService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.StakeHolderService;
@@ -138,7 +138,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     protected static final String COMMON_ERROR = "common-error";
 
     @Autowired
-    protected CheckListDetailService checkListDetailService;
+    protected ChecklistServicetypeMappingService checklistServiceTypeService;
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;

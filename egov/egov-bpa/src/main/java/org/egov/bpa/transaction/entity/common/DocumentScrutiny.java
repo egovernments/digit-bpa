@@ -48,25 +48,25 @@
 package org.egov.bpa.transaction.entity.common;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.egov.bpa.master.entity.VillageName;
-import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
@@ -110,27 +110,18 @@ public class DocumentScrutiny extends AbstractAuditable {
     @Length(min = 1, max = 128)
     private String district;
 
-    @Enumerated(EnumType.STRING)
-    private ChecklistValues neighbourOwnerDtlSubmitted;
-
     @Length(min = 1, max = 64)
     private String deedNumber;
 
     @Temporal(value = TemporalType.DATE)
     private Date deedDate;
 
-    @Enumerated(EnumType.STRING)
-    private ChecklistValues whetherAllDocAttached;
-
-    @Enumerated(EnumType.STRING)
-    private ChecklistValues whetherAllPageOfDocAttached;
-
-    @Enumerated(EnumType.STRING)
-    private ChecklistValues whetherDocumentMatch;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "verifiedBy")
     private User verifiedBy;
+
+    @OneToMany(mappedBy = "documentScrutiny", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DocumentScrutinyChecklist> documentScrutinyChecklists = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -214,14 +205,6 @@ public class DocumentScrutiny extends AbstractAuditable {
         this.district = district;
     }
 
-    public ChecklistValues getNeighbourOwnerDtlSubmitted() {
-        return neighbourOwnerDtlSubmitted;
-    }
-
-    public void setNeighbourOwnerDtlSubmitted(ChecklistValues neighbourOwnerDtlSubmitted) {
-        this.neighbourOwnerDtlSubmitted = neighbourOwnerDtlSubmitted;
-    }
-
     public String getDeedNumber() {
         return deedNumber;
     }
@@ -238,35 +221,19 @@ public class DocumentScrutiny extends AbstractAuditable {
         this.deedDate = deedDate;
     }
 
-    public ChecklistValues getWhetherAllDocAttached() {
-        return whetherAllDocAttached;
-    }
-
-    public void setWhetherAllDocAttached(ChecklistValues whetherAllDocAttached) {
-        this.whetherAllDocAttached = whetherAllDocAttached;
-    }
-
-    public ChecklistValues getWhetherAllPageOfDocAttached() {
-        return whetherAllPageOfDocAttached;
-    }
-
-    public void setWhetherAllPageOfDocAttached(ChecklistValues whetherAllPageOfDocAttached) {
-        this.whetherAllPageOfDocAttached = whetherAllPageOfDocAttached;
-    }
-
-    public ChecklistValues getWhetherDocumentMatch() {
-        return whetherDocumentMatch;
-    }
-
-    public void setWhetherDocumentMatch(ChecklistValues whetherDocumentMatch) {
-        this.whetherDocumentMatch = whetherDocumentMatch;
-    }
-
     public User getVerifiedBy() {
         return verifiedBy;
     }
 
     public void setVerifiedBy(User verifiedBy) {
         this.verifiedBy = verifiedBy;
+    }
+
+    public List<DocumentScrutinyChecklist> getDocumentScrutinyChecklists() {
+        return documentScrutinyChecklists;
+    }
+
+    public void setDocumentScrutinyChecklists(List<DocumentScrutinyChecklist> documentScrutinyChecklists) {
+        this.documentScrutinyChecklists = documentScrutinyChecklists;
     }
 }
