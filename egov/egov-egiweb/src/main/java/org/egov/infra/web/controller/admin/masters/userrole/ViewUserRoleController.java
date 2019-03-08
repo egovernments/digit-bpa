@@ -57,7 +57,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping(value = "/userrole/view/{name}")
+@RequestMapping(value = "/userrole/view/{id}")
 public class ViewUserRoleController {
     private final UserService userService;
 
@@ -67,8 +67,8 @@ public class ViewUserRoleController {
     }
 
     @RequestMapping
-    public String updateuserRole(@PathVariable final Long name, final Model model) {
-        final User user = userService.getUserById(name);
+    public String updateuserRole(@PathVariable final Long id, final Model model) {
+        final User user = userService.getUserById(id);
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles());
         return "userrole-view";

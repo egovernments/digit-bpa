@@ -47,11 +47,11 @@
  */
 package org.egov.portal.entity;
 
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.workflow.entity.State;
-import org.egov.portal.entity.enums.Priority;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.portal.entity.PortalInbox.SEQ_PORTALINBOX;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -70,11 +70,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-import static org.egov.portal.entity.PortalInbox.SEQ_PORTALINBOX;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.workflow.entity.State;
+import org.egov.portal.entity.enums.Priority;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * PortalInbox class
@@ -82,8 +83,8 @@ import static org.egov.portal.entity.PortalInbox.SEQ_PORTALINBOX;
  * @author Pradeep
  */
 @Entity
-@Table(name = "egp_inbox")
-@SequenceGenerator(name = SEQ_PORTALINBOX, sequenceName = SEQ_PORTALINBOX, allocationSize = 1)
+@Table(name = "egp_inbox", schema = "state")
+@SequenceGenerator(name = SEQ_PORTALINBOX, sequenceName = SEQ_PORTALINBOX, allocationSize = 1, schema = "state")
 public class PortalInbox extends AbstractAuditable {
 
     public static final String SEQ_PORTALINBOX = "seq_egp_inbox";
@@ -99,7 +100,6 @@ public class PortalInbox extends AbstractAuditable {
     @NotNull
     @Length(max = 128)
     private String serviceType;
-
 
     @Length(max = 100)
     private String applicantName;
@@ -128,7 +128,7 @@ public class PortalInbox extends AbstractAuditable {
 
     private Date resolvedDate;
 
-    @Column(name="slaenddate")
+    @Column(name = "slaenddate")
     private Date slaEndDate;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -151,6 +151,9 @@ public class PortalInbox extends AbstractAuditable {
 
     @Length(max = 100)
     private String status;
+
+    @Length(max = 250)
+    private String tenantId;
 
     @Override
     public Long getId() {
@@ -308,5 +311,13 @@ public class PortalInbox extends AbstractAuditable {
 
     public void setApplicantName(String applicantName) {
         this.applicantName = applicantName;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

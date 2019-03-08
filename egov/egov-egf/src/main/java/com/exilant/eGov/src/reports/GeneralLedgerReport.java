@@ -868,7 +868,7 @@ public class GeneralLedgerReport {
             + " (CASE WHEN (GLDET.GENERALLEDGERID=GL.ID) THEN '-['||(CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name='Creditor') "
             + "THEN (select name from Supplier where id=gldet.detailkeyid ) "
             + "ELSE (CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name='EMPLOYEE') "
-            + "THEN (select name from eg_user where id=gldet.detailkeyid) "
+            + "THEN (select name from state.eg_user where id=gldet.detailkeyid) "
             + "ELSE (select name from accountentitymaster where id=gldet.detailkeyid) END) END)||']'"
             + " ELSE NULL END) as \"Name\",CASE WHEN gl.glcode = '"
             + glCode1

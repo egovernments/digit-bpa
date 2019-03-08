@@ -52,8 +52,8 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Table(name = "EGBPA_STAKEHOLDER_Document")
-@SequenceGenerator(name = StakeHolderDocument.SEQ_STAKEHOLDER_DOCUMENT, sequenceName = StakeHolderDocument.SEQ_STAKEHOLDER_DOCUMENT, allocationSize = 1)
+@Table(name = "EGBPA_STAKEHOLDER_Document", schema = "state")
+@SequenceGenerator(name = StakeHolderDocument.SEQ_STAKEHOLDER_DOCUMENT, sequenceName = StakeHolderDocument.SEQ_STAKEHOLDER_DOCUMENT, allocationSize = 1, schema = "state")
 public class StakeHolderDocument extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
@@ -69,9 +69,10 @@ public class StakeHolderDocument extends AbstractAuditable {
     private StakeHolder stakeHolder;
     private Boolean isAttached;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "egbpa_stakeholder_support_documents", joinColumns = @JoinColumn(name = "stakeholderdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    @JoinTable(name = "egbpa_stakeholder_support_documents", schema = "state", joinColumns = @JoinColumn(name = "stakeholderdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
     private transient MultipartFile[] files;
+
     @Override
     public Long getId() {
         return id;

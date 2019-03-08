@@ -48,9 +48,38 @@
 
 package org.egov.infra.admin.master.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.gson.annotations.Expose;
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import org.apache.commons.lang3.LocaleUtils;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.Address;
@@ -66,27 +95,18 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.annotations.Expose;
 
 @Entity
-@Table(name = "eg_user")
+@Table(name = "eg_user", schema = "state")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-@SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
-@Unique(fields = {"username", "pan", "aadhaarNumber", "emailId"}, enableDfltMsg = true, isSuperclass = true)
-@CompositeUnique(fields = {"type", "mobileNumber"}, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
-@JsonIgnoreProperties({"createdBy", "lastModifiedBy"})
+@SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1, schema = "state")
+@Unique(fields = { "username", "pan", "aadhaarNumber", "emailId" }, enableDfltMsg = true, isSuperclass = true)
+@CompositeUnique(fields = { "type", "mobileNumber" }, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
+@JsonIgnoreProperties({ "createdBy", "lastModifiedBy" })
 public class User extends AbstractAuditable {
     public static final String SEQ_USER = "SEQ_EG_USER";
     private static final long serialVersionUID = -2415368058955783970L;
@@ -94,6 +114,9 @@ public class User extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_USER, strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @Length(max = 250)
+    private String tenantId;
 
     @Column(name = "username", unique = true)
     @NotNull
@@ -153,7 +176,7 @@ public class User extends AbstractAuditable {
     private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
+    @JoinTable(name = "eg_userrole", schema = "state", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
     @Audited(targetAuditMode = NOT_AUDITED)
     @AuditJoinTable
     private Set<Role> roles = new HashSet<>();
@@ -183,6 +206,14 @@ public class User extends AbstractAuditable {
     @Override
     protected void setId(final Long id) {
         this.id = id;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
     @JsonIgnore
@@ -382,15 +413,11 @@ public class User extends AbstractAuditable {
     }
 
     public boolean hasRole(String roleName) {
-        return roles.parallelStream().map(Role::getName)
-                .anyMatch(roleName::equals);
+        return roles.parallelStream().map(Role::getName).anyMatch(roleName::equals);
     }
 
     public boolean hasAnyRole(String... roleName) {
         List<String> roleNames = Arrays.asList(roleName);
-        return roles.parallelStream()
-                .filter(role -> roleNames.contains(role.getName()))
-                .findFirst()
-                .isPresent();
+        return roles.parallelStream().filter(role -> roleNames.contains(role.getName())).findFirst().isPresent();
     }
 }

@@ -47,23 +47,24 @@
  */
 package org.egov.portal.repository;
 
+import java.util.List;
+
 import org.egov.portal.entity.PortalInboxUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface PortalInboxUserRepository extends JpaRepository<PortalInboxUser, Long> {
 
-    @Query("select distinct piu from PortalInboxUser as piu where piu.user.id = :userId and piu.portalInbox.resolved = :resolved order by piu.id desc")
-    List<PortalInboxUser> getPortalInboxByResolved(@Param("userId") Long userId, @Param("resolved") boolean resolved);
+    @Query("select distinct piu from PortalInboxUser as piu where piu.user.id = :userId and piu.tenantId=:tenantId and piu.portalInbox.tenantId=tenantId and piu.portalInbox.resolved = :resolved order by piu.id desc")
+    List<PortalInboxUser> getPortalInboxByResolved(@Param("userId") Long userId, @Param("resolved") boolean resolved,
+            @Param("tenantId") String tenantId);
 
-    List<PortalInboxUser> findByUser_IdOrderByIdDesc(Long userId);
+    List<PortalInboxUser> findByTenantIdAndUser_IdOrderByIdDesc(String tenantId, Long userId);
 
-    @Query("select count(*) from PortalInboxUser piu where piu.user.id=:userId")
-    Long getPortalInboxUserCount(@Param("userId") Long userId);
+    @Query("select count(*) from PortalInboxUser piu where piu.user.id=:userId and piu.tenantId=:tenantId")
+    Long getPortalInboxUserCount(@Param("userId") Long userId, @Param("tenantId") String tenantId);
 
 }

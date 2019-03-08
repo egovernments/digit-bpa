@@ -1,0 +1,10 @@
+ALTER TABLE egp_firm ADD CONSTRAINT fk_firm_createdby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
+ALTER TABLE egp_firm ADD CONSTRAINT fk_firm_lastmodifiedby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
+ALTER TABLE egp_firmuser ADD CONSTRAINT fk_firmusers_createdby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
+ALTER TABLE egp_firmuser ADD CONSTRAINT fk_firmusers_lastmodifiedby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
+ALTER TABLE egp_firmuser ADD CONSTRAINT fk_firmusers_userid FOREIGN KEY (userid) REFERENCES state.eg_user(id);
+ALTER TABLE egp_notifications ADD CONSTRAINT fk_portalnotification_createdby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
+ALTER TABLE egp_notifications ADD CONSTRAINT fk_portalnotification_lastmodifiedby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
+ALTER TABLE egp_notifications ADD CONSTRAINT fk_portalnotification_user FOREIGN KEY (userid) REFERENCES state.eg_user(id);
+ALTER TABLE egp_portalservice ADD CONSTRAINT fk_portalservice_createdby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
+ALTER TABLE egp_portalservice ADD CONSTRAINT fk_portalservice_lastmodifiedby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);

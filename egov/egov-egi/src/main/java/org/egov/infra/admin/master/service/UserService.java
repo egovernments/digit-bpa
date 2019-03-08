@@ -48,6 +48,10 @@
 
 package org.egov.infra.admin.master.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
@@ -55,13 +59,10 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.utils.ApplicationConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,6 +81,7 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
+        user.setTenantId(ApplicationThreadLocals.getTenantID());
         User savedUser = userRepository.save(user);
         microserviceUtils.createUserMicroservice(user);
         return savedUser;
@@ -103,6 +105,15 @@ public class UserService {
 
     public User getUserByUsername(String userName) {
         return userRepository.findByUsername(userName);
+    }
+
+    public User getUserByUsernameAndTenantIdForLogin(String userName) {
+        return userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID(),
+                ApplicationConstant.STATE_TENANTID);
+    }
+
+    public User getUserByUsernameAndTenantId(String userName) {
+        return userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
     }
 
     public List<User> getUsersByNameLike(String userName) {
@@ -129,6 +140,12 @@ public class UserService {
         return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(username, type);
     }
 
+    public List<User> findAllByMatchingUserNameAndTenantIdForType(String username, UserType type) {
+        return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(
+                "%" + username.toUpperCase() + "%", type, ApplicationThreadLocals.getTenantID(),
+                ApplicationConstant.STATE_TENANTID);
+    }
+
     public Set<User> getUsersByRoleName(String roleName) {
         return userRepository.findUsersByRoleName(roleName);
     }
@@ -144,19 +161,20 @@ public class UserService {
     public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender) {
         return userRepository.findByNameAndMobileNumberAndGender(name, mobileNumber, gender);
     }
-    
-    public List<User> getUserByNameAndMobileNumberAndGenderForUserType(final String name, final String mobileNumber, final Gender gender, final UserType type) {
+
+    public List<User> getUserByNameAndMobileNumberAndGenderForUserType(final String name, final String mobileNumber,
+            final Gender gender, final UserType type) {
         return userRepository.findByNameAndMobileNumberAndGenderAndTypeOrderByIdDesc(name, mobileNumber, gender, type);
     }
-    
-    public List<User> getUserByMobileNumberAndType(final String mobileNumber,final UserType type) {
+
+    public List<User> getUserByMobileNumberAndType(final String mobileNumber, final UserType type) {
         return userRepository.findByMobileNumberAndTypeOrderById(mobileNumber, type);
     }
-    
+
     public List<User> getUserByType(final UserType type) {
         return userRepository.findByTypeAndActiveTrue(type);
     }
-    
+
     public List<User> getUserByTypeInOrder(final UserType type) {
         return userRepository.findByTypeAndActiveTrueOrderByUsername(type);
     }
@@ -164,6 +182,7 @@ public class UserService {
     public List<User> getUsersByTypeAndEmailId(final String emailId, final UserType type) {
         return userRepository.findByEmailIdAndTypeOrderById(emailId, type);
     }
+
     public User getUserByPan(String panNumber) {
         return userRepository.findByPan(panNumber);
     }

@@ -1,0 +1,14 @@
+ALTER TABLE egp_firm DROP CONSTRAINT fk_firm_lastmodifiedby;
+ALTER TABLE egp_firmuser DROP CONSTRAINT fk_firmusers_lastmodifiedby;
+ALTER TABLE egp_notifications DROP CONSTRAINT fk_portalnotification_lastmodifiedby;
+ALTER TABLE egp_portalservice DROP CONSTRAINT fk_portalservice_createdby;
+ALTER TABLE egp_firmuser DROP CONSTRAINT fk_firmusers_userid;
+ALTER TABLE egp_inbox DROP CONSTRAINT fk_portalinbox_lastmdby;
+ALTER TABLE egp_citizen DROP CONSTRAINT fk_citizen_user;
+ALTER TABLE egp_citizeninbox DROP CONSTRAINT fk_c_inbox_createdby;
+ALTER TABLE egp_inbox DROP CONSTRAINT fk_portalinbox_createdby;
+ALTER TABLE egp_notifications DROP CONSTRAINT fk_portalnotification_createdby;
+ALTER TABLE egp_citizeninbox DROP CONSTRAINT fk_c_inbox_lastmodifiedby;
+ALTER TABLE egp_firm DROP CONSTRAINT fk_firm_createdby;
+ALTER TABLE egp_firmuser DROP CONSTRAINT fk_firmusers_createdby;
+ALTER TABLE egp_inboxusers DROP CONSTRAINT fk_inboxuserid;

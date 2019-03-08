@@ -48,6 +48,7 @@
 package org.egov.portal.service;
 
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
@@ -90,6 +91,7 @@ public class PortalInboxService {
 
     @Transactional
     public void pushInboxMessage(final PortalInbox portalInbox) {
+        portalInbox.setTenantId(ApplicationThreadLocals.getTenantID());
         if (portalInbox.getTempPortalInboxUser().isEmpty()) {
             final User user = getLoggedInUser();
             if (user != null
@@ -112,6 +114,7 @@ public class PortalInboxService {
         PortalInboxUser portalInboxUser = null;
         if (portalInbox != null && user!=null) {
             portalInboxUser = new PortalInboxUser();
+            portalInboxUser.setTenantId(ApplicationThreadLocals.getTenantID());
             portalInboxUser.setUser(user);
             portalInbox.getPortalInboxUsers().add(portalInboxUser);
             portalInboxUser.setPortalInbox(portalInbox);

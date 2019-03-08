@@ -106,6 +106,8 @@ public final class ApplicationConstant {
     public static final String SLASH = "/";
     public static final String COLON = ":";
     public static final String DOT = ".";
+    
+    public static final String STATE_TENANTID = "state";
 
 
     private ApplicationConstant() {

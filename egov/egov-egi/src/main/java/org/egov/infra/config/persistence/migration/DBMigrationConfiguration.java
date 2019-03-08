@@ -48,6 +48,13 @@
 
 package org.egov.infra.config.persistence.migration;
 
+import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +65,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
-
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.String.format;
 
 @Configuration
 public class DBMigrationConfiguration {
@@ -83,6 +84,9 @@ public class DBMigrationConfiguration {
     @Value("${statewide.migration.required}")
     private boolean statewideMigrationRequired;
 
+    @Value("${state.migration.required}")
+    private boolean stateMigrationRequired;
+
     @Value("${db.flyway.main.migration.file.path}")
     private String mainMigrationFilePath;
 
@@ -98,6 +102,12 @@ public class DBMigrationConfiguration {
     @Value("${statewide.schema.name}")
     private String statewideSchemaName;
 
+    @Value("${db.flyway.state.migration.file.path}")
+    private String stateMigrationFilePath;
+
+    @Value("${state.schema.name}")
+    private String stateSchemaName;
+
     @Autowired
     private ConfigurableEnvironment environment;
 
@@ -105,6 +115,11 @@ public class DBMigrationConfiguration {
     @DependsOn("dataSource")
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
         if (dbMigrationEnabled) {
+
+            if (stateMigrationRequired) {
+                migrateDatabase(dataSource, stateSchemaName, stateMigrationFilePath);
+            }
+
             cities.stream().forEach(schema -> {
                 if (devMode)
                     migrateDatabase(dataSource, schema,
@@ -119,6 +134,7 @@ public class DBMigrationConfiguration {
             } else if (!devMode) {
                 migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath);
             }
+
         }
 
         return new Flyway();

@@ -48,6 +48,13 @@
 
 package org.egov.infra.admin.master.repository;
 
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
+
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.QueryHint;
+
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.Gender;
@@ -59,17 +66,19 @@ import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.QueryHint;
-import java.util.List;
-import java.util.Set;
-
-import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
-
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, RevisionRepository<User, Long, Integer> {
 
-    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     User findByUsername(String userName);
+
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
+    User findByUsernameAndTenantId(String userName, String tenantId);
+
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
+    @Query("select distinct usr from User usr where usr.username = :usrName and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId)")
+    User findByUsernameAndTenantId(@Param("usrName") String userName, @Param("tenantId") String tenantId,
+            @Param("stateTenantId") String stateTenantId);
 
     List<User> findByNameContainingIgnoreCase(String userName);
 
@@ -84,6 +93,10 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
 
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
 
+    @Query("select distinct usr from User usr where upper(usr.username) like :usrName and usr.type = :type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId)")
+    List<User> findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(@Param("usrName") String usrName,
+            @Param("type") UserType type, @Param("tenantId") String tenantId, @Param("stateTenantId") String stateTenantId);
+
     List<User> findByNameContainingIgnoreCaseAndTypeAndActiveTrue(String name, UserType type);
 
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName ")
@@ -96,11 +109,12 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     Integer getUserSerialNumberByName(@Param("name") final String name);
 
     User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
-    
-    List<User> findByNameAndMobileNumberAndGenderAndTypeOrderByIdDesc(String name, String mobileNumber, Gender gender, UserType type);
-    
-    List<User> findByMobileNumberAndTypeOrderById(String mobileNumber, UserType type); 
-    
+
+    List<User> findByNameAndMobileNumberAndGenderAndTypeOrderByIdDesc(String name, String mobileNumber, Gender gender,
+            UserType type);
+
+    List<User> findByMobileNumberAndTypeOrderById(String mobileNumber, UserType type);
+
     List<User> findByTypeAndActiveTrue(UserType type);
 
     List<User> findByTypeAndActiveTrueOrderByUsername(UserType type);

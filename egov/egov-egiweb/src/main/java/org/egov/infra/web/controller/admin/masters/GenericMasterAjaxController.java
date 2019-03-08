@@ -177,7 +177,7 @@ public class GenericMasterAjaxController {
     @GetMapping(value = "/userRole/ajax/userlist", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void getAllActiveUserByNameLike(@RequestParam String userName, HttpServletResponse response) throws IOException {
-        final List<User> userList = userService.findAllByMatchingUserNameForType(userName, UserType.EMPLOYEE);
+        final List<User> userList = userService.findAllByMatchingUserNameAndTenantIdForType(userName, UserType.EMPLOYEE);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(buildUser(userList), response.getWriter());
     }
