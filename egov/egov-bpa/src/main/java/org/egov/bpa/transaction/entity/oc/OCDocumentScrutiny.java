@@ -47,7 +47,7 @@
 
 package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.transaction.entity.common.DocumentScrutinyCommon;
+import org.egov.bpa.transaction.entity.common.DocumentScrutiny;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.CascadeType;
@@ -76,7 +76,7 @@ public class OCDocumentScrutiny extends AbstractAuditable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@NotNull
 	@JoinColumn(name = "documentScrutiny", nullable = false)
-	private DocumentScrutinyCommon docScrutiny;
+	private DocumentScrutiny docScrutiny;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@NotNull
@@ -93,11 +93,11 @@ public class OCDocumentScrutiny extends AbstractAuditable {
 		this.id = id;
 	}
 
-	public DocumentScrutinyCommon getDocScrutiny() {
+	public DocumentScrutiny getDocScrutiny() {
 		return docScrutiny;
 	}
 
-	public void setDocScrutiny(DocumentScrutinyCommon docScrutiny) {
+	public void setDocScrutiny(DocumentScrutiny docScrutiny) {
 		this.docScrutiny = docScrutiny;
 	}
 

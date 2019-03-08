@@ -57,14 +57,14 @@
 					<spring:message code="lbl.re.survey.no" />
 				</div>
 				<div class="col-sm-3 add-margin view-content">
-					<c:out value="${bpaApplication.documentScrutiny[0].reSurveynumber}"
+					<c:out value="${bpaApplication.documentScrutiny[0].docScrutiny.reSurveyNumber}"
 						default="N/A"></c:out>
 				</div>
 				<div class="col-sm-3 add-margin">
 					<spring:message code="lbl.nature.of.ownership" />
 				</div>
 				<div class="col-sm-3 add-margin view-content">
-					<c:out value="${bpaApplication.documentScrutiny[0].natureofOwnership}"
+					<c:out value="${bpaApplication.documentScrutiny[0].docScrutiny.natureOfOwnership}"
 						default="N/A"></c:out>
 				</div>
 				<%-- <div class="col-sm-3 add-margin">
@@ -84,20 +84,20 @@
 				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<fmt:formatNumber type="number" maxFractionDigits="2"
-						value="${bpaApplication.documentScrutiny[0].extentinsqmts}" />
+						value="${bpaApplication.documentScrutiny[0].docScrutiny.extentInSqmts}" />
 				</div>
 				<div class="col-sm-3 add-margin">
 					<spring:message code="lbl.deednumber" />
 				</div>
 				<div class="col-sm-3 add-margin view-content">
-					<c:out value="${bpaApplication.documentScrutiny[0].deedNumber}" default="N/A"></c:out>
+					<c:out value="${bpaApplication.documentScrutiny[0].docScrutiny.deedNumber}" default="N/A"></c:out>
 				</div>
 				<%-- <div class="col-sm-3 add-margin">
 					<spring:message code="lbl.registraroffice" />
 				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<c:out
-						value="${bpaApplication.documentScrutiny[0].registrarOffice}"
+						value="${bpaApplication.documentScrutiny[0].docScrutiny.registrarOffice}"
 						default="N/A"></c:out>
 				</div> --%>
 			</div>
@@ -106,7 +106,7 @@
 					<spring:message code="lbl.district" />
 				</div>
 				<div class="col-sm-3 add-margin view-content">
-					<c:out value="${bpaApplication.documentScrutiny[0].district}" default="N/A"></c:out>
+					<c:out value="${bpaApplication.documentScrutiny[0].docScrutiny.district}" default="N/A"></c:out>
 				</div>
 			</div>
 			<div class="row add-border">
@@ -115,7 +115,7 @@
 				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<c:out
-							value="${bpaApplication.documentScrutiny[0].neighoutOwnerDtlSubmitted.checkListVal}"
+							value="${bpaApplication.documentScrutiny[0].docScrutiny.neighbourOwnerDtlSubmitted.checkListVal}"
 							default="N/A"></c:out>
 				</div>
 				<div class="col-sm-3 add-margin">
@@ -123,7 +123,7 @@
 				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<c:out
-							value="${bpaApplication.documentScrutiny[0].whetherDocumentMatch.checkListVal}"
+							value="${bpaApplication.documentScrutiny[0].docScrutiny.whetherDocumentMatch.checkListVal}"
 							default="N/A"></c:out>
 				</div>
 			</div>
@@ -133,7 +133,7 @@
 				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<c:out
-						value="${bpaApplication.documentScrutiny[0].whetherAllDocAttached.checkListVal}"
+						value="${bpaApplication.documentScrutiny[0].docScrutiny.whetherAllDocAttached.checkListVal}"
 						default="N/A"></c:out>
 				</div>
 				<div class="col-sm-3 add-margin">
@@ -141,7 +141,7 @@
 				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<c:out
-						value="${bpaApplication.documentScrutiny[0].whetherAllPageOfDocAttached.checkListVal}"
+						value="${bpaApplication.documentScrutiny[0].docScrutiny.whetherAllPageOfDocAttached.checkListVal}"
 						default="N/A"></c:out>
 				</div>
 			</div>

@@ -94,16 +94,16 @@
 							<div class="col-sm-3 add-margin">
 								<form:hidden path="documentScrutiny[0].application"
 									id="scrutinyapplicationid" value="${bpaApplication.id}" />
-								<form:hidden path="documentScrutiny[0].verifiedBy"
+								<form:hidden path="documentScrutiny[0].docScrutiny.verifiedBy"
 									id="verifiedById" value="${loginUser.id}" />
-								<form:hidden path="documentScrutiny[0].reSurveynumber"
+								<form:hidden path="documentScrutiny[0].docScrutiny.reSurveyNumber"
 											 id="verifiedById" value="${bpaApplication.siteDetail[0].reSurveyNumber}" />
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric"
 									data-role="tagsinput" id="reSurveynumber"
 									path="" disabled="true"
 									value="${bpaApplication.siteDetail[0].reSurveyNumber}" />
-								<form:errors path="documentScrutiny[0].reSurveynumber"
+								<form:errors path="documentScrutiny[0].docScrutiny.reSurveyNumber"
 									cssClass="add-margin error-msg" />
 							</div>
 
@@ -130,9 +130,9 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation decimalfixed"
 									maxlength="10" data-pattern="number" id="extentinsqmts"
-									path="documentScrutiny[0].extentinsqmts" readonly="true" required="required"
+									path="documentScrutiny[0].docScrutiny.extentInSqmts" readonly="true" required="required"
 									value="${bpaApplication.siteDetail[0].extentinsqmts}" />
-								<form:errors path="documentScrutiny[0].extentinsqmts"
+								<form:errors path="documentScrutiny[0].docScrutiny.extentInSqmts"
 									cssClass="add-margin error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
@@ -140,8 +140,8 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="60" data-pattern="alphanumeric" id="deedNumber"
-									path="documentScrutiny[0].deedNumber" />
-								<form:errors path="documentScrutiny[0].deedNumber"
+									path="documentScrutiny[0].docScrutiny.deedNumber" />
+								<form:errors path="documentScrutiny[0].docScrutiny.deedNumber"
 									cssClass="add-margin error-msg" />
 							</div>
 						</div>
@@ -151,9 +151,9 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" required="required"
-									id="registrarOffice" readonly="true" path="documentScrutiny[0].registrarOffice"
+									id="registrarOffice" readonly="true" path="documentScrutiny[0].docScrutiny.registrarOffice"
 									value="${bpaApplication.siteDetail[0].registrarOffice.registrarOffice.name}" />
-								<form:errors path="documentScrutiny[0].registrarOffice"
+								<form:errors path="documentScrutiny[0].docScrutiny.registrarOffice"
 									cssClass="add-margin error-msg" />
 							</div> --%>
 							<label class="col-sm-3 control-label text-right"><spring:message
@@ -162,9 +162,9 @@
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric"
 									id="natureofOwnership" readonly="true"
-									path="documentScrutiny[0].natureofOwnership"
+									path="documentScrutiny[0].docScrutiny.natureOfOwnership"
 									value="${bpaApplication.siteDetail[0].natureofOwnership}" />
-								<form:errors path="documentScrutiny[0].natureofOwnership"
+								<form:errors path="documentScrutiny[0].docScrutiny.natureOfOwnership"
 									cssClass="add-margin error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
@@ -172,9 +172,9 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" id="district"
-									path="documentScrutiny[0].district" readonly="true"
+									path="documentScrutiny[0].docScrutiny.district" readonly="true"
 									value="${bpaApplication.siteDetail[0].postalAddress.district}" />
-								<form:errors path="documentScrutiny[0].district"
+								<form:errors path="documentScrutiny[0].docScrutiny.district"
 									cssClass="add-margin error-msg" />
 							</div>
 						</div>
@@ -185,9 +185,9 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" id="taluk"
-									path="documentScrutiny[0].taluk" readonly="true"
+									path="documentScrutiny[0].docScrutiny.taluk" readonly="true"
 									value="${bpaApplication.siteDetail[0].postalAddress.taluk}" />
-								<form:errors path="documentScrutiny[0].taluk"
+								<form:errors path="documentScrutiny[0].docScrutiny.taluk"
 									cssClass="add-margin error-msg" />
 							</div>
 
@@ -196,9 +196,9 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" id="district"
-									path="documentScrutiny[0].district" readonly="true"
+									path="documentScrutiny[0].docScrutiny.district" readonly="true"
 									value="${bpaApplication.siteDetail[0].postalAddress.district}" />
-								<form:errors path="documentScrutiny[0].district"
+								<form:errors path="documentScrutiny[0].docScrutiny.district"
 									cssClass="add-margin error-msg" />
 							</div>
 						</div> --%>
@@ -209,13 +209,13 @@
 								<c:forEach items="${documentScrutinyValues}" var="scrutinyVal">
 									<div class="radio">
 										<label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-													  name="documentScrutiny[0].neighoutOwnerDtlSubmitted"
+													  name="documentScrutiny[0].docScrutiny.neighbourOwnerDtlSubmitted"
 												<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
 										</label>
 									</div>
 								</c:forEach>
 								<form:errors
-									path="documentScrutiny[0].neighoutOwnerDtlSubmitted"
+									path="documentScrutiny[0].docScrutiny.neighbourOwnerDtlSubmitted"
 									cssClass="add-margin error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
@@ -224,12 +224,12 @@
 								<c:forEach items="${documentScrutinyValues}" var="scrutinyVal">
 									<div class="radio">
 										<label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-													  name="documentScrutiny[0].whetherDocumentMatch"
+													  name="documentScrutiny[0].docScrutiny.whetherDocumentMatch"
 												<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
 										</label>
 									</div>
 								</c:forEach>
-								<form:errors path="documentScrutiny[0].whetherDocumentMatch"
+								<form:errors path="documentScrutiny[0].docScrutiny.whetherDocumentMatch"
 									cssClass="add-margin error-msg" />
 							</div>
 						</div>
@@ -240,12 +240,12 @@
 								<c:forEach items="${documentScrutinyValues}" var="scrutinyVal">
 									<div class="radio">
 										<label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-													  name="documentScrutiny[0].whetherAllDocAttached"
+													  name="documentScrutiny[0].docScrutiny.whetherAllDocAttached"
 												<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
 										</label>
 									</div>
 								</c:forEach>
-								<form:errors path="documentScrutiny[0].whetherAllDocAttached"
+								<form:errors path="documentScrutiny[0].docScrutiny.whetherAllDocAttached"
 									cssClass="add-margin error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
@@ -254,13 +254,13 @@
 								<c:forEach items="${documentScrutinyValues}" var="scrutinyVal">
 									<div class="radio">
 										<label><input type="radio" value="${scrutinyVal}" class="scrutinyValue"
-													  name="documentScrutiny[0].whetherAllPageOfDocAttached"
+													  name="documentScrutiny[0].docScrutiny.whetherAllPageOfDocAttached"
 												<c:if test="${scrutinyVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
 										</label>
 									</div>
 								</c:forEach>
 								<form:errors
-									path="documentScrutiny[0].whetherAllPageOfDocAttached"
+									path="documentScrutiny[0].docScrutiny.whetherAllPageOfDocAttached"
 									cssClass="add-margin error-msg" />
 							</div>
 						</div>

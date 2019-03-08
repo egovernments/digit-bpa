@@ -224,7 +224,7 @@ public class BpaApplication extends StateAware<Position> {
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PermitFee> permitFee = new ArrayList<>();
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BpaDocumentScrutiny> documentScrutiny = new ArrayList<>();
+    private List<PermitDocumentScrutiny> documentScrutiny = new ArrayList<>();
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BpaAppointmentSchedule> appointmentSchedule = new ArrayList<>();
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -616,11 +616,11 @@ public class BpaApplication extends StateAware<Position> {
         this.admissionfeeAmount = admissionfeeAmount;
     }
 
-    public List<BpaDocumentScrutiny> getDocumentScrutiny() {
+    public List<PermitDocumentScrutiny> getDocumentScrutiny() {
         return documentScrutiny;
     }
 
-    public void setDocumentScrutiny(final List<BpaDocumentScrutiny> documentScrutiny) {
+    public void setDocumentScrutiny(final List<PermitDocumentScrutiny> documentScrutiny) {
         this.documentScrutiny = documentScrutiny;
     }
 
