@@ -50,25 +50,29 @@
 			modelAttribute="permitInspection" id="documentscrutinyform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" id="bpaApplicationid" name="bpaApplicationid" value="${bpaApplication.id}" />
-			<form:hidden path="id" value="${permitInspection.id}"/>
-			<input type="hidden" name="permitInspection" value="${permitInspection.id}" />
-			<form:hidden path="inspection.id" value="${permitInspection.inspection.id}"/>
-			<form:hidden path="application" value="${bpaApplication.id}"/>
-			<form:hidden
-				id="docketId"
-				path="inspection.docket[0].id" value="${permitInspection.inspection.docket[0].id}" />
+			<input type="hidden" id="bpaApplicationid" name="bpaApplicationid"
+				value="${bpaApplication.id}" />
+			<form:hidden path="id" value="${permitInspection.id}" />
+			<input type="hidden" name="permitInspection"
+				value="${permitInspection.id}" />
+			<form:hidden path="inspection.id"
+				value="${permitInspection.inspection.id}" />
+			<form:hidden path="application" value="${bpaApplication.id}" />
+			<form:hidden id="docketId" path="inspection.docket[0].id"
+				value="${permitInspection.inspection.docket[0].id}" />
 			<input type="hidden" id="mode" name="mode" value="${mode}" />
 			<input type="hidden" name="applicationNumber" id="applicationNumber"
 				value="${applicationNumber}">
 			<input type="hidden" name="inspectionDate" id="inspectionDate"
 				value="${inspectionDate}">
 			<ul class="nav nav-tabs" id="settingstab">
-				<li class="active"><a data-toggle="tab"
-									  href="#inspn-details" data-tabidx=0><spring:message
-						code='lbl.inspn.details' /></a></li>
-				<li><a data-toggle="tab" href="#plan-scrutiny-chklist" data-tabidx=1><spring:message
-						code='lbl.plan.scrutiny' /></a></li>
+				<li class="active"><a data-toggle="tab" href="#inspn-details"
+					data-tabidx=0><spring:message code='lbl.inspn.details' /></a></li>
+				<c:if
+					test="${not empty permitInspection.inspection.planScrutinyChecklistForRule && not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
+					<li><a data-toggle="tab" href="#plan-scrutiny-chklist"
+						data-tabidx=1><spring:message code='lbl.plan.scrutiny' /></a></li>
+				</c:if>
 			</ul>
 			<div class="tab-content">
 				<div id="inspn-details" class="tab-pane fade in active">
@@ -88,25 +92,29 @@
 						</div>
 					</div>
 				</div>
-				<div id="plan-scrutiny-chklist" class="tab-pane fade">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-body custom-form ">
-							<jsp:include page="plan-scrutiny-checklist-rule.jsp"></jsp:include>
+				<c:if
+					test="${not empty permitInspection.inspection.planScrutinyChecklistForRule && not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
+					<div id="plan-scrutiny-chklist" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form ">
+								<jsp:include page="plan-scrutiny-checklist-rule.jsp"></jsp:include>
+							</div>
 						</div>
-					</div>
-					<c:if test="${not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
+
 						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body custom-form ">
 								<jsp:include page="plan-scrutiny-checklist-drawing.jsp"></jsp:include>
 							</div>
 						</div>
-					</c:if>
-				</div>
+					</div>
+				</c:if>
 			</div>
 
 			<div align="center">
 				<form:button type="submit" id="buttonSubmit" class="btn btn-primary"
-					value="createinspectiondetails"><spring:message code='lbl.btn.submit' /></form:button>
+					value="createinspectiondetails">
+					<spring:message code='lbl.btn.submit' />
+				</form:button>
 				<input type="button" name="button2" id="button2" value="Close"
 					class="btn btn-default" onclick="window.close();" />
 			</div>

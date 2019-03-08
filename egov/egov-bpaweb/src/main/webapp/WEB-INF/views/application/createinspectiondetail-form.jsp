@@ -50,17 +50,20 @@
 			modelAttribute="permitInspection" id="permitCreateInspectionForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" id="id" name="application" value="${bpaApplication.id}" />
+			<input type="hidden" id="id" name="application"
+				value="${bpaApplication.id}" />
 			<input type="hidden" name="applicationNumber" id="applicationNumber"
 				value="${applicationNumber}">
-			<input type="hidden" name="inspection.inspectionDate" id="inspectionDate"
-				value="${inspectionDate}">
+			<input type="hidden" name="inspection.inspectionDate"
+				id="inspectionDate" value="${inspectionDate}">
 			<ul class="nav nav-tabs" id="settingstab">
-				<li class="active"><a data-toggle="tab"
-									  href="#inspn-details" data-tabidx=0><spring:message
-						code='lbl.inspn.details' /></a></li>
-				<li><a data-toggle="tab" href="#plan-scrutiny-chklist" data-tabidx=1><spring:message
-						code='lbl.plan.scrutiny' /></a></li>
+				<li class="active"><a data-toggle="tab" href="#inspn-details"
+					data-tabidx=0><spring:message code='lbl.inspn.details' /></a></li>
+				<c:if
+					test="${(not empty planScrutinyCheckList && not empty planScrutinyChecklistForDrawing) || (not empty permitInspection.inspection.planScrutinyChecklistForRuleTemp && not empty permitInspection.inspection.planScrutinyChecklistForDrawingTemp)}">
+					<li><a data-toggle="tab" href="#plan-scrutiny-chklist"
+						data-tabidx=1><spring:message code='lbl.plan.scrutiny' /></a></li>
+				</c:if>
 			</ul>
 			<div class="tab-content">
 				<div id="inspn-details" class="tab-pane fade in active">
@@ -81,22 +84,27 @@
 						</div>
 					</div>
 				</div>
-				<div id="plan-scrutiny-chklist" class="tab-pane fade">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-body custom-form ">
-							<jsp:include page="plan-scrutiny-checklist-rule.jsp"></jsp:include>
+				<c:if
+					test="${(not empty planScrutinyCheckList && not empty planScrutinyChecklistForDrawing) || (not empty permitInspection.inspection.planScrutinyChecklistForRuleTemp && not empty permitInspection.inspection.planScrutinyChecklistForDrawingTemp)}">
+					<div id="plan-scrutiny-chklist" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form ">
+								<jsp:include page="plan-scrutiny-checklist-rule.jsp"></jsp:include>
+							</div>
+						</div>
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form ">
+								<jsp:include page="plan-scrutiny-checklist-drawing.jsp"></jsp:include>
+							</div>
 						</div>
 					</div>
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-body custom-form ">
-							<jsp:include page="plan-scrutiny-checklist-drawing.jsp"></jsp:include>
-						</div>
-					</div>
-				</div>
+				</c:if>
 			</div>
 			<div align="center">
 				<form:button type="submit" id="buttonSubmit" class="btn btn-primary"
-					value="createinspectiondetails"><spring:message code='lbl.btn.submit' /></form:button>
+					value="createinspectiondetails">
+					<spring:message code='lbl.btn.submit' />
+				</form:button>
 				<input type="button" name="button2" id="button2" value="Close"
 					class="btn btn-default" onclick="window.close();" />
 			</div>

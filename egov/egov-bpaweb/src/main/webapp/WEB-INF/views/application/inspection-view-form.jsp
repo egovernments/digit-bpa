@@ -50,8 +50,11 @@
 			<li class="active"><a data-toggle="tab"
 				href="#inspection-details" data-tabidx=0><spring:message
 						code='lbl.inspn.details' /></a></li>
-			<li><a data-toggle="tab" href="#plan-scrutiny" data-tabidx=1><spring:message
-						code='lbl.plan.scrutiny' /></a></li>
+			<c:if
+				test="${not empty permitInspection.inspection.planScrutinyChecklistForRule && not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
+				<li><a data-toggle="tab" href="#plan-scrutiny" data-tabidx=1><spring:message
+							code='lbl.plan.scrutiny' /></a></li>
+			</c:if>
 		</ul>
 		<div class="tab-content">
 			<div id="inspection-details" class="tab-pane fade in active">
@@ -521,17 +524,17 @@
 					</div>
 				</div>
 			</div>
-			<div id="plan-scrutiny" class="tab-pane fade">
-				<div class="panel panel-primary" data-collapsed="0">
-					<jsp:include page="view-plan-scrutiny-checklist-rule.jsp"></jsp:include>
-				</div>
-				<c:if
-					test="${not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
+			<c:if
+				test="${not empty permitInspection.inspection.planScrutinyChecklistForRule && not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
+				<div id="plan-scrutiny" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="view-plan-scrutiny-checklist-rule.jsp"></jsp:include>
+					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-plan-scrutiny-checklist-drawing.jsp"></jsp:include>
 					</div>
-				</c:if>
-			</div>
+				</div>
+			</c:if>
 		</div>
 	</div>
 </div>
