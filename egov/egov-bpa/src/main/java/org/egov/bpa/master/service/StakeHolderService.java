@@ -77,6 +77,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -183,6 +184,7 @@ public class StakeHolderService {
 		StakeHolderState stakeHolderState = new StakeHolderState();
 		stakeHolderState.setStakeHolder(stakeHolder);
 		transition(stakeHolderState, null, null, null, null);
+		stakeHolder.setTenantId(ApplicationThreadLocals.getTenantID());
 		stakeHolderRepository.save(stakeHolder);
 		stakeHolderState.setStakeHolder(stakeHolder);
 
