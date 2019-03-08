@@ -48,6 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -107,7 +108,8 @@ public class BuildingFloorDetailsService {
 	private void validateAndBuildBuildingDetails(final BpaApplication application) {
 		List<BuildingDetail> newBuildingDetailsList = new ArrayList<>();
 		for (BuildingDetail buildingDetail : application.getBuildingDetail()) {
-			if (buildingDetail != null && null != buildingDetail.getApplication() && null != buildingDetail.getTotalPlintArea()) {
+			if (buildingDetail != null && null != buildingDetail.getApplication() && null != buildingDetail.getTotalPlintArea() 
+					&& buildingDetail.getTotalPlintArea().compareTo(BigDecimal.ZERO)>0) {
 				newBuildingDetailsList.add(buildingDetail);
 			}
 		}

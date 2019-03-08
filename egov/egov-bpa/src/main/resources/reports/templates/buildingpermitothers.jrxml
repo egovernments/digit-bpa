@@ -533,7 +533,7 @@
 			</subreport>
 		</band>
 		<band height="57">
-			<printWhenExpression><![CDATA[new Boolean($F{existingBuildingDetails}.size()!= 0)]]></printWhenExpression>
+			<printWhenExpression><![CDATA[new Boolean($F{buildingDetail}.size()!= 0)]]></printWhenExpression>
 			<staticText>
 				<reportElement x="8" y="17" width="105" height="20" uuid="b1829889-ffab-44a9-8996-2687e182c990">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
