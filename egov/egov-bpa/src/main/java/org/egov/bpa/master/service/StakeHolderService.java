@@ -87,6 +87,7 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -184,7 +185,7 @@ public class StakeHolderService {
 		StakeHolderState stakeHolderState = new StakeHolderState();
 		stakeHolderState.setStakeHolder(stakeHolder);
 		transition(stakeHolderState, null, null, null, null);
-		stakeHolder.setTenantId(ApplicationThreadLocals.getTenantID());
+		stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
 		stakeHolderRepository.save(stakeHolder);
 		stakeHolderState.setStakeHolder(stakeHolder);
 

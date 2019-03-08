@@ -116,6 +116,7 @@ public class User extends AbstractAuditable {
     private Long id;
 
     @Length(max = 250)
+    @Audited
     private String tenantId;
 
     @Column(name = "username", unique = true)
