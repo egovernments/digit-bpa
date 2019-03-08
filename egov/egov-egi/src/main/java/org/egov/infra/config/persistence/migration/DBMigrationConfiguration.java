@@ -55,6 +55,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.egov.infra.utils.ApplicationConstant;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,9 +85,6 @@ public class DBMigrationConfiguration {
     @Value("${statewide.migration.required}")
     private boolean statewideMigrationRequired;
 
-    @Value("${state.migration.required}")
-    private boolean stateMigrationRequired;
-
     @Value("${db.flyway.main.migration.file.path}")
     private String mainMigrationFilePath;
 
@@ -105,9 +103,6 @@ public class DBMigrationConfiguration {
     @Value("${db.flyway.state.migration.file.path}")
     private String stateMigrationFilePath;
 
-    @Value("${state.schema.name}")
-    private String stateSchemaName;
-
     @Autowired
     private ConfigurableEnvironment environment;
 
@@ -116,9 +111,7 @@ public class DBMigrationConfiguration {
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
         if (dbMigrationEnabled) {
 
-            if (stateMigrationRequired) {
-                migrateDatabase(dataSource, stateSchemaName, stateMigrationFilePath);
-            }
+            migrateDatabase(dataSource, ApplicationConstant.STATE_TENANTID, stateMigrationFilePath);
 
             cities.stream().forEach(schema -> {
                 if (devMode)
