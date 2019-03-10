@@ -58,85 +58,89 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/application")
 public class ModifyInspectionController extends BpaGenericApplicationController {
 
-	@Autowired
-	private InspectionService inspectionService;
-	@Autowired
-	private PlanScrutinyChecklistCommonService planScrutinyChecklistCommonService;
+    @Autowired
+    private InspectionService inspectionService;
+    @Autowired
+    private PlanScrutinyChecklistCommonService planScrutinyChecklistCommonService;
 
-	public PermitInspection getInspectionForBpaApplication(@PathVariable final String applicationNumber) {
-		PermitInspection inspection = null;
-		final List<PermitInspection> inspections = inspectionService.findByBpaApplicationOrderByIdAsc(applicationBpaService.findByApplicationNumber(applicationNumber));
-		if (!inspections.isEmpty())
-			inspection = inspections.get(0);
-		return inspection;
-	}
+    public PermitInspection getInspectionForBpaApplication(@PathVariable final String applicationNumber) {
+        PermitInspection inspection = null;
+        final List<PermitInspection> inspections = inspectionService
+                .findByBpaApplicationOrderByIdAsc(applicationBpaService.findByApplicationNumber(applicationNumber));
+        if (!inspections.isEmpty())
+            inspection = inspections.get(0);
+        return inspection;
+    }
 
-	@RequestMapping(value = "/modify-inspection/{applicationNumber}", method = RequestMethod.GET)
-	public String editInspectionAppointment(
-			@PathVariable final String applicationNumber, final Model model) {
-		BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-		loadApplication(model, application);
-		Position ownerPosition = application.getCurrentState().getOwnerPosition();
-		if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
-			return COMMON_ERROR;
-		model.addAttribute("mode", "editinsp");
-		return "inspection-edit";
-	}
+    @GetMapping("/modify-inspection/{applicationNumber}")
+    public String editInspectionAppointment(
+            @PathVariable final String applicationNumber, final Model model) {
+        BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        loadApplication(model, application);
+        Position ownerPosition = application.getCurrentState().getOwnerPosition();
+        if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
+            return COMMON_ERROR;
+        model.addAttribute("mode", "editinsp");
+        return "inspection-edit";
+    }
 
-	@RequestMapping(value = "/modify-inspection/{applicationNumber}", method = RequestMethod.POST)
-	public String updateInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection permitInspn,
-								   @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
-		BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-		if (resultBinder.hasErrors()) {
-			loadApplication(model, application);
-			return "inspection-edit";
-		}
-		Position ownerPosition = application.getCurrentState().getOwnerPosition();
-		if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
-			return COMMON_ERROR;
-		final List<DocketDetailCommon> docketDetailTempList = new ArrayList<>();
-		final List<DocketDetailCommon> docketDetailList = inspectionService.buildDocketDetail(permitInspn.getInspection());
-		for (final DocketDetailCommon docketDet : permitInspn.getInspection().getDocket().get(0).getDocketDetail())
-			for (final DocketDetailCommon tempLoc : docketDetailList)
-				if (docketDet.getServiceChecklist().getId().equals(tempLoc.getServiceChecklist().getId())) {
-					docketDet.setValue(tempLoc.getValue());
-					docketDet.setRemarks(tempLoc.getRemarks());
-					docketDetailTempList.add(docketDet);
-				}
-		permitInspn.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);
-		final PermitInspection savedInspection = inspectionService.save(permitInspn, application);
-		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
-		return "redirect:/application/view-inspection/" + savedInspection.getId();
-	}
+    @PostMapping("/modify-inspection/{applicationNumber}")
+    public String updateInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection permitInspn,
+            @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+        BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        if (resultBinder.hasErrors()) {
+            loadApplication(model, application);
+            return "inspection-edit";
+        }
+        Position ownerPosition = application.getCurrentState().getOwnerPosition();
+        if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
+            return COMMON_ERROR;
+        final List<DocketDetailCommon> docketDetailTempList = new ArrayList<>();
+        final List<DocketDetailCommon> docketDetailList = inspectionService.buildDocketDetail(permitInspn.getInspection());
+        for (final DocketDetailCommon docketDet : permitInspn.getInspection().getDocket().get(0).getDocketDetail())
+            for (final DocketDetailCommon tempLoc : docketDetailList)
+                if (docketDet.getServiceChecklist().getId().equals(tempLoc.getServiceChecklist().getId())) {
+                    docketDet.setValue(tempLoc.getValue());
+                    docketDet.setRemarks(tempLoc.getRemarks());
+                    docketDetailTempList.add(docketDet);
+                }
+        permitInspn.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);
+        final PermitInspection savedInspection = inspectionService.save(permitInspn, application);
+        model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
+        return "redirect:/application/view-inspection/" + savedInspection.getId();
+    }
 
-	private void loadApplication(final Model model, final BpaApplication application) {
-		if (application != null && application.getState() != null
-			&& application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
-			prepareWorkflowDataForInspection(model, application);
-			model.addAttribute("loginUser", securityUtils.getCurrentUser());
-			model.addAttribute(BpaConstants.APPLICATION_HISTORY,
-					workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(), application.getStateHistory()));
-		}
-		final PermitInspection permitInspn = getInspectionForBpaApplication(application.getApplicationNumber());
-		if (permitInspn != null)
-			permitInspn.getInspection().setInspectionDate(new Date());
-		//permitInspn.getInspection().getInspectionSupportDocs().setEncodedImages(inspectionService.prepareImagesForView(permitInspn));
-		inspectionService.buildDocketDetailForModifyAndViewList(permitInspn, model);
-		model.addAttribute("permitInspection", permitInspn);
-		model.addAttribute(BpaConstants.BPA_APPLICATION, application);
-		model.addAttribute("planScrutinyValues", ChecklistValues.values());
-		permitInspn.getInspection().setPlanScrutinyChecklistForRuleTemp(planScrutinyChecklistCommonService.findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
-		permitInspn.getInspection().setPlanScrutinyChecklistForDrawingTemp(planScrutinyChecklistCommonService.findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS));
-	}
-
+    private void loadApplication(final Model model, final BpaApplication application) {
+        if (application != null && application.getState() != null
+                && application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
+            prepareWorkflowDataForInspection(model, application);
+            model.addAttribute("loginUser", securityUtils.getCurrentUser());
+            model.addAttribute(BpaConstants.APPLICATION_HISTORY,
+                    workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
+                            application.getStateHistory()));
+        }
+        final PermitInspection permitInspn = getInspectionForBpaApplication(application.getApplicationNumber());
+        if (permitInspn != null)
+            permitInspn.getInspection().setInspectionDate(new Date());
+        inspectionService.prepareImagesForView(permitInspn);
+        inspectionService.buildDocketDetailForModifyAndViewList(permitInspn, model);
+        model.addAttribute("permitInspection", permitInspn);
+        model.addAttribute(BpaConstants.BPA_APPLICATION, application);
+        model.addAttribute("planScrutinyValues", ChecklistValues.values());
+        permitInspn.getInspection().setPlanScrutinyChecklistForRuleTemp(planScrutinyChecklistCommonService
+                .findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
+        permitInspn.getInspection().setPlanScrutinyChecklistForDrawingTemp(planScrutinyChecklistCommonService
+                .findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS));
+    }
 
 }

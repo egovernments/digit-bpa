@@ -120,7 +120,7 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		}
 		if (ocInspection != null)
 			ocInspection.getInspection().setInspectionDate(new Date());
-		//ocInspection.getInspection().setEncodedImages(ocInspectionService.prepareImagesForView(ocInspection));
+		ocInspectionService.prepareImagesForView(ocInspection);
 		ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
 		model.addAttribute("ocInspection", ocInspection);
 		model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());

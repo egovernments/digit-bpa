@@ -405,30 +405,28 @@ public class InspectionService {
         }
     }
 
-    public Map<Long, List<String>> prepareImagesForView(final PermitInspection permitInspn) {
-        Map<Long, List<String>> imageMap = new HashMap<>();
+    public void prepareImagesForView(final PermitInspection permitInspn) {
         if (!permitInspn.getInspection().getInspectionSupportDocs().isEmpty())
             permitInspn.getInspection().getInspectionSupportDocs().forEach(
                     docketFile -> {
                         if (docketFile != null) {
-                            List<String> images = new ArrayList<>();
+                            Map<Long, String> imageMap = new HashMap<>();
                             docketFile.getImages().forEach(
                                     imageFilestore -> {
                                         final File file = fileStoreService.fetch(imageFilestore.getFileStoreId(),
                                                 BpaConstants.FILESTORE_MODULECODE);
                                         if (file != null) {
                                             try {
-                                                images.add(Base64.getEncoder().encodeToString(
+                                                imageMap.put(imageFilestore.getId(), Base64.getEncoder().encodeToString(
                                                         FileCopyUtils.copyToByteArray(file)));
                                             } catch (final IOException e) {
                                                 LOGGER.error("Error while preparing the images for view", e);
                                             }
                                         }
                                     });
-                            imageMap.put(docketFile.getId(), images);
+                            docketFile.setEncodedImages(imageMap);
                         }
                     });
-        return imageMap;
     }
 
 }

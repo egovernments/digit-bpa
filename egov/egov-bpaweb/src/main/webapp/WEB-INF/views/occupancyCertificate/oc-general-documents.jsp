@@ -69,9 +69,9 @@
 			<spring:message code="lbl.remarks"/>
 		</label>
 		<label class="col-sm-6 ">
-			<spring:message code="lbl.attachdocument"/><span class="error-msg"> (<spring:message code="lbl.supp.doc.types"/>)</span>
+			<spring:message code="lbl.attachdocument"/><small class="text-info view-content"> (<spring:message code="lbl.supp.doc.types"/>)</small>
 			<br>
-			<small class="error-msg"><spring:message
+			<small class="text-info view-content"><spring:message
 					code="lbl.mesg.document"/></small>
 		</label>
 	</div>

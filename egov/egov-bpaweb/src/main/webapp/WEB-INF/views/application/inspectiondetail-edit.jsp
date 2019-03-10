@@ -73,6 +73,11 @@
 					<li><a data-toggle="tab" href="#plan-scrutiny-chklist"
 						data-tabidx=1><spring:message code='lbl.plan.scrutiny' /></a></li>
 				</c:if>
+				<c:if
+					test="${not empty permitInspection.inspection.getInspectionSupportDocs()}">
+					<li><a data-toggle="tab" href="#site-images" data-tabidx=2><spring:message
+								code='title.site.image' /></a></li>
+				</c:if>
 			</ul>
 			<div class="tab-content">
 				<div id="inspn-details" class="tab-pane fade in active">
@@ -84,11 +89,6 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
 							<jsp:include page="inspectiondetail-form.jsp"></jsp:include>
-						</div>
-					</div>
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-body custom-form ">
-							<jsp:include page="upload-inspection-documents.jsp"></jsp:include>
 						</div>
 					</div>
 				</div>
@@ -104,6 +104,19 @@
 						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body custom-form ">
 								<jsp:include page="plan-scrutiny-checklist-drawing.jsp"></jsp:include>
+							</div>
+						</div>
+					</div>
+				</c:if>
+				<c:if
+					test="${not empty permitInspection.inspection.getInspectionSupportDocs()}">
+					<div id="site-images" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form ">
+								<c:set var="inspectionSupportDocs"
+									value="${permitInspection.inspection.getInspectionSupportDocs()}"
+									scope="request"></c:set>
+								<jsp:include page="upload-inspection-documents.jsp"></jsp:include>
 							</div>
 						</div>
 					</div>

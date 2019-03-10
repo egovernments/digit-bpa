@@ -39,8 +39,12 @@
  */
 package org.egov.bpa.web.controller.transaction.occupancy;
 
-import org.egov.bpa.master.entity.enums.Directions;
-import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
@@ -61,9 +65,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.validation.Valid;
-import java.util.Date;
-
 @Controller
 @RequestMapping(value = "/application/occupancy-certificate")
 public class CreateInspectionForOccupancyCertificateController extends BpaGenericApplicationController {
@@ -73,8 +74,6 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 	private OCInspectionService ocInspectionService;
 	@Autowired
 	private OccupancyCertificateService occupancyCertificateService;
-	@Autowired
-	private ChecklistServicetypeMappingService checklistServicetypeService;
 
 	@GetMapping("/create-inspection/{applicationNumber}")
 	public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
@@ -106,20 +105,23 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 		}
 		final OCInspection ocInspection = new OCInspection();
 		InspectionCommon inspectionCommon = new InspectionCommon();
-		for (Directions d : Directions.values()) {
-			InspectionFilesCommon inspectionFilesCommon = new InspectionFilesCommon();
-			inspectionFilesCommon.setInspection(inspectionCommon);
-			inspectionCommon.getInspectionSupportDocs().add(inspectionFilesCommon);
-		}
 		inspectionCommon.setInspectionDate(new Date());
 		ocInspectionService.buildDocketDetailList(inspectionCommon, oc.getParent().getServiceType().getId());
 		ocInspection.setInspection(inspectionCommon);
 		ocInspection.setOc(oc);
 		model.addAttribute("ocInspection", ocInspection);
 		model.addAttribute("docketDetailLocList", inspectionCommon.getDocketDetailLocList());
-		model.addAttribute("planScrutinyCheckList", checklistServicetypeService.findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCPLANSCRUTINYRULE"));
+		model.addAttribute("planScrutinyCheckList", checklistServiceTypeService.findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCPLANSCRUTINYRULE"));
 		model.addAttribute("planScrutinyValues", ChecklistValues.values());
-		model.addAttribute("planScrutinyChecklistForDrawing", checklistServicetypeService.findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCPLANSCRUTINYDRAWING"));
+		model.addAttribute("planScrutinyChecklistForDrawing", checklistServiceTypeService.findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCPLANSCRUTINYDRAWING"));
+		List<ChecklistServiceTypeMapping> imagesChecklist = checklistServiceTypeService
+                        .findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCINSPNIMAGES");
+                for (ChecklistServiceTypeMapping serviceChklst : imagesChecklist) {
+                    InspectionFilesCommon inspectionFile = new InspectionFilesCommon();
+                    inspectionFile.setServiceChecklist(serviceChklst);
+                    inspectionFile.setInspection(ocInspection.getInspection());
+                    ocInspection.getInspection().getInspectionSupportDocs().add(inspectionFile);
+                }
 		model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
 		model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
 	}

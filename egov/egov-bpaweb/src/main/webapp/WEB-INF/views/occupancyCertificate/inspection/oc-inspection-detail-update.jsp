@@ -38,33 +38,39 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
-    <div class="col-md-12">
-        <form:form role="form" action="" method="post"
-                   modelAttribute="ocInspection" id="ocInspectionUpdateform"
-                   cssClass="form-horizontal form-groups-bordered"
-                   enctype="multipart/form-data">
-            <form:hidden path="id" value="${ocInspection.id}"/>
-            <input name="ocInspection" value="${ocInspection.id}" type="hidden"/>
-            <form:hidden id="ocId" path="oc" value="${ocInspection.oc.id}"/>
-            <%--<input name="inspection" value="${ocInspection.inspection.id}" type="hidden" />--%>
-            <input id="mode" name="mode" value="${mode}" type="hidden"/>
-            <input type="hidden" name="applicationNumber" id="applicationNumber"
-                   value="${applicationNumber}">
-            <input type="hidden" name="inspectionDate" id="inspectionDate"
-                   value="${ocInspection.inspection.inspectionDate}">
+	<div class="col-md-12">
+		<form:form role="form" action="" method="post"
+			modelAttribute="ocInspection" id="ocInspectionUpdateform"
+			cssClass="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data">
+			<form:hidden path="id" value="${ocInspection.id}" />
+			<input name="ocInspection" value="${ocInspection.id}" type="hidden" />
+			<form:hidden id="ocId" path="oc" value="${ocInspection.oc.id}" />
+			<%--<input name="inspection" value="${ocInspection.inspection.id}" type="hidden" />--%>
+			<input id="mode" name="mode" value="${mode}" type="hidden" />
+			<input type="hidden" name="applicationNumber" id="applicationNumber"
+				value="${applicationNumber}">
+			<input type="hidden" name="inspectionDate" id="inspectionDate"
+				value="${ocInspection.inspection.inspectionDate}">
 
 			<ul class="nav nav-tabs" id="settingstab">
-				<li class="active"><a data-toggle="tab" href="#oc-inspn-details"
-					data-tabidx=0><spring:message code='lbl.inspn.details' /></a></li>
+				<li class="active"><a data-toggle="tab"
+					href="#oc-inspn-details" data-tabidx=0><spring:message
+							code='lbl.inspn.details' /></a></li>
 				<li><a data-toggle="tab" href="#oc-plan-scrutiny-chklist"
 					data-tabidx=1><spring:message code='lbl.plan.scrutiny' /></a></li>
+				<c:if
+					test="${not empty ocInspection.inspection.getInspectionSupportDocs()}">
+					<li><a data-toggle="tab" href="#site-images" data-tabidx=2><spring:message
+								code='title.site.image' /></a></li>
+				</c:if>
 			</ul>
 			<div class="tab-content">
 				<div id="oc-inspn-details" class="tab-pane fade in active">
@@ -96,14 +102,30 @@
 						</div>
 					</div>
 				</div>
+				<c:if
+					test="${not empty ocInspection.inspection.getInspectionSupportDocs()}">
+					<div id="site-images" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form ">
+								<c:set var="inspectionSupportDocs"
+									value="${ocInspection.inspection.getInspectionSupportDocs()}"
+									scope="request"></c:set>
+								<jsp:include
+									page="../../application/upload-inspection-documents.jsp"></jsp:include>
+							</div>
+						</div>
+					</div>
+				</c:if>
 			</div>
 			<div align="center">
-                <form:button type="submit" id="buttonSubmit" class="btn btn-primary"
-                             value="createinspectiondetails"><spring:message code="lbl.btn.submit"/></form:button>
-                <input type="button" name="button2" id="button2" value="Close"
-                       class="btn btn-default" onclick="window.close();"/>
-            </div>
-        </form:form>
-    </div>
+				<form:button type="submit" id="buttonSubmit" class="btn btn-primary"
+					value="createinspectiondetails">
+					<spring:message code="lbl.btn.submit" />
+				</form:button>
+				<input type="button" name="button2" id="button2" value="Close"
+					class="btn btn-default" onclick="window.close();" />
+			</div>
+		</form:form>
+	</div>
 </div>
 

@@ -49,9 +49,7 @@ package org.egov.bpa.transaction.entity.common;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -62,6 +60,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -78,7 +77,8 @@ public class InspectionCommon extends AbstractAuditable {
 
     public static final String SEQ_INSPECTION = "SEQ_EGBPA_INSPECTION_COMMON";
     private static final long serialVersionUID = -6537197288191260269L;
-
+    public static final String ORDER_BY_ID_ASC = "id ASC";
+    
     @Id
     @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -114,12 +114,15 @@ public class InspectionCommon extends AbstractAuditable {
     private List<DocketCommon> docket = new ArrayList<>();
 
     @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL)
+    @OrderBy(ORDER_BY_ID_ASC)
     private List<InspectionFilesCommon> inspectionSupportDocs = new ArrayList<>();
 
     @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
     private List<PlanScrutinyChecklistCommon> planScrutinyChecklistForRule = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
     private List<PlanScrutinyChecklistCommon> planScrutinyChecklistForDrawing = new ArrayList<>(0);
 
     private transient List<DocketDetailCommon> docketDetailLocList = new ArrayList<>();

@@ -42,59 +42,72 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		<spring:message code="lbl.upload.image" />
-	</div>
+	<div class="panel-title"></div>
 </div>
-<div class="row">
-	<label class="col-sm-2 control-label text-right"></label>
-	<div class="col-sm-10">
-		<div class="files-upload-container"
-			data-allowed-extenstion="jpeg,jpg,png,gif" data-file-max-size="4">
-			<div class="files-viewer"
-				data-existing-files="${fn:length(inspectionSupportDocs)}">
-				<c:forEach var="image" items="${inspection.encodedImages}"
-					varStatus="status1">
-					<div class="file-viewer"
-						style="background:url('data:image/jpeg;base64,${image.value}');">
-						<a href="javascript:void(0);" data-id="${image.key}"></a>
-					</div>
-				</c:forEach>
+<div class="panel-body">
+	<div class="row view-content header-color hidden-xs">
+		<label class="col-sm-3 "> <spring:message
+				code="lbl.image.type" />
+		</label> <label class="col-sm-8 "> <spring:message
+				code="lbl.attachdocument" /><br> <small
+			class="text-info view-content"><spring:message
+					code="lbl.image.max.size" /></small>
+		</label>
+	</div>
 
-				<a href="javascript:void(0);" class="file-add"> <i
-					class="fa fa-plus" aria-hidden="true"></i>
-				</a>
-
+	<c:forEach var="imageFile" items="${inspectionSupportDocs}"
+		varStatus="status">
+		<div class="row">
+			<div class="col-sm-3 add-margin">
+				<c:out value="${imageFile.serviceChecklist.checklist.description}"></c:out>
+				<span></span>
+				<c:if test="${imageFile.serviceChecklist.mandatory}">
+					<span class="mandatory"></span>
+				</c:if>
+				<form:hidden id="permitDocuments${status.index}id"
+					path="inspection.inspectionSupportDocs[${status.index}].id"
+					value="${docs.id}" />
+				<form:hidden
+					id="inspection.inspectionSupportDocs${status.index}serviceChecklist"
+					path="inspection.inspectionSupportDocs[${status.index}].serviceChecklist"
+					value="${imageFile.serviceChecklist.id}" />
 			</div>
 
-			<input type="file" name="files" class="filechange inline btn"
-				style="display: none;" /> <input type="file" name="files"
-				class="filechange inline btn" style="display: none;" /> <input
-				type="file" name="files" class="filechange inline btn"
-				style="display: none;" /> <input type="file" name="files"
-				class="filechange inline btn" style="display: none;" /> <input
-				type="file" name="files" class="filechange inline btn"
-				style="display: none;" /><input
-				type="file" name="files" class="filechange inline btn"
-				style="display: none;" /><input
-				type="file" name="files" class="filechange inline btn"
-				style="display: none;" /><input
-				type="file" name="files" class="filechange inline btn"
-				style="display: none;" /><input
-				type="file" name="files" class="filechange inline btn"
-				style="display: none;" /><input
-				type="file" name="files" class="filechange inline btn"
-				style="display: none;" />
+			<div class="col-sm-6 add-margin">
+				<div class="files-upload-container" data-file-max-size="5"
+					<c:if test="${imageFile.serviceChecklist.mandatory eq true && fn:length(imageFile.getImages()) eq 0}">required</c:if>
+					data-allowed-extenstion="jpeg,jpg,png,gif">
+					<div class="files-viewer">
+						<c:forEach var="image" items="${imageFile.encodedImages}"
+							varStatus="status1">
+							<div class="file-viewer"
+								style="background:url('data:image/jpeg;base64,${image.value}');">
+								<a href="javascript:void(0);" data-id="${image.key}"></a>
+							</div>
+						</c:forEach>
+
+						<a href="javascript:void(0);" class="file-add"
+							data-unlimited-files="true"
+							data-file-input-name="inspection.inspectionSupportDocs[${status.index}].files">
+							<i class="fa fa-plus"></i>
+						</a>
+
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
+	</c:forEach>
 </div>
 
-    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
-	<input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.filesize.validate' />" />
-	<input type="hidden" id="noPreviewAvailble" value="<spring:message code='msg.nopreview.availble' />" />
+<input type="hidden" id="uploadMsg"
+	value="<spring:message code='msg.upload' />" />
+<input type="hidden" id="fileSizeLimit"
+	value="<spring:message code='msg.filesize.validate' />" />
+<input type="hidden" id="noPreviewAvailble"
+	value="<spring:message code='msg.nopreview.availble' />" />
 
 <!-- The Modal -->
 <div id="imgModel" class="image-modal">
@@ -105,4 +118,5 @@
 
 <script
 	src="<cdn:url value='/resources/js/app/document-upload-helper.js?rnd=${app_release_no}'/>"></script>
-<link rel="stylesheet" href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">

@@ -87,9 +87,9 @@
 		</label> <label class="col-sm-6 "> <spring:message
 				code="lbl.attachdocument" /> <c:if
 				test="${dcrDocsManuallyUpload eq true || dcrDocsAutoPopulateAndManuallyUpload eq true}">
-				<span class="error-msg"> (Only Pdf files allowed)</span>
+				<small class="text-info view-content"> (Only Pdf files allowed)</small>
 				<br>
-				<small class="error-msg"><spring:message
+				<small class="text-info view-content"><spring:message
 						code="lbl.mesg.document1" /></small>
 			</c:if>
 		</label>

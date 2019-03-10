@@ -49,7 +49,6 @@ package org.egov.bpa.transaction.entity.common;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -98,7 +97,7 @@ public class InspectionFilesCommon extends AbstractAuditable {
     private Set<FileStoreMapper> images = Collections.emptySet();
 
     private transient MultipartFile[] files;
-    private transient Map<Long, List<String>> encodedImages = new HashMap<>();
+    private transient Map<Long, String> encodedImages = new HashMap<>();
 
     @Override
     public Long getId() {
@@ -142,11 +141,11 @@ public class InspectionFilesCommon extends AbstractAuditable {
         this.files = files;
     }
 
-    public Map<Long, List<String>> getEncodedImages() {
+    public Map<Long, String> getEncodedImages() {
         return encodedImages;
     }
 
-    public void setEncodedImages(Map<Long, List<String>> encodedImages) {
+    public void setEncodedImages(Map<Long, String> encodedImages) {
         this.encodedImages = encodedImages;
     }
 

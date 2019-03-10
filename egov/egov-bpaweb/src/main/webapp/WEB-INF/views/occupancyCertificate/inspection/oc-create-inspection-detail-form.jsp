@@ -69,6 +69,11 @@
 					<li><a data-toggle="tab" href="#ocplan-scrutiny-chklist"
 						data-tabidx=1><spring:message code='lbl.plan.scrutiny' /></a></li>
 				</c:if>
+				<c:if
+					test="${not empty ocInspection.inspection.getInspectionSupportDocs()}">
+					<li><a data-toggle="tab" href="#site-images" data-tabidx=2><spring:message
+								code='title.site.image' /></a></li>
+				</c:if>
 			</ul>
 			<div class="tab-content">
 				<div id="ocinspn-details" class="tab-pane fade in active">
@@ -87,11 +92,6 @@
 							<jsp:include page="oc-inspection-detail-form.jsp"></jsp:include>
 						</div>
 					</div>
-					<%-- <div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-body custom-form ">
-							<jsp:include page="oc-upload-inspection-images.jsp"></jsp:include>
-						</div>
-					</div> --%>
 				</div>
 				<c:if
 					test="${not empty planScrutinyCheckList && not empty planScrutinyChecklistForDrawing}">
@@ -104,6 +104,20 @@
 						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body custom-form ">
 								<jsp:include page="oc-plan-scrutiny-checklist-drawing.jsp"></jsp:include>
+							</div>
+						</div>
+					</div>
+				</c:if>
+				<c:if
+					test="${not empty ocInspection.inspection.getInspectionSupportDocs()}">
+					<div id="site-images" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form ">
+								<c:set var="inspectionSupportDocs"
+									value="${ocInspection.inspection.getInspectionSupportDocs()}"
+									scope="request"></c:set>
+								<jsp:include
+									page="../../application/upload-inspection-documents.jsp"></jsp:include>
 							</div>
 						</div>
 					</div>

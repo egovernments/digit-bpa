@@ -76,8 +76,8 @@ public class ViewInspectionForOccupancyCertificateController {
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
         model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
         ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
-        //ocInspection.getInspection().setEncodedImages(ocInspectionService.prepareImagesForView(ocInspection));
-        buildPlanScrutinyChecklistDetails(ocInspection, model);
+        ocInspectionService.prepareImagesForView(ocInspection);
+        buildPlanScrutinyChecklistDetails(ocInspection);
         model.addAttribute("ocInspection", ocInspection);
         return INSPECTION_RESULT;
     }
@@ -90,14 +90,14 @@ public class ViewInspectionForOccupancyCertificateController {
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
         model.addAttribute("inspection", ocInspection);
         ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
-        //ocInspection.getInspection().setEncodedImages(ocInspectionService.prepareImagesForView(ocInspection));
+        ocInspectionService.prepareImagesForView(ocInspection);
         model.addAttribute("ocInspection", ocInspection);
-        buildPlanScrutinyChecklistDetails(ocInspection, model);
+        buildPlanScrutinyChecklistDetails(ocInspection);
         model.addAttribute("planScrutinyValues", ChecklistValues.values());
         return SHOW_INSPECTION_DETAILS;
     }
 
-    private void buildPlanScrutinyChecklistDetails(OCInspection inspectionObj, Model model) {
+    private void buildPlanScrutinyChecklistDetails(OCInspection inspectionObj) {
         inspectionObj.getInspection().getPlanScrutinyChecklistForRule().clear();
         inspectionObj.getInspection().setPlanScrutinyChecklistForRule(planScrutinyChecklistService
                 .findByInspectionAndScrutinyChecklistType(inspectionObj.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
