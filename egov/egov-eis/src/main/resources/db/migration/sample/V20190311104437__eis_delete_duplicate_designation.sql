@@ -1,0 +1,1 @@
+delete from eg_designation where name='Assistant Engineer';
