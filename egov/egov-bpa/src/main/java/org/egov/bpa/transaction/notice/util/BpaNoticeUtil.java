@@ -408,7 +408,8 @@ public class BpaNoticeUtil {
                     : bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict());
         }
         reportParams.put("certificateValidity",
-                getValidityDescription(bpaApplication.getServiceType().getCode(), bpaApplication.getPlanPermissionDate()));
+                getValidityDescription(bpaApplication.getServiceType().getCode(), bpaApplication.getServiceType().getValidity(), 
+                		bpaApplication.getPlanPermissionDate()));
         reportParams.put("isBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         reportParams.put("designation", approverDesignation);
         reportParams.put("approverName", approverName);
@@ -572,16 +573,10 @@ public class BpaNoticeUtil {
         return qrCodeValue.toString();
     }
 
-    private String getValidityDescription(final String serviceTypeCode, final Date planPermissionDate) {
+    private String getValidityDescription(final String serviceTypeCode, Double validity, final Date planPermissionDate) {
         StringBuilder certificateValidatiy = new StringBuilder();
         String validityExpiryDate;
-        if (serviceTypeCode.equals(ST_CODE_14) || serviceTypeCode.equals(ST_CODE_15)) {
-            validityExpiryDate = calculateCertExpryDate(new DateTime(planPermissionDate),
-                    getMessageFromPropertyFile("tower.pole.certificate.expiry"));
-        } else {
-            validityExpiryDate = calculateCertExpryDate(new DateTime(planPermissionDate),
-                    getMessageFromPropertyFile("common.services.certificate.expiry"));
-        }
+        validityExpiryDate = calculateCertExpryDate(new DateTime(planPermissionDate),validity);
         certificateValidatiy.append("\n\nValidity : This certificate is valid upto ").append(validityExpiryDate).append(" Only.");
         return certificateValidatiy.toString();
     }
@@ -708,9 +703,9 @@ public class BpaNoticeUtil {
         return bpaMessageSource.getMessage(key, new String[] { value }, null);
     }
 
-    public String calculateCertExpryDate(DateTime permissionDate, String noOfYears) {
+    public String calculateCertExpryDate(DateTime permissionDate, Double noOfYears) {
         DateTimeFormatter fmt = DateUtils.defaultDateFormatter();
-        return fmt.print(permissionDate.plusYears(Integer.valueOf(noOfYears)).minusDays(1));
+        return fmt.print(permissionDate.plusYears(noOfYears.intValue()).minusDays(1));
     }
 
     public String getApproverDesignation(final Integer amountRule) {

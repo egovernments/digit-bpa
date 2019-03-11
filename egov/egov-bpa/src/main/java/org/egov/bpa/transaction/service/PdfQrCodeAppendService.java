@@ -187,12 +187,7 @@ public class PdfQrCodeAppendService {
 		String permitNumber = "PERMIT NUMBER : " + application.getPlanPermissionNumber();
 		Phrase phrase3 = new Phrase(permitNumber, font);
 		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, phrase3, 18, 32.5f, 0);
-		String validityExpiryDate = application.getServiceType().getCode().equals(ST_CODE_14)
-				|| application.getServiceType().getCode().equals(ST_CODE_15)
-						? bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
-								bpaNoticeUtil.getMessageFromPropertyFile("tower.pole.certificate.expiry"))
-						: bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
-								bpaNoticeUtil.getMessageFromPropertyFile("common.services.certificate.expiry"));
+		String validityExpiryDate = bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),application.getServiceType().getValidity());
 		String pattern = "dd-MM-yyyy";
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 		String date = simpleDateFormat.format(application.getPlanPermissionDate());
@@ -328,12 +323,7 @@ public class PdfQrCodeAppendService {
 			Phrase phrase3 = new Phrase(permitNumber, font1);
 			ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase3, x1, y - 30, 0);
 
-			String validityExpiryDate = application.getServiceType().getCode().equals(ST_CODE_14)
-					|| application.getServiceType().getCode().equals(ST_CODE_15)
-							? bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
-									bpaNoticeUtil.getMessageFromPropertyFile("tower.pole.certificate.expiry"))
-							: bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),
-									bpaNoticeUtil.getMessageFromPropertyFile("common.services.certificate.expiry"));
+			String validityExpiryDate = bpaNoticeUtil.calculateCertExpryDate(new DateTime(application.getPlanPermissionDate()),application.getServiceType().getValidity());
 			String pattern = "dd-MM-yyyy";
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 			String date = simpleDateFormat.format(application.getPlanPermissionDate());

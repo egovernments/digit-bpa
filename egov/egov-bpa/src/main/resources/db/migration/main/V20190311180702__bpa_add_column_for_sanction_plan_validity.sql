@@ -1,0 +1,1 @@
+alter table egbpa_mstr_servicetype add column validity double precision NOT NULL DEFAULT 3;

@@ -80,6 +80,9 @@ public class ServiceType extends AbstractAuditable {
     @Column(name = "isBuildingRequired")
     private Boolean isBuildingDetailsRequired;
     private Boolean isOCRequired;
+    @NotNull
+    @Column(name = "validity")
+    private Double validity;
 
     @Override
     public Long getId() {
@@ -210,5 +213,13 @@ public class ServiceType extends AbstractAuditable {
     public void setIsOCRequired(Boolean isOCRequired) {
         this.isOCRequired = isOCRequired;
     }
+    
+    public Double getValidity() {
+		return validity;
+	}
+
+	public void setValidity(Double validity) {
+		this.validity = validity;
+	}
 
 }
