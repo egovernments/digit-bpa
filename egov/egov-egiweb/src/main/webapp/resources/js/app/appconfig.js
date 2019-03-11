@@ -182,15 +182,6 @@ $(document).ready(function () {
         }
     });
 
-    var regexp_alphanumericcomma = /[^a-zA-Z0-9 ,]/g;
-
-    $('.confValues').on('keyup', function (e) {
-        obj = $(this);
-        if (jQuery(obj).val().match(regexp_alphanumericcomma)) {
-            jQuery(obj).val(jQuery(obj).val().replace(regexp_alphanumericcomma, ''));
-        }
-    });
-
     function dateinitialize() {
         $(".datepicker").datepicker({
             format: "dd/mm/yyyy",
