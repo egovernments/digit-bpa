@@ -131,6 +131,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -939,6 +940,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         citizen.addAddress(address);
         citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         citizen.setAadhaarNumber(bpaApplication.getOwner().getAadhaarNumber());
+        citizen.setTenantId(ApplicationThreadLocals.getTenantID());
         citizen.setActive(true);
         citizen.addRole(roleService.getRoleByName(ROLE_CITIZEN));
         return citizen;
