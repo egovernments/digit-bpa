@@ -51,62 +51,62 @@
 		</band>
 	</background>
 	<title>
-		<band height="194" splitType="Stretch">
+		<band height="129" splitType="Stretch">
 			<textField>
-				<reportElement x="80" y="50" width="373" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="80" y="38" width="373" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["DEVELOPMENT PERMIT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="80" y="26" width="373" height="20" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
+				<reportElement x="80" y="6" width="373" height="20" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ulbName} + "\n" + $P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="92" width="29" height="20" uuid="8c132a85-9329-402b-9b9f-e6a7ed50d5a7"/>
+				<reportElement x="0" y="82" width="29" height="20" uuid="8c132a85-9329-402b-9b9f-e6a7ed50d5a7"/>
 				<textElement textAlignment="Left">
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[No : ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="29" y="92" width="275" height="20" uuid="d32664c0-b2ba-4011-a881-fefd4925c5ee"/>
+				<reportElement x="29" y="82" width="275" height="20" uuid="d32664c0-b2ba-4011-a881-fefd4925c5ee"/>
 				<textElement textAlignment="Left">
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{buildingPermitNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="350" y="92" width="100" height="20" uuid="38791aa3-d66d-4c38-bb6c-99c92dd7659c"/>
+				<reportElement x="350" y="82" width="100" height="20" uuid="38791aa3-d66d-4c38-bb6c-99c92dd7659c"/>
 				<textElement textAlignment="Right">
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dated : ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="450" y="92" width="105" height="20" uuid="c9a26c74-1b40-4ffb-b03c-3e4e887c3b9a"/>
+				<reportElement x="450" y="82" width="105" height="20" uuid="c9a26c74-1b40-4ffb-b03c-3e4e887c3b9a"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="122" width="555" height="20" uuid="96accbd0-87e6-4d36-a4dc-796edc809cdb"/>
+				<reportElement x="0" y="105" width="555" height="20" uuid="96accbd0-87e6-4d36-a4dc-796edc809cdb"/>
 				<textElement textAlignment="Left">
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Ref :-  Application number "+ $P{applicationNumber} + " dated "+$P{applicationDate}+" from smt/sri "+$P{applicantName} + " , " + $P{applicantAddress}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="470" y="10" width="78" height="80" uuid="85ac4e7f-5972-4d84-8695-cee4e0171df5"/>
+				<reportElement x="470" y="2" width="78" height="80" uuid="85ac4e7f-5972-4d84-8695-cee4e0171df5"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="4" y="10" width="77" height="70" uuid="a108b081-d7de-4b95-881b-dbdb520a13bb">
+				<reportElement x="4" y="2" width="77" height="70" uuid="a108b081-d7de-4b95-881b-dbdb520a13bb">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -115,18 +115,18 @@
 		</band>
 	</title>
 	<detail>
-		<band height="52" splitType="Stretch">
+		<band height="36" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="8" width="555" height="44" uuid="cfd11764-e10d-43b9-9f31-2192c95e330b"/>
+				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="1" width="552" height="35" uuid="cfd11764-e10d-43b9-9f31-2192c95e330b"/>
 				<textElement textAlignment="Justified">
 					<font fontName="SansSerif" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["	Permission is hereby granted for the "+$P{serviceTypeDesc}+" to extent of "+$P{landExtent}+" area/hectares comprised in survey No. "+$P{surveyNo}+" locality "+$P{village}+" subject to the following conditions :- "]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="41">
+		<band height="34">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="11" y="10" width="545" height="31" uuid="6e7d6ed7-ce1e-4478-92ad-3d431554548b">
+				<reportElement stretchType="RelativeToBandHeight" x="11" y="3" width="545" height="31" uuid="6e7d6ed7-ce1e-4478-92ad-3d431554548b">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Justified">
@@ -135,7 +135,7 @@
 				<textFieldExpression><![CDATA[$P{permitConditions}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="53">
+		<band height="38">
 			<subreport>
 				<reportElement x="0" y="3" width="555" height="35" isRemoveLineWhenBlank="true" uuid="894e5da5-101c-4689-bde5-44afd293762f">
 					<printWhenExpression><![CDATA[new Boolean($P{permitFeeDetails}.size()!= 0)]]></printWhenExpression>
