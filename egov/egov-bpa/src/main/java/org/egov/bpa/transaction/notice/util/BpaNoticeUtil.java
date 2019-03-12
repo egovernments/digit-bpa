@@ -307,7 +307,8 @@ public class BpaNoticeUtil {
                 bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue());
 
         String lawAct;
-        if (!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0).getIsappForRegularization()) {
+        if (!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0).getIsappForRegularization()
+        		&& bpaApplication.getDemand().getAmtCollected().compareTo(BigDecimal.ZERO)>0) {
             String applicantName = bpaApplication.getOwner().getName();
             String serviceType = bpaApplication.getServiceType().getDescription();
             SiteDetail site = bpaApplication.getSiteDetail().get(0);

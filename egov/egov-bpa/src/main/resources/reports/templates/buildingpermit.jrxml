@@ -334,7 +334,7 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Extend Of Land"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Permit Order"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="12" y="78" width="140" height="14" uuid="ea8ecd39-9889-4a25-887d-91527e4cfbd6"/>

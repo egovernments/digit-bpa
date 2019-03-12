@@ -78,13 +78,6 @@
 	<title>
 		<band height="155" splitType="Stretch">
 			<textField>
-				<reportElement x="88" y="41" width="370" height="30" uuid="860ffd1a-527b-4be5-aeaf-3e6dab016dad"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="11" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Kerala Municipal Building Rules"+ "\n"+ $P{lawAct}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement x="88" y="70" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true" isUnderline="false"/>
@@ -253,21 +246,7 @@
 				<textFieldExpression><![CDATA[$P{surveyNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="78" width="250" height="14" uuid="217e18e4-c870-4075-a605-3e719ffcd672"/>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{district}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="92" width="250" height="14" uuid="6a0af1bd-6841-415a-ad31-d0d6c1d01db6"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="64" width="250" height="14" uuid="6a0af1bd-6841-415a-ad31-d0d6c1d01db6"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -281,7 +260,7 @@
 				<textFieldExpression><![CDATA[$P{landExtent} + " Sq.Mtrs"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="106" width="250" height="14" uuid="3b691739-39a5-40ee-a202-f5de41659f88"/>
+				<reportElement stretchType="RelativeToBandHeight" x="152" y="78" width="250" height="14" uuid="3b691739-39a5-40ee-a202-f5de41659f88"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -293,20 +272,6 @@
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{nearestBuildingNo}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="152" y="64" width="250" height="14" uuid="6dcfa0bf-4cf5-4671-b0a5-c1ab82dfb298"/>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{taluk}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="152" y="8" width="250" height="14" uuid="306e232b-e96f-4bb9-bc43-95d5dd325a47"/>
@@ -373,38 +338,10 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Village"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Locality"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="64" width="140" height="14" uuid="72ab94c9-bd3a-4405-b883-1650845f1f20"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Taluk"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="78" width="140" height="14" uuid="3c5ee10e-b893-4573-b530-744dfc7f7932"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif"/>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA["District"]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="92" width="140" height="14" uuid="97f838c4-e841-4d1b-a5fd-371cdafe96f7"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="64" width="140" height="14" uuid="97f838c4-e841-4d1b-a5fd-371cdafe96f7"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -415,10 +352,10 @@
 					<font fontName="SansSerif"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Extend Of Land"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Plot Area"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="12" y="106" width="140" height="14" uuid="ea8ecd39-9889-4a25-887d-91527e4cfbd6"/>
+				<reportElement stretchType="RelativeToBandHeight" x="12" y="78" width="140" height="14" uuid="ea8ecd39-9889-4a25-887d-91527e4cfbd6"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>

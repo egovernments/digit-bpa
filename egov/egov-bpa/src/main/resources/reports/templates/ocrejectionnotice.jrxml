@@ -33,7 +33,7 @@
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ulbName} + "\n" + $P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="76" width="122" height="20" uuid="097ffb17-4a3c-4452-a196-f15126c79e61"/>
@@ -96,7 +96,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["       Your application, dated "+DateUtils.toDefaultDateFormat($F{parent}.getApplicationDate())+" for occupancy certificate for "+$F{parent}.getServiceType().getDescription()+"  in "+ $P{ulbName} +" falling in "+$F{parent}.getSiteDetail().get(0).getLocationBoundary().getName()+" Village,Revenue Ward "+$F{parent}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum()+",Electoral Ward "+$F{parent}.getSiteDetail().get(0).getElectionBoundary().getBoundaryNum()+",Re-Survey No."+$F{parent}.getSiteDetail().get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["       Your application, dated "+DateUtils.toDefaultDateFormat($F{parent}.getApplicationDate())+" for occupancy certificate for "+$F{parent}.getServiceType().getDescription()+"  in "+ $P{ulbName} +" falling in "+$F{parent}.getSiteDetail().get(0).getLocationBoundary().getName()+" Locality,Revenue Ward "+$F{parent}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum()+",Electoral Ward "+$F{parent}.getSiteDetail().get(0).getElectionBoundary().getBoundaryNum()+",Re-Survey No."+$F{parent}.getSiteDetail().get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>
