@@ -88,7 +88,7 @@
                              <c:when test="${not empty checklists}">
 								<c:forEach items="${checklists}" var="checklist" varStatus="vs">
 									<tr>
-										<td class="form-control">${checklist.description}</td>
+										<td><h6>${checklist.description}</h6></td>
 										<td><input type="checkbox" name="mappingList[${vs.index}].required"/></td>
 										<td><input type="checkbox" name="mappingList[${vs.index}].mandatory"/></td>
 										<div class="hidden">
