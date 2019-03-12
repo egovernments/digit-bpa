@@ -35,6 +35,7 @@
 	<parameter name="applicationNumber" class="java.lang.String"/>
 	<parameter name="applicantAddress" class="java.lang.String"/>
 	<parameter name="approverName" class="java.lang.String"/>
+	<parameter name="stateLogo" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -50,16 +51,16 @@
 		</band>
 	</background>
 	<title>
-		<band height="142" splitType="Stretch">
+		<band height="194" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="50" width="552" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="80" y="50" width="373" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["DEVELOPMENT PERMIT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1" y="71" width="555" height="20" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
+				<reportElement x="80" y="26" width="373" height="20" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -101,16 +102,15 @@
 				<textFieldExpression><![CDATA["Ref :-  Application number "+ $P{applicationNumber} + " dated "+$P{applicationDate}+" from smt/sri "+$P{applicantName} + " , " + $P{applicantAddress}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement positionType="FixRelativeToBottom" x="403" y="10" width="149" height="60" uuid="fa5fff4c-ae2c-4c5c-b5b4-54f6c5f95843">
-					<property name="qrCode" value="$P{qrCode}"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+				<reportElement x="470" y="10" width="78" height="80" uuid="85ac4e7f-5972-4d84-8695-cee4e0171df5"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="2" y="10" width="60" height="60" uuid="85ac4e7f-5972-4d84-8695-cee4e0171df5"/>
-				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+				<reportElement x="4" y="10" width="77" height="70" uuid="a108b081-d7de-4b95-881b-dbdb520a13bb">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -121,7 +121,7 @@
 				<textElement textAlignment="Justified">
 					<font fontName="SansSerif" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	Permission is hereby granted for the "+$P{serviceTypeDesc}+" to extent of "+$P{landExtent}+" area/hectares comprised in survey No. "+$P{surveyNo}+" village "+$P{village}+" taluk "+$P{taluk}+" district "+$P{district}+" subject to the following conditions :- "]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	Permission is hereby granted for the "+$P{serviceTypeDesc}+" to extent of "+$P{landExtent}+" area/hectares comprised in survey No. "+$P{surveyNo}+" locality "+$P{village}+" subject to the following conditions :- "]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="41">
@@ -135,7 +135,7 @@
 				<textFieldExpression><![CDATA[$P{permitConditions}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="38">
+		<band height="53">
 			<subreport>
 				<reportElement x="0" y="3" width="555" height="35" isRemoveLineWhenBlank="true" uuid="894e5da5-101c-4689-bde5-44afd293762f">
 					<printWhenExpression><![CDATA[new Boolean($P{permitFeeDetails}.size()!= 0)]]></printWhenExpression>
@@ -211,4 +211,17 @@
 			</staticText>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="83">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<image>
+				<reportElement positionType="FixRelativeToBottom" x="403" y="2" width="149" height="68" uuid="fa5fff4c-ae2c-4c5c-b5b4-54f6c5f95843">
+					<property name="qrCode" value="$P{qrCode}"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
 </jasperReport>
