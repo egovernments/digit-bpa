@@ -45,6 +45,7 @@
 	<parameter name="blocks" class="java.util.List"/>
 	<parameter name="applicantName" class="java.lang.String"/>
 	<parameter name="licensee" class="java.lang.String"/>
+	<parameter name="ulbName" class="java.lang.String"/>
 	<field name="planInformation" class="org.egov.common.entity.edcr.PlanInformation"/>
 	<field name="plot" class="org.egov.common.entity.edcr.Plot"/>
 	<field name="building" class="org.egov.common.entity.edcr.Building"/>
@@ -54,7 +55,7 @@
 		<band height="579" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement x="112" y="19" width="306" height="20" uuid="8a112e59-5ebc-4b5b-ac94-947d91b2912e"/>
+				<reportElement x="112" y="27" width="306" height="20" uuid="8a112e59-5ebc-4b5b-ac94-947d91b2912e"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -67,20 +68,7 @@
 				<text><![CDATA[AUTOMATED BUILDING PERMIT APPROVAL SYSTEM]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="149" y="0" width="240" height="20" uuid="da7d4d5b-ed1e-4e01-bb95-01faf597ae7b"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" isUnderline="true"/>
-				</textElement>
-				<text><![CDATA[KOZHIKODE MUNICIPAL CORPORATION]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="89" y="38" width="366" height="20" uuid="3ba843d8-ad7c-4b74-a541-a2d6b99fa9b9"/>
+				<reportElement x="89" y="46" width="366" height="20" uuid="3ba843d8-ad7c-4b74-a541-a2d6b99fa9b9"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1140,6 +1128,13 @@
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="104" y="10" width="340" height="17" uuid="1d8eef1e-11e9-40cd-a376-edf9107b8e3f"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
