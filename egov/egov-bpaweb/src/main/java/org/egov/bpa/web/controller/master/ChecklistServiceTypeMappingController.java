@@ -47,7 +47,7 @@ public class ChecklistServiceTypeMappingController {
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String showServiceTypeChecklistMapping(final Model model) {
-		model.addAttribute("servicetypes", serviceTypeService.findAll());
+		model.addAttribute("servicetypes", serviceTypeService.getAllActiveMainServiceTypes());
 		model.addAttribute("checklistTypes", checklistTypeService.findAll());
 		model.addAttribute("serviceTypeChecklist", new ChecklistServiceTypeMapping());
 		return "servicetype-checklist-mapping";
@@ -60,7 +60,7 @@ public class ChecklistServiceTypeMappingController {
 		model.addAttribute("checklistType", checklistServiceType.getChecklistType());
 		model.addAttribute("checklistServicetype", new ChecklistServiceTypeMapping());
 		model.addAttribute("checklists", bpaChecklistService.findByChecklistType(checklistServiceType.getChecklistType()));
-		model.addAttribute("servicetypes", serviceTypeService.findAll());
+		model.addAttribute("servicetypes", serviceTypeService.getAllActiveMainServiceTypes());
 		return "servicetype-checklist-mapping-create";
 	}
 	
@@ -82,7 +82,7 @@ public class ChecklistServiceTypeMappingController {
 	
 	@RequestMapping(value = "/search/view", method = RequestMethod.GET)
 	public String searchViewChecklistServiceTypeMapping(final Model model) {
-		model.addAttribute("servicetypes", serviceTypeService.findAll());
+		model.addAttribute("servicetypes", serviceTypeService.getAllActiveMainServiceTypes());
 		model.addAttribute("checklistTypes", checklistTypeService.findAll());
 		return "checklist-servicetype-mapping-search";
 	}
