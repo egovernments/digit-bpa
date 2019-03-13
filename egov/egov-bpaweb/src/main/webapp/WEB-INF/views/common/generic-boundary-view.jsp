@@ -54,7 +54,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="panel-heading toggle-header custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.bndry.dtl"/>
+		Boundary Details
 	</div>
 	<div class="history-icon toggle-icon">
 		<i class="fa fa-angle-up fa-2x"></i>
@@ -62,6 +62,6 @@
 </div>
 <div class="panel-body display-hide" id="boundarydivision" >
 </div>
-<script id="genericBoundry" data-search="${param.boundaryData}"
-	src="<cdn:url value='/resources/js/commonjs/genericBoundaryForm.js?rnd=${app_release_no}'/>"></script>
+<script id="genericBoundry" data-view="${param.boundaryData}"
+	src="<cdn:url value='/resources/js/commonjs/genericBoundaryView.js?rnd=${app_release_no}'/>"></script>
 

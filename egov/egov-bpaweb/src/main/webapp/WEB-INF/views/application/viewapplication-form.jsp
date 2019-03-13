@@ -114,6 +114,11 @@
                         <jsp:include page="view-applicantdetails.jsp"></jsp:include>
                     </div>
                     <div class="panel panel-primary" data-collapsed="0">
+	                    <jsp:include page="../common/generic-boundary-view.jsp">
+	                    <jsp:param name="boundaryData" value="${bpaApplication.adminBoundary}:${bpaApplication.revenueBoundary}:${bpaApplication.locationBoundary}" />
+	                    </jsp:include>
+                    </div>
+                    <div class="panel panel-primary" data-collapsed="0">
                         <jsp:include page="view-sitedetail.jsp"></jsp:include>
                     </div>
                     <div class="panel panel-primary demolitionDetails" data-collapsed="0">

@@ -66,41 +66,6 @@
 
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.zonal.office" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out
-				value="${bpaApplication.siteDetail[0].adminBoundary.parent.name}"
-				default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.rev.ward" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.siteDetail[0].adminBoundary.name}"
-				default="N/A"></c:out>
-		</div>
-	</div>
-
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.locality" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.siteDetail[0].locationBoundary.name}"
-				default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.election.ward" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.siteDetail[0].electionBoundary.name}"
-				default="N/A"></c:out>
-		</div>
-	</div>
-
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.re.survey.no" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
