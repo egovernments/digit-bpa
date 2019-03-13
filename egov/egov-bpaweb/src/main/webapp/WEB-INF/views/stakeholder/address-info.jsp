@@ -145,7 +145,7 @@
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${address}.pinCode" id="${address}.pinCode"
-			type="text" cssClass="form-control inline-elem patternvalidation" data-pattern="number"
+			type="text" cssClass="form-control inline-elem patternvalidation" data-pattern="number"  minlength="6"
 			placeholder="" maxlength="6" autocomplete="off" required="required" />
 		<form:errors path="${address}.pinCode"
 			cssClass="add-margin error-msg" />
