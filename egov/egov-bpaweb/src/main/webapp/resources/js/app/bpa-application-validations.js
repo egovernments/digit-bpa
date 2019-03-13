@@ -888,12 +888,14 @@ $(document).ready(function() {
             $('#applicationTypeSec').show();
             if($('#isOneDayPermitApplication').is(':checked')) {
                 $('#applicationTypeSec').hide();
+                $('#applicationType').attr('required',false);
                 $('.documentRequire').attr('required', 'required');
                 $('.document-desc').find('span').addClass('mandatory');
                 $('#oneDayPermitSec').show();
                 $('#oneDayPermitTypeOfLandSec').show();
             } else {
                 $('#applicationTypeSec').show();
+                $('#applicationType').attr('required',true);
                 $('.document-desc').find('span').removeClass('mandatory');
                 $('.documentRequire').removeAttr('required');
                 $('#oneDayPermitSec').show();
@@ -904,10 +906,15 @@ $(document).ready(function() {
         
     }
 
-    if ($('#isOneDayPermitApplication').is(':checked'))
+    if ($('#isOneDayPermitApplication').is(':checked')){
         $('#oneDayPermitSec').show();
-    else
+        $('#applicationType').attr('required',false);
+    }
+    else {
         $('#oneDayPermitSec').hide();
+        $('#applicationType').attr('required',true);
+    }
+
 
     $('#isOneDayPermitApplication').click(function() {
         //resetValuesForAmenitiesOfOneDayPermit();
@@ -920,6 +927,7 @@ $(document).ready(function() {
             }*/
             $('#applicationTypeSec').hide();
             $('#applicationType').val('');
+            $('#applicationType').attr('required',false);
             $('#typeOfLand').prop('required', 'required');
             hideRegularization();
             $('#oneDayPermitTypeOfLandSec').show();
@@ -935,6 +943,7 @@ $(document).ready(function() {
         } else {
             /*$('.amenityHideShow').show();*/
             $('#typeOfLand').val('');
+            $('#applicationType').attr('required',true);
             $('.documentRequire').removeAttr('required');
             $('.document-desc').find('span').removeClass('mandatory');
             $('#oneDayPermitTypeOfLandSec').hide();

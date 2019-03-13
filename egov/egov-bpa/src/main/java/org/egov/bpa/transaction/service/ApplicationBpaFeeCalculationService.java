@@ -388,18 +388,16 @@ public class ApplicationBpaFeeCalculationService implements ApplicationBpaFeeCal
                                 // CHECK WHETHER THIS APPLICABLE TO ONLY 701
                                 // OCCUPANCY TYPE.. ALSO HERE WORK
                                 // STARTED,INPROGRSS,COMPLETED TO BE CONSIDER.
-                                if (checkIsWorkAlreadyStarted(application) && BpaConstants.getServicesForValidation()
-                                        .contains(bpaFee.getServiceType().getCode())) {
-                                    amount = amount.multiply(BigDecimal.valueOf(3));
-                                } else if (checkIsEligibleForDiscountOnPermitFee(inputArea, existBldgInputArea,
-                                        bpaFee.getServiceType().getCode(), application.getPermitOccupancies())) {
-                                    amount = calculateAndGetDiscountedPermitFee(inputArea.multiply(feeAmount)); // 50%
-                                                                                                                // off
-                                                                                                                // if
-                                                                                                                // area
-                                    // less than 150
-                                    // mts
-                                }
+								/*
+								 * if (checkIsWorkAlreadyStarted(application) &&
+								 * BpaConstants.getServicesForValidation()
+								 * .contains(bpaFee.getServiceType().getCode())) { amount =
+								 * amount.multiply(BigDecimal.valueOf(3)); } else if
+								 * (checkIsEligibleForDiscountOnPermitFee(inputArea, existBldgInputArea,
+								 * bpaFee.getServiceType().getCode(), application.getPermitOccupancies())) {
+								 * amount = calculateAndGetDiscountedPermitFee(inputArea.multiply(feeAmount));
+								 * // 50% // off // if // area // less than 150 // mts }
+								 */
 
 							} /*
 								 * else if (("102").equals(bpaFee.getCode()) || ("302").equals(bpaFee.getCode())

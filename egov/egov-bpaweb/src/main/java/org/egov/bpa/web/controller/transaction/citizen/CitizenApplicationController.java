@@ -337,6 +337,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
             final HttpServletRequest request, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
+    	String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
         searchBpaApplicationService.validateApplicationTypeAndHeight(bpaApplication, errors);
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
@@ -346,7 +347,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         }
         if(bpaApplication.getIsOneDayPermitApplication())
         	bpaApplication.setApplicationType(
-        			applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase()));
+        			applicationTypeService.findByName(onedaypermit));
         
         Map<String, String> eDcrApplDetails = bpaDcrService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
         if (eDcrApplDetails.get("isExists") == "true") {

@@ -137,7 +137,7 @@
 		
 		<div class="form-group" id="applicationTypeSec">
 				<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.applctn.type" /></label>
+						code="lbl.applctn.type" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:select path="applicationType"
 						id="applicationType"	cssClass="form-control serviceType" >
