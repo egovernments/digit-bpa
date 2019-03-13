@@ -22,3 +22,10 @@ update egbpa_mstr_stakeholder  set stakeholdertype =(select id from EGBPA_MSTR_S
 update egbpa_mstr_stakeholder  set stakeholdertype =(select id from EGBPA_MSTR_STAKEHOLDERTYPE where name='Chartered Architect') where stakeholdertype=10;
 
 update egbpa_mstr_stakeholder  set stakeholdertype =(select id from EGBPA_MSTR_STAKEHOLDERTYPE where name='Chartered Engineer') where stakeholdertype=11;
+
+
+
+ALTER TABLE EGBPA_MSTR_STAKEHOLDER
+ADD CONSTRAINT FK_EGBPA_MSTR_STAKEHOLDER_STAKEHOLDERTYPE FOREIGN KEY (stakeholdertype) 
+REFERENCES EGBPA_MSTR_STAKEHOLDERTYPE (ID);
+    

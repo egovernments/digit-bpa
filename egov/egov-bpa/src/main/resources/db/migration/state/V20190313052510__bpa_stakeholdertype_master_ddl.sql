@@ -47,8 +47,3 @@ insert into egbpa_mstr_stakeholderType(id,name,code, isactive,createdby,createdd
 
 insert into egbpa_mstr_stakeholderType(id,name,code, isactive,createdby,createddate,lastmodifieddate,lastmodifiedby,version) values (nextval('seq_egbpa_mstr_stakeholderType'),'Chartered Engineer','Chartered Engineer',true,1,now(),now(),1,0);
   
-
-ALTER TABLE EGBPA_MSTR_STAKEHOLDER
-ADD CONSTRAINT FK_EGBPA_MSTR_STAKEHOLDER_STAKEHOLDERTYPE FOREIGN KEY (stakeholdertype) 
-REFERENCES EGBPA_MSTR_STAKEHOLDERTYPE (ID);
-    
