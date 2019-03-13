@@ -255,6 +255,9 @@ public class BpaConstants {
     public static final String PERMIT_APPLN_FEE_COLLECTION_REQUIRED = "PERMITAPPLNFEECOLLECTIONREQUIRED";
     public static final String BPA_REGISTRATION_FEE = "Registration Fees";
     public static final String OC_FEE = "Occupancy Certificate Fees";
+    public static final String SHELTERFUND = "Shelter Fund";
+    public static final String LABOURCESS = "Labour cess";
+
 
 
     
@@ -394,6 +397,9 @@ public class BpaConstants {
     public static final String GENERIC_BOUNDARY_CONFIGURATION_KEY="BPA_GENERIC_BOUNDARY_CONFIGURATION";
     public static final String WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY="BPA_WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY";
 
+    public static final String LOWRISK = "Low Risk";
+    public static final String HIGHRISK = "High Risk";
+    public static final String MEDIUMRISK = "Medium Risk";
 
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();

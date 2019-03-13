@@ -80,6 +80,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.entity.enums.SlotMappingApplType;
+import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.ConstructionStagesService;
@@ -188,6 +189,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     protected OcSmsAndEmailService ocSmsAndEmailService;
     @Autowired
     protected StakeholderTypeService stakeholderTypeService;
+    @Autowired
+    protected ApplicationTypeService applicationTypeService;
 
     protected void prepareFormData(Model model) {
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
@@ -198,6 +201,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("stakeHolderTypeList", stakeholderTypeService.findAllIsActive());
         model.addAttribute("governmentTypeList", Arrays.asList(GovernmentType.values()));
         model.addAttribute("constStages", constructionStagesService.findAll());
+        model.addAttribute("appTypes", applicationTypeService.getAllEnabledApplicationTypes());
         model.addAttribute("electionwards", getElectionWards());
         model.addAttribute("wards", getRevenueWards());
         model.addAttribute("street", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(STREET,

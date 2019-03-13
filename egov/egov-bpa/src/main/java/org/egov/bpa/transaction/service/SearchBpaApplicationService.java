@@ -41,6 +41,7 @@ package org.egov.bpa.transaction.service;
 
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
@@ -61,6 +62,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -75,6 +77,10 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.LOWRISK;
+import static org.egov.bpa.utils.BpaConstants.MEDIUMRISK;
+import static org.egov.bpa.utils.BpaConstants.HIGHRISK;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -336,5 +342,28 @@ public class SearchBpaApplicationService {
 				far = totalFloorArea.divide(plotArea, 3, RoundingMode.HALF_UP);
 		}
 		return far.setScale(3, RoundingMode.HALF_UP);
+	}
+	
+	public void validateApplicationTypeAndHeight(final BpaApplication application, final BindingResult errors) {
+		if(application.getApplicationType() != null ) {
+		String appType =	application.getApplicationType().getName();
+			for(BuildingDetail buildingDetail : application.getBuildingDetail()) {
+				BigDecimal buildingHeight = buildingDetail.getHeightFromGroundWithOutStairRoom();
+				if(buildingHeight != null) {
+				if(appType.equals(LOWRISK) && buildingHeight.compareTo(BigDecimal.valueOf(10)) > 0)
+					errors.rejectValue("applicationType", "msg.validation.lowrisk");
+				else if (appType.equals(MEDIUMRISK) && (buildingHeight.compareTo(BigDecimal.valueOf(10)) < 0 || 
+						buildingHeight.compareTo(BigDecimal.valueOf(15)) > 0))
+					errors.rejectValue("applicationType", "msg.validation.mediumrisk");
+				else if (appType.equals(HIGHRISK) && buildingHeight.compareTo(BigDecimal.valueOf(15)) < 0)
+					errors.rejectValue("applicationType", "msg.validation.highrisk");	
+				}
+				if(buildingDetail.getTotalPlintArea() != null && (buildingDetail.getTotalPlintArea().compareTo(BigDecimal.valueOf(3000)) > 0) && application.getInfrastructureCost()==null)
+					errors.rejectValue("buildingDetail.totalPlintArea", "msg.validate.infracost");		
+			}
+		}
+		else if(!application.getIsOneDayPermitApplication())
+			errors.rejectValue("applicationType", "msg.validation.applicationtype");	
+
 	}
 }

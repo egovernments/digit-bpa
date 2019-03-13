@@ -42,11 +42,16 @@ package org.egov.bpa.master.repository;
 import java.util.List;
 
 import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.eis.entity.EmployeeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationTypeRepository extends JpaRepository<ApplicationType, Long> {
+	
+    @Query("select a from ApplicationType a where upper(a.name)=:name")
+	ApplicationType findByNameUpperCase(String name);
 	
 	List<ApplicationType> findByEnabledTrueOrderByDescriptionAsc();
 

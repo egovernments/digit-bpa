@@ -45,6 +45,15 @@ jQuery(document)
 					
 					$('#category').prop('selectedIndex',2);
 					accountDetailGlcode_initialize();
+					
+					$('#submit').click(function(e) {
+					bootbox.alert($('#category').val());
+						if ($('form').valid()) {
+							console.log('submitted')
+						} else {
+							e.preventDefault();
+						}
+					});
 
 					var deletedId = [];
 					$(document)

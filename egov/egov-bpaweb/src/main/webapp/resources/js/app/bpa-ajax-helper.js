@@ -188,7 +188,7 @@ $(document).ready(
 				$('#landUsageId').val($('#landUsage').val());
 			});
 			$('#schemes').trigger("change");
-			$('#serviceType,.applicationAmenity').change(function() {
+			$('#serviceType,#applicationAmenity,#applicationType').change(function() {
                 /*if($('#isOneDayPermitApplication').is(':checked') && $("#applicationAmenity option:selected").val() && $("#applicationAmenity option:selected").text() != 'Roof Conversion under rule 100 or 101') {
                     $(".applicationAmenity").val('');
                     $('#admissionfee').val(0);
@@ -198,17 +198,19 @@ $(document).ready(
                     bootbox.alert("One day permit is applicable only for Roof Conversion under rule 100 or 101 among amenities for others not applicable so you can't select other amenity type for one day permit application.");
                 }*/
                 var servicesAndAmenities =[];
+                var applicationTypeId = null;
 				servicesAndAmenities.push($('#serviceType').val());
 				$.each($("#applicationAmenity option:selected"), function(idx){     
 					servicesAndAmenities.push($(this).val());
 				});
-				
+				applicationTypeId = $('#applicationType').val();
 				$.ajax({
 					url : "/bpa/ajax/getAdmissionFees",
 					type : "GET",
 					contentType: 'application/json; charset=UTF-8',
 					data : {
-						"serviceTypeIds" : servicesAndAmenities.join(",")
+						"serviceTypeIds" : servicesAndAmenities.join(","),
+						"applicationTypeId" : applicationTypeId
 					},
 					cache : false,
 					dataType: "json",
@@ -219,7 +221,8 @@ $(document).ready(
 					}
 				});
 				
-			});
+			});				
+			
 			
 			$('#localitys').change(function(){
 				$.ajax({

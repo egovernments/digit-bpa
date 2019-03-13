@@ -244,8 +244,11 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         }
         List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
                 .getFeeForListOfServices(application.getServiceType().getId(), BpaConstants.BPA_APP_FEE);
+        BigDecimal amount = BigDecimal.ZERO;
+        if(application.getApplicationType() != null)
+        	amount = applicationBpaService.getFeeAmountByApplicationType(application.getApplicationType().getId());
 
-        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), application.getAdmissionfeeAmount());
+        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), application.getAdmissionfeeAmount().add(amount));
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())
@@ -255,7 +258,7 @@ public class ApplicationBpaBillService extends BillServiceInterface {
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
             egDemand.setBaseDemand(applicationBpaService.setAdmissionFeeAmountWithAmenities(
-                    application.getServiceType().getId(), application.getApplicationAmenity()));
+                    application.getServiceType().getId(), application.getApplicationAmenity()).add(amount));
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());
         }

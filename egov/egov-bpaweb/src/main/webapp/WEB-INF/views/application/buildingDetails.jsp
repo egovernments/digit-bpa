@@ -340,6 +340,7 @@
 							path="buildingDetail[${bldgCounter.index}].floorCount"
 							cssClass="add-margin error-msg" />
 					</div>
+					
 					<%-- <label
 		class="col-sm-2 control-label text-right handle-mandatory buildingheightGround"><spring:message
 			code="lbl.build.height" /> <span class="mandatory"></span> </label>

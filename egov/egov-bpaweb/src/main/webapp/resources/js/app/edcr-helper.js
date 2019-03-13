@@ -268,6 +268,9 @@ $(document).ready(
             var blockIdx = 0;
             for(var i = 0; i < planDetail.blocks.length; i++) {
                 var block = planDetail.blocks[i];
+                if(block.building.totalBuitUpArea > 3000)
+                    $('#infrastructureCost').attr('required',true);
+
                 // If Proposed building details present then only will insert
                 if (isProposedBuildingDetailsPresent(block)) {
                     addBlock(blockIdx, block.number, planDetail.blocks.length);

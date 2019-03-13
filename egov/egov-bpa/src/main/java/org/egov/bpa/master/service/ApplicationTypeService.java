@@ -42,6 +42,7 @@ package org.egov.bpa.master.service;
 import java.util.List;
 
 import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.repository.ApplicationTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,8 +54,20 @@ public class ApplicationTypeService {
 
     @Autowired
     private ApplicationTypeRepository applicationTypeRepository;
+    
+    public ApplicationType findById(Long id) {
+        return applicationTypeRepository.findOne(id);
+    }
 
     public List<ApplicationType> findAll() {
         return applicationTypeRepository.findAll();
+    }
+    
+    public ApplicationType findByName(final String name) {
+        return applicationTypeRepository.findByNameUpperCase(name);
+    }
+    
+    public List<ApplicationType> getAllEnabledApplicationTypes() {
+        return applicationTypeRepository.findByEnabledTrueOrderByDescriptionAsc();
     }
 }

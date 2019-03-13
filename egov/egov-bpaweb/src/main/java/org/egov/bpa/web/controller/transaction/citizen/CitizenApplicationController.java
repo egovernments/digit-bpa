@@ -71,9 +71,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
+import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -145,6 +147,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private BpaDcrService bpaDcrService;
     @Autowired
     protected SubOccupancyService subOccupancyService;
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -333,13 +337,17 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
             final HttpServletRequest request, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
-
+        searchBpaApplicationService.validateApplicationTypeAndHeight(bpaApplication, errors);
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
+        if(bpaApplication.getIsOneDayPermitApplication())
+        	bpaApplication.setApplicationType(
+        			applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase()));
+        
         Map<String, String> eDcrApplDetails = bpaDcrService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
         if (eDcrApplDetails.get("isExists") == "true") {
             model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
@@ -516,5 +524,4 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         model.addAttribute("bpaApplication", application);
         return "application-status";
     }
-
 }

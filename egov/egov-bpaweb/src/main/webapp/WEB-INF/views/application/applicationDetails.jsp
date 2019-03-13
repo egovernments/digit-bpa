@@ -133,6 +133,26 @@
 				</div>
 			</div>
 		</c:if>
+		
+		
+		<div class="form-group" id="applicationTypeSec">
+				<label class="col-sm-3 control-label text-right"><spring:message
+						code="lbl.applctn.type" /></label>
+				<div class="col-sm-3 add-margin">
+					<form:select path="applicationType"
+						id="applicationType"	cssClass="form-control serviceType" >
+						<form:option value="">
+						<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${appTypes}" itemValue="id"
+						itemLabel="name" />
+					</form:select> 
+					<form:errors path="applicationType"	cssClass="add-margin error-msg" />
+				</div>
+		</div>
+			
+			
+		
 		<div class="form-group appForRegularization">
 			<label class="col-sm-3 control-label text-right"><spring:message
 					code="lbl.if.regularized" /> </label>
@@ -204,7 +224,7 @@
 		</div>
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message
-					code="lbl.applctn.type" /> <span class="mandatory"></span> </label>
+					code="lbl.service.type" /> <span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="serviceType" data-first-option="false"
 					id="serviceType" cssClass="form-control serviceType"

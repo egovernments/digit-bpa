@@ -76,6 +76,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
@@ -150,6 +151,9 @@ public class BpaApplication extends StateAware<Position> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "applicationType")
+    private ApplicationType applicationType;
     @Length(min = 1, max = 128)
     private String remarks;
     @Length(min = 1, max = 256)
@@ -160,6 +164,8 @@ public class BpaApplication extends StateAware<Position> {
     @Length(min = 1, max = 128)
     private String feeAmountRecieptNo;
     private BigDecimal approvedFeeAmount;
+    private BigDecimal constructionCost;
+    private BigDecimal infrastructureCost;
     private Date approvedReceiptDate;
     @Length(min = 1, max = 128)
     private String revisedApplicationNumber;
@@ -1050,6 +1056,30 @@ public class BpaApplication extends StateAware<Position> {
 
 	public void setLocationBoundary(String locationBoundary) {
 		this.locationBoundary = locationBoundary;
+	}
+
+	public ApplicationType getApplicationType() {
+		return applicationType;
+	}
+
+	public void setApplicationType(ApplicationType applicationType) {
+		this.applicationType = applicationType;
+	}
+
+	public BigDecimal getInfrastructureCost() {
+		return infrastructureCost;
+	}
+
+	public void setInfrastructureCost(BigDecimal infrastructureCost) {
+		this.infrastructureCost = infrastructureCost;
+	}
+
+	public BigDecimal getConstructionCost() {
+		return constructionCost;
+	}
+
+	public void setConstructionCost(BigDecimal constructionCost) {
+		this.constructionCost = constructionCost;
 	}
 
 }

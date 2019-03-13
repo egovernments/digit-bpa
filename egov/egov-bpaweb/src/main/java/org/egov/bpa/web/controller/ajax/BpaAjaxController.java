@@ -166,15 +166,18 @@ public class BpaAjaxController {
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BigDecimal isConnectionPresentForProperty(@RequestParam final Long[] serviceTypeIds) {
-        if (serviceTypeIds.length > 0) {
-            return applicationBpaService
-                    .getTotalFeeAmountByPassingServiceTypeAndAmenities(Arrays.asList(serviceTypeIds));
-        } else {
-            return BigDecimal.ZERO;
-        }
+    public BigDecimal isConnectionPresentForProperty(@RequestParam final Long[] serviceTypeIds, @RequestParam final Long applicationTypeId) {
+       BigDecimal amount = BigDecimal.ZERO;
+    	if (serviceTypeIds.length > 0) {
+             amount = amount.add(applicationBpaService
+                    .getTotalFeeAmountByPassingServiceTypeAndAmenities(Arrays.asList(serviceTypeIds)));
+             if(applicationTypeId != null) {
+            	 amount = amount.add(applicationBpaService.getFeeAmountByApplicationType(applicationTypeId));
+             }
+        } 
+    	return amount;
     }
-
+    
     @GetMapping(value = "/bpaajaxWorkFlow-getDesignationsByObjectTypeAndDesignation", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Designation> getDesignationsByObjectTypeAndDesignation(

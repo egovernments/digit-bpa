@@ -259,7 +259,27 @@
 			<form:hidden path="siteDetail[0].landUsageId" id="landUsageId" value="" /> 
 		</div>
 	</div>
-
+    <div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.construction.cost" /><span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:input class="form-control patternvalidation" maxlength="12"
+					data-pattern="number" id="constructionCost" required="required" 
+					path="constructionCost" />
+				<form:errors path="constructionCost"
+					cssClass="add-margin error-msg" />
+			</div>
+	
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.infrastructure.cost" /></label>
+			<div class="col-sm-3 add-margin">
+				<form:input class="form-control patternvalidation" maxlength="12"
+					data-pattern="number" id="infrastructureCost"
+					path="infrastructureCost" />
+				<form:errors path="infrastructureCost"
+					cssClass="add-margin error-msg" />
+			</div>
+	</div>
 	<div class="form-group">
 		
 		<label class="col-sm-3 control-label text-right"><spring:message

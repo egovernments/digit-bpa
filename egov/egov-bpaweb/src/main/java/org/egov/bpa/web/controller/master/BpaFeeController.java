@@ -48,13 +48,10 @@ import javax.validation.Valid;
 import org.egov.bpa.master.entity.BpaFeeCommon;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.enums.CalculationType;
-import org.egov.bpa.master.entity.enums.FeeSubType;
-import org.egov.bpa.master.entity.enums.FeeApplicationType;
 import org.egov.bpa.master.service.BpaFeeCommonService;
 import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
-import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgReasonCategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -91,15 +88,13 @@ public class BpaFeeController {
 
 	@Autowired
 	private BpaDemandService bpaDemandService;
-
-	@Autowired
-	private DemandGenericDao demadGenericDao;
-
+	
 	@Autowired
 	private MessageSource messageSource;
 	
 	@Autowired
 	private EgReasonCategoryDao egReasonCategoryDAO;
+
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String createFees(final Model model) {

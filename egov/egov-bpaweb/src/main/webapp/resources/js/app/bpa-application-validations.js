@@ -758,6 +758,7 @@ $(document).ready(function() {
                 $('#isOneDayPermitApplication').prop('checked', false);
                 $('#isOneDayPermitApplication').val(false);
                 $('#oneDayPermitTypeOfLandSec').hide();
+                
             } else {
                 $('#typeOfLand').val('');
                 $('#typeOfLand').removeAttr('required');
@@ -767,7 +768,23 @@ $(document).ready(function() {
             }
             //hideAndShowEdcrDetails();
         });
+    } else {
+        $('#applicationTypeSec').hide();
     }
+    
+    $(document).on('change',"#occupancyapplnlevel",function () {
+        //$('.amenityHideShow').show();
+        //resetValuesForAmenitiesOfOneDayPermit();
+        if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
+            $('#applicationTypeSec').show();
+        } else {
+           
+            $('#applicationTypeSec').hide();
+        }
+        //hideAndShowEdcrDetails();
+    });
+    
+    
     function hideAndShowEdcrDetails() {
         if( serviceTypeName && ('New Construction' === serviceTypeName || ('Addition or Extension' === serviceTypeName && $('#isOneDayPermitApplication').is(':checked')))
             && $("#occupancyapplnlevel option:selected" ) && $("#occupancyapplnlevel option:selected" ).text() == 'Residential') {
@@ -868,12 +885,15 @@ $(document).ready(function() {
             $('.amenityHideShow').hide();*/
 
         if($("#occupancyapplnlevel option:selected" ).text() == 'Residential') {
+            $('#applicationTypeSec').show();
             if($('#isOneDayPermitApplication').is(':checked')) {
+                $('#applicationTypeSec').hide();
                 $('.documentRequire').attr('required', 'required');
                 $('.document-desc').find('span').addClass('mandatory');
                 $('#oneDayPermitSec').show();
                 $('#oneDayPermitTypeOfLandSec').show();
             } else {
+                $('#applicationTypeSec').show();
                 $('.document-desc').find('span').removeClass('mandatory');
                 $('.documentRequire').removeAttr('required');
                 $('#oneDayPermitSec').show();
@@ -881,6 +901,7 @@ $(document).ready(function() {
                 $('#oneDayPermitTypeOfLandSec').hide();
             }
         }
+        
     }
 
     if ($('#isOneDayPermitApplication').is(':checked'))
@@ -897,6 +918,8 @@ $(document).ready(function() {
                 if('Amenities'.localeCompare($( "#serviceType option:selected" ).text()) == 0)
                     $('.amenityHideShow').show();
             }*/
+            $('#applicationTypeSec').hide();
+            $('#applicationType').val('');
             $('#typeOfLand').prop('required', 'required');
             hideRegularization();
             $('#oneDayPermitTypeOfLandSec').show();
@@ -918,6 +941,7 @@ $(document).ready(function() {
             $('#isOneDayPermitApplication').prop('checked', false);
             $('#typeOfLand').removeAttr('required');
             $('#isOneDayPermitApplication').val(false);
+            $('#applicationTypeSec').show();
             showRegularization();
             /*if('Addition or Extension' == serviceTypeName){
                 hideAndShowEdcrDetails();
