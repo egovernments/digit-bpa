@@ -94,7 +94,7 @@ public class BpaIndexService {
 			bpaIndex.setStakeHolderName(bpaApplication.getStakeHolder().get(0).getStakeHolder() == null ? EMPTY
 					: bpaApplication.getStakeHolder().get(0).getStakeHolder().getName());
 			bpaIndex.setStakeHolderType(bpaApplication.getStakeHolder().get(0).getStakeHolder() == null ? EMPTY
-					: bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().name());
+					: bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName());
 		}
 		bpaIndex.setRemarks(bpaApplication.getRemarks() == null ? EMPTY : bpaApplication.getRemarks());
 		bpaIndex.setPlanPermissionNumber(

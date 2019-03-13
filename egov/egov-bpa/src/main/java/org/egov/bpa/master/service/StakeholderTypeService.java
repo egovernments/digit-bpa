@@ -1,5 +1,6 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
+
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -37,32 +38,27 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.repository;
+package org.egov.bpa.master.service;
 
 import java.util.List;
 
-import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.StakeHolderType;
-import org.egov.bpa.master.entity.enums.StakeHolderStatus;
-import org.egov.demand.model.EgDemand;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.history.RevisionRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.bpa.master.repository.StakeholderTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface StakeHolderRepository extends JpaRepository<StakeHolder, Long>, RevisionRepository<StakeHolder, Long, Integer> {
-    StakeHolder findByEmailId(String email);
-    StakeHolder findByCode(String code);
-    StakeHolder findByMobileNumberAndStatus(String mobileNumber, StakeHolderStatus status);
-    StakeHolder findByEmailIdAndStatus(String email, StakeHolderStatus status);
-    StakeHolder findByAadhaarNumberAndStatus(String aadhaar, StakeHolderStatus status);
-    StakeHolder findByPanAndStatus(String pan, StakeHolderStatus status);
-    StakeHolder findByLicenceNumberAndStatus(String licenseNo, StakeHolderStatus status);
-    StakeHolder findByLicenceNumber(String licenseNo);
-	List<String> findNameByType(StakeHolderType type);
-    @Query("select stakeholder from StakeHolder stakeholder where stakeholder.stakeHolderType=:type and stakeholder.isActive=true")
-	List<StakeHolder> findActiveByType(@Param("type")StakeHolderType stkHldrType);
-    StakeHolder findByDemand(EgDemand demand);
+@Service
+@Transactional(readOnly = true)
+public class StakeholderTypeService {
+    
+    @Autowired
+    private StakeholderTypeRepository stakeholderTypeRepository;
+
+   public List<StakeHolderType> findAllIsActive(){
+        return stakeholderTypeRepository.findByIsActiveTrue();
+    }     
+   public StakeHolderType findOne(Long id) {
+	   return stakeholderTypeRepository.findOne(id);
+   }
 }

@@ -87,7 +87,6 @@ import org.egov.bpa.transaction.entity.common.DcrDocument;
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
@@ -175,7 +174,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 }
             }
         }
-        model.addAttribute("stakeHolderType", stkHldr.getStakeHolderType().getStakeHolderTypeVal());
+        model.addAttribute("stakeHolderType", stkHldr.getStakeHolderType().getName());
         prepareFormData(model);
         bpaApplication.setApplicationDate(new Date());
         prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
@@ -250,8 +249,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                     messageSource.getMessage("msg.stakeholder.expiry.reached", new String[] { stkHldr.getName() }, null));
             return true;
         }
-        if ((StakeHolderType.TOWN_PLANNER_A.equals(stkHldr.getStakeHolderType())
-                || StakeHolderType.TOWN_PLANNER_B.equals(stkHldr.getStakeHolderType()))
+        if (("Town Planner - A".equals(stkHldr.getStakeHolderType().getCode())
+                || "Town Planner - B".equals(stkHldr.getStakeHolderType().getCode()))
                 && !ST_CODE_05.equals(serviceCode)) {
             model.addAttribute(MESSAGE,
                     messageSource.getMessage("msg.invalid.stakeholder", new String[] { stkHldr.getName() }, null));

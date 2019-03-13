@@ -223,7 +223,7 @@
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out
-				value="${bpaApplication.stakeHolder[0].stakeHolder.stakeHolderType}"
+				value="${bpaApplication.stakeHolder[0].stakeHolder.stakeHolderType.name}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">

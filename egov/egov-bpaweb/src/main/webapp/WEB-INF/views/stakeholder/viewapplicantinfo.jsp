@@ -123,7 +123,7 @@
 			<spring:message code="lbl.stakeholder.type" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.stakeHolderType}"></c:out>
+			<c:out value="${stakeHolder.stakeHolderType.name}"></c:out>
 		</div>
 		<div class="row add-border">
 		<div class="col-sm-3 add-margin">

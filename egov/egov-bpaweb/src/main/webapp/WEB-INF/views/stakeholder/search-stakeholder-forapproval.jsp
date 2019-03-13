@@ -60,7 +60,7 @@
 								class="form-control">
 								<option value=""><spring:message code="lbl.select" /></option>
 								<c:forEach items="${stakeHolderTypes}" var="stkhldrtype">
-									<option value="${stkhldrtype}">${stkhldrtype.stakeHolderTypeVal}</option>
+									<option value="${stkhldrtype}">${stkhldrtype.name}</option>
 								</c:forEach>
 							</select>
 							<form:errors path="stakeHolderType" cssClass="error-msg" />

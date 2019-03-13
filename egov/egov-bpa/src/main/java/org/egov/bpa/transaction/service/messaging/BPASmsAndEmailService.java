@@ -166,7 +166,7 @@ public class BPASmsAndEmailService {
 
 			} else {
 				message = bpaMessageSource.getMessage(MSG_KEY_SMS_STAKEHOLDER_NEW, new String[] {
-						stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getUsername(), "demo" },
+						stakeHolder.getStakeHolderType().getName(), stakeHolder.getUsername(), "demo" },
 						null);
 			}
 		}
@@ -189,7 +189,7 @@ public class BPASmsAndEmailService {
 		String msgKeyMailSubject = EMLS_STK_RJCT;
 		if (isEmailEnabled() && stakeHolder.getEmailId() != null) {
 			final String message = bpaMessageSource.getMessage(msgKeyMail, new String[]{stakeHolder.getName(),
-							stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getCode(), stakeHolder.getComments(), getMunicipalityName()},
+							stakeHolder.getStakeHolderType().getName(), stakeHolder.getCode(), stakeHolder.getComments(), getMunicipalityName()},
 					null);
 			final String subject = bpaMessageSource.getMessage(msgKeyMailSubject, null, null);
 			notificationService.sendEmail(stakeHolder.getEmailId(), subject, message);
@@ -205,21 +205,21 @@ public class BPASmsAndEmailService {
 			message = bpaMessageSource
 					.getMessage(EMLB_STK_CTZ,
 							new String[] { stakeHolder.getName(),
-									stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getCode(),
+									stakeHolder.getStakeHolderType().getName(), stakeHolder.getCode(),
 									getMunicipalityName() },
 							null);
 		} else {
 			if (stakeHolder.getStatus().equals(StakeHolderStatus.PAYMENT_PENDING)) {
 				msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_PP;
 				message = bpaMessageSource.getMessage(BODY_KEY_EMAIL_STAKEHOLDER_NEW_PP,
-						new String[] { stakeHolder.getName(), stakeHolder.getStakeHolderType().getStakeHolderTypeVal(),
+						new String[] { stakeHolder.getName(), stakeHolder.getStakeHolderType().getName(),
 								stakeHolder.getUsername(), "demo", ApplicationThreadLocals.getDomainURL(),
 								getMunicipalityName() },
 						null);
 			} else {
 				msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW;
 				message = bpaMessageSource.getMessage(BODY_KEY_EMAIL_STAKEHOLDER_NEW,
-						new String[] { stakeHolder.getName(), stakeHolder.getStakeHolderType().getStakeHolderTypeVal(),
+						new String[] { stakeHolder.getName(), stakeHolder.getStakeHolderType().getName(),
 								stakeHolder.getUsername(), "demo", ApplicationThreadLocals.getDomainURL(),
 								getMunicipalityName() },
 						null);

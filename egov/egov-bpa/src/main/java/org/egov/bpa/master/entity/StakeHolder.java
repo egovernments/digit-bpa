@@ -41,6 +41,7 @@
 package org.egov.bpa.master.entity;
 
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +62,6 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.User;
@@ -81,9 +81,10 @@ public class StakeHolder extends User {
     private static final long serialVersionUID = 3078684328383202788L;
     @OneToMany(mappedBy = "stakeHolder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>(0);
-    @Enumerated(EnumType.ORDINAL)
     @NotNull
-    private StakeHolderType stakeHolderType;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "stakeholdertype")
+	private StakeHolderType stakeHolderType;
     @NotNull
     @Length(min = 1, max = 128)
     @Column(name = "code", unique = true)

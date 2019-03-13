@@ -134,7 +134,7 @@ public class BpaApplicationValidationService {
             throw new RuntimeException("Unable to find Stakeholder validator service");
         } else {
             return sValidator.validateStakeholder(bpaApplication.getServiceType().getCode(),
-                    bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getStakeHolderTypeVal(),
+                    bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName(),
                     bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
                     noOfFloors, heightOfBuilding, totalPlinthArea, bpaApplication.getAuthorizedToSubmitPlan());
         }
@@ -238,7 +238,7 @@ public class BpaApplicationValidationService {
      */
     public String getValidationMessageForBusinessResgistration(final BpaApplication bpaApplication) {
         String stakeHolderType = bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType()
-                .getStakeHolderTypeVal();
+                .getName();
         String serviceType = bpaApplication.getServiceType().getCode();
         BigDecimal extentInSqmtsInput = BigDecimal.ZERO;
         BigDecimal plinthAreaInput = BigDecimal.ZERO;

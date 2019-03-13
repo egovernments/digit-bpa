@@ -47,12 +47,11 @@
  */
 package org.egov.bpa.web.controller.rest;
 
-import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,10 +61,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.StakeHolder;
+import org.egov.bpa.master.entity.StakeHolderType;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.StakeHolderService;
+import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -99,6 +99,10 @@ public class BpaRestController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private StakeholderTypeService stakeholderTypeService;
+
 
     @GetMapping(value = "/getstakeholder/{id}", produces = APPLICATION_JSON_VALUE)
     public StakeHolder getStakeHolderById(@PathVariable final String id) {
@@ -118,9 +122,9 @@ public class BpaRestController {
 	@GetMapping(value = "/stakeholder/type", produces = APPLICATION_JSON_VALUE)
 	public List<String> getAllStakeHolderTypes() {
 		List<String> stkHldrTypes = new ArrayList<>();
-		List<StakeHolderType> stkhldrtypes = Arrays.asList(StakeHolderType.values());
+		List<StakeHolderType> stkhldrtypes = stakeholderTypeService.findAllIsActive();
 		for (StakeHolderType stkHldrType : stkhldrtypes) {
-			stkHldrTypes.add(stkHldrType.toString());
+			stkHldrTypes.add(stkHldrType.getName());
 		}
 		return stkHldrTypes;
 	}
@@ -153,8 +157,9 @@ public class BpaRestController {
 	public List<Map<String, Object>> getStakeHolderNameAndIdByType(@PathVariable final String type) {
 		List<Map<String, Object>> stkHldrDataList = new ArrayList<>();
 		StakeHolderType stkHldrType = null;
-		for (StakeHolderType stkType : StakeHolderType.values()) {
-			if (String.valueOf(stkType.getStakeHolderTypeVal()).equals(type)) {
+		List<StakeHolderType> stakeholderTypeList = stakeholderTypeService.findAllIsActive();
+		for (StakeHolderType stkType :stakeholderTypeList ) {
+			if ((stkType.getName()).equals(type)) {
 				stkHldrType = stkType;
 				break;
 			}

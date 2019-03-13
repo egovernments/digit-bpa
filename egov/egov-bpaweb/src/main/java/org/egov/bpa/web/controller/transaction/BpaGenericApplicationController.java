@@ -85,6 +85,7 @@ import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.ConstructionStagesService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.StakeHolderService;
+import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
@@ -92,7 +93,6 @@ import org.egov.bpa.transaction.entity.enums.BpaUom;
 import org.egov.bpa.transaction.entity.enums.GovernmentType;
 import org.egov.bpa.transaction.entity.enums.NocStatus;
 import org.egov.bpa.transaction.entity.enums.OneDayPermitLandType;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaApplicationValidationService;
@@ -186,6 +186,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     protected StakeHolderService stakeHolderService;
     @Autowired
     protected OcSmsAndEmailService ocSmsAndEmailService;
+    @Autowired
+    protected StakeholderTypeService stakeholderTypeService;
 
     protected void prepareFormData(Model model) {
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
@@ -193,7 +195,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
                 REVENUE_HIERARCHY_TYPE));
         model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveMainServiceTypes());
         model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
-        model.addAttribute("stakeHolderTypeList", Arrays.asList(StakeHolderType.values()));
+        model.addAttribute("stakeHolderTypeList", stakeholderTypeService.findAllIsActive());
         model.addAttribute("governmentTypeList", Arrays.asList(GovernmentType.values()));
         model.addAttribute("constStages", constructionStagesService.findAll());
         model.addAttribute("electionwards", getElectionWards());

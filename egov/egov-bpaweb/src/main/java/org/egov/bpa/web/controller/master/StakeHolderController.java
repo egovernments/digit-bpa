@@ -41,6 +41,7 @@
 package org.egov.bpa.web.controller.master;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.Arrays;
@@ -55,10 +56,11 @@ import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.StakeHolderAuditService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.master.service.StakeHolderStateService;
+import org.egov.bpa.master.service.StakeholderTypeService;
+import org.egov.bpa.master.entity.StakeHolderType;
 import org.egov.bpa.service.es.StakeHolderIndexService;
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.dto.SearchStakeHolderForm;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.BPADocumentService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.web.controller.adaptor.SearchStakeHolderJsonAdaptor;
@@ -116,6 +118,8 @@ public class StakeHolderController extends GenericWorkFlowController {
 	@Autowired
 	private StakeHolderService stakeHolderService;
 	@Autowired
+    private StakeholderTypeService stakeholderTypeService;
+	@Autowired
 	private MessageSource messageSource;
 	@Autowired
 	private BPADocumentService bpaDocumentService;
@@ -163,13 +167,15 @@ public class StakeHolderController extends GenericWorkFlowController {
 		model.addAttribute("isBusinessUser",
 				securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) ? Boolean.TRUE : Boolean.FALSE);
 		model.addAttribute("genderList", Arrays.asList(Gender.values()));
-		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
-		model.addAttribute("isOnbehalfOfOrganization", false);
+		model.addAttribute(STAKE_HOLDER_TYPES,stakeholderTypeService.findAllIsActive());
+		model.addAttribute("isOnbehalfOfOrganization", false);                
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String createStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder, final Model model,
 			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+		if(stakeHolder.getStakeHolderType() == null)
+			stakeHolder.setStakeHolderType(stakeholderTypeService.findOne(Long.valueOf(request.getParameter("stakeHolderType"))));
 		StakeHolderState stakeHolderState = new StakeHolderState();
 		stakeHolderState.setStakeHolder(stakeHolder);
 		validateStakeholder(stakeHolder, errors);
@@ -183,7 +189,7 @@ public class StakeHolderController extends GenericWorkFlowController {
 		bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);
 		bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, false);
 		redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.approve.stakeholder.success",
-				new String[] { stakeHolder.getStakeHolderType().getStakeHolderTypeVal() }, null));
+				new String[] { stakeHolder.getStakeHolderType().getName() }, null));
 		return RDRCT_STKHLDR_RSLT + stakeHolderRes.getId();
 	}
 
@@ -242,7 +248,7 @@ public class StakeHolderController extends GenericWorkFlowController {
 		} else {
 			redirectAttributes.addFlashAttribute(MESSAGE,
 					messageSource.getMessage("msg.create.stakeholder.ctizen.request", new String[] {
-							stakeHolderRes.getStakeHolderType().getStakeHolderTypeVal(), stakeHolderRes.getCode() },
+							stakeHolderRes.getStakeHolderType().getName(), stakeHolderRes.getCode() },
 							null));
 		}
 		return RDRCT_STKHLDR_RSLT + stakeHolderRes.getId();
@@ -359,7 +365,7 @@ public class StakeHolderController extends GenericWorkFlowController {
 	@RequestMapping(value = "/search/update", method = RequestMethod.GET)
 	public String searchEditStakeHolder(final Model model) {
 		model.addAttribute(STAKE_HOLDER, new StakeHolder());
-		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
+		model.addAttribute(STAKE_HOLDER_TYPES,stakeholderTypeService.findAllIsActive());
 		model.addAttribute(STAKE_HOLDER_STATUS_LIST, Arrays.asList(StakeHolderStatus.values()));
 		return SEARCH_STAKEHOLDER_EDIT;
 	}
@@ -375,7 +381,7 @@ public class StakeHolderController extends GenericWorkFlowController {
 	@RequestMapping(value = "/search/view", method = RequestMethod.GET)
 	public String searchViewStakeHolder(final Model model) {
 		model.addAttribute(STAKE_HOLDER, new StakeHolder());
-		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
+		model.addAttribute(STAKE_HOLDER_TYPES,stakeholderTypeService.findAllIsActive());
 		model.addAttribute(STAKE_HOLDER_STATUS_LIST, Arrays.asList(StakeHolderStatus.values()));
 		return SEARCH_STAKEHOLDER_VIEW;
 	}
@@ -391,7 +397,7 @@ public class StakeHolderController extends GenericWorkFlowController {
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public String searchStakeHolderForApprovalView(Model model) {
 		model.addAttribute(STAKE_HOLDER_FORM, new SearchStakeHolderForm());
-		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
+		model.addAttribute(STAKE_HOLDER_TYPES,stakeholderTypeService.findAllIsActive());
 		return SRCH_STKHLDR_FR_APPRVL;
 	}
 
@@ -462,7 +468,7 @@ public class StakeHolderController extends GenericWorkFlowController {
 			bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderResponse, false);
 			bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderResponse, false);
 			redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.approve.stakeholder.success",
-					new String[] { stakeHolder.getStakeHolderType().getStakeHolderTypeVal() }, null));
+					new String[] { stakeHolder.getStakeHolderType().getName() }, null));
 		} else if ("Reject".equals(stakeHolder.getWorkFlowAction())) {
 			bpaSmsAndEmailService.sendSMSToStkHldrForRejection(stakeHolderResponse);
 			bpaSmsAndEmailService.sendEmailToStkHldrForRejection(stakeHolderResponse);

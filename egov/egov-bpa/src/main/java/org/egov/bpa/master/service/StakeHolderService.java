@@ -56,13 +56,13 @@ import org.apache.log4j.Logger;
 import org.egov.bpa.autonumber.StakeHolderCodeGenerator;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.StakeHolderState;
+import org.egov.bpa.master.entity.StakeHolderType;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.repository.StakeHolderAddressRepository;
 import org.egov.bpa.master.repository.StakeHolderRepository;
 import org.egov.bpa.master.repository.StakeHolderStateRepository;
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.dto.SearchStakeHolderForm;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.service.collection.StakeHolderBpaBillService;
 import org.egov.bpa.utils.BpaConstants;
@@ -77,7 +77,6 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -154,7 +153,7 @@ public class StakeHolderService {
 	private DesignationService designationService;
 	@Autowired
 	private PositionMasterRepository positionMasterRepository;
-
+	
 	public Session getCurrentSession() {
 		return entityManager.unwrap(Session.class);
 	}
@@ -557,7 +556,7 @@ public class StakeHolderService {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<StakeHolder> getStakeHolderListByType(final StakeHolderType stkHldrType, final String name) {
+	public List<StakeHolder> getStakeHolderListByType(final  StakeHolderType stkHldrType, final String name) {
 		final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, STK_HLDR);
 		criteria.add(Restrictions.eq(STK_HLDR_TYPE, stkHldrType));
 		criteria.add(Restrictions.ilike("stakeHolder.name", name, MatchMode.ANYWHERE));
@@ -571,9 +570,11 @@ public class StakeHolderService {
 		if (stkHldr.getName() != null) {
 			criteria.add(Restrictions.ilike("stakeHolder.name", stkHldr.getName(), MatchMode.ANYWHERE));
 		}
+		
 		if (stkHldr.getStakeHolderType() != null) {
 			criteria.add(Restrictions.eq(STK_HLDR_TYPE, stkHldr.getStakeHolderType()));
 		}
+		
 		if (stkHldr.getAadhaarNumber() != null) {
 			criteria.add(
 					Restrictions.ilike("stakeHolder.aadhaarNumber", stkHldr.getAadhaarNumber(), MatchMode.ANYWHERE));
@@ -618,7 +619,7 @@ public class StakeHolderService {
 			srchForm.setApplicantName(stakeHolder.getName());
 			srchForm.setIssueDate(stakeHolder.getBuildingLicenceIssueDate());
 			srchForm.setLicenceNumber(stakeHolder.getLicenceNumber());
-			srchForm.setType(stakeHolder.getStakeHolderType().getStakeHolderTypeVal());
+			srchForm.setType(stakeHolder.getStakeHolderType().getName());
 			srchForm.setActive(stakeHolder.getIsActive());
 			srchForm.setStatus(stakeHolder.getStatus().getStakeHolderStatusVal());
 			srchForm.setCreatedDate(stakeHolder.getCreatedDate());
@@ -638,9 +639,10 @@ public class StakeHolderService {
 			criteria.add(Restrictions.le(STAKE_HOLDER_DOT_CREATED_DATE,
 					searchBpaApplicationService.resetToDateTimeStamp(srchStkHldrFrm.getToDate())));
 		}
-		if (srchStkHldrFrm.getStakeHolderType() != null) {
-			criteria.add(Restrictions.eq(STK_HLDR_TYPE, StakeHolderType.valueOf(srchStkHldrFrm.getStakeHolderType())));
-		}
+        /*
+         * if (srchStkHldrFrm.getStakeHolderType() != null) {
+         * criteria.add(Restrictions.eq(STK_HLDR_TYPE,srchStkHldrFrm.getStakeHolderType().); }
+         */
 		criteria.add(
 				Restrictions.in("stakeHolder.status", StakeHolderStatus.SUBMITTED, StakeHolderStatus.RE_SUBMITTED));
 		criteria.addOrder(Order.desc(STAKE_HOLDER_DOT_CREATED_DATE));
@@ -682,7 +684,7 @@ public class StakeHolderService {
 
 	}
 
-	public List<StakeHolder> getStakeHoldersByType(StakeHolderType type) {
-		return stakeHolderRepository.findActiveByType(type);
+	public List<StakeHolder> getStakeHoldersByType(StakeHolderType stkHldrType) {
+		return stakeHolderRepository.findActiveByType(stkHldrType);
 	}
 }

@@ -140,7 +140,7 @@
 					<spring:message code="lbl.select" />
 				</form:option>
 				<form:options items="${stakeHolderTypes}"
-					itemLabel="stakeHolderTypeVal" />
+					itemValue="id" itemLabel="name" />
 			</form:select>
 			<form:errors path="stakeHolderType" cssClass="error-msg" />
 		</div>

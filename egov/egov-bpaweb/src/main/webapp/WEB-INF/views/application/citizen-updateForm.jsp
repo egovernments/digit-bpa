@@ -83,7 +83,7 @@
 			<form:hidden path="authorizedToSubmitPlan"
 				id="authorizedToSubmitPlan" />
 			<input type="hidden" id="stakeHolderType"
-				value="${bpaApplication.stakeHolder[0].getStakeHolder().getStakeHolderType().getStakeHolderTypeVal()}" />
+				value="${bpaApplication.stakeHolder[0].getStakeHolder().getStakeHolderType().getName()}" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
 					href="#appliccation-info" data-tabidx=0><spring:message

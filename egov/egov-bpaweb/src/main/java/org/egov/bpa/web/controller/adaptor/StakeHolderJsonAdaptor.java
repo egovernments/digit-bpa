@@ -58,7 +58,7 @@ public class StakeHolderJsonAdaptor implements JsonSerializer<StakeHolder> {
 		final JsonObject jsonObject = new JsonObject();
 		if (stakeHolder != null) {
 			jsonObject.addProperty("name", defaultString(stakeHolder.getName()));
-			jsonObject.addProperty("stakeHolderType", defaultString(stakeHolder.getStakeHolderType().getStakeHolderTypeVal()));
+			jsonObject.addProperty("stakeHolderType", defaultString(stakeHolder.getStakeHolderType().getName()));
 			jsonObject.addProperty("code", defaultString(stakeHolder.getCode()));
 			jsonObject.addProperty("licenceNumber", defaultString(stakeHolder.getLicenceNumber()));
 			jsonObject.addProperty("aadharNumber", defaultString(stakeHolder.getAadhaarNumber()));

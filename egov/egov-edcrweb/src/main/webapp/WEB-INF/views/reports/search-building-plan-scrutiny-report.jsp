@@ -62,7 +62,8 @@
                                          data-first-option="false" id="buildingLicenceeType"
                                          cssClass="form-control">
                                 <option value=""><spring:message code="lbl.select"/></option>
-                                <form:options items="${buildingLicenseeTypeList}"/>
+                                <form:options items="${buildingLicenseeTypeList}" />
+                                
                             </form:select>
                             <form:errors path="buildingLicenceeType"
                                          cssClass="add-margin error-msg"/>

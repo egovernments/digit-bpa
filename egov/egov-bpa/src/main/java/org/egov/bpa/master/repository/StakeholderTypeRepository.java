@@ -1,5 +1,6 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
+
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -41,28 +42,10 @@ package org.egov.bpa.master.repository;
 
 import java.util.List;
 
-import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.StakeHolderType;
-import org.egov.bpa.master.entity.enums.StakeHolderStatus;
-import org.egov.demand.model.EgDemand;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.history.RevisionRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface StakeHolderRepository extends JpaRepository<StakeHolder, Long>, RevisionRepository<StakeHolder, Long, Integer> {
-    StakeHolder findByEmailId(String email);
-    StakeHolder findByCode(String code);
-    StakeHolder findByMobileNumberAndStatus(String mobileNumber, StakeHolderStatus status);
-    StakeHolder findByEmailIdAndStatus(String email, StakeHolderStatus status);
-    StakeHolder findByAadhaarNumberAndStatus(String aadhaar, StakeHolderStatus status);
-    StakeHolder findByPanAndStatus(String pan, StakeHolderStatus status);
-    StakeHolder findByLicenceNumberAndStatus(String licenseNo, StakeHolderStatus status);
-    StakeHolder findByLicenceNumber(String licenseNo);
-	List<String> findNameByType(StakeHolderType type);
-    @Query("select stakeholder from StakeHolder stakeholder where stakeholder.stakeHolderType=:type and stakeholder.isActive=true")
-	List<StakeHolder> findActiveByType(@Param("type")StakeHolderType stkHldrType);
-    StakeHolder findByDemand(EgDemand demand);
+public interface StakeholderTypeRepository extends JpaRepository<StakeHolderType, Long> {
+
+	List<StakeHolderType> findByIsActiveTrue();
 }

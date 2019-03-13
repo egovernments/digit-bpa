@@ -15,12 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.StakeHolderService;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
+import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.commons.service.OccupancyService;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
@@ -88,6 +87,8 @@ public class EdcrApplicationController {
     private EdcrBpaRestService edcrBpaRestService;
     @Autowired
     private EdcrPdfDetailService edcrPdfDetailService;
+    @Autowired
+    private StakeholderTypeService stakeholderTypeService;
 
     private void prepareNewForm(Model model, HttpServletRequest request) {
         model.addAttribute("serviceTypeList", serviceTypeService.getEDcrRequiredServiceTypes());
@@ -104,7 +105,7 @@ public class EdcrApplicationController {
         Address permanentAddress = stakeHolder.getAddress().stream()
                 .filter(permtAddress -> permtAddress.getType().equals(AddressType.PERMANENT)).findAny().orElse(null);
         StringBuilder architectInfo = new StringBuilder(256).append(stakeHolder.getName()).append(",")
-                .append(stakeHolder.getStakeHolderType().name()).append(",").append(stakeHolder.getMobileNumber())
+                .append(stakeHolder.getStakeHolderType().getName()).append(",").append(stakeHolder.getMobileNumber())
                 .append(",").append(permanentAddress.getStreetRoadLine()).append(".");
 
         EdcrApplication edcrApplication = new EdcrApplication();
@@ -247,7 +248,7 @@ public class EdcrApplicationController {
         edcrApplication.setApplicationType(ApplicationType.OCCUPANCY_CERTIFICATE);
         if (stakeHolder != null && StringUtils.isNotBlank(stakeHolder.getName()))
             edcrApplication.setArchitectInformation(stakeHolder.getName());
-        model.addAttribute("stakeHolderTypeList", Arrays.asList(StakeHolderType.values()));
+        model.addAttribute("stakeHolderTypeList",stakeholderTypeService.findAllIsActive());
         model.addAttribute("isCitizen", securityUtils.getCurrentUser().getType().equals(UserType.CITIZEN));
         model.addAttribute(EDCR_APPLICATION, edcrApplication);
         return OC_PLAN_SCRUTINY_NEW;

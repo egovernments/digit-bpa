@@ -200,7 +200,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
                                 ? inspection.getApplication().getAmenityName()
                                 : "N/A");
         reportParams.put("licenseeType", inspection.getApplication().getStakeHolder().get(0).getStakeHolder()
-                .getStakeHolderType().getStakeHolderTypeVal());
+                .getStakeHolderType().getName());
         reportParams.put("licenseeName",
                 inspection.getApplication().getStakeHolder().get(0).getStakeHolder().getName());
         reportParams.put("applicationNo", inspection.getApplication().getApplicationNumber());
