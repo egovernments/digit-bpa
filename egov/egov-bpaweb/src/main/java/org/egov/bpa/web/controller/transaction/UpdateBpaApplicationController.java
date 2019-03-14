@@ -199,9 +199,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         loadCommonApplicationDetails(model, application);
         buildRejectionReasons(model, application);
         model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
+        
         if (application != null) {
             loadFormData(model, application);
-
+            bpaUtils.loadBoundary(application);
             if (application.getState() != null
                     && application.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
                 return APPLICATION_VIEW;
@@ -222,6 +223,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         }
         buildRejectionReasons(model, application);
         loadFormData(model, application);
+        bpaUtils.loadBoundary(application);
         loadCommonApplicationDetails(model, application);
         model.addAttribute("showDcrDocuments",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
@@ -460,6 +462,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     public String success(@PathVariable final String applicationNumber, final Model model) {
         BpaApplication application = getBpaApplication(applicationNumber);
         loadCommonApplicationDetails(model, application);
+        bpaUtils.loadBoundary(application);
         model.addAttribute(BPA_APPLICATION, application);
         return BPA_APPLICATION_RESULT;
     }

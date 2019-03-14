@@ -137,6 +137,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                 pdfQrCodeAppendService.addStamp(file.getFileStoreMapper(),application);
             }
         }*/
+        bpaUtils.loadBoundary(application);
         model.addAttribute("bpaApplication", application);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         model.addAttribute(APPLICATION_HISTORY,
@@ -221,6 +222,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     @RequestMapping(value = "/details-view/by-permit-number/{permitNumber}", method = RequestMethod.GET)
     public String viewApplicationByPermitNumber(final Model model, @PathVariable final String permitNumber) {
         BpaApplication application = applicationBpaService.findByPermitNumber(permitNumber);
+        bpaUtils.loadBoundary(application);
         model.addAttribute("bpaApplication", application);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         model.addAttribute(APPLICATION_HISTORY,

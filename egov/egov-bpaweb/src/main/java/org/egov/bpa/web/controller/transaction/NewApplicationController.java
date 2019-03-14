@@ -152,6 +152,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
             if (bpaApplicationRes.getCurrentState() != null && bpaApplicationRes.getCurrentState().getOwnerPosition() != null)
                 pos = bpaApplicationRes.getCurrentState().getOwnerPosition();
 
+            bpaUtils.loadBoundary(bpaApplicationRes);
             message = messageSource.getMessage("msg.update.forward.registration", new String[] {
                     pos != null && pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() != null
                             ? pos.getDeptDesig().getDesignation().getName() : "",
