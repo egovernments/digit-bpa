@@ -1,4 +1,4 @@
-CREATE TABLE eg_user
+CREATE TABLE IF NOT EXISTS state.eg_user
 (
   id bigint NOT NULL,
   tenantId character varying(250),
@@ -31,7 +31,7 @@ CREATE TABLE eg_user
   CONSTRAINT eg_user_user_name_key UNIQUE (username,tenantId)
 );
 
-CREATE TABLE eg_user_aud
+CREATE TABLE IF NOT EXISTS state.eg_user_aud
 (
   id integer NOT NULL,
   tenantId character varying(250),
@@ -44,7 +44,7 @@ CREATE TABLE eg_user_aud
   CONSTRAINT pk_eg_user_aud PRIMARY KEY (id, rev)
 );
 
-CREATE TABLE eg_userrole
+CREATE TABLE IF NOT EXISTS state.eg_userrole
 (
   roleid bigint NOT NULL,
   userid bigint NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE eg_userrole
 );
 
 
-CREATE TABLE eg_userrole_aud
+CREATE TABLE IF NOT EXISTS state.eg_userrole_aud
 (
   userid numeric,
   roleid numeric,
@@ -62,7 +62,7 @@ CREATE TABLE eg_userrole_aud
   revtype numeric
 );
 
-CREATE SEQUENCE seq_eg_user
+CREATE SEQUENCE IF NOT EXISTS state.seq_eg_user
   INCREMENT 1
   MINVALUE 1
   MAXVALUE 9223372036854775807

@@ -1,4 +1,20 @@
-CREATE TABLE egbpa_mstr_stakeholder
+CREATE TABLE IF NOT EXISTS state.EGBPA_MSTR_STAKEHOLDERTYPE
+(
+	  id bigint NOT NULL,
+      name character varying(128) NOT NULL,
+      code character varying(50),
+      isactive boolean,
+	  createdby bigint NOT NULL,
+      createddate timestamp without time zone NOT NULL,
+ 	  lastModifiedDate timestamp without time zone,
+ 	  lastModifiedBy bigint,
+	  version numeric NOT NULL,
+	  CONSTRAINT PK_STAKEHOLDERTYPE_ID PRIMARY KEY (ID),
+	  CONSTRAINT FK_EGBPA_MSTR_STAKEHOLDERTYPE_MDFDBY FOREIGN KEY (lastModifiedBy) REFERENCES state.EG_USER (ID),
+      CONSTRAINT FK_EGBPA_MSTR_STAKEHOLDERTYPE_CRTBY FOREIGN KEY (createdBy)REFERENCES state.EG_USER (ID)
+);
+
+CREATE TABLE IF NOT EXISTS state.egbpa_mstr_stakeholder
 (
   id bigint NOT NULL,
   stakeholdertype bigint NOT NULL,
@@ -32,15 +48,17 @@ CREATE TABLE egbpa_mstr_stakeholder
   demand bigint,
   CONSTRAINT pk_egbpa_mstr_stormwaterdrain PRIMARY KEY (id),
   CONSTRAINT fk_egbpa_stormwaterdrain_crtby FOREIGN KEY (createduser)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_egbpa_stormwaterdrain_mdfdby FOREIGN KEY (lastupdateduser)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT unq_stakeholder_code UNIQUE (code)
+  CONSTRAINT unq_stakeholder_code UNIQUE (code),
+  CONSTRAINT FK_EGBPA_MSTR_STAKEHOLDER_STAKEHOLDERTYPE FOREIGN KEY (stakeholdertype) 
+	  REFERENCES state.EGBPA_MSTR_STAKEHOLDERTYPE (ID)
 );
 
-CREATE TABLE egbpa_mstr_stakeholder_aud
+CREATE TABLE IF NOT EXISTS state.egbpa_mstr_stakeholder_aud
 (
   id bigint NOT NULL,
   rev integer NOT NULL,
@@ -57,7 +75,7 @@ CREATE TABLE egbpa_mstr_stakeholder_aud
 
 
 
-CREATE TABLE egbpa_stakeholder_document
+CREATE TABLE IF NOT EXISTS state.egbpa_stakeholder_document
 (
   id bigint NOT NULL,
   checklistdetail bigint,
@@ -71,34 +89,41 @@ CREATE TABLE egbpa_stakeholder_document
   lastmodifieddate timestamp without time zone,
   CONSTRAINT pk_egbpa_stakeholder_document PRIMARY KEY (id),
   CONSTRAINT fk_egbpa_stakeholder_document_crtby FOREIGN KEY (createdby)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_egbpa_stakeholder_document_mdfdby FOREIGN KEY (lastmodifiedby)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_egbpa_stakeholder_document_stakeholder FOREIGN KEY (stakeholder)
-      REFERENCES egbpa_mstr_stakeholder (id) MATCH SIMPLE
+      REFERENCES state.egbpa_mstr_stakeholder (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
 
-CREATE TABLE egbpa_stakeholder_support_documents
+CREATE TABLE IF NOT EXISTS state.egbpa_stakeholder_support_documents
 (
   filestoreid bigint NOT NULL,
   stakeholderdocumentid bigint NOT NULL,
   CONSTRAINT fk_egbpa_stakeholder_document FOREIGN KEY (stakeholderdocumentid)
-      REFERENCES egbpa_stakeholder_document (id) MATCH SIMPLE
+      REFERENCES state.egbpa_stakeholder_document (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-CREATE SEQUENCE seq_egbpa_mstr_stakeholder
+CREATE SEQUENCE IF NOT EXISTS state.seq_egbpa_mstr_stakeholderType
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+  
+CREATE SEQUENCE IF NOT EXISTS state.seq_egbpa_mstr_stakeholder
   INCREMENT 1
   MINVALUE 1
   MAXVALUE 9223372036854775807
   START 1
   CACHE 1;
 
-CREATE SEQUENCE seq_egbpa_stakeholder_document
+CREATE SEQUENCE IF NOT EXISTS state.seq_egbpa_stakeholder_document
   INCREMENT 1
   MINVALUE 1
   MAXVALUE 9223372036854775807

@@ -1,4 +1,4 @@
-CREATE TABLE egp_inbox
+CREATE TABLE IF NOT EXISTS state.egp_inbox
 (
   id bigint NOT NULL,
   tenantId character varying(250),
@@ -26,15 +26,15 @@ CREATE TABLE egp_inbox
   applicantname character varying(100),
   CONSTRAINT pk_portalinbox PRIMARY KEY (id),
   CONSTRAINT fk_portalinbox_createdby FOREIGN KEY (createdby)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_portalinbox_lastmdby FOREIGN KEY (lastmodifiedby)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT egp_inbox_unique_module_applicationnumber UNIQUE (moduleid, applicationnumber)
 );
 
-CREATE TABLE egp_inboxusers
+CREATE TABLE IF NOT EXISTS state.egp_inboxusers
 (
   id bigint NOT NULL,
   tenantId character varying(250),
@@ -45,22 +45,22 @@ CREATE TABLE egp_inboxusers
       REFERENCES egp_inbox (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_portalinbox_userid FOREIGN KEY (userid)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-CREATE TABLE egp_citizen
+CREATE TABLE IF NOT EXISTS state.egp_citizen
 (
   id bigint NOT NULL,
   activationcode character varying(5),
   version numeric DEFAULT 0,
   CONSTRAINT pk_citizen PRIMARY KEY (id),
   CONSTRAINT fk_citizen_user FOREIGN KEY (id)
-      REFERENCES eg_user (id) MATCH FULL
+      REFERENCES state.eg_user (id) MATCH FULL
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-CREATE TABLE egp_citizeninbox
+CREATE TABLE IF NOT EXISTS state.egp_citizeninbox
 (
   id integer NOT NULL,
   tenantId character varying(250),
@@ -83,28 +83,28 @@ CREATE TABLE egp_citizeninbox
   priority character varying(20) NOT NULL,
   CONSTRAINT pk_c_inbox PRIMARY KEY (id),
   CONSTRAINT fk_c_inbox_createdby FOREIGN KEY (createdby)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT fk_c_inbox_lastmodifiedby FOREIGN KEY (lastmodifiedby)
-      REFERENCES eg_user (id) MATCH SIMPLE
+      REFERENCES state.eg_user (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-CREATE SEQUENCE seq_egp_inbox
+CREATE SEQUENCE IF NOT EXISTS state.seq_egp_inbox
   INCREMENT 1
   MINVALUE 1
   MAXVALUE 9223372036854775807
   START 1
   CACHE 1;
 
-CREATE SEQUENCE seq_egp_inboxusers
+CREATE SEQUENCE IF NOT EXISTS state.seq_egp_inboxusers
   INCREMENT 1
   MINVALUE 1
   MAXVALUE 9223372036854775807
   START 1
   CACHE 1;
 
-CREATE SEQUENCE seq_egp_citizeninbox
+CREATE SEQUENCE IF NOT EXISTS state.seq_egp_citizeninbox
   INCREMENT 1
   MINVALUE 1
   MAXVALUE 9223372036854775807

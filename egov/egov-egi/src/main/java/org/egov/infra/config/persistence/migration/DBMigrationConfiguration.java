@@ -51,11 +51,11 @@ package org.egov.infra.config.persistence.migration;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.egov.infra.utils.ApplicationConstant;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,9 +100,6 @@ public class DBMigrationConfiguration {
     @Value("${statewide.schema.name}")
     private String statewideSchemaName;
 
-    @Value("${db.flyway.state.migration.file.path}")
-    private String stateMigrationFilePath;
-
     @Autowired
     private ConfigurableEnvironment environment;
 
@@ -110,8 +107,6 @@ public class DBMigrationConfiguration {
     @DependsOn("dataSource")
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
         if (dbMigrationEnabled) {
-
-            migrateDatabase(dataSource, ApplicationConstant.STATE_TENANTID, stateMigrationFilePath);
 
             cities.stream().forEach(schema -> {
                 if (devMode)
@@ -156,6 +151,7 @@ public class DBMigrationConfiguration {
                         tenants.add(value.toString());
                 });
         });
+        Collections.reverse(tenants);
         return tenants;
     }
 
