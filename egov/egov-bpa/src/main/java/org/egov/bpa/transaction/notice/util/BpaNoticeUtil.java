@@ -294,6 +294,7 @@ public class BpaNoticeUtil {
         ulbDetailsReportParams.put("cityName", ApplicationThreadLocals.getCityName());
         ulbDetailsReportParams.put("logoPath", cityService.getCityLogoAsStream());
         ulbDetailsReportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
+        ulbDetailsReportParams.put("cityNameLocal", ApplicationThreadLocals.getCityNameLocal());
         return ulbDetailsReportParams;
     }
 

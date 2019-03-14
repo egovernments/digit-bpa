@@ -57,6 +57,7 @@
 	<parameter name="subheader" class="java.lang.String"/>
 	<parameter name="approverName" class="java.lang.String"/>
 	<parameter name="dcrReport" class="java.io.ByteArrayInputStream"/>
+	<parameter name="cityNameLocal" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -76,16 +77,16 @@
 	<title>
 		<band height="127" splitType="Stretch">
 			<textField>
-				<reportElement x="88" y="56" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="88" y="64" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="11" isBold="true" isUnderline="false"/>
+					<font fontName="Arial Unicode MS" size="11" isBold="true" isUnderline="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{permitOrderTitle}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="104" y="10" width="340" height="30" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
 				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false"/>
+					<font fontName="Arial Unicode MS" size="12" isBold="true" isUnderline="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName} + "\n" + $P{cityName}]]></textFieldExpression>
 			</textField>
@@ -104,11 +105,11 @@
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="88" y="83" width="370" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
+				<reportElement x="88" y="87" width="370" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
 					<printWhenExpression><![CDATA[!$P{subHeaderTitle}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="11" isBold="true" isUnderline="false"/>
+					<font fontName="Arial Unicode MS" size="11" isBold="true" isUnderline="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{subHeaderTitle}]]></textFieldExpression>
 			</textField>
@@ -117,14 +118,21 @@
 					<printWhenExpression><![CDATA[!$P{subheader}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement>
-					<font isBold="true"/>
+					<font fontName="Arial Unicode MS" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{subheader}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="121" y="40" width="332" height="24" uuid="9e5d7615-d58c-4141-8b84-edd1ff4281fb"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial Unicode MS" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityNameLocal}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
 	<detail>
-		<band height="96">
+		<band height="92">
 			<staticText>
 				<reportElement x="0" y="7" width="121" height="20" uuid="6928eb55-27ad-4983-93f8-3539c289ba12"/>
 				<textElement>
@@ -135,7 +143,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="121" y="7" width="222" height="20" uuid="6ac37b3a-7df1-4894-b648-4ad0500e0332"/>
 				<textElement>
-					<font fontName="SansSerif" size="11" isBold="true"/>
+					<font fontName="Arial Unicode MS" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{buildingPermitNumber}]]></textFieldExpression>
 			</textField>
@@ -156,7 +164,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="29" width="555" height="20" uuid="f7a1cee0-eb1e-4bed-a424-cc28aeaf926d"/>
 				<textElement>
-					<font fontName="SansSerif" size="10" isBold="true"/>
+					<font fontName="Arial Unicode MS" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Ref :-  Application number "+ $P{applicationNumber} + " dated " + $P{applicationDate} + "."]]></textFieldExpression>
 			</textField>
@@ -170,7 +178,7 @@
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="110" y="54" width="442" height="38" uuid="9b393896-3050-4a52-8c24-70b65e1469b0"/>
 				<textElement>
-					<font fontName="SansSerif" size="10" isBold="false"/>
+					<font fontName="Arial Unicode MS" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicantName} + " , " + "\n" + $P{applicantAddress} + " , " + "\n" + "Mobile number : " + $P{mobileNo} + " ."]]></textFieldExpression>
 			</textField>
@@ -179,7 +187,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="3" width="555" height="30" uuid="cfd11764-e10d-43b9-9f31-2192c95e330b"/>
 				<textElement textAlignment="Justified">
-					<font fontName="SansSerif" size="10"/>
+					<font fontName="Arial Unicode MS" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Permission is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
 			</textField>
@@ -194,7 +202,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{electionWard}]]></textFieldExpression>
@@ -208,7 +216,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{village}]]></textFieldExpression>
@@ -222,7 +230,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{surveyNo}]]></textFieldExpression>
@@ -236,7 +244,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{landExtent} + " Sq.Mtrs"]]></textFieldExpression>
@@ -250,7 +258,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{nearestBuildingNo}]]></textFieldExpression>
@@ -264,7 +272,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="5" rightIndent="0"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{revenueWard}]]></textFieldExpression>
@@ -357,7 +365,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Justified">
-					<font fontName="SansSerif" size="10"/>
+					<font fontName="Arial Unicode MS" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{permitConditions}]]></textFieldExpression>
 			</textField>
@@ -444,7 +452,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{exstTotalBltUpArea}]]></textFieldExpression>
@@ -460,7 +468,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{exstTotalFloorArea}]]></textFieldExpression>
@@ -476,7 +484,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{exstTotalCarpetArea}]]></textFieldExpression>
@@ -567,7 +575,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalBltUpArea}]]></textFieldExpression>
@@ -583,7 +591,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalFloorArea}]]></textFieldExpression>
@@ -599,7 +607,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalCarpetArea}]]></textFieldExpression>
@@ -673,7 +681,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalBltUpArea}.add($P{exstTotalBltUpArea})]]></textFieldExpression>
@@ -689,7 +697,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalFloorArea}.add($P{exstTotalFloorArea})]]></textFieldExpression>
@@ -705,7 +713,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" isBold="false"/>
+					<font fontName="Arial Unicode MS" isBold="false"/>
 					<paragraph leftIndent="0" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalCarpetArea}.add($P{exstTotalCarpetArea})]]></textFieldExpression>

@@ -57,6 +57,8 @@ public class ApplicationThreadLocals {
     private static ThreadLocal<String> cityName = new ThreadLocal<>();
     private static ThreadLocal<String> municipalityName = new ThreadLocal<>();
     private static ThreadLocal<String> domainURL = new ThreadLocal<>();
+    private static ThreadLocal<String> cityNameLocal = new ThreadLocal<>();
+    
 
     private ApplicationThreadLocals() {
         //Not to be initialized
@@ -117,6 +119,14 @@ public class ApplicationThreadLocals {
     public static void setDomainURL(String domURL) {
         domainURL.set(domURL);
     }
+    
+    public static String getCityNameLocal() {
+        return cityNameLocal.get();
+    }
+
+    public static void setCityNameLocal(String citiNameLocal) {
+        cityNameLocal.set(citiNameLocal);
+    }
 
     public static void clearValues() {
         domainName.remove();
@@ -126,6 +136,7 @@ public class ApplicationThreadLocals {
         cityName.remove();
         municipalityName.remove();
         domainURL.remove();
+        cityNameLocal.remove();
 
     }
 }
