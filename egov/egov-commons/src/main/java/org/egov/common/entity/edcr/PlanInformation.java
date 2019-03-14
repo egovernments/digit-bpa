@@ -161,7 +161,7 @@ public class PlanInformation implements Serializable {
     
     private transient BigDecimal embankmentPresent; 
     
-    private transient String nearImpGvtBuilding;
+    private transient Boolean nearImpGvtBuilding;
     
     private transient BigDecimal plantation;
     
@@ -541,11 +541,11 @@ public class PlanInformation implements Serializable {
 		this.embankmentPresent = embankmentPresent;
 	}
 
-	public String getNearImpGvtBuilding() {
+	public Boolean getNearImpGvtBuilding() {
 		return nearImpGvtBuilding;
 	}
 
-	public void setNearImpGvtBuilding(String nearImpGvtBuilding) {
+	public void setNearImpGvtBuilding(Boolean nearImpGvtBuilding) {
 		this.nearImpGvtBuilding = nearImpGvtBuilding;
 	}
 
