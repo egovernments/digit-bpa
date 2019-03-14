@@ -83,6 +83,7 @@ function paintBoundaryForView(genericBoundaryConfigData, selectedAdminBoundary, 
 	var boundaryType;
 	var tempId = [];
 	var domOptionId;
+	var parentId = "";
 	
 	var boundaryData=genericBoundaryConfigData['boundaryData'];
 	for(var k in boundaryData) {
@@ -116,6 +117,11 @@ function paintBoundaryForView(genericBoundaryConfigData, selectedAdminBoundary, 
 				document.getElementById(domOptionId).innerHTML=findNameById(boundaryData, selectedLocationBoundary);
 		}
 	}
+	while(parentId==''){
+		parentId = findParentById(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary);
+		var domId = findDomIdByParent(genericBoundaryConfigData['boundaryData'], parentId);
+		document.getElementById(domId).innerHTML=findNameById(boundaryData, parentId);
+	}
 }
 
 function findNameById(boundaryData, bndryId){
@@ -127,6 +133,34 @@ function findNameById(boundaryData, bndryId){
 			boundary = dataJson[i];
 			if(boundary.id==bndryId){
 				return boundary.name;
+			}
+		}
+	}
+}
+
+function findDomIdByParent(boundaryData, bndryParentId){
+	var dataJson;
+	var boundary;
+	for(var k in boundaryData) {
+		dataJson = boundaryData[k].data;
+		for (var i = 0;  i < dataJson.length; i++) {
+			boundary = dataJson[i];
+			if(boundary.id==bndryParentId){
+				return k.split(":")[1]+k.split(":")[2].replace(/ +/g, "");
+			}
+		}
+	}
+}
+
+function findParentById(boundaryData, bndryId){
+	var dataJson;
+	var boundary;
+	for(var k in boundaryData) {
+		dataJson = boundaryData[k].data;
+		for (var i = 0;  i < dataJson.length; i++) {
+			boundary = dataJson[i];
+			if(boundary.id==bndryId){
+				return boundary.parent;
 			}
 		}
 	}
