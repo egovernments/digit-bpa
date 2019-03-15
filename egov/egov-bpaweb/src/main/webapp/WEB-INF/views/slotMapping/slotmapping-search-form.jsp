@@ -62,13 +62,13 @@
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.slotmapping.applicationtype" /></label>
 					<div class="col-sm-3 add-margin">
-						<select name="applType" id="applType" class="form-control">
+						<select name="applicationType" id="applicationType" class="form-control">
 							<option value=""><spring:message code="lbl.select" /></option>
 							<c:forEach items="${slotMappingApplTypes}" var="applicationType">
-								<option value="${applicationType}" >${applicationType.applicationTypeVal}</option>
+								<option value="${applicationType.id}" >${applicationType.name}</option>
 							</c:forEach>
 						</select>
-						<form:errors path="applType" cssClass="error-msg" />
+						<form:errors path="applicationType" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-3 control-label"><spring:message
 							code="lbl.zonal.office" /></label>

@@ -43,6 +43,8 @@ import static org.egov.bpa.utils.BpaConstants.ADDING_OF_EXTENSION;
 import static org.egov.bpa.utils.BpaConstants.ALTERATION;
 import static org.egov.bpa.utils.BpaConstants.AMENITIES;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADDITIONAL_FEE;
 import static org.egov.bpa.utils.BpaConstants.BPA_OTHER_FEE;
 import static org.egov.bpa.utils.BpaConstants.CHANGE_IN_OCCUPANCY;
@@ -68,11 +70,10 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
-import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.dto.BpaRegisterReportHelper;
@@ -293,8 +294,8 @@ public class BpaReportsService {
             bpaRegister.setApplicationType(application.getServiceType().getDescription());
             bpaRegister.setDateOfAdmission(application.getApplicationDate());
             bpaRegister.setPermitType(
-                    application.getIsOneDayPermitApplication() ? ApplicationType.ONE_DAY_PERMIT.getApplicationType()
-                            : ApplicationType.ALL_OTHER_SERVICES.getApplicationType());
+                    application.getIsOneDayPermitApplication() ? APPLICATION_TYPE_ONEDAYPERMIT
+                            : APPLICATION_TYPE_REGULAR);
             bpaRegister.setDateOfAdmission(application.getApplicationDate());
             bpaRegister.setApplicantName(application.getOwner().getName());
             bpaRegister.setAddress(application.getOwner().getAddress());

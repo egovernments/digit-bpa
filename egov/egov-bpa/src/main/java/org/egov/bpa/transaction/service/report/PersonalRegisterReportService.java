@@ -39,7 +39,6 @@
  */
 package org.egov.bpa.transaction.service.report;
 
-import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.SiteDetail;
@@ -83,6 +82,8 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.LPCREATED;
 import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
 
 @Service
 @Transactional(readOnly = true)
@@ -504,7 +505,7 @@ public class PersonalRegisterReportService {
 		personalRegister.setApplicationNumber(application.getApplicationNumber());
 		personalRegister.setApplicantName(application.getOwner().getName());
 		personalRegister.setAddress(application.getOwner().getAddress());
-		personalRegister.setPermitType(application.getIsOneDayPermitApplication() ? ApplicationType.ONE_DAY_PERMIT.getApplicationTypeVal() : ApplicationType.ALL_OTHER_SERVICES.getApplicationTypeVal());
+		personalRegister.setPermitType(application.getIsOneDayPermitApplication() ? APPLICATION_TYPE_ONEDAYPERMIT  : APPLICATION_TYPE_REGULAR);
 		personalRegister.setDateOfAdmission(application.getApplicationDate());
 		personalRegister.setNatureOfOccupancy(application.getOccupanciesName());
 		personalRegister.setFar(searchBpaApplicationService.getFar(application));

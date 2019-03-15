@@ -3,17 +3,17 @@ $(document)
 				function() {
 					$('.allservices').hide();
 					$('.daysforonedaypermit').hide();
-					$('#applType')
+					$('#applicationType')
 							.change(
 									function() {
 										var applicationTypeName = $(
-												"#applType option:selected")
-												.val();
-										if ('ONE_DAY_PERMIT'
+												"#applicationType option:selected")
+												.text();
+										if ('One Day permit'
 												.localeCompare(applicationTypeName) == 0) {
 											$('.allservices').show();
 											$('.daysforonedaypermit').show();
-										} else if ('ALL_OTHER_SERVICES'
+										} else if ('Regular'
 												.localeCompare(applicationTypeName) == 0) {
 											$('.allservices').hide();
 											$('.daysforonedaypermit').hide();
@@ -89,7 +89,7 @@ $(document)
 						
 					});
 					
-					$('#applType').trigger("change");
+					$('#applicationType').trigger("change");
 					$('#zone').trigger("change");
 
 					$('#btnSearchForView').click(function() {

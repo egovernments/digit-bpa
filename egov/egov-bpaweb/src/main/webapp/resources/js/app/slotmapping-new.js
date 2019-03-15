@@ -54,20 +54,21 @@ $(document)
 					$('.allservices').hide();
 					$('.maxRescheduledSlotsAllowed').hide();
 					$('.daysforonedaypermit').hide();
-					$('#applType')
+					$('#applicationType')
 							.change(
 									function() {
 										var applicationTypeName = $(
-												"#applType option:selected")
-												.val();
-										if ('ONE_DAY_PERMIT'
+												"#applicationType option:selected")
+												.text();
+										//var applicationTypeName = $("#applicationType").text;
+										if ('One Day Permit'
 												.localeCompare(applicationTypeName) == 0) {
 											$('.allservices').show();
 											$('.daysforonedaypermit').show();
 											$('.maxRescheduledSlotsAllowed')
 													.hide();
 											$('#zone').attr('required', true);
-											$('#applType').attr('required',
+											$('#applicationType').attr('required',
 													true);
 											$('#ward').attr('required', true);
 											$('#days').attr('required', true);
@@ -75,14 +76,14 @@ $(document)
 													'required', true);
 											$('.maxRescheduledSlotsAllowed')
 													.removeAttr('required');
-										} else if ('ALL_OTHER_SERVICES'
-												.localeCompare(applicationTypeName) == 0 || 'OCCUPANCY_CERTIFICATE'.localeCompare(applicationTypeName) == 0) {
+										} else if ('Regular'
+												.localeCompare(applicationTypeName) == 0 || 'Occupancy Certificate'.localeCompare(applicationTypeName) == 0) {
 											$('.allservices').hide();
 											$('.daysforonedaypermit').hide();
 											$('.maxRescheduledSlotsAllowed')
 													.show();
 											$('#zone').attr('required', true);
-											$('#applType').attr('required',
+											$('#applicationType').attr('required',
 													true);
 											$('#maxSlotsAllowed').attr(
 													'required', true);
@@ -163,7 +164,7 @@ $(document)
 						
 					});
 
-					$('#applType').trigger("change");
+					$('#applicationType').trigger("change");
 					$('#zone').trigger("change");
 
 					$('#buttonSubmit').click(function() {

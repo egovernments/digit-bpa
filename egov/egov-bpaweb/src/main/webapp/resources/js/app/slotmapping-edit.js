@@ -98,7 +98,7 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "applType",
+														"data" : "applicationType",
 														"sClass" : "text-left"
 													},
 													{
@@ -181,7 +181,7 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "applType",
+														"data" : "applicationType",
 														"sClass" : "text-left"
 													},
 													{

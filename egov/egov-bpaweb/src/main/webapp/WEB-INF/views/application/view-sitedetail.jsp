@@ -236,6 +236,28 @@
 			</div>
 		</div>
 	</div>
+	
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.construction.cost" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<input type="hidden" id="governmentType"
+				value="${bpaApplication.constructionCost}">
+			<c:out value="${bpaApplication.constructionCost}"
+				default="N/A"></c:out>
+		</div>
+		<div id="isEconomicallyWeakerSec">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.infrastructure.cost" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out
+					value="${bpaApplication.infrastructureCost}"
+					default="N/A"></c:out>
+			</div>
+		</div>
+	</div>
 
 	<%--<c:if test="${bpaApplication.siteDetail[0].isappForRegularization}">
 		<div class="row add-border">

@@ -65,8 +65,8 @@ $(document)
                         });
                     });
                     $("#toDate").datepicker().datepicker("setDate", new Date());
-					$('#serviceTypeEnum').on('change', function() {
-						if($("#serviceTypeEnum option:selected" ).val() == 'ALL_OTHER_SERVICES' && $("#isUnattendedCancelled").val()=='YES') {
+					$('#applicationType').on('change', function() {
+						if($("#applicationType option:selected" ).val() == 'Regular' && $("#isUnattendedCancelled").val()=='YES') {
 							$("#toDate").prop('disabled', true);
 						} else {
 							$("#toDate").prop('disabled', false);
@@ -77,10 +77,10 @@ $(document)
                         $(".reset-value").each(function(){
                             $(this)[0].selectedIndex = 0;
                         });
-                        $('#serviceTypeEnum').trigger('change');
+                        $('#applicationType').trigger('change');
 					});
 
-                    $('#serviceTypeEnum').trigger('change');
+                    $('#applicationType').trigger('change');
 					var documentScrutinyUrl = '/bpa/application/documentscrutiny/';
 					var rescheduleUrl = '/bpa/application/scrutiny/reschedule/';
 					$('#btnSearch').click(function() {
@@ -88,7 +88,7 @@ $(document)
                             $(this).removeAttr("disabled")
                         });
 						callAjaxSearch();
-                        $('#serviceTypeEnum').trigger('change');
+                        $('#applicationType').trigger('change');
 					});
 
 					function callAjaxSearch() {
@@ -117,7 +117,7 @@ $(document)
                                                 data: function (args) {
                                                     return {
                                                         "args": JSON.stringify(args),
-                                                        "serviceTypeEnum": $("#serviceTypeEnum").val(),
+                                                        "applicationTypeId": $("#applicationTypeId").val(),
                                                         "toDate": $("#toDate").val(),
                                                         "zoneId": $("#zone").val(),
                                                         "wardId": $("#wardId").val(),

@@ -39,7 +39,8 @@
  */
 package org.egov.bpa.transaction.service;
 
-import org.egov.bpa.master.entity.enums.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.SlotApplication;
@@ -80,6 +81,8 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.LOWRISK;
 import static org.egov.bpa.utils.BpaConstants.MEDIUMRISK;
 import static org.egov.bpa.utils.BpaConstants.HIGHRISK;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 
 
 @Service
@@ -96,6 +99,8 @@ public class SearchBpaApplicationService {
 	private SlotApplicationRepository slotApplicationRepository;
 	@Autowired
 	private ApplicationBpaFeeCalculationService bpaCalculationService;
+	@Autowired
+	private ApplicationTypeService applicationTypeService;
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -252,12 +257,27 @@ public class SearchBpaApplicationService {
 		if (searchBpaApplicationForm.getServiceTypeEnum() != null
 			&& !searchBpaApplicationForm.getServiceTypeEnum().isEmpty()) {
 			if (searchBpaApplicationForm.getServiceTypeEnum()
-										.equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name())) {
+										.equalsIgnoreCase(APPLICATION_TYPE_REGULAR)) {
 				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", false));
 				searchBpaApplicationForm.setToDate(new Date());
 			} else if (searchBpaApplicationForm.getServiceTypeEnum()
-											   .equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
+											   .equalsIgnoreCase(APPLICATION_TYPE_ONEDAYPERMIT))
 				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", true));
+		}
+		if (searchBpaApplicationForm.getApplicationTypeId() != null) {
+			ApplicationType appType = applicationTypeService.findById(searchBpaApplicationForm.getApplicationTypeId());
+			if(!appType.getName().equals(APPLICATION_TYPE_ONEDAYPERMIT)){
+			   searchBpaApplicationForm.setToDate(new Date());
+			}
+			criteria.add(Restrictions.eq("bpaApplication.applicationType.id", searchBpaApplicationForm.getApplicationTypeId()));
+		}
+
+		if (searchBpaApplicationForm.getApplicationTypeId() == null && searchBpaApplicationForm.getApplicationType() != null) {
+			if(!searchBpaApplicationForm.getApplicationType().equals(APPLICATION_TYPE_ONEDAYPERMIT)){
+				   searchBpaApplicationForm.setToDate(new Date());
+			}
+			criteria.createAlias("bpaApplication.applicationType", "applicationType")
+					.add(Restrictions.eq("applicationType.name", searchBpaApplicationForm.getApplicationType()));
 		}
 		if (searchBpaApplicationForm.getElectionWardId() != null || searchBpaApplicationForm.getWardId() != null
 			|| searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getZone() != null ||

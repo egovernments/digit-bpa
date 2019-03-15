@@ -70,4 +70,8 @@ public class ApplicationTypeService {
     public List<ApplicationType> getAllEnabledApplicationTypes() {
         return applicationTypeRepository.findByEnabledTrueOrderByDescriptionAsc();
     }
+    
+    public List<ApplicationType> getAllSlotRequiredApplicationTypes() {
+        return applicationTypeRepository.findBySlotRequiredTrueOrderByDescriptionAsc();
+    }
 }

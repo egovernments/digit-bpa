@@ -42,7 +42,6 @@ package org.egov.bpa.master.repository;
 import java.util.List;
 
 import org.egov.bpa.master.entity.SlotMapping;
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -52,19 +51,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlotMappingRepository extends JpaRepository<SlotMapping, Long> {
 
-    List<SlotMapping> findByApplType(SlotMappingApplType applType);
+   // List<SlotMapping> findByApplicationTypeId(Long id);
 
-    List<SlotMapping> findByApplTypeAndZone(SlotMappingApplType applType, Boundary zone);
+    List<SlotMapping> findByApplicationTypeIdAndZone(Long id, Boundary zone);
 
-    @Query("select sm from SlotMapping sm where sm.applType = :applType")
-    List<SlotMapping> findSlotMappingForOneDayPermit(@Param("applType") SlotMappingApplType applType);
+    @Query("select sm from SlotMapping sm where sm.applicationType.id = :id")
+    List<SlotMapping> findByApplicationTypeId(@Param("id") Long id);
 
-    @Query("select distinct (sm.zone) from SlotMapping sm where sm.applType = :applType")
-    List<Boundary> findZoneByApplType(@Param("applType") SlotMappingApplType applType);
+    @Query("select distinct (sm.zone) from SlotMapping sm where sm.applicationType.id = :id")
+    List<Boundary> findZoneByApplType(@Param("id") Long id);
 
-    @Query("select sm from SlotMapping sm where sm.zone = :zone  and sm.electionWard = :electionWard and sm.applType =:applType")
+    @Query("select sm from SlotMapping sm where sm.zone = :zone  and sm.electionWard = :electionWard and sm.applicationType.id =:id")
     List<SlotMapping> findByZoneElectionWardAndAppType(@Param("zone") Boundary zone,
             @Param("electionWard") Boundary electionWard,
-            @Param("applType") SlotMappingApplType applType);
+            @Param("id") Long id);
 
 }

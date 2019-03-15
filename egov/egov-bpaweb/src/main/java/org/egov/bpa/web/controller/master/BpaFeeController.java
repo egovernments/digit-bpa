@@ -53,6 +53,7 @@ import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.demand.dao.EgReasonCategoryDao;
+import org.egov.demand.model.EgReasonCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -108,12 +109,18 @@ public class BpaFeeController {
 			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
 		bpaFeeCommonService.validateFeeList(bpaFeeMap, errors);
 		BpaFeeMapping bpaFeeMapping = new BpaFeeMapping();
+		if( bpaFeeMap.getBpaFeeCommon().getCategory()!=null && bpaFeeMap.getBpaFeeCommon().getCategory().getIdType()!=null)
+		{
+           final EgReasonCategory reasonCategory = egReasonCategoryDAO.findById(bpaFeeMap.getBpaFeeCommon().getCategory().getIdType(), false);
+           bpaFeeMap.getBpaFeeCommon().setCategory(reasonCategory);
+		}	
 		if (errors.hasErrors()) {
 			loadForm(model);
 			return FEES_NEW;
 		}
-
+		
 		BpaFeeCommon bpaFee = bpaFeeCommonService.update(bpaFeeMap.getBpaFeeCommon());
+		
 		for (BpaFeeMapping bpafee : bpaFeeMap.getBpaFeeMapTemp()) {
 			bpafee.setBpaFeeCommon(bpaFee);
 		}

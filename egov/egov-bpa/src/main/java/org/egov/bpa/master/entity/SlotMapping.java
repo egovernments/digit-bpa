@@ -40,10 +40,7 @@
 package org.egov.bpa.master.entity;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -55,7 +52,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
 import org.egov.bpa.master.entity.enums.WorkingDays;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -89,11 +85,10 @@ public class SlotMapping extends AbstractAuditable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "electionward")
 	private Boundary electionWard;
-
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name = "applicationType")
-	private SlotMappingApplType applType;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "slotApplicationType")
+	private ApplicationType applicationType;
 
 	@Transient
 	private WorkingDays days;
@@ -104,14 +99,6 @@ public class SlotMapping extends AbstractAuditable {
 	private Integer maxSlotsAllowed;
 
 	private Integer maxRescheduledSlotsAllowed;
-
-	public SlotMappingApplType getApplType() {
-		return applType;
-	}
-
-	public void setApplType(SlotMappingApplType applType) {
-		this.applType = applType;
-	}
 
 	public Boundary getRevenueWard() {
 		return revenueWard;
@@ -177,6 +164,14 @@ public class SlotMapping extends AbstractAuditable {
 
 	public void setMaxRescheduledSlotsAllowed(Integer maxRescheduledSlotsAllowed) {
 		this.maxRescheduledSlotsAllowed = maxRescheduledSlotsAllowed;
+	}
+
+	public ApplicationType getApplicationType() {
+		return applicationType;
+	}
+
+	public void setApplicationType(ApplicationType applicationType) {
+		this.applicationType = applicationType;
 	}
 
 }

@@ -102,7 +102,7 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "applType",
+														"data" : "applicationType",
 														"sClass" : "text-left"
 													},
 													{

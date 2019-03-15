@@ -39,6 +39,9 @@
  */
 package org.egov.bpa.web.controller.master;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
+import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.Arrays;
@@ -47,8 +50,6 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.SlotMapping;
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
-import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.entity.enums.WorkingDays;
 import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.web.controller.adaptor.SlotMappingJsonAdaptor;
@@ -63,6 +64,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 @Controller
 @RequestMapping(value = "/slotmapping")
@@ -105,9 +107,9 @@ public class SlotMappingController extends BpaGenericApplicationController {
 	}
 
 	private boolean validateSlotMapping(SlotMapping slotMapping, Model model) {
-		if (slotMapping.getApplType().toString().equals(SlotMappingApplType.ALL_OTHER_SERVICES.toString()) ||
-				slotMapping.getApplType().toString().equals(SlotMappingApplType.OCCUPANCY_CERTIFICATE.toString())) {
-			if (!noOfApplicationsService.findByZoneAndAppType(slotMapping.getZone(), slotMapping.getApplType())
+		if (slotMapping.getApplicationType().getName().equals(APPLICATION_TYPE_REGULAR) ||
+				slotMapping.getApplicationType().getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE)) {
+			if (!noOfApplicationsService.findByZoneAndAppType(slotMapping.getZone(), slotMapping.getApplicationType())
 					.isEmpty()) {
 				model.addAttribute("message",
 						messageSource.getMessage("msg.slotmapping.zone.already.exists", null, null));
@@ -116,7 +118,7 @@ public class SlotMappingController extends BpaGenericApplicationController {
 				return false;
 		} else {
 			if (!noOfApplicationsService.findByZoneElectionWardAndAppType(slotMapping.getZone(),
-					 slotMapping.getElectionWard(), slotMapping.getApplType()).isEmpty()) {
+					 slotMapping.getElectionWard(), slotMapping.getApplicationType()).isEmpty()) {
 				model.addAttribute("message",
 						messageSource.getMessage("msg.slotmapping.zone.ward.already.exists", null, null));
 				return true;
@@ -166,7 +168,7 @@ public class SlotMappingController extends BpaGenericApplicationController {
 						messageSource.getMessage("msg.slotmapping.election.ward.not.updatable", null, null));
 			return true;
 
-		} else if (!slotMapping.getApplType().toString().equals(sltMapping.getApplType().toString())) {
+		} else if (!slotMapping.getApplicationType().getName().equals(sltMapping.getApplicationType().getName())) {
 			model.addAttribute("message",
 					messageSource.getMessage("msg.slotmapping.applicationtype.not.updatable", null, null));
 			return true;
@@ -179,7 +181,7 @@ public class SlotMappingController extends BpaGenericApplicationController {
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
 	public String editHolidayList(@PathVariable final Long id, final Model model) {
 		final SlotMapping slotmapping = noOfApplicationsService.findById(id);
-		if (slotmapping.getApplType().toString().equals(ApplicationType.ONE_DAY_PERMIT.toString()))
+		if (slotmapping.getApplicationType().getName().equals(APPLICATION_TYPE_ONEDAYPERMIT))
 			slotmapping.setDays(WorkingDays.valueOf(WorkingDays.getEnumNameForValue(slotmapping.getDay())));
 		preapreUpdateModel(slotmapping, model);
 		return SLOTMAPPING_UPDATE;
@@ -201,11 +203,12 @@ public class SlotMappingController extends BpaGenericApplicationController {
 	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
 	public String viewHolidayList(@PathVariable final Long id, final Model model) {
 		final SlotMapping slotmapping = noOfApplicationsService.findById(id);
-		if (slotmapping.getApplType().toString().equals(ApplicationType.ONE_DAY_PERMIT.toString()))
+		if (slotmapping.getApplicationType().getName().equals(APPLICATION_TYPE_ONEDAYPERMIT))
 			slotmapping.setDays(WorkingDays.valueOf(WorkingDays.getEnumNameForValue(slotmapping.getDay())));
 		preapreUpdateModel(slotmapping, model);
 		return SLOTMAPPING_VIEW;
 	}
+	
 
 	@RequestMapping(value = "/search/view", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody

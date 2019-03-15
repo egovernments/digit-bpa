@@ -92,7 +92,7 @@
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.fees.category" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:label cssClass="form-control" path="bpaFeeCommon.category">${bpaFeeMapping.bpaFeeCommon.category}</form:label>
+							<form:label cssClass="form-control" path="bpaFeeCommon.category">${bpaFeeMapping.bpaFeeCommon.category.name}</form:label>
 						</div>
 					</div>
 					<div class="panel-heading">
@@ -128,11 +128,11 @@
                                     </form:label></td>
 										<td><form:label cssClass="form-control"
 												path="bpaFeeMapTemp[${item.index}].applicationType">
-                                        ${bpaFeeDetail.applicationType.toString()}
+                                        ${bpaFeeDetail.applicationType.feeApplicationTypeVal}
                                     </form:label></td>
 										<td><form:label cssClass="form-control"
 												path="bpaFeeMapTemp[${item.index}].feeSubType">
-                                        ${bpaFeeDetail.feeSubType.toString()}
+                                        ${bpaFeeDetail.feeSubType.feeSubTypeVal}
                                     </form:label></td>
 										<td><form:label cssClass="form-control"
 												path="bpaFeeMapTemp[${item.index}].calculationType">

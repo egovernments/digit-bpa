@@ -55,5 +55,6 @@ public interface ApplicationTypeRepository extends JpaRepository<ApplicationType
 	ApplicationType findByNameUpperCase(@Param("name") String name);
 	
 	List<ApplicationType> findByEnabledTrueOrderByDescriptionAsc();
-
+	
+	List<ApplicationType> findBySlotRequiredTrueOrderByDescriptionAsc();
 }

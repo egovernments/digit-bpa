@@ -108,7 +108,7 @@
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.fees.category" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:label cssClass="form-control" path="bpaFeeCommon.category">${bpaFeeMapping.bpaFeeCommon.category}</form:label>
+							<form:label cssClass="form-control" path="bpaFeeCommon.category">${bpaFeeMapping.bpaFeeCommon.category.name}</form:label>
 						</div>
 						<form:hidden path="bpaFeeCommon"
 									name="bpaFeeCommon" id="bpaFeeCommon"
@@ -144,7 +144,7 @@
 													path="bpaFeeMapTemp[${status.index}].applicationType" />
 												<input type="text" id="table_applicationType${status.index}"
 												class="form-control" readonly="readonly"
-												style="text-align: center" value="${feeMap.applicationType}" />
+												style="text-align: center" value="${feeMap.applicationType.feeApplicationTypeVal}" />
 
 											</td>
 											<td><form:input type="hidden"
@@ -159,7 +159,7 @@
 													path="bpaFeeMapTemp[${status.index}].feeSubType" />
 												<input type="text" id="table_feeSubType${status.index}"
 												class="form-control" readonly="readonly"
-												style="text-align: center" value="${feeMap.feeSubType}" />
+												style="text-align: center" value="${feeMap.feeSubType.feeSubTypeVal}" />
 											</td>
 											<td><form:input type="hidden"
 													id="bpaFeeMapTemp[${status.index}].calculationType"

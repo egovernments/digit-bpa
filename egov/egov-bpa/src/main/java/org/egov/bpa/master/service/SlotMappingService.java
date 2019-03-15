@@ -39,15 +39,16 @@
  */
 package org.egov.bpa.master.service;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.entity.SlotMapping;
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
-import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.repository.SlotMappingRepository;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -66,6 +67,9 @@ public class SlotMappingService {
 
 	@Autowired
 	private SecurityUtils securityUtils;
+	
+	@Autowired
+	private ApplicationTypeService applicationTypeService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -75,7 +79,7 @@ public class SlotMappingService {
 	}
 
 	public void createSlotMapping(SlotMapping slotMapping) {
-		if(slotMapping.getApplType().toString().equals(ApplicationType.ONE_DAY_PERMIT.toString())){
+		if(slotMapping.getApplicationType().equals(applicationTypeService.findByName(APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase()))){
 		slotMapping.setDay(slotMapping.getDays().getHolidayTypeVal());
 		}
 		slotMapping.setCreatedBy(securityUtils.getCurrentUser());
@@ -85,8 +89,8 @@ public class SlotMappingService {
 
 	public void updateSlotMapping(SlotMapping slotMapping) {
 		SlotMapping slotMap = noOfApplicationsRepository.findOne(slotMapping.getId());
-		slotMap.setApplType(slotMapping.getApplType());
-		if(slotMapping.getApplType().toString().equals(ApplicationType.ONE_DAY_PERMIT.toString()))
+		slotMap.setApplicationType(slotMapping.getApplicationType());
+		if(slotMapping.getApplicationType().getName().equals(APPLICATION_TYPE_ONEDAYPERMIT))
 			slotMap.setDay(slotMapping.getDays().getHolidayTypeVal());
 		slotMap.setMaxSlotsAllowed(slotMapping.getMaxSlotsAllowed());
 		slotMap.setMaxRescheduledSlotsAllowed(slotMapping.getMaxRescheduledSlotsAllowed());
@@ -109,8 +113,8 @@ public class SlotMappingService {
 		if (slotMapping.getZone() != null) {
 			criteria.add(Restrictions.eq("slotMapping.zone", slotMapping.getZone()));
 		}
-		if (slotMapping.getApplType() != null) {
-			criteria.add(Restrictions.eq("slotMapping.applType", slotMapping.getApplType()));
+		if (slotMapping.getApplicationType() != null) {
+			criteria.add(Restrictions.eq("slotMapping.applicationType", slotMapping.getApplicationType()));
 		}
 		if (slotMapping.getElectionWard() != null) {
 			criteria.add(Restrictions.eq("slotMapping.electionWard", slotMapping.getElectionWard()));
@@ -129,24 +133,24 @@ public class SlotMappingService {
 	 return	noOfApplicationsRepository.findOne(id);		
 	}
 
-	public List<SlotMapping> findByZoneAndAppType(Boundary zone, SlotMappingApplType applType) {
-		return noOfApplicationsRepository.findByApplTypeAndZone(applType,zone);
+	public List<SlotMapping> findByZoneAndAppType(Boundary zone, ApplicationType applType) {
+		return noOfApplicationsRepository.findByApplicationTypeIdAndZone(applType.getId(),zone);
 	}
 
-    public List<Boundary> slotfindZoneByApplType(SlotMappingApplType applType) {
-        return noOfApplicationsRepository.findZoneByApplType(applType);
+    public List<Boundary> slotfindZoneByApplType(ApplicationType applType) {
+        return noOfApplicationsRepository.findZoneByApplType(applType.getId());
 
     }
 
-    public List<SlotMapping> slotMappingForOneDayPermit(SlotMappingApplType applType) {
-        return noOfApplicationsRepository.findSlotMappingForOneDayPermit(applType);
+    public List<SlotMapping> slotMappingForOneDayPermit(ApplicationType applType) {
+        return noOfApplicationsRepository.findByApplicationTypeId(applType.getId());
 
     }
 
     public List<SlotMapping> findByZoneElectionWardAndAppType(Boundary zone,
-            Boundary electionWard, SlotMappingApplType applType) {
+            Boundary electionWard, ApplicationType applType) {
         return noOfApplicationsRepository.findByZoneElectionWardAndAppType(zone, electionWard,
-                applType);
+                applType.getId());
 
     }
 

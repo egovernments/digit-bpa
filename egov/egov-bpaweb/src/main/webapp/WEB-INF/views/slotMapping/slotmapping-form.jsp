@@ -82,14 +82,14 @@
 								code="lbl.slotmapping.applicationtype" /> <span
 							class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<select name="applType" id="applType" class="form-control"
+							<select name="applicationType" id="applicationType" class="form-control"
 								required>
 								<option value=""><spring:message code="lbl.select" /></option>
 								<c:forEach items="${slotMappingApplTypes}" var="slotApplicationType">
-									<option value="${slotApplicationType}" >${slotApplicationType.applicationTypeVal}</option>
+									<option value="${slotApplicationType.id}" >${slotApplicationType.name}</option>
 								</c:forEach>
 							</select>
-							<form:errors path="applType" cssClass="error-msg" />
+							<form:errors path="applicationType" cssClass="error-msg" />
 						</div>
 					</div>
 

@@ -63,6 +63,9 @@ public class ApplicationType extends AbstractAuditable {
     
     private Boolean enabled;
     
+    private Boolean slotRequired;
+
+    
 	public Long getId() {
 		return id;
 	}
@@ -86,5 +89,11 @@ public class ApplicationType extends AbstractAuditable {
 	}
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
+	}
+	public Boolean getSlotRequired() {
+		return slotRequired;
+	}
+	public void setSlotRequired(Boolean slotRequired) {
+		this.slotRequired = slotRequired;
 	}
 }

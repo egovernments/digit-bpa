@@ -53,12 +53,12 @@
                     <label class="col-sm-3 control-label text-right"><spring:message
                             code="lbl.applctn.type"/></label>
                     <div class="col-sm-3 add-margin">
-                        <form:select path="serviceTypeEnum" data-first-option="false"
-                                     id="serviceTypeEnum" cssClass="form-control">
+                        <form:select path="applicationTypeId" data-first-option="false"
+                                     id="applicationTypeId" cssClass="form-control applicationType">
                             <form:option value="">
                                 <spring:message code="lbl.select"/>
                             </form:option>
-                            <form:options items="${applicationTypes}" itemLabel="applicationTypeVal"/>
+                            <form:options items="${applicationTypes}" itemLabel="name" itemValue="id"/>
                         </form:select>
                         <form:errors path="statusId" cssClass="add-margin error-msg"/>
                     </div>

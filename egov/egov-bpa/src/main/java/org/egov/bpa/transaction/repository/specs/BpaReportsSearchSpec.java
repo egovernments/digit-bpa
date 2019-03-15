@@ -48,12 +48,14 @@
 
 package org.egov.bpa.transaction.repository.specs;
 
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
+import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
+
+import javax.persistence.criteria.Predicate;
+
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.dto.SlotDetailsHelper;
 import org.springframework.data.jpa.domain.Specification;
-
-import javax.persistence.criteria.Predicate;
 
 public final class BpaReportsSearchSpec {
 
@@ -77,11 +79,11 @@ public final class BpaReportsSearchSpec {
 						.add(builder.isNotNull(root.get("slot").get("electionWard")));
 				predicate.getExpressions()
 						.add(builder.equal(root.get("slot").get("type"),"One Day Permit"));
-			} else if(SlotMappingApplType.ALL_OTHER_SERVICES.name().equals(requestForm.getApplicationType())) {
+			} else if(APPLICATION_TYPE_REGULAR.equals(requestForm.getApplicationType())) {
 				predicate.getExpressions()
 						.add(builder.isNull(root.get("slot").get("electionWard")));
 				predicate.getExpressions().add(builder.equal(root.get("slot").get("type"),"Normal"));
-			} else if(SlotMappingApplType.OCCUPANCY_CERTIFICATE.name().equals(requestForm.getApplicationType())) {
+			} else if(OCCUPANCY_CERTIFICATE_NOTICE_TYPE.equals(requestForm.getApplicationType())) {
                             predicate.getExpressions()
                                             .add(builder.isNull(root.get("slot").get("electionWard")));
                             predicate.getExpressions().add(builder.equal(root.get("slot").get("type"),"Occupancy Certificate"));

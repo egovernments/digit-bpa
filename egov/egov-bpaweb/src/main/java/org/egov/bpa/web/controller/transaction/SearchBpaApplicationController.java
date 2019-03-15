@@ -46,6 +46,7 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.service.BpaDcrService;
@@ -84,6 +85,7 @@ import java.util.Set;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION;
+import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.WARD;
 
@@ -206,8 +208,15 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
-        model.addAttribute("serviceTypeEnumList", getApplicationTypes());
-        model.addAttribute("isUnattendedCancelled",isUnattendedCancelled);
+        List<ApplicationType> appTyps = applicationTypeService.getAllSlotRequiredApplicationTypes();
+		List<ApplicationType> applicationTypes = new ArrayList<>();
+                for (ApplicationType applType : appTyps)
+                    if (applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
+                        continue;
+                    else
+                    	applicationTypes.add(applType);
+		model.addAttribute("applicationTypes", applicationTypes);
+          model.addAttribute("isUnattendedCancelled",isUnattendedCancelled);
         return "search-document-scrutiny";
     }
 

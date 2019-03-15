@@ -39,14 +39,18 @@
  */
 package org.egov.bpa.transaction.service;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.entity.SlotMapping;
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
 import org.egov.bpa.master.repository.SlotMappingRepository;
+import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.master.service.HolidayListService;
 import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotDetail;
@@ -82,7 +86,10 @@ public class SlotOpeningForAppointmentService {
     private SlotRepository slotRepository;
 
     @Autowired
-    private AppConfigValueService appConfigValuesService;
+    private AppConfigValueService appConfigValuesService;    
+
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
 
     @Autowired
     private HolidayListService holidayListService;
@@ -92,7 +99,8 @@ public class SlotOpeningForAppointmentService {
 
     @Transactional
     public void openNewSlots() {
-        List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplType(SlotMappingApplType.ALL_OTHER_SERVICES);
+    	ApplicationType appType = applicationTypeService.findByName(APPLICATION_TYPE_REGULAR.toUpperCase());
+        List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplicationTypeId(appType.getId());
         List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 SLOTS_DAYS_CONFIG);
         String noOfDays = appConfigValue.get(0).getValue();
@@ -150,7 +158,8 @@ public class SlotOpeningForAppointmentService {
         Integer scheduledSlotsAllowedForMorning = 0;
         Integer scheduledSlotsAllowedForEvening = 0;
         final User user = securityUtils.getCurrentUser();
-        List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplType(SlotMappingApplType.ONE_DAY_PERMIT);
+    	ApplicationType appType = applicationTypeService.findByName(APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase());
+        List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplicationTypeId(appType.getId());
         List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 SLOTS_DAYS_CONFIG_ONE_DAY_PERMIT);
         String noOfDays = appConfigValue.get(0).getValue();

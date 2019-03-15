@@ -39,8 +39,8 @@
  */
 package org.egov.bpa.web.controller.report;
 
-import org.egov.bpa.master.entity.enums.ApplicationType;
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
+import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.entity.dto.PersonalRegisterHelper;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
@@ -93,6 +93,10 @@ import java.util.stream.Collectors;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.WARD;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
+
+
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
@@ -121,6 +125,8 @@ public class BpaReportsController extends BpaGenericApplicationController {
 	private OccupancyService occupancyService;
 	@Autowired
 	private SecurityUtils securityUtils;
+	@Autowired
+	private ApplicationTypeService applicationTypeService;
 	@Autowired
 	private PersonalRegisterReportService personalRegisterReportService;
 
@@ -205,13 +211,14 @@ public class BpaReportsController extends BpaGenericApplicationController {
 		prepareFormData(model);
 		model.addAttribute("slotDetailsHelper", new SlotDetailsHelper());
 		model.addAttribute("applicationType", applicationType);
-		List<SlotMappingApplType> slotMappingApplTypes = new ArrayList<>();
-                for (SlotMappingApplType applType : SlotMappingApplType.values())
-                    if (applType.equals(SlotMappingApplType.ONE_DAY_PERMIT))
+		List<ApplicationType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
+		List<ApplicationType> slotMappingApplTypes = new ArrayList<>();
+                for (ApplicationType applType : appTypes)
+                    if (applType.getName().equals(APPLICATION_TYPE_ONEDAYPERMIT))
                         continue;
                     else
                         slotMappingApplTypes.add(applType);
-                model.addAttribute("slotMappingApplTypes", slotMappingApplTypes);
+        model.addAttribute("slotMappingApplTypes", slotMappingApplTypes);                
 		model.addAttribute("searchByNoOfDays", BpaConstants.getSearchByNoOfDays());
 		if ("onedaypermit".equals(applicationType))
 			return "search-onedaypermit-slotdetails-report";
@@ -322,7 +329,14 @@ public class BpaReportsController extends BpaGenericApplicationController {
 			model.addAttribute("wards", revenueWards.stream().sorted(Comparator.comparing(Boundary::getId)).collect(Collectors.toSet()));
 			model.addAttribute("electionwards", mappedElectionWard.stream().sorted(Comparator.comparing(Boundary::getId)).collect(Collectors.toSet()));
 			model.addAttribute("userList", Arrays.asList(employee));
-			model.addAttribute("applicationTypes", Arrays.asList(ApplicationType.values()));
+			List<ApplicationType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
+			List<ApplicationType> applicationTypes = new ArrayList<>();
+	                for (ApplicationType applType : appTypes)
+	                    if (applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
+	                        continue;
+	                    else
+	                    	applicationTypes.add(applType);
+			model.addAttribute("applicationTypes", applicationTypes);
 		} else {
 			prepareFormData(model);
 		}

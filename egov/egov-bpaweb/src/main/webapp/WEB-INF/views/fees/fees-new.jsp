@@ -144,15 +144,9 @@
 									code="lbl.fees.category" /><span class="mandatory"></span>
 							</label>
 							<div class="col-sm-3 add-margin">
-								<%-- <form:input type="text" id="category" readonly="true"
-									value="${category}" path="bpaFeeCommon.category"
-									cssClass="form-control category" />
-								<form:errors path="bpaFeeCommon.category"
-									cssClass="add-margin error-msg" />
-														   <format:input type="hidden"	value="${category}" id="category" path="bpaFeeCommon.category" />
- --%>
+								
 							
-							<form:select path="bpaFeeCommon.category"
+							<form:select path="bpaFeeCommon.category.idType"
 														id="category"
 														cssClass="form-control category" required="required">
 														<form:option value="">
@@ -160,9 +154,10 @@
 														</form:option>
 														<form:options items="${categories}" itemValue="idType"
 															itemLabel="code" />
-													</form:select> <form:errors path="bpaFeeCommon.category"
+													</form:select> <form:errors path="bpaFeeCommon.category.idType"
 														cssClass="add-margin error-msg" />
 							</div>
+							
 
 						</div>
 
@@ -226,7 +221,7 @@
 															<form:option value="">
 																<spring:message code="lbl.select" />
 															</form:option>
-															<form:options items="${applicationTypes}" />
+															<form:options items="${applicationTypes}" itemLabel="feeApplicationTypeVal"/>
 														</form:select> <form:errors
 															path="bpaFeeMapTemp[${item.index}].applicationType"
 															cssClass="add-margin error-msg" /></td>
@@ -239,7 +234,7 @@
 															<form:option value="">
 																<spring:message code="lbl.select" />
 															</form:option>
-															<form:options items="${feeSubTypes}" />
+															<form:options items="${feeSubTypes}" itemLabel="feeSubTypeVal" />
 														</form:select> <form:errors
 															path="bpaFeeMapTemp[${item.index}].feeSubType"
 															cssClass="add-margin error-msg" /></td>
@@ -289,7 +284,7 @@
 														<form:option value="">
 															<spring:message code="lbl.select" />
 														</form:option>
-														<form:options items="${applicationTypes}" />
+														<form:options items="${applicationTypes}" itemLabel="feeApplicationTypeVal" />
 													</form:select> <form:errors path="bpaFeeMapTemp[0].applicationType"
 														cssClass="add-margin error-msg" /></td>
 												<td><form:select path="bpaFeeMapTemp[0].feeSubType"
@@ -298,7 +293,7 @@
 														<form:option value="">
 															<spring:message code="lbl.select" />
 														</form:option>
-														<form:options items="${feeSubTypes}" />
+														<form:options items="${feeSubTypes}" itemLabel="feeSubTypeVal" />
 													</form:select> <form:errors path="bpaFeeMapTemp[0].feeSubType"
 														cssClass="add-margin error-msg" /></td>
 												<td><form:select
@@ -337,7 +332,7 @@
 							</div>
 						</div>
 						<div class="form-group text-center">
-							<button type="submit" class="btn btn-primary" id="search">
+							<button type="submit" class="btn btn-primary" id="submit">
 								<spring:message code="lbl.save" />
 							</button>
 							<button type="reset" class="btn btn-default">

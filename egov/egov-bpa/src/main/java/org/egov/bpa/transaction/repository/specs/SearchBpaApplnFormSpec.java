@@ -55,6 +55,9 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_ORDER_ISSUED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
 
 import java.util.List;
 
@@ -63,7 +66,6 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.Slot;
@@ -117,11 +119,11 @@ public final class SearchBpaApplnFormSpec {
             Join<SlotApplication, BpaApplication> applicationJoin = root.join("application");
             Join<BpaApplication, SiteDetail> siteDetailJoin = applicationJoin.join("siteDetail");
             if (requestForm.getServiceTypeEnum() != null
-                    && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name())) {
+                    && requestForm.getServiceTypeEnum().equalsIgnoreCase(APPLICATION_TYPE_REGULAR)) {
                 predicate.getExpressions()
                         .add(builder.equal(applicationJoin.get(IS_ONE_DAY_PERMIT_APPLICATION), false));
             } else if (requestForm.getServiceTypeEnum() != null
-                    && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
+                    && requestForm.getServiceTypeEnum().equalsIgnoreCase(APPLICATION_TYPE_ONEDAYPERMIT))
                 predicate.getExpressions()
                         .add(builder.equal(applicationJoin.get(IS_ONE_DAY_PERMIT_APPLICATION), true));
             if (requestForm.getToDate() != null) {
@@ -183,6 +185,9 @@ public final class SearchBpaApplnFormSpec {
         if (requestForm.getServiceTypeId() != null)
             predicate.getExpressions()
                     .add(builder.equal(root.get("serviceType").get("id"), requestForm.getServiceTypeId()));
+        if (requestForm.getApplicationTypeId() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("applicationType").get("id"), requestForm.getApplicationTypeId()));
         if (requestForm.getServiceType() != null)
             predicate.getExpressions()
                     .add(builder.equal(root.get("serviceType").get("description"), requestForm.getServiceTypeId()));
@@ -202,11 +207,11 @@ public final class SearchBpaApplnFormSpec {
             predicate.getExpressions()
                     .add(builder.lessThanOrEqualTo(root.get("applicationDate"), requestForm.getToDate()));
         if (requestForm.getServiceTypeEnum() != null
-                && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name()))
+                && requestForm.getServiceTypeEnum().equalsIgnoreCase(APPLICATION_TYPE_REGULAR))
             predicate.getExpressions()
                     .add(builder.equal(root.get(IS_ONE_DAY_PERMIT_APPLICATION), false));
         else if (requestForm.getServiceTypeEnum() != null
-                && requestForm.getServiceTypeEnum().equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
+                && requestForm.getServiceTypeEnum().equalsIgnoreCase(APPLICATION_TYPE_ONEDAYPERMIT))
             predicate.getExpressions()
                     .add(builder.equal(root.get(IS_ONE_DAY_PERMIT_APPLICATION), true));
         if (requestForm.getFromBuiltUpArea() != null)

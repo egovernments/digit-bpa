@@ -55,6 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.entity.BpaScheme;
 import org.egov.bpa.master.entity.BpaSchemeLandUsage;
 import org.egov.bpa.master.entity.PostalAddress;
@@ -63,7 +64,7 @@ import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.StakeHolderType;
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
+import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.PostalAddressService;
@@ -108,7 +109,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -163,6 +164,8 @@ public class BpaAjaxController {
     private ServiceTypeService serviceTypeService;
     @Autowired
     private UsageService usageService;
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -415,11 +418,13 @@ public class BpaAjaxController {
     @ResponseBody
     public Boolean getOneDayPermitSlotByBoundary(@RequestParam Long zoneId, @RequestParam Long electionWardId) {
         SlotMapping slotMapping = new SlotMapping();
+    	ApplicationType appType = applicationTypeService.findByName(APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase());
         Boundary zone = boundaryService.getBoundaryById(zoneId);
         Boundary electionWard = boundaryService.getBoundaryById(electionWardId);
         slotMapping.setZone(zone);
         slotMapping.setElectionWard(electionWard);
-        slotMapping.setApplType(SlotMappingApplType.ONE_DAY_PERMIT);
+       // slotMapping.setApplType(SlotMappingApplType.ONE_DAY_PERMIT);appType
+        slotMapping.setApplicationType(appType);
         List<SlotMapping> slotMappings = slotMappingService.searchSlotMapping(slotMapping);
         return !slotMappings.isEmpty();
     }

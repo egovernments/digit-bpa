@@ -68,7 +68,7 @@
 						<spring:message code="lbl.slotmapping.applicationtype" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<c:out value="${slotMapping.applType.applicationTypeVal}" default="N/A"></c:out>
+						<c:out value="${slotMapping.applicationType.name}" default="N/A"></c:out>
 					</div>
 				</div>
 
@@ -79,7 +79,7 @@
 					<div class="col-sm-3 add-margin view-content">
 						<c:out value="${slotMapping.maxSlotsAllowed}" default="N/A"></c:out>
 					</div>
-					<c:if test="${slotMapping.applType eq 'ALL_OTHER_SERVICES' || slotMapping.applType eq 'OCCUPANCY_CERTIFICATE'}">
+					<c:if test="${slotMapping.applicationType.name eq 'Regular' || slotMapping.applicationType.name eq 'Occupancy Certificate'}">
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.slotmapping.numberofresapplications" />
 						</div>
@@ -89,7 +89,7 @@
 						</div>
 					</c:if>
 				</div>
-				<c:if test="${slotMapping.applType eq 'ONE_DAY_PERMIT'}">
+				<c:if test="${slotMapping.applicationType.name eq 'One Day Permit'}">
 					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.rev.ward" />
@@ -106,7 +106,7 @@
 
 					</div>
 				</c:if>
-				<c:if test="${slotMapping.applType eq 'ONE_DAY_PERMIT'}">
+				<c:if test="${slotMapping.applicationType.name eq 'One Day Permit'}">
 					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.slotmapping.days" />

@@ -83,7 +83,7 @@ public class BpaFeeCommonService {
 	}
 
 	@Transactional
-	public BpaFeeCommon update(final BpaFeeCommon bpaFeeCommon) {
+	public BpaFeeCommon update(final BpaFeeCommon bpaFeeCommon) {		
 		return bpaFeeCommonRepository.save(bpaFeeCommon);
 	}
 

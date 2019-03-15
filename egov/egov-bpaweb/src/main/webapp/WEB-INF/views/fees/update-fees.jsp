@@ -109,7 +109,7 @@
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.fees.category" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:label cssClass="form-control" path="bpaFeeCommon.category">${bpaFeeMapping.bpaFeeCommon.category}</form:label>
+							<form:label cssClass="form-control" path="bpaFeeCommon.category">${bpaFeeMapping.bpaFeeCommon.category.name}</form:label>
 						</div>
 						<form:hidden path="bpaFeeCommon"
 									name="bpaFeeCommon" id="bpaFeeCommon"
@@ -147,12 +147,12 @@
 														path="bpaFeeMapTemp[${item.index}].applicationType"
 														id="bpaFeeDetail[${item.index}].applicationType"
 														value="${bpaFeeDetail.applicationType}"
-														cssClass="form-control applicationType" readonly="true"
+														cssClass="form-control applicationType" disabled="true"
 														required="required">
 														<form:option value="">
 															<spring:message code="lbl.select" />
 														</form:option>
-														<form:options items="${applicationTypes}" />
+														<form:options items="${applicationTypes}" itemLabel="feeApplicationTypeVal"/>
 													</form:select> <form:errors
 														path="bpaFeeMapTemp[${item.index}].applicationType"
 														cssClass="add-margin error-msg" /></td>
@@ -160,7 +160,7 @@
 														path="bpaFeeMapTemp[${item.index}].serviceType"
 														id="bpaFeeDetail[${item.index}].serviceType"
 														value="${bpaFeeDetail.serviceType.description}"
-														cssClass="form-control serviceType" readonly="true"
+														cssClass="form-control serviceType" disabled="true"
 														required="required">
 														<form:option value="">
 															<spring:message code="lbl.select" />
@@ -174,12 +174,12 @@
 														path="bpaFeeMapTemp[${item.index}].feeSubType"
 														id="bpaFeeDetail[${item.index}].feeSubType"
 														value="${bpaFeeDetail.feeSubType}"
-														cssClass="form-control feeSubType" readonly="true"
+														cssClass="form-control feeSubType" disabled="true"
 														required="required">
 														<form:option value="">
 															<spring:message code="lbl.select" />
 														</form:option>
-														<form:options items="${feeSubTypes}" />
+														<form:options items="${feeSubTypes}" itemLabel="feeSubTypeVal" />
 													</form:select> <form:errors
 														path="bpaFeeMapTemp[${item.index}].feeSubType"
 														cssClass="add-margin error-msg" /></td>
@@ -187,7 +187,7 @@
 														path="bpaFeeMapTemp[${item.index}].calculationType"
 														id="bpaFeeDetail[${item.index}].calculationType"
 														value="${bpaFeeDetail.calculationType}"
-														cssClass="form-control calculationType" readonly="true"
+														cssClass="form-control calculationType" disabled="true"
 														required="required">
 														<form:option value="">
 															<spring:message code="lbl.select" />

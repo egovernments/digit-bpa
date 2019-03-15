@@ -98,7 +98,7 @@
                             <form:option value="">
                                 <spring:message code="lbl.select"/>
                             </form:option>
-                            <form:options items="${slotMappingApplTypes}" itemLabel="applicationTypeVal"/>
+                            <form:options items="${slotMappingApplTypes}" itemLabel="name" itemValue="id"/>
                         </form:select>
                     </div> 
                     </div>

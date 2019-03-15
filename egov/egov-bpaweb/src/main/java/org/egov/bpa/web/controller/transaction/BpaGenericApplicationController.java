@@ -57,6 +57,7 @@ import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
 import static org.egov.bpa.utils.BpaConstants.LOCALITY;
 import static org.egov.bpa.utils.BpaConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.MESSAGE;
+import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.STREET;
 import static org.egov.bpa.utils.BpaConstants.WARD;
@@ -78,8 +79,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.bpa.master.entity.enums.ApplicationType;
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
@@ -133,6 +133,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+
 
 public abstract class BpaGenericApplicationController extends GenericWorkFlowController {
 
@@ -212,9 +215,10 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("applicationModes", getApplicationModeMap());
         model.addAttribute("buildingFloorList", getBuildingFloorsList());
         model.addAttribute("uomList", BpaUom.values());
-        List<SlotMappingApplType> slotMappingApplTypes = new ArrayList<>();
-        for (SlotMappingApplType applType : SlotMappingApplType.values())
-            if (!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && applType.equals(SlotMappingApplType.ONE_DAY_PERMIT))
+        List<ApplicationType> slotMappingApplTypes = new ArrayList<>();
+       List<ApplicationType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
+        for (ApplicationType applType : appTypes)
+            if (!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && applType.equals(APPLICATION_TYPE_ONEDAYPERMIT))
                 break;
             else
                 slotMappingApplTypes.add(applType);
@@ -223,14 +227,22 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType());
         model.addAttribute("schemesList", bpaSchemeService.findAll());
         model.addAttribute("oneDayPermitLandTypeList", Arrays.asList(OneDayPermitLandType.values()));
-        model.addAttribute("applicationTypes", getApplicationTypes());
+        List<ApplicationType> appTyps = applicationTypeService.getAllSlotRequiredApplicationTypes();
+		List<ApplicationType> applicationTypes = new ArrayList<>();
+                for (ApplicationType applType : appTyps)
+                    if (applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
+                        continue;
+                    else
+                    	applicationTypes.add(applType);
+		model.addAttribute("applicationTypes", applicationTypes);
         model.addAttribute("userList", userService.getUserByTypeInOrder(UserType.EMPLOYEE));
     }
 
     protected List<ApplicationType> getApplicationTypes() {
         List<ApplicationType> applicationTypeList = new ArrayList<>();
-        for (ApplicationType appType : ApplicationType.values())
-            if (!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && appType.equals(ApplicationType.ONE_DAY_PERMIT))
+        List<ApplicationType> appTypes = applicationTypeService.findAll();
+        for (ApplicationType appType : appTypes)
+            if (!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && appType.getName().equals(APPLICATION_TYPE_ONEDAYPERMIT))
                 break;
             else
                 applicationTypeList.add(appType);

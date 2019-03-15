@@ -39,9 +39,17 @@
  */
 package org.egov.bpa.transaction.service.oc;
 
+import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.entity.SlotMapping;
-import org.egov.bpa.master.entity.enums.SlotMappingApplType;
 import org.egov.bpa.master.repository.SlotMappingRepository;
+import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.master.service.HolidayListService;
 import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotDetail;
@@ -54,11 +62,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -86,11 +89,16 @@ public class OpenSlotsForOcService {
 
     @Autowired
     private SlotService slotService;
+    
+    @Autowired
+    private ApplicationTypeService applicationTypeService;
 
 
     @Transactional
     public void openNewSlots() {
-        List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplType(SlotMappingApplType.OCCUPANCY_CERTIFICATE);
+    	ApplicationType appType = applicationTypeService.findByName(OCCUPANCY_CERTIFICATE_NOTICE_TYPE.toUpperCase());
+
+        List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplicationTypeId(appType.getId());
         List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 SLOTS_DAYS_CONFIG);
         String noOfDays = appConfigValue.get(0).getValue();

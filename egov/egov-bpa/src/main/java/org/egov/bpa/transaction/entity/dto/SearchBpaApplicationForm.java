@@ -91,6 +91,8 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private BigDecimal toPlotArea;
     private BigDecimal fromBuiltUpArea;
     private BigDecimal toBuiltUpArea;
+    private Long applicationTypeId;
+
 
     public SearchBpaApplicationForm() {
         // for form binding
@@ -514,4 +516,12 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     public void setToBuiltUpArea(BigDecimal toBuiltUpArea) {
         this.toBuiltUpArea = toBuiltUpArea;
     }
+
+	public Long getApplicationTypeId() {
+		return applicationTypeId;
+	}
+
+	public void setApplicationTypeId(Long applicationTypeId) {
+		this.applicationTypeId = applicationTypeId;
+	}
 }

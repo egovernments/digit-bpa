@@ -58,10 +58,11 @@
 					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.service.type" /></label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="serviceTypeEnum" 
-							id="serviceTypeEnum" cssClass="form-control reset-value">
-							<c:forEach items="${serviceTypeEnumList}" var="serviceType">
-								<option value="${serviceType}" >${serviceType.applicationTypeVal}</option>
+						<form:select path="applicationTypeId" 
+							id="applicationTypeId" cssClass="form-control reset-value">
+							<option value=""><spring:message code="lbl.select" /></option>						
+							<c:forEach items="${applicationTypes}" var="applicationType">
+								<option value="${applicationType.id}" >${applicationType.name}</option>
 							</c:forEach>
 						</form:select>
 					</div>

@@ -101,13 +101,13 @@
 	<c:if test="${bpaApplication.isOneDayPermitApplication}">
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
-				<spring:message code="lbl.is.one.permit" />
+				<spring:message code="lbl.applctn.type" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<input type="hidden" id="isOneDayPermitApplication"
-					value="${bpaApplication.isOneDayPermitApplication}">
+					value="${bpaApplication.applicationType.name}">
 				<c:out
-					value="${bpaApplication.isOneDayPermitApplication ? 'YES' : 'NO'}"
+					value="${bpaApplication.applicationType.name}"
 					default="N/A"></c:out>
 			</div>
 
@@ -188,7 +188,7 @@
 	</c:if>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.applctn.type" />
+			<spring:message code="lbl.service.type" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<input type="hidden" id="serviceType"

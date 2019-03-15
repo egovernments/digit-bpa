@@ -94,6 +94,7 @@ $(document)
                                                         "fromDate": $("#fromDate").val(),
                                                         "toDate": $("#toDate").val(),
                                                         "serviceTypeId": $("#serviceTypeId").val(),
+                                                        "applicationTypeId": $("#applicationTypeId").val(),
                                                         "zoneId": $("#zone").val(),
                                                         "wardId": $("#ward").val(),
                                                         "electionWardId": $("#electionBoundary").val(),
