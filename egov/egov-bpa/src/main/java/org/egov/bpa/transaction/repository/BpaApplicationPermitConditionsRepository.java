@@ -50,14 +50,21 @@ import java.util.List;
 
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.enums.PermitConditionType;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BpaApplicationPermitConditionsRepository extends JpaRepository<ApplicationPermitConditions, Long> {
-    List<ApplicationPermitConditions> findByPermitConditionTypeOrderByOrderNumberAsc(PermitConditionType conditionType);
+public interface BpaApplicationPermitConditionsRepository extends JpaRepository<ApplicationPermitConditions, Long>,JpaSpecificationExecutor<ApplicationPermitConditions> {
+	
+	
+	@Query("select apc from ApplicationPermitConditions apc where apc.noticeCondition.type = :conditionType")
+    List<ApplicationPermitConditions> findByConditionTypeOrderByOrderNumberAsc(@Param("conditionType") ConditionType conditionType);
 
-    List<ApplicationPermitConditions> findByApplicationAndPermitConditionTypeOrderByOrderNumberAsc(BpaApplication application,
-            PermitConditionType conditionType);
+	@Query("select apc from ApplicationPermitConditions apc where apc.noticeCondition.type = :conditionType and apc.application = :application")
+    List<ApplicationPermitConditions> findByConditionTypeOrderByOrderNumberAsc(@Param("conditionType") ConditionType conditionType,
+    		@Param("application") BpaApplication application);
 }

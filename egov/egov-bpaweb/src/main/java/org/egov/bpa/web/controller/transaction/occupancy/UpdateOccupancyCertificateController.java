@@ -100,7 +100,7 @@ import org.egov.bpa.master.service.PermitConditionsService;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
-import org.egov.bpa.transaction.entity.enums.PermitConditionType;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.entity.oc.OCAppointmentSchedule;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
@@ -606,14 +606,16 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 || (APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(oc.getStatus().getCode())
                         && FORWARDED_TO_CLERK.equalsIgnoreCase(oc.getCurrentState().getNextAction()))) {
             model.addAttribute("showRejectionReasons", true);
-            model.addAttribute("additionalPermitCondition", permitConditionsService
-                    .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.ADDITIONAL_PERMITCONDITION.name()).get(0));
-            model.addAttribute("rejectionReasons",
-                    permitConditionsService.findByConditionTypeOrderByOrderNumberAsc("OCRejection"));
+			model.addAttribute("additionalRejectionReasons",
+					checklistServiceTypeService.findByActiveChecklistAndServiceType(
+							oc.getParent().getServiceType().getDescription(), "ADDITIONALREJECTIONREASONS"));
+            
+            model.addAttribute("rejectionReasons", checklistServiceTypeService.findByActiveChecklistAndServiceType(
+							oc.getParent().getServiceType().getDescription(), "OCREJECTIONREASONS"));
             oc.setRejectionReasonsTemp(ocNoticeConditionsService
-                    .findAllOcConditionsByOcAndType(oc, PermitConditionType.REJECTION_REASON));
+                    .findAllOcConditionsByOcAndType(oc, ConditionType.OCREJECTIONREASONS));
             oc.setAdditionalRejectReasonsTemp(ocNoticeConditionsService
-                    .findAllOcConditionsByOcAndType(oc, PermitConditionType.ADDITIONAL_PERMITCONDITION));
+                    .findAllOcConditionsByOcAndType(oc, ConditionType.ADDITIONALREJECTIONREASONS));
         }
     }
 }

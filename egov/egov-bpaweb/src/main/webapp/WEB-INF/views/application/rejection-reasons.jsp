@@ -59,6 +59,7 @@
 		<i class="fa fa-angle-up fa-2x"></i>
 	</div>
 </div>
+
 <div class="panel-body rejectionReason display-hide">
 	<table class="table table-bordered  multiheadertbl"
 		   id="bpaRejectionResaons">
@@ -72,61 +73,32 @@
 		<tbody>
 		<c:choose>
 			<c:when test="${not empty bpaApplication.rejectionReasonsTemp}">
-				<c:forEach var="rejectionReason"
-						   items="${bpaApplication.rejectionReasonsTemp}"
+				<c:forEach var="rejectionReason" items="${bpaApplication.rejectionReasonsTemp}"
 						   varStatus="rejectPCStatus">
 					<tr>
 						<td class="text-center"><form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].application"
-								value="${bpaApplication.id}" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].permitCondition"
-								value="${staticPermitCondition.permitCondition.id}" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].permitConditionType"
-								value="REJECTION_REASON" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].orderNumber"
-								value="${rejectPCStatus.index+1}" /> <c:out
-								value="${rejectPCStatus.index+1}"></c:out></td>
+								path="rejectionReasonsTemp[${rejectPCStatus.index}].application" value="${bpaApplication.id}" /> 
+								<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.checklistServicetype" value="${rejectionReason.noticeCondition.checklistServicetype.id}" /> 
+								<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.type" value="REJECTIONREASONS" /> 
+								<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.orderNumber" value="${rejectPCStatus.index+1}" /> 
+								<c:out value="${rejectPCStatus.index+1}"></c:out></td>
 						<c:choose>
-							<c:when test="${rejectionReason.required}">
-								<td class="text-center"><input type="checkbox"
-															   data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-															   name="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-															   class="rejectionReasons" checked="checked"
-															   value="${rejectionReason.required}" /></td>
+							<c:when test="${rejectionReason.noticeCondition.required}">
+								<td class="text-center"><input type="checkbox" data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   name="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   class="rejectionReasons" checked="checked" value="${rejectionReason.noticeCondition.required}" /></td>
 							</c:when>
 							<c:otherwise>
-								<td class="text-center"><input type="checkbox"
-															   data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-															   name="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-															   class="rejectionReasons" value="${rejectionReason.required}" /></td>
+								<td class="text-center"><input type="checkbox" data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   name="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   class="rejectionReasons" value="${rejectionReason.noticeCondition.required}" /></td>
 							</c:otherwise>
 						</c:choose>
 						<td class="view-content" style="font-size: 105%;"><c:out
-								value="${rejectionReason.permitCondition.description}"></c:out></td>
+								value="${rejectionReason.noticeCondition.checklistServicetype.checklist.description}"></c:out></td>
 					</tr>
 				</c:forEach>
 			</c:when>
-			<c:otherwise>
-				<c:forEach var="rejectionReason" items="${rejectionReasons}"
-						   varStatus="rejectPCStatus">
-					<tr>
-						<td class="text-center"><form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].application"
-								value="${bpaApplication.id}" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].permitCondition"
-								value="${rejectionReason.id}" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].permitConditionType"
-								value="REJECTION_REASON" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].orderNumber"
-								value="${rejectPCStatus.index+1}" /> <c:out
-								value="${rejectPCStatus.index+1}"></c:out></td>
-						<td class="text-center"><form:checkbox
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-								class="rejectionReasons" /></td>
-						<td class="view-content" style="font-size: 105%;"><c:out value="${rejectionReason.description}"></c:out></td>
-					</tr>
-				</c:forEach>
-			</c:otherwise>
 		</c:choose>
 		</tbody>
 	</table>
@@ -145,8 +117,7 @@
 		</thead>
 		<tbody>
 		<c:choose>
-			<c:when
-					test="${not empty bpaApplication.additionalRejectReasonsTemp}">
+			<c:when	test="${not empty bpaApplication.additionalRejectReasonsTemp}">
 				<c:forEach var="addnlPermitCondition"
 						   items="${bpaApplication.additionalRejectReasonsTemp}"
 						   varStatus="addnlPCStatus">
@@ -155,40 +126,22 @@
 								path="additionalRejectReasonsTemp[${addnlPCStatus.index}].application"
 								value="${bpaApplication.id}" />
 							<form:hidden id="additionalPermitCondition"
-										 path="additionalRejectReasonsTemp[${addnlPCStatus.index}].permitCondition" />
+										 path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition.checklistServicetype" 
+										 value="${addnlPermitCondition.noticeCondition.checklistServicetype.id}"/>
 							<form:hidden
-									path="additionalRejectReasonsTemp[${addnlPCStatus.index}].permitConditionType"
-									value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
+									path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition.type"
+									value="ADDITIONALREJECTIONREASONS" /> <form:hidden
 									class="serialNo"
-									path="additionalRejectReasonsTemp[${addnlPCStatus.index}].orderNumber"
-									value="${addnlPermitCondition.orderNumber}" />
+									path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition.orderNumber"
+									value="${addnlPermitCondition.noticeCondition.orderNumber}" />
 							<c:out value="${addnlPCStatus.index+1}"></c:out></td>
 						<td><form:textarea
-								path="additionalRejectReasonsTemp[${addnlPCStatus.index}].additionalPermitCondition"
+								path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition.additionalCondition"
 								rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
-								class="form-control patternvalidation additionalPermitCondition" value=""></form:textarea></td>
+								class="form-control patternvalidation additionalPermitCondition"></form:textarea></td>
 					</tr>
 				</c:forEach>
 			</c:when>
-			<c:otherwise>
-				<tr>
-					<td class="text-center"><form:hidden
-							path="additionalRejectReasonsTemp[0].application"
-							value="${bpaApplication.id}" /> <form:hidden
-							id="additionalPermitCondition"
-							path="additionalRejectReasonsTemp[0].permitCondition"
-							value="${additionalPermitCondition.id}" /> <form:hidden
-							path="additionalRejectReasonsTemp[0].permitConditionType"
-							value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
-							class="serialNo"
-							path="additionalRejectReasonsTemp[0].orderNumber" value="1" />
-						1</td>
-					<td><form:textarea
-							path="additionalRejectReasonsTemp[0].additionalPermitCondition"
-							rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
-							class="form-control patternvalidation additionalPermitCondition" value=""></form:textarea></td>
-				</tr>
-			</c:otherwise>
 		</c:choose>
 		</tbody>
 	</table>

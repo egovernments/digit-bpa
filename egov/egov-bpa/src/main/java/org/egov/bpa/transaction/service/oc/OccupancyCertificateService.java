@@ -382,7 +382,7 @@ public class OccupancyCertificateService {
         List<OCNoticeConditions> additionalRejectReasons = new ArrayList<>();
         for (OCNoticeConditions addnlReason : oc.getAdditionalRejectReasonsTemp()) {
             addnlReason.setOc(oc);
-            if (addnlReason != null && addnlReason.getAdditionalCondition() != null)
+            if (addnlReason != null && addnlReason.getNoticeCondition().getAdditionalCondition() != null)
                 additionalRejectReasons.add(addnlReason);
         }
         oc.setRejectionReasons(oc.getRejectionReasonsTemp());

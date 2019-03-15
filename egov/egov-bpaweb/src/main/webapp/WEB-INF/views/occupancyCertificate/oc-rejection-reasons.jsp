@@ -72,58 +72,42 @@
 		<tbody>
 		<c:choose>
 			<c:when test="${not empty occupancyCertificate.rejectionReasonsTemp}">
-				<c:forEach var="rejectionReason"
-						   items="${occupancyCertificate.rejectionReasonsTemp}"
-						   varStatus="rejectPCStatus">
+				<c:forEach var="rejectionReason" items="${occupancyCertificate.rejectionReasonsTemp}" varStatus="rejectPCStatus">
 					<tr>
-						<td class="text-center"><form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].oc"
-								value="${occupancyCertificate.id}" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition"
-								value="${staticPermitCondition.noticeCondition.id}" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].type"
-								value="REJECTION_REASON" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].orderNumber"
-								value="${rejectPCStatus.index+1}" /> <c:out
-								value="${rejectPCStatus.index+1}"></c:out></td>
+						<td class="text-center">
+						<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].oc" value="${occupancyCertificate.id}" />
+						<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.checklistServicetype" value="${rejectionReason.noticeCondition.checklistServicetype.id}" />
+						<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.type" value="OCREJECTIONREASONS" />
+						<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.orderNumber" value="${rejectPCStatus.index+1}" />
+						<c:out value="${rejectPCStatus.index+1}"></c:out>
+						</td>
 						<c:choose>
-							<c:when test="${rejectionReason.required}">
-								<td class="text-center"><input type="checkbox"
-															   data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-															   name="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-															   class="rejectionReasons" checked="checked"
-															   value="${rejectionReason.required}" /></td>
+							<c:when test="${rejectionReason.noticeCondition.required}">
+								<td class="text-center"><input type="checkbox" data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+								                               name="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required" class="rejectionReasons" checked="checked" value="${rejectionReason.noticeCondition.required}" /></td>
 							</c:when>
 							<c:otherwise>
-								<td class="text-center"><input type="checkbox"
-															   data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-															   name="rejectionReasonsTemp[${rejectPCStatus.index}].required"
-															   class="rejectionReasons" value="${rejectionReason.required}" /></td>
+								<td class="text-center"><input type="checkbox" data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   name="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required" class="rejectionReasons" value="${rejectionReason.noticeCondition.required}" /></td>
 							</c:otherwise>
 						</c:choose>
-						<td class="view-content" style="font-size: 105%;"><c:out
-								value="${rejectionReason.noticeCondition.description}"></c:out></td>
+						<td class="view-content" style="font-size: 105%;">
+						<c:out value="${rejectionReason.noticeCondition.checklistServicetype.checklist.description}"></c:out></td>
 					</tr>
 				</c:forEach>
 			</c:when>
 			<c:otherwise>
-				<c:forEach var="rejectionReason" items="${rejectionReasons}"
-						   varStatus="rejectPCStatus">
+				<c:forEach var="rejectionReason" items="${rejectionReasons}" varStatus="rejectPCStatus">
 					<tr>
-						<td class="text-center"><form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].oc"
-								value="${occupancyCertificate.id}" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition"
-								value="${rejectionReason.id}" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].type"
-								value="REJECTION_REASON" /> <form:hidden
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].orderNumber"
-								value="${rejectPCStatus.index+1}" /> <c:out
-								value="${rejectPCStatus.index+1}"></c:out></td>
-						<td class="text-center"><form:checkbox
-								path="rejectionReasonsTemp[${rejectPCStatus.index}].required"
+						<td class="text-center">
+						<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].oc" value="${occupancyCertificate.id}" />
+						<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.checklistServicetype" value="${rejectionReason.id}" />
+						<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.type" value="OCREJECTIONREASONS" />
+						<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.orderNumber" value="${rejectPCStatus.index+1}" />
+						<c:out value="${rejectPCStatus.index+1}"></c:out></td>
+						<td class="text-center"><form:checkbox path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
 								class="rejectionReasons" /></td>
-						<td class="view-content" style="font-size: 105%;"><c:out value="${rejectionReason.description}"></c:out></td>
+						<td class="view-content" style="font-size: 105%;"><c:out value="${rejectionReason.checklist.description}"></c:out></td>
 					</tr>
 				</c:forEach>
 			</c:otherwise>
@@ -147,47 +131,35 @@
 		<c:choose>
 			<c:when
 					test="${not empty occupancyCertificate.additionalRejectReasonsTemp}">
-				<c:forEach var="addnlPermitCondition"
-						   items="${occupancyCertificate.additionalRejectReasonsTemp}"
+				<c:forEach var="addnlPermitCondition" items="${occupancyCertificate.additionalRejectReasonsTemp}"
 						   varStatus="addnlPCStatus">
 					<tr>
-						<td class="text-center"><form:hidden
-								path="additionalRejectReasonsTemp[${addnlPCStatus.index}].oc"
-								value="${occupancyCertificate.id}" />
-							<form:hidden id="additionalPermitCondition"
-										 path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition" />
-							<form:hidden
-									path="additionalRejectReasonsTemp[${addnlPCStatus.index}].type"
-									value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
-									class="serialNo"
-									path="additionalRejectReasonsTemp[${addnlPCStatus.index}].orderNumber"
-									value="${addnlPermitCondition.orderNumber}" />
+						<td class="text-center">
+						<form:hidden path="additionalRejectReasonsTemp[${addnlPCStatus.index}].oc" value="${occupancyCertificate.id}" />
+							<form:hidden id="additionalPermitCondition" path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition.checklistServicetype"
+							value="${addnlPermitCondition.noticeCondition.checklistServicetype.id}"/>
+							<form:hidden path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition.type" value="ADDITIONALREJECTIONREASONS" />
+							<form:hidden class="serialNo" path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition.orderNumber" value="${addnlPermitCondition.noticeCondition.orderNumber}" />
 							<c:out value="${addnlPCStatus.index+1}"></c:out></td>
-						<td><form:textarea
-								path="additionalRejectReasonsTemp[${addnlPCStatus.index}].additionalCondition"
+						<td><form:textarea path="additionalRejectReasonsTemp[${addnlPCStatus.index}].noticeCondition.additionalCondition"
 								rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
 								class="form-control patternvalidation additionalPermitCondition" value=""></form:textarea></td>
 					</tr>
 				</c:forEach>
 			</c:when>
 			<c:otherwise>
+			<c:forEach var="addnlRejectionReason" items="${additionalRejectionReasons}">
 				<tr>
-					<td class="text-center"><form:hidden
-							path="additionalRejectReasonsTemp[0].oc"
-							value="${occupancyCertificate.id}" /> <form:hidden
-							id="additionalPermitCondition"
-							path="additionalRejectReasonsTemp[0].noticeCondition"
-							value="${additionalPermitCondition.id}" /> <form:hidden
-							path="additionalRejectReasonsTemp[0].type"
-							value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
-							class="serialNo"
-							path="additionalRejectReasonsTemp[0].orderNumber" value="1" />
+					<td class="text-center">
+					<form:hidden path="additionalRejectReasonsTemp[0].oc" value="${occupancyCertificate.id}" />
+					<form:hidden id="additionalPermitCondition" path="additionalRejectReasonsTemp[0].noticeCondition.checklistServicetype" value="${addnlRejectionReason.id}" />
+					<form:hidden path="additionalRejectReasonsTemp[0].noticeCondition.type" value="ADDITIONALREJECTIONREASONS" />
+					<form:hidden class="serialNo" path="additionalRejectReasonsTemp[0].noticeCondition.orderNumber" value="1" />
 						1</td>
-					<td><form:textarea
-							path="additionalRejectReasonsTemp[0].additionalCondition"
-							rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
+					<td><form:textarea path="additionalRejectReasonsTemp[0].noticeCondition.additionalCondition" rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
 							class="form-control patternvalidation additionalPermitCondition" value=""></form:textarea></td>
 				</tr>
+			</c:forEach>
 			</c:otherwise>
 		</c:choose>
 		</tbody>

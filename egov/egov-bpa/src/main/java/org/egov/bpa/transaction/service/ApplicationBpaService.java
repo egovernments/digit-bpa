@@ -382,7 +382,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             application.getAdditionalPermitConditions().clear();
             List<ApplicationPermitConditions> additionalPermitConditions = new ArrayList<>();
             for (ApplicationPermitConditions addnlCondition : application.getAdditionalPermitConditionsTemp()) {
-                if (addnlCondition != null && addnlCondition.getAdditionalPermitCondition() != null)
+                if (addnlCondition != null && addnlCondition.getNoticeCondition().getAdditionalCondition() != null)
                     additionalPermitConditions.add(addnlCondition);
             }
             application.setDynamicPermitConditions(application.getDynamicPermitConditionsTemp());
@@ -399,7 +399,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         List<ApplicationPermitConditions> additionalRejectReasons = new ArrayList<>();
         for (ApplicationPermitConditions addnlReason : application.getAdditionalRejectReasonsTemp()) {
             addnlReason.setApplication(application);
-            if (addnlReason != null && addnlReason.getAdditionalPermitCondition() != null)
+            addnlReason.getNoticeCondition().setChecklistServicetype(application.getAdditionalRejectReasonsTemp().get(0).getNoticeCondition().getChecklistServicetype());
+            if (addnlReason != null && addnlReason.getNoticeCondition().getAdditionalCondition() != null)
                 additionalRejectReasons.add(addnlReason);
         }
         application.setRejectionReasons(application.getRejectionReasonsTemp());

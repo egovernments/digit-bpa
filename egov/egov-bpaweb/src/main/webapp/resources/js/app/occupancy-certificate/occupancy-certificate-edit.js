@@ -58,8 +58,11 @@ jQuery(document)
             }
 
             var row = '<tr>' +
-                '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalRejectReasonsTemp[{{idx}}].oc" value="{{applicationId}}" /><input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].type" value="ADDITIONAL_PERMITCONDITION"/><input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition" value="{{permitConditionId}}"/><input type="hidden" class="serialNo" data-sno name="additionalRejectReasonsTemp[{{idx}}].orderNumber"/></td>' +
-                '<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalRejectReasonsTemp[{{idx}}].additionalCondition"/></td>';
+                '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalRejectReasonsTemp[{{idx}}].oc" value="{{applicationId}}" />'
+                +'<input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.type" value="ADDITIONALREJECTIONREASONS"/>'
+                +'<input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.checklistServicetype" value="{{permitConditionId}}"/>'
+                +'<input type="hidden" class="serialNo" data-sno name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.orderNumber"/></td>' +
+                '<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.additionalCondition"/></td>';
 
             var tbody = $('#bpaAdditionalRejectionReasons').children('tbody');
             var table = tbody.length ? tbody : $('#bpaAdditionalRejectionReasons');

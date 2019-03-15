@@ -73,7 +73,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.Response;
 import org.egov.bpa.transaction.entity.common.NoticeCommon;
-import org.egov.bpa.transaction.entity.enums.PermitConditionType;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.entity.oc.OCNotice;
 import org.egov.bpa.transaction.entity.oc.OCNoticeConditions;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
@@ -235,7 +235,7 @@ public class OCNoticeUtil {
         StringBuilder rejectReasons = new StringBuilder();
         if (!oc.getRejectionReasons().isEmpty()) {
             List<OCNoticeConditions> additionalPermitConditions = ocNoticeConditionsService
-                    .findAllOcConditionsByOcAndType(oc, PermitConditionType.ADDITIONAL_PERMITCONDITION);
+                    .findAllOcConditionsByOcAndType(oc, ConditionType.ADDITIONALCONDITIONS);
             int order = buildPredefinedRejectReasons(oc, rejectReasons);
             int additionalOrder = buildAdditionalNoticeConditions(rejectReasons, additionalPermitConditions,
                     order);
@@ -260,10 +260,10 @@ public class OCNoticeUtil {
             StringBuilder permitConditions) {
         int order = 1;
         for (OCNoticeConditions rejectReason : oc.getRejectionReasons()) {
-            if (rejectReason.isRequired()
-                    && PermitConditionType.REJECTION_REASON.equals(rejectReason.getType())) {
+            if (rejectReason.getNoticeCondition().isRequired()
+                    && ConditionType.OCREJECTIONREASONS.equals(rejectReason.getNoticeCondition().getType())) {
                 permitConditions
-                        .append(String.valueOf(order) + ") " + rejectReason.getNoticeCondition().getDescription() + TWO_NEW_LINE);
+                        .append(String.valueOf(order) + ") " + rejectReason.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription() + TWO_NEW_LINE);
                 order++;
             }
         }
@@ -274,11 +274,11 @@ public class OCNoticeUtil {
             List<OCNoticeConditions> additionalConditions, int order) {
         int additionalOrder = order;
         if (!additionalConditions.isEmpty()
-                && isNotBlank(additionalConditions.get(0).getAdditionalCondition())) {
+                && isNotBlank(additionalConditions.get(0).getNoticeCondition().getAdditionalCondition())) {
             for (OCNoticeConditions addnlNoticeCondition : additionalConditions) {
-                if (isNotBlank(addnlNoticeCondition.getAdditionalCondition())) {
+                if (isNotBlank(addnlNoticeCondition.getNoticeCondition().getAdditionalCondition())) {
                     permitConditions.append(
-                            String.valueOf(additionalOrder) + ") " + addnlNoticeCondition.getAdditionalCondition()
+                            String.valueOf(additionalOrder) + ") " + addnlNoticeCondition.getNoticeCondition().getAdditionalCondition()
                                     + TWO_NEW_LINE);
                     additionalOrder++;
                 }

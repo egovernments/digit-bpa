@@ -76,23 +76,18 @@
 							   items="${bpaApplication.dynamicPermitConditionsTemp}"
 							   varStatus="modifyPCStatus">
 						<tr>
-							<td><form:hidden
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].application"
-									value="${bpaApplication.id}" /> <form:hidden
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitCondition"
-									value="${modifiablePermitCondition.permitCondition.id}" /> <form:hidden
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionType"
-									value="DYNAMIC_PERMITCONDITION" /> <form:hidden
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].orderNumber"
-									value="${modifyPCStatus.index+1}" /> <c:out
-									value="${modifyPCStatus.index+1}"></c:out></td>
+							<td><form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].application" value="${bpaApplication.id}" />
+							 <form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.checklistServicetype" value="${modifiablePermitCondition.noticeCondition.checklistServicetype.id}" />
+							 <form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.type" value="NOCCONDITIONS" />
+							 <form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.orderNumber" value="${modifyPCStatus.index+1}" /> 
+							 <c:out value="${modifyPCStatus.index+1}"></c:out></td>
 							<c:choose>
-								<c:when test="${modifiablePermitCondition.required}">
+								<c:when test="${modifiablePermitCondition.noticeCondition.required}">
 									<td><input type="checkbox"
-											   data-change-to="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
-											   name="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
+											   data-change-to="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.required"
+											   name="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.required"
 											   class="modifiablePermitConditions" checked="checked"
-											   value="${modifiablePermitCondition.required}" /></td>
+											   value="${modifiablePermitCondition.noticeCondition.required}" /></td>
 								</c:when>
 								<c:otherwise>
 									<td><input type="checkbox"
@@ -103,13 +98,13 @@
 								</c:otherwise>
 							</c:choose>
 							<td class="view-content" style="font-size: 97%;"><c:out
-									value="${modifiablePermitCondition.permitCondition.description}"></c:out></td>
+									value="${modifiablePermitCondition.noticeCondition.checklistServicetype.checklist.description}"></c:out></td>
 							<td><form:input
 									class="form-control permitConditionNumber addremovemandatory" maxlength="30"
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionNumber" /><span
+									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditionNumber" /><span
 									class="error-msg display-hide">Required</span></td>
 							<td><form:input
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditiondDate"
+									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditiondDate"
 									class="form-control datepicker permitConditiondDate addremovemandatory"
 									data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" /><span
 									class="error-msg display-hide">Required</span></td>
@@ -120,29 +115,23 @@
 					<c:forEach var="modifiablePermitCondition"
 							   items="${modifiablePermitConditions}" varStatus="modifyPCStatus">
 						<tr>
-							<td><form:hidden
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].application"
-									value="${bpaApplication.id}" /> <form:hidden
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitCondition"
-									value="${modifiablePermitCondition.id}" /> <form:hidden
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionType"
-									value="DYNAMIC_PERMITCONDITION" /> <form:hidden
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].orderNumber"
-									value="${modifyPCStatus.index+1}" /> <c:out
-									value="${modifyPCStatus.index+1}"></c:out></td>
-							<td class="view-content" style="font-size: 97%;"><form:checkbox
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
-									id="modifiablePermitConditions"
-									class="modifiablePermitConditions" checked="checked"></form:checkbox></td>
-							<td class="view-content" style="font-size: 97%;"><c:out value="${modifiablePermitCondition.description}"></c:out>
+							<td><form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].application" value="${bpaApplication.id}" /> 
+							<form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.checklistServicetype" value="${modifiablePermitCondition.id}" />
+							<form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.type" value="NOCCONDITIONS" /> 
+							<form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.orderNumber" value="${modifyPCStatus.index+1}" /> 
+							<c:out value="${modifyPCStatus.index+1}"></c:out></td>
+							<td class="view-content" style="font-size: 97%;">
+							<form:checkbox path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.required"
+									id="modifiablePermitConditions" class="modifiablePermitConditions" checked="checked"></form:checkbox></td>
+							<td class="view-content" style="font-size: 97%;"><c:out value="${modifiablePermitCondition.checklist.description}"></c:out>
 							</td>
 							<td><form:input
 									class="form-control permitConditionNumber addremovemandatory"
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionNumber"
+									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditionNumber"
 									required="true" maxlength="30" /><span class="error-msg display-hide">Required</span>
 							</td>
 							<td><form:input
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditiondDate"
+									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditiondDate"
 									class="form-control datepicker permitConditiondDate addremovemandatory"
 									data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"
 									required="true" /><span class="error-msg display-hide">Required</span></td>
@@ -172,34 +161,29 @@
 							   items="${bpaApplication.staticPermitConditionsTemp}"
 							   varStatus="staticPCStatus">
 						<tr>
-							<td><form:hidden
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].application"
-									value="${bpaApplication.id}" /> <form:hidden
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].permitCondition"
-									value="${staticPermitCondition.permitCondition.id}" /> <form:hidden
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].permitConditionType"
-									value="STATIC_PERMITCONDITION" /> <form:hidden
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].orderNumber"
-									value="${staticPCStatus.index+1}" /> <c:out
-									value="${staticPCStatus.index+1}"></c:out></td>
+							<td><form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].application" value="${bpaApplication.id}" />
+							 <form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.checklistServicetype" value="${staticPermitCondition.noticeCondition.checklistServicetype.id}" />
+							 <form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.type" value="GENERALCONDITIONS" />
+							 <form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.orderNumber" value="${staticPCStatus.index+1}" /> 
+							 <c:out value="${staticPCStatus.index+1}"></c:out></td>
 							<c:choose>
-								<c:when test="${staticPermitCondition.required}">
+								<c:when test="${staticPermitCondition.noticeCondition.required}">
 									<td><input type="checkbox"
-											   data-change-to="staticPermitConditionsTemp[${staticPCStatus.index}].required"
-											   name="staticPermitConditionsTemp[${staticPCStatus.index}].required"
+											   data-change-to="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.required"
+											   name="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.required"
 											   class="staticPermitConditions" checked="checked"
-											   value="${staticPermitCondition.required}" /></td>
+											   value="${staticPermitCondition.noticeCondition.required}" /></td>
 								</c:when>
 								<c:otherwise>
 									<td><input type="checkbox"
-											   data-change-to="staticPermitConditionsTemp[${staticPCStatus.index}].required"
-											   name="staticPermitConditionsTemp[${staticPCStatus.index}].required"
+											   data-change-to="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.required"
+											   name="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.required"
 											   class="staticPermitConditions"
-											   value="${staticPermitCondition.required}" /></td>
+											   value="${staticPermitCondition.noticeCondition.required}" /></td>
 								</c:otherwise>
 							</c:choose>
 							<td class="view-content" style="font-size: 97%;"><c:out
-									value="${staticPermitCondition.permitCondition.description}"></c:out></td>
+									value="${staticPermitCondition.noticeCondition.checklistServicetype.checklist.description}"></c:out></td>
 						</tr>
 					</c:forEach>
 				</c:when>
@@ -207,20 +191,14 @@
 					<c:forEach var="staticPermitCondition" items="${permitConditions}"
 							   varStatus="staticPCStatus">
 						<tr>
-							<td><form:hidden
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].application"
-									value="${bpaApplication.id}" /> <form:hidden
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].permitCondition"
-									value="${staticPermitCondition.id}" /> <form:hidden
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].permitConditionType"
-									value="STATIC_PERMITCONDITION" /> <form:hidden
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].orderNumber"
-									value="${staticPCStatus.index+1}" /> <c:out
-									value="${staticPCStatus.index+1}"></c:out></td>
-							<td><form:checkbox
-									path="staticPermitConditionsTemp[${staticPCStatus.index}].required"
+							<td><form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].application"	value="${bpaApplication.id}" />
+							 <form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.checklistServicetype" value="${staticPermitCondition.id}" />
+							 <form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.type" value="GENERALCONDITIONS" />
+							 <form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.orderNumber" value="${staticPCStatus.index+1}" />
+							 <c:out value="${staticPCStatus.index+1}"></c:out></td>
+							<td><form:checkbox path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.required"
 									class="staticPermitConditions" checked="checked" /></td>
-							<td class="view-content" style="font-size: 97%;"><c:out value="${staticPermitCondition.description}"></c:out>
+							<td class="view-content" style="font-size: 97%;"><c:out value="${staticPermitCondition.checklist.description}"></c:out>
 							</td>
 						</tr>
 					</c:forEach>
@@ -254,39 +232,36 @@
 								path="additionalPermitConditionsTemp[${addnlPCStatus.index}].application"
 								value="${bpaApplication.id}" />
 							<form:hidden id="additionalPermitCondition"
-										 path="additionalPermitConditionsTemp[${addnlPCStatus.index}].permitCondition" />
+										 path="additionalPermitConditionsTemp[${addnlPCStatus.index}].noticeCondition.checklistServicetype" />
 							<form:hidden
-									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].permitConditionType"
-									value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].noticeCondition.type"
+									value="ADDITIONALCONDITIONS" /> <form:hidden
 									class="orderNo"
-									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].orderNumber"
-									value="${addnlPermitCondition.orderNumber}" />
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].noticeCondition.orderNumber"
+									value="${addnlPermitCondition.noticeCondition.orderNumber}" />
 							<c:out value="${addnlPCStatus.index+1}"></c:out></td>
 						<td><form:textarea
-								path="additionalPermitConditionsTemp[${addnlPCStatus.index}].additionalPermitCondition"
+								path="additionalPermitConditionsTemp[${addnlPCStatus.index}].noticeCondition.additionalCondition"
 								rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
 								class="form-control patternvalidation additionalPermitCondition" value=""></form:textarea></td>
 					</tr>
 				</c:forEach>
 			</c:when>
 			<c:otherwise>
+			<c:forEach var="additionalPermitCondition" items="${additionalPermitCondition}">
 				<tr>
-					<td class="text-center"><form:hidden
-							path="additionalPermitConditionsTemp[0].application"
-							value="${bpaApplication.id}" /> <form:hidden
-							id="additionalPermitCondition"
-							path="additionalPermitConditionsTemp[0].permitCondition"
-							value="${additionalPermitCondition.id}" /> <form:hidden
-							path="additionalPermitConditionsTemp[0].permitConditionType"
-							value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
-							class="orderNo"
-							path="additionalPermitConditionsTemp[0].orderNumber" value="1" />
+					<td class="text-center"><form:hidden path="additionalPermitConditionsTemp[0].application"
+							value="${bpaApplication.id}" /> 
+							<form:hidden id="additionalPermitCondition" path="additionalPermitConditionsTemp[0].noticeCondition.checklistServicetype" value="${additionalPermitCondition.id}" />
+							<form:hidden path="additionalPermitConditionsTemp[0].noticeCondition.type" value="ADDITIONALCONDITIONS" />
+							<form:hidden class="orderNo" path="additionalPermitConditionsTemp[0].noticeCondition.orderNumber" value="1" />
 						1</td>
 					<td><form:textarea
-							path="additionalPermitConditionsTemp[0].additionalPermitCondition"
+							path="additionalPermitConditionsTemp[0].noticeCondition.additionalCondition"
 							rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
 							class="form-control patternvalidation additionalPermitCondition" value=""></form:textarea></td>
 				</tr>
+				</c:forEach>
 			</c:otherwise>
 		</c:choose>
 		</tbody>

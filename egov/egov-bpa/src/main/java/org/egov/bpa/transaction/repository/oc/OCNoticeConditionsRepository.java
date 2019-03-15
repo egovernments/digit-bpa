@@ -48,16 +48,20 @@ package org.egov.bpa.transaction.repository.oc;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.enums.PermitConditionType;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.entity.oc.OCNoticeConditions;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OCNoticeConditionsRepository extends JpaRepository<OCNoticeConditions, Long> {
-	List<OCNoticeConditions> findByTypeOrderByOrderNumberAsc(PermitConditionType conditionType);
+	
+	@Query("select onc from OCNoticeConditions onc where onc.noticeCondition.type = :conditionType")
+	List<OCNoticeConditions> findByTypeOrderByOrderNumberAsc(@Param("conditionType") ConditionType conditionType);
 
-	List<OCNoticeConditions> findByOcAndTypeOrderByOrderNumberAsc(OccupancyCertificate oc,
-			PermitConditionType conditionType);
+	@Query("select onc from OCNoticeConditions onc where onc.noticeCondition.type = :conditionType and onc.oc = :oc ")
+	List<OCNoticeConditions> findByOcAndTypeOrderByOrderNumberAsc(@Param("oc") OccupancyCertificate oc, @Param("conditionType") ConditionType conditionType);
 }

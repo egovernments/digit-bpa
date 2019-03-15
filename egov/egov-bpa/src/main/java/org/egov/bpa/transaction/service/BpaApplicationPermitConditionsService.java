@@ -51,7 +51,7 @@ import java.util.List;
 
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.enums.PermitConditionType;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.repository.BpaApplicationPermitConditionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,14 +64,13 @@ public class BpaApplicationPermitConditionsService {
     @Autowired
     private BpaApplicationPermitConditionsRepository bpaApplicationPermitConditionsRepository;
 
-    public List<ApplicationPermitConditions> findAllByPermitConditionType(PermitConditionType type) {
-        return bpaApplicationPermitConditionsRepository.findByPermitConditionTypeOrderByOrderNumberAsc(type);
+    public List<ApplicationPermitConditions> findAllByPermitConditionType(ConditionType type) {
+        return bpaApplicationPermitConditionsRepository.findByConditionTypeOrderByOrderNumberAsc(type);
     }
 
     public List<ApplicationPermitConditions> findAllByApplicationAndPermitConditionType(BpaApplication application,
-            PermitConditionType type) {
-        return bpaApplicationPermitConditionsRepository.findByApplicationAndPermitConditionTypeOrderByOrderNumberAsc(application,
-                type);
+            ConditionType type) {
+        return bpaApplicationPermitConditionsRepository.findByConditionTypeOrderByOrderNumberAsc(type,application);
     }
 
     @Transactional

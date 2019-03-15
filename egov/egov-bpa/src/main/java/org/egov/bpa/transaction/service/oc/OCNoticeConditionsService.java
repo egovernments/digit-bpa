@@ -49,7 +49,7 @@ package org.egov.bpa.transaction.service.oc;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.enums.PermitConditionType;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.entity.oc.OCNoticeConditions;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.repository.oc.OCNoticeConditionsRepository;
@@ -64,11 +64,11 @@ public class OCNoticeConditionsService {
 	@Autowired
 	private OCNoticeConditionsRepository ocNoticeConditionsRepository;
 
-	public List<OCNoticeConditions> findAllOcConditionsByType(PermitConditionType type) {
+	public List<OCNoticeConditions> findAllOcConditionsByType(ConditionType type) {
 		return ocNoticeConditionsRepository.findByTypeOrderByOrderNumberAsc(type);
 	}
 
-	public List<OCNoticeConditions> findAllOcConditionsByOcAndType(OccupancyCertificate oc, PermitConditionType type) {
+	public List<OCNoticeConditions> findAllOcConditionsByOcAndType(OccupancyCertificate oc, ConditionType type) {
 		return ocNoticeConditionsRepository.findByOcAndTypeOrderByOrderNumberAsc(oc, type);
 	}
 

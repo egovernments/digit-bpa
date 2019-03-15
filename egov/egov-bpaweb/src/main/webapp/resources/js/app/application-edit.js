@@ -59,8 +59,12 @@ jQuery(document)
             var tbody = $('#bpaAdditionalPermitConditions').children('tbody');
             var table = tbody.length ? tbody : $('#bpaAdditionalPermitConditions');
             var row = '<tr>' +
-                '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].application" value="{{applicationId}}" /><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitConditionType" value="ADDITIONAL_PERMITCONDITION"/><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitCondition" value="{{permitConditionId}}"/><input type="hidden" class="serialNo" data-sno name="additionalPermitConditionsTemp[{{idx}}].orderNumber"/></td>' +
-                '<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalPermitConditionsTemp[{{idx}}].additionalPermitCondition"/></td>';
+                '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span>'
+                +'<input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].application" value="{{applicationId}}" />'
+                +'<input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].noticeCondition.checklistServicetype" value="{{permitConditionId}}" />'
+                +'<input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].noticeCondition.type" value="ADDITIONALCONDITIONS"/>'
+                +'<input type="hidden" class="serialNo" data-sno name="additionalPermitConditionsTemp[{{idx}}].noticeCondition.orderNumber"/></td>' 
+                +'<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalPermitConditionsTemp[{{idx}}].noticeCondition.additionalCondition"/></td>';
 
 
             $('#addAddnlPermitRow').click(function () {
@@ -81,8 +85,12 @@ jQuery(document)
             var tbody1 = $('#bpaAdditionalRejectionReasons').children('tbody');
             var table1 = tbody1.length ? tbody1 : $('#bpaAdditionalRejectionReasons');
             var row1 = '<tr>' +
-                '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalRejectReasonsTemp[{{idx}}].application" value="{{applicationId}}" /><input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].permitConditionType" value="ADDITIONAL_PERMITCONDITION"/><input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].permitCondition" value="{{permitConditionId}}"/><input type="hidden" class="serialNo" data-sno name="additionalRejectReasonsTemp[{{idx}}].orderNumber"/></td>' +
-                '<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalRejectReasonsTemp[{{idx}}].additionalPermitCondition"/></td>';
+                '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span>'
+                +'<input type="hidden" name="additionalRejectReasonsTemp[{{idx}}].application" value="{{applicationId}}" />'
+                +'<input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].noticeCondition.checklistServicetype" value="{{permitConditionId}}" />'
+                +'<input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.type" value="ADDITIONALREJECTIONREASONS"/>'
+                +'<input type="hidden" class="serialNo" data-sno name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.orderNumber"/></td>' 
+                +'<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.additionalCondition"/></td>';
             $('#addAddnlRejectRow').click(function () {
                 var idx = $(tbody1).find('tr').length;
                 if(validateAdditionalConditionsOrReasonsOnAdd('bpaAdditionalRejectionReasons')) {
@@ -92,6 +100,7 @@ jQuery(document)
                         'idx': idx,
                         'permitConditionId': $('#additionalPermitCondition').val(),
                         'applicationId': $('#scrutinyapplicationid').val()
+                        
                     };
                     addRowFromObject1(row);
                     patternvalidation();
@@ -101,7 +110,7 @@ jQuery(document)
             function validateAdditionalConditionsOrReasonsOnAdd(tableId){
             	var isValid=true;
                 $('#'+tableId+' tbody tr').each(function(index){
-                	var additionalPermitCondition  = $(this).find('*[name$="additionalPermitCondition"]').val();
+                	var additionalPermitCondition  = $(this).find('*[name$="additionalCondition"]').val();
             	    if(!additionalPermitCondition) { 
             	    	bootbox.alert($('#valuesCannotEmpty').val());
             	    	isValid=false;
@@ -296,9 +305,7 @@ jQuery(document)
                                                 label: 'Yes',
                                                 className: 'btn-primary',
                                                 callback: function (result) {
-                                                	e.stopPropagation();
-                                                    e.preventDefault();
-                                                   // $('#viewBpaApplicationForm').trigger('submit');
+                                                    $('#viewBpaApplicationForm').trigger('submit');
                                                 }
                                             },
                                             'cancel': {

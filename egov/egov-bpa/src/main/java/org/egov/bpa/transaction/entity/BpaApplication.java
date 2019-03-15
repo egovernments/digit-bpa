@@ -238,16 +238,16 @@ public class BpaApplication extends StateAware<Position> {
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("number ASC")
     private List<ExistingBuildingDetail> existingBuildingDetails = new ArrayList<>(0);
-    @OrderBy(ORDER_BY_NUMBER_ASC)
+    @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationPermitConditions> dynamicPermitConditions = new ArrayList<>(0);
-    @OrderBy(ORDER_BY_NUMBER_ASC)
+    @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationPermitConditions> staticPermitConditions = new ArrayList<>(0);
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationPermitConditions> additionalPermitConditions = new ArrayList<>(0);
-    @OrderBy(ORDER_BY_NUMBER_ASC)
+    @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationPermitConditions> rejectionReasons = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
