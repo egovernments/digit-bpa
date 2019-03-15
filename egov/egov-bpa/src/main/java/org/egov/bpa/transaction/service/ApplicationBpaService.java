@@ -422,8 +422,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (!application.getBuildingSubUsages().isEmpty())
             for (BuildingSubUsage subUsage : application.getBuildingSubUsages())
                 for (BuildingSubUsageDetails subUsageDetails : subUsage.getSubUsageDetails()) {
-                    subUsageDetails.getSubUsages().clear();
-                    subUsageDetails.setSubUsages(subUsageDetails.getSubUsagesTemp());
+                	if(!subUsageDetails.getSubUsagesTemp().isEmpty()) {
+                		subUsageDetails.getSubUsages().clear();
+                        subUsageDetails.setSubUsages(subUsageDetails.getSubUsagesTemp());
+                	}
                 }
 
         buildBuildingSubUsage(application);
