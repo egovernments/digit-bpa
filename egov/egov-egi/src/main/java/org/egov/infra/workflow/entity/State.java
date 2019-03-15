@@ -48,14 +48,14 @@
 
 package org.egov.infra.workflow.entity;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.JsonUtils;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.egov.infra.workflow.entity.State.SEQ_STATE;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -69,12 +69,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.egov.infra.workflow.entity.State.SEQ_STATE;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.JsonUtils;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EG_WF_STATES")
@@ -109,8 +113,8 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.LAZY, mappedBy = "state", targetEntity = StateHistory.class)
+    @OneToMany(cascade = { CascadeType.PERSIST,
+            CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "state", targetEntity = StateHistory.class)
     @OrderBy("id")
     private Set<StateHistory<T>> history = new HashSet<>();
 
@@ -154,8 +158,12 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @JoinColumn(name = "previousStateRef")
     private State<T> previousStateRef;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date sla;
+
     protected State() {
-        //Explicit state initialization not allowed
+        // Explicit state initialization not allowed
     }
 
     @Override
@@ -315,6 +323,14 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
 
     public <S> S extraInfoAs(Class<S> type) {
         return JsonUtils.fromJSON(getExtraInfo(), type);
+    }
+
+    public Date getSla() {
+        return sla;
+    }
+
+    public void setSla(Date sla) {
+        this.sla = sla;
     }
 
     public enum StateStatus {

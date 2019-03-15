@@ -48,9 +48,10 @@
 
 package org.egov.infra.workflow.entity;
 
-import org.egov.infra.admin.master.entity.User;
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -63,8 +64,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
+
+import org.egov.infra.admin.master.entity.User;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Immutable
@@ -118,6 +120,10 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
     @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "INITIATOR_POS")
     private T initiatorPosition;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date sla;
 
     StateHistory() {
     }
@@ -275,6 +281,14 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
 
     public void setInitiatorPosition(T initiatorPosition) {
         this.initiatorPosition = initiatorPosition;
+    }
+
+    public Date getSla() {
+        return sla;
+    }
+
+    public void setSla(Date sla) {
+        this.sla = sla;
     }
 
 }

@@ -472,6 +472,9 @@ function worklist() {
                 "targets": 4
             }
         ],
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+        },
         "fnInitComplete": function (oSettings, json) {
             response_json = JSON.stringify(json);
             if (JSON.parse(response_json).length != 0) {
@@ -578,7 +581,10 @@ function drafts() {
                 },
                 "targets": 4
             }
-        ]
+        ],
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+        },
     });
 }
 
@@ -606,6 +612,9 @@ function worklistwrtnow(json) {
         "aaSorting": [],
         "autoWidth": false,
         "data": json,
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+        },
         "columns": [
             {"data": "date", "width": "16%"},
             {"data": "sender", "width": "15%"},

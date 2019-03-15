@@ -48,7 +48,21 @@
 
 package org.egov.infra.workflow.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -57,20 +71,9 @@ import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
+import org.joda.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @MappedSuperclass
 public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable {
@@ -85,8 +88,7 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
     private Transition transition;
 
     /**
-     * Need to overridden by the implementing class to give details about the State
-     * <I>Used by Inbox to fetch the State Detail at
+     * Need to overridden by the implementing class to give details about the State <I>Used by Inbox to fetch the State Detail at
      * runtime</I>
      *
      * @return String Detail
@@ -166,10 +168,9 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
     }
 
     protected StateInfoBuilder buildStateInfo() {
-        return new StateInfoBuilder().task(this.getState().getNatureOfTask()).
-                itemDetails(this.getStateDetails()).status(getCurrentState().getStatus().name()).
-                refDate(this.getCreatedDate()).sender(this.getState().getSenderName()).
-                senderPhoneno(this.getState().getExtraInfo());
+        return new StateInfoBuilder().task(this.getState().getNatureOfTask()).itemDetails(this.getStateDetails())
+                .status(getCurrentState().getStatus().name()).refDate(getCreatedDate()).sender(this.getState().getSenderName())
+                .senderPhoneno(this.getState().getExtraInfo());
     }
 
     public String getStateInfoJson() {
@@ -334,6 +335,20 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
             return this;
         }
 
+        public final Transition withSLA(Date slaDate) {
+            checkTransitionStatus();
+            state.setSla(slaDate);
+            return this;
+        }
+        
+        public final Transition withSLA(int slaDays) {
+            return withSLA(new LocalDateTime().plusDays(slaDays).toDate());
+        }
+
+        public final Transition withSLAHours(int slaHours) {
+            return withSLA(new LocalDateTime().plusHours(slaHours).toDate());
+        }
+
         private void resetState() {
             state.setComments(EMPTY);
             state.setDateInfo(null);
@@ -346,6 +361,7 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
             state.setOwnerUser(null);
             state.setOwnerPosition(null);
             state.setInitiatorPosition(null);
+            state.setSla(null);
         }
 
     }

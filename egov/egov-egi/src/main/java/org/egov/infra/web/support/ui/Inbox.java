@@ -48,20 +48,23 @@
 
 package org.egov.infra.web.support.ui;
 
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.entity.WorkflowTypes;
-
-import java.util.Date;
-
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
 
-public class Inbox {
+import java.io.Serializable;
+import java.util.Date;
+
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.entity.WorkflowTypes;
+
+public class Inbox implements Serializable {
+    private static final long serialVersionUID = 5490133352834240110L;
     private String id;
     private String sender;
     private String date;
@@ -72,9 +75,10 @@ public class Inbox {
     private String moduleName;
     private Date createdDate;
     private boolean draft;
+    private Date sla;
 
     public Inbox() {
-        //Default constructor for external inbox integration
+        // Default constructor for external inbox integration
     }
 
     private Inbox(StateAware stateAware, WorkflowTypes workflowTypes, String nextAction) {
@@ -89,6 +93,7 @@ public class Inbox {
         setModuleName(workflowTypes.getModule().getDisplayName());
         setCreatedDate(state.getCreatedDate());
         setDraft(state.isNew() && state.getCreatedBy().getId().equals(getUserId()));
+        sla = state.getSla();
     }
 
     private Inbox(StateHistory stateHistory, WorkflowTypes workflowTypes) {
@@ -190,5 +195,9 @@ public class Inbox {
 
     public void setDraft(final boolean draft) {
         this.draft = draft;
+    }
+
+    public boolean isWithinSla() {
+        return sla == null || sla.after(DateUtils.now());
     }
 }
