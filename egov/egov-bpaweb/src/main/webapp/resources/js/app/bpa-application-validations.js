@@ -772,18 +772,6 @@ $(document).ready(function() {
         $('#applicationTypeSec').hide();
     }
     
-    $(document).on('change',"#occupancyapplnlevel",function () {
-        //$('.amenityHideShow').show();
-        //resetValuesForAmenitiesOfOneDayPermit();
-        if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
-            $('#applicationTypeSec').show();
-        } else {
-           
-            $('#applicationTypeSec').hide();
-        }
-        //hideAndShowEdcrDetails();
-    });
-    
     
     function hideAndShowEdcrDetails() {
         if( serviceTypeName && ('New Construction' === serviceTypeName || ('Addition or Extension' === serviceTypeName && $('#isOneDayPermitApplication').is(':checked')))
@@ -885,7 +873,6 @@ $(document).ready(function() {
             $('.amenityHideShow').hide();*/
 
         if($("#occupancyapplnlevel option:selected" ).text() == 'Residential') {
-            $('#applicationTypeSec').show();
             if($('#isOneDayPermitApplication').is(':checked')) {
                 $('#applicationTypeSec').hide();
                 $('#applicationType').attr('required',false);
@@ -964,6 +951,18 @@ $(document).ready(function() {
     });
 
 });
+
+$('#applicationType').on('change', function() {
+	if(($("#applicationType option:selected" ).text() == 'Select' || $("#applicationType option:selected" ).text() == '') && $("#occupancyapplnlevel option:selected" ).text() == 'Residential') {
+        $('#oneDayPermitSec').show();
+        $('#applicationType').attr('required',false);
+	}
+	else{
+        $('#oneDayPermitSec').hide();
+        $('#applicationType').attr('required',true);
+	}
+});
+
 
 function hideRegularization() {
 	$('#constDiv').hide();

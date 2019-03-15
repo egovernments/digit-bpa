@@ -47,6 +47,7 @@
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
@@ -71,19 +72,13 @@
 							<form:select path="bpaFeeCommon.code" id="code"
 								cssClass="form-control" cssErrorClass="form-control error"
 								required="required">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${bpaFeeList}" itemValue="code"
-									itemLabel="code" />
-							</form:select>
+						<option value=""><spring:message code="lbl.select" /></option>
+							<c:forEach items="${bpaFeeList}" var="fee">
+								<option value="${fee.code}" >${fee.code} ~ ${fee.name}</option>
+							</c:forEach>
+						</form:select>
 						</div>
-						<label class="col-sm-3 control-label">
-                            <spring:message code="lbl.fees.name"/>
-                        </label>
-                        <div class="col-sm-3 add-margin">
-                            <form:input path="bpaFeeCommon.name" id="name" class="form-control" disabled="true"/>
-                        </div> 
+						
                       </div>
 				</div>
 			</div>

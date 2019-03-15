@@ -141,9 +141,7 @@
 				<div class="col-sm-3 add-margin">
 					<form:select path="applicationType"
 						id="applicationType"	cssClass="form-control serviceType" >
-						<form:option value="">
-						<spring:message code="lbl.select" />
-						</form:option>
+						<form:option value=""><spring:message code="lbl.select" /></form:option>
 						<form:options items="${appTypes}" itemValue="id"
 						itemLabel="name" />
 					</form:select> 

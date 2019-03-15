@@ -84,6 +84,7 @@ import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.SubOccupancy;
@@ -286,11 +287,17 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             @PathVariable final String applicationNumber, final BindingResult resultBinder,
             final HttpServletRequest request, final Model model,
             final RedirectAttributes redirectAttributes, @RequestParam("files") final MultipartFile... files) {
+    	String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
 
         if (resultBinder.hasErrors()) {
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadViewdata(model, bpaApplication);
         }
+        if(bpaApplication.getIsOneDayPermitApplication())
+        	bpaApplication.setApplicationType(
+        			applicationTypeService.findByName(onedaypermit));
+        
+  
         bpaUtils.saveOrUpdateBoundary(bpaApplication);
         String workFlowAction = request.getParameter("workFlowAction");
         Long approvalPosition = 0l;
