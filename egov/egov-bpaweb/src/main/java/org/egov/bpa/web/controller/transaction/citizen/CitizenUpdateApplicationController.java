@@ -238,8 +238,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 && application.getStatus().getCode().equals(APPLICATION_STATUS_CREATED) && !isCitizen) {
             getDcrDocumentsUploadMode(model);
             return BPAAPP_CITIZEN_FORM;
-        } else
+        } else{
+            bpaUtils.loadBoundary(application);
             return CITIZEN_VIEW;
+        }
     }
 
     private void buildBuildingSubUsages(final BpaApplication application) {
