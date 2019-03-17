@@ -102,9 +102,13 @@ public class Plan implements Serializable {
     private transient Basement basement;
     private transient ParkingDetails parkingDetails = new ParkingDetails();
     private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
+    @JsonIgnore
     private transient List<org.egov.common.entity.bpa.Occupancy> occupancyMaster = new ArrayList<>();
+    @JsonIgnore
     private transient List<SubOccupancy> subOccupancyMaster = new ArrayList<>();
+    @JsonIgnore
     private transient List<Usage> usageMaster = new ArrayList<>();
+    @JsonIgnore
     private transient Map<String, Integer> extraFeaturesColorMaster = new HashMap<>();
     @Transient
     @JsonIgnore

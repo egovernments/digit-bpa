@@ -62,4 +62,9 @@ public class UsageService {
     public List<Usage> findAll() {
         return usagesRepository.findAll();
     }
+    
+    public List<Usage> findAllByActive() {
+        return usagesRepository.findByIsActiveTrueOrderByOrderNumberAsc();
+    }
+    
 }

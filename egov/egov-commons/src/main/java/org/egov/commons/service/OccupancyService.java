@@ -61,43 +61,47 @@ public class OccupancyService {
     private OccupancyRepository occupancyRepository;
     @Autowired
     private SubOccupancyRepository subOccupancyRepository;
-    
+
     @Autowired
     private UsagesRepository usagesRepository;
 
     public Occupancy findById(final Long id) {
         return occupancyRepository.findOne(id);
     }
-    
+
     public List<Occupancy> findAll() {
         return occupancyRepository.findAll();
     }
-    
+
+    public List<Occupancy> findAllByActive() {
+        return occupancyRepository.findByIsactiveTrueOrderByOrderNumberAsc();
+    }
+
     public List<Occupancy> findAllOrderByOrderNumber() {
         return occupancyRepository.findAll(new Sort(Sort.Direction.ASC, "orderNumber"));
     }
 
-	public List<Usage> findSubUsagesByOccupancy(final String occupancyName) {
-		Occupancy occupancy = occupancyRepository.findByName(occupancyName);
-		List<SubOccupancy> list = null;
-		List<Usage> usagesList = new ArrayList<>();
-		if (occupancy != null) {
-			list = subOccupancyRepository.findByOccupancyAndIsActiveTrueOrderByOrderNumberAsc(occupancy);
-			for (SubOccupancy subOccupancy : list) {
-				List<Usage> usages = usagesRepository
-						.findBySubOccupancyAndIsActiveTrueOrderByOrderNumberAsc(subOccupancy);
-				usagesList.addAll(usages);
-			}
-		} else {
-			SubOccupancy subOccupancy;
-			if (list == null) {
-				subOccupancy = subOccupancyRepository.findByName(occupancyName);
-				List<Usage> usages = usagesRepository
-						.findBySubOccupancyAndIsActiveTrueOrderByOrderNumberAsc(subOccupancy);
-				usagesList.addAll(usages);
-			}
-		}
+    public List<Usage> findSubUsagesByOccupancy(final String occupancyName) {
+        Occupancy occupancy = occupancyRepository.findByName(occupancyName);
+        List<SubOccupancy> list = null;
+        List<Usage> usagesList = new ArrayList<>();
+        if (occupancy != null) {
+            list = subOccupancyRepository.findByOccupancyAndIsActiveTrueOrderByOrderNumberAsc(occupancy);
+            for (SubOccupancy subOccupancy : list) {
+                List<Usage> usages = usagesRepository
+                        .findBySubOccupancyAndIsActiveTrueOrderByOrderNumberAsc(subOccupancy);
+                usagesList.addAll(usages);
+            }
+        } else {
+            SubOccupancy subOccupancy;
+            if (list == null) {
+                subOccupancy = subOccupancyRepository.findByName(occupancyName);
+                List<Usage> usages = usagesRepository
+                        .findBySubOccupancyAndIsActiveTrueOrderByOrderNumberAsc(subOccupancy);
+                usagesList.addAll(usages);
+            }
+        }
 
-		return usagesList;
-	}
+        return usagesList;
+    }
 }

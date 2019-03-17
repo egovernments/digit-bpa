@@ -52,4 +52,5 @@ public interface SubOccupancyRepository extends JpaRepository<SubOccupancy, Long
 	List<SubOccupancy> findByOccupancyAndIsActiveTrueOrderByOrderNumberAsc(Occupancy occupancy);
 	SubOccupancy findByName(String name);
 	List<SubOccupancy> findByOccupancyNameAndIsActiveTrueOrderByOrderNumberAsc(String occupancy);
+	List<SubOccupancy> findByIsActiveTrueOrderByOrderNumberAsc();
 }

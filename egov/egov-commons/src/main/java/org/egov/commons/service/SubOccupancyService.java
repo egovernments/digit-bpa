@@ -71,4 +71,7 @@ public class SubOccupancyService {
         return subOccupancyRepository.findByOccupancyNameAndIsActiveTrueOrderByOrderNumberAsc(occupancy);
     }
 
+    public List<SubOccupancy> findAllByActive() {
+        return subOccupancyRepository.findByIsActiveTrueOrderByOrderNumberAsc();
+    }
 }
