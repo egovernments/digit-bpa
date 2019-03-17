@@ -56,6 +56,7 @@ public class Occupancy extends Measurement {
     private static final long serialVersionUID = 22L;
 
     private OccupancyType type;
+    private OccupancyTypeHelper typeHelper;
     private BigDecimal deduction = BigDecimal.ZERO;
     private BigDecimal builtUpArea = BigDecimal.ZERO;
     private BigDecimal floorArea = BigDecimal.ZERO;
@@ -131,6 +132,14 @@ public class Occupancy extends Measurement {
 
     public void setType(OccupancyType type) {
         this.type = type;
+    }
+
+    public OccupancyTypeHelper getTypeHelper() {
+        return typeHelper;
+    }
+
+    public void setTypeHelper(OccupancyTypeHelper typeHelper) {
+        this.typeHelper = typeHelper;
     }
 
     public BigDecimal getDeduction() {
