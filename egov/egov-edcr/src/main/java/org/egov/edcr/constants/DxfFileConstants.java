@@ -165,7 +165,54 @@ public class DxfFileConstants {
     public static final int OCCUPANCY_A2_PARKING_WITHATTACHBATH_COLOR_CODE = 3;
     public static final int OCCUPANCY_A2_PARKING_WOATTACHBATH_COLOR_CODE = 23;
     public static final int OCCUPANCY_A2_PARKING_WITHDINE_COLOR_CODE = 24;
+    
+    //***********START - Extra functionalities color code key names************
+    //******** Height of room related ************
+    public static final String COLOR_KEY_MEZZANINE_HEAD_ROOM = "Mezzanine head room";
+    public static final String COLOR_KEY_NORMAL_ROOM_BCEFHI_OCCUPANCIES = "Normal room for BCEFHI occupancies";
+    public static final String COLOR_KEY_AC_ROOM_BCEFHI_OCCUPANCIES = "AC room for BCEFHI occupancies";
+    public static final String COLOR_KEY_CAR_AND_TWO_WHEELER_PARKING_ROOM = "Car and two parking room";
+    public static final String COLOR_KEY_ASSEMBLY_ROOM = "Assembly room";
+    public static final String COLOR_KEY_ASSEMBLY_AC_HALL = "Assembly AC hall";
+    public static final String COLOR_KEY_HEAD_ROOM_BENEATH_OR_ABOVE_BALCONY = "Head room beneath or above balcony";
+    public static final String COLOR_KEY_HEAD_ROOM_IN_GENERAL_AC_ROOM_IN_ASSEMBLY_OCCUPANCY = "Head room in general AC room in assembly";
+    public static final String COLOR_KEY_GENERALAC_STORE_TOILET_LAMBER_CELLAR_ROOM = "GeneralLac store toiler lambar cellar";
+    public static final String COLOR_KEY_WORK_ROOM_UNDER_OCCUPANCY_G = "Work room under industrial";
+    public static final String COLOR_KEY_LAB_ENTRANCE_HALL_CANTEEN_CLOAK_ROOM = "Lab entrance hall canteen cloak room";
+    public static final String COLOR_KEY_STORE_TOILET_ROOM_IN_INDUSTRIES = "Store toilet room in industrial";
 
+    //******** Sanitation related ************
+    public static final String COLOR_KEY_MALE_WATER_CLOSET = "Male water closet";
+    public static final String COLOR_KEY_FEMALE_WATER_CLOSET = "Female water closet";
+    public static final String COLOR_KEY_COMMON_WATER_CLOSET = "Common water closet";
+    
+    //Yard related
+    public static final String COLOR_KEY_YARD_DIMENSION = "Yard dimension";
+    
+    //********Parking related************
+    public static final String COLOR_KEY_A_SR_PARKING_WITHATTACHBATH = "Special residetial with attach bath";
+    public static final String COLOR_KEY_A_SR_PARKING_WOATTACHBATH = "Special residetial without attach bath";
+    public static final String COLOR_KEY_A_SR_PARKING_WITHDINE = "Special residetial with dine";
+    
+    //*******Stair related**************
+    public static final String COLOR_KEY_FLIGHT_LENGTH = "Flight length";
+    public static final String COLOR_KEY_FLIGHT_WIDTH = "Flight width";
+    
+    //********Interior open space related*****
+    public static final String COLOR_KEY_HABITABLE_ROOM = "Habitable room";
+    public static final String COLOR_KEY_FLR_EXTERIOR_WALL = "Floor exterior wall";
+    public static final String COLOR_KEY_FLR_OPEN_SPACE = "Floor open space";
+    
+    //********Distances related*****
+    public static final String COLOR_KEY_NOTIFIED_ROAD = "Notified road";
+    public static final String COLOR_KEY_NON_NOTIFIED_ROAD = "Non notified road";
+    public static final String COLOR_KEY_LANE = "lane";
+    public static final String COLOR_KEY_CULDE_SAC_ROAD = "Culdesac road";
+    public static final String COLOR_KEY_WELL_TO_BNDRY = "Well to boundary";
+    public static final String COLOR_KEY_WELL_TO_LEACH_PIT = "Well to leach pit";
+    public static final String COLOR_KEY_PIT_TO_PLOT_BNDRY = "Leach pit to plot boundary"; 
+    //***********END - Extra functionalities color code key names************
+    
     public static final String MTEXT_NAME_HEIGHT_M = "HEIGHT_M";
     public static final int COLOR_CODE_MALE_WATER_CLOSET = 1;
     public static final int COLOR_CODE_FEMALE_WATER_CLOSET = 2;

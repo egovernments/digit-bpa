@@ -61,6 +61,9 @@ import java.util.Map.Entry;
 
 import javax.persistence.Transient;
 
+import org.egov.common.entity.bpa.SubOccupancy;
+import org.egov.common.entity.bpa.Usage;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -99,6 +102,10 @@ public class Plan implements Serializable {
     private transient Basement basement;
     private transient ParkingDetails parkingDetails = new ParkingDetails();
     private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
+    private transient List<org.egov.common.entity.bpa.Occupancy> occupancyMaster = new ArrayList<>();
+    private transient List<SubOccupancy> subOccupancyMaster = new ArrayList<>();
+    private transient List<Usage> usageMaster = new ArrayList<>();
+    private transient Map<String, Integer> extraFeaturesColorMaster = new HashMap<>();
     @Transient
     @JsonIgnore
     private Boolean inMeters = true;
@@ -377,6 +384,38 @@ public class Plan implements Serializable {
 
     public void setParkingDetails(ParkingDetails parkingDetails) {
         this.parkingDetails = parkingDetails;
+    }
+
+    public List<org.egov.common.entity.bpa.Occupancy> getOccupancyMaster() {
+        return occupancyMaster;
+    }
+
+    public void setOccupancyMaster(List<org.egov.common.entity.bpa.Occupancy> occupancyMaster) {
+        this.occupancyMaster = occupancyMaster;
+    }
+
+    public List<SubOccupancy> getSubOccupancyMaster() {
+        return subOccupancyMaster;
+    }
+
+    public void setSubOccupancyMaster(List<SubOccupancy> subOccupancyMaster) {
+        this.subOccupancyMaster = subOccupancyMaster;
+    }
+
+    public List<Usage> getUsageMaster() {
+        return usageMaster;
+    }
+
+    public void setUsageMaster(List<Usage> usageMaster) {
+        this.usageMaster = usageMaster;
+    }
+
+    public Map<String, Integer> getExtraFeaturesColorMaster() {
+        return extraFeaturesColorMaster;
+    }
+
+    public void setExtraFeaturesColorMaster(Map<String, Integer> extraFeaturesColorMaster) {
+        this.extraFeaturesColorMaster = extraFeaturesColorMaster;
     }
 
     public Boolean getInMeters() {

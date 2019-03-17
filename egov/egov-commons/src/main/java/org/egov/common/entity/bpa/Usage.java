@@ -69,91 +69,101 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Entity
 @Table(name = "EGBPA_USAGE")
 @SequenceGenerator(name = Usage.SEQ_OCCUPANCY, sequenceName = Usage.SEQ_OCCUPANCY, allocationSize = 1)
-@JsonIdentityInfo(generator=ObjectIdGenerators.UUIDGenerator.class,property = "@id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 public class Usage extends AbstractAuditable {
 
-	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_USAGE";
-	private static final long serialVersionUID = -3811124517745056627L;
+    public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_USAGE";
+    private static final long serialVersionUID = -3811124517745056627L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "subOccupancy")
-	private SubOccupancy subOccupancy;
+    @Id
+    @GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	private String code;
-	
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String name;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "subOccupancy")
+    private SubOccupancy subOccupancy;
 
-	@Length(min = 1, max = 512)
-	private String description;
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	
-	private Boolean isActive;
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String name;
 
-	private Integer orderNumber;
+    @Length(min = 1, max = 512)
+    private String description;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    private Boolean isActive;
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private Integer orderNumber;
 
-	public String getCode() {
-		return code;
-	}
+    private Integer colorCode;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public Boolean getActive() {
-		return isActive;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setActive(Boolean active) {
-		isActive = active;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Integer getOrderNumber() {
-		return orderNumber;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setOrderNumber(Integer orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public Boolean getActive() {
+        return isActive;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
 
-	public SubOccupancy getSubOccupancy() {
-		return subOccupancy;
-	}
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-	public void setSubOccupancy(SubOccupancy subOccupancy) {
-		this.subOccupancy = subOccupancy;
-	}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public SubOccupancy getSubOccupancy() {
+        return subOccupancy;
+    }
+
+    public void setSubOccupancy(SubOccupancy subOccupancy) {
+        this.subOccupancy = subOccupancy;
+    }
+
+    public Integer getColorCode() {
+        return colorCode;
+    }
+
+    public void setColorCode(Integer colorCode) {
+        this.colorCode = colorCode;
+    }
+
 }

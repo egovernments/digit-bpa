@@ -72,120 +72,131 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Entity
 @Table(name = "EGBPA_OCCUPANCY")
 @SequenceGenerator(name = Occupancy.SEQ_OCCUPANCY, sequenceName = Occupancy.SEQ_OCCUPANCY, allocationSize = 1)
-@JsonIdentityInfo(generator=ObjectIdGenerators.UUIDGenerator.class,property = "@id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 public class Occupancy extends AbstractAuditable {
 
-	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_OCCUPANCY";
-	private static final long serialVersionUID = -1928622582218032380L;
+    public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_OCCUPANCY";
+    private static final long serialVersionUID = -1928622582218032380L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@OneToMany(mappedBy = "occupancy", cascade = CascadeType.ALL)
-	private List<SubOccupancy> subOccupancies = new ArrayList<>();
+    @OneToMany(mappedBy = "occupancy", cascade = CascadeType.ALL)
+    private List<SubOccupancy> subOccupancies = new ArrayList<>();
 
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	private String code;
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String name;
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String name;
 
-	@Length(min = 1, max = 1024)
-	private String description;
+    @Length(min = 1, max = 1024)
+    private String description;
 
-	private Boolean isactive;
+    private Boolean isactive;
 
-	private BigDecimal maxCoverage;
+    private BigDecimal maxCoverage;
 
-	private BigDecimal minFar;
+    private BigDecimal minFar;
 
-	private BigDecimal maxFar;
+    private BigDecimal maxFar;
 
-	private Integer orderNumber;
+    private Integer orderNumber;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    private Integer colorCode;
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Boolean getIsactive() {
-		return isactive;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setIsactive(Boolean isactive) {
-		this.isactive = isactive;
-	}
+    public Boolean getIsactive() {
+        return isactive;
+    }
 
-	public Integer getOrderNumber() {
-		return orderNumber;
-	}
+    public void setIsactive(Boolean isactive) {
+        this.isactive = isactive;
+    }
 
-	public List<SubOccupancy> getSubOccupancies() {
-		return subOccupancies;
-	}
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setSubOccupancies(List<SubOccupancy> subOccupancies) {
-		this.subOccupancies = subOccupancies;
-	}
+    public List<SubOccupancy> getSubOccupancies() {
+        return subOccupancies;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setSubOccupancies(List<SubOccupancy> subOccupancies) {
+        this.subOccupancies = subOccupancies;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public BigDecimal getMaxCoverage() {
-		return maxCoverage;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setMaxCoverage(BigDecimal maxCoverage) {
-		this.maxCoverage = maxCoverage;
-	}
+    public BigDecimal getMaxCoverage() {
+        return maxCoverage;
+    }
 
-	public BigDecimal getMinFar() {
-		return minFar;
-	}
+    public void setMaxCoverage(BigDecimal maxCoverage) {
+        this.maxCoverage = maxCoverage;
+    }
 
-	public void setMinFar(BigDecimal minFar) {
-		this.minFar = minFar;
-	}
+    public BigDecimal getMinFar() {
+        return minFar;
+    }
 
-	public BigDecimal getMaxFar() {
-		return maxFar;
-	}
+    public void setMinFar(BigDecimal minFar) {
+        this.minFar = minFar;
+    }
 
-	public void setMaxFar(BigDecimal maxFar) {
-		this.maxFar = maxFar;
-	}
+    public BigDecimal getMaxFar() {
+        return maxFar;
+    }
 
-	public void setOrderNumber(Integer orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setMaxFar(BigDecimal maxFar) {
+        this.maxFar = maxFar;
+    }
+
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Integer getColorCode() {
+        return colorCode;
+    }
+
+    public void setColorCode(Integer colorCode) {
+        this.colorCode = colorCode;
+    }
+
 }
