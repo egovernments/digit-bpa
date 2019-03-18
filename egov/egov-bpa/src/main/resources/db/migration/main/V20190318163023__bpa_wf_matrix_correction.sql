@@ -1,0 +1,2 @@
+update eg_wf_matrix set nextaction = 'Forwarded to Assistant Engineer For Approval' where objecttype = 'BpaApplication' and currentstate = 'Section clerk approved' 
+and additionalrule = 'CREATEBPAAPPLICATION-ONEDAYPERMIT' and nextaction = 'Forwarded to Assistant Engineer Approval';

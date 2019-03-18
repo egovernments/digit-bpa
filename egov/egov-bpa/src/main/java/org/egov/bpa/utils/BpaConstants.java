@@ -147,7 +147,7 @@ public class BpaConstants {
     public static final String FWD_TO_OVERSEER_AFTER_TS_INSPN = "Forwarded to Overseer";
     public static final String REJECT_BY_CLERK = "Rejection initiated by clerk";
     public static final String WF_AUTO_RESCHEDULE_PENDING = "Pending For Auto Rescheduling Document Scrutiny";
-    public static final String FWD_TO_AE_FOR_APPROVAL = "Forwarded to Assistant Engineer Approval";
+    public static final String FWD_TO_AE_FOR_APPROVAL = "Forwarded to Assistant Engineer For Approval";
     public static final String FWD_TO_CLERK_PENDING = "Forward to section clerk is pending";
     public static final String FORWARDED_TO_CLERK = "Forwarded to section clerk";
     public static final String WF_DOC_SCRUTINY_SCHEDLE_PEND = "Document Scrutiny Scheduling Pending";
