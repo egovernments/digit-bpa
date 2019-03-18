@@ -51,7 +51,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" action="/bpa/checklistservicetypemapping/create"
+<form:form role="form" action="/bpa/checklistservicetypemapping/update"
 	modelAttribute="serviceTypeChecklist" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
@@ -60,11 +60,6 @@
 				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message code="lbl.checklist.servicetype.main.title" />
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="panel-title text-center no-float error-msg">
-						<strong>${message}</strong>
 					</div>
 				</div>
 				<div class="panel-body">

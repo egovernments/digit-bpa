@@ -50,50 +50,61 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-
-<form:form role="form" action="/bpa/checklistservicetypemapping/create"
-	modelAttribute="serviceTypeChecklist" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form" action="/common/checklist/updateChecklist"
+	modelAttribute="checklist" id="checklistform"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="row">
-		<div class="col-md-12">
+
+	<div class="tab-content">
+		<div id="applicant-info" class="tab-pane fade in active">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="lbl.checklist.servicetype.main.title" />
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="panel-title text-center no-float error-msg">
-						<strong>${message}</strong>
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message
-								code="lbl.checklist.type" /> <span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<input type="hidden" id="message" value="${message}"> <select
-								name="checklistType" id="checklist" class="form-control" required>
-								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach items="${checklistTypes}" var="checklistType">
-									<option value="${checklistType.id}">${checklistType.description}</option>
-								</c:forEach>
-							</select>
-							<form:errors path="checklistType" cssClass="error-msg" />
-						</div>
 
-						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.servicetype" /> <span
-							class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<select name="serviceType" id="serviceType" class="form-control" required>
-								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach items="${servicetypes}" var="servicetype">
-									<option value="${servicetype.id}" >${servicetype.description}</option>
-								</c:forEach>
-							</select>
-							<form:errors path="serviceType" cssClass="error-msg" />
-						</div>
+				</div>
+				<div class="col-sm-12">
+				   
+				   Checklist Type  : ${selectedChecklist.description}
+					<table class="table table-bordered" id="checklist">
+						<thead>
+							<tr>
+								<th class="col-sm-2 table-div-column"><spring:message code='lbl.description' /></th>
+								<%-- <th class="col-sm-2 table-div-column"><spring:message code='lbl.actions' /></th> --%>
+							</tr>
+						</thead>
+						<tbody>
+							<c:choose>
+								<c:when test="${not empty checklist.checklistTemp}">
+									<c:forEach items="${checklist.checklistTemp}" var="checklist"
+										varStatus="vs">
+										<tr class="dynamicInput">
+										<input type="hidden" name="checklistTemp[${vs.index}]" value="${checklist.id}"/>
+											<div class="hidden"><form:select path="checklistTemp[${vs.index}].checklistType" id="checklistType">
+													<form:option value="">
+														<spring:message code="lbl.select" />
+													</form:option>
+													<c:forEach items="${checklistTypes}" var="checklistType">
+														<option value="${checklistType.id}"	title="${checklistType.description}"
+															<c:if test="${checklistType.id == selectedChecklist.id}"> Selected </c:if>>${checklistType.description}</option>
+													</c:forEach>
+												</form:select>
+												</div>
+											<td><form:input type="text" path="checklistTemp[${vs.index}].description"
+												value="${description}" class="form-control patternvalidation" />
+												<form:errors path="checklistTemp[${vs.index}]description" cssClass="add-margin error-msg" />
+												</td>
+<!-- 											<td class="text-center"><span class="add-padding"><i
+													class="fa fa-trash delete-row btn-sm btn-danger"
+													id="deleteChecklistRow" aria-hidden="true"></i></span></td> -->
+										</tr>
+									</c:forEach>
+								</c:when>
+							</c:choose>
+						</tbody>
+					</table>
+					<div class="col-md-12 panel-title text-left">
+						<button type="button" class="btn btn-secondary pull-right" id="updaterow">
+							<i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;<spring:message code='lbl.btn.add.row' />
+						</button>
 					</div>
 				</div>
 			</div>
@@ -101,11 +112,16 @@
 	</div>
 	<div class="text-center">
 		<button type='submit' class='btn btn-primary' id="buttonSubmit">
-			<spring:message code='lbl.search' />
+			<spring:message code='lbl.update' />
 		</button>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>
 	</div>
 </form:form>
 
-
+<script
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+<script
+	src="<cdn:url value='/resources/app/js/checklistHelper.js?rnd=${app_release_no}'/> "></script>

@@ -51,8 +51,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" action="/bpa/checklistservicetypemapping/create"
-	modelAttribute="serviceTypeChecklist" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form" action="/bpa/checklistservicetypemapping/updatemapping"
+	modelAttribute="checklistServicetype" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
 		<div class="col-md-12">
@@ -62,50 +62,60 @@
 						<spring:message code="lbl.checklist.servicetype.main.title" />
 					</div>
 				</div>
-				<div class="panel-body">
+				<div class="col-md-12 col-xs-6  panel-title">
+					Service Type : ${serviceType.description} </br> </br> Checklist Type : ${checklistType.description}
+					</br> </br>
+				</div>
+				
+			    <div class="panel-body">
 					<div class="panel-title text-center no-float error-msg">
 						<strong>${message}</strong>
 					</div>
 				</div>
+				
 				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message
-								code="lbl.checklist.type" /> <span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<input type="hidden" id="message" value="${message}"> <select
-								name="checklistType" id="checklist" class="form-control" required>
-								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach items="${checklistTypes}" var="checklistType">
-									<option value="${checklistType.id}">${checklistType.description}</option>
-								</c:forEach>
-							</select>
-							<form:errors path="checklistType" cssClass="error-msg" />
-						</div>
+                    <table class="table table-bordered table-hover multiheadertbl">
+							<thead>
+								<tr>
+									<th><spring:message code="lbl.checklist" /></th>
+									<th><spring:message code="lbl.isrequired" /></th>
+									<th><spring:message code="lbl.ismandatory" /></th>
+								</tr>
+							</thead>
+							<tbody>
 
-						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.servicetype" /> <span
-							class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<select name="serviceType" id="serviceType" class="form-control" required>
-								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach items="${servicetypes}" var="servicetype">
-									<option value="${servicetype.id}" >${servicetype.description}</option>
+						  <c:choose>
+                             <c:when test="${not empty checklistServicetype.mappingList}">
+								<c:forEach items="${checklistServicetype.mappingList}" var="checklistServicetype" varStatus="vs">
+									<tr>
+									<input type="hidden" name="mappingList[${vs.index}]" value="${checklistServicetype.id}"/>
+										<td><h6>${checklistServicetype.checklist.description}</h6></td>
+										<td><form:checkbox path="mappingList[${vs.index}].required" value="${checklistServicetype.required}"/></td>
+										<td><form:checkbox path="mappingList[${vs.index}].mandatory" value="${checklistServicetype.mandatory}"/></td>
+									</tr>
 								</c:forEach>
-							</select>
-							<form:errors path="serviceType" cssClass="error-msg" />
+							 </c:when>
+									<c:otherwise>
+									<c:if test="${empty message}">
+										<div class="col-md-12 col-xs-6  panel-title">
+										No Checklists found for selected checklist type</div>
+										</c:if>
+									</c:otherwise>
+							</c:choose>
+							</tbody>
+						</table>
+						<div class="text-center">
+						<c:if test="${not empty checklistServicetype.mappingList}">
+							<button type='submit' class='btn btn-primary' id="buttonSubmit">
+								<spring:message code='lbl.update' />
+							</button>
+						</c:if>
+							<a href='javascript:void(0)' class='btn btn-default'
+								onclick='self.close()'><spring:message code='lbl.close' /></a>
 						</div>
-					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="text-center">
-		<button type='submit' class='btn btn-primary' id="buttonSubmit">
-			<spring:message code='lbl.search' />
-		</button>
-		<a href='javascript:void(0)' class='btn btn-default'
-			onclick='self.close()'><spring:message code='lbl.close' /></a>
-	</div>
 </form:form>
-
 

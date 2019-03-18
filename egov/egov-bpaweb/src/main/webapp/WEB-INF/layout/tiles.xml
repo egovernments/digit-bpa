@@ -796,6 +796,13 @@
 			value="/WEB-INF/views/checklistservicetype/servicetype-checklist-mapping.jsp" />
 	</definition>
 	
+	<definition name="update-servicetype-checklist-mapping" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.checklist.servicetype.mapping.update" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/checklistservicetype/update-servicetype-checklist-mapping.jsp" />
+	</definition>
+	
 	<definition name="servicetype-checklist-mapping-create" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.create" cascade="true" />
@@ -803,11 +810,25 @@
 			value="/WEB-INF/views/checklistservicetype/servicetype-checklist-mapping-create.jsp" />
 	</definition>
 	
+	<definition name="servicetype-checklist-mapping-update" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.checklist.servicetype.mapping.update" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/checklistservicetype/servicetype-checklist-mapping-update.jsp" />
+	</definition>
+	
 	<definition name="checklist-servicetype-mapping-result" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.result" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/checklistservicetype/checklist-servicetype-mapping-result.jsp" />
+	</definition>
+	
+	<definition name="checklist-servicetype-mapping-update-result" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.checklist.servicetype.mapping.result" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/checklistservicetype/checklist-servicetype-mapping-update-result.jsp" />
 	</definition>
 	
 	<definition name="checklist-servicetype-mapping-search" extends="base_layout">

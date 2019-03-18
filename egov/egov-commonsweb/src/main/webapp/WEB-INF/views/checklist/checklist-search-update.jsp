@@ -51,61 +51,43 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" action="/bpa/checklistservicetypemapping/create"
-	modelAttribute="serviceTypeChecklist" cssClass="form-horizontal form-groups-bordered"
+<form:form role="form" action="/common/checklist/update" modelAttribute="checklist" id="checklist"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<spring:message code="lbl.checklist.servicetype.main.title" />
-					</div>
-				</div>
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title"><spring:message code="title.checklist.update" /></div>
+			</div>
 				<div class="panel-body">
-					<div class="panel-title text-center no-float error-msg">
+					<div class="panel-title text-center no-float">
 						<strong>${message}</strong>
 					</div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message
-								code="lbl.checklist.type" /> <span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<input type="hidden" id="message" value="${message}"> <select
-								name="checklistType" id="checklist" class="form-control" required>
-								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach items="${checklistTypes}" var="checklistType">
-									<option value="${checklistType.id}">${checklistType.description}</option>
-								</c:forEach>
-							</select>
-							<form:errors path="checklistType" cssClass="error-msg" />
-						</div>
-
-						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.servicetype" /> <span
-							class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<select name="serviceType" id="serviceType" class="form-control" required>
-								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach items="${servicetypes}" var="servicetype">
-									<option value="${servicetype.id}" >${servicetype.description}</option>
-								</c:forEach>
-							</select>
-							<form:errors path="serviceType" cssClass="error-msg" />
-						</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.checklist.type" /><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
+						<form:select path="checklistType" data-first-option="false"
+							id="serviceTypeId" cssClass="form-control serviceType" required="required">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${checklistTypes}" itemValue="id" itemLabel="description"/>
+						</form:select>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 	<div class="text-center">
-		<button type='submit' class='btn btn-primary' id="buttonSubmit">
-			<spring:message code='lbl.search' />
+		<button type='submit' class='btn btn-primary' id="buttonsubmit">
+			<spring:message code='lbl.update' />
 		</button>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>
 	</div>
 </form:form>
-
-

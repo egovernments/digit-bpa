@@ -97,10 +97,9 @@ public class ChecklistServicetypeMappingService {
         return mappingRepository.findByActiveByServiceTypeAndChecklist(serviceType, checklistType);
     }
 
-    public boolean validateChecklistServiceTypeAlreadyExist(ChecklistServiceTypeMapping checklistServiceType) {
+    public boolean validateChecklistServiceTypeAlreadyExist(String serviceType,String checklistType) {
         List<ChecklistServiceTypeMapping> list = mappingRepository.findByServiceTypeAndChecklistType(
-                checklistServiceType.getMappingList().get(0).getServiceType().getDescription(),
-                checklistServiceType.getMappingList().get(0).getChecklist().getChecklistType().getDescription());
+        		serviceType,checklistType);
         return !list.isEmpty();
     }
 

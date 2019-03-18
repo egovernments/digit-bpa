@@ -40,12 +40,38 @@ public class CheckListController {
 	private static final String DATA = "{ \"data\":";
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public String newForm(final Model model) {
+	public String getSearchFormToCreate(final Model model) {
 		model.addAttribute("checklist", new Checklist());
 		model.addAttribute("checklistTypes", checkListTypeService.findAll());
 		return "checklist-search";
 	}
 	
+	@RequestMapping(value = "/update", method = RequestMethod.GET)
+	public String getSearchFormToUpdate(final Model model) {
+		model.addAttribute("checklist", new Checklist());
+		model.addAttribute("checklistTypes", checkListTypeService.findAll());
+		return "checklist-search-update";
+	}
+	
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public String updateCheckListForm(@ModelAttribute("checklist") final Checklist checkList, final Model model,
+			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+		List<Checklist> list = bpaCheckListService.findByChecklistType(checkList.getChecklistType());
+		if(list.isEmpty()){
+			model.addAttribute("message", "No Checklists found to update.");
+			model.addAttribute("checklistTypes", checkListTypeService.findAll());
+			return "checklist-search-update";
+		}
+			
+		model.addAttribute("checklistTypes", checkListTypeService.findAll());
+		model.addAttribute("selectedChecklist", checkList.getChecklistType());
+
+		Checklist checklist = new Checklist();
+		checklist.setChecklistTemp(list);
+		model.addAttribute("checklist",checklist);
+		return "checklist-update";
+	}
+
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String showCheckListForm(@ModelAttribute("checklist") final Checklist checkList, final Model model,
 			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
@@ -74,6 +100,19 @@ public class CheckListController {
 		return "redirect:/checklist/result";
 	}
 
+	@RequestMapping(value = "/updateChecklist", method = RequestMethod.POST)
+	public String updateCheckList(@ModelAttribute("checklist") final Checklist checkList, final Model model,
+			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+		for(Checklist checklist : checkList.getChecklistTemp())
+			if(checklist.getChecklistType() == null )
+				checklist.setChecklistType(checkList.getChecklistTemp().get(0).getChecklistType());
+		
+		bpaCheckListService.save(checkList.getChecklistTemp());
+		redirectAttributes.addFlashAttribute("message",
+				messageSource.getMessage("msg.update.checklist.success", null, null));
+		return "redirect:/checklist/result";
+	}
+	
 	@RequestMapping(value = "/result", method = RequestMethod.GET)
 	public String ChecklistTypeResult(final Model model) {
 		return "checklist-result";

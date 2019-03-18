@@ -127,6 +127,11 @@
         <put-attribute name="page-title" value="title.checklist.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/checklist/checklist-new.jsp"/>
     </definition>
+    
+     <definition name="checklist-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.checklist.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/checklist/checklist-update.jsp"/>
+    </definition>
 
 	<definition name="checklist-result" extends="base_layout">
 		<put-attribute name="page-title" value="title.checklist.new"
@@ -145,6 +150,11 @@
 	<definition name="checklist-search" extends="base_layout">
 		<put-attribute name="page-title" value="title.checklist.create" cascade="true" />
 		<put-attribute name="body" value="/WEB-INF/views/checklist/checklist-search.jsp" />
+	</definition>
+	
+	<definition name="checklist-search-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.checklist.update" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/checklist/checklist-search-update.jsp" />
 	</definition>
 
     <definition name="nationality-new" extends="base_layout">

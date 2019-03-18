@@ -80,9 +80,45 @@ var tbody = $('#checklist').children('tbody');
 			addRowFromObject(row);
 	});
 	
-		function addRowFromObject(rowJsonObj){
-		table.append(row.compose(rowJsonObj));
-	}
+
+		function addRowFromObject(rowJsonObj) {
+			table.append(row.compose(rowJsonObj));
+		}
+		
+		var updaterow = '<tr>'+
+		'<td ><input type="text" class="form-control table-input  patternvalidation description" name="checklistTemp[{{idx}}].description" id="checklistTemp[{{idx}}]description" required="required" maxlength="256" /></td>'+
+		'</tr>';	
+		
+		$('#updaterow').click(function(){
+			var idx=$(tbody).find('tr').length;
+			var sno=idx+1;
+			//Add row
+			var row={
+			       'sno': sno,
+			       'idx': idx
+			   };
+			 var rowCount = $('#checklist tbody tr').length;
+	         var valid = true;
+	         //validate all rows before adding new row
+	         $('#checklist tbody tr').each(function (idx, value) {
+	             $('#checklist tbody tr:eq(' + idx + ') td input[type="text"]').each(function (i, v) {
+	                 if (!$.trim($(v).val())) {
+	                     valid = false;
+	                     bootbox.alert("Enter Description for existing rows!", function () {
+	                         $(v).focus();
+	                     });
+	                     return false;
+	                 }
+	             });
+	         });
+	         if(valid)
+				addUpdateRowFromObject(row);
+		});
+		
+		function addUpdateRowFromObject(rowJsonObj) {
+			table.append(updaterow.compose(rowJsonObj));
+		}
+		
 	
 	String.prototype.compose = (function (){
 		   var re = /\{{(.+?)\}}/g;

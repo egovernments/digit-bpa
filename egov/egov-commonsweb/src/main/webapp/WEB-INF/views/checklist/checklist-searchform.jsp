@@ -44,7 +44,7 @@
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title"><spring:message code="lbl.tittle.search.checklist" /></div>
+				<div class="panel-title"><spring:message code="title.checklist.create" /></div>
 			</div>
 			<div class="panel-body">
 				<div class="form-group">
