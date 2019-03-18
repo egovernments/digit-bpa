@@ -47,6 +47,9 @@
  */
 $(document).ready(function()
 {	
+	if($('#approvalDepartment').val()){
+	$('#approvalDepartment').trigger("change");
+	}
 	
 	// On page load setting default department get selected
 	$('[name=approvalDepartment] option').filter(function() { 

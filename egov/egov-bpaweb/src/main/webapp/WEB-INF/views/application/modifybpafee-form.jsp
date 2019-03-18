@@ -163,12 +163,12 @@
 												<form:input class="form-control patternvalidation text-right otherFees"
 													data-pattern="number" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
-													value="${docs.amount}" data-pattern="number"
+													value="${docs.amount}"
 													path="applicationFee.applicationFeeDetail[${status.index}].amount" />
 											</c:when>
 											<c:otherwise>
 												<form:input class="form-control patternvalidation text-right"
-													data-pattern="decimalvalue" maxlength="10"
+													data-pattern="number" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
 													value="${docs.amount}" disabled="true"
 													path="applicationFee.applicationFeeDetail[${status.index}].amount" />

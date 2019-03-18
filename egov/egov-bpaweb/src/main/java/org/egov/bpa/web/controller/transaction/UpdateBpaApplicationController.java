@@ -339,6 +339,21 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
                 BpaConstants.BPAFEECALULATION);
 
+
+        if (APPLICATION_STATUS_NOCUPDATED.equals(bpaApplication.getStatus().getCode())
+                && feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
+            List<PermitFee> permitFeeList = permitFeeService
+                    .getPermitFeeListByApplicationId(bpaApplication.getId());
+            if (permitFeeList.isEmpty() || permitFeeList == null) {
+                model.addAttribute("feeNotDefined", "Please enter fee to proceed");
+                loadFormData(model, bpaApplication);
+                loadCommonApplicationDetails(model, bpaApplication);
+                bpaUtils.loadBoundary(bpaApplication);
+                model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(bpaApplication));
+                return APPLICATION_VIEW;
+            }
+        }
+        
         if (WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)
                 && feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
             List<PermitFee> permitFeeList = permitFeeService

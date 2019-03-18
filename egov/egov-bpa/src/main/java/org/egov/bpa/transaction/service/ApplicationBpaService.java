@@ -48,6 +48,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
 import static org.egov.bpa.utils.BpaConstants.EXTENTINSQMTS;
@@ -494,16 +495,24 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // persistPostalAddress(application);
         buildSchemeLandUsage(application);
         // For one day permit
-        if (application.getIsOneDayPermitApplication()
-                && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())) {
-            PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
+		if (application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_DOC_VERIFIED
+				.equalsIgnoreCase(application.getState().getValue())
+				|| APPLICATION_STATUS_SECTION_CLRK_APPROVED.equalsIgnoreCase(application.getState().getValue()))) {
 
-            ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
-            permitFee.setApplicationFee(applicationFee);
-            permitFeeRepository.save(permitFee);
-            application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(),
-                    permitFee.getApplication().getDemand()));
-        }
+			String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
+					BpaConstants.BPAFEECALULATION);
+
+			if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL)
+					|| feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
+				PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
+
+				ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
+				permitFee.setApplicationFee(applicationFee);
+				permitFeeRepository.save(permitFee);
+				application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(),
+						permitFee.getApplication().getDemand()));
+			}
+		}
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
