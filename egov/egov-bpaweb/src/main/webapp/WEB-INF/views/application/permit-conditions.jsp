@@ -91,10 +91,9 @@
 								</c:when>
 								<c:otherwise>
 									<td><input type="checkbox"
-											   data-change-to="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
-											   name="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
-											   class="modifiablePermitConditions"
-											   value="${modifiablePermitCondition.required}" /></td>
+											   data-change-to="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.required"
+											   name="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.required"
+											   class="modifiablePermitConditions" value="${modifiablePermitCondition.noticeCondition.required}" /></td>
 								</c:otherwise>
 							</c:choose>
 							<td class="view-content" style="font-size: 97%;"><c:out
