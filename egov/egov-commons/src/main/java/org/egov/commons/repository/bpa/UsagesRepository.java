@@ -51,5 +51,5 @@ public interface UsagesRepository extends JpaRepository<Usage, Long> {
 
 	List<Usage> findBySubOccupancyAndIsActiveTrueOrderByOrderNumberAsc(SubOccupancy subOccupancy);
 	List<Usage> findBySubOccupancyNameAndIsActiveTrueOrderByOrderNumberAsc(String subOccupancy);
-	List<Usage> findByIsActiveTrueOrderByOrderNumberAsc();
+	List<Usage> findByIsActiveTrueOrderBySubOccupancyAsc();
 }

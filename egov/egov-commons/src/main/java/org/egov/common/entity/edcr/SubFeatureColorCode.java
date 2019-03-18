@@ -45,32 +45,71 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.commons.service;
+package org.egov.common.entity.edcr;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import org.egov.common.entity.edcr.ExtraFeaturesColorCode;
-import org.egov.commons.repository.bpa.ExtraFeaturesColorCodeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+@Entity
+@Table(name = "egdcr_sub_feature_colorcode")
+@SequenceGenerator(name = SubFeatureColorCode.SEQ_EXTRA_COLOR_CODE, sequenceName = SubFeatureColorCode.SEQ_EXTRA_COLOR_CODE, allocationSize = 1)
+public class SubFeatureColorCode {
+    public static final String SEQ_EXTRA_COLOR_CODE = "seq_egdcr_sub_feature_colorcode";
 
-@Service
-@Transactional(readOnly = true)
-public class ExtraFeaturesColorCodeService {
+    @Id
+    @GeneratedValue(generator = SEQ_EXTRA_COLOR_CODE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    @Autowired
-    private ExtraFeaturesColorCodeRepository extraFeaturesColorCodeRepository;
+    private String feature;
 
-    public List<ExtraFeaturesColorCode> findByFeature(String feature) {
-        return extraFeaturesColorCodeRepository.findByFeature(feature);
+    private String subFeature;
+
+    private Integer colorCode;
+
+    private Integer orderNumber;
+
+    public Long getId() {
+        return id;
     }
 
-    public ExtraFeaturesColorCode findBySubFeature(String subFeature) {
-        return extraFeaturesColorCodeRepository.findBySubFeature(subFeature);
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public List<ExtraFeaturesColorCode> findAll() {
-        return extraFeaturesColorCodeRepository.findAll();
+    public String getFeature() {
+        return feature;
     }
+
+    public void setFeature(String feature) {
+        this.feature = feature;
+    }
+
+    public String getSubFeature() {
+        return subFeature;
+    }
+
+    public void setSubFeature(String subfeature) {
+        this.subFeature = subfeature;
+    }
+
+    public Integer getColorCode() {
+        return colorCode;
+    }
+
+    public void setColorCode(Integer colorCode) {
+        this.colorCode = colorCode;
+    }
+
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
 }

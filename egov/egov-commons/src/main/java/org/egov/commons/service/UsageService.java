@@ -64,7 +64,7 @@ public class UsageService {
     }
     
     public List<Usage> findAllByActive() {
-        return usagesRepository.findByIsActiveTrueOrderByOrderNumberAsc();
+        return usagesRepository.findByIsActiveTrueOrderBySubOccupancyAsc();
     }
     
 }

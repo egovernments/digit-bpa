@@ -49,14 +49,14 @@ package org.egov.commons.repository.bpa;
 
 import java.util.List;
 
-import org.egov.common.entity.edcr.ExtraFeaturesColorCode;
+import org.egov.common.entity.edcr.SubFeatureColorCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ExtraFeaturesColorCodeRepository extends JpaRepository<ExtraFeaturesColorCode, Long> {
-    List<ExtraFeaturesColorCode> findByFeature(String feature);
+public interface SubFeatureColorCodeRepository extends JpaRepository<SubFeatureColorCode, Long> {
+    List<SubFeatureColorCode> findByFeature(String feature);
 
-    ExtraFeaturesColorCode findBySubFeature(String subFeature);
+    SubFeatureColorCode findBySubFeature(String subFeature);
 
 }

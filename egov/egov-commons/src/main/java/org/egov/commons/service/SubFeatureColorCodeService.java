@@ -45,71 +45,32 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.common.entity.edcr;
+package org.egov.commons.service;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.util.List;
 
-@Entity
-@Table(name = "egdcr_additional_feature_colorcodes")
-@SequenceGenerator(name = ExtraFeaturesColorCode.SEQ_EXTRA_COLOR_CODE, sequenceName = ExtraFeaturesColorCode.SEQ_EXTRA_COLOR_CODE, allocationSize = 1)
-public class ExtraFeaturesColorCode {
-    public static final String SEQ_EXTRA_COLOR_CODE = "seq_egdcr_additional_feature_colorcodes";
+import org.egov.common.entity.edcr.SubFeatureColorCode;
+import org.egov.commons.repository.bpa.SubFeatureColorCodeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EXTRA_COLOR_CODE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+@Service
+@Transactional(readOnly = true)
+public class SubFeatureColorCodeService {
 
-    private String feature;
+    @Autowired
+    private SubFeatureColorCodeRepository extraFeaturesColorCodeRepository;
 
-    private String subFeature;
-
-    private Integer colorCode;
-
-    private Integer orderNumber;
-
-    public Long getId() {
-        return id;
+    public List<SubFeatureColorCode> findByFeature(String feature) {
+        return extraFeaturesColorCodeRepository.findByFeature(feature);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public SubFeatureColorCode findBySubFeature(String subFeature) {
+        return extraFeaturesColorCodeRepository.findBySubFeature(subFeature);
     }
 
-    public String getFeature() {
-        return feature;
+    public List<SubFeatureColorCode> findAll() {
+        return extraFeaturesColorCodeRepository.findAll();
     }
-
-    public void setFeature(String feature) {
-        this.feature = feature;
-    }
-
-    public String getSubFeature() {
-        return subFeature;
-    }
-
-    public void setSubFeature(String subfeature) {
-        this.subFeature = subfeature;
-    }
-
-    public Integer getColorCode() {
-        return colorCode;
-    }
-
-    public void setColorCode(Integer colorCode) {
-        this.colorCode = colorCode;
-    }
-
-    public Integer getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(Integer orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
 }
