@@ -387,8 +387,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("stateType", oc.getClass().getSimpleName());
         model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
         model.addAttribute("currentState", oc.getCurrentState() == null ? "" : oc.getCurrentState().getValue());
-        model.addAttribute("feeCalculationMode",
-                bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION));
+        model.addAttribute("feeCalculationMode",bpaUtils.getOCFeeCalculationMode());
 
     }
 
@@ -472,8 +471,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         wfBean.setAmountRule(amountRule);
         Position pos = null;
         Long approvalPosition = null;
-        String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
-                BpaConstants.OCFEECALULATION);
+        String feeCalculationMode = bpaUtils.getOCFeeCalculationMode();
 
         if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 && feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {

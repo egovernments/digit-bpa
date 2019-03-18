@@ -321,7 +321,7 @@ public class OccupancyCertificateService {
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(oc.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(oc.getState().getValue())) {
-        	String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
+        	String feeCalculationMode = bpaUtils.getOCFeeCalculationMode();
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
                     feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 OccupancyFee ocFee = new OccupancyFee();

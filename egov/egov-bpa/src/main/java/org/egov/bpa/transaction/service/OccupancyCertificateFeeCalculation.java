@@ -48,9 +48,8 @@ package org.egov.bpa.transaction.service;
 
 import java.io.IOException;
 
-import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 
 @FunctionalInterface
 public interface OccupancyCertificateFeeCalculation {

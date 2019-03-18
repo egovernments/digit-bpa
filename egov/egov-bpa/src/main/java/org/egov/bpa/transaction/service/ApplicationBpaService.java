@@ -51,7 +51,6 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATE
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
-import static org.egov.bpa.utils.BpaConstants.EXTENTINSQMTS;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
@@ -499,8 +498,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 				.equalsIgnoreCase(application.getState().getValue())
 				|| APPLICATION_STATUS_SECTION_CLRK_APPROVED.equalsIgnoreCase(application.getState().getValue()))) {
 
-			String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
-					BpaConstants.BPAFEECALULATION);
+			String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
 
 			if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL)
 					|| feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
@@ -517,8 +515,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
 
-            String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
-                    BpaConstants.BPAFEECALULATION);
+            String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
 
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
                     feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {

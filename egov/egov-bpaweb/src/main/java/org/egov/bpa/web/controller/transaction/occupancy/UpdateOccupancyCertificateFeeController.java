@@ -47,6 +47,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.BpaFeeService;
@@ -69,7 +70,8 @@ import org.egov.bpa.utils.BpaUtils;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -87,12 +89,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/occupancy-certificate/fee")
 public class UpdateOccupancyCertificateFeeController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateOccupancyCertificateFeeController.class);
     private static final String OC_FEE = "occupancyFee";
     private static final String OC = "oc";
     private static final String CREATEOCFEE_FORM = "createocfee-form";
-    private static final String MODIFYOCFEE_FORM = "modifyocfee-form"; 
-    private static final String CREATEOCFEE_VIEW = "createocfee-view"; 
-    private static final String MODIFYOCFEE_VIEW = "modifyocfee-view"; 
+    private static final String MODIFYOCFEE_FORM = "modifyocfee-form";
+    private static final String CREATEOCFEE_VIEW = "createocfee-view";
+    private static final String MODIFYOCFEE_VIEW = "modifyocfee-view";
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String MESSAGE = "message";
 
@@ -126,15 +129,16 @@ public class UpdateOccupancyCertificateFeeController {
     protected OccupancyFeeRepository ocFeeRepository;
     @Autowired
     protected BpaUtils bpaUtils;
+
     @ModelAttribute
     public OccupancyFee getOCApplication(@PathVariable final String applicationNumber) {
-    	OccupancyCertificate oc = ocService.findByApplicationNumber(applicationNumber);
+        OccupancyCertificate oc = ocService.findByApplicationNumber(applicationNumber);
         OccupancyFee ocFee = new OccupancyFee();
         if (oc != null) {
             List<OccupancyFee> ocFeeList = ocFeeService
                     .getOCFeeListByApplicationId(oc.getId());
             if (ocFeeList.isEmpty()) {
-            	ocFee.setOc(oc);
+                ocFee.setOc(oc);
                 return ocFee;
             } else {
                 return ocFeeList.get(0);
@@ -142,14 +146,12 @@ public class UpdateOccupancyCertificateFeeController {
         }
         return ocFee;
     }
-   
 
     @RequestMapping(value = "/calculateFee/{applicationNumber}", method = RequestMethod.GET)
     public String calculateFeeform(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         OccupancyFee ocFee = getOCApplication(applicationNumber);
-        if (ocFee != null && ocFee.getOc() != null
-                            ) {
+        if (ocFee != null && ocFee.getOc() != null) {
             loadViewdata(model, ocFee);
 
             // check fee calculate first time or update ? Check inspection is captured for existing application ?
@@ -157,31 +159,31 @@ public class UpdateOccupancyCertificateFeeController {
             // Get all sanction fee by service type
             List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService
                     .getOCSFeeForListOfServices(ocFee.getOc()
-                    		.getParent().getServiceType().getId());
-            String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.OCFEECALULATION);
+                            .getParent().getServiceType().getId());
+            String feeCalculationMode = bpaUtils.getOCFeeCalculationMode();
             model.addAttribute("sanctionFees", bpaSanctionFees);
             model.addAttribute("feeCalculationMode", feeCalculationMode);
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
-            		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)){
+                    feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 // calculate fee by passing sanction list, inspection latest object.
                 // based on fee code, define calculation logic for each servicewise.
-            	try {
-					ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(ocFee.getOc());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                try {
+                    ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(ocFee.getOc());
+                } catch (IOException ioe) {
+                    // TODO do what here to do else rethrow exception, remove this comment if it can be ignored
+                    LOGGER.error("Error occurred while occupancy certificate fee calculation", ioe);
+                }
                 model.addAttribute(OC_FEE, ocFee);
 
                 return MODIFYOCFEE_FORM;
             } else {
 
                 if (ocFee.getApplicationFee() == null) {
-                	ocFee.setApplicationFee(new ApplicationFee());
-                	ocFee.getApplicationFee().setStatus(bpaStatusService
+                    ocFee.setApplicationFee(new ApplicationFee());
+                    ocFee.getApplicationFee().setStatus(bpaStatusService
                             .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE_REGISTRATIONFEE,
                                     BpaConstants.APPROVED));
-                	ocFee.getApplicationFee().setFeeDate(new Date());
+                    ocFee.getApplicationFee().setFeeDate(new Date());
 
                     for (BpaFeeMapping bpaFee : bpaSanctionFees) {
                         ApplicationFeeDetail applicationDtl = new ApplicationFeeDetail();
@@ -193,9 +195,10 @@ public class UpdateOccupancyCertificateFeeController {
                 }
                 model.addAttribute(OC_FEE, ocFee);
 
-                BigDecimal amount = ocFee.getApplicationFee().getApplicationFeeDetail().stream().map(ApplicationFeeDetail::getAmount)
+                BigDecimal amount = ocFee.getApplicationFee().getApplicationFeeDetail().stream()
+                        .map(ApplicationFeeDetail::getAmount)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
-                return  amount.compareTo(BigDecimal.ZERO) > 0 ? MODIFYOCFEE_FORM : CREATEOCFEE_FORM;
+                return amount.compareTo(BigDecimal.ZERO) > 0 ? MODIFYOCFEE_FORM : CREATEOCFEE_FORM;
             }
         }
 
@@ -228,16 +231,17 @@ public class UpdateOccupancyCertificateFeeController {
         // generate demand based on sanction list, application
         ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(ocFee.getApplicationFee());
         ocFee.setApplicationFee(applicationFee);
-        EgDemand demand = bpaDemandService.generateDemandUsingSanctionFeeList(ocFee.getApplicationFee(), ocFee.getOc().getDemand());
-        if (ocFee.getOc().getDemand() == null) { 
-        	ocFee.getOc().setDemand(demand);	
-		}
+        EgDemand demand = bpaDemandService.generateDemandUsingSanctionFeeList(ocFee.getApplicationFee(),
+                ocFee.getOc().getDemand());
+        if (ocFee.getOc().getDemand() == null)
+            ocFee.getOc().setDemand(demand);
         ocFeeRepository.save(ocFee);
 
         String message = messageSource.getMessage("msg.create.calculateFee", new String[] {
                 ocFee.getOc().getApplicationNumber() }, LocaleContextHolder.getLocale());
         model.addAttribute(MESSAGE, message);
 
-        return StringUtils.isBlank(applicationFee.getModifyFeeReason()) ? CREATEOCFEE_VIEW : MODIFYOCFEE_VIEW;
+        return StringUtils.isBlank(applicationFee.getModifyFeeReason()) ? CREATEOCFEE_VIEW
+                : MODIFYOCFEE_VIEW;
     }
 }

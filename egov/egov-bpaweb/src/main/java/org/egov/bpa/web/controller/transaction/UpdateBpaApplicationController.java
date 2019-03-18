@@ -336,8 +336,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
         String approvalComent = request.getParameter(APPROVAL_COMENT);
 
-        String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME,
-                BpaConstants.BPAFEECALULATION);
+        String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
 
 
         if (APPLICATION_STATUS_NOCUPDATED.equals(bpaApplication.getStatus().getCode())

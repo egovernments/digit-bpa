@@ -146,7 +146,7 @@ public class UpdateBpaPermitFeeController {
             List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService
                     .getSanctionFeeForListOfServices(permitFee.getApplication().getServiceType().getId());
 
-            String feeCalculationMode = bpaUtils.getAppConfigValueForFeeCalculation(BpaConstants.EGMODULE_NAME, BpaConstants.BPAFEECALULATION);
+            String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
             model.addAttribute("sanctionFees", bpaSanctionFees);
             model.addAttribute("feeCalculationMode", feeCalculationMode);
             

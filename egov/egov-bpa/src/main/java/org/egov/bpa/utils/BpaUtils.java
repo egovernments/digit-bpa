@@ -236,9 +236,10 @@ public class BpaUtils {
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
         String status;
-        if(APPLICATION_STATUS_SUBMITTED.equals(application.getStatus().getCode()) && checkAnyTaxIsPendingToCollect(application.getDemand()))
+        if (APPLICATION_STATUS_SUBMITTED.equals(application.getStatus().getCode())
+                && checkAnyTaxIsPendingToCollect(application.getDemand()))
             status = APPLICATION_FEE_PAYMENT_PENDING;
-        else 
+        else
             status = application.getStatus().getDescription();
         if ((application.getState() != null && (CLOSED.equals(application.getState().getValue())
                 || WF_END_ACTION.equals(application.getState().getValue())))
@@ -260,7 +261,7 @@ public class BpaUtils {
             status = "To be submitted";
         } else if (null != application.getStatus().getDescription()
                 && WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            if(checkAnyTaxIsPendingToCollect(application.getDemand()))
+            if (checkAnyTaxIsPendingToCollect(application.getDemand()))
                 status = APPLICATION_FEE_PAYMENT_PENDING;
             else
                 status = application.getStatus().getDescription();
@@ -285,7 +286,7 @@ public class BpaUtils {
             status = "To be submitted";
         } else if (null != oc.getStatus().getDescription()
                 && WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            if(checkAnyTaxIsPendingToCollect(oc.getDemand()))
+            if (checkAnyTaxIsPendingToCollect(oc.getDemand()))
                 status = APPLICATION_FEE_PAYMENT_PENDING;
             else
                 status = oc.getStatus().getDescription();
@@ -307,9 +308,9 @@ public class BpaUtils {
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
         String status;
-        if(APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode()) && checkAnyTaxIsPendingToCollect(oc.getDemand()))
+        if (APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode()) && checkAnyTaxIsPendingToCollect(oc.getDemand()))
             status = APPLICATION_FEE_PAYMENT_PENDING;
-        else 
+        else
             status = oc.getStatus().getDescription();
         if ((oc.getState() != null && (CLOSED.equals(oc.getState().getValue())
                 || WF_END_ACTION.equals(oc.getState().getValue())))
@@ -411,8 +412,8 @@ public class BpaUtils {
         final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
         Long approvalPositionId = approvalPosition;
         if (approvalPosition == null) {
-			approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+            approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
         }
         if (applicationWorkflowCustomDefaultImpl != null)
             if (LETTERTOPARTYINITIATE.equals(currentState))
@@ -450,8 +451,8 @@ public class BpaUtils {
         final OccupancyCertificateWorkflowCustomDefaultImpl ocWorkflowCustomDefaultImpl = getInitialisedWorkFlowBeanForOC();
         Long approvalPositionId = wfBean.getApproverPositionId();
         if (wfBean.getApproverPositionId() == null)
-			approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId());
+            approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId());
         wfBean.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE_OC);
         wfBean.setApproverPositionId(approvalPositionId);
         if (ocWorkflowCustomDefaultImpl != null)
@@ -509,7 +510,7 @@ public class BpaUtils {
     public void addQrCodeToOcPdfDocuments(FileStoreMapper fileMapper, OccupancyCertificate oc) {
         pdfQrCodeAppend.addStampForOc(fileMapper, oc);
     }
-    
+
     public Path getExistingFilePath(FileStoreMapper fileMapper, String moduleName) throws IOException {
         Path fileDirPath = this.getFileDirectoryPath(moduleName);
         if (!fileDirPath.toFile().exists()) {
@@ -534,7 +535,7 @@ public class BpaUtils {
         Map<SubOccupancy, BigDecimal> occupancyWiseBuiltupArea = new ConcurrentHashMap<>();
         for (BuildingDetail building : buildingDetails) {
             for (ApplicationFloorDetail floor : building.getApplicationFloorDetails()) {
-                if (floor.getSubOccupancy()!=null && occupancyWiseBuiltupArea.containsKey(floor.getSubOccupancy()))
+                if (floor.getSubOccupancy() != null && occupancyWiseBuiltupArea.containsKey(floor.getSubOccupancy()))
                     occupancyWiseBuiltupArea.put(floor.getSubOccupancy(),
                             occupancyWiseBuiltupArea.get(floor.getSubOccupancy()).add(floor.getPlinthArea()));
                 else
@@ -643,7 +644,7 @@ public class BpaUtils {
         proposedArea.put("totalCarpetArea", totalCarpetArea);
         return proposedArea;
     }
-    
+
     public static Map<String, BigDecimal> getExistingBuildingAreasOfOC(List<OCExistingBuilding> ocExistingBuildings) {
         BigDecimal totalBltUpArea = BigDecimal.ZERO;
         BigDecimal totalFloorArea = BigDecimal.ZERO;
@@ -662,19 +663,21 @@ public class BpaUtils {
         return proposedArea;
     }
 
-    public String getAppConfigValueForFeeCalculation(String moduleName, String mode) {
-        final List<AppConfigValues> appConfigValue = appConfigValueService.getConfigValuesByModuleAndKey(moduleName,
-                mode);
-        String feeCalculationMode = BpaConstants.MANUAL;
+    public String getOCFeeCalculationMode() {
+        return getAppConfigValueForFeeCalculation(BpaConstants.OCFEECALULATION);
+    }
 
+    public String getBPAFeeCalculationMode() {
+        return getAppConfigValueForFeeCalculation(BpaConstants.BPAFEECALULATION);
+    }
+
+    private String getAppConfigValueForFeeCalculation(String mode) {
+        List<AppConfigValues> appConfigValue = appConfigValueService.getConfigValuesByModuleAndKey(EGMODULE_NAME, mode);
+        String feeCalculationMode = BpaConstants.MANUAL;
         if (appConfigValue != null && !appConfigValue.isEmpty()) {
             String configValue = appConfigValue.get(0).getValue();
-            if (configValue.equalsIgnoreCase(BpaConstants.AUTOFEECAL))
-                return configValue;
-            else if (configValue.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT))
-                return configValue;
-            else
-                return feeCalculationMode;
+            return configValue.equalsIgnoreCase(BpaConstants.AUTOFEECAL)
+                    || configValue.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT) ? configValue : feeCalculationMode;
         }
         return feeCalculationMode;
     }
@@ -714,55 +717,57 @@ public class BpaUtils {
 
     public String getAppConfigForOcAllowDeviation() {
         List<AppConfigValues> appConfigValueList = appConfigValueService
-                .getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, "OC_ALLOW_DEVIATION");
+                .getConfigValuesByModuleAndKey(EGMODULE_NAME, "OC_ALLOW_DEVIATION");
         return appConfigValueList.get(0).getValue();
     }
-    
+
     public Boolean isApplicationFeeCollectionRequired() {
         return getAppconfigValueByKeyName(PERMIT_APPLN_FEE_COLLECTION_REQUIRED).equalsIgnoreCase(YES);
     }
-    
-	public void saveOrUpdateBoundary(BpaApplication bpaApplication) {
-		SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
-		List<SiteDetail> siteDetails = new ArrayList<>();
-		if (bpaApplication.getAdminBoundary() != null && !bpaApplication.getAdminBoundary().isEmpty()) {
-			siteDetail.setElectionBoundary(
-					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getAdminBoundary())));
-		}
-		if (bpaApplication.getRevenueBoundary() != null && !bpaApplication.getRevenueBoundary().isEmpty()) {
-			siteDetail.setAdminBoundary(
-					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getRevenueBoundary())));
-			bpaApplication.setWardId(Long.valueOf(bpaApplication.getRevenueBoundary()));
-		}
-		if (bpaApplication.getLocationBoundary() != null && !bpaApplication.getLocationBoundary().isEmpty()) {
-			siteDetail.setLocationBoundary(
-					boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getLocationBoundary())));
-		}
-		siteDetails.add(siteDetail);
-		bpaApplication.setSiteDetail(siteDetails);
-	}
 
-
-    public void loadBoundary(BpaApplication bpaApplication){
-    	SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
-    	bpaApplication.setAdminBoundary(siteDetail.getElectionBoundary() == null ? "" : String.valueOf(siteDetail.getElectionBoundary().getId()));
-    	bpaApplication.setLocationBoundary(siteDetail.getLocationBoundary() == null ? "" : String.valueOf(siteDetail.getLocationBoundary().getId()));
-    	bpaApplication.setRevenueBoundary(siteDetail.getAdminBoundary() == null ? "" : String.valueOf(siteDetail.getAdminBoundary().getId()));
+    public void saveOrUpdateBoundary(BpaApplication bpaApplication) {
+        SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
+        List<SiteDetail> siteDetails = new ArrayList<>();
+        if (bpaApplication.getAdminBoundary() != null && !bpaApplication.getAdminBoundary().isEmpty()) {
+            siteDetail.setElectionBoundary(
+                    boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getAdminBoundary())));
+        }
+        if (bpaApplication.getRevenueBoundary() != null && !bpaApplication.getRevenueBoundary().isEmpty()) {
+            siteDetail.setAdminBoundary(
+                    boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getRevenueBoundary())));
+            bpaApplication.setWardId(Long.valueOf(bpaApplication.getRevenueBoundary()));
+        }
+        if (bpaApplication.getLocationBoundary() != null && !bpaApplication.getLocationBoundary().isEmpty()) {
+            siteDetail.setLocationBoundary(
+                    boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getLocationBoundary())));
+        }
+        siteDetails.add(siteDetail);
+        bpaApplication.setSiteDetail(siteDetails);
     }
-    
-	public Boundary getBoundaryForWorkflow(SiteDetail siteDetail) {
-		Boundary workFlowBoundary = null;
-		String workflowBoundary = appConfigValuesService.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME,
-				BpaConstants.WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY).get(0).getValue();
-		if (workflowBoundary != null && !workflowBoundary.isEmpty()) {
-			if (workflowBoundary.equals("ADMINISTRATION")) {
-				workFlowBoundary = siteDetail.getElectionBoundary();
-			} else if (workflowBoundary.equals("REVENUE")) {
-				workFlowBoundary = siteDetail.getAdminBoundary();
-			} else {
-				workFlowBoundary = siteDetail.getLocationBoundary();
-			}
-		}
-		return workFlowBoundary;
-	}
+
+    public void loadBoundary(BpaApplication bpaApplication) {
+        SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
+        bpaApplication.setAdminBoundary(
+                siteDetail.getElectionBoundary() == null ? "" : String.valueOf(siteDetail.getElectionBoundary().getId()));
+        bpaApplication.setLocationBoundary(
+                siteDetail.getLocationBoundary() == null ? "" : String.valueOf(siteDetail.getLocationBoundary().getId()));
+        bpaApplication.setRevenueBoundary(
+                siteDetail.getAdminBoundary() == null ? "" : String.valueOf(siteDetail.getAdminBoundary().getId()));
+    }
+
+    public Boundary getBoundaryForWorkflow(SiteDetail siteDetail) {
+        Boundary workFlowBoundary = null;
+        String workflowBoundary = appConfigValuesService.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME,
+                BpaConstants.WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY).get(0).getValue();
+        if (workflowBoundary != null && !workflowBoundary.isEmpty()) {
+            if (workflowBoundary.equals("ADMINISTRATION")) {
+                workFlowBoundary = siteDetail.getElectionBoundary();
+            } else if (workflowBoundary.equals("REVENUE")) {
+                workFlowBoundary = siteDetail.getAdminBoundary();
+            } else {
+                workFlowBoundary = siteDetail.getLocationBoundary();
+            }
+        }
+        return workFlowBoundary;
+    }
 }
