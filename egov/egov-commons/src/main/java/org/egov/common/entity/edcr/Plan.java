@@ -95,19 +95,19 @@ public class Plan implements Serializable {
     private List<Occupancy> occupancies = new ArrayList<>();
     private transient List<CulDeSacRoad> culdeSacRoads = new ArrayList<>();
     private transient List<Lane> laneRoads = new ArrayList<>();
-    private transient HashMap<String, String> errors = new LinkedHashMap<>();
-    private transient HashMap<String, String> noObjectionCertificates = new HashMap<>();
+    private transient Map<String, String> errors = new LinkedHashMap<>();
+    private transient Map<String, String> noObjectionCertificates = new HashMap<>();
     private transient List<BigDecimal> travelDistancesToExit = new ArrayList<>();
-    private transient HashMap<String, String> generalInformation = new HashMap<>();
+    private transient Map<String, String> generalInformation = new HashMap<>();
     private transient Basement basement;
     private transient ParkingDetails parkingDetails = new ParkingDetails();
     private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
     @JsonIgnore
-    private transient List<org.egov.common.entity.bpa.Occupancy> occupancyMaster = new ArrayList<>();
+    private transient Map<Integer, org.egov.common.entity.bpa.Occupancy> occupancyMaster = new HashMap<>();
     @JsonIgnore
-    private transient List<SubOccupancy> subOccupancyMaster = new ArrayList<>();
+    private transient Map<Integer, SubOccupancy> subOccupancyMaster = new HashMap<>();
     @JsonIgnore
-    private transient List<Usage> usageMaster = new ArrayList<>();
+    private transient Map<Integer, Usage> usageMaster = new HashMap<>();
     @JsonIgnore
     private transient Map<String, Integer> extraFeaturesColorMaster = new HashMap<>();
     @Transient
@@ -115,6 +115,7 @@ public class Plan implements Serializable {
     private Boolean inMeters = true;
     @Transient
     @JsonIgnore
+
     public StringBuffer additionsToDxf = new StringBuffer();
     @Transient
     private Boolean lengthFactor = true;
@@ -185,11 +186,11 @@ public class Plan implements Serializable {
         return null;
     }
 
-    public HashMap<String, String> getNoObjectionCertificates() {
+    public Map<String, String> getNoObjectionCertificates() {
         return noObjectionCertificates;
     }
 
-    public void setNoObjectionCertificates(HashMap<String, String> noObjectionCertificates) {
+    public void setNoObjectionCertificates(Map<String, String> noObjectionCertificates) {
         this.noObjectionCertificates = noObjectionCertificates;
     }
 
@@ -249,11 +250,11 @@ public class Plan implements Serializable {
         this.notifiedRoads = notifiedRoads;
     }
 
-    public HashMap<String, String> getGeneralInformation() {
+    public Map<String, String> getGeneralInformation() {
         return generalInformation;
     }
 
-    public void setGeneralInformation(HashMap<String, String> generalInformation) {
+    public void setGeneralInformation(Map<String, String> generalInformation) {
         this.generalInformation = generalInformation;
     }
 
@@ -284,11 +285,11 @@ public class Plan implements Serializable {
             getErrors().put(key, value);
     }
 
-    public HashMap<String, String> getErrors() {
+    public Map<String, String> getErrors() {
         return errors;
     }
 
-    public void setErrors(HashMap<String, String> errors) {
+    public void setErrors(Map<String, String> errors) {
         this.errors = errors;
     }
 
@@ -390,27 +391,27 @@ public class Plan implements Serializable {
         this.parkingDetails = parkingDetails;
     }
 
-    public List<org.egov.common.entity.bpa.Occupancy> getOccupancyMaster() {
+    public Map<Integer, org.egov.common.entity.bpa.Occupancy> getOccupancyMaster() {
         return occupancyMaster;
     }
 
-    public void setOccupancyMaster(List<org.egov.common.entity.bpa.Occupancy> occupancyMaster) {
+    public void setOccupancyMaster(Map<Integer, org.egov.common.entity.bpa.Occupancy> occupancyMaster) {
         this.occupancyMaster = occupancyMaster;
     }
 
-    public List<SubOccupancy> getSubOccupancyMaster() {
+    public Map<Integer, SubOccupancy> getSubOccupancyMaster() {
         return subOccupancyMaster;
     }
 
-    public void setSubOccupancyMaster(List<SubOccupancy> subOccupancyMaster) {
+    public void setSubOccupancyMaster(Map<Integer, SubOccupancy> subOccupancyMaster) {
         this.subOccupancyMaster = subOccupancyMaster;
     }
 
-    public List<Usage> getUsageMaster() {
+    public Map<Integer, Usage> getUsageMaster() {
         return usageMaster;
     }
 
-    public void setUsageMaster(List<Usage> usageMaster) {
+    public void setUsageMaster(Map<Integer, Usage> usageMaster) {
         this.usageMaster = usageMaster;
     }
 
