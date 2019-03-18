@@ -102,11 +102,16 @@ public class EdcrApplicationController {
         StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
         if (validateStakeholder(model, stakeHolder, request))
             return DCR_ACKNOWLEDGEMENT;
-        Address permanentAddress = stakeHolder.getAddress().stream()
-                .filter(permtAddress -> permtAddress.getType().equals(AddressType.PERMANENT)).findAny().orElse(null);
-        StringBuilder architectInfo = new StringBuilder(256).append(stakeHolder.getName()).append(",")
-                .append(stakeHolder.getStakeHolderType().getName()).append(",").append(stakeHolder.getMobileNumber())
-                .append(",").append(permanentAddress.getStreetRoadLine()).append(".");
+		/*
+		 * Address permanentAddress = stakeHolder.getAddress().stream()
+		 * .filter(permtAddress ->
+		 * permtAddress.getType().equals(AddressType.PERMANENT)).findAny().orElse(null);
+		 * StringBuilder architectInfo = new
+		 * StringBuilder(256).append(stakeHolder.getName()).append(",")
+		 * .append(stakeHolder.getStakeHolderType().getName()).append(",").append(
+		 * stakeHolder.getMobileNumber())
+		 * .append(",").append(permanentAddress.getStreetRoadLine()).append(".");
+		 */
 
         EdcrApplication edcrApplication = new EdcrApplication();
         if (stakeHolder != null && !isBlank(stakeHolder.getName())) {

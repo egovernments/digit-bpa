@@ -293,6 +293,7 @@ public class StakeHolderController extends GenericWorkFlowController {
 		}
 		preapreUpdateModel(stakeHolder, model);
 		
+		model.addAttribute(STAKE_HOLDER_TYPES,stakeholderTypeService.findAllIsActive());
 		model.addAttribute("stakeHolderDocumentList", stakeHolder.getStakeHolderDocument());
 		model.addAttribute("applicationHistory",
 				stakeHolderAuditService.getStakeholderUpdateHistory(stakeHolder.getId()));
