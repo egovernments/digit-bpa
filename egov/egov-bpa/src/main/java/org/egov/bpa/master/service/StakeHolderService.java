@@ -108,6 +108,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class StakeHolderService {
 
+    private static final String DATA_ENTRY = "DataEntry";
     private static final String STAKE_HOLDER_STATUS = "stakeHolder.status";
     private static final Logger LOG = Logger.getLogger(StakeHolderService.class);
     private static final String STK_HLDR_TYPE = "stakeHolder.stakeHolderType";
@@ -176,7 +177,6 @@ public class StakeHolderService {
         stakeHolder.setPassword(passwordEncoder.encode("demo"));
         stakeHolder.addRole(roleService.getRoleByName(BpaConstants.ROLE_BUSINESS_USER));
         stakeHolder.setActive(stakeHolder.getIsActive());
-        stakeHolder.setSource(Source.SYSTEM);
         stakeHolder.setCreatedUser(securityUtils.getCurrentUser());
         stakeHolder.setCreateDate(new Date());
         stakeHolder.setLastUpdatedDate(new Date());
@@ -184,7 +184,10 @@ public class StakeHolderService {
         processAndStoreApplicationDocuments(stakeHolder);
         StakeHolderState stakeHolderState = new StakeHolderState();
         stakeHolderState.setStakeHolder(stakeHolder);
-        transition(stakeHolderState, null, null, null, null);
+        if(stakeHolder.getSource().equals(Source.ONLINE))
+            transition(stakeHolderState, null, null, null, null);
+        else
+            transition(stakeHolderState, DATA_ENTRY, null, null, null);
         stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
         stakeHolderRepository.save(stakeHolder);
         stakeHolderState.setStakeHolder(stakeHolder);
@@ -206,11 +209,13 @@ public class StakeHolderService {
         final DateTime currentDate = new DateTime();
 
         if (null == stakeHolderState.getId()) {
-            {
                 // this is for initiation
                 wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
                         additionalRule, BpaConstants.WF_NEW_STATE, pendingAction);
-                if (wfmatrix != null) {
+                //this is for data entry purpose, approval cycle and fee not require
+                if(DATA_ENTRY.equals(workflowAction)) {
+                    stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
+                } else if (wfmatrix != null) {
                     // this is for Single step workflow no status entry
                     if (wfmatrix.getCurrentState().equalsIgnoreCase(BpaConstants.WF_NEW_STATE)
                             && wfmatrix.getNextAction().equalsIgnoreCase("END")) {
@@ -228,9 +233,7 @@ public class StakeHolderService {
                         } else {
                             stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
                         }
-                    }
-
-                    else {
+                    } else {
                         if (wfmatrix.getNextDesignation() != null && !wfmatrix.getNextDesignation().isEmpty()) {
                             final List<Assignment> assignments = assignmentService.getAllActiveAssignments(
                                     designationService.getDesignationByName(wfmatrix.getNextDesignation()).getId());
@@ -250,11 +253,7 @@ public class StakeHolderService {
 
                     }
                 }
-            }
-
-        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject"))
-
-        {
+        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject")) {
             wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
                     additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
             stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.REJECTED);

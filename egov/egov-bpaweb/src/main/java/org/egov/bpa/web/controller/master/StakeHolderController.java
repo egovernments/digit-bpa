@@ -183,7 +183,7 @@ public class StakeHolderController extends GenericWorkFlowController {
             prepareModel(model, stakeHolder);
             return STAKEHOLDER_NEW;
         }
-        stakeHolder.setStatus(StakeHolderStatus.APPROVED);
+        stakeHolder.setSource(Source.SYSTEM);
         StakeHolder stakeHolderRes = stakeHolderService.save(stakeHolder);
         stakeHolderIndexService.updateIndexes(stakeHolderRes);
         bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);
@@ -208,8 +208,9 @@ public class StakeHolderController extends GenericWorkFlowController {
             final Model model, final BindingResult errors, final RedirectAttributes redirectAttributes,
             HttpServletRequest request) {
 
-        if (!captchaUtils.captchaIsValid(request))
-            errors.reject("captcha.not.valid");
+        /*
+         * if (!captchaUtils.captchaIsValid(request)) errors.reject("captcha.not.valid");
+         */
 
         StakeHolder existingStakeholder = stakeHolderService.validateStakeHolderIsRejected(
                 stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), stakeHolder.getAadhaarNumber(),
@@ -225,6 +226,7 @@ public class StakeHolderController extends GenericWorkFlowController {
             return STAKEHOLDER_NEW_BY_CITIZEN;
         }
         stakeHolder.setStatus(StakeHolderStatus.SUBMITTED);
+        stakeHolder.setSource(Source.ONLINE);
         StakeHolder stakeHolderRes;
         if (existingStakeholder == null)
             stakeHolderRes = stakeHolderService.save(stakeHolder);
@@ -293,8 +295,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         model.addAttribute("stakeHolderDocumentList", stakeHolder.getStakeHolderDocument());
         model.addAttribute(APPLICATION_HISTORY,
                 stakeHolderAuditService.getStakeholderUpdateHistory(stakeHolder.getId()));
-        if (!securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) && stakeHolderstate != null
-                && stakeHolderstate.getState() != null
+        if (stakeHolderstate != null && stakeHolderstate.getState() != null
                 && !stakeHolderstate.getState().getValue().equalsIgnoreCase("Closed")) {
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setPendingActions(stakeHolderstate.getCurrentState().getNextAction());
