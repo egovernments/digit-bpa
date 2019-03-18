@@ -103,19 +103,18 @@ public class Plan implements Serializable {
     private transient ParkingDetails parkingDetails = new ParkingDetails();
     private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
     @JsonIgnore
-    private transient Map<Integer, org.egov.common.entity.bpa.Occupancy> occupancyMaster = new HashMap<>();
+    private transient Map<Integer, org.egov.common.entity.bpa.Occupancy> occupanciesMaster = new HashMap<>();
     @JsonIgnore
-    private transient Map<Integer, SubOccupancy> subOccupancyMaster = new HashMap<>();
+    private transient Map<Integer, SubOccupancy> subOccupanciesMaster = new HashMap<>();
     @JsonIgnore
-    private transient Map<Integer, Usage> usageMaster = new HashMap<>();
+    private transient Map<Integer, Usage> usagesMaster = new HashMap<>();
     @JsonIgnore
-    private transient Map<String, Integer> extraFeaturesColorMaster = new HashMap<>();
+    private transient Map<String, Integer> subFeatureColorCodesMaster = new HashMap<>();
     @Transient
     @JsonIgnore
     private Boolean inMeters = true;
     @Transient
     @JsonIgnore
-
     public StringBuffer additionsToDxf = new StringBuffer();
     @Transient
     private Boolean lengthFactor = true;
@@ -391,36 +390,36 @@ public class Plan implements Serializable {
         this.parkingDetails = parkingDetails;
     }
 
-    public Map<Integer, org.egov.common.entity.bpa.Occupancy> getOccupancyMaster() {
-        return occupancyMaster;
+    public Map<Integer, org.egov.common.entity.bpa.Occupancy> getOccupanciesMaster() {
+        return occupanciesMaster;
     }
 
-    public void setOccupancyMaster(Map<Integer, org.egov.common.entity.bpa.Occupancy> occupancyMaster) {
-        this.occupancyMaster = occupancyMaster;
+    public void setOccupanciesMaster(Map<Integer, org.egov.common.entity.bpa.Occupancy> occupanciesMaster) {
+        this.occupanciesMaster = occupanciesMaster;
     }
 
-    public Map<Integer, SubOccupancy> getSubOccupancyMaster() {
-        return subOccupancyMaster;
+    public Map<Integer, SubOccupancy> getSubOccupanciesMaster() {
+        return subOccupanciesMaster;
     }
 
-    public void setSubOccupancyMaster(Map<Integer, SubOccupancy> subOccupancyMaster) {
-        this.subOccupancyMaster = subOccupancyMaster;
+    public void setSubOccupanciesMaster(Map<Integer, SubOccupancy> subOccupanciesMaster) {
+        this.subOccupanciesMaster = subOccupanciesMaster;
     }
 
-    public Map<Integer, Usage> getUsageMaster() {
-        return usageMaster;
+    public Map<Integer, Usage> getUsagesMaster() {
+        return usagesMaster;
     }
 
-    public void setUsageMaster(Map<Integer, Usage> usageMaster) {
-        this.usageMaster = usageMaster;
+    public void setUsagesMaster(Map<Integer, Usage> usagesMaster) {
+        this.usagesMaster = usagesMaster;
     }
 
-    public Map<String, Integer> getExtraFeaturesColorMaster() {
-        return extraFeaturesColorMaster;
+    public Map<String, Integer> getSubFeatureColorCodesMaster() {
+        return subFeatureColorCodesMaster;
     }
 
-    public void setExtraFeaturesColorMaster(Map<String, Integer> extraFeaturesColorMaster) {
-        this.extraFeaturesColorMaster = extraFeaturesColorMaster;
+    public void setSubFeatureColorCodesMaster(Map<String, Integer> subFeatureColorCodesMaster) {
+        this.subFeatureColorCodesMaster = subFeatureColorCodesMaster;
     }
 
     public Boolean getInMeters() {
