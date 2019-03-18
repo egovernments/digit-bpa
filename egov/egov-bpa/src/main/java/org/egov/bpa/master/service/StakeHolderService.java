@@ -108,583 +108,580 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class StakeHolderService {
 
-	private static final Logger LOG = Logger.getLogger(StakeHolderService.class);
-	private static final String STK_HLDR_TYPE = "stakeHolder.stakeHolderType";
-	private static final String STK_HLDR = "stakeHolder";
-	public static final String BLOCK = "Block";
-	public static final String UNBLOCK = "Unblock";
-	public static final String STAKE_HOLDER_DOT_CREATED_DATE = "stakeHolder.createdDate";
-	@Autowired
-	private SecurityUtils securityUtils;
-	@PersistenceContext
-	private EntityManager entityManager;
-	@Autowired
-	private StakeHolderRepository stakeHolderRepository;
-	@Autowired
-	private StakeHolderAddressRepository stakeHolderAddressRepository;
-	@Autowired
-	private FileStoreService fileStoreService;
-	@Autowired
-	private CheckListDetailService checkListDetailService;
-	@Autowired
-	private StakeHolderCodeGenerator stakeHolderCodeGenerator;
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	@Autowired
-	private EnvironmentSettings environmentSettings;
-	@Autowired
-	private RoleService roleService;
-	@Autowired
-	private SearchBpaApplicationService searchBpaApplicationService;
-	@Autowired
-	private BpaUtils bpaUtils;
-	@Autowired
-	private StakeHolderBpaBillService stakeHolderBpaBillService;
-	@Autowired
-	private AppConfigValueService appConfigValueService;
-	@Autowired
-	private StakeHolderStateRepository stakeHolderStateRepository;
-	@Autowired
-	@Qualifier("workflowService")
-	private SimpleWorkflowService<StakeHolderState> stakeHolderWorkflowService;
-	@Autowired
-	private AssignmentService assignmentService;
-	@Autowired
-	private DesignationService designationService;
-	@Autowired
-	private PositionMasterRepository positionMasterRepository;
-	
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    private static final String STAKE_HOLDER_STATUS = "stakeHolder.status";
+    private static final Logger LOG = Logger.getLogger(StakeHolderService.class);
+    private static final String STK_HLDR_TYPE = "stakeHolder.stakeHolderType";
+    private static final String STK_HLDR = "stakeHolder";
+    public static final String BLOCK = "Block";
+    public static final String UNBLOCK = "Unblock";
+    public static final String STAKE_HOLDER_DOT_CREATED_DATE = "stakeHolder.createdDate";
+    @Autowired
+    private SecurityUtils securityUtils;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private StakeHolderRepository stakeHolderRepository;
+    @Autowired
+    private StakeHolderAddressRepository stakeHolderAddressRepository;
+    @Autowired
+    private FileStoreService fileStoreService;
+    @Autowired
+    private CheckListDetailService checkListDetailService;
+    @Autowired
+    private StakeHolderCodeGenerator stakeHolderCodeGenerator;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EnvironmentSettings environmentSettings;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private SearchBpaApplicationService searchBpaApplicationService;
+    @Autowired
+    private BpaUtils bpaUtils;
+    @Autowired
+    private StakeHolderBpaBillService stakeHolderBpaBillService;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
+    @Autowired
+    private StakeHolderStateRepository stakeHolderStateRepository;
+    @Autowired
+    @Qualifier("workflowService")
+    private SimpleWorkflowService<StakeHolderState> stakeHolderWorkflowService;
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private DesignationService designationService;
+    @Autowired
+    private PositionMasterRepository positionMasterRepository;
 
-	public List<StakeHolder> findAll() {
-		return stakeHolderRepository.findAll();
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Transactional
-	public StakeHolder save(final StakeHolder stakeHolder) {
-		if (null == stakeHolder.getCode())
-			stakeHolder.setCode(stakeHolderCodeGenerator.generateStakeHolderCode(stakeHolder));
-		final List<Address> addressList = new ArrayList<>();
-		addressList.add(setCorrespondenceAddress(stakeHolder));
-		addressList.add(setPermanentAddress(stakeHolder));
-		stakeHolder.setAddress(addressList);
-		stakeHolder.setUsername(stakeHolder.getEmailId());
-		stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
-		stakeHolder.setPassword(passwordEncoder.encode("demo"));
-		stakeHolder.addRole(roleService.getRoleByName(BpaConstants.ROLE_BUSINESS_USER));
-		stakeHolder.setActive(stakeHolder.getIsActive());
-		stakeHolder.setSource(Source.SYSTEM);
-		stakeHolder.setCreatedUser(securityUtils.getCurrentUser());
-		stakeHolder.setCreateDate(new Date());
-		stakeHolder.setLastUpdatedDate(new Date());
-		stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
-		processAndStoreApplicationDocuments(stakeHolder);
-		StakeHolderState stakeHolderState = new StakeHolderState();
-		stakeHolderState.setStakeHolder(stakeHolder);
-		transition(stakeHolderState, null, null, null, null);
-		stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
-		stakeHolderRepository.save(stakeHolder);
-		stakeHolderState.setStakeHolder(stakeHolder);
+    public List<StakeHolder> findAll() {
+        return stakeHolderRepository.findAll();
+    }
 
-		stakeHolderStateRepository.save(stakeHolderState);
-		return stakeHolder;
-	}
+    @Transactional
+    public StakeHolder save(final StakeHolder stakeHolder) {
+        if (null == stakeHolder.getCode())
+            stakeHolder.setCode(stakeHolderCodeGenerator.generateStakeHolderCode(stakeHolder));
+        final List<Address> addressList = new ArrayList<>();
+        addressList.add(setCorrespondenceAddress(stakeHolder));
+        addressList.add(setPermanentAddress(stakeHolder));
+        stakeHolder.setAddress(addressList);
+        stakeHolder.setUsername(stakeHolder.getEmailId());
+        stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
+        stakeHolder.setPassword(passwordEncoder.encode("demo"));
+        stakeHolder.addRole(roleService.getRoleByName(BpaConstants.ROLE_BUSINESS_USER));
+        stakeHolder.setActive(stakeHolder.getIsActive());
+        stakeHolder.setSource(Source.SYSTEM);
+        stakeHolder.setCreatedUser(securityUtils.getCurrentUser());
+        stakeHolder.setCreateDate(new Date());
+        stakeHolder.setLastUpdatedDate(new Date());
+        stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
+        processAndStoreApplicationDocuments(stakeHolder);
+        StakeHolderState stakeHolderState = new StakeHolderState();
+        stakeHolderState.setStakeHolder(stakeHolder);
+        transition(stakeHolderState, null, null, null, null);
+        stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
+        stakeHolderRepository.save(stakeHolder);
+        stakeHolderState.setStakeHolder(stakeHolder);
 
-	public void transition(StakeHolderState stakeHolderState, String workflowAction, String approvalComment,
-			String additionalRule, Long nextPosition) {
-		if (LOG.isDebugEnabled())
-			LOG.debug(" Create WorkFlow Transition Started  ...");
-		final User currentUser = securityUtils.getCurrentUser();
-		Assignment wfInitiator = null;
-		List<Assignment> approverAssignments = null;
-		Position ownerPos = null;
-		User ownerUser = null;
-		WorkFlowMatrix wfmatrix = null;
-		String pendingAction = null;
-		List<User> users = new ArrayList<User>();
-		// wfInitiator =
-		// assignmentService.getPrimaryAssignmentForUser(egBillregister.getCreatedBy().getId());
-		final DateTime currentDate = new DateTime();
+        stakeHolderStateRepository.save(stakeHolderState);
+        return stakeHolder;
+    }
 
-		if (null == stakeHolderState.getId()) {
-			{
-				// this is for initiation
-				wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
-						additionalRule, BpaConstants.WF_NEW_STATE, pendingAction);
-				if (wfmatrix != null) {
-					// this is for Single step workflow no status entry
-					if (wfmatrix.getCurrentState().equalsIgnoreCase(BpaConstants.WF_NEW_STATE)
-							&& wfmatrix.getNextAction().equalsIgnoreCase("END")) {
-						List<AppConfigValues> appConfigValueList = appConfigValueService.
-								getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDERREGFEE);
-						String	appConfigValue	="NO";
-						if(!appConfigValueList.isEmpty())
-						{
-								appConfigValue	=    appConfigValueList.get(0).getValue();
-						}
-						
-						if (appConfigValue != null && appConfigValue.equalsIgnoreCase("YES")) {
-							stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.PAYMENT_PENDING);
-							stakeHolderState.getStakeHolder().setDemand(stakeHolderBpaBillService.createDemand(stakeHolderState.getStakeHolder()));
-						} else {
-							stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
-						}
-					}
+    public void transition(StakeHolderState stakeHolderState, String workflowAction, String approvalComment,
+            String additionalRule, Long nextPosition) {
+        if (LOG.isDebugEnabled())
+            LOG.debug(" Create WorkFlow Transition Started  ...");
+        final User currentUser = securityUtils.getCurrentUser();
+        Assignment wfInitiator = null;
+        Position ownerPos = null;
+        User ownerUser = null;
+        WorkFlowMatrix wfmatrix = null;
+        String pendingAction = null;
+        final DateTime currentDate = new DateTime();
 
-					else {
-						if (wfmatrix.getNextDesignation() != null && !wfmatrix.getNextDesignation().isEmpty()) {
-							final List<Assignment> assignments = assignmentService.getAllActiveAssignments(
-									designationService.getDesignationByName(wfmatrix.getNextDesignation()).getId());
-							if (!assignments.isEmpty())
-								ownerPos = assignments.get(0).getPosition();
-						}
+        if (null == stakeHolderState.getId()) {
+            {
+                // this is for initiation
+                wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
+                        additionalRule, BpaConstants.WF_NEW_STATE, pendingAction);
+                if (wfmatrix != null) {
+                    // this is for Single step workflow no status entry
+                    if (wfmatrix.getCurrentState().equalsIgnoreCase(BpaConstants.WF_NEW_STATE)
+                            && wfmatrix.getNextAction().equalsIgnoreCase("END")) {
+                        List<AppConfigValues> appConfigValueList = appConfigValueService
+                                .getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDERREGFEE);
+                        String appConfigValue = "NO";
+                        if (!appConfigValueList.isEmpty()) {
+                            appConfigValue = appConfigValueList.get(0).getValue();
+                        }
 
-						stakeHolderState.transition().start()
-								.withSenderName(
-										currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
-								.withComments(approvalComment)
-								// .withInitiator(wfInitiator == null ? null :
-								// wfInitiator.getPosition())
-								.withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-								.withOwner(ownerPos).withOwner(ownerUser).withNextAction(wfmatrix.getNextAction())
-								.withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
+                        if (appConfigValue != null && appConfigValue.equalsIgnoreCase("YES")) {
+                            stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.PAYMENT_PENDING);
+                            stakeHolderState.getStakeHolder()
+                                    .setDemand(stakeHolderBpaBillService.createDemand(stakeHolderState.getStakeHolder()));
+                        } else {
+                            stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
+                        }
+                    }
 
-					}
-				}
-			}
+                    else {
+                        if (wfmatrix.getNextDesignation() != null && !wfmatrix.getNextDesignation().isEmpty()) {
+                            final List<Assignment> assignments = assignmentService.getAllActiveAssignments(
+                                    designationService.getDesignationByName(wfmatrix.getNextDesignation()).getId());
+                            if (!assignments.isEmpty())
+                                ownerPos = assignments.get(0).getPosition();
+                        }
 
-		} else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject"))
+                        stakeHolderState.transition().start()
+                                .withSenderName(
+                                        currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
+                                .withComments(approvalComment)
+                                // .withInitiator(wfInitiator == null ? null :
+                                // wfInitiator.getPosition())
+                                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                                .withOwner(ownerPos).withOwner(ownerUser).withNextAction(wfmatrix.getNextAction())
+                                .withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
 
-		{
-			wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
-					additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
-			stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.REJECTED);
-			stakeHolderState.transition().end()
-					.withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
-					.withComments(approvalComment).withInitiator(wfInitiator == null ? null : wfInitiator.getPosition())
-					.withStateValue("Rejected").withDateInfo(currentDate.toDate()).withOwner(ownerPos)
-					.withOwner(ownerUser).withNextAction(wfmatrix.getNextAction())
-					.withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
-		} else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("approve")) {
-			stakeHolderState.transition().end()
-					.withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
-					.withComments(approvalComment).withStateValue("END").withDateInfo(currentDate.toDate())
-					.withOwner(ownerPos).withOwner(ownerUser).withNextAction(null)
-					.withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
-			List<AppConfigValues> appConfigValueList = appConfigValueService.
-					getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDERREGFEE);
-			String	appConfigValue	="NO";
-			if(!appConfigValueList.isEmpty())
-			{
-					appConfigValue	=    appConfigValueList.get(0).getValue();
-			}
-			if (appConfigValue != null && appConfigValue.equalsIgnoreCase("YES")) {
-				stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.PAYMENT_PENDING);
-				stakeHolderState.getStakeHolder().setDemand(stakeHolderBpaBillService.createDemand(stakeHolderState.getStakeHolder()));
-			} else {
-				stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
-			}
+                    }
+                }
+            }
 
-		} else {
-			wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
-					additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
-			ownerPos = positionMasterRepository.getOne(nextPosition);
-			stakeHolderState.transition().progressWithStateCopy()
-					.withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
-					.withComments(approvalComment).withStateValue(wfmatrix.getNextState())
-					.withDateInfo(currentDate.toDate()).withOwner(ownerPos).withOwner(ownerUser)
-					.withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
-		}
-	}
+        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject"))
 
-	@Transactional
-	public StakeHolder updateOnResubmit(final StakeHolder modelObj, final StakeHolder existingStakeholder) {
-		if (null == modelObj.getCode())
-			modelObj.setCode(stakeHolderCodeGenerator.generateStakeHolderCode(modelObj));
-		modelObj.setActive(modelObj.getIsActive());
-		getStakeHolderWhenResubmit(modelObj, existingStakeholder);
-		updateDocumentsOnResubmit(modelObj, existingStakeholder);
-		StakeHolderState stakeHolderState = new StakeHolderState();
-		stakeHolderRepository.save(existingStakeholder);
-		stakeHolderState.setStakeHolder(existingStakeholder);
-		stakeHolderStateRepository.save(stakeHolderState);
-		return existingStakeholder;
-	}
+        {
+            wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
+                    additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
+            stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.REJECTED);
+            stakeHolderState.transition().end()
+                    .withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
+                    .withComments(approvalComment).withInitiator(wfInitiator == null ? null : wfInitiator.getPosition())
+                    .withStateValue("Rejected").withDateInfo(currentDate.toDate()).withOwner(ownerPos)
+                    .withOwner(ownerUser).withNextAction(wfmatrix.getNextAction())
+                    .withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
+        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("approve")) {
+            stakeHolderState.transition().end()
+                    .withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
+                    .withComments(approvalComment).withStateValue("END").withDateInfo(currentDate.toDate())
+                    .withOwner(ownerPos).withOwner(ownerUser).withNextAction(null)
+                    .withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
+            List<AppConfigValues> appConfigValueList = appConfigValueService
+                    .getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDERREGFEE);
+            String appConfigValue = "NO";
+            if (!appConfigValueList.isEmpty()) {
+                appConfigValue = appConfigValueList.get(0).getValue();
+            }
+            if (appConfigValue != null && appConfigValue.equalsIgnoreCase("YES")) {
+                stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.PAYMENT_PENDING);
+                stakeHolderState.getStakeHolder()
+                        .setDemand(stakeHolderBpaBillService.createDemand(stakeHolderState.getStakeHolder()));
+            } else {
+                stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
+            }
 
-	private void updateDocumentsOnResubmit(final StakeHolder modelObj, final StakeHolder existingStakeHolder) {
-		if (!modelObj.getStakeHolderDocument().isEmpty())
-			for (final StakeHolderDocument modelSHDoc : modelObj.getStakeHolderDocument()) {
-				for (final StakeHolderDocument stakeHolderDoc : existingStakeHolder.getStakeHolderDocument()) {
-					if (modelSHDoc.getCheckListDetail().getId().equals(stakeHolderDoc.getCheckListDetail().getId())) {
-						stakeHolderDoc.setCheckListDetail(
-								checkListDetailService.load(stakeHolderDoc.getCheckListDetail().getId()));
-						stakeHolderDoc.setStakeHolder(existingStakeHolder);
-						if (modelSHDoc.getFiles() != null) {
-							if (modelSHDoc.getFiles().length > 0 && modelSHDoc.getFiles() != null) {
-								stakeHolderDoc.setSupportDocs(addToFileStore(modelSHDoc.getFiles()));
-								stakeHolderDoc.setIsAttached(true);
-							} else {
-								stakeHolderDoc.setIsAttached(false);
-							}
-						}
-					}
-				}
-			}
-	}
+        } else {
+            wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
+                    additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
+            ownerPos = positionMasterRepository.getOne(nextPosition);
+            stakeHolderState.transition().progressWithStateCopy()
+                    .withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
+                    .withComments(approvalComment).withStateValue(wfmatrix.getNextState())
+                    .withDateInfo(currentDate.toDate()).withOwner(ownerPos).withOwner(ownerUser)
+                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
+        }
+    }
 
-	protected void processAndStoreApplicationDocuments(final StakeHolder stakeHolder) {
-		if (!stakeHolder.getStakeHolderDocument().isEmpty())
-			for (final StakeHolderDocument applicationDocument : stakeHolder.getStakeHolderDocument()) {
-				applicationDocument.setCheckListDetail(
-						checkListDetailService.load(applicationDocument.getCheckListDetail().getId()));
-				applicationDocument.setStakeHolder(stakeHolder);
-				if (applicationDocument.getFiles() != null) {
-					for (MultipartFile tempFile : applicationDocument.getFiles()) {
-						if (!tempFile.isEmpty()) {
-							applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
-							applicationDocument.setIsAttached(true);
-						} else {
-							applicationDocument.setIsAttached(false);
-						}
-					}
-				}
-			}
-	}
+    @Transactional
+    public StakeHolder updateOnResubmit(final StakeHolder modelObj, final StakeHolder existingStakeholder) {
+        if (null == modelObj.getCode())
+            modelObj.setCode(stakeHolderCodeGenerator.generateStakeHolderCode(modelObj));
+        modelObj.setActive(modelObj.getIsActive());
+        getStakeHolderWhenResubmit(modelObj, existingStakeholder);
+        updateDocumentsOnResubmit(modelObj, existingStakeholder);
+        StakeHolderState stakeHolderState = new StakeHolderState();
+        stakeHolderRepository.save(existingStakeholder);
+        stakeHolderState.setStakeHolder(existingStakeholder);
+        stakeHolderStateRepository.save(stakeHolderState);
+        return existingStakeholder;
+    }
 
-	protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-		if (ArrayUtils.isNotEmpty(files))
-			return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-				try {
-					return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-							file.getContentType(), BpaConstants.FILESTORE_MODULECODE);
-				} catch (final Exception e) {
-					throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-				}
-			}).collect(Collectors.toSet());
-		else
-			return Collections.emptySet();
-	}
+    private void updateDocumentsOnResubmit(final StakeHolder modelObj, final StakeHolder existingStakeHolder) {
+        if (!modelObj.getStakeHolderDocument().isEmpty())
+            for (final StakeHolderDocument modelSHDoc : modelObj.getStakeHolderDocument()) {
+                for (final StakeHolderDocument stakeHolderDoc : existingStakeHolder.getStakeHolderDocument()) {
+                    if (modelSHDoc.getCheckListDetail().getId().equals(stakeHolderDoc.getCheckListDetail().getId())) {
+                        stakeHolderDoc.setCheckListDetail(
+                                checkListDetailService.load(stakeHolderDoc.getCheckListDetail().getId()));
+                        stakeHolderDoc.setStakeHolder(existingStakeHolder);
+                        if (modelSHDoc.getFiles() != null && modelSHDoc.getFiles().length > 0) {
+                            stakeHolderDoc.setSupportDocs(addToFileStore(modelSHDoc.getFiles()));
+                            stakeHolderDoc.setIsAttached(true);
+                        } else {
+                            stakeHolderDoc.setIsAttached(false);
+                        }
+                    }
+                }
+            }
+    }
 
-	@Transactional
-	public StakeHolder update(final StakeHolder stakeHolder, final String workFlowAction) {
-		stakeHolder.addAddress(updateCorrespondenceAddress(stakeHolder, stakeHolder.getAddress()));
-		stakeHolder.addAddress(updatePermanentAddress(stakeHolder, stakeHolder.getAddress()));
-		stakeHolder.setLastUpdatedDate(stakeHolder.getLastModifiedDate());
-		stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
-		processAndStoreApplicationDocuments(stakeHolder);
-		if ("Update".equals(workFlowAction) || "Fee Collected".equals(workFlowAction)) {
-			stakeHolder.setActive(stakeHolder.getIsActive());
-		} else if (BLOCK.equals(workFlowAction)) {
-			stakeHolder.setStatus(StakeHolderStatus.BLOCKED);
-			setActiveToStakeholder(stakeHolder);
-			stakeHolder.setNoOfTimesBlocked(
-					stakeHolder.getNoOfTimesBlocked() == null ? 1 : stakeHolder.getNoOfTimesBlocked() + 1);
-		} else if (UNBLOCK.equals(workFlowAction)) {
-			stakeHolder.setStatus(StakeHolderStatus.UNBLOCKED);
-			setActiveToStakeholder(stakeHolder);
-		}
-		StakeHolderState stakeHolderState = stakeHolderStateRepository.findByStakeHolderId(stakeHolder.getId());
-		if(stakeHolderState == null){
-			stakeHolderState = new StakeHolderState();
-		}
-		stakeHolderRepository.save(stakeHolder);
-		stakeHolderState.setStakeHolder(stakeHolder);
-		stakeHolderStateRepository.save(stakeHolderState);
-		return stakeHolder;
-	}
+    protected void processAndStoreApplicationDocuments(final StakeHolder stakeHolder) {
+        if (!stakeHolder.getStakeHolderDocument().isEmpty())
+            for (final StakeHolderDocument applicationDocument : stakeHolder.getStakeHolderDocument()) {
+                applicationDocument.setCheckListDetail(
+                        checkListDetailService.load(applicationDocument.getCheckListDetail().getId()));
+                applicationDocument.setStakeHolder(stakeHolder);
+                if (applicationDocument.getFiles() != null) {
+                    for (MultipartFile tempFile : applicationDocument.getFiles()) {
+                        if (!tempFile.isEmpty()) {
+                            applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
+                            applicationDocument.setIsAttached(true);
+                        } else {
+                            applicationDocument.setIsAttached(false);
+                        }
+                    }
+                }
+            }
+    }
 
-	private void setActiveToStakeholder(StakeHolder stakeHolder) {
-		stakeHolder.setIsActive(true);
-		stakeHolder.setActive(true);
-	}
+    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files))
+            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
+                try {
+                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                            file.getContentType(), BpaConstants.FILESTORE_MODULECODE);
+                } catch (final Exception e) {
+                    throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                }
+            }).collect(Collectors.toSet());
+        else
+            return Collections.emptySet();
+    }
 
-	public CorrespondenceAddress setCorrespondenceAddress(final StakeHolder stakeHolder) {
-		return buildCorrespondenceAddress(stakeHolder, new CorrespondenceAddress());
-	}
+    @Transactional
+    public StakeHolder update(final StakeHolder stakeHolder, final String workFlowAction) {
+        stakeHolder.addAddress(updateCorrespondenceAddress(stakeHolder, stakeHolder.getAddress()));
+        stakeHolder.addAddress(updatePermanentAddress(stakeHolder, stakeHolder.getAddress()));
+        stakeHolder.setLastUpdatedDate(stakeHolder.getLastModifiedDate());
+        stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
+        processAndStoreApplicationDocuments(stakeHolder);
+        if ("Update".equals(workFlowAction) || "Fee Collected".equals(workFlowAction)) {
+            stakeHolder.setActive(stakeHolder.getIsActive());
+        } else if (BLOCK.equals(workFlowAction)) {
+            stakeHolder.setStatus(StakeHolderStatus.BLOCKED);
+            setActiveToStakeholder(stakeHolder);
+            stakeHolder.setNoOfTimesBlocked(
+                    stakeHolder.getNoOfTimesBlocked() == null ? 1 : stakeHolder.getNoOfTimesBlocked() + 1);
+        } else if (UNBLOCK.equals(workFlowAction)) {
+            stakeHolder.setStatus(StakeHolderStatus.UNBLOCKED);
+            setActiveToStakeholder(stakeHolder);
+        }
+        StakeHolderState stakeHolderState = stakeHolderStateRepository.findByStakeHolderId(stakeHolder.getId());
+        if (stakeHolderState == null) {
+            stakeHolderState = new StakeHolderState();
+        }
+        stakeHolderRepository.save(stakeHolder);
+        stakeHolderState.setStakeHolder(stakeHolder);
+        stakeHolderStateRepository.save(stakeHolderState);
+        return stakeHolder;
+    }
 
-	public PermanentAddress setPermanentAddress(final StakeHolder stakeHolder) {
-		return buildPermanentAddress(stakeHolder, new PermanentAddress());
-	}
+    private void setActiveToStakeholder(StakeHolder stakeHolder) {
+        stakeHolder.setIsActive(true);
+        stakeHolder.setActive(true);
+    }
 
-	private CorrespondenceAddress updateCorrespondenceAddress(final StakeHolder stakeHolder,
-			final List<Address> addressList) {
-		CorrespondenceAddress correspondenceAddress = null;
-		for (final Address address : addressList)
-			if (AddressType.CORRESPONDENCE.equals(address.getType()))
-				correspondenceAddress = (CorrespondenceAddress) address;
-		return buildCorrespondenceAddress(stakeHolder,
-				correspondenceAddress == null ? new CorrespondenceAddress() : correspondenceAddress);
-	}
+    public CorrespondenceAddress setCorrespondenceAddress(final StakeHolder stakeHolder) {
+        return buildCorrespondenceAddress(stakeHolder, new CorrespondenceAddress());
+    }
 
-	private CorrespondenceAddress buildCorrespondenceAddress(final StakeHolder stakeHolder,
-			final CorrespondenceAddress correspondenceAddress) {
-		correspondenceAddress.setHouseNoBldgApt(stakeHolder.getCorrespondenceAddress().getHouseNoBldgApt());
-		correspondenceAddress.setStreetRoadLine(stakeHolder.getCorrespondenceAddress().getStreetRoadLine());
-		correspondenceAddress.setAreaLocalitySector(stakeHolder.getCorrespondenceAddress().getAreaLocalitySector());
-		correspondenceAddress.setCityTownVillage(stakeHolder.getCorrespondenceAddress().getCityTownVillage());
-		correspondenceAddress.setDistrict(stakeHolder.getCorrespondenceAddress().getDistrict());
-		correspondenceAddress.setState(stakeHolder.getCorrespondenceAddress().getState());
-		correspondenceAddress.setPostOffice(stakeHolder.getCorrespondenceAddress().getPostOffice());
-		correspondenceAddress.setPinCode(stakeHolder.getCorrespondenceAddress().getPinCode());
-		correspondenceAddress.setUser(stakeHolder);
-		return correspondenceAddress;
-	}
+    public PermanentAddress setPermanentAddress(final StakeHolder stakeHolder) {
+        return buildPermanentAddress(stakeHolder, new PermanentAddress());
+    }
 
-	public PermanentAddress updatePermanentAddress(final StakeHolder stakeHolder, final List<Address> addressList) {
-		PermanentAddress permanentAddress = null;
-		for (final Address address : addressList)
-			if (AddressType.PERMANENT.equals(address.getType()))
-				permanentAddress = (PermanentAddress) address;
-		return buildPermanentAddress(stakeHolder, permanentAddress == null ? new PermanentAddress() : permanentAddress);
-	}
+    private CorrespondenceAddress updateCorrespondenceAddress(final StakeHolder stakeHolder,
+            final List<Address> addressList) {
+        CorrespondenceAddress correspondenceAddress = null;
+        for (final Address address : addressList)
+            if (AddressType.CORRESPONDENCE.equals(address.getType()))
+                correspondenceAddress = (CorrespondenceAddress) address;
+        return buildCorrespondenceAddress(stakeHolder,
+                correspondenceAddress == null ? new CorrespondenceAddress() : correspondenceAddress);
+    }
 
-	private PermanentAddress buildPermanentAddress(final StakeHolder stakeHolder,
-			final PermanentAddress permanentAddress) {
-		permanentAddress.setHouseNoBldgApt(stakeHolder.getPermanentAddress().getHouseNoBldgApt());
-		permanentAddress.setStreetRoadLine(stakeHolder.getPermanentAddress().getStreetRoadLine());
-		permanentAddress.setAreaLocalitySector(stakeHolder.getPermanentAddress().getAreaLocalitySector());
-		permanentAddress.setCityTownVillage(stakeHolder.getPermanentAddress().getCityTownVillage());
-		permanentAddress.setDistrict(stakeHolder.getPermanentAddress().getDistrict());
-		permanentAddress.setState(stakeHolder.getPermanentAddress().getState());
-		permanentAddress.setPostOffice(stakeHolder.getCorrespondenceAddress().getPostOffice());
-		permanentAddress.setPinCode(stakeHolder.getPermanentAddress().getPinCode());
-		permanentAddress.setUser(stakeHolder);
-		return permanentAddress;
-	}
+    private CorrespondenceAddress buildCorrespondenceAddress(final StakeHolder stakeHolder,
+            final CorrespondenceAddress correspondenceAddress) {
+        correspondenceAddress.setHouseNoBldgApt(stakeHolder.getCorrespondenceAddress().getHouseNoBldgApt());
+        correspondenceAddress.setStreetRoadLine(stakeHolder.getCorrespondenceAddress().getStreetRoadLine());
+        correspondenceAddress.setAreaLocalitySector(stakeHolder.getCorrespondenceAddress().getAreaLocalitySector());
+        correspondenceAddress.setCityTownVillage(stakeHolder.getCorrespondenceAddress().getCityTownVillage());
+        correspondenceAddress.setDistrict(stakeHolder.getCorrespondenceAddress().getDistrict());
+        correspondenceAddress.setState(stakeHolder.getCorrespondenceAddress().getState());
+        correspondenceAddress.setPostOffice(stakeHolder.getCorrespondenceAddress().getPostOffice());
+        correspondenceAddress.setPinCode(stakeHolder.getCorrespondenceAddress().getPinCode());
+        correspondenceAddress.setUser(stakeHolder);
+        return correspondenceAddress;
+    }
 
-	@Transactional
-	public void removeAddress(final List<Address> address) {
-		stakeHolderAddressRepository.deleteInBatch(address);
-	}
+    public PermanentAddress updatePermanentAddress(final StakeHolder stakeHolder, final List<Address> addressList) {
+        PermanentAddress permanentAddress = null;
+        for (final Address address : addressList)
+            if (AddressType.PERMANENT.equals(address.getType()))
+                permanentAddress = (PermanentAddress) address;
+        return buildPermanentAddress(stakeHolder, permanentAddress == null ? new PermanentAddress() : permanentAddress);
+    }
 
-	public StakeHolder findById(final Long id) {
-		return stakeHolderRepository.findOne(id);
-	}
+    private PermanentAddress buildPermanentAddress(final StakeHolder stakeHolder,
+            final PermanentAddress permanentAddress) {
+        permanentAddress.setHouseNoBldgApt(stakeHolder.getPermanentAddress().getHouseNoBldgApt());
+        permanentAddress.setStreetRoadLine(stakeHolder.getPermanentAddress().getStreetRoadLine());
+        permanentAddress.setAreaLocalitySector(stakeHolder.getPermanentAddress().getAreaLocalitySector());
+        permanentAddress.setCityTownVillage(stakeHolder.getPermanentAddress().getCityTownVillage());
+        permanentAddress.setDistrict(stakeHolder.getPermanentAddress().getDistrict());
+        permanentAddress.setState(stakeHolder.getPermanentAddress().getState());
+        permanentAddress.setPostOffice(stakeHolder.getCorrespondenceAddress().getPostOffice());
+        permanentAddress.setPinCode(stakeHolder.getPermanentAddress().getPinCode());
+        permanentAddress.setUser(stakeHolder);
+        return permanentAddress;
+    }
 
-	public StakeHolder findByDemand(final EgDemand demand) {
-		return stakeHolderRepository.findByDemand(demand);
-	}
+    @Transactional
+    public void removeAddress(final List<Address> address) {
+        stakeHolderAddressRepository.deleteInBatch(address);
+    }
 
-	public StakeHolder findByMobileNumberAndStatus(final String mobileNo, final StakeHolderStatus status) {
-		return stakeHolderRepository.findByMobileNumberAndStatus(mobileNo, status);
-	}
+    public StakeHolder findById(final Long id) {
+        return stakeHolderRepository.findOne(id);
+    }
 
-	public StakeHolder findByEmailIdAndStatus(final String email, final StakeHolderStatus status) {
-		return stakeHolderRepository.findByEmailIdAndStatus(email, status);
-	}
+    public StakeHolder findByDemand(final EgDemand demand) {
+        return stakeHolderRepository.findByDemand(demand);
+    }
 
-	public StakeHolder findByAadhaarNumberAndStatus(final String aadhaar, final StakeHolderStatus status) {
-		return stakeHolderRepository.findByAadhaarNumberAndStatus(aadhaar, status);
-	}
+    public StakeHolder findByMobileNumberAndStatus(final String mobileNo, final StakeHolderStatus status) {
+        return stakeHolderRepository.findByMobileNumberAndStatus(mobileNo, status);
+    }
 
-	public StakeHolder findByPanNumberAndStatus(final String pan, final StakeHolderStatus status) {
-		return stakeHolderRepository.findByPanAndStatus(pan, status);
-	}
+    public StakeHolder findByEmailIdAndStatus(final String email, final StakeHolderStatus status) {
+        return stakeHolderRepository.findByEmailIdAndStatus(email, status);
+    }
 
-	public StakeHolder findByLicenseNumber(final String licenseNumber) {
-		return stakeHolderRepository.findByLicenceNumber(licenseNumber);
-	}
+    public StakeHolder findByAadhaarNumberAndStatus(final String aadhaar, final StakeHolderStatus status) {
+        return stakeHolderRepository.findByAadhaarNumberAndStatus(aadhaar, status);
+    }
 
-	public StakeHolder findByLicenseNumberAndStatus(final String licenseNumber, final StakeHolderStatus status) {
-		return stakeHolderRepository.findByLicenceNumberAndStatus(licenseNumber, status);
-	}
+    public StakeHolder findByPanNumberAndStatus(final String pan, final StakeHolderStatus status) {
+        return stakeHolderRepository.findByPanAndStatus(pan, status);
+    }
 
-	public StakeHolder getStakeHolderWhenResubmit(final StakeHolder modelObj, final StakeHolder existingStakeHolder) {
-		existingStakeHolder.setIsOnbehalfOfOrganization(modelObj.getIsOnbehalfOfOrganization());
-		if (modelObj.getIsOnbehalfOfOrganization()) {
-			existingStakeHolder.setOrganizationName(modelObj.getOrganizationName());
-			existingStakeHolder.setOrganizationAddress(modelObj.getOrganizationAddress());
-			existingStakeHolder.setOrganizationMobNo(modelObj.getOrganizationMobNo());
-			existingStakeHolder.setOrganizationUrl(modelObj.getOrganizationUrl());
-		}
-		existingStakeHolder.setCode(modelObj.getCode());
-		existingStakeHolder.setName(modelObj.getName());
-		existingStakeHolder.setStakeHolderType(modelObj.getStakeHolderType());
-		existingStakeHolder.setGender(modelObj.getGender());
-		existingStakeHolder.setDob(modelObj.getDob());
-		existingStakeHolder.setMobileNumber(modelObj.getMobileNumber());
-		existingStakeHolder.setEmailId(modelObj.getEmailId());
-		existingStakeHolder.setLicenceNumber(modelObj.getLicenceNumber());
-		existingStakeHolder.setAadhaarNumber(modelObj.getAadhaarNumber());
-		existingStakeHolder.setPan(modelObj.getPan());
-		existingStakeHolder.setSource(modelObj.getSource());
-		existingStakeHolder.setBuildingLicenceIssueDate(modelObj.getBuildingLicenceIssueDate());
-		existingStakeHolder.setBuildingLicenceExpiryDate(modelObj.getBuildingLicenceExpiryDate());
-		existingStakeHolder.setIsActive(modelObj.getIsActive());
-		existingStakeHolder.setStatus(StakeHolderStatus.RE_SUBMITTED);
-		existingStakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
-		existingStakeHolder.setLastUpdatedDate(new Date());
-		existingStakeHolder.setComments("");
-		existingStakeHolder.addAddress(updateCorrespondenceAddress(modelObj, existingStakeHolder.getAddress()));
-		existingStakeHolder.addAddress(updatePermanentAddress(modelObj, existingStakeHolder.getAddress()));
-		return existingStakeHolder;
-	}
+    public StakeHolder findByLicenseNumber(final String licenseNumber) {
+        return stakeHolderRepository.findByLicenceNumber(licenseNumber);
+    }
 
-	public StakeHolder validateStakeHolderIsRejected(final String mobileNo, final String email, final String aadhaarNo,
-			final String panNo, final String licenseNo) {
-		StakeHolder shWithMobNo = StringUtils.isBlank(mobileNo) ? null
-				: findByMobileNumberAndStatus(mobileNo, StakeHolderStatus.REJECTED);
-		StakeHolder shWithEmail = StringUtils.isBlank(email) ? null
-				: findByEmailIdAndStatus(email, StakeHolderStatus.REJECTED);
-		StakeHolder shWithAadhaar = StringUtils.isBlank(aadhaarNo) ? null
-				: findByAadhaarNumberAndStatus(aadhaarNo, StakeHolderStatus.REJECTED);
-		StakeHolder shWithPan = StringUtils.isBlank(panNo) ? null
-				: findByPanNumberAndStatus(panNo, StakeHolderStatus.REJECTED);
-		StakeHolder shWithLicenseNo = StringUtils.isBlank(licenseNo) ? null
-				: findByLicenseNumberAndStatus(licenseNo, StakeHolderStatus.REJECTED);
-		StakeHolder existingStakeholder = null;
-		if (shWithMobNo != null) {
-			existingStakeholder = shWithMobNo;
-		} else if (shWithEmail != null) {
-			existingStakeholder = shWithEmail;
-		} else if (shWithAadhaar != null) {
-			existingStakeholder = shWithAadhaar;
-		} else if (shWithPan != null) {
-			existingStakeholder = shWithPan;
-		} else if (shWithLicenseNo != null) {
-			existingStakeholder = shWithLicenseNo;
-		}
-		return existingStakeholder;
-	}
+    public StakeHolder findByLicenseNumberAndStatus(final String licenseNumber, final StakeHolderStatus status) {
+        return stakeHolderRepository.findByLicenceNumberAndStatus(licenseNumber, status);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<StakeHolder> search(final StakeHolder stakeHolder) {
-		final Criteria criteria = buildSearchCriteria(stakeHolder);
-		return criteria.list();
-	}
+    public StakeHolder getStakeHolderWhenResubmit(final StakeHolder modelObj, final StakeHolder existingStakeHolder) {
+        existingStakeHolder.setIsOnbehalfOfOrganization(modelObj.getIsOnbehalfOfOrganization());
+        if (modelObj.getIsOnbehalfOfOrganization()) {
+            existingStakeHolder.setOrganizationName(modelObj.getOrganizationName());
+            existingStakeHolder.setOrganizationAddress(modelObj.getOrganizationAddress());
+            existingStakeHolder.setOrganizationMobNo(modelObj.getOrganizationMobNo());
+            existingStakeHolder.setOrganizationUrl(modelObj.getOrganizationUrl());
+        }
+        existingStakeHolder.setCode(modelObj.getCode());
+        existingStakeHolder.setName(modelObj.getName());
+        existingStakeHolder.setStakeHolderType(modelObj.getStakeHolderType());
+        existingStakeHolder.setGender(modelObj.getGender());
+        existingStakeHolder.setDob(modelObj.getDob());
+        existingStakeHolder.setMobileNumber(modelObj.getMobileNumber());
+        existingStakeHolder.setEmailId(modelObj.getEmailId());
+        existingStakeHolder.setLicenceNumber(modelObj.getLicenceNumber());
+        existingStakeHolder.setAadhaarNumber(modelObj.getAadhaarNumber());
+        existingStakeHolder.setPan(modelObj.getPan());
+        existingStakeHolder.setSource(modelObj.getSource());
+        existingStakeHolder.setBuildingLicenceIssueDate(modelObj.getBuildingLicenceIssueDate());
+        existingStakeHolder.setBuildingLicenceExpiryDate(modelObj.getBuildingLicenceExpiryDate());
+        existingStakeHolder.setIsActive(modelObj.getIsActive());
+        existingStakeHolder.setStatus(StakeHolderStatus.RE_SUBMITTED);
+        existingStakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
+        existingStakeHolder.setLastUpdatedDate(new Date());
+        existingStakeHolder.setComments("");
+        existingStakeHolder.addAddress(updateCorrespondenceAddress(modelObj, existingStakeHolder.getAddress()));
+        existingStakeHolder.addAddress(updatePermanentAddress(modelObj, existingStakeHolder.getAddress()));
+        return existingStakeHolder;
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<StakeHolder> getStakeHolderListByType(final  StakeHolderType stkHldrType, final String name) {
-		final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, STK_HLDR);
-		criteria.add(Restrictions.eq(STK_HLDR_TYPE, stkHldrType));
-		criteria.add(Restrictions.ilike("stakeHolder.name", name, MatchMode.ANYWHERE));
-		criteria.add(Restrictions.eq("stakeHolder.isActive", true));
-		return criteria.list();
-	}
+    public StakeHolder validateStakeHolderIsRejected(final String mobileNo, final String email, final String aadhaarNo,
+            final String panNo, final String licenseNo) {
+        StakeHolder shWithMobNo = StringUtils.isBlank(mobileNo) ? null
+                : findByMobileNumberAndStatus(mobileNo, StakeHolderStatus.REJECTED);
+        StakeHolder shWithEmail = StringUtils.isBlank(email) ? null
+                : findByEmailIdAndStatus(email, StakeHolderStatus.REJECTED);
+        StakeHolder shWithAadhaar = StringUtils.isBlank(aadhaarNo) ? null
+                : findByAadhaarNumberAndStatus(aadhaarNo, StakeHolderStatus.REJECTED);
+        StakeHolder shWithPan = StringUtils.isBlank(panNo) ? null
+                : findByPanNumberAndStatus(panNo, StakeHolderStatus.REJECTED);
+        StakeHolder shWithLicenseNo = StringUtils.isBlank(licenseNo) ? null
+                : findByLicenseNumberAndStatus(licenseNo, StakeHolderStatus.REJECTED);
+        StakeHolder existingStakeholder = null;
+        if (shWithMobNo != null) {
+            existingStakeholder = shWithMobNo;
+        } else if (shWithEmail != null) {
+            existingStakeholder = shWithEmail;
+        } else if (shWithAadhaar != null) {
+            existingStakeholder = shWithAadhaar;
+        } else if (shWithPan != null) {
+            existingStakeholder = shWithPan;
+        } else if (shWithLicenseNo != null) {
+            existingStakeholder = shWithLicenseNo;
+        }
+        return existingStakeholder;
+    }
 
-	public Criteria buildSearchCriteria(final StakeHolder stkHldr) {
-		final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, STK_HLDR);
+    @SuppressWarnings("unchecked")
+    public List<StakeHolder> search(final StakeHolder stakeHolder) {
+        final Criteria criteria = buildSearchCriteria(stakeHolder);
+        return criteria.list();
+    }
 
-		if (stkHldr.getName() != null) {
-			criteria.add(Restrictions.ilike("stakeHolder.name", stkHldr.getName(), MatchMode.ANYWHERE));
-		}
-		
-		if (stkHldr.getStakeHolderType() != null) {
-			criteria.add(Restrictions.eq(STK_HLDR_TYPE, stkHldr.getStakeHolderType()));
-		}
-		
-		if (stkHldr.getAadhaarNumber() != null) {
-			criteria.add(
-					Restrictions.ilike("stakeHolder.aadhaarNumber", stkHldr.getAadhaarNumber(), MatchMode.ANYWHERE));
-		}
-		if (stkHldr.getPan() != null) {
-			criteria.add(Restrictions.ilike("stakeHolder.pan", stkHldr.getPan(), MatchMode.ANYWHERE));
-		}
-		if (stkHldr.getLicenceNumber() != null) {
-			criteria.add(
-					Restrictions.ilike("stakeHolder.licenceNumber", stkHldr.getLicenceNumber(), MatchMode.ANYWHERE));
-		}
-		if (stkHldr.getStatus() != null) {
-			criteria.add(Restrictions.eq("stakeHolder.status", stkHldr.getStatus()));
-		}
-		criteria.addOrder(Order.desc(STAKE_HOLDER_DOT_CREATED_DATE));
-		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return criteria;
-	}
+    @SuppressWarnings("unchecked")
+    public List<StakeHolder> searchForUpdate(final StakeHolder stakeHolder) {
+        final Criteria criteria = buildSearchCriteria(stakeHolder);
+        criteria.add(Restrictions.in(STAKE_HOLDER_STATUS, StakeHolderStatus.APPROVED, StakeHolderStatus.BLOCKED,
+                StakeHolderStatus.UNBLOCKED));
+        return criteria.list();
+    }
 
-	public boolean checkIsEmailAlreadyExists(final StakeHolder stakeHolder) {
-		return stakeHolderRepository.findByEmailId(stakeHolder.getEmailId()) == null ? false : true;
-	}
+    @SuppressWarnings("unchecked")
+    public List<StakeHolder> getStakeHolderListByType(final StakeHolderType stkHldrType, final String name) {
+        final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, STK_HLDR);
+        criteria.add(Restrictions.eq(STK_HLDR_TYPE, stkHldrType));
+        criteria.add(Restrictions.ilike("stakeHolder.name", name, MatchMode.ANYWHERE));
+        criteria.add(Restrictions.eq("stakeHolder.isActive", true));
+        return criteria.list();
+    }
 
-	public boolean checkIsStakeholderCodeAlreadyExists(final StakeHolder stakeHolder) {
-		return stakeHolderRepository.findByCode(stakeHolder.getCode()) == null ? false : true;
-	}
+    public Criteria buildSearchCriteria(final StakeHolder stkHldr) {
+        final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, STK_HLDR);
 
-	public boolean checkIsStakeholderDemandPending(final String stakeHolderCode) {
-		StakeHolder stakeHolder = stakeHolderRepository.findByCode(stakeHolderCode);
-		return bpaUtils.checkAnyTaxIsPendingToCollect(stakeHolder.getDemand());
-	}
+        if (stkHldr.getName() != null)
+            criteria.add(Restrictions.ilike("stakeHolder.name", stkHldr.getName(), MatchMode.ANYWHERE));
 
-	public List<SearchStakeHolderForm> searchForApproval(SearchStakeHolderForm srchStkHldrFrm) {
-		return buildResponseAsPerForm(buildSearchCriteriaForApproval(srchStkHldrFrm));
-	}
+        if (stkHldr.getStakeHolderType() != null)
+            criteria.add(Restrictions.eq(STK_HLDR_TYPE, stkHldr.getStakeHolderType()));
 
-	private List<SearchStakeHolderForm> buildResponseAsPerForm(List<StakeHolder> stkHldrLst) {
-		List<SearchStakeHolderForm> srchFrmLst = new ArrayList<>();
-		for (StakeHolder stakeHolder : stkHldrLst) {
-			SearchStakeHolderForm srchForm = new SearchStakeHolderForm();
-			srchForm.setId(stakeHolder.getId());
-			srchForm.setApplicantName(stakeHolder.getName());
-			srchForm.setIssueDate(stakeHolder.getBuildingLicenceIssueDate());
-			srchForm.setLicenceNumber(stakeHolder.getLicenceNumber());
-			srchForm.setType(stakeHolder.getStakeHolderType().getName());
-			srchForm.setActive(stakeHolder.getIsActive());
-			srchForm.setStatus(stakeHolder.getStatus().getStakeHolderStatusVal());
-			srchForm.setCreatedDate(stakeHolder.getCreatedDate());
-			srchFrmLst.add(srchForm);
-		}
-		return srchFrmLst;
-	}
+        if (stkHldr.getAadhaarNumber() != null)
+            criteria.add(
+                    Restrictions.ilike("stakeHolder.aadhaarNumber", stkHldr.getAadhaarNumber(), MatchMode.ANYWHERE));
 
-	@SuppressWarnings("unchecked")
-	private List<StakeHolder> buildSearchCriteriaForApproval(SearchStakeHolderForm srchStkHldrFrm) {
-		final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, STK_HLDR);
-		if (srchStkHldrFrm.getFromDate() != null) {
-			criteria.add(Restrictions.ge(STAKE_HOLDER_DOT_CREATED_DATE,
-					searchBpaApplicationService.resetFromDateTimeStamp(srchStkHldrFrm.getFromDate())));
-		}
-		if (srchStkHldrFrm.getToDate() != null) {
-			criteria.add(Restrictions.le(STAKE_HOLDER_DOT_CREATED_DATE,
-					searchBpaApplicationService.resetToDateTimeStamp(srchStkHldrFrm.getToDate())));
-		}
-        /*
-         * if (srchStkHldrFrm.getStakeHolderType() != null) {
-         * criteria.add(Restrictions.eq(STK_HLDR_TYPE,srchStkHldrFrm.getStakeHolderType().); }
-         */
-		criteria.add(
-				Restrictions.in("stakeHolder.status", StakeHolderStatus.SUBMITTED, StakeHolderStatus.RE_SUBMITTED));
-		criteria.addOrder(Order.desc(STAKE_HOLDER_DOT_CREATED_DATE));
-		return criteria.list();
-	}
+        if (stkHldr.getPan() != null)
+            criteria.add(Restrictions.ilike("stakeHolder.pan", stkHldr.getPan(), MatchMode.ANYWHERE));
 
-	public StakeHolder updateForApproval(StakeHolderState stakeHolderState, String stkHldrStatus) {
-		StakeHolder stakeHolder = stakeHolderState.getStakeHolder();
-		stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
-		stakeHolder.setLastUpdatedDate(new Date());
-		if ("Approve".equals(stkHldrStatus)) {
-			stakeHolder.setUsername(stakeHolder.getEmailId());
-			stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
-			setActiveToStakeholder(stakeHolder);
-			/*List<AppConfigValues> appConfigValueList = appConfigValueService
-					.getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDER_ONLINEPAYMENT);
-			if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
-				stakeHolder.setDemand(stakeHolderBpaBillService.createDemand(stakeHolder));
-				stakeHolder.setStatus(StakeHolderStatus.PAYMENT_PENDING);
-			} else {
-				stakeHolder.setStatus(StakeHolderStatus.APPROVED);
-			}*/
+        if (stkHldr.getLicenceNumber() != null)
+            criteria.add(
+                    Restrictions.ilike("stakeHolder.licenceNumber", stkHldr.getLicenceNumber(), MatchMode.ANYWHERE));
 
-		} else if ("Reject".equals(stkHldrStatus)) {
-			stakeHolder.setIsActive(false);
-			stakeHolder.setActive(false);
-			stakeHolder.setStatus(StakeHolderStatus.REJECTED);
-			stakeHolder.setNoOfTimesRejected(
-					stakeHolder.getNoOfTimesRejected() == null ? 1 : stakeHolder.getNoOfTimesRejected() + 1);
-		} else if (BLOCK.equals(stkHldrStatus)) {
-			stakeHolder.setStatus(StakeHolderStatus.BLOCKED);
-			stakeHolder.setNoOfTimesBlocked(
-					stakeHolder.getNoOfTimesBlocked() == null ? 1 : stakeHolder.getNoOfTimesBlocked() + 1);
-		}
-		transition(stakeHolderState, stakeHolder.getWorkFlowAction(), stakeHolder.getApprovalComent(), null,
-				stakeHolder.getNextPosition());
+        if (stkHldr.getStatus() != null)
+            criteria.add(Restrictions.eq(STAKE_HOLDER_STATUS, stkHldr.getStatus()));
 
-		return stakeHolderRepository.saveAndFlush(stakeHolder);
+        criteria.addOrder(Order.desc(STAKE_HOLDER_DOT_CREATED_DATE));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria;
+    }
 
-	}
+    public boolean checkIsEmailAlreadyExists(final StakeHolder stakeHolder) {
+        return stakeHolderRepository.findByEmailId(stakeHolder.getEmailId()) != null;
+    }
 
-	public List<StakeHolder> getStakeHoldersByType(StakeHolderType stkHldrType) {
-		return stakeHolderRepository.findActiveByType(stkHldrType);
-	}
+    public boolean checkIsStakeholderCodeAlreadyExists(final StakeHolder stakeHolder) {
+        return stakeHolderRepository.findByCode(stakeHolder.getCode()) != null;
+    }
+
+    public boolean checkIsStakeholderDemandPending(final String stakeHolderCode) {
+        StakeHolder stakeHolder = stakeHolderRepository.findByCode(stakeHolderCode);
+        return bpaUtils.checkAnyTaxIsPendingToCollect(stakeHolder.getDemand());
+    }
+
+    public List<SearchStakeHolderForm> searchForApproval(SearchStakeHolderForm srchStkHldrFrm) {
+        return buildResponseAsPerForm(buildSearchCriteriaForApproval(srchStkHldrFrm));
+    }
+
+    private List<SearchStakeHolderForm> buildResponseAsPerForm(List<StakeHolder> stkHldrLst) {
+        List<SearchStakeHolderForm> srchFrmLst = new ArrayList<>();
+        for (StakeHolder stakeHolder : stkHldrLst) {
+            SearchStakeHolderForm srchForm = new SearchStakeHolderForm();
+            srchForm.setId(stakeHolder.getId());
+            srchForm.setApplicantName(stakeHolder.getName());
+            srchForm.setIssueDate(stakeHolder.getBuildingLicenceIssueDate());
+            srchForm.setLicenceNumber(stakeHolder.getLicenceNumber());
+            srchForm.setType(stakeHolder.getStakeHolderType().getName());
+            srchForm.setActive(stakeHolder.getIsActive());
+            srchForm.setStatus(stakeHolder.getStatus().getStakeHolderStatusVal());
+            srchForm.setCreatedDate(stakeHolder.getCreatedDate());
+            srchFrmLst.add(srchForm);
+        }
+        return srchFrmLst;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<StakeHolder> buildSearchCriteriaForApproval(SearchStakeHolderForm srchStkHldrFrm) {
+        final Criteria criteria = getCurrentSession().createCriteria(StakeHolder.class, STK_HLDR);
+        if (srchStkHldrFrm.getFromDate() != null) {
+            criteria.add(Restrictions.ge(STAKE_HOLDER_DOT_CREATED_DATE,
+                    searchBpaApplicationService.resetFromDateTimeStamp(srchStkHldrFrm.getFromDate())));
+        }
+        if (srchStkHldrFrm.getToDate() != null) {
+            criteria.add(Restrictions.le(STAKE_HOLDER_DOT_CREATED_DATE,
+                    searchBpaApplicationService.resetToDateTimeStamp(srchStkHldrFrm.getToDate())));
+        }
+        criteria.add(
+                Restrictions.in(STAKE_HOLDER_STATUS, StakeHolderStatus.SUBMITTED, StakeHolderStatus.RE_SUBMITTED));
+        criteria.addOrder(Order.desc(STAKE_HOLDER_DOT_CREATED_DATE));
+        return criteria.list();
+    }
+
+    public StakeHolder updateForApproval(StakeHolderState stakeHolderState, String stkHldrStatus) {
+        StakeHolder stakeHolder = stakeHolderState.getStakeHolder();
+        stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
+        stakeHolder.setLastUpdatedDate(new Date());
+        if ("Approve".equals(stkHldrStatus)) {
+            stakeHolder.setUsername(stakeHolder.getEmailId());
+            stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
+            setActiveToStakeholder(stakeHolder);
+            /*
+             * List<AppConfigValues> appConfigValueList = appConfigValueService
+             * .getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDER_ONLINEPAYMENT); if
+             * ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
+             * stakeHolder.setDemand(stakeHolderBpaBillService.createDemand(stakeHolder));
+             * stakeHolder.setStatus(StakeHolderStatus.PAYMENT_PENDING); } else {
+             * stakeHolder.setStatus(StakeHolderStatus.APPROVED); }
+             */
+
+        } else if ("Reject".equals(stkHldrStatus)) {
+            stakeHolder.setIsActive(false);
+            stakeHolder.setActive(false);
+            stakeHolder.setStatus(StakeHolderStatus.REJECTED);
+            stakeHolder.setNoOfTimesRejected(
+                    stakeHolder.getNoOfTimesRejected() == null ? 1 : stakeHolder.getNoOfTimesRejected() + 1);
+        } else if (BLOCK.equals(stkHldrStatus)) {
+            stakeHolder.setStatus(StakeHolderStatus.BLOCKED);
+            stakeHolder.setNoOfTimesBlocked(
+                    stakeHolder.getNoOfTimesBlocked() == null ? 1 : stakeHolder.getNoOfTimesBlocked() + 1);
+        }
+        transition(stakeHolderState, stakeHolder.getWorkFlowAction(), stakeHolder.getApprovalComent(), null,
+                stakeHolder.getNextPosition());
+
+        return stakeHolderRepository.saveAndFlush(stakeHolder);
+
+    }
+
+    public List<StakeHolder> getStakeHoldersByType(StakeHolderType stkHldrType) {
+        return stakeHolderRepository.findActiveByType(stkHldrType);
+    }
 }
