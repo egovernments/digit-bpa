@@ -48,6 +48,7 @@
 
 package org.egov.bpa.transaction.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -89,13 +90,13 @@ public class BuildingSubUsageDetails extends AbstractAuditable {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "egbpa_builing_usage", joinColumns = @JoinColumn(name = "subUsageDetails"), inverseJoinColumns = @JoinColumn(name = "usage"))
-	private List<Usage> subUsages;
+	private List<Usage> subUsages = new ArrayList<>();
 	
 /*	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "egbpa_sub_usage", joinColumns = @JoinColumn(name = "subUsageDetails"), inverseJoinColumns = @JoinColumn(name = "suboccupancy"))
 	private List<SubOccupancy> subUsages;*/
 
-	private transient List<Usage> subUsagesTemp;
+	private transient List<Usage> subUsagesTemp = new ArrayList<>();
 
 	@Override
 	public Long getId() {
