@@ -768,8 +768,6 @@ $(document).ready(function() {
             }
             //hideAndShowEdcrDetails();
         });
-    } else {
-        $('#applicationTypeSec').hide();
     }
     
     
@@ -962,7 +960,6 @@ $('#applicationType').on('change', function() {
         $('#applicationType').attr('required',true);
 	}
 });
-
 
 function hideRegularization() {
 	$('#constDiv').hide();
