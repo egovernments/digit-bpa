@@ -83,7 +83,7 @@ $(document).ready(function() {
             bootbox.alert("Please enter work starting date");
             $('#completionDate').val('').datepicker("refresh");
         } else if ($('#commencedDate').val() && moment($('#completionDate').val(),'DD/MM/YYYY').isSameOrBefore(moment($('#commencedDate').val(),'DD/MM/YYYY'))) {
-            bootbox.alert("Work completion date should be greater than the work commencement date");
+            bootbox.alert("Date of construction completion Should be greater than Date of construction started.");
             $('#completionDate').val('').datepicker("refresh");
         }
     });
