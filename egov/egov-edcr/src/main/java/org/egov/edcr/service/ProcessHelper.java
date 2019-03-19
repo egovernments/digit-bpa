@@ -103,6 +103,41 @@ public class ProcessHelper {
         }
         return occupancy;
     }
+    
+    public static OccupancyType getMostRestrictiveOccupancy(List<OccupancyType> distinctOccupancyTypes) {
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_I2))
+            return OccupancyType.OCCUPANCY_I2;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_I1))
+            return OccupancyType.OCCUPANCY_I1;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_G1))
+            return OccupancyType.OCCUPANCY_G1;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_D))
+            return OccupancyType.OCCUPANCY_D;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_B1))
+            return OccupancyType.OCCUPANCY_B1;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_B2))
+            return OccupancyType.OCCUPANCY_B2;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_B3))
+            return OccupancyType.OCCUPANCY_B3;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_C))
+            return OccupancyType.OCCUPANCY_C;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_D1))
+            return OccupancyType.OCCUPANCY_D1;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_E))
+            return OccupancyType.OCCUPANCY_E;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_F))
+            return OccupancyType.OCCUPANCY_F;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_A1))
+            return OccupancyType.OCCUPANCY_A1;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_A2))
+            return OccupancyType.OCCUPANCY_A2;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_A4))
+            return OccupancyType.OCCUPANCY_A4;
+        if (distinctOccupancyTypes.contains(OccupancyType.OCCUPANCY_G2))
+            return OccupancyType.OCCUPANCY_G2;
+        else
+            return null;
+    }
 
     public static Map<String, Object> getTypicalFloorValues(Block block, Floor floor,
             Boolean isTypicalRepititiveFloor) {

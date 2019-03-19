@@ -69,6 +69,7 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -160,7 +161,7 @@ public class FireStairService extends FeatureProcess {
 				List<Occupancy> occupancies = block.getBuilding().getOccupancies();
 				List<OccupancyType> collect = occupancies.stream().map(occupancy -> occupancy.getType())
 						.collect(Collectors.toList());
-				OccupancyType mostRestrictiveOccupancy = Util.getMostRestrictiveOccupancy(collect);
+				OccupancyType mostRestrictiveOccupancy = ProcessHelper.getMostRestrictiveOccupancy(collect);
 				List<Boolean> abutingList = new ArrayList<>();
 				int fireStairCount = 0;
 				int spiralStairCount = 0;
