@@ -3,7 +3,6 @@ package org.egov.bpa.service.common;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.springframework.stereotype.Service;
@@ -22,15 +21,11 @@ import net.sf.jasperreports.engine.JasperPrint;
 @Service
 public class JasperReportHelperService {
 
-    public InputStream exportPdf(final JasperPrint jasperPrint) throws JRException, IOException {
+    public InputStream exportPdf(final JasperPrint jasperPrint) throws JRException {
         ByteArrayOutputStream outputBytes = new ByteArrayOutputStream(1 * 1024 * 1024);
         JasperExportManager.exportReportToPdfStream(jasperPrint, outputBytes);
-        InputStream inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
-        // closeStream(reportStream);
-        return inputStream;
+        return new ByteArrayInputStream(outputBytes.toByteArray());
     }
-
-   
 
     public Style getConcurrenceColumnStyle() {
         final Style columnStyle = new Style("ColumnCss");
@@ -44,7 +39,7 @@ public class JasperReportHelperService {
         columnStyle.setTransparent(false);
         return columnStyle;
     }
-    
+
     public Style getBudgetReportDetailStyle() {
         final Style detailStyle = new Style("detail");
         detailStyle.setBorderLeft(Border.THIN());
@@ -56,7 +51,7 @@ public class JasperReportHelperService {
         detailStyle.setTransparency(Transparency.OPAQUE);
         return detailStyle;
     }
-    
+
     public Style getDetailStyle() {
         final Style detailStyle = new Style("detail");
         detailStyle.setBorderLeft(Border.THIN());
@@ -70,8 +65,6 @@ public class JasperReportHelperService {
         detailStyle.setTransparency(Transparency.OPAQUE);
         return detailStyle;
     }
-
-    
 
     public Style getHeaderStyle() {
         final Style headerStyle = new Style("header");
@@ -94,18 +87,17 @@ public class JasperReportHelperService {
         columnStyle.setBorderBottom(Border.THIN());
         columnStyle.setBorderTop(Border.THIN());
         columnStyle.setTextColor(Color.black);
-        columnStyle.setHorizontalAlign(HorizontalAlign.LEFT); 
+        columnStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         columnStyle.setFont(new Font(9, Font._FONT_TIMES_NEW_ROMAN, false));
-        columnStyle.setStreching(Stretching.RELATIVE_TO_BAND_HEIGHT);   
+        columnStyle.setStreching(Stretching.RELATIVE_TO_BAND_HEIGHT);
         columnStyle.setStretchWithOverflow(true);
         columnStyle.setVerticalAlign(VerticalAlign.MIDDLE);
 
-        columnStyle.setTransparent(false);  
+        columnStyle.setTransparent(false);
         columnStyle.setPaddingRight(2);
-        
-        return columnStyle; 
-    }
 
+        return columnStyle;
+    }
 
     public Style getNumberStyle() {
         final Style columnStyle = new Style("NumberCss");
@@ -189,6 +181,7 @@ public class JasperReportHelperService {
         titleStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         return titleStyle;
     }
+
     public Style getSubReportTitleStyle() {
         final Style titleStyle = new Style("subReportTitleStyle");
         titleStyle.setFont(new Font(12, Font._FONT_ARIAL, true));
@@ -209,8 +202,6 @@ public class JasperReportHelperService {
         subTitleStyle.setVerticalAlign(VerticalAlign.MIDDLE);
         return subTitleStyle;
     }
-
-   
 
     public Style getAcceptedResultStyle() {
 
@@ -247,7 +238,5 @@ public class JasperReportHelperService {
         columnResultStyle.setBorderBottom(Border.THIN());
         return columnResultStyle;
     }
-
-   
 
 }

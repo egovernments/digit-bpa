@@ -83,6 +83,8 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -116,7 +118,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
  */
 @Service
 public class InspectionReportFormatImpl implements InspectionReportFormat {
-
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(InspectionReportFormatImpl.class);
+    
     @Autowired
     private CityService cityService;
     @Autowired
@@ -158,10 +162,9 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
             Path path = fileStoreService.fetchAsPath(fileStoreMapper.getFileStoreId(), APPLICATION_MODULE_TYPE);
             try {
                 reportOutput.setReportOutputData(Files.readAllBytes(path));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ioe) {
+                LOGGER.error("Error occurred while generate notice", ioe);
             }
-            // }
         }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
@@ -283,10 +286,8 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
             JasperPrint generateJasperPrint = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(),
                     ds, reportParams);
             exportPdf = jasperReportHelperService.exportPdf(generateJasperPrint);
-        } catch (JRException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (JRException jre) {
+            LOGGER.error("Error occurred while generating inspection report", jre);  
         }
         return exportPdf;
     }
@@ -343,11 +344,12 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         InspectionImg img = new InspectionImg();
         try {
             for (FileStoreMapper fileMapper : images) {
+                //FIXME FileInputSteam needs to be closed after report is generated to avoid resource leak
                 img.setImg(
                         new FileInputStream(fileStoreService.fetch(fileMapper.getFileStoreId(), APPLICATION_MODULE_TYPE)));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioe) {
+            LOGGER.error("Error occurred while getting inspection Image", ioe);
         }
         img.setDescription(checklistDesc);
 
@@ -395,8 +397,8 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
             sub.setDatasource(new DJDataSource(title, DJConstants.DATA_SOURCE_ORIGIN_PARAMETER, 0));
             sub.setLayoutManager(new ClassicLayoutManager());
             return sub;
-        } catch (ColumnBuilderException e) {
-            e.printStackTrace();
+        } catch (ColumnBuilderException cbe) {
+            LOGGER.error("Error occurred while getting subreport", cbe);
         }
         return null;
     }
@@ -408,8 +410,8 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
 
             try {
                 frb.addImageColumn("Site Image", "img", 550, true, ImageScaleMode.FILL);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (ClassNotFoundException cnfe) {
+                LOGGER.error("Error occurred while getting subreport image", cnfe);
             }
             frb.setDetailHeight(250);
             frb.setMargins(0, 0, 0, 0);
@@ -433,8 +435,8 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
             sub.setDatasource(new DJDataSource(title, DJConstants.DATA_SOURCE_ORIGIN_PARAMETER, 0));
             sub.setLayoutManager(new ClassicLayoutManager());
             return sub;
-        } catch (ColumnBuilderException e) {
-            e.printStackTrace();
+        } catch (ColumnBuilderException cbe) {
+            LOGGER.error("Error occurred while getting subreport image", cbe);
         }
         return null;
     }
