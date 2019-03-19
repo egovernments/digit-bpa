@@ -59,9 +59,9 @@ import javax.persistence.*;
 import static org.egov.infra.persistence.entity.Address.SEQ_ADDRESS;
 
 @Entity
-@Table(name = "eg_address")
+@Table(name = "eg_address", schema = "state")
 @Inheritance(strategy = InheritanceType.JOINED)
-@SequenceGenerator(name = SEQ_ADDRESS, sequenceName = SEQ_ADDRESS, allocationSize = 1)
+@SequenceGenerator(name = SEQ_ADDRESS, sequenceName = SEQ_ADDRESS, allocationSize = 1, schema = "state")
 @Cacheable
 public abstract class Address extends AbstractPersistable<Long> {
 
