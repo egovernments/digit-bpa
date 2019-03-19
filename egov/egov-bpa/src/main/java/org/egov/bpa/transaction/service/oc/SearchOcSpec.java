@@ -68,6 +68,10 @@ public class SearchOcSpec {
                 predicate.getExpressions()
                         .add(builder.equal(bpaApplication.get("owner").get("name"),
                                 requestForm.getApplicantName()));
+            if(requestForm.getStatusId() !=null)
+            	predicate.getExpressions()
+                .add(builder.equal(root.get("status").get("id"), requestForm.getStatusId()));
+            
             if (requestForm.getServiceTypeId() != null)
                 predicate.getExpressions()
                         .add(builder.equal(bpaApplication.get("serviceType").get("id"), requestForm.getServiceTypeId()));

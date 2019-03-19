@@ -181,6 +181,18 @@
 						<form:errors path="toBuiltUpArea" cssClass="add-margin error-msg" />
 					</div>
 				</div>
+				<div class="form-group">
+                    <label class="col-sm-3 control-label text-right"><spring:message code="lbl.status"/></label>
+                    <div class="col-sm-3 add-margin">
+                        <form:select path="statusId" data-first-option="false" id="statusId" cssClass="form-control">
+                            <form:option value="">
+                                <spring:message code="lbl.select"/>
+                            </form:option>
+                            <form:options items="${applnStatusList}" itemValue="id" itemLabel="description"/>
+                        </form:select>
+                        <form:errors path="statusId" cssClass="add-margin error-msg"/>
+                    </div>
+				</div>
 			</div>
 		</div>
 	</div>
