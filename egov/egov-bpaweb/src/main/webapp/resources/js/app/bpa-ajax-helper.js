@@ -204,6 +204,7 @@ $(document).ready(
 					servicesAndAmenities.push($(this).val());
 				});
 				applicationTypeId = $('#applicationType').val();
+				if($('#permitApplnFeeRequired').val() == 'true'){
 				$.ajax({
 					url : "/bpa/ajax/getAdmissionFees",
 					type : "GET",
@@ -220,7 +221,9 @@ $(document).ready(
 					error : function(response) {
 					}
 				});
-				
+				} else {
+					$('#admissionfee').val(0);
+				}
 			});				
 			
 			

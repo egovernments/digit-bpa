@@ -99,6 +99,8 @@
 			<form:hidden path="authorizedToSubmitPlan"
 				id="authorizedToSubmitPlan" />
 			<input type="hidden" id="stakeHolderType" value="${stakeHolderType}" />
+			<input type="hidden" id="permitApplnFeeRequired" value="${permitApplnFeeRequired}" />
+			
 
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"

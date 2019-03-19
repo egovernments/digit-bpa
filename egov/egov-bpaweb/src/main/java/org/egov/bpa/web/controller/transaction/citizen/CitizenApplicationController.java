@@ -183,6 +183,12 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         bpaApplication.setApplicationDate(new Date());
         prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
         model.addAttribute("mode", "new");
+        List<AppConfigValues> appConfigValueList = appConfigValueService
+                .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, BpaConstants.PERMIT_APPLN_FEE_COLLECTION_REQUIRED);
+		if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES"))
+			model.addAttribute("permitApplnFeeRequired", true);
+		else
+			model.addAttribute("permitApplnFeeRequired", false);
         bpaApplication.setSource(Source.CITIZENPORTAL);
         bpaApplication.setApplicantMode(ApplicantMode.NEW);
         bpaApplication.setServiceType(serviceTypeService.getServiceTypeByCode(serviceCode));
