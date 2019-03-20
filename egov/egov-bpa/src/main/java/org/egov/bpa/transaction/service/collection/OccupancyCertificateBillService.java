@@ -197,8 +197,11 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
         }
         List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
         		.getOCFeeForListOfServices(oc.getParent().getServiceType().getId(), BpaConstants.BPA_APP_FEE);
+        
+        BigDecimal ocAdmissionFee = occupancyCertificateService.setOCAdmissionFeeAmountWithAmenities(
+                oc.getParent().getServiceType().getId(), oc.getParent().getApplicationAmenity());
 
-        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), oc.getParent().getAdmissionfeeAmount());
+        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), ocAdmissionFee);
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())
@@ -207,8 +210,7 @@ public class OccupancyCertificateBillService extends BillServiceInterface {
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
-            egDemand.setBaseDemand(occupancyCertificateService.setOCAdmissionFeeAmountWithAmenities(
-                    oc.getParent().getServiceType().getId(), oc.getParent().getApplicationAmenity()));
+            egDemand.setBaseDemand(ocAdmissionFee);
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());
         }

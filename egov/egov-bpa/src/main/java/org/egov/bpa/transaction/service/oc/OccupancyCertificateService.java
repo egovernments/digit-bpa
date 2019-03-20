@@ -267,8 +267,8 @@ public class OccupancyCertificateService {
     public BigDecimal setOCAdmissionFeeAmountWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
         BigDecimal admissionfeeAmount = BigDecimal.ZERO;
         String feeType;
-        if (serviceType != null && bpaUtils.isApplicationFeeCollectionRequired()) {
-        	Criteria feeCrit = bpaDemandService.createCriteriaforApplicationFee(serviceType, BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
+        if (serviceType != null && occupancyCertificateUtils.isApplicationFeeCollectionRequired()) {
+        	Criteria feeCrit = bpaDemandService.createCriteriaforOCApplicationFee(serviceType, BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
         	final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
             for (final BpaFeeMapping feeMap : bpaFeeMap)
             	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
@@ -295,6 +295,9 @@ public class OccupancyCertificateService {
             admissionfeeAmount = BigDecimal.ZERO;
         
         return admissionfeeAmount;
+        
+        
+        
     }
 
     @Transactional
