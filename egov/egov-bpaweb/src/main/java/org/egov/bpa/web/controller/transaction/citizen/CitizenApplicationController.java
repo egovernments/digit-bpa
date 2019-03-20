@@ -94,6 +94,7 @@ import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.commons.service.SubOccupancyService;
@@ -183,12 +184,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         bpaApplication.setApplicationDate(new Date());
         prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
         model.addAttribute("mode", "new");
-        List<AppConfigValues> appConfigValueList = appConfigValueService
-                .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, BpaConstants.PERMIT_APPLN_FEE_COLLECTION_REQUIRED);
-		if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES"))
-			model.addAttribute("permitApplnFeeRequired", true);
-		else
-			model.addAttribute("permitApplnFeeRequired", false);
+		model.addAttribute("permitApplnFeeRequired", bpaUtils.isApplicationFeeCollectionRequired());
         bpaApplication.setSource(Source.CITIZENPORTAL);
         bpaApplication.setApplicantMode(ApplicantMode.NEW);
         bpaApplication.setServiceType(serviceTypeService.getServiceTypeByCode(serviceCode));

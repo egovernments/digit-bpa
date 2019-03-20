@@ -202,6 +202,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         List<PermitLetterToParty> lettertoPartyList = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
         model.addAttribute("lettertopartylist", lettertoPartyList);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
+        model.addAttribute("permitApplnFeeRequired", bpaUtils.isApplicationFeeCollectionRequired());
         model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
         if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getLetterToParty().getSentDate() != null)
@@ -338,6 +339,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             bpaApplication.setPermitOccupancies(bpaApplication.getPermitOccupanciesTemp());
         }
         
+        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountWithAmenities(
+                bpaApplication.getServiceType().getId(), new ArrayList<>()));
         if (bpaUtils.isApplicationFeeCollectionRequired())
         	bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
         else
