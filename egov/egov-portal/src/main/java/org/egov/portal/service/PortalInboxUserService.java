@@ -50,6 +50,7 @@ package org.egov.portal.service;
 import java.util.List;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.repository.PortalInboxUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,15 +65,33 @@ public class PortalInboxUserService {
     private PortalInboxUserRepository portalInboxUserRepository;
 
     public List<PortalInboxUser> getPortalInboxByResolved(final Long userId, final boolean resolved) {
-        return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved, ApplicationThreadLocals.getTenantID());
+        
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved);
+        } else {
+            return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved, ApplicationThreadLocals.getTenantID());
+        }
+
     }
 
     public List<PortalInboxUser> getPortalInboxByUserId(final Long userId) {
-        return portalInboxUserRepository.findByTenantIdAndUser_IdOrderByIdDesc(ApplicationThreadLocals.getTenantID(), userId);
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.findByUser_IdOrderByIdDesc(userId);
+        } else {
+            return portalInboxUserRepository.findByTenantIdAndUser_IdOrderByIdDesc(ApplicationThreadLocals.getTenantID(), userId);
+        }
+
     }
 
     public Long getPortalInboxUserCount(final Long userId) {
-        return portalInboxUserRepository.getPortalInboxUserCount(userId, ApplicationThreadLocals.getTenantID());
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.getPortalInboxUserCount(userId);
+        } else {
+            return portalInboxUserRepository.getPortalInboxUserCount(userId, ApplicationThreadLocals.getTenantID());
+        }
+
     }
 
 }
