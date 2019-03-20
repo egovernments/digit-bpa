@@ -41,6 +41,7 @@ package org.egov.bpa.master.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.bpa.autonumber.LicenceNumberGenerator;
 import org.egov.bpa.autonumber.StakeHolderCodeGenerator;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.StakeHolderState;
@@ -155,6 +157,8 @@ public class StakeHolderService {
     private DesignationService designationService;
     @Autowired
     private PositionMasterRepository positionMasterRepository;
+    @Autowired
+    private LicenceNumberGenerator licenceNumberGenerator;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -184,11 +188,19 @@ public class StakeHolderService {
         processAndStoreApplicationDocuments(stakeHolder);
         StakeHolderState stakeHolderState = new StakeHolderState();
         stakeHolderState.setStakeHolder(stakeHolder);
-        if(stakeHolder.getSource().equals(Source.ONLINE))
+        if (stakeHolder.getSource().equals(Source.ONLINE))
             transition(stakeHolderState, null, null, null, null);
         else
             transition(stakeHolderState, DATA_ENTRY, null, null, null);
         stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
+        if (StakeHolderStatus.APPROVED.equals(stakeHolder.getStatus())
+                && !BpaConstants.STAKEHOLDER_TYPE_ARCHITECT.equalsIgnoreCase(stakeHolder.getStakeHolderType().getName())) {
+            stakeHolder.setLicenceNumber(licenceNumberGenerator.generateNumber(stakeHolder));
+            stakeHolder.setBuildingLicenceIssueDate(new Date());
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.YEAR, stakeHolder.getStakeHolderType().getValidYears().intValue());
+            stakeHolder.setBuildingLicenceExpiryDate(cal.getTime());
+        }
         stakeHolderRepository.save(stakeHolder);
         stakeHolderState.setStakeHolder(stakeHolder);
 
@@ -209,50 +221,50 @@ public class StakeHolderService {
         final DateTime currentDate = new DateTime();
 
         if (null == stakeHolderState.getId()) {
-                // this is for initiation
-                wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
-                        additionalRule, BpaConstants.WF_NEW_STATE, pendingAction);
-                //this is for data entry purpose, approval cycle and fee not require
-                if(DATA_ENTRY.equals(workflowAction)) {
-                    stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
-                } else if (wfmatrix != null) {
-                    // this is for Single step workflow no status entry
-                    if (wfmatrix.getCurrentState().equalsIgnoreCase(BpaConstants.WF_NEW_STATE)
-                            && wfmatrix.getNextAction().equalsIgnoreCase("END")) {
-                        List<AppConfigValues> appConfigValueList = appConfigValueService
-                                .getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDERREGFEE);
-                        String appConfigValue = "NO";
-                        if (!appConfigValueList.isEmpty()) {
-                            appConfigValue = appConfigValueList.get(0).getValue();
-                        }
-
-                        if (appConfigValue != null && appConfigValue.equalsIgnoreCase("YES")) {
-                            stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.PAYMENT_PENDING);
-                            stakeHolderState.getStakeHolder()
-                                    .setDemand(stakeHolderBpaBillService.createDemand(stakeHolderState.getStakeHolder()));
-                        } else {
-                            stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
-                        }
-                    } else {
-                        if (wfmatrix.getNextDesignation() != null && !wfmatrix.getNextDesignation().isEmpty()) {
-                            final List<Assignment> assignments = assignmentService.getAllActiveAssignments(
-                                    designationService.getDesignationByName(wfmatrix.getNextDesignation()).getId());
-                            if (!assignments.isEmpty())
-                                ownerPos = assignments.get(0).getPosition();
-                        }
-
-                        stakeHolderState.transition().start()
-                                .withSenderName(
-                                        currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
-                                .withComments(approvalComment)
-                                // .withInitiator(wfInitiator == null ? null :
-                                // wfInitiator.getPosition())
-                                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                                .withOwner(ownerPos).withOwner(ownerUser).withNextAction(wfmatrix.getNextAction())
-                                .withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
-
+            // this is for initiation
+            wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
+                    additionalRule, BpaConstants.WF_NEW_STATE, pendingAction);
+            // this is for data entry purpose, approval cycle and fee not require
+            if (DATA_ENTRY.equals(workflowAction)) {
+                stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
+            } else if (wfmatrix != null) {
+                // this is for Single step workflow no status entry
+                if (wfmatrix.getCurrentState().equalsIgnoreCase(BpaConstants.WF_NEW_STATE)
+                        && wfmatrix.getNextAction().equalsIgnoreCase("END")) {
+                    List<AppConfigValues> appConfigValueList = appConfigValueService
+                            .getConfigValuesByModuleAndKey(BpaConstants.EGMODULE_NAME, BpaConstants.ENABLESTACKEHOLDERREGFEE);
+                    String appConfigValue = "NO";
+                    if (!appConfigValueList.isEmpty()) {
+                        appConfigValue = appConfigValueList.get(0).getValue();
                     }
+
+                    if (appConfigValue != null && appConfigValue.equalsIgnoreCase("YES")) {
+                        stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.PAYMENT_PENDING);
+                        stakeHolderState.getStakeHolder()
+                                .setDemand(stakeHolderBpaBillService.createDemand(stakeHolderState.getStakeHolder()));
+                    } else {
+                        stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
+                    }
+                } else {
+                    if (wfmatrix.getNextDesignation() != null && !wfmatrix.getNextDesignation().isEmpty()) {
+                        final List<Assignment> assignments = assignmentService.getAllActiveAssignments(
+                                designationService.getDesignationByName(wfmatrix.getNextDesignation()).getId());
+                        if (!assignments.isEmpty())
+                            ownerPos = assignments.get(0).getPosition();
+                    }
+
+                    stakeHolderState.transition().start()
+                            .withSenderName(
+                                    currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
+                            .withComments(approvalComment)
+                            // .withInitiator(wfInitiator == null ? null :
+                            // wfInitiator.getPosition())
+                            .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                            .withOwner(ownerPos).withOwner(ownerUser).withNextAction(wfmatrix.getNextAction())
+                            .withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
+
                 }
+            }
         } else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject")) {
             wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
                     additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);

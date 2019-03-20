@@ -1,5 +1,9 @@
 package org.egov.bpa.service.es;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.entity.es.StakeHolderIndex;
 import org.egov.bpa.master.entity.StakeHolder;
@@ -17,8 +21,6 @@ import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
 @Transactional(readOnly = true)
@@ -65,7 +67,8 @@ public class StakeHolderIndexService {
             String viewUrl = "/stakeholder/view/%s";
             applicationIndex = ApplicationIndex.builder().withModuleName(BpaConstants.APPL_INDEX_MODULE_NAME)
                     .withApplicationNumber(stakeHolder.getCode())
-                    .withApplicationDate(stakeHolder.getBuildingLicenceIssueDate())
+                    .withApplicationDate(stakeHolder.getBuildingLicenceIssueDate() == null ? new Date()
+                            : stakeHolder.getBuildingLicenceIssueDate())
                     .withApplicationType(stakeHolder.getType().name())
                     .withOwnername(stakeHolder.getName())
                     .withApplicantName(stakeHolder.getName())
@@ -87,12 +90,13 @@ public class StakeHolderIndexService {
     }
 
     private void buildApplicationIndexForUpdate(final StakeHolder stakeHolder,
-                                                ApplicationIndex applicationIndex) {
+            ApplicationIndex applicationIndex) {
         applicationIndex.setStatus(stakeHolder.getStatus().name());
         if (stakeHolder.getStatus().name().equals(StakeHolderStatus.REJECTED)) {
             applicationIndex.setApproved(ApprovalStatus.REJECTED);
             applicationIndex.setClosed(ClosureStatus.YES);
         } else if (stakeHolder.getStatus().name().equals(StakeHolderStatus.APPROVED)) {
+            applicationIndex.setApplicationDate(stakeHolder.getBuildingLicenceIssueDate());
             applicationIndex.setApproved(ApprovalStatus.APPROVED);
             applicationIndex.setClosed(ClosureStatus.YES);
         }

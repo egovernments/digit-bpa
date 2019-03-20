@@ -47,6 +47,25 @@
  */
 
 $(document).ready( function () {
+	
+	$('#stakeHolderType').change(function(e) {
+		if($("#stakeHolderType option:selected").text() == "Architect"){
+			$('#licenceGroup').show();
+			$('#licenceNumber').attr( "required", "true" );
+			$('#buildingLicenceIssueDate').attr( "required", "true" );
+			$('#buildingLicenceExpiryDate').attr( "required", "true" );
+		}else{
+			$('#licenceGroup').hide();
+			$('#licenceNumber').removeAttr( "required" );
+			$('#buildingLicenceIssueDate').removeAttr( "required" );
+			$('#buildingLicenceExpiryDate').removeAttr( "required" );
+			
+			$('#licenceNumber').val("");
+			$('#buildingLicenceIssueDate').val("");
+			$('#buildingLicenceExpiryDate').val("");
+		}
+	});
+	
 
     $('.currentOwner').hide();
 

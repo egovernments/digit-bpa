@@ -240,16 +240,6 @@
             <form:errors path="" cssClass="error-msg" />
         </div>
     </div> --%>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.lic.no" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<form:input type="text" cssClass="form-control" path="licenceNumber"
-				maxlength="64" id="licenceNumber" required="required" />
-			<span class=""></span>
-			<form:errors path="licenceNumber" cssClass="error-msg" />
-		</div>
-	</div>
 
 	<%-- <div class="form-group">
         <label class="col-sm-3 control-label text-right"><spring:message
@@ -282,23 +272,36 @@
             <form:errors path="tinNumber" cssClass="error-msg" />
         </div>
     </div> --%>
-
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.buil.lic.iss.date" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<form:input type="text" cssClass="form-control datepicker"
-				path="buildingLicenceIssueDate" id="buildingLicenceIssueDate"
-				required="required" />
-			<form:errors path="buildingLicenceIssueDate" cssClass="error-msg" />
+    
+    <div id="licenceGroup">
+	    <div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message
+					code="lbl.lic.no" /><span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:input type="text" cssClass="form-control" path="licenceNumber"
+					maxlength="64" id="licenceNumber" required="required" />
+				<span class=""></span>
+				<form:errors path="licenceNumber" cssClass="error-msg" />
+			</div>
 		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.build.lic.exp.date" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<form:input type="text" cssClass="form-control datepicker"
-				path="buildingLicenceExpiryDate" id="buildingLicenceExpiryDate"
-				required="required" />
-			<form:errors path="buildingLicenceExpiryDate" cssClass="error-msg" />
+	
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message
+					code="lbl.buil.lic.iss.date" /><span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:input type="text" cssClass="form-control datepicker"
+					path="buildingLicenceIssueDate" id="buildingLicenceIssueDate"
+					required="required" />
+				<form:errors path="buildingLicenceIssueDate" cssClass="error-msg" />
+			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message
+					code="lbl.build.lic.exp.date" /><span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:input type="text" cssClass="form-control datepicker"
+					path="buildingLicenceExpiryDate" id="buildingLicenceExpiryDate"
+					required="required" />
+				<form:errors path="buildingLicenceExpiryDate" cssClass="error-msg" />
+			</div>
 		</div>
 	</div>
 	<div class="form-group">

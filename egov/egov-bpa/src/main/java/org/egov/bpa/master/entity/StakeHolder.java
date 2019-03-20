@@ -41,7 +41,6 @@
 package org.egov.bpa.master.entity;
 
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.List;
 
@@ -82,19 +81,17 @@ public class StakeHolder extends User {
     @OneToMany(mappedBy = "stakeHolder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>(0);
     @NotNull
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "stakeholdertype")
-	private StakeHolderType stakeHolderType;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "stakeholdertype")
+    private StakeHolderType stakeHolderType;
     @NotNull
     @Length(min = 1, max = 128)
     @Column(name = "code", unique = true)
     @Audited
     private String code;
-    @NotNull
     @Length(min = 1, max = 64)
     @Audited
     private String licenceNumber;
-    @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date buildingLicenceIssueDate;
     @Enumerated(EnumType.ORDINAL)

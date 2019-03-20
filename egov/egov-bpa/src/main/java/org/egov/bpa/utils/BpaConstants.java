@@ -401,6 +401,9 @@ public class BpaConstants {
     public static final String LOWRISK = "Low Risk";
     public static final String HIGHRISK = "High Risk";
     public static final String MEDIUMRISK = "Medium Risk";
+    
+    public static final String STAKEHOLDER_TYPE_ARCHITECT = "Architect";
+    
 
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();

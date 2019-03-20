@@ -45,10 +45,10 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGBPA_MSTR_STAKEHOLDERTYPE", schema = "state")
 @SequenceGenerator(name = StakeHolderType.SEQ_STAKEHOLDERTYPE, sequenceName = StakeHolderType.SEQ_STAKEHOLDERTYPE, allocationSize = 1)
-public class StakeHolderType extends AbstractAuditable{
+public class StakeHolderType extends AbstractAuditable {
 
     private static final long serialVersionUID = 3523866218161324731L;
-    public static final String SEQ_STAKEHOLDERTYPE= "SEQ_EGBPA_MSTR_STAKEHOLDERTYPE";
+    public static final String SEQ_STAKEHOLDERTYPE = "SEQ_EGBPA_MSTR_STAKEHOLDERTYPE";
     @Id
     @GeneratedValue(generator = SEQ_STAKEHOLDERTYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -62,8 +62,12 @@ public class StakeHolderType extends AbstractAuditable{
     @Length(min = 1, max = 50)
     private String code;
 
+    @NotNull
+    @Length(min = 1, max = 50)
+    private Long validYears;
+
     private Boolean isActive;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -71,8 +75,8 @@ public class StakeHolderType extends AbstractAuditable{
 
     @Override
     protected void setId(Long id) {
-         this.id=id;
-        
+        this.id = id;
+
     }
 
     public String getName() {
@@ -81,7 +85,7 @@ public class StakeHolderType extends AbstractAuditable{
 
     public void setName(String name) {
         this.name = name;
-        
+
     }
 
     public String getCode() {
@@ -92,14 +96,20 @@ public class StakeHolderType extends AbstractAuditable{
         this.code = code;
     }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-    
-  
-   
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public Long getValidYears() {
+        return validYears;
+    }
+
+    public void setValidYears(Long validYears) {
+        this.validYears = validYears;
+    }
+
 }
