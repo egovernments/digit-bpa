@@ -240,12 +240,12 @@ public class StakeHolderController extends GenericWorkFlowController {
         bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, true);
         StakeHolderStatus status = stakeHolder.getStatus();
 
-        stakeHolderService.populateLicenceDetails(stakeHolderRes);
-        stakeHolderRes = stakeHolderService.save(stakeHolderRes);
+        stakeHolderService.populateLicenceDetails(stakeHolder);
+        stakeHolderService.save(stakeHolder);
 
         if (status.compareTo(StakeHolderStatus.APPROVED) == 0) {
-            stakeHolderRes.setIsActive(true);
-            stakeHolderRes = stakeHolderService.save(stakeHolderRes);
+            stakeHolder.setIsActive(true);
+            stakeHolderService.save(stakeHolder);
         }
 
         if (status.compareTo(StakeHolderStatus.APPROVED) == 0 || status.compareTo(StakeHolderStatus.PAYMENT_PENDING) == 0) {
@@ -340,12 +340,12 @@ public class StakeHolderController extends GenericWorkFlowController {
         stakeHolderIndexService.updateIndexes(stakeHolderRes);
         StakeHolderStatus status = stakeHolderRes.getStatus();
 
-        stakeHolderService.populateLicenceDetails(stakeHolderRes);
-        stakeHolderRes = stakeHolderService.save(stakeHolder);
+        stakeHolderService.populateLicenceDetails(stakeHolder);
+        stakeHolderService.save(stakeHolder);
 
         if (status.compareTo(StakeHolderStatus.APPROVED) == 0) {
-            stakeHolderRes.setIsActive(true);
-            stakeHolderRes = stakeHolderService.save(stakeHolderRes);
+            stakeHolder.setIsActive(true);
+            stakeHolderService.save(stakeHolder);
         }
 
         if (status.compareTo(StakeHolderStatus.APPROVED) == 0 || status.compareTo(StakeHolderStatus.PAYMENT_PENDING) == 0) {
