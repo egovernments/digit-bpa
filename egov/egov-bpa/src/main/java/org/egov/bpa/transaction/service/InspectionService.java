@@ -389,9 +389,9 @@ public class InspectionService {
                     inspection.getDocketDetailRoofConversion().add(docketDet);
             }
             model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
-            model.addAttribute("docketDetailMeasumentList", inspection.getDocketDetailMeasurementList());
+            model.addAttribute("docketDetailMeasurementList", inspection.getDocketDetailMeasurementList());
             model.addAttribute("docketDetailAccessList", inspection.getDocketDetailAccessList());
-            model.addAttribute("docketDetlSurroundingPlotList", inspection.getDocketDetailSurroundingPlotList());
+            model.addAttribute("docketDetailSurroundingPlotList", inspection.getDocketDetailSurroundingPlotList());
             model.addAttribute("docketDetailLandTypeList", inspection.getDocketDetailLandTypeList());
             model.addAttribute("docketDetailProposedWorkList", inspection.getDocketDetailProposedWorkList());
             model.addAttribute("docketDetailWorkAsPerPlanList", inspection.getDocketDetailWorkAsPerPlanList());

@@ -207,14 +207,14 @@
 								</c:forEach>
 							</div>
 						</c:if>
-						<c:if test="${not empty docketDetailMeasumentList}">
+						<c:if test="${not empty docketDetailMeasurementList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
 									<spring:message code="lbl.meas.plot" />
 								</div>
 							</div>
 							<div class="panel-body">
-								<c:forEach items="${docketDetailMeasumentList}" var="doc"
+								<c:forEach items="${docketDetailMeasurementList}" var="doc"
 									varStatus="counter">
 									<div class="row add-border">
 										<div class="col-sm-5 add-margin view-content">
@@ -255,14 +255,14 @@
 								</c:forEach>
 							</div>
 						</c:if>
-						<c:if test="${not empty docketDetlSurroundingPlotList}">
+						<c:if test="${not empty docketDetailSurroundingPlotList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
 									<spring:message code="lbl.surrnd.plot" />
 								</div>
 							</div>
 							<div class="panel-body">
-								<c:forEach items="${docketDetlSurroundingPlotList}" var="doc"
+								<c:forEach items="${docketDetailSurroundingPlotList}" var="doc"
 									varStatus="counter">
 									<div class="row add-border">
 										<div class="col-sm-5 add-margin view-content">

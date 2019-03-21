@@ -586,13 +586,13 @@ $(document).ready(
                     type: "GET",
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
-                    	if(response.applicationType !== 'Permit') {
-                            bootbox.alert($('#dcrforoc').val());
-                    	} else if (response.errorDetail && response.errorDetail.errorCode != null && response.errorDetail.errorCode != '') {
+                    	if (response.errorDetail && response.errorDetail.errorCode != null && response.errorDetail.errorCode != '') {
                             bootbox.alert(response.errorDetail.errorMessage);
                             $('#eDcrNumber').val('');
                             resetDCRPopulatedValues();
-                        } else if ($("#serviceType option:selected").text()&& response.serviceType && response.serviceType !== $("#serviceType option:selected").text()) {
+                        } else if(response.applicationType !== 'Permit') {
+                            bootbox.alert($('#dcrforoc').val());
+                    	} else if ($("#serviceType option:selected").text()&& response.serviceType && response.serviceType !== $("#serviceType option:selected").text()) {
                             bootbox.alert($('#buildScrutinyNumber').val() + response.serviceType + $('#buildingPlanApplnForServiceType').val() + $("#serviceType option:selected").text() + $('#buildServiceType').val());
                             $('#eDcrNumber').val('');
                             resetDCRPopulatedValues();
