@@ -72,9 +72,9 @@ $(document).ready(
             '<th class="text-center dcr-floor-toggle-mandatory">Floor Description</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Level</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Occupancy</th>'+
-            '<th class="text-center dcr-floor-toggle-mandatory">Builtup Area (m2)</th>'+
-            '<th class="text-center dcr-floor-toggle-mandatory">Floor Area (m2)</th>'+
-            '<th class="text-center dcr-floor-toggle-mandatory">Carpet Area (m2)</th>'
+            '<th class="text-center dcr-floor-toggle-mandatory">Builtup Area (m²)</th>'+
+            '<th class="text-center dcr-floor-toggle-mandatory">Floor Area (m²)</th>'+
+            '<th class="text-center dcr-floor-toggle-mandatory">Carpet Area (m²)</th>'
         '</tr></thead>';
 
         var tbody = '<tbody></tbody>';
@@ -102,17 +102,17 @@ $(document).ready(
         var otherBldgDetails = '<div class="edcrBuildingAreaDetails{{bldgIdx}}"><div class="form-group">' +
             '        <label' +
             '                class="col-sm-3 control-label text-right show-hide totalPlintArea">' +
-            '                Total Builtup Area (m2)<span class="mandatory"></span> </label> <label' +
+            '                Total Builtup Area (m²)<span class="mandatory"></span> </label> <label' +
             '            class="col-sm-3 control-label text-right show-hide demolition">' +
-            '            Demolition Area (m2)<span class="mandatory"></span> </label><label' +
+            '            Demolition Area (m²)<span class="mandatory"></span> </label><label' +
             '            class="col-sm-3 control-label text-right show-hide noofhutorshed">' +
-            '            Area of the Hut/Shed (m2) <span class="mandatory"></span> </label> <label' +
+            '            Area of the Hut/Shed (m²) <span class="mandatory"></span> </label> <label' +
             '            class="col-sm-3 control-label text-right show-hide alterationInArea">' +
-            '            Alteration/Change in Area (m2) <span class="mandatory"></span> </label> <label' +
+            '            Alteration/Change in Area (m²) <span class="mandatory"></span> </label> <label' +
             '            class="col-sm-3 control-label text-right show-hide additionInArea">' +
-            '            Addition or Extension in Area (m2) <span class="mandatory"></span> </label> <label' +
+            '            Addition or Extension in Area (m²) <span class="mandatory"></span> </label> <label' +
             '            class="col-sm-3 control-label text-right show-hide changeInOccupancyArea">' +
-            '            Change in Occupancy Area (m2) <span class="mandatory"></span>' +
+            '            Change in Occupancy Area (m²) <span class="mandatory"></span>' +
             '    </label>' +
             '        <div class="col-sm-3 add-margin">' +
             '            <input type="hidden" id="name" name="buildingDetail[{{bldgIdx}}].name"' +
@@ -504,7 +504,7 @@ $(document).ready(
                     	}
                     		
                     	if($('#isCitizen').val() === 'true' && !isSingleFamily) {
-                    		bootbox.alert('Dear Citizen, you are not allowed to do plan scrutiny as the submitted plan do not comply these conditions such as a single family residential and floor area is less then or equal to 150 m2 and Maximum Ground+1 floors can be submitted');
+                    		bootbox.alert('Dear Citizen, you are not allowed to do plan scrutiny as the submitted plan do not comply these conditions such as a single family residential and floor area is less then or equal to 150 m² and Maximum Ground+1 floors can be submitted');
                     		$('.resetValues').val('');
                     	} else if (response.errorDetail && response.errorDetail.errorCode != null && response.errorDetail.errorCode != '') {
                             bootbox.alert(response.errorDetail.errorMessage);

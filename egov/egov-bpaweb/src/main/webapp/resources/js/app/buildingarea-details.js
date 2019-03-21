@@ -58,9 +58,9 @@ jQuery(document).ready(function() {
     '<th class="text-center bldg-floor-toggle-mandatory">Level</th>'+
     '<th class="text-center bldg-floor-toggle-mandatory">Sub Occupancy</th>'+
     '<th class="text-center bldg-floor-toggle-mandatory">Usage</th>'+
-    '<th class="text-center bldg-floor-toggle-mandatory">Builtup Area (m2)</th>'+
-    '<th class="text-center bldg-floor-toggle-mandatory">Floor Area (m2)</th>'+
-    '<th class="text-center bldg-floor-toggle-mandatory">Carpet Area (m2)</th>'+
+    '<th class="text-center bldg-floor-toggle-mandatory">Builtup Area (m²)</th>'+
+    '<th class="text-center bldg-floor-toggle-mandatory">Floor Area (m²)</th>'+
+    '<th class="text-center bldg-floor-toggle-mandatory">Carpet Area (m²)</th>'+
     '<th class="text-center bldg-floor-toggle-mandatory">Action</th>'+
     '</tr></thead>';
 	
@@ -88,17 +88,17 @@ var otherBldgDetails = '<div class="block-{{bldgIdx}}">'+
 	'</div><div class="form-group">' +
     '        <label' +
     '                class="col-sm-3 control-label text-right show-hide totalPlintArea">' +
-    '                Total Builtup Area (m2)<span class="mandatory"></span> </label> <label' +
+    '                Total Builtup Area (m²)<span class="mandatory"></span> </label> <label' +
     '            class="col-sm-3 control-label text-right show-hide demolition">' +
-    '            Demolition Area (m2)<span class="mandatory"></span> </label><label' +
+    '            Demolition Area (m²)<span class="mandatory"></span> </label><label' +
     '            class="col-sm-3 control-label text-right show-hide noofhutorshed">' +
-    '            Area of the Hut/Shed (m2) <span class="mandatory"></span> </label> <label' +
+    '            Area of the Hut/Shed (m²) <span class="mandatory"></span> </label> <label' +
     '            class="col-sm-3 control-label text-right show-hide alterationInArea">' +
-    '            Alteration/Change in Area (m2) <span class="mandatory"></span> </label> <label' +
+    '            Alteration/Change in Area (m²) <span class="mandatory"></span> </label> <label' +
     '            class="col-sm-3 control-label text-right show-hide additionInArea">' +
-    '            Addition or Extension in Area (m2) <span class="mandatory"></span> </label> <label' +
+    '            Addition or Extension in Area (m²) <span class="mandatory"></span> </label> <label' +
     '            class="col-sm-3 control-label text-right show-hide changeInOccupancyArea">' +
-    '            Change in Occupancy Area (m2) <span class="mandatory"></span>' +
+    '            Change in Occupancy Area (m²) <span class="mandatory"></span>' +
     '    </label>' +
     '        <div class="col-sm-3 add-margin">' +
     '            <input type="hidden" id="name" name="buildingDetail[{{bldgIdx}}].name"' +
