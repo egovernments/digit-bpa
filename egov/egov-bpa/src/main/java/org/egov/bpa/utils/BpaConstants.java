@@ -258,6 +258,7 @@ public class BpaConstants {
     public static final String OC_FEE = "Occupancy Certificate Fees";
     public static final String SHELTERFUND = "Shelter Fund";
     public static final String LABOURCESS = "Labour cess";
+    public static final String TP_DEPT = "TOWN PLANNING DEPARTMENT";
 
 
 
@@ -367,6 +368,8 @@ public class BpaConstants {
     // other
     public static final int SCALING_FACTOR = 2;
     public static final String MESSAGE = "message";
+    public static final String STATELOGO = "STATE_LOGO";
+
     // elastic search constants
     public static final String APPL_INDEX_MODULE_NAME = "Building Plan Approval";
     // Application Type Constants

@@ -89,6 +89,8 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.egov.bpa.autonumber.RejectionNumberGenerator;
+import org.egov.bpa.config.reports.properties.BpaApplicationReportProperties;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -183,6 +185,10 @@ public class BpaNoticeUtil {
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private CityService cityService;
+    @Autowired
+    private RejectionNumberGenerator rejectionNumberGenerator;
+    @Autowired
+    private BpaApplicationReportProperties bpaApplicationReportProperties;
 
     public BpaNotice findByApplicationAndNoticeType(final BpaApplication application, final String noticeType) {
         return bpaNoticeRepository.findByApplicationAndNoticeType(application, noticeType);
@@ -294,13 +300,18 @@ public class BpaNoticeUtil {
         ulbDetailsReportParams.put("cityName", ApplicationThreadLocals.getCityName());
         ulbDetailsReportParams.put("logoPath", cityService.getCityLogoAsStream());
         ulbDetailsReportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
+        ulbDetailsReportParams.put("ulbGrade", cityService.getCityGrade());
         ulbDetailsReportParams.put("cityNameLocal", ApplicationThreadLocals.getCityNameLocal());
         return ulbDetailsReportParams;
     }
 
     public Map<String, Object> buildParametersForReport(final BpaApplication bpaApplication) {
         StringBuilder serviceTypeDesc = new StringBuilder();
-        final Map<String, Object> reportParams = new HashMap<>();
+        StringBuilder senderInfo = new StringBuilder();
+        
+        senderInfo.append(BpaConstants.TP_DEPT).append(" ").append(ApplicationThreadLocals.getMunicipalityName())
+                           .append(" ").append(cityService.getCityGrade());
+       final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("bpademandtitle", WordUtils.capitalize(BPADEMANDNOTICETITLE));
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         String approverName = getApproverName(bpaApplication);
@@ -445,7 +456,7 @@ public class BpaNoticeUtil {
             reportParams.put("permitFeeDetails", getPermitFeeDetails(bpaApplication));
 
         reportParams.put("cityName", ApplicationThreadLocals.getCityName());
-        String imageURL = ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH);
+        String imageURL = ReportUtil.getImageURL(bpaUtils.getStateLogoPath());
         reportParams.put("stateLogo", imageURL);
         if (bpaApplication.getExistingBuildingDetails() != null && !bpaApplication.getExistingBuildingDetails().isEmpty()) {
             Map<String, BigDecimal> exstArea = BpaUtils.getTotalExstArea(bpaApplication.getExistingBuildingDetails());
@@ -493,6 +504,11 @@ public class BpaNoticeUtil {
             reportParams.put("subHeaderTitle", "Building permit to construct,");
             reportParams.put("subheader", subHeaderString + "confirming to the details and conditions here under.");
         }
+        reportParams.put("rejectionNo",rejectionNumberGenerator.generateRejectionNumber());
+        reportParams.put("sender",senderInfo.toString());
+        reportParams.put("form",bpaApplicationReportProperties.getReportFormat());
+        reportParams.put("refusalFormat",bpaApplicationReportProperties.getRefusalFormat());
+        reportParams.put("byeLaws",bpaApplicationReportProperties.getByeLaws());
         return reportParams;
 
     }

@@ -1,0 +1,1 @@
+create sequence SEQ_EGBPA_REJECTION_NUMBER;

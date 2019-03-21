@@ -770,4 +770,10 @@ public class BpaUtils {
         }
         return workFlowBoundary;
     }
+    
+    public String getStateLogoPath() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService
+                .getConfigValuesByModuleAndKey(EGMODULE_NAME, BpaConstants.STATELOGO);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+    }
 }

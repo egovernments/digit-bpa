@@ -12,6 +12,7 @@
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="logoPath" class="java.io.InputStream"/>
+	<parameter name="refusalFormat" class="java.lang.String"/>
 	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="applicationDate" class="java.util.Date"/>
 	<field name="serviceType" class="org.egov.bpa.master.entity.ServiceType"/>
@@ -72,14 +73,14 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="26" splitType="Stretch">
-			<staticText>
-				<reportElement x="0" y="6" width="555" height="20" uuid="417140e2-f7b0-44c4-ad3d-650024f6f95a"/>
-				<textElement textAlignment="Center">
+		<band height="41" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="553" height="30" uuid="29da4196-1a30-4696-9443-282c2036ac20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[ORDER OF REJECTION FOR PERMIT /REGULARIZATION APLLICATION]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{refusalFormat}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<detail>
