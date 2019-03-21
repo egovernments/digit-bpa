@@ -49,7 +49,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.bpa.autonumber.LicenceNumberGenerator;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.StakeHolderState;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
@@ -140,8 +139,6 @@ public class StakeHolderController extends GenericWorkFlowController {
     private StakeHolderIndexService stakeHolderIndexService;
     @Autowired
     private StakeHolderStateService stakeHolderStateService;
-    @Autowired
-    private LicenceNumberGenerator licenceNumberGenerator;
 
     @ModelAttribute("stakeHolderDocumentList")
     public List<StakeHolderDocument> getStakeHolderDocuments() {
@@ -240,14 +237,6 @@ public class StakeHolderController extends GenericWorkFlowController {
         bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, true);
         StakeHolderStatus status = stakeHolder.getStatus();
 
-        stakeHolderService.populateLicenceDetails(stakeHolder);
-        stakeHolderService.save(stakeHolder);
-
-        if (status.compareTo(StakeHolderStatus.APPROVED) == 0) {
-            stakeHolder.setIsActive(true);
-            stakeHolderService.save(stakeHolder);
-        }
-
         if (status.compareTo(StakeHolderStatus.APPROVED) == 0 || status.compareTo(StakeHolderStatus.PAYMENT_PENDING) == 0) {
             bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);
             bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, false);
@@ -339,14 +328,6 @@ public class StakeHolderController extends GenericWorkFlowController {
         StakeHolder stakeHolderRes = stakeHolderService.update(stakeHolder, workFlowAction);
         stakeHolderIndexService.updateIndexes(stakeHolderRes);
         StakeHolderStatus status = stakeHolderRes.getStatus();
-
-        stakeHolderService.populateLicenceDetails(stakeHolder);
-        stakeHolderService.save(stakeHolder);
-
-        if (status.compareTo(StakeHolderStatus.APPROVED) == 0) {
-            stakeHolder.setIsActive(true);
-            stakeHolderService.save(stakeHolder);
-        }
 
         if (status.compareTo(StakeHolderStatus.APPROVED) == 0 || status.compareTo(StakeHolderStatus.PAYMENT_PENDING) == 0) {
             bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);

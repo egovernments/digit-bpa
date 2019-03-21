@@ -194,6 +194,9 @@ public class StakeHolderService {
             transition(stakeHolderState, DATA_ENTRY, null, null, null);
         stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
         populateLicenceDetails(stakeHolder);
+        if (stakeHolder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
+            stakeHolder.setIsActive(true);
+        }
         stakeHolderRepository.save(stakeHolder);
         stakeHolderState.setStakeHolder(stakeHolder);
 
