@@ -322,6 +322,10 @@ public class StakeHolderService {
         getStakeHolderWhenResubmit(modelObj, existingStakeholder);
         updateDocumentsOnResubmit(modelObj, existingStakeholder);
         StakeHolderState stakeHolderState = new StakeHolderState();
+        populateLicenceDetails(existingStakeholder);
+        if (existingStakeholder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
+            existingStakeholder.setIsActive(true);
+        }
         stakeHolderRepository.save(existingStakeholder);
         stakeHolderState.setStakeHolder(existingStakeholder);
         stakeHolderStateRepository.save(stakeHolderState);
@@ -401,6 +405,10 @@ public class StakeHolderService {
         StakeHolderState stakeHolderState = stakeHolderStateRepository.findByStakeHolderId(stakeHolder.getId());
         if (stakeHolderState == null) {
             stakeHolderState = new StakeHolderState();
+        }
+        populateLicenceDetails(stakeHolder);
+        if (stakeHolder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
+            stakeHolder.setIsActive(true);
         }
         stakeHolderRepository.save(stakeHolder);
         stakeHolderState.setStakeHolder(stakeHolder);
