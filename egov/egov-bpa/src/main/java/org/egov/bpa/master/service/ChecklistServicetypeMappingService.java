@@ -77,8 +77,7 @@ public class ChecklistServicetypeMappingService {
 
         if (checklistServiceTypeMapping.getChecklistType() != null
                 && checklistServiceTypeMapping.getServiceType() != null) {
-            return mappingRepository.findByServiceTypeAndChecklistType(
-                    checklistServiceTypeMapping.getServiceType().getDescription(),
+            return findByServiceTypeAndChecklistType(checklistServiceTypeMapping.getServiceType().getDescription(),
                     checklistServiceTypeMapping.getChecklistType().getDescription());
         }
         if (checklistServiceTypeMapping.getChecklistType() != null)
@@ -98,9 +97,12 @@ public class ChecklistServicetypeMappingService {
     }
 
     public boolean validateChecklistServiceTypeAlreadyExist(String serviceType,String checklistType) {
-        List<ChecklistServiceTypeMapping> list = mappingRepository.findByServiceTypeAndChecklistType(
-        		serviceType,checklistType);
+        List<ChecklistServiceTypeMapping> list = findByServiceTypeAndChecklistType(serviceType,checklistType);
         return !list.isEmpty();
+    }
+    
+    public List<ChecklistServiceTypeMapping> findByServiceTypeAndChecklistType(String serviceType,String checklistType){
+    	return mappingRepository.findByServiceTypeAndChecklistType(serviceType,checklistType);
     }
 
     public ChecklistServiceTypeMapping load(Long id) {

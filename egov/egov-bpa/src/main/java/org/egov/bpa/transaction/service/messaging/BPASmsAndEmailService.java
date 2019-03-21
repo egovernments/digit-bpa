@@ -127,6 +127,10 @@ public class BPASmsAndEmailService {
 	private static final String EMLS_STK_RJCT = "msg.stakeholder.rejection.email.subject";
 	private static final String SMS_KEY_APRVL = "msg.application.approval.sms";
 	private static final String EMLB_KEY_APRVL = "msg.application.approval.email.body";
+	
+	private static final String SMS_KEY_APRVL_WITHOUT_PERMITFEE = "msg.application.approval.sms.without.permitfee";
+	private static final String EMLB_KEY_APRVL_WITHOUT_PERMITFEE = "msg.application.approval.email.body.without.permitfee";
+	
 	private static final String EMLS_KEY_APRVL = "msg.application.approval.email.subject";
 	private static final String EMLB_KEY_PO = "msg.permitorder.generation.email.body";
 	private static final String SMS_KEY_PO = "msg.permitorder.generation.sms";
@@ -629,16 +633,29 @@ public class BPASmsAndEmailService {
 
 	private void buildSmsAndEmailOnApplicationApproval(BpaApplication application, String name, String mobileNumber,
 													   String emailId, ReportOutput reportOutput) {
-		String smsMsg = buildMsgDetailsOnApplicationApproval(application, name, SMS_KEY_APRVL);
-		String body = buildMsgDetailsOnApplicationApproval(application, name, EMLB_KEY_APRVL);
+		String smsMsg ="";
+		String body="";
+		
+		Boolean isPermitFeeExist = application.getDemand().getBaseDemand().subtract(application.getDemand().getAmtCollected())
+				.compareTo(BigDecimal.ZERO) > 0 ? Boolean.TRUE :Boolean.FALSE;
+		
+		if (isPermitFeeExist) {
+			smsMsg = buildMsgDetailsOnApplicationApproval(application, name, SMS_KEY_APRVL);
+			body = buildMsgDetailsOnApplicationApproval(application, name, EMLB_KEY_APRVL);
+		} else {
+			smsMsg = buildMsgDetailsOnApplicationApproval(application, name, SMS_KEY_APRVL_WITHOUT_PERMITFEE);
+			body = buildMsgDetailsOnApplicationApproval(application, name, EMLB_KEY_APRVL_WITHOUT_PERMITFEE);
+		}
 		String subject = buildMsgDetailsForEmailSubjectOnApplicationApproval(application, EMLS_KEY_APRVL);
 		if (isNotBlank(mobileNumber) && isNotBlank(smsMsg)) {
 			notificationService.sendSMS(mobileNumber, smsMsg);
 		}
-		if (isNotBlank(emailId) && isNotBlank(body)) {
-			notificationService.sendEmailWithAttachment(emailId, subject, body, APP_PDF, DEMANDNOCFILENAME + PDFEXTN,
-					reportOutput.getReportOutputData());
-		}
+		if (isNotBlank(emailId) && isNotBlank(body))
+			if (isPermitFeeExist)
+				notificationService.sendEmailWithAttachment(emailId, subject, body, APP_PDF,
+						DEMANDNOCFILENAME + PDFEXTN, reportOutput.getReportOutputData());
+			else
+				notificationService.sendEmail(emailId, subject, body);
 	}
 
 	private String buildMsgDetailsForEmailSubjectOnApplicationApproval(BpaApplication application, String msgKey) {

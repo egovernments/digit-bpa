@@ -87,7 +87,8 @@ public class ChecklistServiceTypeMappingController {
 			final Model model,final HttpServletRequest request, final BindingResult errors) {
 		model.addAttribute("serviceType", checklistServiceType.getServiceType());
 		model.addAttribute("checklistType", checklistServiceType.getChecklistType());
-		List<ChecklistServiceTypeMapping> mappintList = checklisterviceTypeService.findByActiveChecklistAndServiceType(checklistServiceType.getServiceType().getDescription(), checklistServiceType.getChecklistType().getCode());
+		List<ChecklistServiceTypeMapping> mappintList = checklisterviceTypeService.findByServiceTypeAndChecklistType(
+				checklistServiceType.getServiceType().getDescription(),checklistServiceType.getChecklistType().getDescription());
 		ChecklistServiceTypeMapping mapping = new ChecklistServiceTypeMapping();
 		mapping.setMappingList(mappintList);
 		model.addAttribute("checklistServicetype",mapping);
