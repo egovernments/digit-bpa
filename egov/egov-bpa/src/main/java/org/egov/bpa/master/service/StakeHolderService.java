@@ -330,7 +330,7 @@ public class StakeHolderService {
         StakeHolderState stakeHolderState = new StakeHolderState();
         populateLicenceDetails(existingStakeholder);
         if (existingStakeholder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
-            existingStakeholder.setIsActive(true);
+            setActiveToStakeholder(existingStakeholder);
         }
         stakeHolderRepository.save(existingStakeholder);
         stakeHolderState.setStakeHolder(existingStakeholder);
@@ -708,7 +708,7 @@ public class StakeHolderService {
         }
         transition(stakeHolderState, stakeHolder.getWorkFlowAction(), stakeHolder.getApprovalComent(), null,
                 stakeHolder.getNextPosition());
-
+        populateLicenceDetails(stakeHolder);
         return stakeHolderRepository.saveAndFlush(stakeHolder);
 
     }
