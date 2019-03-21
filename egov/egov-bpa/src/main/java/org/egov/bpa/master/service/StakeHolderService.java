@@ -195,7 +195,7 @@ public class StakeHolderService {
         stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
         populateLicenceDetails(stakeHolder);
         if (stakeHolder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
-            stakeHolder.setIsActive(true);
+            setActiveToStakeholder(stakeHolder);
         }
         stakeHolderRepository.save(stakeHolder);
         stakeHolderState.setStakeHolder(stakeHolder);
@@ -205,8 +205,14 @@ public class StakeHolderService {
     }
 
     public void populateLicenceDetails(final StakeHolder stakeHolder) {
+        if (LOG.isInfoEnabled())
+            LOG.info(" stakeHolder Status ..." + stakeHolder.getStatus().name());
+        if (LOG.isInfoEnabled())
+            LOG.info(" stakeHolderType Name ..." + stakeHolder.getStakeHolderType().getName());
         if (StakeHolderStatus.APPROVED.equals(stakeHolder.getStatus())
                 && !BpaConstants.STAKEHOLDER_TYPE_ARCHITECT.equalsIgnoreCase(stakeHolder.getStakeHolderType().getName())) {
+            if (LOG.isInfoEnabled())
+                LOG.info(" Populating licence details");
             stakeHolder.setLicenceNumber(licenceNumberGenerator.generateNumber(stakeHolder));
             stakeHolder.setBuildingLicenceIssueDate(new Date());
             Calendar cal = Calendar.getInstance();
@@ -408,7 +414,7 @@ public class StakeHolderService {
         }
         populateLicenceDetails(stakeHolder);
         if (stakeHolder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
-            stakeHolder.setIsActive(true);
+            setActiveToStakeholder(stakeHolder);
         }
         stakeHolderRepository.save(stakeHolder);
         stakeHolderState.setStakeHolder(stakeHolder);
