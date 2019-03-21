@@ -309,8 +309,8 @@ public class BpaNoticeUtil {
         StringBuilder serviceTypeDesc = new StringBuilder();
         StringBuilder senderInfo = new StringBuilder();
         
-        senderInfo.append(BpaConstants.TP_DEPT).append(" ").append(ApplicationThreadLocals.getMunicipalityName())
-                           .append(" ").append(cityService.getCityGrade());
+        senderInfo.append(BpaConstants.TP_DEPT).append(',').append(ApplicationThreadLocals.getMunicipalityName())
+                           .append(',').append(cityService.getCityGrade());
        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("bpademandtitle", WordUtils.capitalize(BPADEMANDNOTICETITLE));
         reportParams.put("currentDate", currentDateToDefaultDateFormat());

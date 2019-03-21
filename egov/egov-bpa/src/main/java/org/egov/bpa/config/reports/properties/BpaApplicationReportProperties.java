@@ -55,7 +55,7 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 @PropertySource(name = "bpaApplicationReportProperties", value = {
-		"classpath:config/egov-erp-override.properties",
+		"classpath:config/reports-message.properties",
         "classpath:config/reports-message-${client.id}.properties"}, ignoreResourceNotFound = true)
 public class BpaApplicationReportProperties {
 
