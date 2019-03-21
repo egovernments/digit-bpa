@@ -44,7 +44,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -63,7 +62,6 @@ import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.dto.SearchStakeHolderForm;
 import org.egov.bpa.transaction.service.BPADocumentService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.adaptor.SearchStakeHolderJsonAdaptor;
 import org.egov.bpa.web.controller.adaptor.StakeHolderJsonAdaptor;
 import org.egov.commons.entity.Source;
@@ -231,6 +229,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         }
         stakeHolder.setStatus(StakeHolderStatus.SUBMITTED);
         stakeHolder.setSource(Source.ONLINE);
+        stakeHolder.setIsActive(false);
         StakeHolder stakeHolderRes;
         if (existingStakeholder == null)
             stakeHolderRes = stakeHolderService.save(stakeHolder);
@@ -241,16 +240,13 @@ public class StakeHolderController extends GenericWorkFlowController {
         bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, true);
         StakeHolderStatus status = stakeHolder.getStatus();
 
-        if (StakeHolderStatus.APPROVED.equals(status)
-                && !BpaConstants.STAKEHOLDER_TYPE_ARCHITECT.equalsIgnoreCase(stakeHolder.getStakeHolderType().getName())) {
-            stakeHolderRes.setLicenceNumber(licenceNumberGenerator.generateNumber(stakeHolder));
-            stakeHolderRes.setBuildingLicenceIssueDate(new Date());
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.YEAR, stakeHolderRes.getStakeHolderType().getValidYears().intValue());
-            stakeHolderRes.setBuildingLicenceExpiryDate(cal.getTime());
+        stakeHolderService.populateLicenceDetails(stakeHolderRes);
+        stakeHolderRes = stakeHolderService.save(stakeHolderRes);
+
+        if (status.compareTo(StakeHolderStatus.APPROVED) == 0) {
+            stakeHolderRes.setIsActive(true);
+            stakeHolderRes = stakeHolderService.save(stakeHolderRes);
         }
-        
-        stakeHolderRes = stakeHolderService.save(stakeHolder);
 
         if (status.compareTo(StakeHolderStatus.APPROVED) == 0 || status.compareTo(StakeHolderStatus.PAYMENT_PENDING) == 0) {
             bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);
@@ -343,18 +339,15 @@ public class StakeHolderController extends GenericWorkFlowController {
         StakeHolder stakeHolderRes = stakeHolderService.update(stakeHolder, workFlowAction);
         stakeHolderIndexService.updateIndexes(stakeHolderRes);
         StakeHolderStatus status = stakeHolderRes.getStatus();
-        
-        if (StakeHolderStatus.APPROVED.equals(status)
-                && !BpaConstants.STAKEHOLDER_TYPE_ARCHITECT.equalsIgnoreCase(stakeHolder.getStakeHolderType().getName())) {
-            stakeHolderRes.setLicenceNumber(licenceNumberGenerator.generateNumber(stakeHolder));
-            stakeHolderRes.setBuildingLicenceIssueDate(new Date());
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.YEAR, stakeHolderRes.getStakeHolderType().getValidYears().intValue());
-            stakeHolderRes.setBuildingLicenceExpiryDate(cal.getTime());
-        }
-        
+
+        stakeHolderService.populateLicenceDetails(stakeHolderRes);
         stakeHolderRes = stakeHolderService.save(stakeHolder);
-        
+
+        if (status.compareTo(StakeHolderStatus.APPROVED) == 0) {
+            stakeHolderRes.setIsActive(true);
+            stakeHolderRes = stakeHolderService.save(stakeHolderRes);
+        }
+
         if (status.compareTo(StakeHolderStatus.APPROVED) == 0 || status.compareTo(StakeHolderStatus.PAYMENT_PENDING) == 0) {
             bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);
             bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, false);

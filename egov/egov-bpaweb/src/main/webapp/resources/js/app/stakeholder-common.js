@@ -46,24 +46,16 @@
  *
  */
 
+var $type = "";
+
 $(document).ready( function () {
 	
+	$type = $("#stakeHolderType option:selected").text();
+	
+	loadLicenceNumber($type);
+	
 	$('#stakeHolderType').change(function(e) {
-		if($("#stakeHolderType option:selected").text() == "Architect"){
-			$('#licenceGroup').show();
-			$('#licenceNumber').attr( "required", "true" );
-			$('#buildingLicenceIssueDate').attr( "required", "true" );
-			$('#buildingLicenceExpiryDate').attr( "required", "true" );
-		}else{
-			$('#licenceGroup').hide();
-			$('#licenceNumber').removeAttr( "required" );
-			$('#buildingLicenceIssueDate').removeAttr( "required" );
-			$('#buildingLicenceExpiryDate').removeAttr( "required" );
-			
-			$('#licenceNumber').val("");
-			$('#buildingLicenceIssueDate').val("");
-			$('#buildingLicenceExpiryDate').val("");
-		}
+		loadLicenceNumber($("#stakeHolderType option:selected").text());
 	});
 	
 
@@ -425,5 +417,23 @@ $(document).ready( function () {
 
 });
 	
+function loadLicenceNumber(type){
+	
+	if(type == "Architect"){
+		$('#licenceGroup').show();
+		$('#licenceNumber').attr( "required", "true" );
+		$('#buildingLicenceIssueDate').attr( "required", "true" );
+		$('#buildingLicenceExpiryDate').attr( "required", "true" );
+	}else{
+		$('#licenceGroup').hide();
+		$('#licenceNumber').removeAttr( "required" );
+		$('#buildingLicenceIssueDate').removeAttr( "required" );
+		$('#buildingLicenceExpiryDate').removeAttr( "required" );
+		
+		$('#licenceNumber').val("");
+		$('#buildingLicenceIssueDate').val("");
+		$('#buildingLicenceExpiryDate').val("");
+	}
+}
 
 

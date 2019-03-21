@@ -193,6 +193,15 @@ public class StakeHolderService {
         else
             transition(stakeHolderState, DATA_ENTRY, null, null, null);
         stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
+        populateLicenceDetails(stakeHolder);
+        stakeHolderRepository.save(stakeHolder);
+        stakeHolderState.setStakeHolder(stakeHolder);
+
+        stakeHolderStateRepository.save(stakeHolderState);
+        return stakeHolder;
+    }
+
+    public void populateLicenceDetails(final StakeHolder stakeHolder) {
         if (StakeHolderStatus.APPROVED.equals(stakeHolder.getStatus())
                 && !BpaConstants.STAKEHOLDER_TYPE_ARCHITECT.equalsIgnoreCase(stakeHolder.getStakeHolderType().getName())) {
             stakeHolder.setLicenceNumber(licenceNumberGenerator.generateNumber(stakeHolder));
@@ -201,11 +210,6 @@ public class StakeHolderService {
             cal.add(Calendar.YEAR, stakeHolder.getStakeHolderType().getValidYears().intValue());
             stakeHolder.setBuildingLicenceExpiryDate(cal.getTime());
         }
-        stakeHolderRepository.save(stakeHolder);
-        stakeHolderState.setStakeHolder(stakeHolder);
-
-        stakeHolderStateRepository.save(stakeHolderState);
-        return stakeHolder;
     }
 
     public void transition(StakeHolderState stakeHolderState, String workflowAction, String approvalComment,
