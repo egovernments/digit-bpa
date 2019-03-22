@@ -157,6 +157,10 @@ public class PlanInformation implements Serializable {
     
     private String typeOfArea;
 
+    private BigDecimal depthOfPlot = BigDecimal.ZERO;
+    
+    private BigDecimal widthOfPlot = BigDecimal.ZERO;
+    
     public Boolean getParkingToMainBuilding() {
         return parkingToMainBuilding;
     }
@@ -515,6 +519,22 @@ public class PlanInformation implements Serializable {
 
 	public void setTypeOfArea(String typeOfArea) {
 		this.typeOfArea = typeOfArea;
+	}
+
+	public BigDecimal getDepthOfPlot() {
+		return depthOfPlot;
+	}
+
+	public void setDepthOfPlot(BigDecimal depthOfPlot) {
+		this.depthOfPlot = depthOfPlot;
+	}
+
+	public BigDecimal getWidthOfPlot() {
+		return widthOfPlot;
+	}
+
+	public void setWidthOfPlot(BigDecimal widthOfPlot) {
+		this.widthOfPlot = widthOfPlot;
 	}
 
 }
