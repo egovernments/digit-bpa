@@ -58,7 +58,7 @@ public class LicenceNumberGeneratorImpl implements LicenceNumberGenerator {
 
     @Override
     public String generateNumber(StakeHolder stakeHolder) {
-        return String.format("%s%s%s%06d", "BR/", stakeHolder.getCode() + "/",
+        return String.format("%s%s%s%06d", "BR/", stakeHolder.getStakeHolderType().getCode() + "/",
                 new SimpleDateFormat("yyyy").format(new Date()) + "/",
                 genericSequenceNumberGenerator.getNextSequence(SEQ_BPA_LICENCE_NUMBER));
     }

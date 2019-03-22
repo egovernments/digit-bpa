@@ -49,6 +49,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib  uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+
+<c:set var="req" value="${pageContext.request}" />
+<c:set var="url">${req.requestURL}</c:set>
+<c:set var="uri" value="${req.requestURI}" />
+<c:set var="domainURL" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
+<c:set var="protocol" value="${fn:split(domainURL, '//')[0]}//" />
+<c:set var="subdomain" value="${fn:substring(domainURL, domainURL.indexOf('.'), fn:length(domainURL))}" />
     <div class="container-fluid">
 		<div class="">
         <div class="left-menu">
@@ -178,7 +186,7 @@
                 </thead>
                 <tbody class="servicesUnderScrutinyHide">
                 <c:forEach items="${totalServicesPending}" var="inboxItem" varStatus="item">
-		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
+		                 <tr onclick="openPopUp('${protocol}${inboxItem.portalInbox.tenantId}${subdomain}${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 							 <td><span class="spansno">${item.index + 1}</span></td>
 							 <td>${inboxItem.portalInbox.applicantName == null ? inboxItem.portalInbox.portalInboxUsers[0].user.name : inboxItem.portalInbox.applicantName}</td>
 							 <td>${inboxItem.portalInbox.applicationNumber}</td>
@@ -216,7 +224,7 @@
                 </tbody>
                 <tbody class="totalServicesAppliedHide">
                 <c:forEach items="${totalServicesApplied}" var="inboxItem" varStatus="item">
-					<tr onclick="openPopUp('${inboxItem.portalInbox.link}');"
+					<tr onclick="openPopUp('${protocol}${inboxItem.portalInbox.tenantId}${subdomain}${inboxItem.portalInbox.link}');"
 						class="${inboxItem.portalInbox.module.contextRoot } showAll">
 						<td><span class="spansno">${item.index + 1}</span></td>
 						<td>${inboxItem.portalInbox.applicantName == null ? inboxItem.portalInbox.portalInboxUsers[0].user.name : inboxItem.portalInbox.applicantName}</td>
@@ -256,7 +264,7 @@
                 </tbody>
                  <tbody class="totalServicesCompletedHide">
                 <c:forEach items="${totalServicesCompleted}" var="inboxItem" varStatus="item">
-					<tr onclick="openPopUp('${inboxItem.portalInbox.link}');"
+					<tr onclick="openPopUp('${protocol}${inboxItem.portalInbox.tenantId}${subdomain}${inboxItem.portalInbox.link}');"
 						class="${inboxItem.portalInbox.module.contextRoot } showAll">
 						<td><span class="spansno">${item.index + 1}</span></td>
 						<td>${inboxItem.portalInbox.applicantName == null ? inboxItem.portalInbox.portalInboxUsers[0].user.name : inboxItem.portalInbox.applicantName}</td>
