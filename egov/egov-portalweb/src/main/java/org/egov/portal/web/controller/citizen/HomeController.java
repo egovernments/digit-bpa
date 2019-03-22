@@ -96,6 +96,9 @@ public class HomeController {
 
     @Value("${dev.mode}")
     private boolean devMode;
+    
+    @Value("${client.id}")
+    private String clientId;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showHomePage(ModelMap modelData) {
@@ -158,6 +161,7 @@ public class HomeController {
         modelData.addAttribute("totalServicesPendingSize", totalServicesPending.size());
         modelData.addAttribute("totalServicesAppliedSize", totalServicesApplied.size());
         modelData.addAttribute("totalServicesCompletedSize", totalServicesCompleted.size());
+        modelData.addAttribute("clientId",clientId);
         return "citizen-home";
     }
 
