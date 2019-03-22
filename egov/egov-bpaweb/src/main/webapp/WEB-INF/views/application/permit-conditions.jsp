@@ -119,11 +119,23 @@
 							<form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.type" value="NOCCONDITIONS" /> 
 							<form:hidden path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.orderNumber" value="${modifyPCStatus.index+1}" /> 
 							<c:out value="${modifyPCStatus.index+1}"></c:out></td>
-							<td class="view-content" style="font-size: 97%;">
-							<form:checkbox path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.required"
-									id="modifiablePermitConditions" class="modifiablePermitConditions" checked="checked"></form:checkbox></td>
-							<td class="view-content" style="font-size: 97%;"><c:out value="${modifiablePermitCondition.checklist.description}"></c:out>
-							</td>
+								<c:choose>
+									<c:when test="${modifiablePermitCondition.mandatory}">
+										<td class="view-content" style="font-size: 97%;"><form:checkbox
+												path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.required"
+												id="modifiablePermitConditions"
+												class="modifiablePermitConditions" checked="checked"
+												value="${modifiablePermitCondition.mandatory}"></form:checkbox></td>
+									</c:when>
+									<c:otherwise>
+										<td class="view-content" style="font-size: 97%;"><form:checkbox
+												path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.required"
+												id="modifiablePermitConditions"
+												class="modifiablePermitConditions"
+												value="${modifiablePermitCondition.mandatory}"></form:checkbox></td>
+									</c:otherwise>
+								</c:choose>
+								<td class="view-content" style="font-size: 97%;"><c:out value="${modifiablePermitCondition.checklist.description}"></c:out></td>
 							<td><form:input
 									class="form-control permitConditionNumber addremovemandatory"
 									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditionNumber"
@@ -195,9 +207,20 @@
 							 <form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.type" value="GENERALCONDITIONS" />
 							 <form:hidden path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.orderNumber" value="${staticPCStatus.index+1}" />
 							 <c:out value="${staticPCStatus.index+1}"></c:out></td>
-							<td><form:checkbox path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.required"
-									class="staticPermitConditions" checked="checked" /></td>
-							<td class="view-content" style="font-size: 97%;"><c:out value="${staticPermitCondition.checklist.description}"></c:out>
+								<c:choose>
+									<c:when test="${staticPermitCondition.mandatory}">
+										<td><form:checkbox
+												path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.required"
+												class="staticPermitConditions"
+												value="${staticPermitCondition.mandatory}" checked="checked" /></td>
+									</c:when>
+									<c:otherwise>
+										<td><form:checkbox
+												path="staticPermitConditionsTemp[${staticPCStatus.index}].noticeCondition.required"
+												class="staticPermitConditions" value="${staticPermitCondition.mandatory}" /></td>
+									</c:otherwise>
+								</c:choose>
+								<td class="view-content" style="font-size: 97%;"><c:out value="${staticPermitCondition.checklist.description}"></c:out>
 							</td>
 						</tr>
 					</c:forEach>

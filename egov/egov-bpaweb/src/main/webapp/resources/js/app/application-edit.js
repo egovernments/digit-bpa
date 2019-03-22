@@ -154,6 +154,10 @@ jQuery(document)
                     $('input[name="' + $hiddenName + '"]').val(true);
                     $(rowObj).find('.addremovemandatory').attr('required', true);
                     //$(rowObj).find("span").removeClass('display-hide');
+                } else {
+                    $('input[name="' + $hiddenName + '"]').val(false);
+                    $(rowObj).find('.addremovemandatory').removeAttr('required');
+                    $(rowObj).find('.addremovemandatory').val('');
                 }
             });
 
