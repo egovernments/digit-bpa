@@ -557,7 +557,7 @@ $(document).ready(
              }
 
              loadSubUsages(subUsages, "buildingSubUsages["+blkIdx+"].subUsageDetails["+subUsageIdx+"].subUsages");
-            $("select.tick-indicator").trigger('mousedown');
+           // $("select.tick-indicator").trigger('mousedown');
              patternvalidation();
         }
 

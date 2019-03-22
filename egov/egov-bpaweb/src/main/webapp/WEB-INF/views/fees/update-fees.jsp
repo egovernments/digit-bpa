@@ -272,6 +272,8 @@
 			<button type="submit" class="btn btn-primary">
 				<spring:message code="lbl.update" />
 			</button>
+			<a href='javascript:void(0)' class='btn btn-default'
+				onclick='window.location="."'><spring:message code='lbl.back' /></a>
 			<button type="button" class="btn btn-default" data-dismiss="modal"
 				onclick="self.close()">
 				<spring:message code="lbl.close" />
