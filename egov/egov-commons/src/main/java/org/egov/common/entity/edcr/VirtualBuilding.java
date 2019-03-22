@@ -50,11 +50,14 @@ package org.egov.common.entity.edcr;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 
 public class VirtualBuilding implements Serializable {
     private static final long serialVersionUID = 7L;
     private BigDecimal buildingHeight;
     private EnumSet<OccupancyType> occupancies = EnumSet.noneOf(OccupancyType.class);
+    private Set<OccupancyTypeHelper> occupancyTypes = new HashSet<>();
     private BigDecimal totalBuitUpArea;
     private BigDecimal totalFloorArea;
     private BigDecimal totalCarpetArea;
@@ -63,6 +66,8 @@ public class VirtualBuilding implements Serializable {
     private BigDecimal totalExistingCarpetArea;
     private OccupancyType mostRestrictiveFar;
     private OccupancyType mostRestrictiveCoverage;
+    private OccupancyTypeHelper mostRestrictiveFarHelper;
+    private OccupancyTypeHelper mostRestrictiveCoverageHelper;
     private BigDecimal floorsAboveGround;
     private BigDecimal totalCoverageArea;
     private transient Boolean residentialOrCommercialBuilding = false;
@@ -148,6 +153,14 @@ public class VirtualBuilding implements Serializable {
         this.occupancies = occupancies;
     }
 
+    public Set<OccupancyTypeHelper> getOccupancyTypes() {
+        return occupancyTypes;
+    }
+
+    public void setOccupancyTypes(Set<OccupancyTypeHelper> occupancyTypes) {
+        this.occupancyTypes = occupancyTypes;
+    }
+
     public BigDecimal getBuildingHeight() {
         return buildingHeight;
     }
@@ -166,6 +179,22 @@ public class VirtualBuilding implements Serializable {
 
     public OccupancyType getMostRestrictiveCoverage() {
         return mostRestrictiveCoverage;
+    }
+
+    public OccupancyTypeHelper getMostRestrictiveFarHelper() {
+        return mostRestrictiveFarHelper;
+    }
+
+    public void setMostRestrictiveFarHelper(OccupancyTypeHelper mostRestrictiveFarHelper) {
+        this.mostRestrictiveFarHelper = mostRestrictiveFarHelper;
+    }
+
+    public OccupancyTypeHelper getMostRestrictiveCoverageHelper() {
+        return mostRestrictiveCoverageHelper;
+    }
+
+    public void setMostRestrictiveCoverageHelper(OccupancyTypeHelper mostRestrictiveCoverageHelper) {
+        this.mostRestrictiveCoverageHelper = mostRestrictiveCoverageHelper;
     }
 
     public void setMostRestrictiveCoverage(OccupancyType mostRestrictiveCoverage) {

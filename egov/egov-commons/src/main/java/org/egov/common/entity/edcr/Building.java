@@ -97,6 +97,7 @@ public class Building extends Measurement {
     private BigDecimal totalExistingBuiltUpArea;
 
     private OccupancyType mostRestrictiveOccupancy;
+    private OccupancyType mostRestrictiveOccupancyType;
     // this is converted Occupancies to base type
     private List<Occupancy> occupancies = new ArrayList<>();
 
@@ -119,6 +120,14 @@ public class Building extends Measurement {
 
     public void setMostRestrictiveOccupancy(OccupancyType mostRestrictiveOccupancy) {
         this.mostRestrictiveOccupancy = mostRestrictiveOccupancy;
+    }
+
+    public OccupancyType getMostRestrictiveOccupancyType() {
+        return mostRestrictiveOccupancyType;
+    }
+
+    public void setMostRestrictiveOccupancyType(OccupancyType mostRestrictiveOccupancyType) {
+        this.mostRestrictiveOccupancyType = mostRestrictiveOccupancyType;
     }
 
     public BigDecimal getTotalExistingFloorArea() {
