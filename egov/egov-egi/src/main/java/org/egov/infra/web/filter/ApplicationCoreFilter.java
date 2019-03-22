@@ -48,6 +48,7 @@
 
 package org.egov.infra.web.filter;
 
+import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
@@ -89,6 +90,9 @@ public class ApplicationCoreFilter implements Filter {
 
     @Value("${cdn.domain.url}")
     private String cdnURL;
+    
+    @Value("${client.id}")
+    private String clientId;
 
     @Value("${app.version}_${app.build.no}")
     private String applicationRelease;
@@ -131,6 +135,20 @@ public class ApplicationCoreFilter implements Filter {
         ApplicationThreadLocals.setCityNameLocal((String) session.getAttribute(CITY_LOCAL_NAME_KEY));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
         ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
+        if(session.getAttribute(CITY_CODE_KEY)!=null)
+        {
+		 City city = cityService.getCityByCode((String) session.getAttribute(CITY_CODE_KEY));
+		 if(city!=null)
+		 {
+		 ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
+		 ApplicationThreadLocals.setDistrictName(city.getDistrictName());
+		 ApplicationThreadLocals.setStateName(clientId);
+		 ApplicationThreadLocals.setGrade(city.getGrade());
+		 }
+        }
+		 
+	 
+        
     }
 
     @Override

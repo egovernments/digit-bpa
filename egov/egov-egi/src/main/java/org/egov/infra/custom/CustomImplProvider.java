@@ -28,6 +28,7 @@ public class CustomImplProvider {
 	@Autowired
 	private CityService cityService;
 
+	@Deprecated()
 	public Map<String, String> getCityDetails() {
 		LOG.info("Getting city Details");
 		Map<String, String> cityDetails = new HashMap<>();
@@ -87,26 +88,29 @@ public class CustomImplProvider {
 			for (String s : keySet) {
 
 				Object c = beans.get(s);
-				if (!c.getClass().getSimpleName().toLowerCase().contains(parentClazz.getSimpleName().toLowerCase())) {
+				String serviceName = c.getClass().getSimpleName().toLowerCase();
+				if (!serviceName.contains(parentClazz.getSimpleName().toLowerCase())) {
 					continue;
 
 				}
 
-				if (c.getClass().getSimpleName().toLowerCase().contains(cityDetails.get(ULB_NAME).toLowerCase())) {
+				if (serviceName.contains(ApplicationThreadLocals.getCityName().toLowerCase())) {
 					ulbBean = c;
 					break;
 				}
-				if (c.getClass().getSimpleName().contains(cityDetails.get(DISTRICT_NAME))) {
+				if (serviceName.contains(ApplicationThreadLocals.getDistrictName().toLowerCase())) {
+					if (serviceName.contains("District".toLowerCase())) {
 					districtBean = c;
+					}
 
 				}
 
-				if (c.getClass().getSimpleName().contains(cityDetails.get(STATE_NAME))) {
+				if (serviceName.contains(ApplicationThreadLocals.getStateName().toLowerCase())) {
 					stateBean = c;
 
 				}
 
-				if (c.getClass().getSimpleName().contains(cityDetails.get(GRADE))) {
+				if (serviceName.contains(ApplicationThreadLocals.getGrade().toLowerCase())) {
 					gradeBean = c;
 
 				}
@@ -119,11 +123,11 @@ public class CustomImplProvider {
 						+ ulbBean.getClass().getName());
 			} else if (districtBean != null) {
 				bean = districtBean;
-				LOG.debug("Returning ulb implementation for service " + parentClazz + " : "
-						+ districtBean.getClass().getName());
+				LOG.debug("Returning district implementation for service " + parentClazz + " : "
+						+ bean.getClass().getName());
 			} else if (gradeBean != null) {
 				bean = gradeBean;
-				LOG.debug("Returning ulb implementation for service " + parentClazz + " : "
+				LOG.debug("Returning Gradewise implementation for service " + parentClazz + " : "
 						+ gradeBean.getClass().getName());
 			} else if (stateBean != null) {
 				bean = stateBean;
