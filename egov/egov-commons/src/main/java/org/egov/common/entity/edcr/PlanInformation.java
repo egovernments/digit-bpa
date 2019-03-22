@@ -152,19 +152,11 @@ public class PlanInformation implements Serializable {
     private transient String landUseZone;
     
     private transient String leaseHoldLand;
+            
+    private BigDecimal roadWidth = BigDecimal.ZERO;
+    
+    private String typeOfArea;
 
-    private transient BigDecimal distanceFromRiverGanga;
-    
-    private transient BigDecimal distanceFromRiverNonGanga;
-    
-    private transient BigDecimal riverProtectionWall;
-    
-    private transient BigDecimal embankmentPresent; 
-    
-    private transient Boolean nearImpGvtBuilding;
-    
-    private transient BigDecimal plantation;
-    
     public Boolean getParkingToMainBuilding() {
         return parkingToMainBuilding;
     }
@@ -509,51 +501,20 @@ public class PlanInformation implements Serializable {
 		this.leaseHoldLand = leaseHoldLand;
 	}
 
-	public BigDecimal getDistanceFromRiverGanga() {
-		return distanceFromRiverGanga;
+	public BigDecimal getRoadWidth() {
+		return roadWidth;
 	}
 
-	public void setDistanceFromRiverGanga(BigDecimal distanceFromRiverGanga) {
-		this.distanceFromRiverGanga = distanceFromRiverGanga;
+	public void setRoadWidth(BigDecimal roadWidth) {
+		this.roadWidth = roadWidth;
 	}
 
-	public BigDecimal getDistanceFromRiverNonGanga() {
-		return distanceFromRiverNonGanga;
+	public String getTypeOfArea() {
+		return typeOfArea;
 	}
 
-	public void setDistanceFromRiverNonGanga(BigDecimal distanceFromRiverNonGanga) {
-		this.distanceFromRiverNonGanga = distanceFromRiverNonGanga;
+	public void setTypeOfArea(String typeOfArea) {
+		this.typeOfArea = typeOfArea;
 	}
 
-	public BigDecimal getRiverProtectionWall() {
-		return riverProtectionWall;
-	}
-
-	public void setRiverProtectionWall(BigDecimal riverProtectionWall) {
-		this.riverProtectionWall = riverProtectionWall;
-	}
-
-	public BigDecimal getEmbankmentPresent() {
-		return embankmentPresent;
-	}
-
-	public void setEmbankmentPresent(BigDecimal embankmentPresent) {
-		this.embankmentPresent = embankmentPresent;
-	}
-
-	public Boolean getNearImpGvtBuilding() {
-		return nearImpGvtBuilding;
-	}
-
-	public void setNearImpGvtBuilding(Boolean nearImpGvtBuilding) {
-		this.nearImpGvtBuilding = nearImpGvtBuilding;
-	}
-
-	public BigDecimal getPlantation() {
-		return plantation;
-	}
-
-	public void setPlantation(BigDecimal plantation) {
-		this.plantation = plantation;
-	}
 }
