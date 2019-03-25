@@ -260,9 +260,6 @@ public class BpaConstants {
     public static final String LABOURCESS = "Labour cess";
     public static final String TP_DEPT = "TOWN PLANNING DEPARTMENT";
 
-
-
-    
     // designation constants
     public static final String DESIGNATION_AEE = "Assistant executive engineer";
     public static final String DESIGNATION_AE = "Assistant engineer";
@@ -271,23 +268,22 @@ public class BpaConstants {
     public static final String DESIGNATION_TOWN_SURVEYOR = "Town Surveyor";
     public static final String DESIGNATION_OVERSEER = "Town Planning Building Overseer";
     // occupancy type constants
-    
-      public static final String BPA_THATCHED_TILED_HOUSE = "Thatched / Tiled House"; 
-      public static final String   BPA_MERCANTILE_COMMERCIAL = "Mercantile / Commercial"; 
-      public static final String BPA_INDUSTRIAL = "Industrial"; 
-      public static   final String BPA_RESIDENTIAL = "Residential"; 
-      public static final String BPA_MIXED_OCCUPANCY = "Mixed";
-     
+
+    public static final String BPA_THATCHED_TILED_HOUSE = "Thatched / Tiled House";
+    public static final String BPA_MERCANTILE_COMMERCIAL = "Mercantile / Commercial";
+    public static final String BPA_INDUSTRIAL = "Industrial";
+    public static final String BPA_RESIDENTIAL = "Residential";
+    public static final String BPA_MIXED_OCCUPANCY = "Mixed";
 
     // Occupancy Constants
-	
-      public static final String MIXED_OCCUPANCY = "15";
-      public static final String INDUSTRIAL = "G1";
-      public static final String MERCANTILE_COMMERCIAL = "F";
 
-      public static final String THATCHED_TILED_HOUSE = "14";
-      public static final String RESIDENTIAL = "A";
-    
+    public static final String MIXED_OCCUPANCY = "15";
+    public static final String INDUSTRIAL = "G1";
+    public static final String MERCANTILE_COMMERCIAL = "F";
+
+    public static final String THATCHED_TILED_HOUSE = "14";
+    public static final String RESIDENTIAL = "A";
+
     public static final String RESIDENTIAL_A1 = "A1";
     public static final String SPECIAL_RESIDENTIAL = "A2";
     public static final String HOSTEL_EDUCATIONAL = "A3";
@@ -385,7 +381,6 @@ public class BpaConstants {
     public static final String POLE_CONSTRUCTION_FEE = "Charges for Pole Structures";
     public static final String SANCTION_FEE = "Sanction Fee";
 
-
     // Occupancy certificate related
     public static final String CREATE_ADDITIONAL_RULE_CREATE_OC = "OCCUPANCYCERTIFICATE";
     public static final String BPA_OC_NUMBER_SEQ = "SEQ_BPA_OC_NO_";
@@ -398,16 +393,16 @@ public class BpaConstants {
     public static final String BPAFEECALULATION = "BPA_FEE_CALCULATION";
 
     public static final String BPA_MODULE_NAME = "BPA";
-    public static final String GENERIC_BOUNDARY_CONFIGURATION_KEY="BPA_GENERIC_BOUNDARY_CONFIGURATION";
-    public static final String WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY="BPA_WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY";
+    public static final String GENERIC_BOUNDARY_CONFIGURATION_KEY = "BPA_GENERIC_BOUNDARY_CONFIGURATION";
+    public static final String WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY = "BPA_WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY";
 
     public static final String LOWRISK = "Low Risk";
     public static final String HIGHRISK = "High Risk";
     public static final String MEDIUMRISK = "Medium Risk";
-    
-    public static final String STAKEHOLDER_TYPE_ARCHITECT = "Architect";
-    
 
+    public static final String STAKEHOLDER_TYPE_ARCHITECT = "Architect";
+    public static final String STAKEHOLDER_REG_FEE_AMOUNT = "STAKEHOLDER_REG_FEE_AMOUNT";
+    
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {

@@ -71,7 +71,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
@@ -94,7 +93,6 @@ import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.commons.service.SubOccupancyService;
@@ -184,7 +182,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         bpaApplication.setApplicationDate(new Date());
         prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
         model.addAttribute("mode", "new");
-		model.addAttribute("permitApplnFeeRequired", bpaUtils.isApplicationFeeCollectionRequired());
+        model.addAttribute("permitApplnFeeRequired", bpaUtils.isApplicationFeeCollectionRequired());
         bpaApplication.setSource(Source.CITIZENPORTAL);
         bpaApplication.setApplicantMode(ApplicantMode.NEW);
         bpaApplication.setServiceType(serviceTypeService.getServiceTypeByCode(serviceCode));
@@ -249,7 +247,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                             new String[] { ApplicationThreadLocals.getMunicipalityName() }, null));
             return true;
         }
-        if (stkHldr != null && stkHldr.getBuildingLicenceExpiryDate()
+        if (stkHldr != null && stkHldr.getBuildingLicenceExpiryDate() != null && stkHldr.getBuildingLicenceExpiryDate()
                 .before(searchBpaApplicationService.resetFromDateTimeStamp(new Date()))) {
             model.addAttribute(MESSAGE,
                     messageSource.getMessage("msg.stakeholder.expiry.reached", new String[] { stkHldr.getName() }, null));
@@ -339,7 +337,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
             final HttpServletRequest request, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
-    	String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
+        String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
         searchBpaApplicationService.validateApplicationTypeAndHeight(bpaApplication, errors);
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
@@ -347,10 +345,10 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
-        if(bpaApplication.getIsOneDayPermitApplication())
-        	bpaApplication.setApplicationType(
-        			applicationTypeService.findByName(onedaypermit));
-        
+        if (bpaApplication.getIsOneDayPermitApplication())
+            bpaApplication.setApplicationType(
+                    applicationTypeService.findByName(onedaypermit));
+
         Map<String, String> eDcrApplDetails = bpaDcrService.checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
         if (eDcrApplDetails.get("isExists") == "true") {
             model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
