@@ -1763,7 +1763,7 @@ label.error {
   border: 0;
   padding-left: 0;
   font-size: 15px;
-  /*border-bottom: 1px solid #D0D2D7;*/
+  border-bottom: 1px solid #9e9e9e;
   outline: none;
   box-shadow: none;
   border-radius: 0px;

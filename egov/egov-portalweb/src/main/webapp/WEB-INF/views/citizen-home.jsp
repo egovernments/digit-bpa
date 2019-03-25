@@ -56,28 +56,8 @@
 <c:set var="uri" value="${req.requestURI}" />
 <c:set var="domainURL" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}" />
     <div class="container-fluid">
-		<div class="">
-        <div class="left-menu">
-          <ul class="modules-ul">
-            <li class="modules-li inbox active" data-module="home">
-              <a href="javascript:void(0)">
-                <div><i class="fa fa-home img-view"></i></div>
-                <div class="module-text">Home</div>
-              </a>
-            </li>
-            <c:forEach items="${moduleNames}" var="moduleName" varStatus="item">
-	            <li class="modules-li" data-module="${moduleName }">
-	              <a href="javascript:void(0)">
-	                <div><i class="fa fa-building img-view" aria-hidden="true"></i></div>
-	                <div class="module-text">${moduleName }</div>
-	              </a>
-	            </li>
-            </c:forEach>
-       </ul>
-        </div>
-        <div class="right-content">
-          <header>
-            <nav class="navbar">
+    	 <header class = "citizen-header">
+            <nav class="navbar center-align-flex bpa-navbar-new">
               <div class="col-md-6 col-sm-7 col-xs-12 left-section">
                 <span>
 					<img src="<c:url value='/downloadfile/logo' context="/egi"/>" height="60" class="homepage_logo">
@@ -92,12 +72,8 @@
 					</span>
 				</div>--%>
 
-              <div class="col-md-6 col-sm-5 col-xs-12 right-section">
-				<span class="pull-right ">
-					<a href="http://www.egovernments.org" target="_blank">
-							<img src="<cdn:url value='/resources/global/images/egov_logo_brown.png' context='/egi'/>" title="Powered by eGovernments" height="35px">
-						</a>
-				</span>
+              <div style = "justify-content: flex-end;" class="center-align-flex col-md-6 col-sm-5 col-xs-12 right-section">
+				
                 <span class="pull-right profile-dd"><a href="/egi/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a></span>
                 <span class="pull-right profile-name">
                   <span class="text hidden-sm">${userName }</span> <span><i class="fa fa-caret-down" aria-hidden="true"></i></span>
@@ -107,9 +83,35 @@
                     <li><a href="javascript:void(0)" onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});" >Change Password</a></li>
                   </ul>
                 </span>
+                <span class="pull-right profile-dd">
+					<a href="http://www.egovernments.org" target="_blank">
+							<img src="<cdn:url value='/resources/global/images/egov_logo_brown.png' context='/egi'/>" title="Powered by eGovernments" height="35px">
+						</a>
+				</span>
               </div>
             </nav>
           </header>
+		<div class="bpa-citizen-main-wrapper clearfix">
+        <div class="left-menu col-md-2">
+          <ul class="modules-ul">
+            <li class="modules-li inbox active" data-module="home">
+              <a class = "home-module-menu-link" href="javascript:void(0)">
+                <div><i class="fa fa-home img-view"></i></div>
+                <div class="module-text">Home</div>
+              </a>
+            </li>
+            <c:forEach items="${moduleNames}" var="moduleName" varStatus="item">
+	            <li class="modules-li" data-module="${moduleName }">
+	              <a class = "home-module-menu-link"  href="javascript:void(0)">
+	                <div><i class="fa fa-building img-view" aria-hidden="true"></i></div>
+	                <div class="module-text">${moduleName }</div>
+	              </a>
+	            </li>
+            </c:forEach>
+       </ul>
+        </div>
+        <div class="right-content col-md-10">
+         
           
           <div class="main-content">
             <div class="action-bar hide">

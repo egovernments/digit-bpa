@@ -76,6 +76,8 @@
 	href="<cdn:url value='/resources/global/images/favicon.png'/>"
 	sizes="32x32">
 <link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/egov/customloginNew.css?rnd=${app_release_no}'/>">
+<link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
@@ -93,266 +95,193 @@
 <body class="page-body index"
 	style="height: 580px; background: #F8F9F9;">
 	<div class="page-container">
-		<div class="main-content">
-			<nav class="navbar transparent">
-				<div class="container-fluid">
-					<div class="navbar-header">
-						<%-- <a class="navbar-brand" href="javascript:void(0);">
-					<img src="https://www.egovernments.org/wp-content/uploads/2018/11/Logo-2.png" style="background-color:#3b73af" height="90">
-						</a> --%>
-						<div>
-							<span class="title2"
-								style="color: black; font-family: OpenSans; font-size: 30px"><b>${sessionScope.citymunicipalityname}</b></span>
+		<div class="padding0 login-main-content">
+			<div class = "padding0 login-cont">
+				<div class = "login-bg-cont clearfix">
+					<div class = "blue-background"></div>
+					<div class = "login-content-wrapper page-common-padding col-md-12">
+						<div class = "new-login-header padding0 col-md-12">
+							<span class="f-medium login-title-1 bold color-white">${sessionScope.citymunicipalityname}</span>
+							<a href="http://www.egovernments.org" data-strwindname="egovsite"
+								class="open-popup"> 
+								<img src="<cdn:url value='/resources/global/images/digit-logo-white.png'/>"
+									title="Powered by eGovernments" width = "100" alt="" />
+							</a>
+						</div>
+						<div class = "new-login-content padding0 col-md-12">
+							<div class = "login-left-cont padding0 col-md-6">
+								<span class = "f-light login-title-2 color-white">Building Plan Approvals Made <span class = "f-medium">Easy</span></span>
+								<div class = "login-action-cont padding0 f-regular">
+									<a class = "login-create-link padding0 col-md-6" href="#"
+										onclick="window.open('/portal/citizen/signup','CTZ',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
+										<div class = "create-button col-md-12">
+											<spring:message code="lbl.create.ac.citizen" />
+										</div>
+									</a>
+									<a class = "login-create-link padding0 col-md-6" href="#"
+										onclick="window.open('/bpa/stakeholder/createbycitizen','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
+										<div class = "create-button col-md-12">
+											<spring:message code="lbl.bldng.create.ac" />
+										</div>
+									</a>
+								</div>
+								<div class = "application-action-cont">
+									<div class="application-card bpa-card-new card">
+									  <div class="card-body">
+									    <div class="md-form clearfix">
+										    <div class = "f-regular padding0 col-md-8">
+										    	<label class = "login-input-label" for="inputPlaceholderEx">
+										    		<spring:message code="lbl.check.application.status" />
+										    	</label>
+												<input id="appsearchtxt" style="font-family: Roboto_Regular;" placeholder="Enter Application No." type="text" id="inputPlaceholderEx" class="login-input form-control">
+										    </div>
+										    <div class = "col-md-4">
+										    	<button id="appsearch" style = "width: 170px;" type="button" class="f-medium btn-login-new btn">
+										    		<spring:message code="btn.lbl.search" />
+										    	</button>
+										    </div>
+										</div>
+										<div class="f-regular error-msg search-error-msg display-hide">Application number is mandatory</div>
+									  </div>
+									</div>
+								</div>
+							</div>
+							<div class = "f-regular login-right-cont padding0 col-md-6">
+								<div class = "application-card bpa-card-new card col-md-8">
+									<div class = "card-body">
+										<div class = "login-card-header">
+											<spring:message code="lbl.login" />
+										</div>
+										<form action="${pageContext.request.contextPath}/j_security_check" 
+											method="post" role="form" id="signform"
+											<div class = "md-form clearfix">
+												<div class = "col-md-12 padding0" style = "margin: 36px 0 16px 0">
+													<label class = "login-input-label" for="j_username">Mobile No. / Login ID</label>
+													<input name="j_username" id="j_username" 
+														style="font-family: Roboto_Regular;" 
+														placeholder="Enter Mobile No. / Login ID" 
+														required="" type="text" 
+														class="login-input form-control">
+												</div>
+												<div class = "col-md-12 padding0">
+													<label class = "login-input-label" for="j_password">Password</label>
+													<input name="j_password" id="j_password" required="required"
+														style="font-family: Roboto_Regular;" placeholder="Enter Password" 
+														type="text" class="login-input form-control">
+												</div>
+												<div class = "col-md-12 forgot-password-text">
+													<span data-toggle="modal" data-target="#fpassword" data-backdrop="static">FORGOT PASSWORD?</span>
+												</div>
+												<div class="col-md-12 form-group display-hide" id="counter-section">
+													<div class="input-group">
+														<div class="input-group-addon style-label">
+															<i class="fa fa-map-marker theme-color style-color"></i>
+														</div>
+														<select class="form-control style-form" name="locationId"
+															id="locationId"></select> <label id="locationId-error"
+															class="error pull-right" for="locationId"></label>
+													</div>
+												</div>
+												<c:if test="${param.error}">
+													<div class="col-md-12 text-center error-msg add-margin">
+														<c:set var="security_message"
+															value="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}" />
+														<c:choose>
+															<c:when
+																test="${security_message.contains('Maximum sessions')}">
+																<spring:message code="msg.multiple.login" />
+															</c:when>
+															<c:when test="${security_message.contains('expired')}">
+																<spring:message code="msg.cred.exprd1" />
+																<a href="javascript:void(0);" data-toggle="modal"
+																	data-target="#fpassword" data-backdrop="static"> <spring:message
+																		code="msg.cred.exprd2" />
+																</a>
+																<spring:message code="msg.cred.exprd3" />
+															</c:when>
+															<c:when
+																test="${fn:contains(security_message, 'User account is locked')}">
+																<spring:message code="msg.acc.locked" />
+																<spring:eval
+																	expression="@environment.getProperty('captcha.strength')"
+																	var="strength" />
+																<c:import url="/WEB-INF/views/common/captcha-${strength}.jsp"
+																	context="/egi" />
+																<c:if
+																	test="${fn:contains(security_message, 'Recaptcha Invalid')}">
+																	<spring:message code="err.recaptcha.invalid" />
+																</c:if>
+															</c:when>
+															<c:when
+																test="${fn:contains(security_message, 'Too many attempts')}">
+																<c:set var="attempts"
+																	value="${fn:substringAfter(security_message, 'Too many attempts')}" />
+																<spring:message code="msg.acc.toomany.attempt"
+																	arguments="${attempts}" />
+															</c:when>
+															<c:otherwise>
+																<div class="form-group">
+																	<div>
+																		<spring:message code="msg.cred.invalid" />
+																	</div>
+																</div>
+															</c:otherwise>
+														</c:choose>
+													</div>
+												</c:if>
+												<c:if test="${not empty param.reset}">
+													<div class="form-group">
+														<c:choose>
+															<c:when test="${param.reset}">
+																<div class="text-center success-msg font-12">
+																	<spring:message code="msg.success.pwd.reset" />
+																</div>
+															</c:when>
+															<c:otherwise>
+																<div class="text-center  error-msg font-12">
+																	<spring:message code="msg.fail.pwd.reset" />
+																</div>
+															</c:otherwise>
+														</c:choose>
+													</div>
+												</c:if>
+												<input type="hidden" id="ipAddress" name="ipAddress"
+													value="<%=ipAddress%>" /> <input type="hidden" id="loginType"
+													name="loginType" /> <input type="hidden" name="userAgentInfo"
+													value="<%=userAgentInfo%>" />
+												<div class = "col-md-12 padding0" style="padding-bottom: 10px;">
+												 	<button style = "margin-top:15px;" id="signin-action" type="submit" class="f-medium col-md-12 btn-login-new btn padding0">
+												 		<spring:message code="lbl.login" />
+												 	</button>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
-					<div class="navbar-right">
-						<a href="http://www.egovernments.org" data-strwindname="egovsite"
-							class="open-popup"> <img
-							src="<cdn:url value='/resources/global/images/egov_logo_tr_h.png'/>"
-							title="Powered by eGovernments" height="64" alt="">
-						</a>
-					</div>
 				</div>
-			</nav>
-
-			<div class="row top-space">
+			</div>
+			<div class = "padding0 bpa-feature-main-cont col-md-12">
+				<div class = "bpa-feature-wrapper">
+					<%@include file="../../resources/guide/bpa-features.jsp"%>
+				</div>
+			</div>
+			<div style="margin-bottom: 0px;" class="row top-space">
 				<div class="text-center error-msg">
 					<noscript>You don't have javascript enabled. Make sure
 						Javascript is enabled.</noscript>
 				</div>
-				<div class="col-md-6 side-space">
-					<div class="col-md-12 community-card">
-						<a href="#"
-							onclick="window.open('/portal/citizen/signup','CTZ',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
-							<div class="rounded-circle">
-								<i class="fa fa-user a"></i>
-							</div>&nbsp;
-							<div class="label-font">
-								<spring:message code="lbl.create.ac.citizen" />
-								<br> <span class="label-subfont"><spring:message
-										code="lbl.create.ac.desc" /></span>
-							</div>
-						</a>
-					</div>
-
-					<div class="col-md-12 community-card"<%--style="opacity: 0.75"--%>>
-						<a href="#"
-							onclick="window.open('/bpa/stakeholder/createbycitizen','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
-							<div class="rounded-circle">
-								<i class="fa fa-user a"></i>
-							</div>&nbsp;
-							<div class="label-font">
-								<spring:message code="lbl.bldng.create.ac" />
-								<br> <span class="label-subfont"><spring:message
-										code="lbl.create.ac.desc" /></span>
-							</div>
-						</a>
-					</div>
-					<div class="col-md-12 community-card">
-					<div class="rounded-circle">
-							<i class="fa fa-search c"></i>
-						</div>
-						<div class="label-font" style="vertical-align: sub">
-							<spring:message code="lbl.check.application.status" />
-							&nbsp;<br> <input type="text"
-								placeholder="Enter application number" id="appsearchtxt"
-								style="padding: 2px 5px; height: 30px; font-size: 14px; border: 0; padding-left: 0; border-bottom: 1px solid #D0D2D7; outline: none; box-shadow: none; width: initial;">
-							<button class="btn btn-custom btn-small" id="appsearch" style="font-size: 12px;">
-								<spring:message code="btn.lbl.search" />
-							</button>
-						</div>
-						<div class="error-msg search-error-msg display-hide"
-							style="padding-left: 65px;">Application number is mandatory</div>
-					</div>
-					<div class="col-md-12 community-card transparent text-center">
-					<img src="<cdn:url value='/resources/guide/assets/digit_dcr_glow_logo.png'/>" height=128>
-					</div>
-					<div class="col-md-12  community-card" style="position: relative; top: -60px;">
-						
-								<h6 class="text-center view-content">Building
-									Planning Approval</h6>
-								<p class="text-justify view-content">
-									Citizens, ULB officials, and other stakeholders can
-										submit and track applications in real time and obtain
-										approvals without having to physically visit an office.
-								</p>
-					</div>
-				</div>
-
-				<div class="col-md-6 side-space login-form-licensee">
-					<!-- style="position: relative; left: 63px; top: 60px" -->
-
-					<div class="signin-formcontent signin-section">
-						<form method="post" role="form" id="signform"
-							action="${pageContext.request.contextPath}/j_security_check"
-							autocomplete="off"<%--style="opacity: 0.75"--%>>
-							<div class="form-group">
-								<div class="signin-title">
-									<spring:message code="lbl.login" />
-								</div>
-							</div>
-							<input style="display: none" type="text"> <input
-								style="display: none" type="password" />
-							<div class="form-group">
-								<div class="input-group">
-									<div class="input-group-addon style-label">
-										<i class="fa fa-user theme-color style-color"></i>
-									</div>
-									<input type="text" class="form-control style-form"
-										name="j_username" id="j_username"
-										placeholder="Mobile Number / Login ID" autocomplete="off"
-										required="required" autofocus="autofocus" /> <label
-										id="j_username-error" class="error pull-right"
-										for="j_username"></label>
-								</div>
-							</div>
-							<div class="form-group overflow">
-								<div class="input-group">
-									<div class="input-group-addon style-label">
-										<i class="fa fa-key theme-color style-color"></i>
-									</div>
-									<input type="password" class="form-control style-form"
-										name="j_password" id="j_password" placeholder="Password"
-										autocomplete="new-password" required="required" />
-									<div class="input-group-addon font-12" data-toggle="modal"
-										data-target="#fpassword" data-backdrop="static">Forgot?
-									</div>
-								</div>
-								<label id="j_password-error" class="error align-top pull-right"
-									for="j_password"></label>
-							</div>
-							<div class="form-group display-hide" id="counter-section">
-								<div class="input-group">
-									<div class="input-group-addon style-label">
-										<i class="fa fa-map-marker theme-color style-color"></i>
-									</div>
-									<select class="form-control style-form" name="locationId"
-										id="locationId"></select> <label id="locationId-error"
-										class="error pull-right" for="locationId"></label>
-								</div>
-							</div>
-							<c:if test="${param.error}">
-								<div class="text-center error-msg add-margin">
-									<c:set var="security_message"
-										value="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}" />
-									<c:choose>
-										<c:when
-											test="${security_message.contains('Maximum sessions')}">
-											<spring:message code="msg.multiple.login" />
-										</c:when>
-										<c:when test="${security_message.contains('expired')}">
-											<spring:message code="msg.cred.exprd1" />
-											<a href="javascript:void(0);" data-toggle="modal"
-												data-target="#fpassword" data-backdrop="static"> <spring:message
-													code="msg.cred.exprd2" />
-											</a>
-											<spring:message code="msg.cred.exprd3" />
-										</c:when>
-										<c:when
-											test="${fn:contains(security_message, 'User account is locked')}">
-											<spring:message code="msg.acc.locked" />
-											<spring:eval
-												expression="@environment.getProperty('captcha.strength')"
-												var="strength" />
-											<c:import url="/WEB-INF/views/common/captcha-${strength}.jsp"
-												context="/egi" />
-											<c:if
-												test="${fn:contains(security_message, 'Recaptcha Invalid')}">
-												<spring:message code="err.recaptcha.invalid" />
-											</c:if>
-										</c:when>
-										<c:when
-											test="${fn:contains(security_message, 'Too many attempts')}">
-											<c:set var="attempts"
-												value="${fn:substringAfter(security_message, 'Too many attempts')}" />
-											<spring:message code="msg.acc.toomany.attempt"
-												arguments="${attempts}" />
-										</c:when>
-										<c:otherwise>
-											<div class="form-group">
-												<div>
-													<spring:message code="msg.cred.invalid" />
-												</div>
-											</div>
-										</c:otherwise>
-									</c:choose>
-								</div>
-							</c:if>
-							<c:if test="${not empty param.reset}">
-								<div class="form-group">
-									<c:choose>
-										<c:when test="${param.reset}">
-											<div class="text-center success-msg font-12">
-												<spring:message code="msg.success.pwd.reset" />
-											</div>
-										</c:when>
-										<c:otherwise>
-											<div class="text-center  error-msg font-12">
-												<spring:message code="msg.fail.pwd.reset" />
-											</div>
-										</c:otherwise>
-									</c:choose>
-								</div>
-							</c:if>
-							<div class="form-group signin-leftpadding">
-								<button type="submit"
-									class="btn btn-custom btn-block btn-login signin-submit"
-									id="signin-action">
-									<i class="fa fa-sign-in"></i>
-									<spring:message code="lbl.login" />
-								</button>
-							</div>
-							<input type="hidden" id="ipAddress" name="ipAddress"
-								value="<%=ipAddress%>" /> <input type="hidden" id="loginType"
-								name="loginType" /> <input type="hidden" name="userAgentInfo"
-								value="<%=userAgentInfo%>" />
-						</form>
-						<div style="color: white; height: 30px"></div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
-	<div>
-		<%@include file="../../resources/guide/landingPage.jsp"%>
-	</div>
-
-
-	<%-- <footer class="main">
-				<div class="col-md-12 feature-top text-center"></div>
-				<div class="col-md-4 top-community-space login-footer-icon" style=" text-align: center ;>
-					<a href="${sessionScope.corpGisLink}" target="_blank"><span><i
-							class="fa fa-map-marker fa-3x"></i></span></a>
-					<p style="margin: 0px">
-						${sessionScope.corpAddress}
-					</p>
-					<a class="block-left-text" href="${sessionScope.corpGisLink}"
-					   target="_blank">Find us on google maps</a>
-				</div>
-					<div class="col-md-4 top-community-space login-footer-icon" style=" text-align: center ;>
-					<a href="tel:${sessionScope.corpContactNo}"><span><i
-							class="fa fa-phone fa-3x"></i></span></a>
-					<p style="margin: 0px">${sessionScope.corpContactNo}</p>
-					<a href="mailto:${sessionScope.corpContactEmail}"><p>${sessionScope.corpContactEmail}</p></a>
-				</div>
-				<div class="col-md-4 top-community-space login-footer-icon" style=" text-align: center;">
-					<a href="javascript:void(0)"><span><i
-							class="fa fa-thumbs-o-up fa-2x"></i></span></a>
-					<p>Follow us on</p>
-					<a href="${sessionScope.corpTwitterLink}" target="_blank"><i
-							class="fa fa-twitter fa-2x"></i></a> <a
-						href="${sessionScope.corpFBLink}" target="_blank"><i
-						class="fa fa-facebook fa-2x"></i></a>
-				</div>
-		</div>
-		</div>
-		</div>
-		</footer> --%>
-	<div class="modal fade" id="fpassword" tabindex="-1" role="dialog"
+	
+	<div class="f-regular login-modal-new modal fade" id="fpassword" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<div class="modal-header">
+				<div style = "border: none;" class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
@@ -362,17 +291,19 @@
 					</h4>
 				</div>
 				<form method="post" role="form" id="forgotPasswordForm">
-					<div class="modal-body">
+					<div style = "border: none;" class="modal-body">
 						<div class="form-group">
-							<div class="input-group" style="margin: 0;">
-								<div class="input-group-addon style-label">
+							<div class="input-group col-md-12" style="margin: 0;">
+								<!-- <div class="input-group-addon style-label">
 									<i class="fa fa-user style-color"></i>
-								</div>
-								<input type="text" class="form-control style-form"
+								</div> -->
+								<label class = "login-input-label" for="identity">Mobile Number / Login ID</label>
+								<input type="text" class="login-input form-control style-form"
 									name="identity" id="emailOrMobileNum" required="required"
-									placeholder="Mobile Number / Login ID" autocomplete="off" /> <input
-									type="hidden" name="originURL" id="originURL"> <input
-									type="hidden" name="byOTP" id="byOtp">
+									placeholder="Mobile Number / Login ID" autocomplete="off"
+									style="font-family: Roboto_Regular;" /> 
+								<input type="hidden" name="originURL" id="originURL" /> 
+								<input type="hidden" name="byOTP" id="byOtp" style="font-family: Roboto_Regular;" />
 							</div>
 							<div id="emailOrMobileNoReq"
 								class="text-right error-msg display-hide">
@@ -383,16 +314,16 @@
 							</div>
 						</div>
 					</div>
-					<div class="modal-footer">
+					<div style="background-color: transparent; border: none;" class="modal-footer">
 						<div class="form-group text-right">
-							<button type="button" class="btn btn-primary recovrbtn">
+							<button type="button" class="f-medium btn-login-new btn btn-primary recovrbtn">
 								<spring:message code="btn.lbl.recover.link" />
 							</button>
 							<button type="button" id="recoveryotpbtn"
-								class="btn btn-primary recovrbtn">
+								class="f-medium btn-login-new btn btn-primary recovrbtn">
 								<spring:message code="btn.lbl.recover.otp" />
 							</button>
-							<button type="button" class="btn btn-default"
+							<button type="button" class="f-medium btn-login-new btn btn-default"
 								data-dismiss="modal">
 								<spring:message code="lbl.close" />
 							</button>
@@ -402,10 +333,10 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="cookieornoscript" data-backdrop="static">
+	<div class="f-regular login-modal-new modal fade" id="cookieornoscript" data-backdrop="static">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<div class="modal-header">
+				<div style = "border: none;" class="modal-header">
 					<h4 class="modal-title">Enable Cookies</h4>
 				</div>
 				<div class="modal-body">Your browser seems to have cookies
@@ -415,63 +346,66 @@
 		</div>
 	</div>
 	<c:if test="${not empty param.recovered}">
-		<div class="modal fade" data-backdrop="static" id="resetpwd">
+		<div class="f-regular login-modal-new modal fade" data-backdrop="static" id="resetpwd">
 			<div class="modal-dialog">
 				<div class="modal-content">
-					<div class="modal-header">
+					<div style = "border: none;" class="modal-header">
 						<h4 class="modal-title">
 							<spring:message code="lbl.recover.pwd" />
 						</h4>
 					</div>
-					<form method="post" role="form">
+					<form class = "f-regular" method="post" role="form">
 						<c:choose>
 							<c:when test="${param.recovered}">
 								<c:if test="${param.byOTP}">
-									<div class="modal-body">
+									<div class="modal-body f-regular">
 										<div class="form-group">
-											<div class="input-group" style="margin: 0;">
-												<div class="input-group-addon style-label">
+											<div class="col-md-12 input-group" style="margin: 0;">
+												<!-- <div class="input-group-addon style-label">
 													<i class="fa fa-key theme-color style-color"></i>
-												</div>
+												</div> -->
+												<label class = "login-input-label" for="token">New Password</label>
 												<input style="display: none" type="password"> <input
-													type="password" class="form-control style-form"
+													type="password" class="login-input form-control style-form"
 													name="token" id="token" placeholder="Enter your OTP"
-													autocomplete="new-password" required="required" /> <span
-													class="mandatory set-mandatory"></span>
+													autocomplete="new-password" required="required"
+													style="font-family: Roboto_Regular;"  /> 
+													<span class="mandatory set-mandatory"></span>
 											</div>
 											<div class="text-right font-12">OTP sent to your
-												registered mobile / email</div>
+												registered mobile / email
+											</div>
 										</div>
 									</div>
-									<div class="modal-footer">
+									<div style = "background-color: transparent; border: none;" class="modal-footer">
 										<button type="button"
-											class="btn btn-custom recovrbtn text-right"
+											class="f-medium btn-login-new btn btn-custom recovrbtn text-right"
 											id="otprecoverybtn">
 											<spring:message code="title.reset.password" />
 										</button>
 									</div>
 								</c:if>
 								<c:if test="${not param.byOTP}">
-									<div class="modal-body">
+									<div class="modal-body f-regular">
 										<div class="text-center font-12">
 											<spring:message
 												code="msg.success.pwd.recov.otp.${param.byOTP}" />
 										</div>
 									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-default text-right"
+									<div style = "background-color: transparent; border: none;" class="modal-footer">
+										<button type="button" class="f-medium btn-login-new btn btn-default text-right"
 											data-dismiss="modal">Close</button>
 									</div>
 								</c:if>
 							</c:when>
 							<c:otherwise>
-								<div class="modal-body">
+								<div class="modal-body f-regular ">
 									<div class="text-center error-msg">
 										<spring:message code="msg.fail.pwd.recov" />
 									</div>
 								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-default text-right"
+								<div style = "background-color: transparent; border: none;" class="modal-footer">
+									<button type="button" class="f-medium btn-login-new btn btn-default text-right"
 										data-dismiss="modal">Close</button>
 								</div>
 							</c:otherwise>
