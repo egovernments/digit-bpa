@@ -269,14 +269,24 @@
 				<form:errors path="constructionCost"
 					cssClass="add-margin error-msg" />
 			</div>
-	
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.infrastructure.cost" /></label>
+	</div>
+	<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.charitable.trust" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input class="form-control patternvalidation" maxlength="12"
-					data-pattern="number" id="infrastructureCost"
-					path="infrastructureCost" />
-				<form:errors path="infrastructureCost"
+				<form:checkbox id="charitableTrustBuilding"
+					path="siteDetail[0].charitableTrustBuilding"
+					value="siteDetail[0].charitableTrustBuilding" />
+				<form:errors path="siteDetail[0].charitableTrustBuilding"
+					cssClass="add-margin error-msg" />
+			</div>
+			<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.affordable.scheme" /></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:checkbox id="affordableHousingScheme"
+					path="siteDetail[0].affordableHousingScheme"
+					value="siteDetail[0].affordableHousingScheme" />
+				<form:errors path="siteDetail[0].affordableHousingScheme"
 					cssClass="add-margin error-msg" />
 			</div>
 	</div>

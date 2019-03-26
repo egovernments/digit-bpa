@@ -39,14 +39,14 @@
  */
 package org.egov.bpa.transaction.entity.dto;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private Long id;
@@ -112,7 +112,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         }
         setAddress(application.getOwner().getAddress());
         setRescheduledByEmployee(application.getIsRescheduledByEmployee());
-        setApplicationType(application.getApplicantType());
+        setApplicationType(application.getApplicationType().getName());
         setOccupancy(application.getOccupanciesName());
         setServiceType(application.getServiceType().getDescription());
         setServiceCode(application.getServiceType().getCode());

@@ -92,6 +92,8 @@ import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_APPROVAL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
+import static org.egov.bpa.utils.BpaConstants.LOWRISK;
+
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -535,7 +537,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus)) {
             model.addAttribute("showUpdateNoc", true);
         } else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(pendingAction)
-                && !application.getPermitInspections().isEmpty())
+                && !application.getPermitInspections().isEmpty() && !application.getApplicationType().getName().equals(LOWRISK))
             mode = "initiatedForApproval";
 
         // To show/hide TS inspection required checkbox

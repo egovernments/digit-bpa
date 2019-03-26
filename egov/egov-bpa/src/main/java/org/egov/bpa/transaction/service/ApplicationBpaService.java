@@ -108,11 +108,14 @@ import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.ApplicationFee;
+import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
+import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
 import org.egov.bpa.transaction.entity.PermitDcrDocument;
 import org.egov.bpa.transaction.entity.PermitDocument;
 import org.egov.bpa.transaction.entity.PermitFee;
@@ -212,8 +215,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private SecurityUtils securityUtils;
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
-    @Autowired
-    private ApplicationBpaFeeCalculationService applicationBpaFeeCalculationService;
+
     @Autowired
     private EnvironmentSettings environmentSettings;
     @Autowired
@@ -306,11 +308,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         }
         setSource(application);
         Long approvalPosition = null;
-        if (bpaUtils.isApplicationFeeCollectionRequired())
-            application.setDemand(applicationBpaBillService.createDemand(application));
-        else
-            application.setDemand(applicationBpaBillService.createDemandWhenFeeCollectionNotRequire());
-
+        
+       
         if (!bpaUtils.logedInuseCitizenOrBusinessUser()) {
             WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
                     application.getStateType(), WF_CREATED_STATE);
@@ -330,6 +329,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         BpaApplication bpaApplicationResponse = applicationBpaRepository.saveAndFlush(application);
         application.setPermitDcrDocuments(persistApplnDCRDocuments(permitDcrDocuments));
         applicationBpaRepository.save(bpaApplicationResponse);
+        ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+        if (bpaUtils.isApplicationFeeCollectionRequired())
+            application.setDemand(feeCalculation.createDemand(application));
+        else
+            application.setDemand(feeCalculation.createDemandWhenFeeCollectionNotRequire(application));
+
         bpaIndexService.updateIndexes(bpaApplicationResponse);
         return bpaApplicationResponse;
     }
@@ -502,7 +508,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
 			if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL)
 					|| feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
-				PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
+				ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+			                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+			    
+				PermitFee permitFee = feeCalculation.calculateBpaSanctionFees(application);
 
 				ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
 				permitFee.setApplicationFee(applicationFee);
@@ -519,7 +528,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
                     feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
-                PermitFee permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(application);
+            	 ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                         .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+                PermitFee permitFee = feeCalculation.calculateBpaSanctionFees(application);
 
                 ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
                 permitFee.setApplicationFee(applicationFee);
@@ -1042,6 +1053,25 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         criteria.setMaxResults(totalAvailableSlots);
         return criteria.list();
 
+    }
+    
+    public BigDecimal getTotalFloorArea(final BpaApplication application) {
+        BigDecimal totalFloorArea = BigDecimal.ZERO;
+        for (BuildingDetail buildingDetail : application.getBuildingDetail())
+            for (ApplicationFloorDetail floorDetails : buildingDetail.getApplicationFloorDetails())
+                totalFloorArea = totalFloorArea.add(floorDetails.getFloorArea());
+        return totalFloorArea;
+    }
+
+    public BigDecimal getExistBldgTotalFloorArea(final BpaApplication application) {
+        BigDecimal totalFloorArea = BigDecimal.ZERO;
+        if (!application.getExistingBuildingDetails().isEmpty()
+                && application.getExistingBuildingDetails().get(0).getTotalPlintArea() != null)
+            for (ExistingBuildingFloorDetail floor : application.getExistingBuildingDetails().get(0)
+                    .getExistingBuildingFloorDetails()) {
+                totalFloorArea = totalFloorArea.add(floor.getFloorArea());
+            }
+        return totalFloorArea;
     }
 
 }

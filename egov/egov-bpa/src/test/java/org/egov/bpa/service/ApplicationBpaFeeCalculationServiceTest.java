@@ -61,7 +61,7 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.SiteDetail;
-import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.SubOccupancy;
@@ -74,7 +74,7 @@ import org.mockito.Mock;
 public class ApplicationBpaFeeCalculationServiceTest {
 
     @InjectMocks
-    private ApplicationBpaFeeCalculationService applicationBpaFeeCalculationService;
+    private PermitFeeCalculationService applicationBpaFeeCalculationService;
 
     @Mock
     private BpaFeeService bpaFeeService;

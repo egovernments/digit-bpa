@@ -39,12 +39,34 @@
  */
 package org.egov.bpa.transaction.service.report;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
+import static org.egov.bpa.utils.BpaConstants.LPCREATED;
+import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.dto.PersonalRegisterHelper;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
-import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
+import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
@@ -64,27 +86,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Collections;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.LPCREATED;
-import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
-
 @Service
 @Transactional(readOnly = true)
 public class PersonalRegisterReportService {
@@ -96,7 +97,7 @@ public class PersonalRegisterReportService {
 	@Autowired
 	private BpaWorkFlowService bpaWorkFlowService;
 	@Autowired
-	private ApplicationBpaFeeCalculationService bpaCalculationService;
+	private ApplicationBpaService bpaCalculationService;
 	@Autowired
 	private BpaReportsService bpaReportService;
 	@Autowired

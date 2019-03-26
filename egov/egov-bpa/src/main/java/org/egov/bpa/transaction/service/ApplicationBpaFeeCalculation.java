@@ -46,12 +46,24 @@
  */
 package org.egov.bpa.transaction.service;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitFee;
+import org.egov.demand.model.EgDemand;
 
-@FunctionalInterface
 public interface ApplicationBpaFeeCalculation {
 
 	PermitFee calculateBpaSanctionFees(final BpaApplication application) ;
+
+	BigDecimal calculateAdmissionFeeAmount(List<Long> serviceTypeIds, Long applicationTypeId);
+
+	BigDecimal setAdmissionFeeAmount(BpaApplication application, List<ServiceType> amenityList);
+
+	EgDemand createDemand(BpaApplication application);
+
+	EgDemand createDemandWhenFeeCollectionNotRequire(BpaApplication application);
 
 }

@@ -88,6 +88,10 @@ import org.egov.bpa.transaction.entity.common.DcrDocument;
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
+import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
+import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
+import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
@@ -100,6 +104,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -149,6 +154,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     protected SubOccupancyService subOccupancyService;
     @Autowired
     private ApplicationTypeService applicationTypeService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -453,14 +460,16 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 }
             }
         }
+        ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+        bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
+      
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountWithAmenities(
-                bpaApplication.getServiceType().getId(), new ArrayList<>()));
-        if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
+         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
 
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
-
+     
         if (citizenOrBusinessUser)
             if (isCitizen)
                 bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),

@@ -39,16 +39,8 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import org.egov.bpa.master.entity.BpaScheme;
-import org.egov.bpa.master.entity.BpaSchemeLandUsage;
-import org.egov.bpa.master.entity.ConstructionStages;
-import org.egov.bpa.master.entity.PostalAddress;
-import org.egov.bpa.master.entity.RegistrarOfficeVillage;
-import org.egov.bpa.master.entity.VillageName;
-import org.egov.bpa.transaction.entity.enums.BpaUom;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -66,8 +58,17 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
+
+import org.egov.bpa.master.entity.BpaScheme;
+import org.egov.bpa.master.entity.BpaSchemeLandUsage;
+import org.egov.bpa.master.entity.ConstructionStages;
+import org.egov.bpa.master.entity.PostalAddress;
+import org.egov.bpa.master.entity.RegistrarOfficeVillage;
+import org.egov.bpa.master.entity.VillageName;
+import org.egov.bpa.transaction.entity.enums.BpaUom;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_SITEDETAIL")
@@ -166,6 +167,8 @@ public class SiteDetail extends AbstractAuditable {
     @Length(min = 1, max = 128)
     private String stateOfConstruction;
     private Boolean isappForRegularization = false;
+    private Boolean charitableTrustBuilding;
+    private Boolean affordableHousingScheme;
     @Temporal(value = TemporalType.DATE)
     private Date workCommencementDate;
     @Temporal(value = TemporalType.DATE)
@@ -614,4 +617,20 @@ public class SiteDetail extends AbstractAuditable {
     public void setRegistrarVillageId(Long registrarVillageId) {
         this.registrarVillageId = registrarVillageId;
     }
+
+	public Boolean getCharitableTrustBuilding() {
+		return charitableTrustBuilding;
+	}
+
+	public void setCharitableTrustBuilding(Boolean charitableTrustBuilding) {
+		this.charitableTrustBuilding = charitableTrustBuilding;
+	}
+
+	public Boolean getAffordableHousingScheme() {
+		return affordableHousingScheme;
+	}
+
+	public void setAffordableHousingScheme(Boolean affordableHousingScheme) {
+		this.affordableHousingScheme = affordableHousingScheme;
+	}
 }

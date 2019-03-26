@@ -57,7 +57,7 @@ import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.repository.PermitFeeRepository;
 import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
-import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
@@ -119,8 +119,6 @@ public class UpdateOccupancyCertificateFeeController {
     protected PermitFeeService permitFeeService;
     @Autowired
     protected PermitFeeRepository permitFeeRepository;
-    @Autowired
-    protected ApplicationBpaFeeCalculationService applicationBpaFeeCalculationService;
     @Autowired
     protected OccupancyFeeService ocFeeService;
     @Autowired

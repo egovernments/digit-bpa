@@ -78,6 +78,8 @@ public class SearchBpaApplicationFormAdaptor implements JsonSerializer<SearchBpa
 			jsonObject.addProperty("status", searchFormObj.getStatus());
 			jsonObject.addProperty("rescheduledByEmployee", searchFormObj.getRescheduledByEmployee());
 			jsonObject.addProperty("onePermitApplication", searchFormObj.getOnePermitApplication());
+			jsonObject.addProperty("applicationType", searchFormObj.getApplicationType());
+
 			if (BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(searchFormObj.getStatus())
 				|| BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(searchFormObj.getStatus())) {
 				jsonObject.addProperty("appointmentDate", DateUtils.toDefaultDateFormat(searchFormObj.getAppointmentDate()));

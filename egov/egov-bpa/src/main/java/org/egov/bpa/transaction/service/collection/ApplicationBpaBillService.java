@@ -39,6 +39,11 @@
  */
 package org.egov.bpa.transaction.service.collection;
 
+import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
+import static org.egov.bpa.utils.BpaConstants.ROOF_CONVERSION;
+import static org.egov.bpa.utils.BpaConstants.SHUTTER_DOOR_CONVERSION;
+import static org.egov.bpa.utils.BpaConstants.WELL;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -89,11 +94,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
-import static org.egov.bpa.utils.BpaConstants.ROOF_CONVERSION;
-import static org.egov.bpa.utils.BpaConstants.SHUTTER_DOOR_CONVERSION;
-import static org.egov.bpa.utils.BpaConstants.WELL;
 
 @Service
 @Transactional(readOnly = true)
@@ -179,7 +179,7 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         return bpaDemandService.createCriteriaforApplicationFeeAmount(amenityList, feeType, feeSubType);
     }
 
-    public EgDemand createDemandWhenFeeCollectionNotRequire() {
+    public EgDemand createDemandWhenFeeCollectionNotRequire(BpaApplication application) {
         EgDemand egDemand = new EgDemand();
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);

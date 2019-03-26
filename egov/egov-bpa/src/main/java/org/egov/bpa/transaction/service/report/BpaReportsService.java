@@ -86,7 +86,7 @@ import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
 import org.egov.bpa.transaction.repository.SlotDetailRepository;
 import org.egov.bpa.transaction.repository.specs.BpaReportsSearchSpec;
 import org.egov.bpa.transaction.repository.specs.SearchBpaApplnFormSpec;
-import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
+import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
@@ -123,7 +123,7 @@ public class BpaReportsService {
     @Autowired
     private BpaAppointmentScheduleService bpaAppointmentScheduleService;
     @Autowired
-    private ApplicationBpaFeeCalculationService bpaCalculationService;
+    private ApplicationBpaService bpaCalculationService;
     @Autowired
     private ApplicationBpaRepository applicationBpaRepository;
     @Autowired

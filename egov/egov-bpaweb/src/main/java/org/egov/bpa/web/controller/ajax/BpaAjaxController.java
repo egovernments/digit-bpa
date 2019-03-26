@@ -73,9 +73,11 @@ import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
+import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.SubOccupancy;
@@ -96,6 +98,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
@@ -151,7 +154,7 @@ public class BpaAjaxController {
     @Autowired
     private SlotMappingService slotMappingService;
     @Autowired
-    private ApplicationBpaFeeCalculationService permitFeeCalculationService;
+    private ApplicationBpaService permitFeeCalculationService;
     @Autowired
     private ChecklistServicetypeMappingService checklistServicetypeMappingService;
     @Autowired
@@ -166,20 +169,30 @@ public class BpaAjaxController {
     private UsageService usageService;
     @Autowired
     private ApplicationTypeService applicationTypeService;
+    @Autowired
+    private BpaUtils bpaUtils;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public BigDecimal isConnectionPresentForProperty(@RequestParam final Long[] serviceTypeIds, @RequestParam final Long applicationTypeId) {
        BigDecimal amount = BigDecimal.ZERO;
     	if (serviceTypeIds.length > 0) {
-             amount = amount.add(applicationBpaService
-                    .getTotalFeeAmountByPassingServiceTypeAndAmenities(Arrays.asList(serviceTypeIds)));
-             if(applicationTypeId != null) {
-            	 amount = amount.add(applicationBpaService.getFeeAmountByApplicationType(applicationTypeId));
-             }
+    		 ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+    	                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+    	       return amount.add(feeCalculation.calculateAdmissionFeeAmount(Arrays.asList(serviceTypeIds),applicationTypeId));
+               
         } 
     	return amount;
     }
+    
+    @GetMapping(value = "/ajax/getApplicationType", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ApplicationType getApplicationType(final BigDecimal height, @RequestParam final BigDecimal plotArea) {
+    	return bpaUtils.getApplicationTypeByHeightAndArea(height,plotArea);
+    }
+ 
     
     @GetMapping(value = "/bpaajaxWorkFlow-getDesignationsByObjectTypeAndDesignation", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

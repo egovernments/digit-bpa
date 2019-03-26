@@ -39,6 +39,26 @@
  */
 package org.egov.bpa.transaction.service;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
+import static org.egov.bpa.utils.BpaConstants.HIGHRISK;
+import static org.egov.bpa.utils.BpaConstants.LOWRISK;
+import static org.egov.bpa.utils.BpaConstants.MEDIUMRISK;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -65,25 +85,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.LOWRISK;
-import static org.egov.bpa.utils.BpaConstants.MEDIUMRISK;
-import static org.egov.bpa.utils.BpaConstants.HIGHRISK;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
-
 
 @Service
 @Transactional(readOnly = true)
@@ -97,8 +98,8 @@ public class SearchBpaApplicationService {
 	private ApplicationBpaRepository applicationBpaRepository;
 	@Autowired
 	private SlotApplicationRepository slotApplicationRepository;
-	@Autowired
-	private ApplicationBpaFeeCalculationService bpaCalculationService;
+	//@Autowired
+	//private ApplicationBpaFeeCalculationService bpaCalculationService;
 	@Autowired
 	private ApplicationTypeService applicationTypeService;
 	@PersistenceContext
@@ -355,8 +356,8 @@ public class SearchBpaApplicationService {
 		BigDecimal plotArea = application.getSiteDetail().get(0).getExtentinsqmts();
 		BigDecimal far = BigDecimal.ZERO;
 		if (!application.getBuildingDetail().isEmpty()) {
-			BigDecimal totalFloorArea = bpaCalculationService.getTotalFloorArea(application);
-			BigDecimal existBldgFloorArea = bpaCalculationService.getExistBldgTotalFloorArea(application);
+			BigDecimal totalFloorArea = BigDecimal.ZERO; //bpaCalculationService.getTotalFloorArea(application);
+			BigDecimal existBldgFloorArea = BigDecimal.ZERO;//bpaCalculationService.getExistBldgTotalFloorArea(application);
 			totalFloorArea = totalFloorArea.add(existBldgFloorArea);
 			if (totalFloorArea != null)
 				far = totalFloorArea.divide(plotArea, 3, RoundingMode.HALF_UP);

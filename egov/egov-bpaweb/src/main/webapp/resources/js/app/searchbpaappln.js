@@ -141,15 +141,8 @@ $(document)
 											aaSorting : [],
 											columns : [
 													{
-														"data" : null,
-														"sClass" : "text-left",
-														"render" : function(data, type, row, meta) {
-															if(row.onePermitApplication) {
-																return "One day permit";
-															} else {
-																return "Regular";
-															}
-														}
+														"data" : "applicationType",
+														"sClass" : "text-left"
 													},
 													{
 														"data" : "applicantName",

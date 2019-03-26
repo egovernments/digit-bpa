@@ -54,7 +54,8 @@ import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.repository.PermitFeeRepository;
-import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculationService;
+import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.bpa.transaction.service.BpaStatusService;
@@ -65,6 +66,7 @@ import org.egov.bpa.utils.BpaUtils;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -113,9 +115,9 @@ public class UpdateBpaPermitFeeController {
     @Autowired
     protected PermitFeeRepository permitFeeRepository;
     @Autowired
-    private ApplicationBpaFeeCalculationService applicationBpaFeeCalculationService;
-    @Autowired
     private BpaUtils bpaUtils;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @ModelAttribute
     public PermitFee getBpaApplication(@PathVariable final String applicationNumber) {
@@ -154,7 +156,10 @@ public class UpdateBpaPermitFeeController {
             		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 // calculate fee by passing sanction list, inspection latest object.
                 // based on fee code, define calculation logic for each servicewise.
-            	permitFee = applicationBpaFeeCalculationService.calculateBpaSanctionFees(permitFee.getApplication());
+            	ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+		                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+		  
+            	permitFee = feeCalculation.calculateBpaSanctionFees(permitFee.getApplication());
                 model.addAttribute(PERMIT_FEE, permitFee);
                return MODIFYPAFEE_FORM;
             }  else {

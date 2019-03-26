@@ -58,7 +58,7 @@
                             <form:option value="">
                                 <spring:message code="lbl.select"/>
                             </form:option>
-                            <form:options items="${applicationTypes}" itemLabel="name" itemValue="id"/>
+                            <form:options items="${appTypes}" itemLabel="name" itemValue="id"/>
                         </form:select>
                         <form:errors path="statusId" cssClass="add-margin error-msg"/>
                     </div>

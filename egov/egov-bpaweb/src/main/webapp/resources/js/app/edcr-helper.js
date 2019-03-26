@@ -290,8 +290,34 @@ $(document).ready(
                     blockIdx++;
                 }
             }
+           // getApplicationType(planDetail.blocks[0].building.buildingHeight);
+
             $('.serviceType').trigger('change');
         }
+     
+        function getApplicationType(area, height) {   
+        	$.ajax({
+				url : '/bpa/ajax/getApplicationType?height='+height+'&plotArea='+area,
+				type: "GET",
+				 contentType: 'application/json; charset=utf-8',
+				success: function (response) {
+					if(response){
+					$('#applicationTypeSec').val(response.applicationTypeSec);
+	                $('#applicationType').val(response.id);
+                    $('#applicationType').attr("disabled", "disabled");
+					}else{
+						console.log('No applications available');
+					}
+					
+				}, 
+				error: function (response) {
+					//
+				}
+			});
+            $('#applicationType').trigger('change');
+
+   }
+
 
         // Will Auto Populate existing building details
         function setExistingBuildingDetailFromEdcrs(planDetail) {
@@ -586,6 +612,7 @@ $(document).ready(
                     type: "GET",
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
+                    	
                     	if (response.errorDetail && response.errorDetail.errorCode != null && response.errorDetail.errorCode != '') {
                             bootbox.alert(response.errorDetail.errorMessage);
                             $('#eDcrNumber').val('');
@@ -643,12 +670,15 @@ $(document).ready(
 
                                     if(existingBldgPresent.length > 0 && jQuery.inArray(true, existingBldgPresent) !== -1) {
                                      	$('.existingbuildingdetails').show();
-                                    	setExistingBuildingDetailFromEdcrs(response.plan);
+                                    	setExistingBuildingDetailFromEdcrs(response.plan);                                        
                                      } else {
                                      	$('.existingbuildingdetails').hide();
                                      }
 
                                     setProposedBuildingDetailFromEdcrs(response.plan);
+                                    var area =response.plotArea.toFixed(2);
+                                    getApplicationType(area, response.plan.blocks[0].building.buildingHeight);
+
                                     if($('#dcrDocsAutoPopulate').val() === 'true' || $('#dcrDocsAutoPopulateAndManuallyUpload').val() === 'true')
                                         autoPopulatePlanScrutinyGeneratedPdfFiles(response.planScrutinyPdfs);
 
@@ -677,6 +707,7 @@ $(document).ready(
                                 $('#extentOfLand').val(response.plotArea.toFixed(2));
                                 setExtentOfLand();
                             }
+                            
                         }
                     },
                     error: function (response) {

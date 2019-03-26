@@ -78,6 +78,8 @@ import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
+import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InspectionService;
@@ -93,6 +95,7 @@ import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -138,6 +141,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private SubOccupancyService subOccupancyService;
     @Autowired
     private ChecklistServicetypeMappingService checklistServieTypeServcie;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -203,8 +208,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         model.addAttribute("lettertopartylist", lettertoPartyList);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         model.addAttribute("permitApplnFeeRequired", bpaUtils.isApplicationFeeCollectionRequired());
-        model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountWithAmenities(
-                application.getServiceType().getId(), application.getApplicationAmenity()));
+        ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+        model.addAttribute("admissionFee", feeCalculation.setAdmissionFeeAmount(
+                application, application.getApplicationAmenity()));
         if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getLetterToParty().getSentDate() != null)
             model.addAttribute("mode", "showLPDetails");
         buildAppointmentDetailsOfScutinyAndInspection(model, application);
@@ -338,13 +345,15 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             bpaApplication.getPermitOccupancies().clear();
             bpaApplication.setPermitOccupancies(bpaApplication.getPermitOccupanciesTemp());
         }
-        
-        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountWithAmenities(
-                bpaApplication.getServiceType().getId(), new ArrayList<>()));
+        ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+      
+        bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(
+        		bpaApplication, new ArrayList<>()));
         if (bpaUtils.isApplicationFeeCollectionRequired())
         	bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
         else
-        	bpaApplication.setDemand(applicationBpaBillService.createDemandWhenFeeCollectionNotRequire());
+        	bpaApplication.setDemand(applicationBpaBillService.createDemandWhenFeeCollectionNotRequire(bpaApplication));
 
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
 

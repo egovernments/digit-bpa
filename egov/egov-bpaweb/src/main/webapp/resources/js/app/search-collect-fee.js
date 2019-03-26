@@ -97,6 +97,7 @@ $(document)
                                                         "fromDate": $("#fromDate").val(),
                                                         "toDate": $("#toDate").val(),
                                                         "serviceTypeId": $("#serviceTypeId").val(),
+                                                        "applicationTypeId": $("#applicationTypeId").val(),
                                                         "zoneId": $("#zone").val(),
                                                         "wardId": $("#ward").val(),
                                                         "electionWardId": $("#electionBoundary").val(),
@@ -119,15 +120,9 @@ $(document)
 											aaSorting : [],
 											columns : [
 													{
-														"data" : null,
-														"sClass" : "text-left",
-														"render" : function(data, type, row, meta) {
-															if(row.onePermitApplication) {
-																return "One day permit";
-															} else {
-																return "Regular";
-															}
-														}
+														"data":"applicationType",
+														"sClass" : "text-left"
+
 													},
 													{
 														"data" : "applicantName",

@@ -64,7 +64,7 @@ public class ApplicationTypeService {
     }
     
     public ApplicationType findByName(final String name) {
-        return applicationTypeRepository.findByNameUpperCase(name);
+        return applicationTypeRepository.findByNameUpperCase(name.toUpperCase());
     }
     
     public List<ApplicationType> getAllEnabledApplicationTypes() {
