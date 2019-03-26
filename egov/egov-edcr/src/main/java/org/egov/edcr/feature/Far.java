@@ -75,8 +75,17 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.ProcessHelper;
+import org.egov.edcr.service.ProcessHelper;/*
+ * private static final BigDecimal ROAD_WIDTH_EIGHTEEN_POINTTHREE =
+ * BigDecimal.valueOf(18.3); private static final BigDecimal
+ * ROAD_WIDTH_TWENTYFOUR_POINTFOUR = BigDecimal.valueOf(24.4); private static
+ * final BigDecimal ROAD_WIDTH_TWENTYSEVEN_POINTFOUR = BigDecimal.valueOf(27.4);
+ * private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE =
+ * BigDecimal.valueOf(30.5);
+ */
+
 import org.egov.edcr.service.ProcessPrintHelper;
+import org.egov.infra.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -106,7 +115,41 @@ public class Far extends FeatureProcess {
     private static final String VALIDATION_NEGATIVE_BUILTUP_AREA = "msg.error.negative.builtuparea.occupancy.floor";
     private static final String VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA = "msg.error.negative.existing.builtuparea.occupancy.floor";
     public static final String RULE_31_1 = "31(1)";
+    public static final String RULE_38 = "38";
+    
+    private static final BigDecimal ONE_POINTTWO = BigDecimal.valueOf(1.2);
+    private static final BigDecimal ONE_POINTFIVE = BigDecimal.valueOf(1.5);
+    private static final BigDecimal ONE_POINTEIGHT = BigDecimal.valueOf(1.8);
+    private static final BigDecimal TWO = BigDecimal.valueOf(2);
+    private static final BigDecimal TWO_POINTFIVE = BigDecimal.valueOf(2.5);
+    private static final BigDecimal THREE = BigDecimal.valueOf(3);
+    private static final BigDecimal THREE_POINTTWOFIVE = BigDecimal.valueOf(3.25);
+    private static final BigDecimal THREE_POINTFIVE = BigDecimal.valueOf(3.5);
+  
+    
+    private static final BigDecimal ROAD_WIDTH_TWO_POINTFOUR = BigDecimal.valueOf(2.4);
+	private static final BigDecimal ROAD_WIDTH_TWO_POINTFOURFOUR = BigDecimal.valueOf(2.44);
+	private static final BigDecimal ROAD_WIDTH_THREE_POINTSIX = BigDecimal.valueOf(3.6);
+	private static final BigDecimal ROAD_WIDTH_THREE_POINTSIXSIX = BigDecimal.valueOf(3.66);
+	private static final BigDecimal ROAD_WIDTH_FOUR_POINTEIGHT = BigDecimal.valueOf(4.8);
+	private static final BigDecimal ROAD_WIDTH_SIX_POINTONE = BigDecimal.valueOf(6.1);
+	private static final BigDecimal ROAD_WIDTH_NINE_POINTONE = BigDecimal.valueOf(9.1);
+	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
 
+	private static final BigDecimal ROAD_WIDTH_EIGHTEEN_POINTTHREE = BigDecimal.valueOf(18.3);
+	private static final BigDecimal ROAD_WIDTH_TWENTYFOUR_POINTFOUR = BigDecimal.valueOf(24.4);
+	private static final BigDecimal ROAD_WIDTH_TWENTYSEVEN_POINTFOUR = BigDecimal.valueOf(27.4);
+	private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE = BigDecimal.valueOf(30.5);
+	 
+
+	public static final String OLD = "OLD";
+	public static final String NEW = "NEW";
+	public static final String OLD_AREA_ERROR = "road width old area";
+	public static final String NEW_AREA_ERROR = "road width new area";
+	public static final String OLD_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 2.4m for old area.";
+	public static final String NEW_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 6.1m for new area.";
+
+	
     String farDeductByFloor = BLOCK_NAME_PREFIX + "%s" + "_" + FLOOR_NAME_PREFIX + "%s" + "_"
             + DxfFileConstants.BUILT_UP_AREA_DEDUCT;
 
@@ -122,7 +165,7 @@ public class Far extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
-
+    	HashMap<String, String> errorMsgs = new HashMap<>();
         int errors = pl.getErrors().size();
         validate(pl);
         int validatedErrors = pl.getErrors().size();
@@ -482,9 +525,11 @@ public class Far extends FeatureProcess {
                     ROUNDMODE_MEASUREMENTS);
 
         pl.setFar(far);
-        if (!ProcessHelper.isSmallPlot(pl)) {
-            calculateFar(pl, mostRestrictiveOccupancy, far);
-        }
+		/*
+		 * if (!ProcessHelper.isSmallPlot(pl)) { calculateFar(pl,
+		 * mostRestrictiveOccupancy, far); }
+		 */
+		processFarResidential(pl, mostRestrictiveOccupancy.getOccupancyType(), far, errorMsgs);
         ProcessPrintHelper.print(pl);
         return pl;
     }
@@ -839,6 +884,108 @@ public class Far extends FeatureProcess {
         }
         return permissibleFar;
     }
+
+    
+	private void processFarResidential(Plan pl, String occupancyType, BigDecimal far, HashMap<String, String> errors) {
+
+		String typeOfArea = pl.getPlanInformation().getTypeOfArea();
+		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+		String expectedResult = StringUtils.EMPTY;
+		boolean isAccepted = false;
+		ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Common_FAR");
+
+		if (typeOfArea.equalsIgnoreCase(OLD)) {
+			if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOUR) < 0) {
+				errors.put(OLD_AREA_ERROR, OLD_AREA_ERROR_MSG);
+				pl.addErrors(errors);
+			} else if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOURFOUR) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) <= 0) {
+				isAccepted = far.compareTo(ONE_POINTTWO) <= 0;
+				expectedResult = "<= 1.2";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) <= 0) {
+				isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
+				expectedResult = "<= 1.5";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) <= 0) {
+				isAccepted = far.compareTo(ONE_POINTEIGHT) <= 0;
+				expectedResult = "<= 1.8";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
+				isAccepted = far.compareTo(TWO) <= 0;
+				expectedResult = "<= 2";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) <= 0) {
+				isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
+				expectedResult = "<= 2.5";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) <= 0) {
+				isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
+				expectedResult = "<= 2.5";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_TWENTYFOUR_POINTFOUR) <= 0) {
+				isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
+				expectedResult = "<= 2.5";
+			}
+
+		}
+
+		if (typeOfArea.equalsIgnoreCase(NEW)) {
+			if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) < 0) {
+				errors.put(NEW_AREA_ERROR, NEW_AREA_ERROR_MSG);
+				pl.addErrors(errors);
+			} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
+				isAccepted = far.compareTo(TWO) <= 0;
+				expectedResult = "<= 2";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) <= 0) {
+				isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
+				expectedResult = "<= 2.5";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) <= 0) {
+				isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
+				expectedResult = "<= 2.5";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_TWENTYFOUR_POINTFOUR) <= 0) {
+				isAccepted = far.compareTo(THREE) <= 0;
+				expectedResult = "<= 3";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_TWENTYFOUR_POINTFOUR) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_TWENTYSEVEN_POINTFOUR) <= 0) {
+				isAccepted = far.compareTo(THREE_POINTTWOFIVE) <= 0;
+				expectedResult = "<= 3.25";
+			} else if (roadWidth.compareTo(ROAD_WIDTH_TWENTYSEVEN_POINTFOUR) >= 0
+					&& roadWidth.compareTo(ROAD_WIDTH_THIRTY_POINTFIVE) <= 0) {
+				isAccepted = far.compareTo(THREE_POINTFIVE) <= 0;
+				expectedResult = "<= 3.5";
+			}
+
+		}
+
+		if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
+			String actualResult = far.toString();
+
+			Map<String, String> details = new HashMap<>();
+			details.put(RULE_NO, RULE_38);
+			details.put(OCCUPANCY, occupancyType);
+			details.put(REQUIRED, expectedResult);
+			details.put(PROVIDED, actualResult);
+			details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+
+			scrutinyDetail.getDetail().add(details);
+			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+		}
+	}
+    
+	private ScrutinyDetail getNewScrutinyDetail(String key) {
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
+		scrutinyDetail.setKey(key);
+		return scrutinyDetail;
+	}
 
     @Override
     public Map<String, Date> getAmendments() {
