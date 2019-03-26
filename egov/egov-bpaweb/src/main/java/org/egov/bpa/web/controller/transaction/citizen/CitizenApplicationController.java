@@ -100,6 +100,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +153,10 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return "redirect:/common/city/selection-form?url=" + request.getRequestURL().toString();
+        }
         setCityName(model, request);
         model.addAttribute("currentuser", securityUtils.getCurrentUser().getName());
         return loadNewForm(bpaApplication, model, ST_CODE_01);
