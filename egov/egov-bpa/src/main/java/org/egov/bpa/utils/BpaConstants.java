@@ -405,6 +405,7 @@ public class BpaConstants {
 
     public static final String STAKEHOLDER_TYPE_ARCHITECT = "Architect";
     public static final String STAKEHOLDER_REG_FEE_AMOUNT = "STAKEHOLDER_REG_FEE_AMOUNT";
+    public static final String REGISTRATION_FEES_CODE = "RF";
     
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();
