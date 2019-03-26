@@ -776,4 +776,27 @@ public class BpaUtils {
                 .getConfigValuesByModuleAndKey(EGMODULE_NAME, BpaConstants.STATELOGO);
         return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
     }
+    
+    
+    public String getBuildingType(BigDecimal totalBuildupArea,BigDecimal heightOfTheBuilding, String occupancy ){
+    	BigDecimal lowPlotArea = new BigDecimal(300);
+    	BigDecimal moderatePlotArea = new BigDecimal(500);
+    	BigDecimal moderateHeightOfTheBuilding = new BigDecimal(15);
+    	
+		if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
+			if (totalBuildupArea.compareTo(lowPlotArea) <= 0 && heightOfTheBuilding.compareTo(BigDecimal.TEN) <= 0) {
+				return BpaConstants.APPLICATION_TYPE_LOWRISK.toUpperCase();
+			} else if (totalBuildupArea.compareTo(moderatePlotArea) <= 0
+					&& heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
+				return BpaConstants.APPLICATION_TYPE_MEDIUMRISK.toUpperCase();
+			} else
+				return BpaConstants.APPLICATION_TYPE_HIGHRISK.toUpperCase();
+		} else {
+			if (totalBuildupArea.compareTo(moderatePlotArea) <= 0
+					&& heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
+				return BpaConstants.APPLICATION_TYPE_MEDIUMRISK.toUpperCase();
+			} else
+				return BpaConstants.APPLICATION_TYPE_HIGHRISK.toUpperCase();
+		}
+    }
 }
