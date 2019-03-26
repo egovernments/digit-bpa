@@ -55,33 +55,40 @@ $(document).ready(function(){
 
 	$('.totalServicesAppliedHide').hide();
 	$('.totalServicesCompletedHide').hide();
-	$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-	$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//	$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//	$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
 	$('#totalServicesAppliedDiv').click(function() {
 		$('.servicesUnderScrutinyHide').hide();
 		$('.totalServicesCompletedHide').hide();
 		$('.totalServicesAppliedHide').show();
-		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
+//		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
 	});
 	
 	$('#servicesUnderScrutinyDiv').click(function() {
 		$('.totalServicesAppliedHide').hide();
 		$('.totalServicesCompletedHide').hide();
 		$('.servicesUnderScrutinyHide').show();
-		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
+//		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
 	});
+	
+	$(".bpa-home-card").click(function(){
+		$(".bpa-home-card").removeClass("clicked-card");
+		$(this).addClass("clicked-card");
+		$(".bpa-home-card .text").removeClass("color-generic-new");
+		$(this).find(".text").addClass("color-generic-new");
+	})
 	
 	$('#servicesCmpletedDiv').click(function() {
 		$('.totalServicesAppliedHide').hide();
 		$('.servicesUnderScrutinyHide').hide();
 		$('.totalServicesCompletedHide').show();
-		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
-		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
+//		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
 
 	});
 	

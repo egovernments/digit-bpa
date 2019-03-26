@@ -160,7 +160,7 @@
 													<input name="j_username" id="j_username" 
 														style="font-family: Roboto_Regular;" 
 														placeholder="Enter Mobile No. / Login ID" 
-														required="" type="text" 
+														required="" type="text" autofocus="autofocus"
 														class="login-input form-control">
 												</div>
 												<div class = "col-md-12 padding0">
