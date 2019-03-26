@@ -305,6 +305,8 @@ $(document).ready(
 					$('#applicationTypeSec').val(response.applicationTypeSec);
 	                $('#applicationType').val(response.id);
                     $('#applicationType').attr("disabled", "disabled");
+                    $('#applicationType').trigger('change');
+
 					}else{
 						console.log('No applications available');
 					}
@@ -314,7 +316,6 @@ $(document).ready(
 					//
 				}
 			});
-            $('#applicationType').trigger('change');
 
    }
 
