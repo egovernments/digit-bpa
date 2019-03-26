@@ -161,13 +161,14 @@
 														style="font-family: Roboto_Regular;" 
 														placeholder="Enter Mobile No. / Login ID" 
 														required="" type="text" autofocus="autofocus"
-														class="login-input form-control">
+														autocomplete="off" class="login-input form-control" />
 												</div>
 												<div class = "col-md-12 padding0">
 													<label class = "login-input-label" for="j_password">Password</label>
 													<input name="j_password" id="j_password" required="required"
 														style="font-family: Roboto_Regular;" placeholder="Enter Password" 
-														type="password" class="login-input form-control">
+														type="password" class="login-input form-control"
+														autocomplete="new-password" />
 												</div>
 												<div class = "col-md-12 forgot-password-text">
 													<span data-toggle="modal" data-target="#fpassword" data-backdrop="static">FORGOT PASSWORD?</span>
