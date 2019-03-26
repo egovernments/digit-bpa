@@ -69,8 +69,8 @@ public class CommonController {
             final HttpServletRequest request) {
 
         Map<String, String> cityNameTenantIdMap = new HashMap<>();
-        cityNameTenantIdMap.put("sunam", "City One");
-        cityNameTenantIdMap.put("mohali", "City Two");
+        cityNameTenantIdMap.put("jupiter", "Jupiter");
+        cityNameTenantIdMap.put("mercury", "Mercury");
         model.addAttribute("cityNameTenantIdMap", cityNameTenantIdMap);
         model.addAttribute("city", new City());
         model.addAttribute("clientId", clientId);
