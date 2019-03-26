@@ -59,6 +59,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,6 +68,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
@@ -79,11 +81,11 @@ import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
-import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
@@ -302,10 +304,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             return loadViewdata(model, bpaApplication);
         }
         if(bpaApplication.getIsOneDayPermitApplication())
-        	bpaApplication.setApplicationType(
-        			applicationTypeService.findByName(onedaypermit));
+        	bpaApplication.setApplicationType(applicationTypeService.findByName(onedaypermit));
         
-  
         bpaUtils.saveOrUpdateBoundary(bpaApplication);
         String workFlowAction = request.getParameter("workFlowAction");
         Long approvalPosition = 0l;
@@ -345,6 +345,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             bpaApplication.getPermitOccupancies().clear();
             bpaApplication.setPermitOccupancies(bpaApplication.getPermitOccupanciesTemp());
         }
+
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
       
@@ -366,6 +367,18 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
         // To allot slot for one day permit applications
+        String occupancyName =""; 
+        if(bpaApplication.getPermitOccupanciesTemp().size() == 1)
+        	occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
+        ApplicationType applicationType = null;
+        if(bpaApplication.getIsOneDayPermitApplication())
+        	applicationType = applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT);
+        else if(!bpaApplication.getBuildingDetailFromEdcr().isEmpty() && bpaApplication.getBuildingDetailFromEdcr().get(0).getTotalPlintArea().compareTo(BigDecimal.ZERO) > 0)
+        	applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
+    		   bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetailFromEdcr()).getHeightFromGroundWithOutStairRoom(),occupancyName);
+
+        bpaApplication.setApplicationType(applicationType);
+        
         applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
         bpaUtils.updatePortalUserinbox(bpaApplication, null);
 
@@ -384,6 +397,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, bpaApplication, WF_NEW_STATE,
                     remarks == null ? bpaApplication.getApprovalComent() : remarks, null, null);
             bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);
+            
             List<Assignment> assignments;
             if (null == approvalPosition)
                 assignments = bpaWorkFlowService

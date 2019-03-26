@@ -786,25 +786,28 @@ public class BpaUtils {
     }
     
     
-    public String getBuildingType(BigDecimal totalBuildupArea,BigDecimal heightOfTheBuilding, String occupancy ){
+    public ApplicationType getBuildingType(BigDecimal plotArea,BigDecimal heightOfTheBuilding, String occupancy ){
     	BigDecimal lowPlotArea = new BigDecimal(300);
     	BigDecimal moderatePlotArea = new BigDecimal(500);
     	BigDecimal moderateHeightOfTheBuilding = new BigDecimal(15);
     	
 		if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
-			if (totalBuildupArea.compareTo(lowPlotArea) <= 0 && heightOfTheBuilding.compareTo(BigDecimal.TEN) <= 0) {
-				return BpaConstants.APPLICATION_TYPE_LOWRISK.toUpperCase();
-			} else if (totalBuildupArea.compareTo(moderatePlotArea) <= 0
+			if (plotArea.compareTo(lowPlotArea) <= 0 && heightOfTheBuilding.compareTo(BigDecimal.TEN) <= 0) {
+				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
+			} else if (plotArea.compareTo(moderatePlotArea) <= 0
 					&& heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
-				return BpaConstants.APPLICATION_TYPE_MEDIUMRISK.toUpperCase();
-			} else
-				return BpaConstants.APPLICATION_TYPE_HIGHRISK.toUpperCase();
+				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+			} else if(plotArea.compareTo(moderatePlotArea) > 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) > 0){ 
+				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+			} else 
+				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_REGULAR);
 		} else {
-			if (totalBuildupArea.compareTo(moderatePlotArea) <= 0
-					&& heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
-				return BpaConstants.APPLICATION_TYPE_MEDIUMRISK.toUpperCase();
-			} else
-				return BpaConstants.APPLICATION_TYPE_HIGHRISK.toUpperCase();
+			if (plotArea.compareTo(moderatePlotArea) <= 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
+				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+			} else if(plotArea.compareTo(moderatePlotArea) > 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) > 0)
+				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+			else 
+				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_REGULAR);
 		}
     }
 		

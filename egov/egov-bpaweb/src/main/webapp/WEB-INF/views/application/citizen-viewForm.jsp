@@ -250,7 +250,7 @@
 										 value="Cancel Application"> <spring:message code='lbl.btn.cancel.application' /> </form:button>&nbsp;
 							</c:if>
 						</td>
-						<c:if test="${bpaApplication.status.code eq 'Order Issued to Applicant' }">
+						<c:if test="${(bpaApplication.status.code eq 'Order Issued to Applicant' || bpaApplication.applicationType.name eq 'Low Risk') && not empty bpaApplication.bpaNotice}">
 							<td>
 								<a href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}"
 								   target="popup" class="btn btn-primary"
@@ -259,7 +259,7 @@
 								</a>&nbsp;
 							</td> 
 						</c:if>
-						
+
 						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null}">
 							<td>
 								<a href="/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}"

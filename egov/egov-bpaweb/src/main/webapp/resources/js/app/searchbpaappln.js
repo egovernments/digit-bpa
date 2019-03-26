@@ -196,7 +196,7 @@ $(document)
 																		+ demandNoticeurl
 																		+ row.applicationNumber + '>Generate Demand Notice</option></select>');
 															} 
-															else if (row.status == 'Order Issued to Applicant') {
+															else if (row.status == 'Order Issued to Applicant' || (row.applicationType == 'Low Risk' && !row.isFeeCollected )) {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ permitorderurl
 																		+ row.applicationNumber + '>Generate Permit Order</option></select>');

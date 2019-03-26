@@ -171,6 +171,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 
 @Service
 @Transactional(readOnly = true)
@@ -460,6 +461,19 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // persistPostalAddress(application);
         // buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
+		if (application.getApplicationType().getName().equals(BpaConstants.APPLICATION_TYPE_LOWRISK) && application.getStatus().getCode().equals("Registered")) {
+            application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
+            application.setPlanPermissionDate(new Date());
+			PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
+					.find(PermitOrderFormatImpl.class, specificNoticeService.getCityDetails());
+			try {
+				ReportOutput reportOutput = bpaNoticeFeature
+						.generateNotice(findByApplicationNumber(application.getApplicationNumber()));
+			} catch (IOException e) {
+				if(LOG.isDebugEnabled())
+					LOG.debug(e.getMessage());
+			}
+		}
         applicationBpaRepository.saveAndFlush(application);
     }
 

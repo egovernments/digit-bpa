@@ -62,6 +62,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -71,6 +72,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.master.entity.ApplicationType;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
@@ -97,6 +99,7 @@ import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.commons.service.SubOccupancyService;
@@ -468,6 +471,19 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
          if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
 
+       String occupancyName =""; 
+        if(bpaApplication.getPermitOccupanciesTemp().size() == 1)
+        	occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
+        ApplicationType applicationType = null;
+        
+        if(bpaApplication.getIsOneDayPermitApplication())
+        	applicationType = applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT);
+        else if(!bpaApplication.getBuildingDetailFromEdcr().isEmpty() && bpaApplication.getBuildingDetailFromEdcr().get(0).getTotalPlintArea().compareTo(BigDecimal.ZERO) > 0)
+        	applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
+    		   bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetailFromEdcr()).getHeightFromGroundWithOutStairRoom(),occupancyName);
+
+        bpaApplication.setApplicationType(applicationType);
+       
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
      
         if (citizenOrBusinessUser)

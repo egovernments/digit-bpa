@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,7 @@ public class DcrRestService {
     public String getDcrReport(final String dcrNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
 
-        final String url = String.format(EDCR_REPORT_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        final String url = String.format(EDCR_REPORT_RESTURL,ApplicationThreadLocals.getDomainURL());
 
         return restTemplate.getForObject(url, String.class, dcrNumber);
     }
@@ -27,7 +28,7 @@ public class DcrRestService {
     public String getConvertedPdfs(final String dcrNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
 
-        final String url = String.format(EDCR_CONVERTED_PDF_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        final String url = String.format(EDCR_CONVERTED_PDF_RESTURL, ApplicationThreadLocals.getDomainURL());
 
         return restTemplate.getForObject(url, String.class, dcrNumber);
     }
@@ -35,7 +36,7 @@ public class DcrRestService {
     public String getDcr(final String dcrNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
 
-        final String url = String.format(EDCR_REPORT_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        final String url = String.format(EDCR_REPORT_RESTURL,ApplicationThreadLocals.getDomainURL());
 
         return restTemplate.getForObject(url, String.class, dcrNumber);
     }
@@ -46,7 +47,7 @@ public class DcrRestService {
     public Date getDcrCreatedDate(final String dcrNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
 
-        final String url = String.format(EDCR_CREATED_DATE, WebUtils.extractRequestDomainURL(request, false));
+        final String url = String.format(EDCR_CREATED_DATE, ApplicationThreadLocals.getDomainURL());
 
         return restTemplate.getForObject(url, Date.class, dcrNumber);
     }
@@ -55,7 +56,7 @@ public class DcrRestService {
     public String getEdcrPlanPermissionNo(@PathVariable final String dcrNumber, final HttpServletRequest request){
     	 final RestTemplate restTemplate = new RestTemplate();
 
-         final String url = String.format(EDCR_PPNO, WebUtils.extractRequestDomainURL(request, false));
+         final String url = String.format(EDCR_PPNO, ApplicationThreadLocals.getDomainURL());
 
          return restTemplate.getForObject(url, String.class, dcrNumber);
     }
