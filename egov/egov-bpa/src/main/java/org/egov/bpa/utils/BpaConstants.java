@@ -371,6 +371,9 @@ public class BpaConstants {
     // Application Type Constants
     public static final String APPLICATION_TYPE_REGULAR = "Regular";
     public static final String APPLICATION_TYPE_ONEDAYPERMIT = "One Day Permit";
+    public static final String APPLICATION_TYPE_LOWRISK = "Low Risk";
+    public static final String APPLICATION_TYPE_MEDIUMRISK = "Medium Risk";
+    public static final String APPLICATION_TYPE_HIGHRISK = "High Risk";
 
     public static final String SLOT_TYPE_NORMAL = "Normal";
     public static final String SLOT_TYPE_ONE_DAY_PERMIT = "One Day Permit";
