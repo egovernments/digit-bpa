@@ -81,17 +81,21 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeDetail;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
@@ -101,13 +105,20 @@ import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
 import org.egov.bpa.transaction.entity.PermitFee;
+import org.egov.bpa.transaction.repository.PermitFeeRepository;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
+import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.SubOccupancy;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.demand.model.EgDemand;
+import org.egov.demand.model.EgDemandDetails;
+import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -147,6 +158,26 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 		private ApplicationBpaService applicationBpaService;
 		@Autowired
 		private ApplicationBpaBillService applicationBpaBillService;
+		
+		 
+		    @Autowired
+		    private ApplicationFeeService applicationFeeService;
+
+		    @Autowired
+		    private BpaDemandService bpaDemandService;
+
+		    @Autowired
+		    private PermitFeeRepository permitFeeRepository;
+
+		  
+
+		    
+		    @Autowired
+		    private InstallmentDao installmentDao;
+		    
+		    @Autowired
+		    private ModuleService moduleService;
+		    
 		
 		
 		
@@ -1284,13 +1315,105 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	        return convertedOccupancy;
 	    }
 
-	    @Override
-		public EgDemand createDemand(BpaApplication application) {
-			return applicationBpaBillService.createDemand(application);
-		}
+	/*
+	 * @Override public EgDemand createDemand(BpaApplication application) { return
+	 * applicationBpaBillService.createDemand(application); }
+	 * 
+	 * @Override public EgDemand
+	 * createDemandWhenFeeCollectionNotRequire(BpaApplication application) { return
+	 * applicationBpaBillService.createDemandWhenFeeCollectionNotRequire(application
+	 * ); }
+	 */
 	    
 	    @Override
-	  		public EgDemand createDemandWhenFeeCollectionNotRequire(BpaApplication application) {
-	  			return applicationBpaBillService.createDemandWhenFeeCollectionNotRequire(application);
-	  		}
+	    public EgDemand createDemand(final BpaApplication application) {
+	        final Map<String, BigDecimal> feeDetails = new HashMap<>();
+	        ApplicationFee applicationFee = new ApplicationFee();
+	        if (application.getApplicationType().getName().equals(LOWRISK)) {
+	            setPermitFee(application, feeDetails);
+	        }
+
+	        EgDemand egDemand = null;
+	        String feeType;
+	        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+	                moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
+	        
+	        List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
+	                .getFeeForListOfServices(application.getServiceType().getId(), BpaConstants.BPA_APP_FEE);
+   		   if(application.getApplicationType().getId() != null) 
+   			  application.setAdmissionfeeAmount(applicationBpaService.getFeeAmountByApplicationType(application.getApplicationType().getId()));
+         
+	        BigDecimal amount = BigDecimal.ZERO;
+	        
+	        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), application.getAdmissionfeeAmount());
+	        BigDecimal baseDemandAmount = feeDetails.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);  
+	        if (installment != null) {
+	            final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
+	            for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())
+	                dmdDetailSet.add(createDemandDetails(feeDetails.get(demandReason.getKey()), demandReason.getKey(), installment));
+	            egDemand = new EgDemand();
+	            egDemand.setEgInstallmentMaster(installment);
+	            egDemand.getEgDemandDetails().addAll(dmdDetailSet);
+	            egDemand.setIsHistory("N");
+	            egDemand.setBaseDemand(baseDemandAmount);
+	            egDemand.setCreateDate(new Date());
+	            egDemand.setModifiedDate(new Date());
+	        }
+
+	        return egDemand;
+	    }
+	    
+	    public void setPermitFee(BpaApplication application, Map<String, BigDecimal> feeDetails) {
+	        PermitFee permitFee = calculateBpaSanctionFees(application);
+	        ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
+	        permitFee.setApplicationFee(applicationFee);
+	        permitFeeRepository.save(permitFee);
+	        for(ApplicationFeeDetail appFee : applicationFee.getApplicationFeeDetail()) {
+	                feeDetails.put(appFee.getBpaFeeMapping().getBpaFeeCommon().getCode(),appFee.getAmount());            
+	        }
+	    }
+	    
+	    public EgDemand createDemandWhenFeeCollectionNotRequire(BpaApplication application) {
+	        
+	        
+	        EgDemand egDemand = new EgDemand();
+	         final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
+
+	        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
+	                moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
+	        Map<String, BigDecimal> feeDetails = new  HashMap<>();
+	        if (application.getApplicationType().getName().equals(LOWRISK) && installment!=null) {
+	        setPermitFee(application, feeDetails);
+	         for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())
+	             dmdDetailSet.add(createDemandDetails(feeDetails.get(demandReason.getKey()), demandReason.getKey(), installment));
+	        }
+	        egDemand.setEgInstallmentMaster(installment);
+	        egDemand.setIsHistory("N");
+	        egDemand.setCreateDate(new Date());
+	        if (application.getApplicationType().getName().equals(LOWRISK)) {
+	            egDemand.getEgDemandDetails().addAll(dmdDetailSet);
+	            egDemand.setBaseDemand(feeDetails.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add));
+	        }
+	        else {
+	         egDemand.setEgDemandDetails(new HashSet<>());
+	         egDemand.setBaseDemand(BigDecimal.ZERO);
+	        }
+
+	        egDemand.setModifiedDate(new Date());
+	        return egDemand;
+	    }
+	    
+	    private EgDemandDetails createDemandDetails(final BigDecimal amount, final String demandReason,
+	            final Installment installment) {
+	        final EgDemandReason demandReasonObj = bpaDemandService.getDemandReasonByCodeAndInstallment(demandReason,
+	                installment);
+	        final EgDemandDetails demandDetail = new EgDemandDetails();
+	        demandDetail.setAmount(amount);
+	        demandDetail.setAmtCollected(BigDecimal.ZERO);
+	        demandDetail.setAmtRebate(BigDecimal.ZERO);
+	        demandDetail.setEgDemandReason(demandReasonObj);
+	        demandDetail.setCreateDate(new Date());
+	        demandDetail.setModifiedDate(new Date());
+	        return demandDetail;
+	    }
 }

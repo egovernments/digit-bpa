@@ -181,7 +181,10 @@ public class BpaAjaxController {
     	if (serviceTypeIds.length > 0) {
     		 ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
     	                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
-    	       return amount.add(feeCalculation.calculateAdmissionFeeAmount(Arrays.asList(serviceTypeIds),applicationTypeId));
+    	      
+    		 if(applicationTypeId != null) {
+            	 amount = amount.add(applicationBpaService.getFeeAmountByApplicationType(applicationTypeId));
+             }
                
         } 
     	return amount;
