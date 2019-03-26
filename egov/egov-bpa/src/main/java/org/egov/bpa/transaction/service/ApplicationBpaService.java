@@ -461,7 +461,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // persistPostalAddress(application);
         // buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
-		if (application.getApplicationType().getName().equals(BpaConstants.APPLICATION_TYPE_LOWRISK) && application.getStatus().getCode().equals("Registered")) {
+		if (application.getApplicationType() != null && application.getApplicationType().getName() != null
+				&& application.getApplicationType().getName().equals(BpaConstants.APPLICATION_TYPE_LOWRISK)
+				&& application.getStatus()!=null && application.getStatus().getCode()!=null && application.getStatus().getCode().equals("Registered")) {
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
             application.setPlanPermissionDate(new Date());
 			PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
