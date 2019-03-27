@@ -529,7 +529,12 @@ public class Far extends FeatureProcess {
 		 * if (!ProcessHelper.isSmallPlot(pl)) { calculateFar(pl,
 		 * mostRestrictiveOccupancy, far); }
 		 */
-		processFarResidential(pl, mostRestrictiveOccupancy.getOccupancyType(), far, errorMsgs);
+    	String typeOfArea = pl.getPlanInformation().getTypeOfArea();
+		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+		
+		if (StringUtils.isNotBlank(typeOfArea) && roadWidth != null) {
+		processFarResidential(pl, mostRestrictiveOccupancy.getOccupancyType(), far, typeOfArea, roadWidth , errorMsgs);
+		}
         ProcessPrintHelper.print(pl);
         return pl;
     }
@@ -886,10 +891,9 @@ public class Far extends FeatureProcess {
     }
 
     
-	private void processFarResidential(Plan pl, String occupancyType, BigDecimal far, HashMap<String, String> errors) {
+	private void processFarResidential(Plan pl, String occupancyType, BigDecimal far, String typeOfArea,
+			BigDecimal roadWidth , HashMap<String, String> errors) {
 
-		String typeOfArea = pl.getPlanInformation().getTypeOfArea();
-		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
 		ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Common_FAR");
