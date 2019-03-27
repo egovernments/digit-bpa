@@ -209,7 +209,8 @@ public class StakeHolderService {
             LOG.info(" stakeHolder Status ..." + stakeHolder.getStatus().name());
         if (LOG.isInfoEnabled())
             LOG.info(" stakeHolderType Name ..." + stakeHolder.getStakeHolderType().getName());
-        if (StakeHolderStatus.APPROVED.equals(stakeHolder.getStatus())
+        if ((StakeHolderStatus.APPROVED.equals(stakeHolder.getStatus())
+                || StakeHolderStatus.PAYMENT_PENDING.equals(stakeHolder.getStatus()))
                 && !BpaConstants.STAKEHOLDER_TYPE_ARCHITECT.equalsIgnoreCase(stakeHolder.getStakeHolderType().getName())) {
             if (LOG.isInfoEnabled())
                 LOG.info(" Populating licence details");
