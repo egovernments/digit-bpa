@@ -48,6 +48,7 @@
 package org.egov.portal.service;
 
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -107,6 +108,7 @@ public class CitizenService {
         citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActive(true);
+        citizen.setTenantId(ApplicationThreadLocals.getTenantID());
         citizenRepository.saveAndFlush(citizen);
         notificationService.sendSMS(citizen.getMobileNumber(), getMessage("citizen.reg.sms"));
         notificationService.sendEmail(citizen.getEmailId(), getMessage("citizen.reg.mail.subject"),

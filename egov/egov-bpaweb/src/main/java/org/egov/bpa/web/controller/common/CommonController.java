@@ -70,7 +70,7 @@ public class CommonController {
 
         Map<String, String> cityNameTenantIdMap = new HashMap<>();
         cityNameTenantIdMap.put("jupiter", "Jupiter");
-        cityNameTenantIdMap.put("mercury", "Mercury");
+        cityNameTenantIdMap.put("mercury", "Patna");
         model.addAttribute("cityNameTenantIdMap", cityNameTenantIdMap);
         model.addAttribute("city", new City());
         model.addAttribute("clientId", clientId);
