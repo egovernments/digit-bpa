@@ -779,13 +779,6 @@ public class BpaUtils {
         return workFlowBoundary;
     }
     
-    public String getStateLogoPath() {
-        List<AppConfigValues> appConfigValueList = appConfigValueService
-                .getConfigValuesByModuleAndKey(EGMODULE_NAME, BpaConstants.STATELOGO);
-        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-    }
-    
-    
     public ApplicationType getBuildingType(BigDecimal plotArea,BigDecimal heightOfTheBuilding, String occupancy ){
     	BigDecimal lowPlotArea = new BigDecimal(300);
     	BigDecimal moderatePlotArea = new BigDecimal(500);
