@@ -54,6 +54,7 @@ import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_D;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_D1;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_F;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_G1;
+import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD1_DESC;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD2_DESC;
@@ -154,6 +155,7 @@ public class SideYardService extends GeneralRule {
 				scrutinyDetail.addColumnHeading(6, REQUIRED);
 				scrutinyDetail.addColumnHeading(7, PROVIDED);
 				scrutinyDetail.addColumnHeading(8, STATUS);
+				scrutinyDetail.setHeading(SIDE_YARD_DESC);
 				SideYardResult sideYard1Result = new SideYardResult();
 				SideYardResult sideYard2Result = new SideYardResult();
 
@@ -207,7 +209,7 @@ public class SideYardService extends GeneralRule {
 
 						if (buildingHeight != null && (minlength > 0 || max > 0)) {
 							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Yard");
+								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
 
 								if (-1 == setback.getLevel()) {
 									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Side Yard");

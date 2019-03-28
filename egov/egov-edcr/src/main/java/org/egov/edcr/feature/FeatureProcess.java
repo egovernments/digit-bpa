@@ -70,7 +70,7 @@ public abstract class FeatureProcess {
 
     public static final String DESCRIPTION = "Description";
 
-    public static final String RULE_NO = "Rule No";
+    public static final String RULE_NO = "Bye Law";
 
     public abstract Map<String, Date> getAmendments();
 

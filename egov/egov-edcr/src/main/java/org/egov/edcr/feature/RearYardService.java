@@ -107,7 +107,7 @@ public class RearYardService extends GeneralRule {
 	private static final BigDecimal REARYARDMINIMUM_DISTANCE_9 = BigDecimal.valueOf(9);
 	private static final BigDecimal REARYARDMINIMUM_DISTANCE_12 = BigDecimal.valueOf(12);
 
-	public static final String BSMT_REAR_YARD_DESC = "Basement Rear Yard";
+	public static final String BSMT_REAR_YARD_DESC = "Basement Rear Setback";
 	private static final int PLOTAREA_300 = 300;
 
 	private class RearYardResult {
@@ -142,6 +142,7 @@ public class RearYardService extends GeneralRule {
 				scrutinyDetail.addColumnHeading(5, REQUIRED);
 				scrutinyDetail.addColumnHeading(6, PROVIDED);
 				scrutinyDetail.addColumnHeading(7, STATUS);
+				scrutinyDetail.setHeading(REAR_YARD_DESC);
 				RearYardResult rearYardResult = new RearYardResult();
 
 				for (SetBack setback : block.getSetBacks()) {
@@ -161,10 +162,10 @@ public class RearYardService extends GeneralRule {
 
 						if (buildingHeight != null && (min.doubleValue() > 0 || mean.doubleValue() > 0)) {
 							for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
-								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Rear Yard");
+								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Rear Setback");
 
 								if (-1 == setback.getLevel()) {
-									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Front Yard");
+									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Front Setback");
 									checkRearYardBasement(pl, block.getBuilding(), block.getName(),
 											setback.getLevel(), plot, BSMT_REAR_YARD_DESC, min, mean,
 											occupancy.getType(), rearYardResult);
