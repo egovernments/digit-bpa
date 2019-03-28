@@ -116,6 +116,10 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
 
     @GetMapping("/occupancy-certificate/apply")
     public String newOCForm(final Model model, final HttpServletRequest request) {
+        
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         OccupancyCertificate occupancyCertificate = new OccupancyCertificate();
         occupancyCertificate.setApplicationDate(new Date());
         loadFormData(model, request, occupancyCertificate);

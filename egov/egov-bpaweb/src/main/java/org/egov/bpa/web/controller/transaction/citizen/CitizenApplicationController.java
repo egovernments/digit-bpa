@@ -39,7 +39,6 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
 import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
@@ -60,7 +59,6 @@ import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -90,21 +88,17 @@ import org.egov.bpa.transaction.entity.common.DcrDocument;
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
-import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
-import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
-import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.custom.CustomImplProvider;
@@ -164,6 +158,10 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
 
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
+
         if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
             return "redirect:/common/city/selection-form?url=" + request.getRequestURL().toString();
         }
@@ -180,18 +178,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private String loadNewForm(final BpaApplication bpaApplication, final Model model, String serviceCode) {
         User user = securityUtils.getCurrentUser();
         StakeHolder stkHldr = stakeHolderService.findById(user.getId());
+
         if (validateStakeholderIsEligibleSubmitAppln(model, serviceCode, stkHldr))
             return COMMON_ERROR;
-        if (user.getType().equals(BUSINESS) && stkHldr.getDemand() != null) {
-            List<AppConfigValues> appConfigValueList = appConfigValueService
-                    .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
-            if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
-                if (stkHldr.getStatus() != null
-                        && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().toString())) {
-                    return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr, model);
-                }
-            }
-        }
         model.addAttribute("stakeHolderType", stkHldr.getStakeHolderType().getName());
         prepareFormData(model);
         bpaApplication.setApplicationDate(new Date());
@@ -281,6 +270,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/demolition-form")
     public String showDemolition(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_02);
     }
@@ -288,6 +280,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/reconstruction-form")
     public String showReconstruction(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_03);
     }
@@ -295,6 +290,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/alteration-form")
     public String showAlteration(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_04);
     }
@@ -302,6 +300,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/subdevland-form")
     public String showSubDevlisionOfLand(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_05);
     }
@@ -309,6 +310,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/addextnew-form")
     public String loadAddOfExtection(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_06);
     }
@@ -316,6 +320,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/changeofoccupancy-form")
     public String showChangeOfOccupancy(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_07);
     }
@@ -323,6 +330,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/permissionhutorshud-form")
     public String loadPermOfHutOrShud(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_09);
     }
@@ -330,6 +340,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/amenity-form")
     public String loadAmenity(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_08);
     }
@@ -337,6 +350,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/towerconstruction-form")
     public String loadTowerConstruction(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_14);
     }
@@ -344,6 +360,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/polestructures-form")
     public String loadPoleStruture(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
+        if (validateStakeholderRegFee(model)) {
+            return COMMON_ERROR;
+        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_15);
     }
@@ -466,26 +485,29 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
         bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
-      
+
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
+        if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
 
-       String occupancyName =""; 
-        if(bpaApplication.getPermitOccupanciesTemp().size() == 1)
-        	occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
+        String occupancyName = "";
+        if (bpaApplication.getPermitOccupanciesTemp().size() == 1)
+            occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
         ApplicationType applicationType = null;
-        
-        if(bpaApplication.getIsOneDayPermitApplication())
-        	applicationType = applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT);
-        else if(!bpaApplication.getBuildingDetailFromEdcr().isEmpty() && bpaApplication.getBuildingDetailFromEdcr().get(0).getTotalPlintArea().compareTo(BigDecimal.ZERO) > 0)
-        	applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
-    		   bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetailFromEdcr()).getHeightFromGroundWithOutStairRoom(),occupancyName);
+
+        if (bpaApplication.getIsOneDayPermitApplication())
+            applicationType = applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT);
+        else if (!bpaApplication.getBuildingDetailFromEdcr().isEmpty()
+                && bpaApplication.getBuildingDetailFromEdcr().get(0).getTotalPlintArea().compareTo(BigDecimal.ZERO) > 0)
+            applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
+                    bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetailFromEdcr())
+                            .getHeightFromGroundWithOutStairRoom(),
+                    occupancyName);
 
         bpaApplication.setApplicationType(applicationType);
-       
+
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
-     
+
         if (citizenOrBusinessUser)
             if (isCitizen)
                 bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),

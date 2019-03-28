@@ -50,13 +50,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.egov.bpa.autonumber.BpaBillReferenceNumberGenerator;
-import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.repository.StakeHolderRepository;
@@ -195,11 +193,11 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
          * (final BpaFeeDetail feeDetail : bpaFeeDetails) { feeDetails.put(feeDetail.getBpafee().getCode(),
          * BigDecimal.valueOf(feeDetail.getAmount())); } }
          */
-      /*  Criteria feeCrit = getRegistrationFeeCriteria(BpaConstants.BPA_REGISTRATION_FEE);
-        List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
-        for (final BpaFeeMapping feeMap : bpaFeeMap) {
-            feeDetails.put(feeMap.getBpaFeeCommon().getCode(), BigDecimal.valueOf(feeMap.getAmount()));
-        }*/
+        /*
+         * Criteria feeCrit = getRegistrationFeeCriteria(BpaConstants.BPA_REGISTRATION_FEE); List<BpaFeeMapping> bpaFeeMap =
+         * feeCrit.list(); for (final BpaFeeMapping feeMap : bpaFeeMap) { feeDetails.put(feeMap.getBpaFeeCommon().getCode(),
+         * BigDecimal.valueOf(feeMap.getAmount())); }
+         */
 
         /*
          * List<BpaFee> bpaRegistrationFees = bpaFeeService
@@ -208,10 +206,11 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
          */
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
-           /* for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet()) {
-                registrationfeeAmount = demandReason.getValue().setScale(0, BigDecimal.ROUND_HALF_UP);
-                dmdDetailSet.add(createDemandDetails(registrationfeeAmount, demandReason.getKey(), installment));
-            }*/
+            /*
+             * for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet()) { registrationfeeAmount =
+             * demandReason.getValue().setScale(0, BigDecimal.ROUND_HALF_UP);
+             * dmdDetailSet.add(createDemandDetails(registrationfeeAmount, demandReason.getKey(), installment)); }
+             */
             dmdDetailSet.add(createDemandDetails(registrationfeeAmount, BpaConstants.REGISTRATION_FEES_CODE, installment));
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);

@@ -66,6 +66,7 @@ import static org.egov.bpa.utils.BpaConstants.YES;
 import static org.egov.bpa.utils.BpaConstants.ZONE;
 import static org.egov.bpa.utils.BpaConstants.getBuildingFloorsList;
 import static org.egov.bpa.utils.OcConstants.OCCUPANCY_CERTIFICATE;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,6 +81,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.service.ApplicationTypeService;
 import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
@@ -409,6 +411,26 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
                 bpaUtils.getAppconfigValueByKeyName(DCR_DOC_MANUAL_UPLOAD).equalsIgnoreCase(YES));
         model.addAttribute("dcrDocsAutoPopulateAndManuallyUpload",
                 bpaUtils.getAppconfigValueByKeyName(DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD).equalsIgnoreCase(YES));
+    }
+    
+    protected boolean validateStakeholderRegFee(final Model model) {
+        User user = securityUtils.getCurrentUser();
+        StakeHolder stkHldr = stakeHolderService.findById(user.getId());
+        if (user.getType().equals(BUSINESS) && stkHldr.getDemand() != null) {
+            List<AppConfigValues> appConfigValueList = appConfigValueService
+                    .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
+            if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
+                if (stkHldr.getStatus() != null
+                        && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().toString())) {
+                    model.addAttribute(MESSAGE,
+                            messageSource.getMessage("msg.stakeholder.reg.payfees.to.create.appln",
+                                    new String[] {}, null));
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 }

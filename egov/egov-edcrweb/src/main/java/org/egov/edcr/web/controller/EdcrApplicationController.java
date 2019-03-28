@@ -1,6 +1,8 @@
 package org.egov.edcr.web.controller;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.MESSAGE;
 import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
@@ -20,6 +22,7 @@ import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.master.service.StakeholderTypeService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.commons.service.OccupancyService;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
@@ -29,7 +32,9 @@ import org.egov.edcr.service.EdcrApplicationService;
 import org.egov.edcr.service.EdcrBpaRestService;
 import org.egov.edcr.service.EdcrPdfDetailService;
 import org.egov.edcr.web.adaptor.EdcrApplicationJsonAdaptor;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.AddressType;
@@ -72,7 +77,6 @@ public class EdcrApplicationController {
 
     @Autowired
     private EdcrApplicationService edcrApplicationService;
-
     @Autowired
     private MessageSource messageSource;
     @Autowired
@@ -89,6 +93,8 @@ public class EdcrApplicationController {
     private EdcrPdfDetailService edcrPdfDetailService;
     @Autowired
     private StakeholderTypeService stakeholderTypeService;
+    @Autowired
+    protected AppConfigValueService appConfigValueService;
 
     private void prepareNewForm(Model model, HttpServletRequest request) {
         model.addAttribute("serviceTypeList", serviceTypeService.getEDcrRequiredServiceTypes());
@@ -137,6 +143,20 @@ public class EdcrApplicationController {
         }
 
         User user = securityUtils.getCurrentUser();
+        
+        if (user.getType().equals(BUSINESS) && stakeHolder.getDemand() != null) {
+            List<AppConfigValues> appConfigValueList = appConfigValueService
+                    .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
+            if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
+                if (stakeHolder.getStatus() != null
+                        && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
+                    model.addAttribute(MESSAGE,
+                            messageSource.getMessage("msg.stakeholder.reg.payfees.to.create.appln",
+                                    new String[] {}, null));
+                    return true;
+                }
+            }
+        }
 
         if (user.getType().equals(BUSINESS) && stakeHolder != null && stakeHolder.getDemand() != null
                 && edcrBpaRestService.checkAnyTaxIsPendingToCollectForStakeHolder(user.getId(), request)) {

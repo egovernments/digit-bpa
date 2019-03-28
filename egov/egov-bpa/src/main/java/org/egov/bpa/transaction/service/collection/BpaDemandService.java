@@ -322,6 +322,18 @@ public class BpaDemandService {
         return getCurrentSession().createSQLQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId())
                 .list();
     }
+    
+    public List<Object> getDmdCollAmtInstallmentWiseForRegFee(final EgDemand egDemand) {
+        final StringBuilder queryStringBuilder = new StringBuilder();
+        queryStringBuilder
+                .append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
+                        + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from state.eg_demand_details dmdDet,state.eg_demand_reason dmdRes, "
+                        + "state.eg_installment_master inst,state.eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
+                        + "and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
+                        + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+        return getCurrentSession().createSQLQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId())
+                .list();
+    }
 
     public Criteria createCriteriaforFeeAmount(List<Long> serviceTypeList, final String feeType) {
 
