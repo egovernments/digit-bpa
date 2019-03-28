@@ -62,8 +62,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS;
 import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_AE;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_OVERSEER;
 import static org.egov.bpa.utils.BpaConstants.FIELD_INSPECTION_COMPLETED;
@@ -93,7 +92,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_APPROVAL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
 import static org.egov.bpa.utils.BpaConstants.LOWRISK;
-
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -200,7 +198,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         loadCommonApplicationDetails(model, application);
         buildRejectionReasons(model, application);
         model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
-        
+
         if (application != null) {
             loadFormData(model, application);
             bpaUtils.loadBoundary(application);
@@ -340,7 +338,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
         String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
 
-
         if (APPLICATION_STATUS_NOCUPDATED.equals(bpaApplication.getStatus().getCode())
                 && feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
             List<PermitFee> permitFeeList = permitFeeService
@@ -354,7 +351,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 return APPLICATION_VIEW;
             }
         }
-        
+
         if (WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)
                 && feeCalculationMode.equalsIgnoreCase(BpaConstants.MANUAL)) {
             List<PermitFee> permitFeeList = permitFeeService
@@ -574,15 +571,15 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         // added for one day permit. amount rule and pending action needs to be set only for other services.
         if (application.getIsOneDayPermitApplication()) {
-            model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
-            workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
+            model.addAttribute(ADDITIONALRULE, APPLICATION_TYPE_ONEDAYPERMIT);
+            workflowContainer.setAdditionalRule(APPLICATION_TYPE_ONEDAYPERMIT);
             if (application.getState() != null && application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
                     || application.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
                 workflowContainer.setPendingActions(application.getState().getNextAction());
 
         } else {
-            model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
-            workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
+            model.addAttribute(ADDITIONALRULE, application.getApplicationType().getName());
+            workflowContainer.setAdditionalRule(application.getApplicationType().getName());
             List<PermitLetterToParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
 
             if (application.getState() != null
@@ -599,9 +596,12 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                             && !lettertoParties.isEmpty()
                             && APPLICATION_STATUS_NOCUPDATED
                                     .equals(lettertoParties.get(0).getLetterToParty().getCurrentApplnStatus().getCode())) {
-                workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceType(application));
+                if (BpaConstants.APPLICATION_TYPE_REGULAR.equals(application.getApplicationType().getName()))
+                    workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceType(application));
+
                 workflowContainer.setPendingActions(application.getState().getNextAction());
-            } else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+            } else if (BpaConstants.APPLICATION_TYPE_REGULAR.equals(application.getApplicationType().getName())
+                    && APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                     && !APPLICATION_STATUS_RECORD_APPROVED.equalsIgnoreCase(application.getState().getValue())) {
                 workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceType(application));
             }
@@ -694,72 +694,75 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 || (APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(application.getStatus().getCode())
                         && FORWARDED_TO_CLERK.equalsIgnoreCase(application.getCurrentState().getNextAction()))) {
             model.addAttribute("showRejectionReasons", true);
-			
-			List<ChecklistServiceTypeMapping> additionalRejectionReasonList = checklistServiceTypeService
-					.findByActiveChecklistAndServiceType(application.getServiceType().getDescription(),"ADDITIONALREJECTIONREASONS");			
-			
-			List<ChecklistServiceTypeMapping> rejectionReasonList =checklistServiceTypeService.findByActiveChecklistAndServiceType(
-					application.getServiceType().getDescription(),"PERMITREJECTIONREASONS");
-			
-			
-			
-			List<ApplicationPermitConditions> rejectionApplnPermitConditions = new ArrayList<>();
-			if(application.getRejectionReasons() == null || application.getRejectionReasons().isEmpty()){
-				for(ChecklistServiceTypeMapping checklistServicetype :rejectionReasonList){
-					ApplicationPermitConditions condition = new ApplicationPermitConditions();
-					NoticeCondition noticeCondtion = new NoticeCondition();
-					noticeCondtion.setChecklistServicetype(checklistServicetype);
-					condition.setNoticeCondition(noticeCondtion);
-					condition.setApplication(application);
-					rejectionApplnPermitConditions.add(condition);
-				}
-			application.setRejectionReasonsTemp(rejectionApplnPermitConditions);
-			}else{
-				for(ApplicationPermitConditions apc: application.getRejectionReasons()){
-					if(apc.getNoticeCondition().getType().name().equals("REJECTIONREASONS"))
-						rejectionApplnPermitConditions.add(apc);
-				}
-			application.setRejectionReasonsTemp(rejectionApplnPermitConditions);
-			}
-			
-			List<ApplicationPermitConditions> additionalRejectionApplnPermitConditions = new ArrayList<>();
-			if(application.getAdditionalPermitConditions() == null || application.getAdditionalPermitConditions().isEmpty()){
-				for(ChecklistServiceTypeMapping checklistServicetype :additionalRejectionReasonList){
-					ApplicationPermitConditions condition = new ApplicationPermitConditions();
-					NoticeCondition noticeCondtion = new NoticeCondition();
-					noticeCondtion.setChecklistServicetype(checklistServicetype);
-					condition.setNoticeCondition(noticeCondtion);
-					condition.setApplication(application);
-					additionalRejectionApplnPermitConditions.add(condition);
-				}	
-		    	application.setAdditionalRejectReasonsTemp(additionalRejectionApplnPermitConditions);
-			} else {
-				for(ApplicationPermitConditions apc: application.getAdditionalPermitConditions()){
-					if(apc.getNoticeCondition().getType().name().equals("ADDITIONALREJECTIONREASONS"))
-						additionalRejectionApplnPermitConditions.add(apc);
-				}
-				application.setAdditionalRejectReasonsTemp(additionalRejectionApplnPermitConditions);
-			}
+
+            List<ChecklistServiceTypeMapping> additionalRejectionReasonList = checklistServiceTypeService
+                    .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(),
+                            "ADDITIONALREJECTIONREASONS");
+
+            List<ChecklistServiceTypeMapping> rejectionReasonList = checklistServiceTypeService
+                    .findByActiveChecklistAndServiceType(
+                            application.getServiceType().getDescription(), "PERMITREJECTIONREASONS");
+
+            List<ApplicationPermitConditions> rejectionApplnPermitConditions = new ArrayList<>();
+            if (application.getRejectionReasons() == null || application.getRejectionReasons().isEmpty()) {
+                for (ChecklistServiceTypeMapping checklistServicetype : rejectionReasonList) {
+                    ApplicationPermitConditions condition = new ApplicationPermitConditions();
+                    NoticeCondition noticeCondtion = new NoticeCondition();
+                    noticeCondtion.setChecklistServicetype(checklistServicetype);
+                    condition.setNoticeCondition(noticeCondtion);
+                    condition.setApplication(application);
+                    rejectionApplnPermitConditions.add(condition);
+                }
+                application.setRejectionReasonsTemp(rejectionApplnPermitConditions);
+            } else {
+                for (ApplicationPermitConditions apc : application.getRejectionReasons()) {
+                    if (apc.getNoticeCondition().getType().name().equals("REJECTIONREASONS"))
+                        rejectionApplnPermitConditions.add(apc);
+                }
+                application.setRejectionReasonsTemp(rejectionApplnPermitConditions);
+            }
+
+            List<ApplicationPermitConditions> additionalRejectionApplnPermitConditions = new ArrayList<>();
+            if (application.getAdditionalPermitConditions() == null || application.getAdditionalPermitConditions().isEmpty()) {
+                for (ChecklistServiceTypeMapping checklistServicetype : additionalRejectionReasonList) {
+                    ApplicationPermitConditions condition = new ApplicationPermitConditions();
+                    NoticeCondition noticeCondtion = new NoticeCondition();
+                    noticeCondtion.setChecklistServicetype(checklistServicetype);
+                    condition.setNoticeCondition(noticeCondtion);
+                    condition.setApplication(application);
+                    additionalRejectionApplnPermitConditions.add(condition);
+                }
+                application.setAdditionalRejectReasonsTemp(additionalRejectionApplnPermitConditions);
+            } else {
+                for (ApplicationPermitConditions apc : application.getAdditionalPermitConditions()) {
+                    if (apc.getNoticeCondition().getType().name().equals("ADDITIONALREJECTIONREASONS"))
+                        additionalRejectionApplnPermitConditions.add(apc);
+                }
+                application.setAdditionalRejectReasonsTemp(additionalRejectionApplnPermitConditions);
+            }
         }
     }
 
     private void buildApplicationPermitConditions(final BpaApplication application, final Model model) {
         model.addAttribute("showpermitconditions", true);
-       /* model.addAttribute("permitConditions", permitConditionsService
-                .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.STATIC_PERMITCONDITION.name()));
-        model.addAttribute("modifiablePermitConditions", permitConditionsService
-                .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.DYNAMIC_PERMITCONDITION.name())); 
-        model.addAttribute("additionalPermitCondition", permitConditionsService
-                .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.ADDITIONAL_PERMITCONDITION.name()).get(0));*/
-        
-		model.addAttribute("permitConditions", checklistServiceTypeService
-				.findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), "PERMITGENERALCONDITIONS"));
+        /*
+         * model.addAttribute("permitConditions", permitConditionsService
+         * .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.STATIC_PERMITCONDITION.name()));
+         * model.addAttribute("modifiablePermitConditions", permitConditionsService
+         * .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.DYNAMIC_PERMITCONDITION.name()));
+         * model.addAttribute("additionalPermitCondition", permitConditionsService
+         * .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.ADDITIONAL_PERMITCONDITION.name()).get(0));
+         */
+
+        model.addAttribute("permitConditions", checklistServiceTypeService
+                .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), "PERMITGENERALCONDITIONS"));
 
         model.addAttribute("modifiablePermitConditions", checklistServiceTypeService
-                .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(),"PERMITNOCCONDITIONS"));        
+                .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), "PERMITNOCCONDITIONS"));
 
         model.addAttribute("additionalPermitCondition", checklistServiceTypeService
-                .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(),"PERMITADDITIONALCONDITIONS"));
+                .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(),
+                        "PERMITADDITIONALCONDITIONS"));
 
         application.setDynamicPermitConditionsTemp(bpaApplicationPermitConditionsService
                 .findAllByApplicationAndPermitConditionType(application, ConditionType.NOCCONDITIONS));

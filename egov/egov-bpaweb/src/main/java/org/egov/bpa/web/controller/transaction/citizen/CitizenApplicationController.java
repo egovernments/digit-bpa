@@ -443,7 +443,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 && request.getParameter(ONLINE_PAYMENT_ENABLE)
                         .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
         final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(),
-                bpaApplication.getStateType(), WF_NEW_STATE);
+                bpaApplication.getStateType(), WF_NEW_STATE, bpaApplication.getApplicationType().getName());
         if (wfMatrix != null)
             approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
                     bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());

@@ -11,9 +11,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
 import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
 import static org.egov.bpa.utils.BpaConstants.DOC_SCRUTINY_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
 import static org.egov.bpa.utils.BpaConstants.HIGHRISK;
@@ -225,13 +223,13 @@ public class BpaUtils {
     }
 
     public WorkFlowMatrix getWfMatrixByCurrentState(final Boolean isOneDayPermit, final String stateType,
-            final String currentState) {
+            final String currentState, String applicationType) {
         if (isOneDayPermit) {
             return bpaApplicationWorkflowService.getWfMatrix(stateType, null, null,
-                    CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT, currentState, null);
+                    BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT, currentState, null);
         } else
             return bpaApplicationWorkflowService.getWfMatrix(stateType, null, null,
-                    CREATE_ADDITIONAL_RULE_CREATE, currentState, null);
+                    applicationType, currentState, null);
     }
 
     public WorkFlowMatrix getWfMatrixByCurrentState(final String stateType, final String currentState) {
@@ -416,7 +414,7 @@ public class BpaUtils {
     private void buildWorkFlow(Long approvalPosition, final BpaApplication application, final String currentState,
             final String remarks, final String workFlowAction, final BigDecimal amountRule) {
         final WorkFlowMatrix wfMatrix = getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
-                application.getStateType(), currentState);
+                application.getStateType(), currentState, application.getApplicationType().getName());
         final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
         Long approvalPositionId = approvalPosition;
         if (approvalPosition == null) {
@@ -426,27 +424,27 @@ public class BpaUtils {
         if (applicationWorkflowCustomDefaultImpl != null)
             if (LETTERTOPARTYINITIATE.equals(currentState))
                 applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
-                        CREATE_ADDITIONAL_RULE_CREATE, LETTERTOPARTYINITIATE, amountRule);
+                        application.getApplicationType().getName(), LETTERTOPARTYINITIATE, amountRule);
             else if (LPCREATED.equals(currentState))
                 applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
-                        CREATE_ADDITIONAL_RULE_CREATE, LPCREATED, amountRule);
+                        application.getApplicationType().getName(), LPCREATED, amountRule);
             else if (LPREPLIED.equals(currentState))
                 applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
-                        CREATE_ADDITIONAL_RULE_CREATE, LPREPLYRECEIVED, amountRule);
+                        application.getApplicationType().getName(), LPREPLYRECEIVED, amountRule);
             else if (WF_PERMIT_FEE_COLL_PENDING.equals(currentState)) {
                 if (application.getIsOneDayPermitApplication()) {
                     applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
-                            CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT, WF_PERMIT_FEE_COLL_PENDING, amountRule);
+                            BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT, WF_PERMIT_FEE_COLL_PENDING, amountRule);
                 } else
                     applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
-                            CREATE_ADDITIONAL_RULE_CREATE, WF_PERMIT_FEE_COLL_PENDING, amountRule);
+                            application.getApplicationType().getName(), WF_PERMIT_FEE_COLL_PENDING, amountRule);
             } else {
                 if (application.getIsOneDayPermitApplication()) {
                     applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
-                            CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT, workFlowAction, amountRule);
+                            BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT, workFlowAction, amountRule);
                 } else
                     applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
-                            CREATE_ADDITIONAL_RULE_CREATE, workFlowAction, amountRule);
+                            application.getApplicationType().getName(), workFlowAction, amountRule);
             }
     }
 
@@ -778,43 +776,51 @@ public class BpaUtils {
         }
         return workFlowBoundary;
     }
-    
-    public ApplicationType getBuildingType(BigDecimal plotArea,BigDecimal heightOfTheBuilding, String occupancy ){
-    	BigDecimal lowPlotArea = new BigDecimal(300);
-    	BigDecimal moderatePlotArea = new BigDecimal(500);
-    	BigDecimal moderateHeightOfTheBuilding = new BigDecimal(15);
-    	
-		if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
-			if (plotArea.compareTo(lowPlotArea) <= 0 && heightOfTheBuilding.compareTo(BigDecimal.TEN) <= 0) {
-				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
-			} else if (plotArea.compareTo(moderatePlotArea) <= 0
-					&& heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
-				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
-			} else if(plotArea.compareTo(moderatePlotArea) > 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) > 0){ 
-				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
-			} else 
-				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_REGULAR);
-		} else {
-			if (plotArea.compareTo(moderatePlotArea) <= 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
-				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
-			} else if(plotArea.compareTo(moderatePlotArea) > 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) > 0)
-				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
-			else 
-				return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_REGULAR);
-		}
+
+    public String getStateLogoPath() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService
+                .getConfigValuesByModuleAndKey(EGMODULE_NAME, BpaConstants.STATELOGO);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
     }
-		
-    public ApplicationType getApplicationTypeByHeightAndArea(BigDecimal height , BigDecimal area) {    	
-    	if(height.compareTo(BigDecimal.valueOf(10)) <=0 && area.compareTo(BigDecimal.valueOf(300))<=0)
-    	   return applicationTypeService.findByName(LOWRISK);
-    	else if(height.compareTo(BigDecimal.valueOf(10)) > 0 &&	height.compareTo(BigDecimal.valueOf(15)) <=0 &&
-    			area.compareTo(BigDecimal.valueOf(300))>0 &&  area.compareTo(BigDecimal.valueOf(500))<=0)
-     	   return applicationTypeService.findByName(MEDIUMRISK);
-    	else if(height.compareTo(BigDecimal.valueOf(15)) > 0 &&
-    			area.compareTo(BigDecimal.valueOf(500)) > 0)
-    		return applicationTypeService.findByName(HIGHRISK);   
-    	else
-    		return applicationTypeService.findByName(APPLICATION_TYPE_REGULAR);  
+
+    public ApplicationType getBuildingType(BigDecimal plotArea, BigDecimal heightOfTheBuilding, String occupancy) {
+        BigDecimal lowPlotArea = new BigDecimal(300);
+        BigDecimal moderatePlotArea = new BigDecimal(500);
+        BigDecimal moderateHeightOfTheBuilding = new BigDecimal(15);
+
+        if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
+            if (plotArea.compareTo(lowPlotArea) <= 0 && heightOfTheBuilding.compareTo(BigDecimal.TEN) <= 0) {
+                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
+            } else if (plotArea.compareTo(moderatePlotArea) <= 0
+                    && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
+                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+            } else if (plotArea.compareTo(moderatePlotArea) > 0
+                    && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) > 0) {
+                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+            } else
+                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_REGULAR);
+        } else {
+            if (plotArea.compareTo(moderatePlotArea) <= 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
+                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+            } else if (plotArea.compareTo(moderatePlotArea) > 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) > 0)
+                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+            else
+                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_REGULAR);
+        }
+    }
+
+    public ApplicationType getApplicationTypeByHeightAndArea(BigDecimal height, BigDecimal area) {
+        if (height.compareTo(BigDecimal.valueOf(10)) <= 0 && area.compareTo(BigDecimal.valueOf(300)) <= 0)
+            return applicationTypeService.findByName(LOWRISK);
+        else if (height.compareTo(BigDecimal.valueOf(10)) > 0 && height.compareTo(BigDecimal.valueOf(15)) <= 0 &&
+                area.compareTo(BigDecimal.valueOf(300)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0)
+            return applicationTypeService.findByName(MEDIUMRISK);
+        else if (height.compareTo(BigDecimal.valueOf(15)) > 0 &&
+                area.compareTo(BigDecimal.valueOf(500)) > 0)
+            return applicationTypeService.findByName(HIGHRISK);
+        else
+            return applicationTypeService.findByName(APPLICATION_TYPE_REGULAR);
 
     }
+
 }

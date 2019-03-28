@@ -222,7 +222,7 @@ public class BpaTaxCollection extends TaxCollection {
                 .getApplicationByDemand(demand);
         if (application.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_SUBMITTED)) {
             Long approvalPosition = 0l;
-            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(), application.getStateType(), WF_NEW_STATE);
+            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(), application.getStateType(), WF_NEW_STATE,application.getApplicationType().getName());
             if (wfMatrix != null)
 				approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
 						bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());

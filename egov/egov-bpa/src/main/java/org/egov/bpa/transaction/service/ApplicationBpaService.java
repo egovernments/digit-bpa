@@ -313,12 +313,12 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
        
         if (!bpaUtils.logedInuseCitizenOrBusinessUser()) {
             WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
-                    application.getStateType(), WF_CREATED_STATE);
+                    application.getStateType(), WF_CREATED_STATE,application.getApplicationType().getName());
             String currentState = WF_CREATED_STATE;
             if (application.getAdmissionfeeAmount() != null
                     && application.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0) {
                 wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
-                        application.getStateType(), WF_NEW_STATE);
+                        application.getStateType(), WF_NEW_STATE,application.getApplicationType().getName());
                 currentState = WF_NEW_STATE;
             }
             if (wfMatrix != null)

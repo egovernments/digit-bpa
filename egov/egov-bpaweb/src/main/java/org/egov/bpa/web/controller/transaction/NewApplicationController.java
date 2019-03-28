@@ -111,7 +111,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
             return loadFormData(bpaApplication, model);
         }
 
-        final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(), bpaApplication.getStateType(), BpaConstants.WF_NEW_STATE);
+        final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(), bpaApplication.getStateType(), BpaConstants.WF_NEW_STATE,bpaApplication.getApplicationType().getName());
         if (wfmatrix != null)
 			userPosition = bpaUtils.getUserPositionIdByZone(wfmatrix.getNextDesignation(),
 					bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());

@@ -374,7 +374,7 @@ public class BpaWorkFlowService {
 	public Position getApproverPositionOfElectionWardByCurrentState(final BpaApplication application,
 			final String currentState) {
 		WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
-				application.getStateType(), currentState);
+				application.getStateType(), currentState,application.getApplicationType().getName());
 		return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
 				bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
 	}
