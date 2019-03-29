@@ -54,7 +54,6 @@ import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_D;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_D1;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_F;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_G1;
-import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.REAR_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.YES;
@@ -165,7 +164,7 @@ public class RearYardService extends GeneralRule {
 								scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Rear Setback");
 
 								if (-1 == setback.getLevel()) {
-									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Front Setback");
+									scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Basement Rear Setback");
 									checkRearYardBasement(pl, block.getBuilding(), block.getName(),
 											setback.getLevel(), plot, BSMT_REAR_YARD_DESC, min, mean,
 											occupancy.getType(), rearYardResult);
@@ -281,8 +280,6 @@ public class RearYardService extends GeneralRule {
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(33)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(39)) <= 0) {
 			minVal = REARYARDMINIMUM_DISTANCE_3;
-			// meanVal = FRONTYARDMEAN_DISTANCE_1_8;
-			// valid = validateMinimumAndMeanValue(valid, min, mean, minVal, meanVal);
 		} else if (depthOfPlot.compareTo(BigDecimal.valueOf(39)) > 0
 				&& depthOfPlot.compareTo(BigDecimal.valueOf(45)) <= 0) {
 			minVal = REARYARDMINIMUM_DISTANCE_4;
@@ -301,7 +298,7 @@ public class RearYardService extends GeneralRule {
 	}
 
 	private Boolean checkRearYardBasement(Plan planDetail, Building building, String blockName, Integer level,
-			Plot plot, String frontYardFieldName, BigDecimal min, BigDecimal mean,
+			Plot plot, String rearYardFieldName, BigDecimal min, BigDecimal mean,
 			OccupancyType mostRestrictiveOccupancy, RearYardResult rearYardResult) {
 		Boolean valid = false;
 		String subRule = RULE_47;
@@ -556,7 +553,7 @@ public class RearYardService extends GeneralRule {
 			final OccupancyType mostRestrictiveOccupancy, RearYardResult rearYardResult, BigDecimal buildingHeight) {
 		Boolean valid = false;
 		String subRule = RULE_35;
-		String rule = FRONT_YARD_DESC;
+		String rule = REAR_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		valid = allOccupancyForHighRise(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult, subRule,
@@ -601,7 +598,7 @@ public class RearYardService extends GeneralRule {
 		}
 
 		/*
-		 * if (-1 == level) { rule = BSMT_FRONT_YARD_DESC; subRuleDesc =
+		 * if (-1 == level) { rule = BSMT_REAR_YARD_DESC; subRuleDesc =
 		 * SUB_RULE_24_12_DESCRIPTION; subRule = SUB_RULE_24_12; }
 		 */
 
@@ -617,7 +614,7 @@ public class RearYardService extends GeneralRule {
 			final OccupancyType mostRestrictiveOccupancy, RearYardResult rearYardResult, BigDecimal buildingHeight) {
 		Boolean valid = false;
 		String subRule = RULE_37_TWO_A;
-		String rule = FRONT_YARD_DESC;
+		String rule = REAR_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		// Educational

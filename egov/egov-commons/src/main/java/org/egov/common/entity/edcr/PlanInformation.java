@@ -100,29 +100,29 @@ public class PlanInformation implements Serializable {
 
     private transient BigDecimal noOfBeds;
 
-    private transient Boolean nocToAbutSide = false;
+    //private transient Boolean nocToAbutSide = false;
 
     private transient String nocToAbutSideDesc = NA;
 
-    private transient Boolean nocToAbutRear = false;
+    //private transient Boolean nocToAbutRear = false;
 
     private transient String nocToAbutRearDesc = NA;
 
     private transient Boolean openingOnSide = false;
 
-    private transient Boolean openingOnSideBelow2mts = false;
+   //private transient Boolean openingOnSideBelow2mts = false;
 
     private transient String openingOnSideBelow2mtsDesc = NA;
 
-    private transient Boolean openingOnSideAbove2mts = false;
+   //private transient Boolean openingOnSideAbove2mts = false;
 
     private transient String openingOnSideAbove2mtsDesc = NA;
 
-    private transient Boolean openingOnRearBelow2mts = false;
+    //private transient Boolean openingOnRearBelow2mts = false;
 
     private transient String openingOnRearBelow2mtsDesc = NA;
 
-    private transient Boolean openingOnRearAbove2mts = false;
+    //private transient Boolean openingOnRearAbove2mts = false;
 
     private transient String openingOnRearAbove2mtsDesc = NA;
 
@@ -160,6 +160,24 @@ public class PlanInformation implements Serializable {
     private BigDecimal depthOfPlot = BigDecimal.ZERO;
     
     private BigDecimal widthOfPlot = BigDecimal.ZERO;
+    
+    private transient String buildingNearMonuments;
+    
+    private transient String gvtBuildingWithin200Mt;
+    
+    private transient String nocNearMonuments = NA;
+    
+    private transient String nocNearAirport = NA;
+    
+    private transient String nocNearDefenceAerodomes = NA;
+    
+    private transient String nocStateEnvImpact = NA;
+    
+    private transient String nocRailways = NA;
+    
+    private transient String nocCollectorGvtLand = NA;
+    
+    private transient String nocIrrigationDept = NA;
     
     public Boolean getParkingToMainBuilding() {
         return parkingToMainBuilding;
@@ -535,6 +553,78 @@ public class PlanInformation implements Serializable {
 
 	public void setWidthOfPlot(BigDecimal widthOfPlot) {
 		this.widthOfPlot = widthOfPlot;
+	}
+
+	public String getBuildingNearMonuments() {
+		return buildingNearMonuments;
+	}
+
+	public void setBuildingNearMonuments(String buildingNearMonuments) {
+		this.buildingNearMonuments = buildingNearMonuments;
+	}
+
+	public String getGvtBuildingWithin200Mt() {
+		return gvtBuildingWithin200Mt;
+	}
+
+	public void setGvtBuildingWithin200Mt(String gvtBuildingWithin200Mt) {
+		this.gvtBuildingWithin200Mt = gvtBuildingWithin200Mt;
+	}
+
+	public String getNocNearMonuments() {
+		return nocNearMonuments;
+	}
+
+	public void setNocNearMonuments(String nocNearMonuments) {
+		this.nocNearMonuments = nocNearMonuments;
+	}
+
+	public String getNocNearAirport() {
+		return nocNearAirport;
+	}
+
+	public void setNocNearAirport(String nocNearAirport) {
+		this.nocNearAirport = nocNearAirport;
+	}
+
+	public String getNocNearDefenceAerodomes() {
+		return nocNearDefenceAerodomes;
+	}
+
+	public void setNocNearDefenceAerodomes(String nocNearDefenceAerodomes) {
+		this.nocNearDefenceAerodomes = nocNearDefenceAerodomes;
+	}
+
+	public String getNocStateEnvImpact() {
+		return nocStateEnvImpact;
+	}
+
+	public void setNocStateEnvImpact(String nocStateEnvImpact) {
+		this.nocStateEnvImpact = nocStateEnvImpact;
+	}
+
+	public String getNocRailways() {
+		return nocRailways;
+	}
+
+	public void setNocRailways(String nocRailways) {
+		this.nocRailways = nocRailways;
+	}
+
+	public String getNocCollectorGvtLand() {
+		return nocCollectorGvtLand;
+	}
+
+	public void setNocCollectorGvtLand(String nocCollectorGvtLand) {
+		this.nocCollectorGvtLand = nocCollectorGvtLand;
+	}
+
+	public String getNocIrrigationDept() {
+		return nocIrrigationDept;
+	}
+
+	public void setNocIrrigationDept(String nocIrrigationDept) {
+		this.nocIrrigationDept = nocIrrigationDept;
 	}
 
 }

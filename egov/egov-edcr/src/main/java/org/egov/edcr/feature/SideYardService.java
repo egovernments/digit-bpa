@@ -54,7 +54,6 @@ import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_D;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_D1;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_F;
 import static org.egov.common.entity.edcr.OccupancyType.OCCUPANCY_G1;
-import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD1_DESC;
 import static org.egov.edcr.utility.DcrConstants.SIDE_YARD2_DESC;
