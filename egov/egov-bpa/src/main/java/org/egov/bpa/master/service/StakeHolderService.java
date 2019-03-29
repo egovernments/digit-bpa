@@ -502,6 +502,10 @@ public class StakeHolderService {
     public StakeHolder findByEmailIdAndStatus(final String email, final StakeHolderStatus status) {
         return stakeHolderRepository.findByEmailIdAndStatus(email, status);
     }
+    
+    public StakeHolder findByCode(final String code) {
+        return stakeHolderRepository.findByCode(code);
+    }
 
     public StakeHolder findByAadhaarNumberAndStatus(final String aadhaar, final StakeHolderStatus status) {
         return stakeHolderRepository.findByAadhaarNumberAndStatus(aadhaar, status);

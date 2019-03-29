@@ -169,4 +169,15 @@ $(document).ready(function()
 			$('.search-error-msg').removeClass('display-hide');
 		}
 	});
+	
+	$('#stkhldrregfeesearch').click(function() {
+		var acknum=$('#stkhldrregfeetxt').val();
+		if (acknum) {
+			$('.search-stkhldr-error-msg').addClass('display-hide');
+			$('#stkhldrregfeetxt').val("");
+			window.open("/bpa/stakeholder/payregfee/"+acknum,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes')
+		}else{
+			$('.search-stkhldr-error-msg').removeClass('display-hide');
+		}
+	});
 });

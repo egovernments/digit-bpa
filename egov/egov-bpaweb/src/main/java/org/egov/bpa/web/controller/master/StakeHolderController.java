@@ -60,13 +60,17 @@ import org.egov.bpa.service.es.StakeHolderIndexService;
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.dto.SearchStakeHolderForm;
 import org.egov.bpa.transaction.service.BPADocumentService;
+import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.adaptor.SearchStakeHolderJsonAdaptor;
 import org.egov.bpa.web.controller.adaptor.StakeHolderJsonAdaptor;
 import org.egov.commons.entity.Source;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
@@ -139,6 +143,10 @@ public class StakeHolderController extends GenericWorkFlowController {
     private StakeHolderIndexService stakeHolderIndexService;
     @Autowired
     private StakeHolderStateService stakeHolderStateService;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
+    @Autowired
+    private GenericBillGeneratorService genericBillGeneratorService;
 
     @ModelAttribute("stakeHolderDocumentList")
     public List<StakeHolderDocument> getStakeHolderDocuments() {
@@ -201,6 +209,38 @@ public class StakeHolderController extends GenericWorkFlowController {
         model.addAttribute("showNotification", true);
         prepareModel(model, stakeHolder);
         return STAKEHOLDER_NEW_BY_CITIZEN;
+    }
+
+    @GetMapping("/payregfee/{acknum}")
+    public String payRegFee(final Model model, @PathVariable final String acknum, HttpServletRequest request) {
+
+        StakeHolder stakeHolder = stakeHolderService.findByCode(acknum);
+        if (stakeHolder == null) {
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.invalid.acknowledgement.num", new String[] {}, null));
+            return COMMON_ERROR;
+        }
+        List<AppConfigValues> appConfigValueList = appConfigValueService
+                .getConfigValuesByModuleAndKey(BpaConstants.APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
+        if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
+            if (stakeHolder.getStatus() != null
+                    && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
+                return genericBillGeneratorService.generateBillAndRedirectToCollection(stakeHolder, model);
+            } else if (stakeHolder.getStatus() != null
+                    && BpaConstants.APPLICATION_STATUS_SUBMITTED.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
+                model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.not.approved", new String[] {}, null));
+                return COMMON_ERROR;
+            } else if (stakeHolder.getStatus() != null
+                    && BpaConstants.APPLICATION_STATUS_SUBMITTED.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
+                model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.payment.done", new String[] {}, null));
+                return COMMON_ERROR;
+            } else {
+                model.addAttribute(MESSAGE,
+                        messageSource.getMessage("msg.stakeholder.pay.fee.generic.issue", new String[] {}, null));
+                return COMMON_ERROR;
+            }
+        }
+        model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.pay.fee.generic.issue", new String[] {}, null));
+        return COMMON_ERROR;
     }
 
     @PostMapping("/createbycitizen")

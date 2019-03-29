@@ -112,20 +112,48 @@
 							<div class = "login-left-cont padding0 col-md-6">
 								<span class = "f-light login-title-2 color-white">Building Plan Approvals Made <span class = "f-medium">Easy</span></span>
 								<div class = "login-action-cont padding0 f-regular">
-									<a class = "login-create-link padding0 col-md-6" href="#"
+									<%-- <a class = "login-create-link padding0 col-md-6" href="#"
 										onclick="window.open('/portal/citizen/signup','CTZ',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
-										<div class = "create-button col-md-12">
+										<div class = "create-button col-md-18">
 											<spring:message code="lbl.create.ac.citizen" />
 										</div>
-									</a>
+									</a> --%>
 									<a class = "login-create-link padding0 col-md-6" href="#"
 										onclick="window.open('/bpa/stakeholder/createbycitizen','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
 										<div class = "create-button col-md-12">
 											<spring:message code="lbl.bldng.create.ac" />
 										</div>
 									</a>
+									<%-- <a class = "login-create-link padding0 col-md-6" href="#"
+										onclick="window.open('/bpa/stakeholder/payregfee','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
+										<div class = "create-button col-md-12">
+											<spring:message code="lbl.stakeholder.reg.fee.pay" />
+										</div>
+									</a> --%>
 								</div>
+								
 								<div class = "application-action-cont">
+									<div class="application-card bpa-card-new card">
+									  <div class="card-body">
+									    <div class="md-form clearfix">
+										    <div class = "f-regular padding0 col-md-8">
+										    	<label class = "login-input-label" for="inputPlaceholderEx">
+										    		<spring:message code="lbl.stakeholder.reg.fee.pay" />
+										    	</label>
+												<input id="stkhldrregfeetxt" style="font-family: Roboto_Regular;" placeholder="Enter Acknowledgement No." type="text" id="inputPlaceholderEx" class="login-input form-control">
+										    </div>
+										    <div class = "col-md-4">
+										    	<button id="stkhldrregfeesearch" style = "width: 170px;" type="button" class="f-medium btn-login-new btn">
+										    		<spring:message code="btn.lbl.search" />
+										    	</button>
+										    </div>
+										</div>
+										<div class="f-regular error-msg search-stkhldr-error-msg display-hide">Acknowledgement number is mandatory</div>
+									  </div>
+									</div>
+								</div>
+								
+								<%-- <div class = "application-action-cont">
 									<div class="application-card bpa-card-new card">
 									  <div class="card-body">
 									    <div class="md-form clearfix">
@@ -144,7 +172,7 @@
 										<div class="f-regular error-msg search-error-msg display-hide">Application number is mandatory</div>
 									  </div>
 									</div>
-								</div>
+								</div> --%>
 							</div>
 							<div class = "f-regular login-right-cont padding0 col-md-6">
 								<div class = "application-card bpa-card-new card col-md-8">
