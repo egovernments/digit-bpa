@@ -93,5 +93,13 @@ public class PortalInboxUserService {
         }
 
     }
+    
+    public Long getPortalInboxUserCountByResolved(final Long userId,boolean resolved) {
+    	if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+    		return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, resolved);
+    	}else{
+    		return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, resolved, ApplicationThreadLocals.getTenantID());
+    	}
+    }
 
 }
