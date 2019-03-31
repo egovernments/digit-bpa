@@ -259,6 +259,26 @@
 			<form:hidden path="siteDetail[0].landUsageId" id="landUsageId" value="" /> 
 		</div>
 	</div>
+	<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.previousowner.details" />  </label>
+		<div class="col-sm-3 add-margin">
+			<form:textarea path="previousownerdetails"
+						   id="previousownerdetails" class="form-control patternvalidation"
+						   data-pattern="alphanumericspecialcharacters"
+						   maxlength="4000" />
+			<form:errors path="previousownerdetails" cssClass="add-margin error-msg" />
+		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.landregistration.details" /></label>
+		<div class="col-sm-3 add-margin">
+			<form:textarea path="landregistrationdetails"
+						   id="landregistrationdetails" class="form-control patternvalidation"
+						   data-pattern="alphanumericspecialcharacters" required="required"
+						   maxlength="4000" />
+			<form:errors path="landregistrationdetails" cssClass="add-margin error-msg" />
+		</div>
+	</div>
     <div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.construction.cost" /><span class="mandatory"></span></label>

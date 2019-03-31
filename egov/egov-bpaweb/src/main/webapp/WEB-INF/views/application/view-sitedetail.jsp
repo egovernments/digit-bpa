@@ -214,6 +214,22 @@
 				default="N/A"></c:out>
 		</div>
 	</div>
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.previousowner.details" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.previousownerdetails}"
+				default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.landregistration.details" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.landregistrationdetails}"
+				default="N/A"></c:out>
+		</div>
+	</div>
 
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
