@@ -48,6 +48,7 @@
   --%>
 
 <%@page import="org.apache.commons.lang3.StringUtils"%>
+<%@page import="org.egov.infra.config.core.ApplicationThreadLocals"%>
 <%
     String ipAddress = request.getRemoteAddr();
 			String proxiedIPAddress = request.getHeader("X-Forwarded-For");
@@ -55,7 +56,8 @@
 				String[] ipAddresses = proxiedIPAddress.split(",");
 				ipAddress = ipAddresses[ipAddresses.length - 1].trim();
 			}
-			String userAgentInfo = request.getHeader("User-Agent");
+	String userAgentInfo = request.getHeader("User-Agent");
+	String tenantId = ApplicationThreadLocals.getTenantID();
 %>
 <!DOCTYPE html>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
@@ -131,28 +133,29 @@
 										</div>
 									</a> --%>
 								</div>
-								
-								<div class = "application-action-cont">
-									<div class="application-card bpa-card-new card">
-									  <div class="card-body">
-									    <div class="md-form clearfix">
-										    <div class = "f-regular padding0 col-md-8">
-										    	<label class = "login-input-label" for="inputPlaceholderEx">
-										    		<spring:message code="lbl.stakeholder.reg.fee.pay" />
-										    	</label>
-												<input id="stkhldrregfeetxt" style="font-family: Roboto_Regular;" placeholder="Enter Acknowledgement No." type="text" id="inputPlaceholderEx" class="login-input form-control">
-										    </div>
-										    <div class = "col-md-4">
-										    	<button id="stkhldrregfeesearch" style = "width: 170px;" type="button" class="f-medium btn-login-new btn">
-										    		<spring:message code="btn.lbl.search" />
-										    	</button>
-										    </div>
+								<c:set var="tenantId" value="<%=tenantId%>" />
+								<c:if test="${tenantId == 'state' }">
+									<div class = "application-action-cont">
+										<div class="application-card bpa-card-new card">
+										  <div class="card-body">
+										    <div class="md-form clearfix">
+											    <div class = "f-regular padding0 col-md-8">
+											    	<label class = "login-input-label" for="inputPlaceholderEx">
+											    		<spring:message code="lbl.stakeholder.reg.fee.pay" />
+											    	</label>
+													<input id="stkhldrregfeetxt" style="font-family: Roboto_Regular;" placeholder="Enter Acknowledgement No." type="text" id="inputPlaceholderEx" class="login-input form-control">
+											    </div>
+											    <div class = "col-md-4">
+											    	<button id="stkhldrregfeesearch" style = "width: 170px;" type="button" class="f-medium btn-login-new btn">
+											    		<spring:message code="btn.lbl.search" />
+											    	</button>
+											    </div>
+											</div>
+											<div class="f-regular error-msg search-stkhldr-error-msg display-hide">Acknowledgement number is mandatory</div>
+										  </div>
 										</div>
-										<div class="f-regular error-msg search-stkhldr-error-msg display-hide">Acknowledgement number is mandatory</div>
-									  </div>
 									</div>
-								</div>
-								
+								</c:if>
 								<%-- <div class = "application-action-cont">
 									<div class="application-card bpa-card-new card">
 									  <div class="card-body">
