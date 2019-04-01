@@ -67,6 +67,7 @@ import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.dto.SearchStakeHolderForm;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.transaction.service.collection.StakeHolderBpaBillService;
+import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.entity.Source;
@@ -159,6 +160,8 @@ public class StakeHolderService {
     private PositionMasterRepository positionMasterRepository;
     @Autowired
     private LicenceNumberGenerator licenceNumberGenerator;
+    @Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -398,7 +401,7 @@ public class StakeHolderService {
         stakeHolder.setLastUpdatedDate(stakeHolder.getLastModifiedDate());
         stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
         processAndStoreApplicationDocuments(stakeHolder);
-        if ("Update".equals(workFlowAction) || "Fee Collected".equals(workFlowAction)) {
+        if ("Update".equals(workFlowAction)) {
             stakeHolder.setActive(stakeHolder.getIsActive());
         } else if (BLOCK.equals(workFlowAction)) {
             stakeHolder.setStatus(StakeHolderStatus.BLOCKED);
@@ -414,8 +417,13 @@ public class StakeHolderService {
             stakeHolderState = new StakeHolderState();
         }
         populateLicenceDetails(stakeHolder);
-        if (stakeHolder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
+        if ((stakeHolder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0 && !Source.ONLINE.equals(stakeHolder.getSource()))
+                || "Fee Collected".equals(workFlowAction)) {
+            stakeHolder.setUsername(stakeHolder.getEmailId());
+            stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
             setActiveToStakeholder(stakeHolder);
+            bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolder, false);
+            bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolder, false);
         }
         stakeHolderRepository.save(stakeHolder);
         stakeHolderState.setStakeHolder(stakeHolder);
@@ -687,7 +695,7 @@ public class StakeHolderService {
         StakeHolder stakeHolder = stakeHolderState.getStakeHolder();
         stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
         stakeHolder.setLastUpdatedDate(new Date());
-        if ("Approve".equals(stkHldrStatus)) {
+        if ("Approve".equals(stkHldrStatus) && !Source.ONLINE.equals(stakeHolder.getSource())) {
             stakeHolder.setUsername(stakeHolder.getEmailId());
             stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
             setActiveToStakeholder(stakeHolder);

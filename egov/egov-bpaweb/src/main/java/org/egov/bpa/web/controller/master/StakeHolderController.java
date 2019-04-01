@@ -272,15 +272,10 @@ public class StakeHolderController extends GenericWorkFlowController {
             stakeHolderRes = stakeHolderService.save(stakeHolder);
         else
             stakeHolderRes = stakeHolderService.updateOnResubmit(stakeHolder, existingStakeholder);
+
         stakeHolderIndexService.updateIndexes(stakeHolderRes);
         bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, true);
         bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, true);
-        StakeHolderStatus status = stakeHolder.getStatus();
-
-        if (status.compareTo(StakeHolderStatus.APPROVED) == 0 || status.compareTo(StakeHolderStatus.PAYMENT_PENDING) == 0) {
-            bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);
-            bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, false);
-        }
 
         if (stakeHolder.getStatus().getStakeHolderStatusVal().equalsIgnoreCase("Approved")) {
             redirectAttributes.addFlashAttribute(MESSAGE,
@@ -367,12 +362,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         String workFlowAction = request.getParameter("workFlowAction");
         StakeHolder stakeHolderRes = stakeHolderService.update(stakeHolder, workFlowAction);
         stakeHolderIndexService.updateIndexes(stakeHolderRes);
-        StakeHolderStatus status = stakeHolderRes.getStatus();
 
-        if (status.compareTo(StakeHolderStatus.APPROVED) == 0 || status.compareTo(StakeHolderStatus.PAYMENT_PENDING) == 0) {
-            bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes, false);
-            bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes, false);
-        }
         String message;
         if ("Block".equals(workFlowAction)) {
             message = messageSource.getMessage("msg.block.stakeholder", null, null);
@@ -491,6 +481,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         StakeHolder stakeHolderResponse = stakeHolderService.updateForApproval(stakeHolderState,
                 stakeHolderState.getStakeHolder().getWorkFlowAction());
         stakeHolderIndexService.updateIndexes(stakeHolderResponse);
+
         if ("Forward".equals(stakeHolder.getWorkFlowAction())) {
             redirectAttributes
                     .addFlashAttribute(MESSAGE,
@@ -500,8 +491,6 @@ public class StakeHolderController extends GenericWorkFlowController {
                                             : stakeHolderState.getCurrentState().getComments()) },
                                     null));
         } else if ("Approve".equals(stakeHolder.getWorkFlowAction())) {
-            bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderResponse, false);
-            bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderResponse, false);
             redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.approve.stakeholder.success",
                     new String[] { stakeHolder.getStakeHolderType().getName() }, null));
         } else if ("Reject".equals(stakeHolder.getWorkFlowAction())) {

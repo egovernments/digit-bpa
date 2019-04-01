@@ -144,20 +144,6 @@ public class EdcrApplicationController {
 
         User user = securityUtils.getCurrentUser();
         
-        if (user.getType().equals(BUSINESS) && stakeHolder.getDemand() != null) {
-            List<AppConfigValues> appConfigValueList = appConfigValueService
-                    .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
-            if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
-                if (stakeHolder.getStatus() != null
-                        && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
-                    model.addAttribute(MESSAGE,
-                            messageSource.getMessage("msg.stakeholder.reg.payfees.to.create.appln",
-                                    new String[] {}, null));
-                    return true;
-                }
-            }
-        }
-
         if (user.getType().equals(BUSINESS) && stakeHolder != null && stakeHolder.getDemand() != null
                 && edcrBpaRestService.checkAnyTaxIsPendingToCollectForStakeHolder(user.getId(), request)) {
             model.addAttribute("userId", user.getId());

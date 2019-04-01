@@ -99,8 +99,6 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
 
     private static final String MESSAGE = "message";
 
-    private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
-
     public static final String CITIZEN_OCCUPANCY_CERTIFICATE_NEW = "citizen-occupancy-certificate-new";
 
     private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
@@ -116,10 +114,7 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
 
     @GetMapping("/occupancy-certificate/apply")
     public String newOCForm(final Model model, final HttpServletRequest request) {
-        
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
+
         OccupancyCertificate occupancyCertificate = new OccupancyCertificate();
         occupancyCertificate.setApplicationDate(new Date());
         loadFormData(model, request, occupancyCertificate);
@@ -172,8 +167,8 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
                         .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
         final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
         if (wfMatrix != null)
-			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
+            userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
         if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (userPosition == 0 || userPosition == null)) {
             model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);

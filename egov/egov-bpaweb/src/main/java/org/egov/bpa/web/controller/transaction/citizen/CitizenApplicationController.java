@@ -158,10 +158,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
 
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
-
         if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
             return "redirect:/common/city/selection-form?url=" + request.getRequestURL().toString();
         }
@@ -270,9 +266,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/demolition-form")
     public String showDemolition(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_02);
     }
@@ -280,9 +273,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/reconstruction-form")
     public String showReconstruction(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_03);
     }
@@ -290,9 +280,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/alteration-form")
     public String showAlteration(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_04);
     }
@@ -300,9 +287,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/subdevland-form")
     public String showSubDevlisionOfLand(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_05);
     }
@@ -310,9 +294,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/addextnew-form")
     public String loadAddOfExtection(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_06);
     }
@@ -320,9 +301,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/changeofoccupancy-form")
     public String showChangeOfOccupancy(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_07);
     }
@@ -330,9 +308,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/permissionhutorshud-form")
     public String loadPermOfHutOrShud(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_09);
     }
@@ -340,9 +315,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/amenity-form")
     public String loadAmenity(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_08);
     }
@@ -350,9 +322,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/towerconstruction-form")
     public String loadTowerConstruction(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_14);
     }
@@ -360,9 +329,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/polestructures-form")
     public String loadPoleStruture(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        if (validateStakeholderRegFee(model)) {
-            return COMMON_ERROR;
-        }
         setCityName(model, request);
         return loadNewForm(bpaApplication, model, ST_CODE_15);
     }
