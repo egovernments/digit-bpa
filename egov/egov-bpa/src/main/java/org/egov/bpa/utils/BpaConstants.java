@@ -402,9 +402,6 @@ public class BpaConstants {
     public static final String LOWRISK = "Low Risk";
     public static final String HIGHRISK = "High Risk";
     public static final String MEDIUMRISK = "Medium Risk";
-
-    public static final String STAKEHOLDER_TYPE_ARCHITECT = "Architect";
-    public static final String STAKEHOLDER_REG_FEE_AMOUNT = "STAKEHOLDER_REG_FEE_AMOUNT";
     public static final String REGISTRATION_FEES_CODE = "RF";
     
 

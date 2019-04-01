@@ -30,6 +30,8 @@
  */
 package org.egov.bpa.master.entity;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -65,6 +67,10 @@ public class StakeHolderType extends AbstractAuditable {
     @NotNull
     @Length(min = 1, max = 50)
     private Long validYears;
+
+    private BigDecimal regFee;
+
+    private Boolean autoGenerateLicenceDetails;
 
     private Boolean isActive;
 
@@ -110,6 +116,22 @@ public class StakeHolderType extends AbstractAuditable {
 
     public void setValidYears(Long validYears) {
         this.validYears = validYears;
+    }
+
+    public BigDecimal getRegFee() {
+        return regFee;
+    }
+
+    public void setRegFee(BigDecimal regFee) {
+        this.regFee = regFee;
+    }
+
+    public Boolean getAutoGenerateLicenceDetails() {
+        return autoGenerateLicenceDetails;
+    }
+
+    public void setAutoGenerateLicenceDetails(Boolean autoGenerateLicenceDetails) {
+        this.autoGenerateLicenceDetails = autoGenerateLicenceDetails;
     }
 
 }

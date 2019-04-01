@@ -1,0 +1,1 @@
+update state.EGBPA_MSTR_STAKEHOLDERTYPE set autoGenerateLicenceDetails = false where code = 'Architect';

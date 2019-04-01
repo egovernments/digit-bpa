@@ -110,8 +110,6 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
     private BpaDemandService bpaDemandService;
     @Autowired
     private StakeHolderRepository stakeHolderRepository;
-    @Autowired
-    private AppConfigValueService appConfigValueService;
 
     @Transactional
     public String generateBill(final StakeHolder stakeHolder) {
@@ -176,48 +174,19 @@ public class StakeHolderBpaBillService extends BillServiceInterface {
 
     public EgDemand createDemand(final StakeHolder stakeHolder) {
 
-        final Map<String, BigDecimal> feeDetails = new HashMap<>();
         EgDemand egDemand = null;
-        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.STAKEHOLDER_REG_FEE_AMOUNT);
-        String amount = appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-        BigDecimal registrationfeeAmount = amount != null && !amount.isEmpty() ? new BigDecimal(amount) : BigDecimal.ZERO;
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
         // Not updating demand amount collected for new connection as per the
         // discussion.
-        /*
-         * if (!stakeHolder.getApplicationAmenity().isEmpty()) { List<Long> serviceTypeList = new ArrayList<>(); for (ServiceType
-         * serviceType : stakeHolder.getApplicationAmenity()) { serviceTypeList.add(serviceType.getId()); } Criteria feeCrit =
-         * getBpaFeeCriteria(serviceTypeList, BpaConstants.BPAFEETYPE); List<BpaFeeDetail> bpaFeeDetails = feeCrit.list(); for
-         * (final BpaFeeDetail feeDetail : bpaFeeDetails) { feeDetails.put(feeDetail.getBpafee().getCode(),
-         * BigDecimal.valueOf(feeDetail.getAmount())); } }
-         */
-        /*
-         * Criteria feeCrit = getRegistrationFeeCriteria(BpaConstants.BPA_REGISTRATION_FEE); List<BpaFeeMapping> bpaFeeMap =
-         * feeCrit.list(); for (final BpaFeeMapping feeMap : bpaFeeMap) { feeDetails.put(feeMap.getBpaFeeCommon().getCode(),
-         * BigDecimal.valueOf(feeMap.getAmount())); }
-         */
-
-        /*
-         * List<BpaFee> bpaRegistrationFees = bpaFeeService
-         * .getAllActiveRegistrationFeebyFeeType(BpaConstants.BPAREGISTRATIONFEETYPE);
-         * feeDetails.put(bpaRegistrationFees.get(0).getCode(), bpaRegistrationFees.get(0).getFeeAmount());
-         */
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
-            /*
-             * for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet()) { registrationfeeAmount =
-             * demandReason.getValue().setScale(0, BigDecimal.ROUND_HALF_UP);
-             * dmdDetailSet.add(createDemandDetails(registrationfeeAmount, demandReason.getKey(), installment)); }
-             */
-            dmdDetailSet.add(createDemandDetails(registrationfeeAmount, BpaConstants.REGISTRATION_FEES_CODE, installment));
+            dmdDetailSet.add(createDemandDetails(stakeHolder.getStakeHolderType().getRegFee(), BpaConstants.REGISTRATION_FEES_CODE, installment));
             egDemand = new EgDemand();
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
-            egDemand.setBaseDemand(registrationfeeAmount);
-
+            egDemand.setBaseDemand(stakeHolder.getStakeHolderType().getRegFee());
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());
         }

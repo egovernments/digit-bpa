@@ -51,14 +51,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class StakeholderTypeService {
-    
+
     @Autowired
     private StakeholderTypeRepository stakeholderTypeRepository;
 
-   public List<StakeHolderType> findAllIsActive(){
+    public List<StakeHolderType> findAllIsActive() {
         return stakeholderTypeRepository.findByIsActiveTrue();
-    }     
-   public StakeHolderType findOne(Long id) {
-	   return stakeholderTypeRepository.findOne(id);
-   }
+    }
+
+    public StakeHolderType findOne(Long id) {
+        return stakeholderTypeRepository.findOne(id);
+    }
+
+    public StakeHolderType findByCode(String code) {
+        return stakeholderTypeRepository.findByCode(code);
+    }
+
 }

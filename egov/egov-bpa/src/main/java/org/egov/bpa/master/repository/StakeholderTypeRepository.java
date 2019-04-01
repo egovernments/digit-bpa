@@ -48,4 +48,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface StakeholderTypeRepository extends JpaRepository<StakeHolderType, Long> {
 
 	List<StakeHolderType> findByIsActiveTrue();
+	StakeHolderType findByCode(String code);
 }

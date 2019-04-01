@@ -211,7 +211,7 @@ public class StakeHolderService {
             LOG.info(" stakeHolderType Name ..." + stakeHolder.getStakeHolderType().getName());
         if ((StakeHolderStatus.APPROVED.equals(stakeHolder.getStatus())
                 || StakeHolderStatus.PAYMENT_PENDING.equals(stakeHolder.getStatus()))
-                && !BpaConstants.STAKEHOLDER_TYPE_ARCHITECT.equalsIgnoreCase(stakeHolder.getStakeHolderType().getName())) {
+                && stakeHolder.getStakeHolderType().getAutoGenerateLicenceDetails()) {
             if (LOG.isInfoEnabled())
                 LOG.info(" Populating licence details");
             stakeHolder.setLicenceNumber(licenceNumberGenerator.generateNumber(stakeHolder));
@@ -502,7 +502,7 @@ public class StakeHolderService {
     public StakeHolder findByEmailIdAndStatus(final String email, final StakeHolderStatus status) {
         return stakeHolderRepository.findByEmailIdAndStatus(email, status);
     }
-    
+
     public StakeHolder findByCode(final String code) {
         return stakeHolderRepository.findByCode(code);
     }

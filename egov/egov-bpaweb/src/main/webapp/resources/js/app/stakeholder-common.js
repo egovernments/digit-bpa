@@ -419,21 +419,39 @@ $(document).ready( function () {
 	
 function loadLicenceNumber(type){
 	
-	if(type == "Architect"){
-		$('#licenceGroup').show();
-		$('#licenceNumber').attr( "required", "true" );
-		$('#buildingLicenceIssueDate').attr( "required", "true" );
-		$('#buildingLicenceExpiryDate').attr( "required", "true" );
-	}else{
-		$('#licenceGroup').hide();
-		$('#licenceNumber').removeAttr( "required" );
-		$('#buildingLicenceIssueDate').removeAttr( "required" );
-		$('#buildingLicenceExpiryDate').removeAttr( "required" );
-		
-		$('#licenceNumber').val("");
-		$('#buildingLicenceIssueDate').val("");
-		$('#buildingLicenceExpiryDate').val("");
-	}
+	 $.ajax({
+         url: "/bpa/check/auto-generate-licence-details",
+         type: "GET",
+         data: {
+             code : type
+         },
+         cache: false,
+         dataType: "json",
+         success: function (response) {
+        	 
+             if(true == response) {
+            	 $('#licenceGroup').hide();
+     			$('#licenceNumber').removeAttr( "required" );
+     			$('#buildingLicenceIssueDate').removeAttr( "required" );
+     			$('#buildingLicenceExpiryDate').removeAttr( "required" );
+     			
+     			$('#licenceNumber').val("");
+     			$('#buildingLicenceIssueDate').val("");
+     			$('#buildingLicenceExpiryDate').val("");
+             } else {
+            	 $('#licenceGroup').show();
+     			$('#licenceNumber').attr( "required", "true" );
+     			$('#buildingLicenceIssueDate').attr( "required", "true" );
+     			$('#buildingLicenceExpiryDate').attr( "required", "true" );
+             }
+         },
+         error: function (response) {
+             console.log('Error occured, while validating license number!!!!')
+         }
+     });
+	 
+	
+	
 }
 
 
