@@ -161,9 +161,9 @@ public class PlanInformation implements Serializable {
     
     private BigDecimal widthOfPlot = BigDecimal.ZERO;
     
-    private transient String buildingNearMonuments;
+    private transient String buildingNearMonuments = NA;
     
-    private transient String gvtBuildingWithin200Mt;
+    private transient String gvtBuildingWithin200Mt = NA;
     
     private transient String nocNearMonuments = NA;
     
