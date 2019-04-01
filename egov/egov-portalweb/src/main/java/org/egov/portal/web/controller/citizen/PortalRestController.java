@@ -7,11 +7,10 @@ import org.egov.portal.entity.InboxRenderResponse;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxHelper;
 import org.egov.portal.entity.PortalInboxUser;
-import org.egov.portal.repository.PortalInboxUserRepository;
 import org.egov.portal.service.PortalInboxUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +21,7 @@ public class PortalRestController {
 	@Autowired
 	private PortalInboxUserService portalInboxUserService;
 
-	@GetMapping(value = "/rest/fetch/servicesapplied", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/rest/fetch/servicesapplied", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public InboxRenderResponse fetchServicesApplied(@RequestParam final Long id) {
 		List<PortalInboxUser> totalServicesAppliedList = portalInboxUserService.getPortalInboxByUserId(id);
@@ -35,7 +34,7 @@ public class PortalRestController {
 		return inboxRenderResponse;
 	}
 
-	@GetMapping(value = "/rest/fetch/servicescompleted", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/rest/fetch/servicescompleted", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public InboxRenderResponse fetchServicesCompleted(@RequestParam final Long id) {
 		List<PortalInboxUser> totalServicesCompletedList = portalInboxUserService.getPortalInboxByResolved(id, true);
@@ -48,7 +47,7 @@ public class PortalRestController {
 		return inboxRenderResponse;
 	}
 
-	@GetMapping(value = "/rest/fetch/servicespending", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/rest/fetch/servicespending", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public InboxRenderResponse fetchServicesUnderScrutiny(@RequestParam final Long id) {
 		List<PortalInboxUser> totalServicesPendingList = portalInboxUserService.getPortalInboxByResolved(id, false);

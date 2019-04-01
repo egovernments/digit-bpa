@@ -276,7 +276,7 @@ html body .container-fluid .right-content {
   float: left;
   position: relative;
   margin-left: 214px;
-  height: 100vh; }
+  /* height: 100vh; */ }
 html body .container-fluid .right-content header {
   position: relative; }
 html body .container-fluid .right-content header nav {
@@ -352,19 +352,22 @@ html body .container-fluid .right-content .main-content .action-bar .action-item
   background-color: transparent;
   color: #333; }
 html body .container-fluid .right-content .main-content table thead {
-  background: #26A69A;
+  background: #455A64;
   color: #fff; }
 html body .container-fluid .right-content .main-content table thead tr th {
-  font-family: regular;
-  font-weight: normal;
-  border: none;
-  padding: 10px;
-  vertical-align: top; }
+	font-family: regular;
+	font-weight: normal;
+	border: none;
+	padding: 10px 26px;
+	vertical-align: middle;
+	text-align: center; }
 html body .container-fluid .right-content .main-content table tbody tr td {
-  padding: 10px;
-  font-size: 13px; }
+  padding: 15px 10px;
+  font-size: 13px;
+  text-align: center; }
 html body .container-fluid .right-content .main-content table tbody tr:hover {
-  cursor: pointer; }
+  cursor: pointer;
+  background-color: #f3f3f3; }
 html body .container-fluid .right-content .main-content .services-item [class*='col-'].services {
   display: none; }
 html body .container-fluid .right-content .main-content .services-item [class*='col-'].services, html body .container-fluid .right-content .main-content .stats-item [class*='col-'].services {
@@ -473,7 +476,17 @@ html body .container-fluid .right-content .main-content .services-item [class*='
 .clearfix { display: block; }
 /* close commented backslash hack */
 
+.bpa-table-container{
+	padding-top: 20px;
+}
 
+#bpa-home-table{
+	width: 100% !important;
+}
+
+#bpa-home-table thead tr th:after{
+	top:35%;
+}
 
 
 /* ********************************************** */

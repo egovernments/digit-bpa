@@ -47,6 +47,77 @@
  */
 
 $(document).ready(function(){
+	
+	//Global variable
+	
+	var clickedServiceData;
+	var selectedService;
+	
+	//---------------
+	
+	// AJAX Call -------------------
+	$.ajax({
+        url: '/portal/rest/fetch/servicespending',
+//        dataType: 'text',
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        data: {
+        	id: parseFloat($('#userId').val())
+        },
+        success: function( data, textStatus, jQxhr ){
+        	var tableInitData = configureTableData(data, "portalInboxHelper");
+        	var table = $("#bpa-home-table").DataTable( {
+                data: tableInitData,
+                "columns": [
+                    { "data": "srNo", "orderable": false },
+                    { "data": "applicantName", "orderable": false },
+                    { "data": "serviceRequestNo", "orderable": false},
+                    { "data": "serviceRequestDate" },
+                    { "data": "serviceGroup" },
+                    { "data": "serviceName" },
+                    { "data": "status" },
+                    { "data": "pendingAction", "orderable": false},
+                ]
+
+            } );
+        	$('#bpa-home-table tbody').on('click', 'tr', function () {
+        	    var data = table.row( this ).data();
+        	    openPopUp(window.origin+data.link);
+        	} );
+        	
+        	//Initialize data in global variable
+        	window.clickedServiceData = cloneDeep(data);
+        	window.selectedService = "all";
+        	
+        },
+        error: function( jqXhr, textStatus, errorThrown ){
+            console.log( errorThrown );
+        }
+    });
+	
+	
+	
+	//------------------------------
+		
+	$(".bpa-service-card").click(function(){
+		var url = "";
+		switch($(this).attr("name")){
+			case "totalServicesApplied": 
+				url = "/portal/rest/fetch/servicesapplied";
+				break;
+			case "servicesUnderScrutiny": 
+				url = "/portal/rest/fetch/servicespending";
+				break;
+			case "servicesCompleted": 
+				url = "/portal/rest/fetch/servicescompleted";
+				break;
+			default: 
+				url = "/portal/rest/fetch/servicespending";
+				break;
+		}
+		fetchDataAndInitiateTable(url, "portalInboxHelper");
+		
+	})
 
     $('#new-pass').popover({trigger: "focus", placement: "bottom"});
 
@@ -211,31 +282,33 @@ $(document).ready(function(){
     });
   
   $('#serviceGroup').change(function(){
-	  var selected = $(this).val();
-	  var total = $( "#totalServicesAppliedSize" ).html().trim();
-	  var length = document.getElementsByClassName($(this).val()).length / 2;
-	  if($(this).val() == "") {
-		  $('.showAll').show();
-		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr.showAll" ).length);
-		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr.showAll" ).length);
-		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll" ).length);
-		  var showAllClass ="#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll td:first-child";
-		  generateSno(showAllClass);
-
-	  } else {
-		  $('.showAll').hide();
-		  $('.'+$(this).val()).show();
-		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr."+$(this).val() ).length);
-		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr."+$(this).val() ).length);
-		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr."+$(this).val() ).length);
-		  
-		  var servicesUnderScrutinyHideClass ="#tabelPortal tbody.servicesUnderScrutinyHide tr."+ selected + " td:first-child";
-		  var totalServicesAppliedHideClass="#tabelPortal tbody.totalServicesAppliedHide tr."+ selected + " td:first-child";
-		  var totalServicesCompletedHideClass="#tabelPortal tbody.totalServicesCompletedHide tr."+ selected + " td:first-child";
-		  generateSno(servicesUnderScrutinyHideClass);
-		  generateSno(totalServicesAppliedHideClass);
-		  generateSno(totalServicesCompletedHideClass);
-	  }
+	  window.selectedService = getServiceGroup($(this).val());
+	  initiateTable(window.clickedServiceData, window.selectedService, "portalInboxHelper");
+//	  var selected = $(this).val();
+//	  var total = $( "#totalServicesAppliedSize" ).html().trim();
+//	  var length = document.getElementsByClassName($(this).val()).length / 2;
+//	  if($(this).val() == "") {
+//		  $('.showAll').show();
+//		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr.showAll" ).length);
+//		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr.showAll" ).length);
+//		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll" ).length);
+//		  var showAllClass ="#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll td:first-child";
+//		  generateSno(showAllClass);
+//
+//	  } else {
+//		  $('.showAll').hide();
+//		  $('.'+$(this).val()).show();
+//		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr."+$(this).val() ).length);
+//		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr."+$(this).val() ).length);
+//		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr."+$(this).val() ).length);
+//		  
+//		  var servicesUnderScrutinyHideClass ="#tabelPortal tbody.servicesUnderScrutinyHide tr."+ selected + " td:first-child";
+//		  var totalServicesAppliedHideClass="#tabelPortal tbody.totalServicesAppliedHide tr."+ selected + " td:first-child";
+//		  var totalServicesCompletedHideClass="#tabelPortal tbody.totalServicesCompletedHide tr."+ selected + " td:first-child";
+//		  generateSno(servicesUnderScrutinyHideClass);
+//		  generateSno(totalServicesAppliedHideClass);
+//		  generateSno(totalServicesCompletedHideClass);
+//	  }
   });
   
   
@@ -254,8 +327,8 @@ function leftmenuheight(){
 function rightcontentheight(){
   //console.log($( window ).height(), $('.right-content').height());
   $('.right-content').css({
-    height:$( window ).height(),
-    overflow : 'auto'
+//    height:$( window ).height(),
+//    overflow : 'auto'
   })
 }
 
@@ -287,4 +360,83 @@ function resetValues() {
 
 function inboxloadmethod() {
 	location.reload();
+}
+
+function configureTableData(dataset, dataKey){
+	return dataset[dataKey].map(function(item, index) {
+		item.serviceRequestDate = epochToYmd(item.serviceRequestDate);
+		item.srNo = index+1;
+		return item;
+	})
+}
+
+function initiateTable(tableData, serviceGroup, dataKey){
+	var clonedTableData = cloneDeep(tableData);
+	if(serviceGroup && serviceGroup !== "all"){
+		clonedTableData[dataKey] = clonedTableData[dataKey].filter(function(item) { return item.serviceGroup === serviceGroup});
+	}
+	
+	var finalData = configureTableData(clonedTableData, dataKey);
+	var datatable = $( "#bpa-home-table" ).DataTable();
+	datatable.clear();
+	datatable.rows.add(finalData);
+	datatable.draw();
+	$('#bpa-home-table tbody').on('click', 'tr', function () {
+	    var data = datatable.row( this ).data();
+	    openPopUp(window.origin+data.link);
+	} );
+}
+
+function getServiceGroup(code){
+	switch(code){
+		case "all":
+			return "all";
+		case "edcr":
+			return "Digit DCR";
+		case "bpa":
+			return "BPA";
+		default: 
+			return "all";
+	}
+}
+
+function cloneDeep(obj){
+	return JSON.parse(JSON.stringify(obj));
+}
+
+function fetchDataAndInitiateTable(url, dataKey){
+	$.ajax({
+        url: url,
+//        dataType: 'text',
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        data: {
+        	id: parseFloat($('#userId').val())
+        },
+        success: function( data, textStatus, jQxhr ){
+        	var tableInitData = configureTableData(data, dataKey);
+        	initiateTable(data, window.selectedService, dataKey);
+        	//Initialize data in global variable
+        	window.clickedServiceData = cloneDeep(data);
+        	
+        },
+        error: function( jqXhr, textStatus, errorThrown ){
+            console.log( errorThrown );
+        }
+    });
+
+}
+
+function epochToYmd(et) {
+	// Return null if et already null
+	if (!et) return null;
+	// Return the same format if et is already a string (boundary case)
+	if (typeof et === "string") return et;
+	let date = new Date(et);
+	let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+	let month =
+	date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+	// date = `${date.getFullYear()}-${month}-${day}`;
+	var formatted_date = date.getFullYear() + "-" + month + "-" + day;
+	return formatted_date;
 }

@@ -93,8 +93,8 @@
 					</ul>
 				</span> <span class="pull-right profile-dd"> <a
 					href="http://www.egovernments.org" target="_blank"> <img
-						src="<cdn:url value='/resources/global/images/egov_logo_brown.png' context='/egi'/>"
-						title="Powered by eGovernments" height="35px">
+						src="<cdn:url value='/resources/global/images/digit-logo-black.png' context='/egi'/>"
+						title="Powered by eGovernments" height="35px" style="opacity: 0.8;">
 				</a>
 				</span>
 			</div>
@@ -136,6 +136,7 @@
 				<div class="inbox-modules clearfix">
 					<div id="showServiceGroup" class = "col-md-12 clearfix">
 						<div class = "col-md-6 padding0">
+						<input type="hidden" id="userId" value="${currentUser.id}">
 							<div class="col-md-12 welcome-message"
 								style="line-height: 2.3; padding: 0;">
 								Welcome ${userName},
@@ -149,7 +150,7 @@
 							</div>
 							<div class="col-md-6">
 								<select class="form-control" id="serviceGroup">
-									<option value="">ALL</option>
+									<option value="all">ALL</option>
 									<c:forEach items="${distinctModuleNames}" var="module"
 										varStatus="item">
 										<option value="${module.contextRoot }">${module.displayName}</option>
@@ -160,29 +161,29 @@
 					</div>
 					<div class="stats-item col-md-12" style="overflow: auto;padding: 0">
 						<div class="col-md-4 col-sm-4 services">
-							<div id="totalServicesAppliedDiv" style="cursor: pointer">
-								<div class="bpa-home-card content x clicked-card">
+							<div name = "totalServicesApplied" class = "bpa-service-card" id="totalServicesAppliedDiv" style="cursor: pointer">
+								<div class="bpa-home-card content x">
 									<div class="count" id="totalServicesAppliedSize">
 										${totalServicesAppliedSize }</div>
-									<div class="text color-generic-new">
+									<div class="text">
 										<spring:message code="lbl.totalservicesapplied" />
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-4 col-sm-4 services">
-							<div id="servicesUnderScrutinyDiv" style="cursor: pointer">
-								<div class="bpa-home-card content x">
+							<div name = "servicesUnderScrutiny" class = "bpa-service-card" id="servicesUnderScrutinyDiv" style="cursor: pointer">
+								<div class="bpa-home-card content x clicked-card">
 									<div class="count" id="totalServicesPendingSize">
 										${totalServicesPendingSize}</div>
-									<div class="text">
+									<div class="text color-generic-new">
 										<spring:message code="lbl.servicesunderscrutiny" />
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-4 col-sm-4 services">
-							<div id="servicesCmpletedDiv" style="cursor: pointer">
+							<div name = "servicesCompleted" class = "bpa-service-card" id="servicesCmpletedDiv" style="cursor: pointer">
 								<div class="bpa-home-card content x">
 									<div class="count" id="totalServicesCompletedSize">
 										${totalServicesCompletedSize }</div>
@@ -195,9 +196,8 @@
 					</div>
 					<br>
 					
-					<div class="col-md-12">
-						<br>
-						<table class="table table-striped datatable" id="tabelPortal">
+					<div class="bpa-table-container col-md-12">
+						<table class = "hover row-border" id = "bpa-home-table" >
 							<thead>
 								<tr>
 									<th><spring:message code="lbl.slno" /></th>
@@ -208,8 +208,25 @@
 									<th><spring:message code="lbl.servicename" /></th>
 									<th><spring:message code="lbl.status" /></th>
 									<th><spring:message code="lbl.pendingaction" /></th>
-									<%--<th><spring:message code="lbl.expectedservicedelivery" /></th>--%>
-									<%--<th><spring:message code="lbl.description" /></th>--%>
+									<%-- <th><spring:message code="lbl.expectedservicedelivery" /></th>
+									<th><spring:message code="lbl.description" /></th> --%>
+								</tr>
+							</thead>
+						</table>
+						
+						<%-- <table class="table table-striped datatable" id="tabelPortal">
+							<thead>
+								<tr>
+									<th><spring:message code="lbl.slno" /></th>
+									<th><spring:message code="lbl.applicant.name" /></th>
+									<th><spring:message code="lbl.applicartionno" /></th>
+									<th><spring:message code="lbl.applicationdate" /></th>
+									<th><spring:message code="lbl.servicegroup" /></th>
+									<th><spring:message code="lbl.servicename" /></th>
+									<th><spring:message code="lbl.status" /></th>
+									<th><spring:message code="lbl.pendingaction" /></th>
+									<th><spring:message code="lbl.expectedservicedelivery" /></th>
+									<th><spring:message code="lbl.description" /></th>
 								</tr>
 							</thead>
 							<tbody class="servicesUnderScrutinyHide">
@@ -240,16 +257,16 @@
 													</div>
 												</c:otherwise>
 											</c:choose></td>
-										<%-- <td>
+										<td>
 		 						<div>
 									<fmt:formatDate
 										value="${inboxItem.portalInbox.slaEndDate}"
 										pattern="dd/MM/yyyy" />
 							</div>
-		 					</td>--%>
-										<%--<td>
+		 					</td>
+										<td>
  								${inboxItem.portalInbox.detailedMessage}
-		 					</td>--%>
+		 					</td>
 									</tr>
 								</c:forEach>
 							</tbody>
@@ -282,16 +299,16 @@
 													</div>
 												</c:otherwise>
 											</c:choose></td>
-										<%--<td>
+										<td>
 							<div>
 								<fmt:formatDate
 										value="${inboxItem.portalInbox.slaEndDate}"
 										pattern="dd/MM/yyyy"/>
 							</div>
-						</td>--%>
-										<%--<td>
+						</td>
+										<td>
                                  ${inboxItem.portalInbox.detailedMessage}
-                             </td>--%>
+                             </td>
 									</tr>
 								</c:forEach>
 							</tbody>
@@ -323,20 +340,20 @@
 													</div>
 												</c:otherwise>
 											</c:choose></td>
-										<%--<td>
+										<td>
 							<div>
 								<fmt:formatDate
 										value="${inboxItem.portalInbox.slaEndDate}"
 										pattern="dd/MM/yyyy"/>
 							</div>
-						</td>--%>
-										<%--<td>
+						</td>
+										<td>
                                  ${inboxItem.portalInbox.detailedMessage}
-                             </td>--%>
+                             </td>
 									</tr>
 								</c:forEach>
 							</tbody>
-						</table>
+						</table> --%>
 					</div>
 				</div>
 				<br> <input type="hidden"
@@ -358,3 +375,11 @@
 		</div>
 	</div>
 </div>
+	
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">	
+<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+
+

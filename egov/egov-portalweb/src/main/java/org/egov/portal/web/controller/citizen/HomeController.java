@@ -117,6 +117,7 @@ public class HomeController {
         String moduleName = "moduleNames";
         String services = "services";
         final User user = securityUtils.getCurrentUser();
+        modelData.addAttribute("currentUser", user);
         modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
         modelData.addAttribute("inboxMessages", getAllInboxMessages());
         modelData.addAttribute("myAccountMessages", getMyAccountMessages());
