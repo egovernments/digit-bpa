@@ -154,9 +154,18 @@ public class SetBackService extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
         validate(pl);
-        frontYardService.processFrontYard(pl);
-        sideYardService.processSideYard(pl);
-        rearYardService.processRearYard(pl);
+        
+		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+		if (depthOfPlot != null && depthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+			frontYardService.processFrontYard(pl);
+			rearYardService.processRearYard(pl);
+		}
+
+		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
+		if (widthOfPlot != null && widthOfPlot.compareTo(BigDecimal.ZERO) > 0) {
+			sideYardService.processSideYard(pl);
+		}
+
         return pl;
     }
 
