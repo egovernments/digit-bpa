@@ -219,14 +219,14 @@
 			<spring:message code="lbl.previousowner.details" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.previousownerdetails}"
+			<c:out value="${bpaApplication.siteDetail[0].previousownerdetails}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.landregistration.details" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.landregistrationdetails}"
+			<c:out value="${bpaApplication.siteDetail[0].landregistrationdetails}"
 				default="N/A"></c:out>
 		</div>
 	</div>

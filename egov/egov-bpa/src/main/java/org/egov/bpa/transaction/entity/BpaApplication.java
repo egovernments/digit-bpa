@@ -263,10 +263,6 @@ public class BpaApplication extends StateAware<Position> {
     private List<PermitDcrDocument> permitDcrDocuments = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BuildingSubUsage> buildingSubUsages = new ArrayList<>(0);
-    @Length(min = 1,max = 4000)
-    private String previousownerdetails;
-    @Length(min = 1,max = 4000)
-    private String landregistrationdetails;
 
     private transient MultipartFile[] files;
     private transient Long approvalDepartment;
@@ -1084,22 +1080,6 @@ public class BpaApplication extends StateAware<Position> {
 
 	public void setConstructionCost(BigDecimal constructionCost) {
 		this.constructionCost = constructionCost;
-	}
-
-	public String getPreviousownerdetails() {
-		return previousownerdetails;
-	}
-
-	public void setPreviousownerdetails(String previousownerdetails) {
-		this.previousownerdetails = previousownerdetails;
-	}
-
-	public String getLandregistrationdetails() {
-		return landregistrationdetails;
-	}
-
-	public void setLandregistrationdetails(String landregistrationdetails) {
-		this.landregistrationdetails = landregistrationdetails;
 	}
 
 }

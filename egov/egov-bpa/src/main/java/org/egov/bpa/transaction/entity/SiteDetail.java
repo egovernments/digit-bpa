@@ -183,6 +183,10 @@ public class SiteDetail extends AbstractAuditable {
     @JoinColumn(name = "landUsage")
     private BpaSchemeLandUsage landUsage;
     private transient Long registrarVillageId;
+    @Length(min = 1,max = 4000)
+    private String previousownerdetails;
+    @Length(min = 1,max = 4000)
+    private String landregistrationdetails;
 
     @Override
     public Long getId() {
@@ -632,5 +636,21 @@ public class SiteDetail extends AbstractAuditable {
 
 	public void setAffordableHousingScheme(Boolean affordableHousingScheme) {
 		this.affordableHousingScheme = affordableHousingScheme;
+	}
+	
+	public String getPreviousownerdetails() {
+		return previousownerdetails;
+	}
+
+	public void setPreviousownerdetails(String previousownerdetails) {
+		this.previousownerdetails = previousownerdetails;
+	}
+
+	public String getLandregistrationdetails() {
+		return landregistrationdetails;
+	}
+
+	public void setLandregistrationdetails(String landregistrationdetails) {
+		this.landregistrationdetails = landregistrationdetails;
 	}
 }
