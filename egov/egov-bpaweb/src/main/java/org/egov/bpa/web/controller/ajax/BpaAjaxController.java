@@ -565,6 +565,7 @@ public class BpaAjaxController {
         JSONObject boundaryConfigJson = new JSONObject(boundaryConfiguration.getValue());
         JSONObject validBoundaryJson = (JSONObject) boundaryConfigJson.get("validBoundary");
         JSONObject crossBoundaryJson = (JSONObject) boundaryConfigJson.get("crossBoundary");
+        JSONObject uniformBoundaryJson = (JSONObject) boundaryConfigJson.get("uniformBoundary");
         if (crossBoundaryJson.length() != 0) {
             boundaryOutputJson.put("crossBoundary", crossBoundaryJson);
         }
@@ -590,6 +591,7 @@ public class BpaAjaxController {
             }
         }
         boundaryOutputJson.put("boundaryData", boundaryDataJson);
+        boundaryOutputJson.put("uniformBoundary", uniformBoundaryJson);
         System.out.println("getBoundaryConfiguration--->" + boundaryOutputJson.toString());
         IOUtils.write(boundaryOutputJson.toString(), response.getWriter());
     }
@@ -631,4 +633,29 @@ public class BpaAjaxController {
     public List<ServiceType> getServiceTypeDetails() {
         return serviceTypeService.getAllActiveServiceTypes();
     }
+    
+	@GetMapping(value = "/boundary/ajax-child-boundary", produces = MediaType.APPLICATION_JSON_VALUE)
+	public void getBoundariesByparent(HttpServletResponse response, @RequestParam final String parent,
+			@RequestParam final String child, @RequestParam final String selectedParent) throws IOException {
+		JSONObject childBoundaryJson = new JSONObject();
+		List<Boundary> childBoundaries;
+		JSONObject boundaryJson = null;
+		JSONArray boundaryArray = null;
+
+    	String[] childBoundary = child.split(",");
+		if (selectedParent != null && !selectedParent.isEmpty()) {
+				childBoundaries = boundaryService.findActiveImmediateChildrenWithOutParent(Long.valueOf(selectedParent));
+				boundaryArray = new JSONArray();
+				for (final Boundary boundary : childBoundaries) {
+					boundaryJson = new JSONObject();
+					boundaryJson.put("id", boundary.getId());
+					boundaryJson.put("name", boundary.getName());
+					boundaryJson.put("materialpath", boundary.getMaterializedPath());
+					boundaryArray.put(boundaryJson);
+				}
+				childBoundaryJson.put(childBoundary[0].split(":")[0], boundaryArray);
+		}
+		System.out.println("getChildBoundaries--->" + childBoundaryJson.toString());
+		IOUtils.write(childBoundaryJson.toString(), response.getWriter());
+	}
 }

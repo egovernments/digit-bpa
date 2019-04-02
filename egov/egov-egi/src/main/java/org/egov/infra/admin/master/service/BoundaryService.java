@@ -223,6 +223,10 @@ public class BoundaryService {
     public List<Boundary> findActiveBoundariesForMpath(final Set<String> mpath) {
         return boundaryRepository.findActiveBoundariesForMpath(mpath);
     }
+    
+    public List<Boundary> findActiveImmediateChildrenWithOutParent(Long parentId){
+    	return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentId);
+    }
 
     public String getMaterializedPath(final Boundary child, final Boundary parent) {
         String mpath = "";

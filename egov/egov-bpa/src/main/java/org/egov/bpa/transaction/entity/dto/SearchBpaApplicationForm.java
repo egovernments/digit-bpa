@@ -112,7 +112,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         }
         setAddress(application.getOwner().getAddress());
         setRescheduledByEmployee(application.getIsRescheduledByEmployee());
-        setApplicationType(application.getApplicationType().getName());
+        setApplicationType(application.getApplicationType()!=null ? application.getApplicationType().getName() : "");
         setOccupancy(application.getOccupanciesName());
         setServiceType(application.getServiceType().getDescription());
         setServiceCode(application.getServiceType().getCode());

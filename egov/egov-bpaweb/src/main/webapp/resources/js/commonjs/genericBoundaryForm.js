@@ -93,13 +93,16 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 	var boundaryType;
 	var tempId = [];
 	var domOptionId;
+	var uniformMap = new Map(); 
 	
 	var crosslinkConfig=genericBoundaryConfigData['crossBoundary'];
 	var boundaryData=genericBoundaryConfigData['boundaryData'];
+	var uniformBoundary = genericBoundaryConfigData['uniformBoundary'];
 	if(crosslinkConfig!=null && crosslinkConfig!=''){
     	fromHierarchy=crosslinkConfig['fromHierarchy'];
     	toHierarchy=crosslinkConfig['toHierarchy'];
 	}
+	
 	for(var k in boundaryData) {
 		tempId = k.split(':');
 		orderArray.push(k);
@@ -113,19 +116,43 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 			orderMap.set(hierarchyNumber, tempArray);
 		}
 	}
-	orderArray.sort();
+
+	if (uniformBoundary != null && uniformBoundary != '') {
+		for ( var i in uniformBoundary) {
+			uniformMap.set(i, uniformBoundary[i]);
+		}
+	}
+
+		orderArray.sort();
 	for (var i = 0; i < orderArray.length; i++) {
 		displayName = orderArray[i].split(':')[2];
 		hierarchy = orderArray[i].split(':')[1];
 		domOptionId = hierarchy+displayName.replace(/ +/g, "");
+		var fromBoundary='';
+		var toBoundary='';
+		var result = uniformMap.get(hierarchy);
+		if (result != null && result != '') {
+			for (var k = 0; k < result.length; k++) {
+				if (result[k]['fromBoundary'].split(':')[1] == displayName) {
+					toBoundary = result[k]['toBoundary'];
+					fromBoundary = result[k]['fromBoundary'];
+					break;
+				}
+			}
+		}
+
 		if(boundaryData[orderArray[i]]['data']!=null && boundaryData[orderArray[i]]['data']!=''){
 			$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
-			if(fromHierarchy.indexOf(displayName) != -1){
+			if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] != displayName){
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossBoundaryNew(\''+domOptionId+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
-			}else {
+			} else if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] == displayName){
+				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossAndUniformBoundaryNew(\''+domOptionId+'\', \''+hierarchy+'\', \''+toBoundary+'\',\''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
+			} else if(fromBoundary !=null && fromBoundary!='' && fromBoundary.split(':')[1] == displayName){
+				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="uniformBoundaryNew(\''+domOptionId+'\', \''+hierarchy+'\', \''+toBoundary+'\');"> <option value="">select</option></select></div>');
+			} else {
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'"> <option value="">select</option></select></div>');
 			}
-			if(toHierarchy.indexOf(displayName) == -1){
+			if(fromBoundary.split(':')[1] == displayName  && toHierarchy.indexOf(displayName) == -1){
 				$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
 					$("#"+domOptionId).append($('<option>').text(value.name).attr('value', value.id));
 				});
@@ -137,6 +164,19 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 					document.getElementById(domOptionId).name="revenueBoundary";
 				if(hierarchy=='LOCATION')
 					document.getElementById(domOptionId).name="locationBoundary";
+			}
+			
+			if(uniformMap!=null && uniformMap!=''){
+				var result = uniformMap.get(hierarchy);
+				if (result != null && result != '') 
+					if(result.length>1){
+						for (var k = 0; k < result.length; k++) {
+							if (result[k]['toBoundary'].split(':')[1] == displayName) {
+								$("#"+hierarchy+result[k]['toBoundary'].split(':')[1].replace(/ +/g, "")).empty()
+								.append('<option value="">select</option></select>');
+							}
+						}
+					}
 			}
 		}
 	}
@@ -158,8 +198,10 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 	var tempId = [];
 	var crosslinkConfig=genericBoundaryConfigData['crossBoundary'];
 	var boundaryData=genericBoundaryConfigData['boundaryData'];
+	var uniformBoundary = genericBoundaryConfigData['uniformBoundary'];
 	var domOptionId;
 	var parentId = "";
+	var uniformMap = new Map();
 	
 	if(crosslinkConfig!=null && crosslinkConfig!=''){
     	fromHierarchy=crosslinkConfig['fromHierarchy'];
@@ -178,19 +220,41 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 			orderMap.set(hierarchyNumber, tempArray);
 		}
 	}
+	
+	if (uniformBoundary != null && uniformBoundary != '') {
+		for ( var i in uniformBoundary) {
+			uniformMap.set(i, uniformBoundary[i]);
+			}
+	}
+	
 	orderArray.sort();
 	for (var i = 0; i < orderArray.length; i++) {
 		displayName = orderArray[i].split(':')[2];
 		hierarchy = orderArray[i].split(':')[1];
 		domOptionId = hierarchy+displayName.replace(/ +/g, "");
+		var result = uniformMap.get(hierarchy);
+		if (result != null && result != '') {
+			for (var k = 0; k < result.length; k++) {
+				if (result[k]['fromBoundary'].includes(displayName)) {
+					toBoundary = result[k]['toBoundary'];
+					fromBoundary = result[k]['fromBoundary'];
+					break;
+				}
+			}
+		}
 		if(boundaryData[orderArray[i]]['data']!=null && boundaryData[orderArray[i]]['data']!=''){
 			$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
-			if(fromHierarchy.indexOf(displayName) != -1){
+			if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] != displayName){
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossBoundaryNew(\''+domOptionId+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
+			}else if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] == displayName){
+				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossAndUniformBoundaryNew(\''+domOptionId+'\', \''+hierarchy+'\', \''+toBoundary+'\',\''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
+			}else if(fromBoundary !=null && fromBoundary!='' && fromBoundary.split(':')[1] == displayName){
+				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="uniformBoundaryModify(\''+domOptionId+'\', \''+hierarchy+'\', \''+toBoundary+'\');"> <option value="">select</option></select></div>');
 			}else {
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'"> <option value="">select</option></select></div>');
 			}
-			if(toHierarchy.indexOf(displayName) == -1){
+
+			if(fromBoundary.split(':')[1] == displayName && toHierarchy.indexOf(displayName) == -1 && fromHierarchy.indexOf(displayName) == -1){
 				$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
 					$("#"+domOptionId).append($('<option>').text(value.name).attr('value', value.id));
 				});
@@ -211,10 +275,6 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 				}
 			}
     	}
-		if(crosslinkConfig!=null && crosslinkConfig!=''){
-			crossBoundaryModify(selectedRevenueBoundary, fromHierarchy, toHierarchy);
-		}
-		
 		if(revenueBoundaryId!=null && revenueBoundaryId!='')
 			document.getElementById(revenueBoundaryId).value=selectedRevenueBoundary;
 		if(adminBoundaryId!=null && adminBoundaryId!='')
@@ -222,11 +282,9 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 		if(locationBoundaryId!=null && locationBoundaryId!='')
 			document.getElementById(locationBoundaryId).value=selectedLocationBoundary;
 		
-		while(parentId==''){
-			parentId = findParentById(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary);
-			var domId = findDomIdByParent(genericBoundaryConfigData['boundaryData'], parentId);
-			document.getElementById(domId).value=parentId;
-		}
+          setParentDetails(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary,uniformMap,'REVENUE',crosslinkConfig);
+          setParentDetails(genericBoundaryConfigData['boundaryData'], selectedAdminBoundary,uniformMap,'ADMINISTRATION',crosslinkConfig);
+          setParentDetails(genericBoundaryConfigData['boundaryData'], selectedLocationBoundary,uniformMap,'LOCATION',crosslinkConfig);
 }
 
 function crossBoundaryNew(selectedBndryId, fromHeirarchy, toHeirarchy) {
@@ -260,6 +318,45 @@ function crossBoundaryNew(selectedBndryId, fromHeirarchy, toHeirarchy) {
 	});
 }
 
+function uniformBoundaryNew(selectedBndryId, hierarchy, toHeirarchy){
+	var selectedBoundary = $('#'+selectedBndryId).children(":selected").attr("value");
+	$.ajax({
+		url : "/bpa/boundary/ajax-child-boundary",
+		type : "GET",
+		data : {
+			parent : hierarchy,
+			child : toHeirarchy,
+			selectedParent : selectedBoundary
+		},
+		cache : false,
+		async : false,
+		contentType : 'application/json; charset=utf-8',
+		success : function(response) {
+			var crossBoundaryData = JSON.parse(response);
+			var toHeirarchyArray = toHeirarchy.split(',');
+			for (var i = 0; i < toHeirarchyArray.length; i++) {
+				$("#"+hierarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, "")).empty()
+				.append('<option value="">select</option></select>');
+				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[0]], function(index, value) {
+					$($("#"+hierarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+				});
+		    }
+		},
+		error : function(response) {
+			console.log("Error occurred while retrieving cross boundary!!!"
+					+ response);
+		}
+	});
+}
+
+function crossAndUniformBoundaryNew(selectedBndryId, hierarchy, toHeirarchy,fromHierarchy,toHierarchy){
+	uniformBoundaryNew(selectedBndryId,hierarchy,toHeirarchy);
+	crossBoundaryNew(selectedBndryId,fromHierarchy,toHierarchy);
+}
+
+
+
+
 function crossBoundaryModify(selectedBoundary, fromHeirarchy, toHeirarchy) {
 	$.ajax({
 		url : "/bpa/boundary/ajax-cross-boundary",
@@ -290,6 +387,41 @@ function crossBoundaryModify(selectedBoundary, fromHeirarchy, toHeirarchy) {
 	});
 }
 
+function uniformBoundaryModify(selectedBndryId, heirarchy, toHeirarchy) {
+	var selectedBoundary = $('#'+selectedBndryId).children(":selected").attr("value");
+	if(selectedBoundary!=null && selectedBoundary!=''){
+	$.ajax({
+		url : "/bpa/boundary/ajax-child-boundary",
+		type : "GET",
+		data : {
+			parent : heirarchy,
+			child : toHeirarchy,
+			selectedParent : selectedBoundary
+		},
+		cache : false,
+		async : false,
+		contentType : 'application/json; charset=utf-8',
+		success : function(response) {
+			var crossBoundaryData = JSON.parse(response);
+			var toHeirarchyArray = toHeirarchy.split(',');
+			for (var i = 0; i < toHeirarchyArray.length; i++) {
+				$("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, "")).empty()
+				.append('<option value="">select</option></select>');
+				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[0]], function(index, value) {
+					$($("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+				});
+		    }
+		},
+		error : function(response) {
+			console.log("Error occurred while retrieving cross boundary!!!"
+					+ response);
+		}
+	});
+	}
+}
+
+
+
 function findParentById(boundaryData, bndryId){
 	var dataJson;
 	var boundary;
@@ -315,5 +447,95 @@ function findDomIdByParent(boundaryData, bndryParentId){
 				return k.split(":")[1]+k.split(":")[2].replace(/ +/g, "");
 			}
 		}
+	}
+}
+
+function findDomIdByBoundary(boundaryData, bndryId){
+	var dataJson;
+	var boundary;
+	for(var k in boundaryData) {
+		dataJson = boundaryData[k].data;
+		for (var i = 0;  i < dataJson.length; i++) {
+			boundary = dataJson[i];
+			if(boundary.id==bndryId){
+				return k.split(":")[1]+k.split(":")[2].replace(/ +/g, "");
+			}
+		}
+	}
+}
+
+function parentDetails(selectedBndryId, heirarchy, toHeirarchy) {
+	if(selectedBndryId!=null && selectedBndryId!=''){
+	$.ajax({
+		url : "/bpa/boundary/ajax-child-boundary",
+		type : "GET",
+		data : {
+			parent : heirarchy,
+			child : toHeirarchy,
+			selectedParent : selectedBndryId
+		},
+		cache : false,
+		async : false,
+		contentType : 'application/json; charset=utf-8',
+		success : function(response) {
+			var crossBoundaryData = JSON.parse(response);
+			var toHeirarchyArray = toHeirarchy.split(',');
+			for (var i = 0; i < toHeirarchyArray.length; i++) {
+				$("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, "")).empty()
+				.append('<option value="">select</option></select>');
+				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[0]], function(index, value) {
+					$($("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+				});
+		    }
+		},
+		error : function(response) {
+			console.log("Error occurred while retrieving cross boundary!!!"
+					+ response);
+		}
+	});
+	}
+}
+
+function setParentDetails(boundaryData,revenueBoundaryId,uniformMap,hierarchy,crosslinkConfig){
+	var result = uniformMap.get(hierarchy);
+	var fromHierarchy=crosslinkConfig['fromHierarchy'];
+	var toHierarchy=crosslinkConfig['toHierarchy'];
+	var selectedRevenue = revenueBoundaryId;
+	
+	if(result !=undefined && result!=null && result!=''){
+	if(result.length == 1){
+	    var parent = findParentById(boundaryData,revenueBoundaryId);
+	    parentDetails(parent,hierarchy,result[0]['toBoundary']);
+	    if(crosslinkConfig!=null && crosslinkConfig!='')
+	        crossBoundaryModify(revenueBoundaryId, fromHierarchy, toHierarchy);
+		document.getElementById(hierarchy+(result[0]['toBoundary'].split(':')[1].replace(/ +/g, ""))).value=revenueBoundaryId;
+		var domId = findDomIdByParent(boundaryData, parent);
+		document.getElementById(domId).value=parent;
+	}else {
+      for(var k=result.length-1;k>=0;k--){
+    	 var parent = findParentById(boundaryData,revenueBoundaryId);
+    	 parentDetails(parent,hierarchy,result[k]['toBoundary']);
+    	 if(fromHierarchy.indexOf(result[k]['toBoundary'].split(':')[1]) == -1){
+    		if(crosslinkConfig!=null && crosslinkConfig!='')
+    			crossBoundaryModify(parent, fromHierarchy, toHierarchy);
+    	 }
+		var domId = findDomIdByParent(boundaryData, parent);
+		document.getElementById(domId).value=parent;
+    	 revenueBoundaryId = parent;
+      }
+      if(result.length == 2){
+      var dom = findDomIdByBoundary(boundaryData, selectedRevenue);
+      document.getElementById(dom).value=selectedRevenue;
+      var parent = findParentById(boundaryData,selectedRevenue);
+      if(parent!=null && parent!=''){
+    	var domId = findDomIdByParent(boundaryData, parent);
+		document.getElementById(domId).value=parent;
+      }
+      }
+	}
+	} else if(result == undefined){
+		var domId = findDomIdByParent(boundaryData, revenueBoundaryId);
+		document.getElementById(domId).value=revenueBoundaryId;
+		return;
 	}
 }
