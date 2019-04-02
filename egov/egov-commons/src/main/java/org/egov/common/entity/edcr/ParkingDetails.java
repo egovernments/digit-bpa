@@ -60,6 +60,10 @@ import java.util.List;
 public class ParkingDetails implements Serializable {
     private static final long serialVersionUID = 8L;
     private List<Measurement> cars = new ArrayList<>();
+    private List<Measurement> openCars = new ArrayList<>();
+    private List<Measurement> coverCars = new ArrayList<>();
+    private List<Measurement> basementCars = new ArrayList<>();
+    private List<Measurement> visitors = new ArrayList<>();
     private Integer validCarParkingSlots = 0;
     private Integer diningSeats = 0;
     private List<Measurement> loadUnload = new ArrayList<>();
@@ -68,6 +72,7 @@ public class ParkingDetails implements Serializable {
     private List<Measurement> disabledPersons = new ArrayList<>();
     private Integer validDAParkingSlots = 0;
     private BigDecimal distFromDAToMainEntrance = BigDecimal.ZERO;
+    private List<Measurement> special = new ArrayList<>();
 
     public List<Measurement> getCars() {
         return cars;
@@ -75,6 +80,38 @@ public class ParkingDetails implements Serializable {
 
     public void setCars(List<Measurement> cars) {
         this.cars = cars;
+    }
+
+    public List<Measurement> getOpenCars() {
+        return openCars;
+    }
+
+    public void setOpenCars(List<Measurement> openCars) {
+        this.openCars = openCars;
+    }
+
+    public List<Measurement> getCoverCars() {
+        return coverCars;
+    }
+
+    public void setCoverCars(List<Measurement> coverCars) {
+        this.coverCars = coverCars;
+    }
+
+    public List<Measurement> getBasementCars() {
+        return basementCars;
+    }
+
+    public void setBasementCars(List<Measurement> basementCars) {
+        this.basementCars = basementCars;
+    }
+
+    public List<Measurement> getVisitors() {
+        return visitors;
+    }
+
+    public void setVisitors(List<Measurement> visitors) {
+        this.visitors = visitors;
     }
 
     public Integer getValidCarParkingSlots() {
@@ -140,4 +177,13 @@ public class ParkingDetails implements Serializable {
     public void setDistFromDAToMainEntrance(BigDecimal distFromDAToMainEntrance) {
         this.distFromDAToMainEntrance = distFromDAToMainEntrance;
     }
+
+    public List<Measurement> getSpecial() {
+        return special;
+    }
+
+    public void setSpecial(List<Measurement> special) {
+        this.special = special;
+    }
+
 }
