@@ -46,9 +46,9 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
@@ -69,7 +69,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.getStakeholderType1Restrictions;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayInputStream;
@@ -95,11 +94,11 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaSchemeLandUsageService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.PostalAddressService;
@@ -126,6 +125,7 @@ import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.bpa.transaction.entity.common.StoreDcrFiles;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
+import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
 import org.egov.bpa.transaction.repository.DcrDocumentRepository;
 import org.egov.bpa.transaction.repository.PermitFeeRepository;
@@ -135,6 +135,7 @@ import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.common.entity.bpa.Occupancy;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -171,7 +172,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
-import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 
 @Service
 @Transactional(readOnly = true)
@@ -261,7 +261,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Autowired
     private ServiceTypeService serviceTypeService;
     @Autowired
-    private ApplicationTypeService applicationTypeService;
+    private ApplicationSubTypeService applicationTypeService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -443,6 +443,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
         applicationBpaRepository.saveAndFlush(application);
+        
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
             bpaIndexService.updateIndexes(application);
@@ -706,7 +707,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
     
     public BigDecimal getFeeAmountByApplicationType(Long applicationTypeId) {
-    	ApplicationType applicationType = applicationTypeService.findById(applicationTypeId);
+    	ApplicationSubType applicationType = applicationTypeService.findById(applicationTypeId);
     	 if (getApplicationTypeAmount().containsKey(applicationType.getName())   ) 			  
              return BigDecimal.valueOf(getApplicationTypeAmount().get(applicationType.getName()).longValue());
     	 else
@@ -1088,6 +1089,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 totalFloorArea = totalFloorArea.add(floor.getFloorArea());
             }
         return totalFloorArea;
+    }
+    
+    public boolean isOccupancyContains(final List<Occupancy> occupancies, final String occupancy) {
+        Optional<Occupancy> occ = occupancies.stream().filter(o -> o.getCode().equalsIgnoreCase(occupancy)).findAny();
+        return occ.isPresent();
     }
 
 }

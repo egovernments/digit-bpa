@@ -359,6 +359,7 @@ public class BpaDemandService {
         
         feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
         feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.PERMIT_APPLICATION));
+        feeCrit.add(Restrictions.isNull("bpaFeeMap.applicationSubType"));
 
         return feeCrit;
     }

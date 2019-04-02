@@ -46,8 +46,6 @@
  */
 package org.egov.bpa.utils;
 
-import static org.egov.bpa.utils.BpaConstants.IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -259,6 +257,7 @@ public class BpaConstants {
     public static final String SHELTERFUND = "Shelter Fund";
     public static final String LABOURCESS = "Labour cess";
     public static final String TP_DEPT = "TOWN PLANNING DEPARTMENT";
+    public static final String DEV_PERMIT_FEE = "DPF";
 
     // designation constants
     public static final String DESIGNATION_AEE = "Assistant executive engineer";

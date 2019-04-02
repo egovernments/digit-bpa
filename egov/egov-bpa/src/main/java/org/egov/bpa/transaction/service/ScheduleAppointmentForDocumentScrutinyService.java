@@ -40,8 +40,9 @@
 package org.egov.bpa.transaction.service;
 
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,9 +53,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.SlotMapping;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -116,13 +117,13 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     @Autowired
     private BpaIndexService bpaIndexService;
     @Autowired
-    private ApplicationTypeService applicationTypeService;
+    private ApplicationSubTypeService applicationTypeService;
 
     public void scheduleScrutiny() {
         Calendar calendar = Calendar.getInstance();
         String noOfDays = getGapForSchedulingForNormalApplications();
         calendar.add(Calendar.DAY_OF_YEAR, Integer.valueOf(noOfDays));
-    	ApplicationType appType = applicationTypeService.findByName(APPLICATION_TYPE_REGULAR.toUpperCase());
+    	ApplicationSubType appType = applicationTypeService.findByName(APPLICATION_TYPE_REGULAR.toUpperCase());
         List<Boundary> zonesList = slotMappingService.slotfindZoneByApplType(appType);
         for (Boundary bndry : zonesList) {
             List<Slot> slotList = slotRepository.findByZoneAndApplicationDate(bndry, calendar.getTime());
@@ -358,7 +359,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
         Calendar calendar = Calendar.getInstance();
         String noOfDays = getGapForSchedulingForOneDayPermitApplications();
         calendar.add(Calendar.DAY_OF_YEAR, Integer.valueOf(noOfDays));
-    	ApplicationType appType = applicationTypeService.findByName(APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase());
+    	ApplicationSubType appType = applicationTypeService.findByName(APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase());
         List<SlotMapping> slotMappings = slotMappingService.slotMappingForOneDayPermit(appType);
         for (SlotMapping sltMapping : slotMappings) {
             List<Slot> slotList = slotRepository.findByZoneWardAndApplicationDateForOneDayPermit(sltMapping.getZone(),sltMapping.getElectionWard(), calendar.getTime());

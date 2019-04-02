@@ -48,6 +48,7 @@ import javax.validation.Valid;
 import org.egov.bpa.master.entity.BpaFeeCommon;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.enums.CalculationType;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaFeeCommonService;
 import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.ServiceTypeService;
@@ -89,6 +90,9 @@ public class BpaFeeController {
 
 	@Autowired
 	private BpaDemandService bpaDemandService;
+	
+	@Autowired
+	private ApplicationSubTypeService applicationSubTypeService;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -205,6 +209,7 @@ public class BpaFeeController {
 		model.addAttribute("calculationTypes", Arrays.asList(CalculationType.values()));
 		model.addAttribute("feeSubTypes", bpaFeeCommonService.getFeeSubTypes());
 		model.addAttribute("categories", egReasonCategoryDAO.findAll());
+		model.addAttribute("appSubTypes", applicationSubTypeService.getAllEnabledApplicationTypes());
 	}
 
 }

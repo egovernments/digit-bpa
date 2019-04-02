@@ -46,8 +46,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.enums.CalculationType;
-import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.entity.enums.FeeApplicationType;
+import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -78,6 +78,10 @@ public class BpaFeeMapping extends AbstractAuditable {
     @ManyToOne
     @JoinColumn(name = "serviceType")
     private ServiceType serviceType;
+    
+    @ManyToOne
+    @JoinColumn(name = "applicationSubType")
+    private ApplicationSubType applicationSubType;
       
     @JoinColumn(name = "amount")
     private Double amount;
@@ -146,5 +150,13 @@ public class BpaFeeMapping extends AbstractAuditable {
 
 	public void setFeeSubType(FeeSubType feeSubType) {
 		this.feeSubType = feeSubType;
+	}
+
+	public ApplicationSubType getApplicationSubType() {
+		return applicationSubType;
+	}
+
+	public void setApplicationSubType(ApplicationSubType applicationSubType) {
+		this.applicationSubType = applicationSubType;
 	}
 }

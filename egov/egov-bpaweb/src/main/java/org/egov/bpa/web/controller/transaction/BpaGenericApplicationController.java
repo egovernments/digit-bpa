@@ -80,8 +80,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.bpa.master.entity.ApplicationType;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.ConstructionStagesService;
@@ -191,7 +191,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @Autowired
     protected StakeholderTypeService stakeholderTypeService;
     @Autowired
-    protected ApplicationTypeService applicationTypeService;
+    protected ApplicationSubTypeService applicationTypeService;
 
     protected void prepareFormData(Model model) {
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
@@ -213,9 +213,9 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("applicationModes", getApplicationModeMap());
         model.addAttribute("buildingFloorList", getBuildingFloorsList());
         model.addAttribute("uomList", BpaUom.values());
-        List<ApplicationType> slotMappingApplTypes = new ArrayList<>();
-        List<ApplicationType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
-        for (ApplicationType applType : appTypes)
+        List<ApplicationSubType> slotMappingApplTypes = new ArrayList<>();
+        List<ApplicationSubType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
+        for (ApplicationSubType applType : appTypes)
             if (!bpaUtils.isOneDayPermitApplicationIntegrationRequired() && applType.equals(APPLICATION_TYPE_ONEDAYPERMIT))
                 break;
             else
@@ -225,9 +225,9 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType());
         model.addAttribute("schemesList", bpaSchemeService.findAll());
         model.addAttribute("oneDayPermitLandTypeList", Arrays.asList(OneDayPermitLandType.values()));
-        List<ApplicationType> appTyps = applicationTypeService.getAllSlotRequiredApplicationTypes();
-        List<ApplicationType> applicationTypes = new ArrayList<>();
-        for (ApplicationType applType : appTyps)
+        List<ApplicationSubType> appTyps = applicationTypeService.getAllSlotRequiredApplicationTypes();
+        List<ApplicationSubType> applicationTypes = new ArrayList<>();
+        for (ApplicationSubType applType : appTyps)
             if (applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
                 continue;
             else
@@ -236,10 +236,10 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("userList", userService.getUserByTypeInOrder(UserType.EMPLOYEE));
     }
 
-    protected List<ApplicationType> getApplicationTypes() {
-        List<ApplicationType> applicationTypeList = new ArrayList<>();
-        List<ApplicationType> appTypes = applicationTypeService.findAll();
-        for (ApplicationType appType : appTypes)
+    protected List<ApplicationSubType> getApplicationTypes() {
+        List<ApplicationSubType> applicationTypeList = new ArrayList<>();
+        List<ApplicationSubType> appTypes = applicationTypeService.findAll();
+        for (ApplicationSubType appType : appTypes)
             if (!bpaUtils.isOneDayPermitApplicationIntegrationRequired()
                     && appType.getName().equals(APPLICATION_TYPE_ONEDAYPERMIT))
                 break;

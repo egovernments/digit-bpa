@@ -126,6 +126,8 @@
 										<th class="col-sm-2 table-div-column"><spring:message
 												code='lbl.applctn.type' /></th>
 										<th class="col-sm-2 table-div-column"><spring:message
+												code='lbl.applctn.subtype' /></th>
+										<th class="col-sm-2 table-div-column"><spring:message
 												code='lbl.service.type' /></th>
 										<th class="col-sm-2 table-div-column"><spring:message
 												code='lbl.fee.subtype' /></th>
@@ -147,6 +149,13 @@
 												style="text-align: center" value="${feeMap.applicationType.feeApplicationTypeVal}" />
 
 											</td>
+											<td><form:input type="hidden"
+													id="bpaFeeMapTemp[${status.index}].applicationSubType"
+													path="bpaFeeMapTemp[${status.index}].applicationSubType" />
+												<input type="text" id="table_applicationSubType${status.index}"
+												class="form-control" readonly="readonly"
+												style="text-align: center"
+												value="${feeMap.applicationSubType.description}" /></td>
 											<td><form:input type="hidden"
 													id="bpaFeeMapTemp[${status.index}].serviceType"
 													path="bpaFeeMapTemp[${status.index}].serviceType" />

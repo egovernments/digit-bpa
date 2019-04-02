@@ -46,7 +46,7 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.service.BpaDcrService;
@@ -208,9 +208,9 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
-        List<ApplicationType> appTyps = applicationTypeService.getAllSlotRequiredApplicationTypes();
-		List<ApplicationType> applicationTypes = new ArrayList<>();
-                for (ApplicationType applType : appTyps)
+        List<ApplicationSubType> appTyps = applicationTypeService.getAllSlotRequiredApplicationTypes();
+		List<ApplicationSubType> applicationTypes = new ArrayList<>();
+                for (ApplicationSubType applType : appTyps)
                     if (applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
                         continue;
                     else

@@ -179,6 +179,7 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         return bpaDemandService.createCriteriaforApplicationFeeAmount(amenityList, feeType, feeSubType);
     }
 
+
     public EgDemand createDemandWhenFeeCollectionNotRequire(BpaApplication application) {
         EgDemand egDemand = new EgDemand();
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(

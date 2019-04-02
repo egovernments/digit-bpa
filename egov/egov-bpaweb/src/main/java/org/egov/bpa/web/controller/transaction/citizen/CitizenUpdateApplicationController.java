@@ -59,7 +59,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,7 +67,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
@@ -86,7 +85,6 @@ import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
-import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
@@ -133,8 +131,6 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private GenericBillGeneratorService genericBillGeneratorService;
     @Autowired
     private InspectionService inspectionService;
-    @Autowired
-    private ApplicationBpaBillService applicationBpaBillService;
     @Autowired
     private BpaAppointmentScheduleService bpaAppointmentScheduleService;
     @Autowired
@@ -352,9 +348,9 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(
         		bpaApplication, new ArrayList<>()));
         if (bpaUtils.isApplicationFeeCollectionRequired())
-        	bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
+        	bpaApplication.setDemand(feeCalculation.createDemand(bpaApplication));
         else
-        	bpaApplication.setDemand(applicationBpaBillService.createDemandWhenFeeCollectionNotRequire(bpaApplication));
+        	bpaApplication.setDemand(feeCalculation.createDemandWhenFeeCollectionNotRequire(bpaApplication));
 
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
 
@@ -367,17 +363,29 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
         // To allot slot for one day permit applications
-        String occupancyName =""; 
-        if(bpaApplication.getPermitOccupanciesTemp().size() == 1)
-        	occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
-        ApplicationType applicationType = null;
-        if(bpaApplication.getIsOneDayPermitApplication())
-        	applicationType = applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT);
-        else if(!bpaApplication.getBuildingDetailFromEdcr().isEmpty() && bpaApplication.getBuildingDetailFromEdcr().get(0).getTotalPlintArea().compareTo(BigDecimal.ZERO) > 0)
-        	applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
-    		   bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetailFromEdcr()).getHeightFromGroundWithOutStairRoom(),occupancyName);
+        boolean isEdcrIntegrationRequire = bpaDcrService
+                .isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode());
+        List<ApplicationSubType> riskBasedAppTypes = applicationTypeService.getRiskBasedApplicationTypes();
 
-        bpaApplication.setApplicationType(applicationType);
+        String occupancyName;
+        
+        if (bpaApplication.getPermitOccupanciesTemp().size() == 1)
+            occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
+        else if(applicationBpaService.isOccupancyContains(bpaApplication.getPermitOccupanciesTemp(), BpaConstants.INDUSTRIAL))
+        	occupancyName = BpaConstants.INDUSTRIAL;
+        else
+        	occupancyName = BpaConstants.MIXED_OCCUPANCY;
+        	
+        	
+        
+        
+        if(!isEdcrIntegrationRequire && riskBasedAppTypes.contains(bpaApplication.getApplicationType())) {
+        	ApplicationSubType applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
+                    bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetail())
+                            .getHeightFromGroundWithOutStairRoom(),
+                    occupancyName);
+            bpaApplication.setApplicationType(applicationType);
+        }
         
         applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
         bpaUtils.updatePortalUserinbox(bpaApplication, null);

@@ -7,20 +7,16 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECT_CLERK;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
 import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.DOC_SCRUTINY_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
-import static org.egov.bpa.utils.BpaConstants.HIGHRISK;
 import static org.egov.bpa.utils.BpaConstants.LETTERTOPARTYINITIATE;
-import static org.egov.bpa.utils.BpaConstants.LOWRISK;
 import static org.egov.bpa.utils.BpaConstants.LPCREATED;
 import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
 import static org.egov.bpa.utils.BpaConstants.LPREPLYRECEIVED;
-import static org.egov.bpa.utils.BpaConstants.MEDIUMRISK;
 import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_APPLN_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.PERMIT_APPLN_FEE_COLLECTION_REQUIRED;
@@ -46,8 +42,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.RandomStringGenerator;
-import org.egov.bpa.master.entity.ApplicationType;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
@@ -152,7 +148,7 @@ public class BpaUtils {
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
-    private ApplicationTypeService applicationTypeService;
+    private ApplicationSubTypeService applicationTypeService;
 
     @Autowired
     public BpaUtils(@Value("${filestore.base.dir}") String fileStoreDir) {
@@ -783,44 +779,46 @@ public class BpaUtils {
         return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
     }
 
-    public ApplicationType getBuildingType(BigDecimal plotArea, BigDecimal heightOfTheBuilding, String occupancy) {
-        BigDecimal lowPlotArea = new BigDecimal(300);
-        BigDecimal moderatePlotArea = new BigDecimal(500);
-        BigDecimal moderateHeightOfTheBuilding = new BigDecimal(15);
+    public ApplicationSubType getBuildingType(BigDecimal plotArea, BigDecimal heightOfTheBuilding, String occupancy) {
+		if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
+			return getResidentialApplicationType(plotArea, heightOfTheBuilding);
+		} else if (BpaConstants.BPA_INDUSTRIAL.equalsIgnoreCase(occupancy)) {
+			return getIndustrialApplicationType(plotArea, heightOfTheBuilding);
+		} else {
+			return getMixedOccAppType(plotArea, heightOfTheBuilding);
+		}
+	}
+	
+	public ApplicationSubType getResidentialApplicationType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
+		if (plotArea.compareTo(BigDecimal.valueOf(300)) <= 0
+				|| heightOfTheBuilding.compareTo(BigDecimal.TEN) <= 0) {
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
+		} else if (plotArea.compareTo(BigDecimal.valueOf(300)) >= 0
+				&& plotArea.compareTo(BigDecimal.valueOf(500)) <= 0
+				|| heightOfTheBuilding.compareTo(BigDecimal.TEN) >= 0
+						&& heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) <= 0) {
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+		} else
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+	}
+	
 
-        if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
-            if (plotArea.compareTo(lowPlotArea) <= 0 && heightOfTheBuilding.compareTo(BigDecimal.TEN) <= 0) {
-                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
-            } else if (plotArea.compareTo(moderatePlotArea) <= 0
-                    && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
-                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
-            } else if (plotArea.compareTo(moderatePlotArea) > 0
-                    && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) > 0) {
-                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
-            } else
-                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_REGULAR);
-        } else {
-            if (plotArea.compareTo(moderatePlotArea) <= 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) <= 0) {
-                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
-            } else if (plotArea.compareTo(moderatePlotArea) > 0 && heightOfTheBuilding.compareTo(moderateHeightOfTheBuilding) > 0)
-                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
-            else
-                return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_REGULAR);
-        }
-    }
-
-    public ApplicationType getApplicationTypeByHeightAndArea(BigDecimal height, BigDecimal area) {
-        if (height.compareTo(BigDecimal.valueOf(10)) <= 0 && area.compareTo(BigDecimal.valueOf(300)) <= 0)
-            return applicationTypeService.findByName(LOWRISK);
-        else if (height.compareTo(BigDecimal.valueOf(10)) > 0 && height.compareTo(BigDecimal.valueOf(15)) <= 0 &&
-                area.compareTo(BigDecimal.valueOf(300)) > 0 && area.compareTo(BigDecimal.valueOf(500)) <= 0)
-            return applicationTypeService.findByName(MEDIUMRISK);
-        else if (height.compareTo(BigDecimal.valueOf(15)) > 0 &&
-                area.compareTo(BigDecimal.valueOf(500)) > 0)
-            return applicationTypeService.findByName(HIGHRISK);
-        else
-            return applicationTypeService.findByName(APPLICATION_TYPE_REGULAR);
-
-    }
+	public ApplicationSubType getIndustrialApplicationType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
+		if (plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0
+				|| heightOfTheBuilding.compareTo(BigDecimal.valueOf(11)) <= 0) {
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
+		} else {
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+		}
+	}
+	
+	public ApplicationSubType getMixedOccAppType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
+		if (plotArea.compareTo(BigDecimal.valueOf(300)) >= 0 && plotArea.compareTo(BigDecimal.valueOf(500)) <= 0
+				|| heightOfTheBuilding.compareTo(BigDecimal.TEN) >= 0
+						&& heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) <= 0) {
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+		} else
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+	}
 
 }

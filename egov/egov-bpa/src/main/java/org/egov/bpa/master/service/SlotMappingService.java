@@ -47,7 +47,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.repository.SlotMappingRepository;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -69,7 +69,7 @@ public class SlotMappingService {
 	private SecurityUtils securityUtils;
 	
 	@Autowired
-	private ApplicationTypeService applicationTypeService;
+	private ApplicationSubTypeService applicationTypeService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -133,22 +133,22 @@ public class SlotMappingService {
 	 return	noOfApplicationsRepository.findOne(id);		
 	}
 
-	public List<SlotMapping> findByZoneAndAppType(Boundary zone, ApplicationType applType) {
+	public List<SlotMapping> findByZoneAndAppType(Boundary zone, ApplicationSubType applType) {
 		return noOfApplicationsRepository.findByApplicationTypeIdAndZone(applType.getId(),zone);
 	}
 
-    public List<Boundary> slotfindZoneByApplType(ApplicationType applType) {
+    public List<Boundary> slotfindZoneByApplType(ApplicationSubType applType) {
         return noOfApplicationsRepository.findZoneByApplType(applType.getId());
 
     }
 
-    public List<SlotMapping> slotMappingForOneDayPermit(ApplicationType applType) {
+    public List<SlotMapping> slotMappingForOneDayPermit(ApplicationSubType applType) {
         return noOfApplicationsRepository.findByApplicationTypeId(applType.getId());
 
     }
 
     public List<SlotMapping> findByZoneElectionWardAndAppType(Boundary zone,
-            Boundary electionWard, ApplicationType applType) {
+            Boundary electionWard, ApplicationSubType applType) {
         return noOfApplicationsRepository.findByZoneElectionWardAndAppType(zone, electionWard,
                 applType.getId());
 

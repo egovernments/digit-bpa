@@ -59,8 +59,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.bpa.master.entity.ApplicationType;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.SlotApplication;
@@ -101,7 +101,7 @@ public class SearchBpaApplicationService {
 	//@Autowired
 	//private ApplicationBpaFeeCalculationService bpaCalculationService;
 	@Autowired
-	private ApplicationTypeService applicationTypeService;
+	private ApplicationSubTypeService applicationTypeService;
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -266,7 +266,7 @@ public class SearchBpaApplicationService {
 				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", true));
 		}
 		if (searchBpaApplicationForm.getApplicationTypeId() != null) {
-			ApplicationType appType = applicationTypeService.findById(searchBpaApplicationForm.getApplicationTypeId());
+			ApplicationSubType appType = applicationTypeService.findById(searchBpaApplicationForm.getApplicationTypeId());
 			if(!appType.getName().equals(APPLICATION_TYPE_ONEDAYPERMIT)){
 			   searchBpaApplicationForm.setToDate(new Date());
 			}
@@ -379,8 +379,6 @@ public class SearchBpaApplicationService {
 				else if (appType.equals(HIGHRISK) && buildingHeight.compareTo(BigDecimal.valueOf(15)) < 0)
 					errors.rejectValue("applicationType", "msg.validation.highrisk");	
 				}
-				if(buildingDetail.getTotalPlintArea() != null && (buildingDetail.getTotalPlintArea().compareTo(BigDecimal.valueOf(3000)) > 0) && application.getInfrastructureCost()==null)
-					errors.rejectValue("buildingDetail.totalPlintArea", "msg.validate.infracost");		
 			}
 		}
 		else if(!application.getIsOneDayPermitApplication())

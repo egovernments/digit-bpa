@@ -181,6 +181,8 @@
 										<th class="col-sm-2 table-div-column"><spring:message
 												code='lbl.applctn.type' /></th>
 										<th class="col-sm-2 table-div-column"><spring:message
+												code='lbl.applctn.subtype' /></th>
+										<th class="col-sm-2 table-div-column"><spring:message
 												code='lbl.fee.subtype' /></th>
 										<th class="col-sm-2 table-div-column"><spring:message
 												code='lbl.fees.calculationtype' /></th>
@@ -225,6 +227,19 @@
 														</form:select> <form:errors
 															path="bpaFeeMapTemp[${item.index}].applicationType"
 															cssClass="add-margin error-msg" /></td>
+														<td><form:select
+															path="bpaFeeMapTemp[${item.index}].applicationSubType"
+															id="bpaFeeMapTemp[${item.index}].applicationSubType"
+															value="${bpaFeeDetail.applicationSubType}"
+															cssClass="form-control applicationSubType" required="required">
+															<form:option value="">
+																<spring:message code="lbl.select" />
+															</form:option>
+															<form:options items="${appSubTypes}" itemValue="id"
+																itemLabel="description" />
+														</form:select> <form:errors
+															path="bpaFeeMapTemp[${item.index}].applicationSubType"
+															cssClass="add-margin error-msg" /></td>	
 													<td><form:select
 															path="bpaFeeMapTemp[${item.index}].feeSubType"
 															id="bpaFeeMapTemp[${item.index}].feeSubType"
@@ -286,6 +301,16 @@
 														</form:option>
 														<form:options items="${applicationTypes}" itemLabel="feeApplicationTypeVal" />
 													</form:select> <form:errors path="bpaFeeMapTemp[0].applicationType"
+														cssClass="add-margin error-msg" /></td>
+												<td><form:select path="bpaFeeMapTemp[0].applicationSubType"
+														id="bpaFeeMapTemp[0].applicationSubType"
+														cssClass="form-control applicationSubType" required="required">
+														<form:option value="">
+															<spring:message code="lbl.select" />
+														</form:option>
+														<form:options items="${appSubTypes}" itemValue="id"
+															itemLabel="description" />
+													</form:select> <form:errors path="bpaFeeMapTemp[0].applicationSubType"
 														cssClass="add-margin error-msg" /></td>
 												<td><form:select path="bpaFeeMapTemp[0].feeSubType"
 														id="bpaFeeMapTemp[0].feeSubType"

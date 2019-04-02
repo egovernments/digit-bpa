@@ -43,8 +43,6 @@ package org.egov.bpa.transaction.service;
 import static org.egov.bpa.utils.BpaConstants.ADDING_OF_EXTENSION;
 import static org.egov.bpa.utils.BpaConstants.ALTERATION;
 import static org.egov.bpa.utils.BpaConstants.APARTMENT_FLAT;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_REGULAR;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADDITIONAL_FEE;
 import static org.egov.bpa.utils.BpaConstants.BPA_COMPOUND_FEE;
 import static org.egov.bpa.utils.BpaConstants.BPA_DEMOLITION_FEE;
@@ -55,11 +53,9 @@ import static org.egov.bpa.utils.BpaConstants.CHANGE_IN_OCCUPANCY;
 import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
 import static org.egov.bpa.utils.BpaConstants.DEMOLITION;
 import static org.egov.bpa.utils.BpaConstants.DIVISION_OF_PLOT;
-import static org.egov.bpa.utils.BpaConstants.HIGHRISK;
 import static org.egov.bpa.utils.BpaConstants.INDUSTRIAL;
 import static org.egov.bpa.utils.BpaConstants.LABOURCESS;
 import static org.egov.bpa.utils.BpaConstants.LOWRISK;
-import static org.egov.bpa.utils.BpaConstants.MEDIUMRISK;
 import static org.egov.bpa.utils.BpaConstants.MERCANTILE_COMMERCIAL;
 import static org.egov.bpa.utils.BpaConstants.NEW_CONSTRUCTION;
 import static org.egov.bpa.utils.BpaConstants.PERM_FOR_HUT_OR_SHED;
@@ -90,13 +86,17 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeDetail;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.entity.enums.FeeSubType;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaFeeMappingService;
+import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
@@ -106,7 +106,6 @@ import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.repository.PermitFeeRepository;
-import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.common.entity.bpa.Occupancy;
@@ -155,112 +154,48 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 		@Autowired
 		private CityService cityService;
 		@Autowired
-		private ApplicationBpaService applicationBpaService;
+		protected ApplicationBpaService applicationBpaService;			 
 		@Autowired
-		private ApplicationBpaBillService applicationBpaBillService;
-		
-		 
-		    @Autowired
-		    private ApplicationFeeService applicationFeeService;
-
-		    @Autowired
-		    private BpaDemandService bpaDemandService;
-
-		    @Autowired
-		    private PermitFeeRepository permitFeeRepository;
-
-		  
-
-		    
-		    @Autowired
-		    private InstallmentDao installmentDao;
-		    
-		    @Autowired
-		    private ModuleService moduleService;
-		    
+	    private ApplicationFeeService applicationFeeService;
+        @Autowired
+		private BpaDemandService bpaDemandService;
+        @Autowired
+		private PermitFeeRepository permitFeeRepository;
+        @Autowired
+		private InstallmentDao installmentDao;
+		@Autowired
+		private ModuleService moduleService;	
+		@Autowired
+		private ApplicationSubTypeService applicationSubTypeService;
+		@Autowired
+		private ServiceTypeService serviceTypeService;
 		
 		
-		
-	    public static Map<String, Map<String, BigDecimal>> getFeeAmountByGrade() {
-	        Map<String, Map<String,BigDecimal>> gradeWiseAmount = new HashMap<>();
-	        gradeWiseAmount.put("Gram Panchayat",getGramPanchayatFeeAmount());
-	        gradeWiseAmount.put("Nagar Panchayat",getNagarPanchayatFeeAmount());
-	        gradeWiseAmount.put("Municipal Council",getMunicipalCouncilFeeAmount());
-	        gradeWiseAmount.put("Grade I",getGradeOneCorporation());
-	        gradeWiseAmount.put("Grade II",getGradeTwoCorporation());
-	        return gradeWiseAmount;   	
-	    }
-	    
-	    public static Map<String, BigDecimal> getDefaultFeeAmount() {
-	        Map<String, BigDecimal> gramPanchayat = new HashMap<>();
-	        gramPanchayat.put(LOWRISK, BigDecimal.valueOf(10));
-	        gramPanchayat.put(MEDIUMRISK, BigDecimal.valueOf(15));
-	        gramPanchayat.put(HIGHRISK, BigDecimal.valueOf(20));
-	        gramPanchayat.put(APPLICATION_TYPE_REGULAR, BigDecimal.valueOf(20));
-	        gramPanchayat.put(APPLICATION_TYPE_ONEDAYPERMIT, BigDecimal.valueOf(20));
-	        return gramPanchayat;
-	    }
-		
-	    public static Map<String, BigDecimal> getGramPanchayatFeeAmount() {
-	        Map<String, BigDecimal> gramPanchayat = new HashMap<>();
-	        gramPanchayat.put(LOWRISK, BigDecimal.valueOf(3));
-	        gramPanchayat.put(MEDIUMRISK, BigDecimal.valueOf(5));
-	        gramPanchayat.put(HIGHRISK, BigDecimal.valueOf(6));
-	        gramPanchayat.put(APPLICATION_TYPE_REGULAR, BigDecimal.valueOf(6));
-	        gramPanchayat.put(APPLICATION_TYPE_ONEDAYPERMIT, BigDecimal.valueOf(6));
-	        return gramPanchayat;
-	    }
-	    
-		
-	    public static Map<String, BigDecimal> getNagarPanchayatFeeAmount() {
-	        Map<String, BigDecimal> nagarPanchayat = new HashMap<>();
-	        nagarPanchayat.put(LOWRISK, BigDecimal.valueOf(4));
-	        nagarPanchayat.put(MEDIUMRISK, BigDecimal.valueOf(6));
-	        nagarPanchayat.put(HIGHRISK, BigDecimal.valueOf(8));
-	        nagarPanchayat.put(APPLICATION_TYPE_REGULAR, BigDecimal.valueOf(6));
-	        nagarPanchayat.put(APPLICATION_TYPE_ONEDAYPERMIT, BigDecimal.valueOf(6));
-	        return nagarPanchayat;
-	    }
-	    
-	    public static Map<String, BigDecimal> getMunicipalCouncilFeeAmount() {
-	        Map<String, BigDecimal> municipalCouncil = new HashMap<>();
-	        municipalCouncil.put(LOWRISK, BigDecimal.valueOf(6));
-	        municipalCouncil.put(MEDIUMRISK, BigDecimal.valueOf(8));
-	        municipalCouncil.put(HIGHRISK, BigDecimal.valueOf(12));
-	        municipalCouncil.put(APPLICATION_TYPE_REGULAR, BigDecimal.valueOf(12));
-	        municipalCouncil.put(APPLICATION_TYPE_ONEDAYPERMIT, BigDecimal.valueOf(12));
-	        return municipalCouncil;
-	    }
-	    
-	    public static Map<String, BigDecimal> getGradeOneCorporation() {
-	        Map<String, BigDecimal> corporation = new HashMap<>();
-	        corporation.put(LOWRISK, BigDecimal.valueOf(10));
-	        corporation.put(MEDIUMRISK, BigDecimal.valueOf(15));
-	        corporation.put(HIGHRISK, BigDecimal.valueOf(20));
-	        corporation.put(APPLICATION_TYPE_REGULAR, BigDecimal.valueOf(20));
-	        corporation.put(APPLICATION_TYPE_ONEDAYPERMIT, BigDecimal.valueOf(20));
-	        return corporation;
-	    }    
-	    
-	    public static Map<String, BigDecimal> getGradeTwoCorporation() {
-	        Map<String, BigDecimal> corporation = new HashMap<>();
-	        corporation.put(LOWRISK, BigDecimal.valueOf(12));
-	        corporation.put(MEDIUMRISK, BigDecimal.valueOf(18));
-	        corporation.put(HIGHRISK, BigDecimal.valueOf(25));
-	        corporation.put(APPLICATION_TYPE_REGULAR, BigDecimal.valueOf(25));
-	        corporation.put(APPLICATION_TYPE_ONEDAYPERMIT, BigDecimal.valueOf(25));
-	        return corporation;
-	    }   
 	    
 	    @Override
 	    public BigDecimal calculateAdmissionFeeAmount(List<Long> serviceTypeIds, Long applicationTypeId) {
-	    	return applicationBpaService.getTotalFeeAmountByPassingServiceTypeAndAmenities(serviceTypeIds);
+	    	BigDecimal amount = BigDecimal.ZERO;
+	    	List<ApplicationSubType> riskBasedAppTypes = applicationSubTypeService.getRiskBasedApplicationTypes();
+	    	List<Long> ids = riskBasedAppTypes.stream().map(rs -> rs.getId()).collect(Collectors.toList());
+	    	if(applicationTypeId!=null && ids.contains(applicationTypeId)) {
+	    	List<ServiceType> mainServiceTypes = serviceTypeService.getAllActiveMainServiceTypes();
+	    	ServiceType serviceType =			mainServiceTypes.stream()
+	    		            .filter(st -> serviceTypeIds.contains(st.getId())) .collect(Collectors.toList()).get(0);
+	    	List<BpaFeeMapping> appSubTypeFee = bpaFeeMappingService.getAppSubTypeFee(serviceType.getId(), FeeSubType.APPLICATION_FEE, applicationTypeId);
+	    	for (final BpaFeeMapping feeMap : appSubTypeFee)
+	    		amount = amount.add(BigDecimal.valueOf(feeMap.getAmount()));
+	    	}
+	    	else {
+	    		amount = applicationBpaService.getTotalFeeAmountByPassingServiceTypeAndAmenities(serviceTypeIds);
+	    	}
+	    	return amount;
 	    }
 	    
 	    @Override
 	    public BigDecimal setAdmissionFeeAmount(final BpaApplication application, List<ServiceType> amenityList) {
-	    	return applicationBpaService.setAdmissionFeeAmountWithAmenities(
-	    			application.getServiceType().getId(), new ArrayList<>());
+		    List<Long> amenityIds = amenityList.stream().map(al -> al.getId()).collect(Collectors.toList());
+		    amenityIds.add(application.getServiceType().getId());
+		    return calculateAdmissionFeeAmount(amenityIds,application.getApplicationType().getId());
 	    }
 	    
 	    
@@ -304,21 +239,13 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	    
 	    //calculate fee based on city grade , height and built up area
 	    public void calculateFeeByCityGrade(final BpaApplication application, final List<Long> serviceTypeList,
-	            final PermitFee permitFee) {
-	    	String cityGrade = cityService.getCityGrade();
-	    	BigDecimal feeAmount = BigDecimal.ZERO;
-	    	BigDecimal otherFeeAmount = BigDecimal.valueOf(3);
-	    	if(application.getApplicationType() != null ) {
-	    		if(getFeeAmountByGrade().get(cityGrade) !=null)
-	    		 feeAmount = getFeeAmountByGrade().get(cityGrade).get(application.getApplicationType().getName());
-	    		else
-	    		 feeAmount = getDefaultFeeAmount().get(application.getApplicationType().getName());
-	    	}
+	            final PermitFee permitFee) {	    	
 	    	
 	        if (application != null) {
 	            for (Long serviceTypeId : serviceTypeList) {
 
 	                BigDecimal beyondPermissibleArea = BigDecimal.ZERO;
+                    boolean isRiskBased = applicationSubTypeService.getRiskBasedApplicationTypes().contains(application.getApplicationType());
 
 	                // RESTRICT TO FEW SERVICES
 	                if (!application.getBuildingDetail().isEmpty() && !application.getPermitOccupancies().isEmpty()
@@ -339,25 +266,10 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                                                                            // amount
 	                                                                            // will
 	                            // be zero.
-	                            String occupancy;
 	                            BigDecimal inputArea = getBuiltUpInputUnitForEachServiceType(application,
 	                                    bpaFee.getServiceType().getCode());
 	                            List<Occupancy> selectdOccupancies = application.getPermitOccupancies();
-	                            if (BpaConstants.getBpaFeeCateory2().contains(bpaFee.getServiceType().getCode())
-	                                    && (isOccupancyContains(selectdOccupancies, BpaConstants.INDUSTRIAL)
-	                                            || isOccupancyContains(selectdOccupancies, BpaConstants.MERCANTILE_COMMERCIAL)))
-	                                occupancy = selectdOccupancies.get(0).getName();
-	                            else if (selectdOccupancies.size() == 1
-	                                    && (BpaConstants.RESIDENTIAL.equalsIgnoreCase(selectdOccupancies.get(0).getCode())
-	                                            || BpaConstants.APARTMENT_FLAT
-	                                                    .equalsIgnoreCase(selectdOccupancies.get(0).getCode())))
-	                                occupancy = RESIDENTIAL_DESC;
-	                            else if (selectdOccupancies.size() == 1
-	                                    && BpaConstants.THATCHED_TILED_HOUSE
-	                                                    .equalsIgnoreCase(selectdOccupancies.get(0).getCode()))
-	                                occupancy = selectdOccupancies.get(0).getName();
-	                            else
-	                                occupancy = OTHERS;
+	                           
 
 	                            if (BpaConstants.BPA_PERMIT_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& ((bpaFee.getServiceType().getDescription().equalsIgnoreCase(NEW_CONSTRUCTION))
@@ -368,8 +280,8 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 														.equalsIgnoreCase(ADDING_OF_EXTENSION))
 												|| (bpaFee.getServiceType().getDescription()
 														.equalsIgnoreCase(CHANGE_IN_OCCUPANCY)))) {
-	                                BigDecimal existBldgInputArea = getExistBldgTotalBuiltUpArea(application);
-	                                if (selectdOccupancies.size() > 1) {
+	                                if(isRiskBased && application.getApplicationType().equals(bpaFee.getApplicationSubType())) {
+	                                if (selectdOccupancies.size() > 1 ) {
 	                                    List<SubOccupancy> occupancies = subOccupancyService.findAllOrderByOrderNumber();
 	                                    Map<String, Map<Occupancy, BigDecimal>> convertedOccupancies = new ConcurrentHashMap<>();
 	                                    for (Map.Entry<String, Map<SubOccupancy, BigDecimal>> block : groupBlockOccupancyBuiltUpArea(
@@ -408,49 +320,20 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                                    for (Map.Entry<String, Map<Occupancy, BigDecimal>> blockOccupancyFloorAreas : convertedOccupancies
 	                                            .entrySet()) {
 	                                        for (Map.Entry<Occupancy, BigDecimal> occupancyWiseArea : blockOccupancyFloorAreas
-	                                                .getValue().entrySet()) {
-	                                            // occupancy =
-	                                            // getOccupancyToGetFeeAmt(occupancyWiseArea);
-	                                            if (blockOccupancyFloorAreas.getValue().size() == 1
-	                                                    && (RESIDENTIAL
-	                                                            .equalsIgnoreCase(occupancyWiseArea.getKey().getCode())
-	                                                            || APARTMENT_FLAT.equalsIgnoreCase(
-	                                                                    occupancyWiseArea.getKey().getCode())))
-	                                                occupancy = RESIDENTIAL_DESC;
-	                                            else
-	                                                occupancy = OTHERS;
-	                                            // set occupancy type and get fee
-	                                            // and calculate amount.
-												/*
-												 * feeAmount = getBpaFeeObjByOccupancyType(bpaFee.getCode(), occupancy,
-												 * bpaFee);
-												 */
+	                                                .getValue().entrySet()) {                                        
+	                                            
+	                                            
 	                                            amount = amount
-	                                                    .add(calculatePermitFee(occupancyWiseArea.getValue(), feeAmount));
+	                                                    .add(calculatePermitFee(occupancyWiseArea.getValue(), BigDecimal.valueOf(bpaFee.getAmount())));
 	                                        }
 	                                    }
 	                                } else {
-	                                    amount = calculatePermitFee(inputArea, feeAmount);
+	                                    amount = calculatePermitFee(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 	                                }
-	                                // CHECK WHETHER THIS APPLICABLE TO ONLY 701
-	                                // OCCUPANCY TYPE.. ALSO HERE WORK
-	                                // STARTED,INPROGRSS,COMPLETED TO BE CONSIDER.
-									/*
-									 * if (checkIsWorkAlreadyStarted(application) &&
-									 * BpaConstants.getServicesForValidation()
-									 * .contains(bpaFee.getServiceType().getCode())) { amount =
-									 * amount.multiply(BigDecimal.valueOf(3)); } else if
-									 * (checkIsEligibleForDiscountOnPermitFee(inputArea, existBldgInputArea,
-									 * bpaFee.getServiceType().getCode(), application.getPermitOccupancies())) {
-									 * amount = calculateAndGetDiscountedPermitFee(inputArea.multiply(feeAmount));
-									 * // 50% // off // if // area // less than 150 // mts }
-									 */
+	                                }
+	                                
 
-								} /*
-									 * else if (("102").equals(bpaFee.getCode()) || ("302").equals(bpaFee.getCode())
-									 * || ("402").equals(bpaFee.getCode()) || ("602").equals(bpaFee.getCode()) ||
-									 * ("702").equals(bpaFee.getCode())) {
-									 */
+								} 
 	                            else if (BPA_ADDITIONAL_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& ((bpaFee.getServiceType().getDescription().equalsIgnoreCase(NEW_CONSTRUCTION))
 												|| (bpaFee.getServiceType().getDescription()
@@ -460,47 +343,54 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 														.equalsIgnoreCase(ADDING_OF_EXTENSION))
 												|| (bpaFee.getServiceType().getDescription()
 														.equalsIgnoreCase(CHANGE_IN_OCCUPANCY)))) {
-	                               // feeAmount = getBpaFeeObjByOccupancyType(bpaFee.getBpaFeeCommon().getCode(), OTHERS, bpaFee);
-	                                // calculate beyond permissable area tax for
-	                                // other
+	                               
 	                                if (beyondPermissibleArea.compareTo(BigDecimal.ZERO) > 0) {
-	                                    amount = calculateAdditionalFee(beyondPermissibleArea, feeAmount);
+	                                    amount = calculateAdditionalFee(beyondPermissibleArea, BigDecimal.valueOf(bpaFee.getAmount()));
 	                                }
 
 	                            }  else if (BPA_DEMOLITION_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(DEMOLITION)))
-									amount = calculateDemolitionFee(inputArea, feeAmount);
+									amount = calculateDemolitionFee(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (BPA_LAND_DEVELOPMENT_CHARGES.equals(bpaFee.getBpaFeeCommon().getName())
 										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(DIVISION_OF_PLOT)))
-									amount = calculateLandDevelopmentCharges(inputArea, feeAmount);
+									amount = calculateLandDevelopmentCharges(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (BPA_PERMIT_FEE.equals(bpaFee.getBpaFeeCommon().getName()) && (bpaFee
 										.getServiceType().getDescription().equalsIgnoreCase(PERM_FOR_HUT_OR_SHED))) {
-									amount = calculatePermitFeeForHut(inputArea, feeAmount);
+									amount = calculatePermitFeeForHut(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								} else if (BPA_WELL_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(WELL)))
-									amount = calculateChargesForWell(inputArea, feeAmount);
+									amount = calculateChargesForWell(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (BPA_COMPOUND_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(COMPOUND_WALL)))
-									amount = calculateChargesForCompoundWall(inputArea, feeAmount);
+									amount = calculateChargesForCompoundWall(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (SHTR_DOOR_FEE.equals(bpaFee.getBpaFeeCommon().getName()) && (bpaFee
 										.getServiceType().getDescription().equalsIgnoreCase(SHUTTER_DOOR_CONVERSION)))
-									amount = calculateShutterDoorConversionCharges(inputArea, feeAmount);
+									amount = calculateShutterDoorConversionCharges(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (ROOF_CNVRSN_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(ROOF_CONVERSION)))
-									amount = calculateRoofConversionCharges(inputArea, feeAmount);
+									amount = calculateRoofConversionCharges(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (TOWER_CONSTRUCTION_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(TOWER_CONSTRUCTION)))
-									amount = calculateTowerConstructionCharges(inputArea, feeAmount);
+									amount = calculateTowerConstructionCharges(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (POLE_CONSTRUCTION_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(POLE_STRUCTURES)))
-									amount = calculatePoleStructureConstructionCharges(inputArea, feeAmount);
-							}
-	                        if(SHELTERFUND.equals(bpaFee.getBpaFeeCommon().getName()) && application.getInfrastructureCost() != null) {
-	                        	amount = calculateShelterFundAmount(application.getInfrastructureCost());
+									amount = calculatePoleStructureConstructionCharges(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
+							
+	                        if (SHELTERFUND.equals(bpaFee.getBpaFeeCommon().getName())
+									&& inputArea.compareTo(BigDecimal.valueOf(500)) > 0
+									&& inputArea.compareTo(BigDecimal.valueOf(4000)) < 0
+									&& !application.getSiteDetail().get(0).getAffordableHousingScheme()) {
+	                        	amount = calculateShelterFundAmount(BigDecimal.valueOf(bpaFee.getAmount()));
 	                        }
 	                        if(LABOURCESS.equals(bpaFee.getBpaFeeCommon().getName()) && application.getConstructionCost() != null) {
 	                        	amount = calculateLabourCessAmount(application.getConstructionCost());
 	                        }
+	                        
+	                        if(BpaConstants.DEV_PERMIT_FEE.equals(bpaFee.getBpaFeeCommon().getCode()) && application.getBuildingDetail().size() > 1) {
+	                        	amount = BigDecimal.valueOf(bpaFee.getAmount());
+	                        }
+	                        }
+	                        
 	                        if (checkIsWorkAlreadyStarted(application)) {
 	                            amount = amount.multiply(BigDecimal.valueOf(3));
 	                        }
@@ -550,8 +440,8 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                                    bpaFee.getServiceType().getCode());
 	                            List<Occupancy> selectdOccupancies = application.getPermitOccupancies();
 	                            if (BpaConstants.getBpaFeeCateory2().contains(bpaFee.getServiceType().getCode())
-	                                    && (isOccupancyContains(selectdOccupancies, INDUSTRIAL)
-	                                            || isOccupancyContains(selectdOccupancies, MERCANTILE_COMMERCIAL)))
+	                                    && (applicationBpaService.isOccupancyContains(selectdOccupancies, INDUSTRIAL)
+	                                            || applicationBpaService.isOccupancyContains(selectdOccupancies, MERCANTILE_COMMERCIAL)))
 	                                occupancy = selectdOccupancies.get(0).getName();
 	                            else if (selectdOccupancies.size() == 1
 	                                    && (RESIDENTIAL.equalsIgnoreCase(selectdOccupancies.get(0).getCode())
@@ -686,7 +576,8 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(DEMOLITION)))
 									amount = calculateDemolitionFee(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (BPA_LAND_DEVELOPMENT_CHARGES.equals(bpaFee.getBpaFeeCommon().getName())
-										&& (bpaFee.getServiceType().getDescription().equalsIgnoreCase(DIVISION_OF_PLOT)))
+										&& bpaFee.getServiceType().getDescription().equalsIgnoreCase(DIVISION_OF_PLOT) 
+										&& application.getBuildingDetail().size() > 1)
 									amount = calculateLandDevelopmentCharges(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 								else if (BPA_PERMIT_FEE.equals(bpaFee.getBpaFeeCommon().getName()) && (bpaFee
 										.getServiceType().getDescription().equalsIgnoreCase(PERM_FOR_HUT_OR_SHED))) {
@@ -722,10 +613,7 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	        }
 	    }
 
-	    public boolean isOccupancyContains(final List<Occupancy> occupancies, final String occupancy) {
-	        Optional<Occupancy> occ = occupancies.stream().filter(o -> o.getCode().equalsIgnoreCase(occupancy)).findAny();
-	        return occ.isPresent();
-	    }
+	   
 
 	    private String getOccupancyToGetFeeAmt(Entry<Occupancy, BigDecimal> occupancyWiseArea) {
 	        String occupancy;
@@ -794,12 +682,12 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	    }
 
 	    private BigDecimal calculateShelterFundAmount(BigDecimal amount) {
-	        return amount.multiply(BigDecimal.valueOf(75)).divide(BigDecimal.valueOf(100));
+	        return amount.multiply(BigDecimal.valueOf(10)).divide(BigDecimal.valueOf(100));
 
 	    }
 	    
 	    private BigDecimal calculateLabourCessAmount(BigDecimal amount) {
-	        return amount.divide(BigDecimal.valueOf(100));
+	        return amount.multiply(BigDecimal.valueOf(10)).divide(BigDecimal.valueOf(100));
 
 	    }
 
@@ -818,7 +706,7 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	     */
 	    private Boolean checkIsEligibleForDiscountOnPermitFee(final BigDecimal inputUnit,
 	            final BigDecimal existBldgInputArea, final String serviceTypeCode, final List<Occupancy> occupancies) {
-	        return isOccupancyContains(occupancies, BpaConstants.RESIDENTIAL)
+	        return applicationBpaService.isOccupancyContains(occupancies, BpaConstants.RESIDENTIAL)
 	                && BpaConstants.getServicesForValidation().contains(serviceTypeCode)
 	                && inputUnit.add(existBldgInputArea).compareTo(BigDecimal.valueOf(150)) <= 0;
 	    }
@@ -1328,13 +1216,11 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	    @Override
 	    public EgDemand createDemand(final BpaApplication application) {
 	        final Map<String, BigDecimal> feeDetails = new HashMap<>();
-	        ApplicationFee applicationFee = new ApplicationFee();
 	        if (application.getApplicationType().getName().equals(LOWRISK)) {
 	            setPermitFee(application, feeDetails);
 	        }
 
 	        EgDemand egDemand = null;
-	        String feeType;
 	        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
 	                moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
 	        
@@ -1343,7 +1229,6 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
    		   if(application.getApplicationType().getId() != null) 
    			  application.setAdmissionfeeAmount(applicationBpaService.getFeeAmountByApplicationType(application.getApplicationType().getId()));
          
-	        BigDecimal amount = BigDecimal.ZERO;
 	        
 	        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), application.getAdmissionfeeAmount());
 	        BigDecimal baseDemandAmount = feeDetails.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);  

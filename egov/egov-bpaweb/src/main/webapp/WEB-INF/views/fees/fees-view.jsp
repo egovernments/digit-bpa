@@ -103,13 +103,14 @@
 					</div>
 					<div class="col-md-12">
 						<table class="table table-bordered " id="subcat">
-							<thead>
-								<tr>
+							<thead>								<tr>
 									<th class="text-center"><spring:message
 											code='lbl.service.type' /></th>
 
 									<th class="text-center"><spring:message
 											code='lbl.applctn.type' /></th>
+									<th class="text-center"><spring:message
+											code='lbl.applctn.subtype' /></th>
 									<th class="text-center"><spring:message
 											code='lbl.fee.subtype' /></th>
 									<th class="text-center"><spring:message
@@ -129,6 +130,10 @@
 										<td><form:label cssClass="form-control"
 												path="bpaFeeMapTemp[${item.index}].applicationType">
                                         ${bpaFeeDetail.applicationType.feeApplicationTypeVal}
+                                    </form:label></td>
+                                        <td><form:label cssClass="form-control"
+												path="bpaFeeMapTemp[${item.index}].applicationSubType">
+                                        ${bpaFeeDetail.applicationSubType.description}
                                     </form:label></td>
 										<td><form:label cssClass="form-control"
 												path="bpaFeeMapTemp[${item.index}].feeSubType">

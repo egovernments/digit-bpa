@@ -44,6 +44,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -56,7 +57,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.BpaScheme;
 import org.egov.bpa.master.entity.BpaSchemeLandUsage;
 import org.egov.bpa.master.entity.PostalAddress;
@@ -65,7 +66,7 @@ import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.StakeHolderType;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.PostalAddressService;
@@ -170,7 +171,7 @@ public class BpaAjaxController {
     @Autowired
     private UsageService usageService;
     @Autowired
-    private ApplicationTypeService applicationTypeService;
+    private ApplicationSubTypeService applicationTypeService;
     @Autowired
     private BpaUtils bpaUtils;
     @Autowired
@@ -183,22 +184,18 @@ public class BpaAjaxController {
     public BigDecimal isConnectionPresentForProperty(@RequestParam final Long[] serviceTypeIds,
             @RequestParam final Long applicationTypeId) {
         BigDecimal amount = BigDecimal.ZERO;
-        if (serviceTypeIds.length > 0) {
-            ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
-                    .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
-
-            if (applicationTypeId != null) {
-                amount = amount.add(applicationBpaService.getFeeAmountByApplicationType(applicationTypeId));
-            }
-
-        }
-        return amount;
+    	if (serviceTypeIds.length > 0) {
+    		 ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+    	                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+    		 amount = amount.add(feeCalculation.calculateAdmissionFeeAmount(Arrays.asList(serviceTypeIds), applicationTypeId));               
+        } 
+    	return amount;
     }
 
     @GetMapping(value = "/ajax/getApplicationType", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ApplicationType getApplicationType(final BigDecimal height, @RequestParam final BigDecimal plotArea) {
-        return bpaUtils.getApplicationTypeByHeightAndArea(height, plotArea);
+    public ApplicationSubType getApplicationType(final BigDecimal height, @RequestParam final BigDecimal plotArea, @RequestParam String occupancy) {
+    	return bpaUtils.getBuildingType(height,plotArea,occupancy);
     }
 
     @GetMapping(value = "/bpaajaxWorkFlow-getDesignationsByObjectTypeAndDesignation", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -438,7 +435,7 @@ public class BpaAjaxController {
     @ResponseBody
     public Boolean getOneDayPermitSlotByBoundary(@RequestParam Long zoneId, @RequestParam Long electionWardId) {
         SlotMapping slotMapping = new SlotMapping();
-        ApplicationType appType = applicationTypeService.findByName(APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase());
+        ApplicationSubType appType = applicationTypeService.findByName(APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase());
         Boundary zone = boundaryService.getBoundaryById(zoneId);
         Boundary electionWard = boundaryService.getBoundaryById(electionWardId);
         slotMapping.setZone(zone);

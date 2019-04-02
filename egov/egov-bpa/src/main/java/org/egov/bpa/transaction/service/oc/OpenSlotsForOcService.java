@@ -46,10 +46,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.repository.SlotMappingRepository;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.HolidayListService;
 import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotDetail;
@@ -91,12 +91,12 @@ public class OpenSlotsForOcService {
     private SlotService slotService;
     
     @Autowired
-    private ApplicationTypeService applicationTypeService;
+    private ApplicationSubTypeService applicationTypeService;
 
 
     @Transactional
     public void openNewSlots() {
-    	ApplicationType appType = applicationTypeService.findByName(OCCUPANCY_CERTIFICATE_NOTICE_TYPE.toUpperCase());
+    	ApplicationSubType appType = applicationTypeService.findByName(OCCUPANCY_CERTIFICATE_NOTICE_TYPE.toUpperCase());
 
         List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplicationTypeId(appType.getId());
         List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,

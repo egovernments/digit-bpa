@@ -88,7 +88,7 @@ public class SlotMapping extends AbstractAuditable {
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "slotApplicationType")
-	private ApplicationType applicationType;
+	private ApplicationSubType applicationType;
 
 	@Transient
 	private WorkingDays days;
@@ -166,11 +166,11 @@ public class SlotMapping extends AbstractAuditable {
 		this.maxRescheduledSlotsAllowed = maxRescheduledSlotsAllowed;
 	}
 
-	public ApplicationType getApplicationType() {
+	public ApplicationSubType getApplicationType() {
 		return applicationType;
 	}
 
-	public void setApplicationType(ApplicationType applicationType) {
+	public void setApplicationType(ApplicationSubType applicationType) {
 		this.applicationType = applicationType;
 	}
 

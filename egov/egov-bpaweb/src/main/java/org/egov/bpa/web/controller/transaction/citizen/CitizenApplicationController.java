@@ -60,7 +60,6 @@ import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -70,11 +69,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -89,6 +88,7 @@ import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
+import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
@@ -150,9 +150,11 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @Autowired
     protected SubOccupancyService subOccupancyService;
     @Autowired
-    private ApplicationTypeService applicationTypeService;
+    private ApplicationSubTypeService applicationTypeService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private ApplicationBpaService applicationBpaService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -338,7 +340,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             final HttpServletRequest request, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
         String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
-        searchBpaApplicationService.validateApplicationTypeAndHeight(bpaApplication, errors);
+        List<ApplicationSubType> riskBasedAppTypes = applicationTypeService.getRiskBasedApplicationTypes();
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
@@ -397,6 +399,23 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
          * bpaApplication.isCitizenAccepted()); return loadNewForm(bpaApplication, model,
          * bpaApplication.getServiceType().getCode()); }
          */
+        
+        String occupancyName;
+        
+        if (bpaApplication.getPermitOccupanciesTemp().size() == 1)
+            occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
+        else if(applicationBpaService.isOccupancyContains(bpaApplication.getPermitOccupanciesTemp(), BpaConstants.INDUSTRIAL))
+        	occupancyName = BpaConstants.INDUSTRIAL;
+        else
+        	occupancyName = BpaConstants.MIXED_OCCUPANCY  ;   
+        
+        if(!isEdcrIntegrationRequire && riskBasedAppTypes.contains(bpaApplication.getApplicationType())) {
+        	ApplicationSubType applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
+                    bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetail())
+                            .getHeightFromGroundWithOutStairRoom(),
+                    occupancyName);
+            bpaApplication.setApplicationType(applicationType);
+        }
         Long approvalPosition = null;
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
         Boolean isCitizen = request.getParameter(IS_CITIZEN) != null
@@ -455,22 +474,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
-
-        String occupancyName = "";
-        if (bpaApplication.getPermitOccupanciesTemp().size() == 1)
-            occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
-        ApplicationType applicationType = null;
-
-        if (bpaApplication.getIsOneDayPermitApplication())
-            applicationType = applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT);
-        else if (!bpaApplication.getBuildingDetailFromEdcr().isEmpty()
-                && bpaApplication.getBuildingDetailFromEdcr().get(0).getTotalPlintArea().compareTo(BigDecimal.ZERO) > 0)
-            applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
-                    bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetailFromEdcr())
-                            .getHeightFromGroundWithOutStairRoom(),
-                    occupancyName);
-
-        bpaApplication.setApplicationType(applicationType);
 
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
 

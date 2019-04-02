@@ -113,7 +113,7 @@ public class BpaFeeCommonService {
 		Map<String, BpaFeeMapping> feeMap = new HashMap<>();
 		for (BpaFeeMapping feeMp : bpaFeeMap.getBpaFeeMapTemp()) {
 			String key = feeMp.getApplicationType().toString() + "-" + feeMp.getFeeSubType().toString() + "-"
-					+ feeMp.getServiceType().getDescription();
+					+ feeMp.getServiceType().getDescription() + feeMp.getApplicationSubType();
 			if (feeMap.get(key) != null) {
 				errors.rejectValue("applicationType", "msg.fee.combination.exists");
 

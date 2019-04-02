@@ -37,41 +37,26 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.service;
+package org.egov.bpa.master.repository;
 
 import java.util.List;
 
-import org.egov.bpa.master.entity.ApplicationType;
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.master.repository.ApplicationTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.bpa.master.entity.ApplicationSubType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-@Service
-@Transactional(readOnly = true)
-public class ApplicationTypeService {
-
-    @Autowired
-    private ApplicationTypeRepository applicationTypeRepository;
-    
-    public ApplicationType findById(Long id) {
-        return applicationTypeRepository.findOne(id);
-    }
-
-    public List<ApplicationType> findAll() {
-        return applicationTypeRepository.findAll();
-    }
-    
-    public ApplicationType findByName(final String name) {
-        return applicationTypeRepository.findByNameUpperCase(name.toUpperCase());
-    }
-    
-    public List<ApplicationType> getAllEnabledApplicationTypes() {
-        return applicationTypeRepository.findByEnabledTrueOrderByDescriptionAsc();
-    }
-    
-    public List<ApplicationType> getAllSlotRequiredApplicationTypes() {
-        return applicationTypeRepository.findBySlotRequiredTrueOrderByDescriptionAsc();
-    }
+@Repository
+public interface ApplicationSubTypeRepository extends JpaRepository<ApplicationSubType, Long> {
+	
+    @Query("select a from ApplicationSubType a where upper(a.name)=:name")
+	ApplicationSubType findByNameUpperCase(@Param("name") String name);
+	
+	List<ApplicationSubType> findByEnabledTrueOrderByDescriptionAsc();
+	
+    @Query("select a from ApplicationSubType a where name in ('Low Risk','High Risk','Medium Risk')")
+	List<ApplicationSubType> findRiskBasedApplicationType();
+	
+	List<ApplicationSubType> findBySlotRequiredTrueOrderByDescriptionAsc();
 }

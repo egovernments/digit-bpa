@@ -127,6 +127,8 @@
 									<th class="text-center"><spring:message
 											code='lbl.applctn.type' /></th>
 									<th class="text-center"><spring:message
+											code='lbl.applctn.subtype' /></th>
+									<th class="text-center"><spring:message
 											code='lbl.service.type' /></th>
 									<th class="text-center"><spring:message
 											code='lbl.fee.subtype' /></th>
@@ -155,6 +157,20 @@
 														<form:options items="${applicationTypes}" itemLabel="feeApplicationTypeVal"/>
 													</form:select> <form:errors
 														path="bpaFeeMapTemp[${item.index}].applicationType"
+														cssClass="add-margin error-msg" /></td>
+												<td><form:select
+														path="bpaFeeMapTemp[${item.index}].applicationSubType"
+														id="bpaFeeDetail[${item.index}].applicationSubType"
+														value="${bpaFeeDetail.applicationSubType.description}"
+														cssClass="form-control applicationSubType" disabled="true"
+														required="required">
+														<form:option value="">
+															<spring:message code="lbl.select" />
+														</form:option>
+														<form:options items="${appSubTypes}" itemValue="id"
+															itemLabel="description" />
+													</form:select> <form:errors
+														path="bpaFeeMapTemp[${item.index}].applicationSubType"
 														cssClass="add-margin error-msg" /></td>
 												<td><form:select
 														path="bpaFeeMapTemp[${item.index}].serviceType"
@@ -219,6 +235,16 @@
 													</form:option>
 													<form:options items="${applicationTypes}" />
 												</form:select> <form:errors path="bpaFeeMapTemp[0].applicationType"
+													cssClass="add-margin error-msg" /></td>
+											<td><form:select path="bpaFeeMapTemp[0].applicationSubType"
+													id="bpaFeeDetail[0].applicationSubType"
+													cssClass="form-control applicationSubType" required="required">
+													<form:option value="">
+														<spring:message code="lbl.select" />
+													</form:option>
+													<form:options items="${appSubTypes}" itemValue="id"
+														itemLabel="description" />
+												</form:select> <form:errors path="bpaFeeMapTemp[0].applicationSubType"
 													cssClass="add-margin error-msg" /></td>
 											<td><form:select path="bpaFeeMapTemp[0].serviceType"
 													id="bpaFeeDetail[0].serviceType"

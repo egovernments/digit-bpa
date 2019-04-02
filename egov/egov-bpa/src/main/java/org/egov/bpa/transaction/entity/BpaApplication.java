@@ -76,7 +76,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.bpa.master.entity.ApplicationType;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
@@ -152,8 +152,8 @@ public class BpaApplication extends StateAware<Position> {
     @JoinColumn(name = "demand")
     private EgDemand demand;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "applicationType")
-    private ApplicationType applicationType;
+    @JoinColumn(name = "applicationSubType")
+    private ApplicationSubType applicationType;
     @Length(min = 1, max = 128)
     private String remarks;
     @Length(min = 1, max = 256)
@@ -1058,11 +1058,11 @@ public class BpaApplication extends StateAware<Position> {
 		this.locationBoundary = locationBoundary;
 	}
 
-	public ApplicationType getApplicationType() {
+	public ApplicationSubType getApplicationType() {
 		return applicationType;
 	}
 
-	public void setApplicationType(ApplicationType applicationType) {
+	public void setApplicationType(ApplicationSubType applicationType) {
 		this.applicationType = applicationType;
 	}
 

@@ -37,24 +37,44 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.repository;
+package org.egov.bpa.master.service;
 
 import java.util.List;
 
-import org.egov.bpa.master.entity.ApplicationType;
-import org.egov.eis.entity.EmployeeType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.repository.ApplicationSubTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface ApplicationTypeRepository extends JpaRepository<ApplicationType, Long> {
-	
-    @Query("select a from ApplicationType a where upper(a.name)=:name")
-	ApplicationType findByNameUpperCase(@Param("name") String name);
-	
-	List<ApplicationType> findByEnabledTrueOrderByDescriptionAsc();
-	
-	List<ApplicationType> findBySlotRequiredTrueOrderByDescriptionAsc();
+@Service
+@Transactional(readOnly = true)
+public class ApplicationSubTypeService {
+
+    @Autowired
+    private ApplicationSubTypeRepository applicationTypeRepository;
+    
+    public ApplicationSubType findById(Long id) {
+        return applicationTypeRepository.findOne(id);
+    }
+
+    public List<ApplicationSubType> findAll() {
+        return applicationTypeRepository.findAll();
+    }
+    
+    public ApplicationSubType findByName(final String name) {
+        return applicationTypeRepository.findByNameUpperCase(name.toUpperCase());
+    }
+    
+    public List<ApplicationSubType> getAllEnabledApplicationTypes() {
+        return applicationTypeRepository.findByEnabledTrueOrderByDescriptionAsc();
+    }
+    
+    public List<ApplicationSubType> getAllSlotRequiredApplicationTypes() {
+        return applicationTypeRepository.findBySlotRequiredTrueOrderByDescriptionAsc();
+    }
+    
+    public List<ApplicationSubType> getRiskBasedApplicationTypes() {
+        return applicationTypeRepository.findByEnabledTrueOrderByDescriptionAsc();
+    }
 }

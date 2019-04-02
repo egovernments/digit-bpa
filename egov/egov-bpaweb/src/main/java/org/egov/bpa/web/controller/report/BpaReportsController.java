@@ -39,8 +39,24 @@
  */
 package org.egov.bpa.web.controller.report;
 
-import org.egov.bpa.master.entity.ApplicationType;
-import org.egov.bpa.master.service.ApplicationTypeService;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
+import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.bpa.utils.BpaConstants.WARD;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.transaction.entity.dto.PersonalRegisterHelper;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
@@ -81,24 +97,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
-import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.bpa.utils.BpaConstants.WARD;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
-import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
-
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
 @Controller
 @RequestMapping(value = "/reports")
 public class BpaReportsController extends BpaGenericApplicationController {
@@ -126,7 +124,7 @@ public class BpaReportsController extends BpaGenericApplicationController {
 	@Autowired
 	private SecurityUtils securityUtils;
 	@Autowired
-	private ApplicationTypeService applicationTypeService;
+	private ApplicationSubTypeService applicationTypeService;
 	@Autowired
 	private PersonalRegisterReportService personalRegisterReportService;
 
@@ -211,9 +209,9 @@ public class BpaReportsController extends BpaGenericApplicationController {
 		prepareFormData(model);
 		model.addAttribute("slotDetailsHelper", new SlotDetailsHelper());
 		model.addAttribute("applicationType", applicationType);
-		List<ApplicationType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
-		List<ApplicationType> slotMappingApplTypes = new ArrayList<>();
-                for (ApplicationType applType : appTypes)
+		List<ApplicationSubType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
+		List<ApplicationSubType> slotMappingApplTypes = new ArrayList<>();
+                for (ApplicationSubType applType : appTypes)
                     if (applType.getName().equals(APPLICATION_TYPE_ONEDAYPERMIT))
                         continue;
                     else
@@ -329,9 +327,9 @@ public class BpaReportsController extends BpaGenericApplicationController {
 			model.addAttribute("wards", revenueWards.stream().sorted(Comparator.comparing(Boundary::getId)).collect(Collectors.toSet()));
 			model.addAttribute("electionwards", mappedElectionWard.stream().sorted(Comparator.comparing(Boundary::getId)).collect(Collectors.toSet()));
 			model.addAttribute("userList", Arrays.asList(employee));
-			List<ApplicationType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
-			List<ApplicationType> applicationTypes = new ArrayList<>();
-	                for (ApplicationType applType : appTypes)
+			List<ApplicationSubType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
+			List<ApplicationSubType> applicationTypes = new ArrayList<>();
+	                for (ApplicationSubType applType : appTypes)
 	                    if (applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
 	                        continue;
 	                    else

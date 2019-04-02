@@ -290,14 +290,13 @@ $(document).ready(
                     blockIdx++;
                 }
             }
-           // getApplicationType(planDetail.blocks[0].building.buildingHeight);
 
             $('.serviceType').trigger('change');
         }
      
-        function getApplicationType(area, height) {   
+        function getApplicationType(area, height, occupancy) {   
         	$.ajax({
-				url : '/bpa/ajax/getApplicationType?height='+height+'&plotArea='+area,
+				url : '/bpa/ajax/getApplicationType?height='+height+'&plotArea='+area+'&occupancy='+occupancy,
 				type: "GET",
 				 contentType: 'application/json; charset=utf-8',
 				success: function (response) {
@@ -659,6 +658,8 @@ $(document).ready(
                                 	if (response.plan.occupancies.length > 0) {
                                 		var occupancies = [];
 	                                    $.each(response.plan.occupancies, function(index, occupancy) {
+	                                        if(response.plan.planInformation.roadWidth < 12 && occupancy.type == 'Industrial')
+                                               bootbox.alert('Road width cannot be less than 12m for industrial occupancy');
 	                                    	occupancies.push(occupancy.type);
 	                                    });
 	                                    
@@ -675,10 +676,25 @@ $(document).ready(
                                      } else {
                                      	$('.existingbuildingdetails').hide();
                                      }
-
+                                    
                                     setProposedBuildingDetailFromEdcrs(response.plan);
+                                    var occupancy = "";
+                                    
+
+                                	if (response.plan.occupancies.length == 1) {
+                                    occupancy = response.plan.occupancies[0].type;    
+                                	}
+                                	else {
+                                		$.each(response.plan.occupancies, function(index, occupancy){
+                                			if(occupancy.type=='Industrial')
+                                				occupancy=occupancy.type;
+                                			else
+                                				occupancy='Mixed';
+                                		});
+                                	}
+                                	
                                     var area =response.plotArea.toFixed(2);
-                                    getApplicationType(area, response.plan.blocks[0].building.buildingHeight);
+                                    getApplicationType(area, response.plan.blocks[0].building.buildingHeight,occupancy);
 
                                     if($('#dcrDocsAutoPopulate').val() === 'true' || $('#dcrDocsAutoPopulateAndManuallyUpload').val() === 'true')
                                         autoPopulatePlanScrutinyGeneratedPdfFiles(response.planScrutinyPdfs);

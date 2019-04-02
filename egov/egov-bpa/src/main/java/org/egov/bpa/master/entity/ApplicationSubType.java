@@ -42,14 +42,14 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "EGBPA_MSTR_APPLICATIONTYPE")
-@SequenceGenerator(name = ApplicationType.SEQ_APPLICATIONTYPE, sequenceName = ApplicationType.SEQ_APPLICATIONTYPE, allocationSize = 1)
-public class ApplicationType extends AbstractAuditable {
+@Table(name = "EGBPA_MSTR_APPLICATIONSUBTYPE")
+@SequenceGenerator(name = ApplicationSubType.SEQ_APPLICATIONSUBTYPE, sequenceName = ApplicationSubType.SEQ_APPLICATIONSUBTYPE, allocationSize = 1)
+public class ApplicationSubType extends AbstractAuditable {
 
 	private static final long serialVersionUID = 3523866218161324731L;
-	public static final String SEQ_APPLICATIONTYPE= "SEQ_EGBPA_MSTR_APPLICATIONTYPE";
+	public static final String SEQ_APPLICATIONSUBTYPE= "SEQ_EGBPA_MSTR_APPLICATIONSUBTYPE";
     @Id
-    @GeneratedValue(generator = SEQ_APPLICATIONTYPE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_APPLICATIONSUBTYPE, strategy = GenerationType.SEQUENCE)
     private Long id;
     
     @NotNull

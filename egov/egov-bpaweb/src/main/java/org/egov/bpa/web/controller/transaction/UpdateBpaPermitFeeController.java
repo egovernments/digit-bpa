@@ -42,11 +42,14 @@ package org.egov.bpa.web.controller.transaction;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.transaction.entity.ApplicationFee;
@@ -55,10 +58,10 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.repository.PermitFeeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
-import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.bpa.transaction.service.BpaStatusService;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.PermitFeeService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.utils.BpaConstants;
@@ -115,6 +118,8 @@ public class UpdateBpaPermitFeeController {
     @Autowired
     protected PermitFeeRepository permitFeeRepository;
     @Autowired
+    private ApplicationSubTypeService applicationSubTypeService;
+    @Autowired
     private BpaUtils bpaUtils;
     @Autowired
     private CustomImplProvider specificNoticeService;
@@ -143,10 +148,24 @@ public class UpdateBpaPermitFeeController {
         PermitFee permitFee = getBpaApplication(applicationNumber);
         if (permitFee != null && permitFee.getApplication() != null) {
             loadViewdata(model, permitFee);
-            
+            ApplicationSubType applicationType = permitFee.getApplication().getApplicationType();
+            boolean isRiskBased = applicationSubTypeService.getRiskBasedApplicationTypes().contains(applicationType);
+
             // Get all sanction fee by service type
             List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService
                     .getSanctionFeeForListOfServices(permitFee.getApplication().getServiceType().getId());
+            List<BpaFeeMapping> sanctionFeeRiskBased;
+            if(isRiskBased)
+            	sanctionFeeRiskBased = bpaSanctionFees.stream()
+						.filter(bp -> bp.getBpaFeeCommon().getCode().equals("PF") && (bp.getApplicationSubType() == null || ( bp.getApplicationSubType() != null && 
+								bp.getApplicationSubType().getName() != applicationType.getName()))).collect(Collectors.toList()); 
+            else {
+            	sanctionFeeRiskBased = bpaSanctionFees.stream()
+						.filter(bp -> bp.getApplicationSubType() != null 
+				                && bp.getBpaFeeCommon().getCode().equals("PF")).collect(Collectors.toList()); 
+            }
+            
+            bpaSanctionFees.removeAll(sanctionFeeRiskBased);
 
             String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
             model.addAttribute("sanctionFees", bpaSanctionFees);

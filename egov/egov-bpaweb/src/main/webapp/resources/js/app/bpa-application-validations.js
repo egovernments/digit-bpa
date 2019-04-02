@@ -62,6 +62,8 @@ $(document).ready(function() {
     $('.show-hide').hide();
     $('.totalPlintArea').show();
     $('.dcrDocuments').hide();
+    
+    
 
     roundOfDecimalPlaces();
     function roundOfDecimalPlaces() {
@@ -852,6 +854,7 @@ $(document).ready(function() {
                 $('#isEDCRIntegrationRequire').val(response);
                 if(response) {
                     showDCRDetails();
+                    $('#applicationType').attr('readonly',true);
                 } else {
                     hideDcrDetails();
                 }
