@@ -274,7 +274,7 @@
 		<div class="col-sm-3 add-margin">
 			<form:textarea path="siteDetail[0].landregistrationdetails"
 						   id="landregistrationdetails" class="form-control patternvalidation"
-						   data-pattern="alphanumericspecialcharacters" required="required"
+						   data-pattern="alphanumericspecialcharacters"
 						   maxlength="4000" />
 			<form:errors path="siteDetail[0].landregistrationdetails" cssClass="add-margin error-msg" />
 		</div>
