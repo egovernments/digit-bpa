@@ -93,7 +93,7 @@
 		</div>
 		
 		<div class = "bpa-feature-bottom-card f-medium bold padding0 center-align-flex col-md-12">
-			First and Only One Open Standard DCR Scrutiny Software in India
+			First and Only One Open Standard Plan Scrutiny Software in India
 		</div>
 		
 	</div>

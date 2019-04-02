@@ -306,11 +306,11 @@
 	</div>
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.aadhar" /></label>
+				code="lbl.aadhar" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<form:input type="text" cssClass="form-control patternvalidation"
 				path="aadhaarNumber" data-pattern="number" maxlength="12"
-				id="aadhaarNumber" />
+				id="aadhaarNumber" required="required"/>
 			<form:errors path="aadhaarNumber" cssClass="error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
