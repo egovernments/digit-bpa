@@ -65,6 +65,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -119,13 +121,26 @@ public class NewApplicationController extends BpaGenericApplicationController {
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             return redirectOnValidationFailure(model);
         }
+        
+        Map<Boolean, String> shValidation = bpaApplicationValidationService
+                .checkStakeholderIsValid(bpaApplication);
+        if (!shValidation.isEmpty())
+            for (Map.Entry<Boolean, String> keyset : shValidation.entrySet()) {
+                if (!keyset.getKey()) {
+                    String msg = keyset.getValue();
+                    model.addAttribute("invalidStakeholder", msg);
+                    return loadFormData(bpaApplication, model);
 
-        if (!bpaApplicationValidationService.checkStakeholderIsValid(bpaApplication)) {
+                }
+            }
+
+
+    /*    if (!bpaApplicationValidationService.checkStakeholderIsValid(bpaApplication).isEmpty()) {
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             message = bpaApplicationValidationService.getValidationMessageForBusinessResgistration(bpaApplication);
             model.addAttribute("invalidStakeholder", message);
             return loadFormData(bpaApplication, model);
-        }
+        }      */
 
         List<ApplicationStakeHolder> applicationStakeHolders = new ArrayList<>();
         ApplicationStakeHolder applicationStakeHolder = new ApplicationStakeHolder();

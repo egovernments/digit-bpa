@@ -66,6 +66,7 @@ import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.oc.OCBuilding;
 import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.service.impl.StakeholderValidation;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.common.entity.bpa.SubOccupancy;
@@ -114,7 +115,8 @@ public class BpaApplicationValidationService {
      * @param bpaApplication
      * @return
      */
-    public boolean checkStakeholderIsValid(final BpaApplication bpaApplication) {
+    public Map<Boolean, String> checkStakeholderIsValid(final BpaApplication bpaApplication) {
+    	 
         Integer noOfFloors = 0;
         BigDecimal totalPlinthArea = BigDecimal.ZERO;
         BigDecimal heightOfBuilding = BigDecimal.ZERO;
@@ -128,16 +130,17 @@ public class BpaApplicationValidationService {
         }
         Map<String, String> cityDetails = customImplProvider.getCityDetails();
 
-        StakeHolderValidation sValidator = (StakeHolderValidation) customImplProvider.find(StakeHolderValidation.class,
+        StakeholderValidation sValidator = (StakeholderValidation) customImplProvider.find(StakeholderValidation.class,
                 cityDetails);
         if (sValidator == null) {
             throw new RuntimeException("Unable to find Stakeholder validator service");
         } else {
-            return sValidator.validateStakeholder(bpaApplication.getServiceType().getCode(),
+            return sValidator.validateStakeholder(bpaApplication.getServiceType().getCode(),bpaApplication.getServiceType().getDescription(),
                     bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName(),
                     bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
                     noOfFloors, heightOfBuilding, totalPlinthArea, bpaApplication.getAuthorizedToSubmitPlan());
         }
+      
     }
 
     /**
@@ -236,7 +239,7 @@ public class BpaApplicationValidationService {
      * @param bpaApplication
      * @return error message if building licensee is not meeting eligible criteria.
      */
-    public String getValidationMessageForBusinessResgistration(final BpaApplication bpaApplication) {
+ public String getValidationMessageForBusinessResgistration(final BpaApplication bpaApplication) {
         String stakeHolderType = bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType()
                 .getName();
         String serviceType = bpaApplication.getServiceType().getCode();
@@ -312,7 +315,11 @@ public class BpaApplicationValidationService {
                     LocaleContextHolder.getLocale());
         }
         return message;
-    }
+    }    
+    
+    
+  
+    
 
     /**
      * checking each floor wise coverage area is violating for all occupancy where ever building details capturing to those
