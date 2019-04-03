@@ -80,7 +80,7 @@ public class Block extends Measurement {
     private transient Boolean completelyExisting = false;
     private List<DARamp> daRamps = new ArrayList<>();
     private List<Measurement> openStairs = new ArrayList<>();
-    private BigDecimal plinthHeight = BigDecimal.ZERO;
+    private List<BigDecimal> plinthHeight = BigDecimal.ZERO;
 
     @Override
     public String toString() {
@@ -299,12 +299,12 @@ public class Block extends Measurement {
         this.openStairs = openStairs;
     }
 
-	public BigDecimal getPlinthHeight() {
+	public List<BigDecimal> getPlinthHeight() {
 		return plinthHeight;
 	}
 
-	public void setPlinthHeight(BigDecimal plinthHeight) {
+	public void setPlinthHeight(List<BigDecimal> plinthHeight) {
 		this.plinthHeight = plinthHeight;
 	}
-    
+
 }
