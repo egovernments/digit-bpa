@@ -104,7 +104,9 @@
 					code="lbl.contact.person" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input type="text" cssClass="form-control addremoverequired"
-					path="contactPerson" maxlength="50" id="contactPerson" />
+				data-pattern="alphabetspecialcharacters" data-role="tagsinput"
+					path="contactPerson" maxlength="100" id="contactPerson" />
+			   <small class="text-info view-content"> <spring:message code="lbl.names.separated.comma" /></small>
 				<form:errors path="contactPerson" cssClass="error-msg" />
 			</div>
 		</div>
@@ -351,3 +353,7 @@
 	</jsp:include>
 
 </div>
+<link rel="stylesheet"
+	  href="<c:url value='/resources/global/css/bootstrap/bootstrap-tagsinput.css?rnd=${app_release_no}' context='/egi'/>">
+<script
+		src="<c:url value='/resources/global/js/bootstrap/bootstrap-tagsinput.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
