@@ -153,8 +153,12 @@
 			<label class="col-sm-3 control-label text-right"><spring:message
 					code="lbl.stakeholder.ackno" /></label>
 			<div class="col-sm-3 add-margin">
-				<form:input type="text" cssClass="form-control" path="code"
-					id="code" />
+			<c:if test="${stakeHolder.id != null}">
+				<form:input type="text" cssClass="form-control" path="code" id="code" readonly="true" />
+			</c:if>
+			<c:if test="${stakeHolder.id == null}">
+				<form:input type="text" cssClass="form-control" path="code" id="code" />
+			</c:if>
 				<form:errors path="code" cssClass="error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message
