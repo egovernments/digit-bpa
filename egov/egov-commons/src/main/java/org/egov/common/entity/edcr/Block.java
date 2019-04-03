@@ -81,7 +81,8 @@ public class Block extends Measurement {
     private List<DARamp> daRamps = new ArrayList<>();
     private List<Measurement> openStairs = new ArrayList<>();
     private List<BigDecimal> plinthHeight ;
-
+    private List<BigDecimal> interiorCourtYard ;
+    
     @Override
     public String toString() {
         return "Block [building=" + building + ", name=" + name + ", number=" + number + ", setBacks=" + setBacks
@@ -307,4 +308,12 @@ public class Block extends Measurement {
 		this.plinthHeight = plinthHeight;
 	}
 
+	public List<BigDecimal> getInteriorCourtYard() {
+		return interiorCourtYard;
+	}
+
+	public void setInteriorCourtYard(List<BigDecimal> interiorCourtYard) {
+		this.interiorCourtYard = interiorCourtYard;
+	}
+	
 }
