@@ -80,7 +80,7 @@ public class Block extends Measurement {
     private transient Boolean completelyExisting = false;
     private List<DARamp> daRamps = new ArrayList<>();
     private List<Measurement> openStairs = new ArrayList<>();
-    private List<BigDecimal> plinthHeight = BigDecimal.ZERO;
+    private List<BigDecimal> plinthHeight ;
 
     @Override
     public String toString() {
