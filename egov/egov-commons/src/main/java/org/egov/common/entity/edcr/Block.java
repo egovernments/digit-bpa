@@ -47,6 +47,7 @@
 
 package org.egov.common.entity.edcr;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,10 +78,9 @@ public class Block extends Measurement {
     private transient Boolean residentialOrCommercialBuilding = false;
     private transient Boolean highRiseBuilding = false;
     private transient Boolean completelyExisting = false;
-
     private List<DARamp> daRamps = new ArrayList<>();
-
     private List<Measurement> openStairs = new ArrayList<>();
+    private BigDecimal plinthHeight = BigDecimal.ZERO;
 
     @Override
     public String toString() {
@@ -298,4 +298,13 @@ public class Block extends Measurement {
     public void setOpenStairs(List<Measurement> openStairs) {
         this.openStairs = openStairs;
     }
+
+	public BigDecimal getPlinthHeight() {
+		return plinthHeight;
+	}
+
+	public void setPlinthHeight(BigDecimal plinthHeight) {
+		this.plinthHeight = plinthHeight;
+	}
+    
 }
