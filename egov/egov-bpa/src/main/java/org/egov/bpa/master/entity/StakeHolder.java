@@ -117,7 +117,7 @@ public class StakeHolder extends User {
     private Boolean isActive;
     @Length(max = 11)
     private String tinNumber;
-    @Length(max = 50)
+    @Length(max = 256)
     private String contactPerson;
     @Length(max = 50)
     private String designation;

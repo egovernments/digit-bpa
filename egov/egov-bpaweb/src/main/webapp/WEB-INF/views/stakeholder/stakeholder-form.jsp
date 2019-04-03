@@ -105,7 +105,7 @@
 			<div class="col-sm-3 add-margin">
 				<form:input type="text" cssClass="form-control addremoverequired"
 				data-pattern="alphabetspecialcharacters" data-role="tagsinput"
-					path="contactPerson" maxlength="100" id="contactPerson" />
+					path="contactPerson" maxlength="256" id="contactPerson" />
 			   <small class="text-info view-content"> <spring:message code="lbl.names.separated.comma" /></small>
 				<form:errors path="contactPerson" cssClass="error-msg" />
 			</div>

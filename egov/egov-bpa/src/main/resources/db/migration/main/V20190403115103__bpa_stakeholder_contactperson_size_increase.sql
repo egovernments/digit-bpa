@@ -1,0 +1,1 @@
+ALTER TABLE state.egbpa_mstr_stakeholder ALTER COLUMN contactperson type character varying(256);
