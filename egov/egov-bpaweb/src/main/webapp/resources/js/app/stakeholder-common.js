@@ -50,6 +50,7 @@ var $type = "";
 
 $(document).ready( function () {
 	
+	 $('#licenceGroup').hide();
 	$type = $("#stakeHolderType option:selected").text();
 	
 	loadLicenceNumber($type);
