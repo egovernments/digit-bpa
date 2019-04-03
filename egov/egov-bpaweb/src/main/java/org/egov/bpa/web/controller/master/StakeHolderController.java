@@ -43,6 +43,7 @@ package org.egov.bpa.web.controller.master;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -520,10 +521,15 @@ public class StakeHolderController extends GenericWorkFlowController {
     @Override
     protected void prepareWorkflow(final Model prepareModel, final StateAware model,
             final WorkflowContainer container) {
-        prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
-        prepareModel.addAttribute("validActionList", getValidActions(model, container));
-        prepareModel.addAttribute("nextAction", getNextAction(model, container));
-        prepareModel.addAttribute("pendingActions", container.getPendingActions());
+        if("END".equals(model.getCurrentState().getValue())){
+            prepareModel.addAttribute("nextAction", "END");
+            prepareModel.addAttribute("validActionList", new ArrayList<>());
+        }else{
+            prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
+            prepareModel.addAttribute("validActionList", getValidActions(model, container));
+            prepareModel.addAttribute("nextAction", getNextAction(model, container));
+            prepareModel.addAttribute("pendingActions", container.getPendingActions());
+        }
 
     }
 

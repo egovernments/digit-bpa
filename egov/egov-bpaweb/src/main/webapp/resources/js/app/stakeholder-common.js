@@ -49,7 +49,9 @@
 var $type = "";
 
 $(document).ready( function () {
-	
+	if($('#nextAction').val() == "END"){
+		$('#approverDetailBody').hide();
+	}
 	 $('#licenceGroup').hide();
 	$type = $("#stakeHolderType option:selected").text();
 	

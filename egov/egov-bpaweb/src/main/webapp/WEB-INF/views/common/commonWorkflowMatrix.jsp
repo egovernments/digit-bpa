@@ -78,7 +78,7 @@
             <form:hidden path="" id="revenueBoundaryName" value="${revenueBoundaryName}"/>
             <form:hidden path="" id="electionBoundaryName" value="${electionBoundaryName}"/>
             <form:hidden path="" id="defaultDepartment" value="${bpaPrimaryDept}"/>
-
+			<form:hidden path="" name="nextAction" id="nextAction" value="${nextAction}"/>
             <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>
             <form:hidden path="" id="workFlowAction" name="workFlowAction"/>
     	 <c:if test="${nextAction !='END'}">       
