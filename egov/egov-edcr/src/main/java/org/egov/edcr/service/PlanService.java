@@ -55,7 +55,7 @@ public class PlanService {
         plan.setApplicationDate(dcrApplication.getApplicationDate());
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
         plan = applyRules(plan, cityDetails);
-
+        
         InputStream reportStream = generateReport(plan, dcrApplication);
 
         saveOutputReport(dcrApplication, reportStream, plan);
@@ -104,6 +104,8 @@ public class PlanService {
         for (PlanFeature ruleClass : featureService.getFeatures()) {
             FeatureProcess rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass(), cityDetails);
             rule.process(plan);
+			if (plan.getErrors().containsKey("onlyresidential_allowed"))
+				return plan;
         }
         return plan;
     }

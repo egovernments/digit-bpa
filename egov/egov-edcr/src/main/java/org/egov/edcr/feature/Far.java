@@ -64,6 +64,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
@@ -83,7 +84,6 @@ import org.egov.edcr.service.ProcessHelper;/*
  * private static final BigDecimal ROAD_WIDTH_THIRTY_POINTFIVE =
  * BigDecimal.valueOf(30.5);
  */
-
 import org.egov.edcr.service.ProcessPrintHelper;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.stereotype.Service;
@@ -148,8 +148,9 @@ public class Far extends FeatureProcess {
 	public static final String NEW_AREA_ERROR = "road width new area";
 	public static final String OLD_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 2.4m for old area.";
 	public static final String NEW_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 6.1m for new area.";
+	private static final String ONLYRESIDENTIAL_ALLOWED = "Only residential buildings will be scrutinized for now.";
+	private static final String ONLYRESIDENTIAL_ALLOWED_KEY = "onlyresidential_allowed";
 
-	
     String farDeductByFloor = BLOCK_NAME_PREFIX + "%s" + "_" + FLOOR_NAME_PREFIX + "%s" + "_"
             + DxfFileConstants.BUILT_UP_AREA_DEDUCT;
 
@@ -166,6 +167,7 @@ public class Far extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
     	HashMap<String, String> errorMsgs = new HashMap<>();
+    	
         int errors = pl.getErrors().size();
         validate(pl);
         int validatedErrors = pl.getErrors().size();
@@ -518,6 +520,13 @@ public class Far extends FeatureProcess {
                 pl.getVirtualBuilding().setResidentialOrCommercialBuilding(false);
             }
         }
+        
+        
+		if (!checkOnlyResidentialPresent(pl)) {
+			pl.getErrors().put(ONLYRESIDENTIAL_ALLOWED_KEY, ONLYRESIDENTIAL_ALLOWED);
+			return pl;
+		}
+        
         OccupancyType mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFar();
         BigDecimal far = BigDecimal.ZERO;
         if (pl.getPlot().getArea().doubleValue() > 0)
@@ -538,6 +547,21 @@ public class Far extends FeatureProcess {
         ProcessPrintHelper.print(pl);
         return pl;
     }
+
+	private boolean checkOnlyResidentialPresent(Plan pl) {
+		boolean onlyResidentialPresent = true;
+		if (!pl.getOccupancies().isEmpty() && pl.getOccupancies().size() == 1) {
+			List<OccupancyType> occupancyTypes = pl.getOccupancies().stream().map(occupancy -> occupancy.getType())
+					.collect(Collectors.toList());
+			if (!(occupancyTypes.contains(OccupancyType.OCCUPANCY_A1))) {
+				onlyResidentialPresent = false;
+			}
+		} else {
+			onlyResidentialPresent = false;
+		}
+
+		return onlyResidentialPresent;
+	}
 
     private void calculateFar(Plan pl, OccupancyType mostRestrictiveOccupancy, BigDecimal far) {
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
