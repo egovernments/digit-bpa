@@ -92,6 +92,7 @@ public class PortalInboxService {
     @Transactional
     public void pushInboxMessage(final PortalInbox portalInbox) {
         portalInbox.setTenantId(ApplicationThreadLocals.getTenantID());
+        portalInbox.setPendingAction(portalInbox.getState().getNextAction());
         if (portalInbox.getTempPortalInboxUser().isEmpty()) {
             final User user = getLoggedInUser();
             if (user != null
@@ -143,6 +144,7 @@ public class PortalInboxService {
                 portalInbox.setStatus(status);
                 portalInbox.setResolved(isResolved);
                 portalInbox.setState(state);
+                portalInbox.setPendingAction(state.getNextAction());
                 updatePortalInboxData(slaEndDate, consumerNumber, link, portalInbox);
                 if (additionalUser != null
                         && (UserType.BUSINESS.toString().equalsIgnoreCase(additionalUser.getType().toString()) || UserType.CITIZEN

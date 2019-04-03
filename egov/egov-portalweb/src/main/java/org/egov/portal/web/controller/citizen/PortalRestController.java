@@ -72,8 +72,9 @@ public class PortalRestController {
 			portalInboxHelper.setServiceName(portalInbox.getServiceType());
 			portalInboxHelper.setLink(portalInbox.getLink());
 			portalInboxHelper.setStatus(portalInbox.getStatus());
-			portalInboxHelper.setPendingAction(portalInbox.getState()!=null?portalInbox.getState().getNextAction():null);
+			portalInboxHelper.setPendingAction(portalInbox.getPendingAction());
 			portalInboxHelper.setResolved(portalInbox.isResolved());
+			portalInboxHelper.setTenantId(portalInbox.getTenantId());
 			portalInboxHelperList.add(portalInboxHelper);
 		}
 		return portalInboxHelperList;

@@ -52,6 +52,7 @@ $(document).ready(function(){
 	
 	var clickedServiceData;
 	var selectedService;
+	var clientId = $('#clientId').val();
 	
 	//---------------
 	
@@ -82,7 +83,8 @@ $(document).ready(function(){
             } );
         	$('#bpa-home-table tbody').on('click', 'tr', function () {
         	    var data = table.row( this ).data();
-        	    openPopUp(window.origin+data.link);
+        	    var origin = window.origin.replace(clientId, data.tenantId);
+        	    openPopUp(origin+data.link);
         	} );
         	
         	//Initialize data in global variable

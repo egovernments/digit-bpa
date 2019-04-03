@@ -152,6 +152,9 @@ public class PortalInbox extends AbstractAuditable {
     @Length(max = 100)
     private String status;
 
+    @Length(max = 255)
+    private String pendingAction;
+
     @Length(max = 250)
     private String tenantId;
 
@@ -319,5 +322,13 @@ public class PortalInbox extends AbstractAuditable {
 
     public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
+    }
+
+    public String getPendingAction() {
+        return pendingAction;
+    }
+
+    public void setPendingAction(String pendingAction) {
+        this.pendingAction = pendingAction;
     }
 }
