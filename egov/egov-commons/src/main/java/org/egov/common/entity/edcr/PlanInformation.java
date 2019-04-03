@@ -179,6 +179,8 @@ public class PlanInformation implements Serializable {
     
     private transient String nocIrrigationDept = NA;
     
+    private transient String nocFireDept = NA;
+    
     public Boolean getParkingToMainBuilding() {
         return parkingToMainBuilding;
     }
@@ -627,4 +629,11 @@ public class PlanInformation implements Serializable {
 		this.nocIrrigationDept = nocIrrigationDept;
 	}
 
+	public String getNocFireDept() {
+		return nocFireDept;
+	}
+
+	public void setNocFireDept(String nocFireDept) {
+		this.nocFireDept = nocFireDept;
+	}
 }
