@@ -40,6 +40,7 @@
 package org.egov.bpa.master.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -48,6 +49,7 @@ import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.enums.FeeApplicationType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.repository.BpaFeeMappingRepository;
+import org.egov.bpa.transaction.entity.BpaApplication;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -61,6 +63,8 @@ public class BpaFeeMappingService {
 
 	@Autowired
 	private BpaFeeMappingRepository bpaFeeMappingRepository;
+	@Autowired
+	private ApplicationSubTypeService applicationSubTypeService;
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -172,6 +176,25 @@ public class BpaFeeMappingService {
 		feeCrit.add(Restrictions.eq("bpaFeeObj.applicationSubType.id", appSubType));
 
 		return feeCrit.list();
+	}
+	
+	public List<BpaFeeMapping> getPermitFeesByAppType(BpaApplication application, Long serviceTypeId) {
+		 List<BpaFeeMapping> sanctionFeeRiskBased;
+		 List<BpaFeeMapping> sanctionFeeList = getSanctionFeeForListOfServices(serviceTypeId);
+         boolean isRiskBased = applicationSubTypeService.getRiskBasedApplicationTypes().contains(application.getApplicationType());
+
+         if(isRiskBased)
+         	sanctionFeeRiskBased = sanctionFeeList.stream()
+						.filter(bp -> bp.getBpaFeeCommon().getCode().equals("PF") && bp.getApplicationSubType() == null || ( bp.getApplicationSubType() != null && 
+								bp.getApplicationSubType().getName() != application.getApplicationType().getName())).collect(Collectors.toList()); 
+         else {
+         	sanctionFeeRiskBased = sanctionFeeList.stream()
+						.filter(bp -> bp.getApplicationSubType() != null 
+				                && bp.getBpaFeeCommon().getCode().equals("PF")).collect(Collectors.toList()); 
+         }
+         sanctionFeeList.removeAll(sanctionFeeRiskBased);
+         return sanctionFeeList;
+         
 	}
 
 }

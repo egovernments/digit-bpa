@@ -55,9 +55,6 @@ import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
-import static org.egov.bpa.utils.BpaConstants.HIGHRISK;
-import static org.egov.bpa.utils.BpaConstants.LOWRISK;
-import static org.egov.bpa.utils.BpaConstants.MEDIUMRISK;
 import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
 import static org.egov.bpa.utils.BpaConstants.ROOF_CONVERSION;
 import static org.egov.bpa.utils.BpaConstants.SHUTTER_DOOR_CONVERSION;
@@ -81,7 +78,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -94,11 +90,9 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
-import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
-import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaSchemeLandUsageService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.PostalAddressService;
@@ -260,23 +254,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private PermitFeeRepository permitFeeRepository;
     @Autowired
     private ServiceTypeService serviceTypeService;
-    @Autowired
-    private ApplicationSubTypeService applicationTypeService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
-    }
-    
-    private static final Map<String, BigDecimal> APPLICATIONTYPE = new LinkedHashMap<>();
-    static {
-    	APPLICATIONTYPE.put(LOWRISK, BigDecimal.valueOf(1000));
-    	APPLICATIONTYPE.put(MEDIUMRISK, BigDecimal.valueOf(5000));
-    	APPLICATIONTYPE.put(HIGHRISK, BigDecimal.valueOf(10000));
-    }
-	
-	public static Map<String, BigDecimal> getApplicationTypeAmount() {
-	        return Collections.unmodifiableMap(APPLICATIONTYPE);
-	}
+    }    
 
     @Transactional
     public BpaApplication createNewApplication(final BpaApplication application, String workFlowAction) {
@@ -704,16 +685,6 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             throw new ApplicationRuntimeException("Service Type Id is mandatory.");
 
         return totalAmount;
-    }
-    
-    public BigDecimal getFeeAmountByApplicationType(Long applicationTypeId) {
-    	ApplicationSubType applicationType = applicationTypeService.findById(applicationTypeId);
-    	 if (getApplicationTypeAmount().containsKey(applicationType.getName())   ) 			  
-             return BigDecimal.valueOf(getApplicationTypeAmount().get(applicationType.getName()).longValue());
-    	 else
-    		 return BigDecimal.ZERO;           
-     
-    	
     }
 
     public BigDecimal getTotalFeeAmountByPassingServiceTypeAndAmenities(List<Long> serviceTypeIds) {

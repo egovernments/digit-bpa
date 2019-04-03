@@ -116,7 +116,6 @@ import org.egov.commons.service.SubOccupancyService;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -151,8 +150,6 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	    private SubOccupancyService subOccupancyService;
 		@Autowired
 		private BpaFeeMappingService bpaFeeMappingService;
-		@Autowired
-		private CityService cityService;
 		@Autowired
 		protected ApplicationBpaService applicationBpaService;			 
 		@Autowired
@@ -245,7 +242,6 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	            for (Long serviceTypeId : serviceTypeList) {
 
 	                BigDecimal beyondPermissibleArea = BigDecimal.ZERO;
-                    boolean isRiskBased = applicationSubTypeService.getRiskBasedApplicationTypes().contains(application.getApplicationType());
 
 	                // RESTRICT TO FEW SERVICES
 	                if (!application.getBuildingDetail().isEmpty() && !application.getPermitOccupancies().isEmpty()
@@ -253,8 +249,10 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                        && application.getSiteDetail().get(0).getExtentinsqmts() != null) {
 	                    beyondPermissibleArea = calculateBuiltUpAreaForAdditionalFeeCalculation(application).setScale(2,
 	                            BigDecimal.ROUND_HALF_UP);
-	                }
-	                for (BpaFeeMapping bpaFee : bpaFeeMappingService.getSanctionFeeForListOfServices(serviceTypeId)) {
+	                }                
+	                
+	                
+	                for (BpaFeeMapping bpaFee : bpaFeeMappingService.getPermitFeesByAppType(application, serviceTypeId)) {
 	                    if (bpaFee != null) {
 	                        BigDecimal amount = BigDecimal.ZERO;
 	                        if (!application.getIsEconomicallyWeakerSection()) {// In
@@ -280,7 +278,6 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 														.equalsIgnoreCase(ADDING_OF_EXTENSION))
 												|| (bpaFee.getServiceType().getDescription()
 														.equalsIgnoreCase(CHANGE_IN_OCCUPANCY)))) {
-	                                if(isRiskBased && application.getApplicationType().equals(bpaFee.getApplicationSubType())) {
 	                                if (selectdOccupancies.size() > 1 ) {
 	                                    List<SubOccupancy> occupancies = subOccupancyService.findAllOrderByOrderNumber();
 	                                    Map<String, Map<Occupancy, BigDecimal>> convertedOccupancies = new ConcurrentHashMap<>();
@@ -332,8 +329,6 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                                }
 	                                }
 	                                
-
-								} 
 	                            else if (BPA_ADDITIONAL_FEE.equals(bpaFee.getBpaFeeCommon().getName())
 										&& ((bpaFee.getServiceType().getDescription().equalsIgnoreCase(NEW_CONSTRUCTION))
 												|| (bpaFee.getServiceType().getDescription()
@@ -687,8 +682,7 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	    }
 	    
 	    private BigDecimal calculateLabourCessAmount(BigDecimal amount) {
-	        return amount.multiply(BigDecimal.valueOf(10)).divide(BigDecimal.valueOf(100));
-
+	        return amount.multiply(BigDecimal.valueOf(1)).divide(BigDecimal.valueOf(100));
 	    }
 
 	    /**
@@ -1227,7 +1221,7 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	        List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
 	                .getFeeForListOfServices(application.getServiceType().getId(), BpaConstants.BPA_APP_FEE);
    		   if(application.getApplicationType().getId() != null) 
-   			  application.setAdmissionfeeAmount(applicationBpaService.getFeeAmountByApplicationType(application.getApplicationType().getId()));
+   			  application.setAdmissionfeeAmount(setAdmissionFeeAmount(application, new ArrayList<>()));
          
 	        
 	        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), application.getAdmissionfeeAmount());

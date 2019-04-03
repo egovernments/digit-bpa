@@ -56,14 +56,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.egov.bpa.autonumber.BpaBillReferenceNumberGenerator;
+import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
+import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaFeeMappingService;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.master.service.ServiceTypeService;
@@ -135,6 +138,8 @@ public class ApplicationBpaBillService extends BillServiceInterface {
     private ApplicationBpaService applicationBpaService;
     @Autowired
     private ServiceTypeService serviceTypeService;
+    @Autowired
+    private ApplicationSubTypeService applicationSubTypeService;
 
     @Transactional
     public String generateBill(final BpaApplication application) {
@@ -212,12 +217,13 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         final Map<String, BigDecimal> feeDetails = new HashMap<>();
         EgDemand egDemand = null;
         String feeType;
+        List<Long> serviceTypeList = new ArrayList<>();
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
         // Not updating demand amount collected for new connection as per the
         // discussion.
         if (!application.getApplicationAmenity().isEmpty()) {
-            List<Long> serviceTypeList = new ArrayList<>();
+            
             for (ServiceType serviceType : application.getApplicationAmenity()) {
                 serviceTypeList.add(serviceType.getId());
             }
@@ -246,9 +252,18 @@ public class ApplicationBpaBillService extends BillServiceInterface {
         List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
                 .getFeeForListOfServices(application.getServiceType().getId(), BpaConstants.BPA_APP_FEE);
         BigDecimal amount = BigDecimal.ZERO;
-        if(application.getApplicationType() != null)
-        	amount = applicationBpaService.getFeeAmountByApplicationType(application.getApplicationType().getId());
+    	List<ApplicationSubType> riskBasedAppTypes = applicationSubTypeService.getRiskBasedApplicationTypes();
+    	List<Long> ids = riskBasedAppTypes.stream().map(rs -> rs.getId()).collect(Collectors.toList());
 
+    	if(ids.contains(application.getApplicationType().getId())) {
+    		List<BpaFeeMapping> appSubTypeFee =   bpaFeeMappingService.getAppSubTypeFee(application.getServiceType().getId(), FeeSubType.APPLICATION_FEE, application.getApplicationType().getId());
+
+    		for (final BpaFeeMapping feeMap : appSubTypeFee)
+	    		amount = amount.add(BigDecimal.valueOf(feeMap.getAmount()));
+    	}
+        else
+        	amount = applicationBpaService.getTotalFeeAmountByPassingServiceTypeAndAmenities(serviceTypeList);	
+        	
         feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), application.getAdmissionfeeAmount().add(amount));
         if (installment != null) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
