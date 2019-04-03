@@ -60,7 +60,7 @@
 		<i class="fa fa-angle-up fa-2x"></i>
 	</div>
 </div>
-<div class="panel-body display-hide" id="boundarydivision" >
+<div class="panel-body form-group display-hide" id="boundarydivision" >
 </div>
 <script id="genericBoundry" data-search="${param.boundaryData}"
 	src="<cdn:url value='/resources/js/commonjs/genericBoundaryForm.js?rnd=${app_release_no}'/>"></script>

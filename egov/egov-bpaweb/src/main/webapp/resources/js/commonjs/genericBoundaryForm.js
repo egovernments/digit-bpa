@@ -142,17 +142,22 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 		}
 
 		if(boundaryData[orderArray[i]]['data']!=null && boundaryData[orderArray[i]]['data']!=''){
-			$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
-			if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] != displayName){
+			if(isEven(i))
+				$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
+			 else 
+			    $('#boundarydivision').append('<label class="col-sm-2 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
+			if(fromHierarchy.indexOf(displayName) != -1 && (fromBoundary!='' && fromBoundary.split(':')[1] != displayName)){
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossBoundaryNew(\''+domOptionId+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
-			} else if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] == displayName){
+			} else if(fromHierarchy.indexOf(displayName) != -1 && (fromBoundary!='' && fromBoundary.split(':')[1] == displayName)){
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossAndUniformBoundaryNew(\''+domOptionId+'\', \''+hierarchy+'\', \''+toBoundary+'\',\''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
 			} else if(fromBoundary !=null && fromBoundary!='' && fromBoundary.split(':')[1] == displayName){
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="uniformBoundaryNew(\''+domOptionId+'\', \''+hierarchy+'\', \''+toBoundary+'\');"> <option value="">select</option></select></div>');
-			} else {
+			}else if(fromHierarchy.indexOf(displayName) != -1)
+				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossBoundaryNew(\''+domOptionId+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
+			else {
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'"> <option value="">select</option></select></div>');
 			}
-			if(fromBoundary.split(':')[1] == displayName  && toHierarchy.indexOf(displayName) == -1){
+			if(toHierarchy.indexOf(displayName) == -1){
 				$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
 					$("#"+domOptionId).append($('<option>').text(value.name).attr('value', value.id));
 				});
@@ -169,7 +174,7 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 			if(uniformMap!=null && uniformMap!=''){
 				var result = uniformMap.get(hierarchy);
 				if (result != null && result != '') 
-					if(result.length>1){
+					if(result.length>=1){
 						for (var k = 0; k < result.length; k++) {
 							if (result[k]['toBoundary'].split(':')[1] == displayName) {
 								$("#"+hierarchy+result[k]['toBoundary'].split(':')[1].replace(/ +/g, "")).empty()
@@ -232,6 +237,8 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 		displayName = orderArray[i].split(':')[2];
 		hierarchy = orderArray[i].split(':')[1];
 		domOptionId = hierarchy+displayName.replace(/ +/g, "");
+		var fromBoundary='';
+		var toBoundary='';
 		var result = uniformMap.get(hierarchy);
 		if (result != null && result != '') {
 			for (var k = 0; k < result.length; k++) {
@@ -243,22 +250,42 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 			}
 		}
 		if(boundaryData[orderArray[i]]['data']!=null && boundaryData[orderArray[i]]['data']!=''){
-			$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
-			if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] != displayName){
+			if(isEven(i))
+				$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
+			 else 
+			    $('#boundarydivision').append('<label class="col-sm-2 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
+			
+			if(fromBoundary!='' && fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] != displayName){
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossBoundaryNew(\''+domOptionId+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
-			}else if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary.split(':')[1] == displayName){
+			}else if(fromHierarchy.indexOf(displayName) != -1 && fromBoundary!='' && fromBoundary.split(':')[1] == displayName){
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossAndUniformBoundaryNew(\''+domOptionId+'\', \''+hierarchy+'\', \''+toBoundary+'\',\''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
 			}else if(fromBoundary !=null && fromBoundary!='' && fromBoundary.split(':')[1] == displayName){
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="uniformBoundaryModify(\''+domOptionId+'\', \''+hierarchy+'\', \''+toBoundary+'\');"> <option value="">select</option></select></div>');
+			}else if(fromHierarchy.indexOf(displayName) != -1){
+				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'" onChange="crossBoundaryNew(\''+domOptionId+'\', \''+fromHierarchy+'\', \''+toHierarchy+'\');"> <option value="">select</option></select></div>');
 			}else {
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'"> <option value="">select</option></select></div>');
 			}
 
-			if(fromBoundary.split(':')[1] == displayName && toHierarchy.indexOf(displayName) == -1 && fromHierarchy.indexOf(displayName) == -1){
+			if(toHierarchy.indexOf(displayName) == -1){
 				$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
 					$("#"+domOptionId).append($('<option>').text(value.name).attr('value', value.id));
 				});
 			}
+			if(uniformMap!=null && uniformMap!=''){
+				var result = uniformMap.get(hierarchy);
+				if (result != null && result != '') 
+					if(result.length>=1){
+						for (var k = 0; k < result.length; k++) {
+							if (result[k]['toBoundary'].split(':')[1] == displayName) {
+								$("#"+hierarchy+result[k]['toBoundary'].split(':')[1].replace(/ +/g, "")).empty()
+								.append('<option value="">select</option></select>');
+							}
+						}
+					}
+			}
+			
+			
 			if(Math.max.apply(null, orderMap.get(orderArray[i].split('-')[0]))==orderArray[i].split(':')[0].split('-')[1]){
 				if(hierarchy=='ADMINISTRATION'){
 					document.getElementById(domOptionId).name="adminBoundary";
@@ -281,6 +308,11 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 			document.getElementById(adminBoundaryId).value=selectedAdminBoundary;
 		if(locationBoundaryId!=null && locationBoundaryId!='')
 			document.getElementById(locationBoundaryId).value=selectedLocationBoundary;
+		
+		if(uniformMap == null || uniformMap == '' || uniformMap.size == 0){
+		    if(crosslinkConfig!=null && crosslinkConfig!='')
+		        crossBoundaryModify(selectedRevenueBoundary, fromHierarchy, toHierarchy);
+		}
 		
           setParentDetails(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary,uniformMap,'REVENUE',crosslinkConfig);
           setParentDetails(genericBoundaryConfigData['boundaryData'], selectedAdminBoundary,uniformMap,'ADMINISTRATION',crosslinkConfig);
@@ -498,8 +530,12 @@ function parentDetails(selectedBndryId, heirarchy, toHeirarchy) {
 
 function setParentDetails(boundaryData,revenueBoundaryId,uniformMap,hierarchy,crosslinkConfig){
 	var result = uniformMap.get(hierarchy);
-	var fromHierarchy=crosslinkConfig['fromHierarchy'];
-	var toHierarchy=crosslinkConfig['toHierarchy'];
+	var fromHierarchy = '';
+	var toHierarchy ='';
+	if(crosslinkConfig!=null && crosslinkConfig!=''){
+	fromHierarchy=crosslinkConfig['fromHierarchy'];
+	toHierarchy=crosslinkConfig['toHierarchy'];
+	}
 	var selectedRevenue = revenueBoundaryId;
 	
 	if(result !=undefined && result!=null && result!=''){
@@ -510,12 +546,13 @@ function setParentDetails(boundaryData,revenueBoundaryId,uniformMap,hierarchy,cr
 	        crossBoundaryModify(revenueBoundaryId, fromHierarchy, toHierarchy);
 		document.getElementById(hierarchy+(result[0]['toBoundary'].split(':')[1].replace(/ +/g, ""))).value=revenueBoundaryId;
 		var domId = findDomIdByParent(boundaryData, parent);
+		if(parent!=null && domId!=null)
 		document.getElementById(domId).value=parent;
 	}else {
       for(var k=result.length-1;k>=0;k--){
     	 var parent = findParentById(boundaryData,revenueBoundaryId);
     	 parentDetails(parent,hierarchy,result[k]['toBoundary']);
-    	 if(fromHierarchy.indexOf(result[k]['toBoundary'].split(':')[1]) == -1){
+    	 if(fromHierarchy!='' && fromHierarchy.indexOf(result[k]['toBoundary'].split(':')[1]) == -1){
     		if(crosslinkConfig!=null && crosslinkConfig!='')
     			crossBoundaryModify(parent, fromHierarchy, toHierarchy);
     	 }
@@ -534,8 +571,14 @@ function setParentDetails(boundaryData,revenueBoundaryId,uniformMap,hierarchy,cr
       }
 	}
 	} else if(result == undefined){
+		if(revenueBoundaryId!=null && revenueBoundaryId!=''){
 		var domId = findDomIdByParent(boundaryData, revenueBoundaryId);
 		document.getElementById(domId).value=revenueBoundaryId;
+		}
 		return;
 	}
 }
+
+function isEven(n) {
+	   return n % 2 == 0;
+	}
