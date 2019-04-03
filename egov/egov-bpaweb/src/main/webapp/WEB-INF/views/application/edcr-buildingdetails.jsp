@@ -90,7 +90,7 @@
                         <th class="text-center dcr-floor-toggle-mandatory"><span></span>&nbsp;<spring:message
                                 code="lbl.floor.level"/></th>
                         <th class="text-center dcr-floor-toggle-mandatory"><span></span>&nbsp;<spring:message
-                                code="lbl.occupancy"/></th>
+                                code="lbl.sub.occupancy"/></th>
                         <th class="text-center dcr-floor-toggle-mandatory"><span></span>&nbsp;<spring:message
                                 code="lbl.plinth.area"/></th>
                         <th class="text-center dcr-floor-toggle-mandatory"><span></span>&nbsp;<spring:message
