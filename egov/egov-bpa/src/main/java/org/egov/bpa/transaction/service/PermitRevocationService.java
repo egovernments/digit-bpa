@@ -168,7 +168,7 @@ public class PermitRevocationService {
                 mobileNo = applnStakeHolder.getApplication().getOwner().getUser().getMobileNumber();
                 buildSmsAndEmail(permitRevocation, mobileNo, email, applicantName, reportOutput);
             }
-            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
                 applicantName = applnStakeHolder.getStakeHolder().getName();
                 email = applnStakeHolder.getStakeHolder().getEmailId();
                 mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();
