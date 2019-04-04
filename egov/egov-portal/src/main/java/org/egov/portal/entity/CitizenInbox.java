@@ -144,6 +144,9 @@ public class CitizenInbox extends AbstractAuditable {
     @Column(name = "STATUS")
     private String status;
 
+    @Length(max = 250)
+    private String tenantId;
+
     public Module getModule() {
         return module;
     }
@@ -248,5 +251,13 @@ public class CitizenInbox extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }
