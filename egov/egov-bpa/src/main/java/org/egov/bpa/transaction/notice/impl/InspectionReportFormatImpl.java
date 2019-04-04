@@ -54,6 +54,7 @@ import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -118,9 +119,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
  */
 @Service
 public class InspectionReportFormatImpl implements InspectionReportFormat {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(InspectionReportFormatImpl.class);
-    
+
     @Autowired
     private CityService cityService;
     @Autowired
@@ -137,33 +138,41 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         InspectionNotice notice;
         if (permitInspn != null) {
             InspectionCommon inspection = permitInspn.getInspection();
-            /*
-             * notice = inspectionNoticeService.findByRefNumberAndInspectionNumber(
-             * inspection.getApplication().getApplicationNumber(), inspection.getInspectionNumber()); if (notice != null) { final
-             * FileStoreMapper fmp = notice.getNoticeFileStore(); Path path = fileStoreService.fetchAsPath(fmp.getFileStoreId(),
-             * APPLICATION_MODULE_TYPE); try { reportOutput.setReportOutputData(Files.readAllBytes(path)); } catch (IOException e)
-             * { e.printStackTrace(); } } else {
-             */
-            InputStream reportOutputStream = buildReportParameters(permitInspn);
 
-            final String fileName = permitInspn.getApplication().getApplicationNumber() + "_"
-                    + inspection.getInspectionNumber() + ".pdf";
+            notice = inspectionNoticeService.findByRefNumberAndInspectionNumber(
+                    permitInspn.getApplication().getApplicationNumber(), inspection.getInspectionNumber());
+            if (notice != null) {
+                final FileStoreMapper fmp = notice.getNoticeFileStore();
+                Path path = fileStoreService.fetchAsPath(fmp.getFileStoreId(),
+                        APPLICATION_MODULE_TYPE);
+                try {
+                    reportOutput.setReportOutputData(Files.readAllBytes(path));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
 
-            final FileStoreMapper fileStoreMapper = fileStoreService.store(reportOutputStream, fileName,
-                    "application/pdf", BpaConstants.FILESTORE_MODULECODE);
+                InputStream reportOutputStream = buildReportParameters(permitInspn);
 
-            notice = new InspectionNotice();
-            notice.setApplicationType(BpaConstants.PERMIT_APPLICATION_NOTICE_TYPE);
-            notice.setInspectionNumber(inspection.getInspectionNumber());
-            notice.setRefNumber(permitInspn.getApplication().getApplicationNumber());
-            notice.setNoticeFileStore(fileStoreMapper);
-            notice.setNoticeGeneratedDate(new Date());
-            inspectionNoticeService.create(notice);
-            Path path = fileStoreService.fetchAsPath(fileStoreMapper.getFileStoreId(), APPLICATION_MODULE_TYPE);
-            try {
-                reportOutput.setReportOutputData(Files.readAllBytes(path));
-            } catch (IOException ioe) {
-                LOGGER.error("Error occurred while generate notice", ioe);
+                final String fileName = permitInspn.getApplication().getApplicationNumber() + "_"
+                        + inspection.getInspectionNumber() + ".pdf";
+
+                final FileStoreMapper fileStoreMapper = fileStoreService.store(reportOutputStream, fileName,
+                        "application/pdf", BpaConstants.FILESTORE_MODULECODE);
+
+                notice = new InspectionNotice();
+                notice.setApplicationType(BpaConstants.PERMIT_APPLICATION_NOTICE_TYPE);
+                notice.setInspectionNumber(inspection.getInspectionNumber());
+                notice.setRefNumber(permitInspn.getApplication().getApplicationNumber());
+                notice.setNoticeFileStore(fileStoreMapper);
+                notice.setNoticeGeneratedDate(new Date());
+                inspectionNoticeService.create(notice);
+                Path path = fileStoreService.fetchAsPath(fileStoreMapper.getFileStoreId(), APPLICATION_MODULE_TYPE);
+                try {
+                    reportOutput.setReportOutputData(Files.readAllBytes(path));
+                } catch (IOException ioe) {
+                    LOGGER.error("Error occurred while generate notice", ioe);
+                }
             }
         }
         final HttpHeaders headers = new HttpHeaders();
@@ -184,10 +193,14 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         reportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         reportParams.put("applicantName", inspection.getApplication().getOwner().getName());
         reportParams.put("address", inspection.getApplication().getOwner().getAddress());
-        reportParams.put("plotDetails", inspection.getApplication().getSiteDetail().get(0).getExtentinsqmts());
+        reportParams.put("plotDetails",
+                inspection.getApplication().getSiteDetail().get(0).getExtentinsqmts().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         reportParams.put("inspectedBy", inspection.getInspection().getInspectedBy().getName());
         reportParams.put("inspectedDate", DateUtils.getDefaultFormattedDate(inspection.getInspection().getInspectionDate()));
-        reportParams.put("inspectedRemarks", inspection.getInspection().getInspectionRemarks());
+        reportParams.put("inspectedRemarks",
+                inspection.getInspection().getInspectionRemarks() == null
+                        || inspection.getInspection().getInspectionRemarks().isEmpty() ? "NA"
+                                : inspection.getInspection().getInspectionRemarks());
         reportParams.put("occupancyType", inspection.getApplication().getOccupanciesName());
         reportParams.put("scrutinyNumber",
                 inspection.getApplication().geteDcrNumber() != null
@@ -287,7 +300,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
                     ds, reportParams);
             exportPdf = jasperReportHelperService.exportPdf(generateJasperPrint);
         } catch (JRException jre) {
-            LOGGER.error("Error occurred while generating inspection report", jre);  
+            LOGGER.error("Error occurred while generating inspection report", jre);
         }
         return exportPdf;
     }
@@ -344,7 +357,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         InspectionImg img = new InspectionImg();
         try {
             for (FileStoreMapper fileMapper : images) {
-                //FIXME FileInputSteam needs to be closed after report is generated to avoid resource leak
+                // FIXME FileInputSteam needs to be closed after report is generated to avoid resource leak
                 img.setImg(
                         new FileInputStream(fileStoreService.fetch(fileMapper.getFileStoreId(), APPLICATION_MODULE_TYPE)));
             }

@@ -59,6 +59,13 @@ public class InspectionNoticeService {
 
     }
 
+    @Transactional
+    public void delete(final InspectionNotice inspectionNotice) {
+
+        inspectionNoticeRepository.delete(inspectionNotice);
+
+    }
+
     public InspectionNotice findByRefNumberAndInspectionNumber(String refNumber, String inspectionNumber) {
         return inspectionNoticeRepository.findByRefNumberAndInspectionNumber(refNumber, inspectionNumber);
     }

@@ -58,6 +58,7 @@ import org.egov.bpa.autonumber.InspectionNumberGenerator;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.InspectionNotice;
 import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.bpa.transaction.entity.common.DocketCommon;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
@@ -101,6 +102,8 @@ public class InspectionService {
     private ApplicationBpaService applicationBpaService;
     @Autowired
     private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
+    @Autowired
+    private InspectionNoticeService inspectionNoticeService;
 
     public PermitInspection findById(Long id) {
         return inspectionRepository.getOne(id);
@@ -112,6 +115,12 @@ public class InspectionService {
 
     @Transactional
     public PermitInspection save(final PermitInspection permitInspn, final BpaApplication application) {
+        InspectionNotice notice;
+        notice = inspectionNoticeService.findByRefNumberAndInspectionNumber(
+                permitInspn.getApplication().getApplicationNumber(), permitInspn.getInspection().getInspectionNumber());
+        if (notice != null) {
+            inspectionNoticeService.delete(notice);
+        }
         User currentUser = null;
         if (permitInspn.getId() == null) {
             if (ApplicationThreadLocals.getUserId() != null)
