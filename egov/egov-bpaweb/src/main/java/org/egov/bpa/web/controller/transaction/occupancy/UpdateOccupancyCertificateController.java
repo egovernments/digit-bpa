@@ -478,7 +478,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
             List<OccupancyFee> permitFeeList = occupancyFeeService
                     .getOCFeeListByApplicationId(occupancyCertificate.getId());
             if (permitFeeList.size() == 0 || permitFeeList == null) {
-                model.addAttribute("feeNotDefined", "Please enter fee to proceed");
+                model.addAttribute("feeNotDefined", "Set the minimal fee using modify fee button and proceed further");
                 setCityName(model, request);
                 prepareFormData(occupancyCertificate, model);
                 loadData(occupancyCertificate, model);

@@ -171,6 +171,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String BPAAPPLICATION_FORM = "bpaapplication-Form";
     private static final String BPA_APPLICATION_RESULT = "bpa-application-result";
     private static final String PDFEXTN = ".pdf";
+    private static final String BPA_PROCEED_FEE_MSG = "Set the minimal fee using modify fee button and proceed further";
     @Autowired
     private InspectionService inspectionService;
     @Autowired
@@ -343,7 +344,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             List<PermitFee> permitFeeList = permitFeeService
                     .getPermitFeeListByApplicationId(bpaApplication.getId());
             if (permitFeeList.isEmpty() || permitFeeList == null) {
-                model.addAttribute("feeNotDefined", "Please enter fee to proceed");
+                model.addAttribute("feeNotDefined", BPA_PROCEED_FEE_MSG);
                 loadFormData(model, bpaApplication);
                 loadCommonApplicationDetails(model, bpaApplication);
                 bpaUtils.loadBoundary(bpaApplication);
@@ -357,7 +358,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             List<PermitFee> permitFeeList = permitFeeService
                     .getPermitFeeListByApplicationId(bpaApplication.getId());
             if (permitFeeList.isEmpty() || permitFeeList == null) {
-                model.addAttribute("feeNotDefined", "Please enter fee to proceed");
+                model.addAttribute("feeNotDefined", BPA_PROCEED_FEE_MSG);
                 loadFormData(model, bpaApplication);
                 loadCommonApplicationDetails(model, bpaApplication);
                 return APPLICATION_VIEW;
