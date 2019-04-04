@@ -630,8 +630,8 @@ $(document).ready(
                             $('#edcrUploadedDate').html(response.applicationDate);
                             $('#edcrDxfFile').html('<a href="/egi/downloadfile?fileStoreId=' + response.dxfFile.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.dxfFile.fileName + '</a>');
                             $('#edcrPlanReportOutput').html('<a href="/egi/downloadfile?fileStoreId=' + response.reportOutput.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.reportOutput.fileName + '</a>');
+                            updateNocRequired(response.plan.planInformation);
                             if ($('#loadingFloorDetailsFromEdcrRequire').val() === 'true' && $('#mode').val() && $('#mode').val() === 'new' && response.plan) {
-
                                 var existingBldgPresent = [];
                                 if (response.plan.blocks.length > 0)
                                     for (var i = 0; i < response.plan.blocks.length; i++) {
@@ -732,7 +732,17 @@ $(document).ready(
                     }
                 });
             }
-
+        //to update noc document is required
+        function updateNocRequired(planInformation){
+        	if(planInformation.nocIrrigationDept === 'YES')
+                $('div.NOC_from_Irrigation_Department').attr('required','required');
+        	if(planInformation.nocNearMonuments=== 'YES')
+                $('div.NOC_from_Heritage_Conservation_Committee_(National_Monuments_Authority)').attr('required','required');
+            if(planInformation.nocNearAirport=== 'YES')
+                $('div.NOC_from_Airport_Authority').attr('required','required');
+            if(planInformation.nocFireDept=== 'YES')
+                $('div.NOC_from_Fire_Authority').attr('required','required');
+        }
         // Auto populate system generated plan scrutiny checklist documents
         function autoPopulatePlanScrutinyGeneratedPdfFiles(planScrutinyPdfs) {
             if(Object.keys(planScrutinyPdfs).length > 0) {

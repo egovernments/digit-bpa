@@ -149,8 +149,11 @@
 						</div>
 					</td>
 					<td>
-						<div class="files-upload-container" data-file-max-size="5"
-							<c:if test="${docs.nocDocument.serviceChecklistMapping.isMandatory eq true && fn:length(docs.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
+					 <c:set var="splittedString" value="${fn:split(doc.nocDocument.serviceChecklist.checklist.description, ' ')}"/>
+            		 <c:set var="checklistName" value="${fn:join(splittedString, '_')}"/>
+					
+						<div class="files-upload-container ${checklistName}" data-file-max-size="5"
+							<c:if test="${isEDCRIntegrationRequire eq true && docs.nocDocument.serviceChecklistMapping.isMandatory eq true && fn:length(docs.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
 							data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 							<div class="files-viewer">
 
