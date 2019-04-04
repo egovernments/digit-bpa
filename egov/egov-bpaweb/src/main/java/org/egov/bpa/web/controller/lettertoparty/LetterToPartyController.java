@@ -173,9 +173,19 @@ public class LetterToPartyController extends BpaGenericApplicationController {
         processAndStoreLetterToPartyDocuments(permitLTP);
         LetterToPartyCommon ltp = permitLTP.getLetterToParty();
         ltp.setCurrentApplnStatus(permitLTP.getApplication().getStatus());
-        ltp.setCurrentStateValueOfLP(getStateHistoryObjByDesc(permitLTP).getValue());
+        
+        String value ="";
+        String nextAction="";
+        if(!permitLTP.getApplication().getStateHistory().isEmpty()){
+        	value = getStateHistoryObjByDesc(permitLTP).getValue();
+        	nextAction = getStateHistoryObjByDesc(permitLTP).getNextAction();
+        } else {
+        	value = permitLTP.getApplication().getState().getValue();
+        	nextAction = permitLTP.getApplication().getState().getNextAction();
+        }
+        ltp.setCurrentStateValueOfLP(value);
         ltp.setStateForOwnerPosition(permitLTP.getApplication().getState().getValue());
-        ltp.setPendingAction(getStateHistoryObjByDesc(permitLTP).getNextAction());
+        ltp.setPendingAction(nextAction);
         List<PermitLetterToParty> existingLettertoParties = lettertoPartyService
                 .findByBpaApplicationOrderByIdDesc(permitLTP.getApplication());
         if (!existingLettertoParties.isEmpty()) {

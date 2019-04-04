@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="permit_revocation" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b1715f8d-a189-45c5-a759-a3f04bc5d6b4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="org.egov.infra.utils.DateUtils"/>
+	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="isBusinessUser" class="java.lang.Boolean"/>
+	<parameter name="duplicateWatermarkPath" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.io.InputStream"/>
+	<parameter name="serviceTypeDesc" class="java.lang.String"/>
+	<parameter name="lawAct" class="java.lang.String"/>
+	<parameter name="approverName" class="java.lang.String"/>
+	<parameter name="designation" class="java.lang.String"/>
+	<parameter name="stateLogo" class="java.lang.String"/>
+	<field name="applicationNumber" class="java.lang.String"/>
+	<field name="applicationDate" class="java.util.Date"/>
+	<field name="application" class="org.egov.bpa.transaction.entity.BpaApplication"/>
+	<field name="revocationNumber" class="java.lang.String"/>
+	<field name="revocationDate" class="java.util.Date"/>
+	<field name="initiateRemarks" class="java.lang.String"/>
+	<field name="approveCancelRemarks" class="java.lang.String"/>
+	<background>
+		<band height="802" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{isBusinessUser}]]></printWhenExpression>
+			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="20" y="60" width="534" height="570" uuid="a4848347-f954-4c89-bfed-68d5a3660798">
+					<printWhenExpression><![CDATA[$P{isBusinessUser}]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{duplicateWatermarkPath}]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="96" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="88" y="50" width="362" height="20" uuid="643ee47d-a84c-4e17-a758-85b3d2fe1503"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{lawAct}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="88" y="0" width="362" height="20" uuid="ba5c4563-d93c-483f-86e2-5aae2755cd2f"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ulbName} + "\n" + $P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="88" y="26" width="362" height="20" uuid="9f0f3469-57ed-48f6-83ad-1dfab7d6e41e"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Bihar Municipal Building Rules"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="76" width="122" height="20" uuid="097ffb17-4a3c-4452-a196-f15126c79e61"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Revocation Number : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="121" y="76" width="150" height="20" uuid="f67b0c82-e005-4c8b-a4d9-5e0fd37a5c79"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{revocationNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="474" y="76" width="81" height="20" uuid="0efe26f4-820a-4afc-8419-4365102a1ead"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[DateUtils.toDefaultDateFormat($F{revocationDate})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="362" y="76" width="113" height="20" uuid="33008aec-63f0-4e44-b68a-a692784df0a7"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dated : ]]></text>
+			</staticText>
+			<image>
+				<reportElement x="459" y="1" width="88" height="70" uuid="d3a3640c-5d2a-42c4-951d-2b0b64d13350"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="0" y="0" width="88" height="71" uuid="60b7b882-7a85-4b04-887f-d86bda733c2d">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="6" width="555" height="20" uuid="417140e2-f7b0-44c4-ad3d-650024f6f95a"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ORDER OF SUSPENSION AND REVOCATION OF PERMIT]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="39" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="20" uuid="97a7b5ad-99a3-4915-8420-916a97403840"/>
+				<textFieldExpression><![CDATA["To,"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="23" y="19" width="532" height="20" uuid="d7b21c92-04d4-4c38-8a61-56d9052898a3"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["Mr/Mrs. "+$F{application}.getOwner().getName() +",\n"+$F{application}.getOwner().getAddress()+"."]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="78">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["       Your approved permit, dated "+DateUtils.toDefaultDateFormat($F{application}.getPlanPermissionDate())+" with plan permission number " +$F{application}.getPlanPermissionNumber() +" for "+$P{serviceTypeDesc}+"  in "+$P{ulbName}+" falling in "+$F{application}.getSiteDetail().get(0).getLocationBoundary().getName()+" Village,Revenue Ward "+$F{application}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum()+",Electoral Ward "+$F{application}.getSiteDetail().get(0).getElectionBoundary().getBoundaryNum()+",Re-Survey No."+$F{application}.getSiteDetail().get(0).getReSurveyNumber()+" is has been revoked,"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>
+				<textFieldExpression><![CDATA["Sir/Madam,"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="48" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="160" height="48" uuid="dcddb7b9-e898-4d49-a49a-10bd4bc46285">
+					<printWhenExpression><![CDATA[$F{approveCancelRemarks}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Revocation approval reason:-"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="160" y="0" width="394" height="48" uuid="fb5359e2-98fd-4bd0-9ad0-94228c719d5e">
+					<printWhenExpression><![CDATA[$F{approveCancelRemarks}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified">
+					<paragraph leftIndent="3" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{approveCancelRemarks}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="42" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="160" y="0" width="394" height="42" uuid="f84b9d17-6a03-4646-96c0-74b15323f22a">
+					<printWhenExpression><![CDATA[$F{initiateRemarks}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified">
+					<paragraph leftIndent="3" rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{initiateRemarks}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="160" height="42" uuid="3cec3f4c-6007-4027-b831-b99e97ce8009">
+					<printWhenExpression><![CDATA[$F{initiateRemarks}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Revocation initiation reason:- "]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="50">
+			<textField>
+				<reportElement x="65" y="10" width="155" height="19" uuid="b04d8a39-92ff-4b97-b634-e1ee6fb8c76c"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[DateUtils.toDefaultDateFormat($F{revocationDate})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="65" y="29" width="155" height="20" uuid="6620f73b-8541-4efd-abaa-2b560f0ea7e8"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="29" width="65" height="20" uuid="6ec2e595-557a-4348-bb73-b09b70f7a45e"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Place        : ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="300" y="30" width="255" height="20" uuid="a67f4588-9df1-44f8-9ea5-f4dd4c5d9514"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Approved By " + $P{approverName} + ", " + $P{designation}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="9" width="65" height="20" uuid="4e4eb8e9-5fa0-4156-895b-3214d47f3736"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date         : ]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

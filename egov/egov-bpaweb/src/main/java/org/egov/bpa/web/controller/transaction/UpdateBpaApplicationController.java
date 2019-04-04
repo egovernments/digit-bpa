@@ -60,9 +60,9 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_AE;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_OVERSEER;
 import static org.egov.bpa.utils.BpaConstants.FIELD_INSPECTION_COMPLETED;
@@ -76,6 +76,8 @@ import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVERSEER_AFTER_TS_INSPN;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.GENERATEPERMITORDER;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
+import static org.egov.bpa.utils.BpaConstants.GENERATEREVOCATIONNOTICE;
+import static org.egov.bpa.utils.BpaConstants.LOWRISK;
 import static org.egov.bpa.utils.BpaConstants.MESSAGE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
@@ -83,6 +85,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_DOC_SCRUTINY_SCHEDLE_PEND;
 import static org.egov.bpa.utils.BpaConstants.WF_DOC_VERIFY_PEND;
 import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REVOCATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_INIT_AUTO_RESCHDLE;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
@@ -91,7 +94,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_APPROVAL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
-import static org.egov.bpa.utils.BpaConstants.LOWRISK;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -107,7 +109,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.bpa.autonumber.RejectionNumberGenerator;
+import org.egov.bpa.autonumber.RevocationNumberGenerator;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
@@ -121,11 +126,13 @@ import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
+import org.egov.bpa.transaction.notice.impl.PermitRevocationFormat;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitFeeService;
+import org.egov.bpa.transaction.service.PermitRevocationService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
@@ -163,7 +170,9 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String APPROVAL_COMENT = "approvalComent";
     private static final String MSG_REJECT_FORWARD_REGISTRATION = "msg.reject.forward.registration";
+    private static final String MSG_REVOCATE_FORWARD_REGISTRATION = "msg.revocate.forward.registration";
     private static final String MSG_INITIATE_REJECTION = "msg.initiate.reject";
+    private static final String MSG_INITIATE_REVOCATION = "msg.initiate.revocation";
     private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
     private static final String APPLICATION_VIEW = "application-view";
     private static final String CREATEDOCUMENTSCRUTINY_FORM = "createdocumentscrutiny-form";
@@ -186,6 +195,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private BpaDcrService bpaDcrService;
     @Autowired
     protected PermitFeeService permitFeeService;
+    @Autowired
+    private CustomImplProvider findImplementationBean;
+    @Autowired
+    private PermitRevocationService permitRevocationService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -444,16 +457,13 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
         redirectAttributes.addFlashAttribute(MESSAGE, message);
         if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
-
             ReportOutput reportOutput = null;
-
             if (isNotBlank(workFlowAction) && GENERATEREJECTNOTICE.equalsIgnoreCase(workFlowAction)) {
                 PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
                         .find(PermitRejectionFormatImpl.class, specificNoticeService.getCityDetails());
                 reportOutput = bpaNoticeFeature
                         .generateNotice(applicationBpaService.findByApplicationNumber(applicationNumber));
             }
-
             bpaSmsAndEmailService.sendSMSAndEmail(bpaAppln, reportOutput, BPAREJECTIONFILENAME + PDFEXTN);
         }
         if (isNotBlank(workFlowAction) && GENERATEPERMITORDER.equalsIgnoreCase(workFlowAction)) {
@@ -467,6 +477,18 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             return "redirect:/application/generatepermitorder/" + bpaAppln.getApplicationNumber();
         } else if (isNotBlank(workFlowAction) && GENERATEREJECTNOTICE.equalsIgnoreCase(workFlowAction))
             return "redirect:/application/rejectionnotice/" + bpaAppln.getApplicationNumber();
+        
+        if(isNotBlank(workFlowAction) && GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction) && 
+        		bpaApplication.getApplicationType().getName().equals(LOWRISK)){
+            PermitRevocationFormat permitRevocationFormatFeature = (PermitRevocationFormat) findImplementationBean
+                    .find(PermitRevocationFormat.class, findImplementationBean.getCityDetails());
+            ReportOutput reportOutput = permitRevocationFormatFeature
+                    .generateNotice(bpaApplication.getPermitRevocation().get(0));
+           
+            permitRevocationService.sendSmsAndEmail(bpaApplication.getPermitRevocation().get(0), reportOutput);
+            
+        	return "redirect:/application/revocation/generateorder/" + bpaApplication.getPermitRevocation().get(0).getRevocationNumber();
+        }
 
         return "redirect:/application/success/" + bpaAppln.getApplicationNumber();
     }
@@ -670,7 +692,9 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         if (!application.getIsOneDayPermitApplication()
                 && (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())
                         || APPLICATION_STATUS_FIELD_INS.equals(application.getStatus().getCode())
-                        || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode()))) {
+                        || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode()))
+                        || (application.getApplicationType().getName().equals(BpaConstants.LOWRISK) && 
+                        		FORWARDED_TO_CLERK.equals(application.getState().getNextAction()))) {
             model.addAttribute("createlettertoparty", true);
         }
 

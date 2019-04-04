@@ -298,6 +298,35 @@ jQuery(document)
                                 e.preventDefault();
                             }
                             return false;
+                        } if (action == 'Revoke Permit') {
+                            $('#Revoke Permit').attr('formnovalidate', 'true');
+                            if (validateOnRevokePermit() && validateForm(validator)) {
+                                bootbox
+                                    .dialog({
+                                        message: $('#revokePermitAppln').val(),
+                                        buttons: {
+                                            'confirm': {
+                                                label: 'Yes',
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+		                                            $('#viewBpaApplicationForm').trigger('submit');
+		                                        }
+                                                
+                                            },
+		                                    'cancel': {
+		                                        label: 'No',
+		                                        className: 'btn-danger',
+		                                        callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
+		                                    }
+                                        }
+                                    });
+                            } else {
+                                e.preventDefault();
+                            }
+                            return false;
                         } else if (action == 'Initiate Rejection') {
                             $('#Initiate Rejection').attr('formnovalidate', 'true');
                             if (validateOnReject(true) && validateForm(validator)) {
@@ -532,6 +561,17 @@ function validateOnRevert() {
     if (approvalComent == "") {
         $('#approvalComent').focus();
         bootbox.alert($('#applnSendbackCommentsRequired').val());
+        return false;
+    }
+    return true;
+}
+
+function validateOnRevokePermit() {
+    makePermitConditionsNotMandatory();
+    var approvalComent = $('#approvalComent').val();
+    if (approvalComent == "") {
+        $('#approvalComent').focus();
+        bootbox.alert($('#revokePermitCommentsRequired').val());
         return false;
     }
     return true;

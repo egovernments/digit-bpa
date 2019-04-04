@@ -307,9 +307,11 @@ public class BpaConstants {
     public static final String BUILDINGPERMITOTHERSFILENAME = "buildingpermitothers";
     public static final String BUILDINGDEVELOPPERMITFILENAME = "buildingdeveloppermit";
     public static final String BPAREJECTIONFILENAME = "bparejectionnotice";
+    public static final String BPAREVOCATIONFILENAME = "bparevocationnotice";
     public static final String PERMIT_ORDER_NOTICE_TYPE = "PermitOrder";
     public static final String BPA_DEMAND_NOTICE_TYPE = "DemandNotice";
     public static final String BPA_REJECTION_NOTICE_TYPE = "RejectionNotice";
+    public static final String BPA_REVOCATION_NOTICE_TYPE = "RevocationNotice";
     public static final String OCREJECTIONFILENAME = "ocrejectionnotice";
     public static final String OCDEMANDFILENAME = "ocdemandnotice";
     public static final String REGULARIZATIONFIILENAME = "regularization_permit";
@@ -319,15 +321,18 @@ public class BpaConstants {
     // button name constants
     public static final String WF_APPROVE_BUTTON = "Approve";
     public static final String WF_REJECT_BUTTON = "REJECT";
+    public static final String WF_REVOCATE_BUTTON = "Revocate";
     public static final String WF_CANCELAPPLICATION_BUTTON = "Cancel Application";
     public static final String GENERATEPERMITORDER = "Generate Permit Order";
     public static final String GENERATEREJECTNOTICE = "Generate Rejection Notice";
+    public static final String GENERATEREVOCATIONNOTICE = "Revoke Permit";
     public static final String WF_LBE_SUBMIT_BUTTON = "Submit";
     public static final String WF_PAY_ONLINE_BUTTON = "Pay Online";
     public static final String WF_REVERT_BUTTON = "Revert";
     public static final String WF_SAVE_BUTTON = "Save";
     public static final String WF_RESCHDLE_APPMNT_BUTTON = "Reschedule Appointment";
     public static final String WF_INITIATE_REJECTION_BUTTON = "Initiate Rejection";
+    public static final String WF_INITIATE_REVOCATION_BUTTON = "Initiate Revocation";
     public static final String WF_AUTO_RESCHDLE_APPMNT_BUTTON = "Auto ReSchedule";
     public static final String GENERATE_OCCUPANCY_CERTIFICATE = "Generate Occupancy Certificate";
     // building details related constants
@@ -402,6 +407,11 @@ public class BpaConstants {
     public static final String HIGHRISK = "High Risk";
     public static final String MEDIUMRISK = "Medium Risk";
     public static final String REGISTRATION_FEES_CODE = "RF";
+    
+    public static final String BPA_REVOKENO_SEQ="SEQ_BPA_REVOKENO_";
+    public static final String APPLICATION_STATUS_INIT_REVOKE = "Revocation initiated";
+    public static final String APPLICATION_STATUS_REVOKED ="Revocated";
+    public static final String APPLICATION_STATUS_REVOKE_CANCELED ="Revocation cancelled";
     
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();

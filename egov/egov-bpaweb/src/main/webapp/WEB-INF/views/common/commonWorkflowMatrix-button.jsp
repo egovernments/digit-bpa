@@ -61,10 +61,14 @@
 			validateWorkFlowApprover('Forward');
 		}   */
 		var rejectbutton = document.getElementById("workFlowAction").value;
-
+		
 		if (rejectbutton != null && rejectbutton == 'Reject') {
 			removeMandatory();
 			$('#approvalComent').attr('required', 'required');
+		} else if(rejectbutton !=null && rejectbutton == 'Revoke Permit'){
+		 	removeMandatory();
+		    $('#approvalComent').attr('required', 'required');
+		    return false;
 		} else if (rejectbutton != null && rejectbutton == 'CANCEL APPLICATION') {
 			removeMandatory();
 			$('#approvalComent').removeAttr('required');

@@ -120,6 +120,7 @@ function paintBoundaryForView(genericBoundaryConfigData, selectedAdminBoundary, 
 	while(parentId==''){
 		parentId = findParentById(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary);
 		var domId = findDomIdByParent(genericBoundaryConfigData['boundaryData'], parentId);
+		if(parentId!=null && domId!=null)
 		document.getElementById(domId).innerHTML=findNameById(boundaryData, parentId);
 	}
 }

@@ -123,6 +123,7 @@
 		</form:form>
 	</div>
 	<input type="hidden" id="rejectAppln" value="<spring:message code='msg.confirm.reject.appln' />" />
+	<input type="hidden" id="revokePermitAppln" value="<spring:message code='msg.confirm.revoke.appln' />" />
 	<input type="hidden" id="intiateRejectionAppln" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
 	<input type="hidden" id="sendBackApplnPreOfficial" value="<spring:message code='msg.confirm.sendback.previous.approved.official' />" />
 	<input type="hidden" id="approveAppln" value="<spring:message code='msg.confirm.approve.appln' />" />
@@ -136,6 +137,7 @@
 	<input type="hidden" id="rejectionReasonMandatory" value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
 	<input type="hidden" id="rejectionCommentsRequired" value="<spring:message code='msg.validate.enter.rejection.comments' />" />
 	<input type="hidden" id="applnSendbackCommentsRequired" value="<spring:message code='msg.validate.comments.required.toappln.sentback' />" />
+	<input type="hidden" id="revokePermitCommentsRequired" value="<spring:message code='msg.validate.comments.required.revoke.permit' />" />
 	<input type="hidden" id="violationMessage1" value="<spring:message code='msg.validate.violationMessage' />"/>
 	<input type="hidden" id="startingDateReq" value="<spring:message code='msg.validate.startingdate.req' />"/>
 	<input type="hidden" id="completionDateReq" value="<spring:message code='msg.validate.workcompletiondate' />"/>

@@ -90,7 +90,9 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
+import org.egov.bpa.autonumber.RevocationNumberGenerator;
 import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.service.BpaSchemeLandUsageService;
@@ -254,6 +256,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private PermitFeeRepository permitFeeRepository;
     @Autowired
     private ServiceTypeService serviceTypeService;
+    @Autowired
+    private RevocationNumberGenerator revocationNumberGenerator;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -498,6 +502,21 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // persistPostalAddress(application);
         buildSchemeLandUsage(application);
         // For one day permit
+
+        if(workFlowAction.equals(BpaConstants.GENERATEREVOCATIONNOTICE)){
+    	   PermitRevocation permitRevocation = new PermitRevocation();
+    	   permitRevocation.setRevocationNumber(revocationNumberGenerator.generatePermitRevocationNumber());
+    	   permitRevocation.setApplication(application);
+    	   permitRevocation.setApplicationNumber(application.getApplicationNumber());
+    	   permitRevocation.setApplicationDate(new Date());
+    	   permitRevocation.setApproveCancelRemarks(application.getApprovalComent());
+    	   List<PermitRevocation> list = application.getPermitRevocation();
+    	   list.add(permitRevocation);
+    	   application.setPermitRevocation(list);
+    	   final BpaStatus bpaStatus = getStatusByCodeAndModuleType(BpaConstants.APPLICATION_STATUS_REVOKED);
+           application.setStatus(bpaStatus);
+       }
+        
 		if (application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_DOC_VERIFIED
 				.equalsIgnoreCase(application.getState().getValue())
 				|| APPLICATION_STATUS_SECTION_CLRK_APPROVED.equalsIgnoreCase(application.getState().getValue()))) {

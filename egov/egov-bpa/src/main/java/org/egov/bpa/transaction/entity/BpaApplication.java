@@ -77,6 +77,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
@@ -263,6 +264,8 @@ public class BpaApplication extends StateAware<Position> {
     private List<PermitDcrDocument> permitDcrDocuments = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BuildingSubUsage> buildingSubUsages = new ArrayList<>(0);
+    @OneToMany(cascade = CascadeType.ALL,mappedBy="application", fetch = FetchType.LAZY)
+    private List<PermitRevocation> permitRevocation = new ArrayList<>();
 
     private transient MultipartFile[] files;
     private transient Long approvalDepartment;
@@ -1082,4 +1085,11 @@ public class BpaApplication extends StateAware<Position> {
 		this.constructionCost = constructionCost;
 	}
 
+	public List<PermitRevocation> getPermitRevocation() {
+		return permitRevocation;
+	}
+
+	public void setPermitRevocation(List<PermitRevocation> permitRevocation) {
+		this.permitRevocation = permitRevocation;
+	}
 }

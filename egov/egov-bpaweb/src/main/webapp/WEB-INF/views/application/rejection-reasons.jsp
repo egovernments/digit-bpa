@@ -53,7 +53,14 @@
 
 <div class="panel-heading toggle-header custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.rejection.reasons" />
+		<c:choose>
+			<c:when test="${bpaApplication.applicationType.name == 'Low Risk'}">
+				<spring:message code="lbl.revocation.reasons" />
+			</c:when>
+			<c:otherwise>
+				<spring:message code="lbl.rejection.reasons" />
+			</c:otherwise>
+		</c:choose>
 	</div>
 	<div class="history-icon toggle-icon">
 		<i class="fa fa-angle-up fa-2x"></i>
@@ -104,7 +111,14 @@
 	</table>
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="lbl.addnl.reject.reasons" />
+		<c:choose>
+			<c:when test="${bpaApplication.applicationType.name == 'Low Risk'}">
+				<spring:message code="lbl.addnl.revocation.reasons" />
+			</c:when>
+			<c:otherwise>
+				<spring:message code="lbl.addnl.reject.reasons" />
+			</c:otherwise>
+		</c:choose>
 		</div>
 	</div>
 	<table class="table table-bordered  multiheadertbl"
