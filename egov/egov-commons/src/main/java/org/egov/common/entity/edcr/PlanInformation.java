@@ -155,6 +155,8 @@ public class PlanInformation implements Serializable {
             
     private BigDecimal roadWidth = BigDecimal.ZERO;
     
+    private BigDecimal roadLength = BigDecimal.ZERO;
+    
     private String typeOfArea;
 
     private BigDecimal depthOfPlot = BigDecimal.ZERO;
@@ -636,4 +638,13 @@ public class PlanInformation implements Serializable {
 	public void setNocFireDept(String nocFireDept) {
 		this.nocFireDept = nocFireDept;
 	}
+
+	public BigDecimal getRoadLength() {
+		return roadLength;
+	}
+
+	public void setRoadLength(BigDecimal roadLength) {
+		this.roadLength = roadLength;
+	}
+	
 }
