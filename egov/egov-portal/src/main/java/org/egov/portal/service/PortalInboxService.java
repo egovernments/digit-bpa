@@ -51,6 +51,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxUser;
@@ -62,6 +63,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 
 @Service
 @Transactional(readOnly = true)
@@ -92,7 +94,7 @@ public class PortalInboxService {
     @Transactional
     public void pushInboxMessage(final PortalInbox portalInbox) {
         portalInbox.setTenantId(ApplicationThreadLocals.getTenantID());
-        portalInbox.setPendingAction(portalInbox.getState().getNextAction());
+        portalInbox.setPendingAction(portalInbox.getState() == null ? NA : portalInbox.getState().getNextAction());
         if (portalInbox.getTempPortalInboxUser().isEmpty()) {
             final User user = getLoggedInUser();
             if (user != null
@@ -144,7 +146,7 @@ public class PortalInboxService {
                 portalInbox.setStatus(status);
                 portalInbox.setResolved(isResolved);
                 portalInbox.setState(state);
-                portalInbox.setPendingAction(state.getNextAction());
+                portalInbox.setPendingAction(state == null ? NA : state.getNextAction());
                 updatePortalInboxData(slaEndDate, consumerNumber, link, portalInbox);
                 if (additionalUser != null
                         && (UserType.BUSINESS.toString().equalsIgnoreCase(additionalUser.getType().toString()) || UserType.CITIZEN
