@@ -348,7 +348,8 @@ public class StakeHolderController extends GenericWorkFlowController {
             else
                 stakeHolder.setPermanentAddress((PermanentAddress) address);
         model.addAttribute("isEmployee",
-                securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE) ? Boolean.TRUE : Boolean.FALSE);
+                securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE)
+                        || "egovernments".equals(securityUtils.getCurrentUser().getUsername()) ? Boolean.TRUE : Boolean.FALSE);
         model.addAttribute(STAKE_HOLDER, stakeHolder);
     }
 
@@ -398,7 +399,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         model.addAttribute(STAKE_HOLDER, new StakeHolder());
         model.addAttribute(STAKE_HOLDER_TYPES, stakeholderTypeService.findAllIsActive());
         model.addAttribute(STAKE_HOLDER_STATUS_LIST, Arrays.asList(StakeHolderStatus.values()));
-        model.addAttribute("mode","edit");
+        model.addAttribute("mode", "edit");
         return SEARCH_STAKEHOLDER_EDIT;
     }
 
@@ -415,7 +416,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         model.addAttribute(STAKE_HOLDER, new StakeHolder());
         model.addAttribute(STAKE_HOLDER_TYPES, stakeholderTypeService.findAllIsActive());
         model.addAttribute(STAKE_HOLDER_STATUS_LIST, Arrays.asList(StakeHolderStatus.values()));
-        model.addAttribute("mode","view");
+        model.addAttribute("mode", "view");
         return SEARCH_STAKEHOLDER_VIEW;
     }
 
@@ -523,10 +524,10 @@ public class StakeHolderController extends GenericWorkFlowController {
     @Override
     protected void prepareWorkflow(final Model prepareModel, final StateAware model,
             final WorkflowContainer container) {
-        if("END".equals(model.getCurrentState().getValue())){
+        if ("END".equals(model.getCurrentState().getValue())) {
             prepareModel.addAttribute("nextAction", "END");
             prepareModel.addAttribute("validActionList", new ArrayList<>());
-        }else{
+        } else {
             prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
             prepareModel.addAttribute("validActionList", getValidActions(model, container));
             prepareModel.addAttribute("nextAction", getNextAction(model, container));
