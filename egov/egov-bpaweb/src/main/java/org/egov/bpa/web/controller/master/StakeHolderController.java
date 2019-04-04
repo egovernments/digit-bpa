@@ -398,6 +398,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         model.addAttribute(STAKE_HOLDER, new StakeHolder());
         model.addAttribute(STAKE_HOLDER_TYPES, stakeholderTypeService.findAllIsActive());
         model.addAttribute(STAKE_HOLDER_STATUS_LIST, Arrays.asList(StakeHolderStatus.values()));
+        model.addAttribute("mode","edit");
         return SEARCH_STAKEHOLDER_EDIT;
     }
 
@@ -414,6 +415,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         model.addAttribute(STAKE_HOLDER, new StakeHolder());
         model.addAttribute(STAKE_HOLDER_TYPES, stakeholderTypeService.findAllIsActive());
         model.addAttribute(STAKE_HOLDER_STATUS_LIST, Arrays.asList(StakeHolderStatus.values()));
+        model.addAttribute("mode","view");
         return SEARCH_STAKEHOLDER_VIEW;
     }
 

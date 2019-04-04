@@ -79,7 +79,7 @@
 					<th><spring:message code="lbl.stakeholder.ackno" /></th>
 					<th><spring:message code="lbl.lic.no" /></th>
 					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.isactive" /></th>
+					<%-- <th><spring:message code="lbl.isactive" /></th> --%>
 					<th><spring:message code="lbl.action" /></th>
 				</tr>
 			</thead>

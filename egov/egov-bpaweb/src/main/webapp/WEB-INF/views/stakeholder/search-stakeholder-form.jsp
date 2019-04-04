@@ -48,6 +48,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<form:hidden id="mode" path="" value="${mode}"/>
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -67,17 +68,19 @@
 						</select>
 						<form:errors path="stakeHolderType" cssClass="error-msg" />
 					</div>
-					<label class="col-sm-2 control-label"><spring:message
-							code="lbl.status" /></label>
-					<div class="col-sm-3 add-margin">
-						<select name="status" id="status"
-								class="form-control">
-							<option value=""><spring:message code="lbl.select" /></option>
-							<c:forEach items="${stakeHolderStatusList}" var="stkhldrStatus">
-								<option value="${stkhldrStatus}">${stkhldrStatus.stakeHolderStatusVal}</option>
-							</c:forEach>
-						</select>
-					</div>
+					<c:if test="${mode =='view'}">
+						<label class="col-sm-2 control-label"><spring:message
+								code="lbl.status" /></label>
+						<div class="col-sm-3 add-margin">
+							<select name="status" id="status"
+									class="form-control">
+								<option value=""><spring:message code="lbl.select" /></option>
+								<c:forEach items="${stakeHolderStatusList}" var="stkhldrStatus">
+									<option value="${stkhldrStatus}">${stkhldrStatus.stakeHolderStatusVal}</option>
+								</c:forEach>
+							</select>
+						</div>
+					</c:if>
 				</div>
 
 				<div class="form-group">

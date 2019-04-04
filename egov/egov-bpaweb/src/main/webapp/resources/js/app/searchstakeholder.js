@@ -115,7 +115,7 @@ $(document)
 														"data" : "status",
 														"sClass" : "text-left"
 													},
-													{
+													/*{
 														"data" : null,
 														"sClass" : "text-left",
 														"render" : function(data, type, row, meta) {
@@ -125,7 +125,7 @@ $(document)
 																return "No";
 															}
 														}
-													},
+													},*/
 													{
 														"data" : null,
 														"sClass" : "text-center",
@@ -201,7 +201,7 @@ $(document)
 														"data" : "status",
 														"sClass" : "text-left"
 													},
-													{
+													/*{
 														"data" : null,
 														"sClass" : "text-left",
 														"render" : function(data, type, row, meta) {
@@ -211,7 +211,7 @@ $(document)
 																return "No";
 															}
 														}
-													},
+													},*/
 													{
 														"data" : null,
 													    "sClass" : "text-center",
