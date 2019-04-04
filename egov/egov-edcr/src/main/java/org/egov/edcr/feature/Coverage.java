@@ -134,7 +134,7 @@ public class Coverage extends FeatureProcess {
 
         pl.setCoverageArea(totalCoverageArea);
         // use plotBoundaryArea
-        if (pl.getPlot().getArea().doubleValue() > 0)
+        if (pl.getPlot() != null && pl.getPlot().getArea().doubleValue() > 0)
             totalCoverage = totalCoverageArea.multiply(BigDecimal.valueOf(100)).divide(pl.getPlot().getArea(),
                     DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
         pl.setCoverage(totalCoverage);

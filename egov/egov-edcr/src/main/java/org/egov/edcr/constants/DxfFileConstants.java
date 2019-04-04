@@ -39,6 +39,7 @@ public class DxfFileConstants {
     public static final String GOVERNMENT_AIDED = "WHETHER_GOVT_OR_AIDED_SCHOOL";
     public static final String LAYER_RAMP_WITH_NO = "BLK_%s_FLR_%s_RAMP_%s";
     public static final String LAYER_LIFT_WITH_NO = "BLK_%s_FLR_%s_LIFT_%s" ;
+    public static final String LAYER_PLINTH_HEIGHT = "BLK_%s_PLINTH_HEIGHT";
 
     public static String CRZ_ZONE = "CRZ";
     public static final String PLOT_AREA = "PLOT_AREA_M2";

@@ -156,7 +156,7 @@ public class Far extends FeatureProcess {
 
     @Override
     public Plan validate(Plan pl) {
-        if (pl.getPlot().getArea() == null || pl.getPlot().getArea().doubleValue() == 0) {
+        if (pl.getPlot() == null || pl.getPlot().getArea() == null || pl.getPlot().getArea().doubleValue() == 0) {
             pl.addError(PLOT_AREA, getLocaleMessage(OBJECTNOTDEFINED, PLOT_AREA));
         }
         // IF SINGLE FAMILY BUILDING DECLARED AND COLOUR CODE 25 NOT USED IN FLOOR LEVEL, THEN THROW ERROR.
@@ -927,7 +927,7 @@ public class Far extends FeatureProcess {
 				errors.put(OLD_AREA_ERROR, OLD_AREA_ERROR_MSG);
 				pl.addErrors(errors);
 			} else if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOURFOUR) >= 0
-					&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) <= 0) {
+					&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) < 0) {
 				isAccepted = far.compareTo(ONE_POINTTWO) <= 0;
 				expectedResult = "<= 1.2";
 			} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0

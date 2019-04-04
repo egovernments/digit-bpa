@@ -59,6 +59,7 @@ import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -69,6 +70,8 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final Logger LOG = Logger.getLogger(AdditionalFeature.class);
 
 	private static final String RULE_38 = "38";
+	private static final String RULE_41_I_A = "41(i)(a)";
+	private static final String RULE_41_I_B = "41(i)(b)";
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	private static final BigDecimal THREE = BigDecimal.valueOf(3);
 	private static final BigDecimal FOUR = BigDecimal.valueOf(4);
@@ -103,7 +106,11 @@ public class AdditionalFeature extends FeatureProcess {
 	public static final String NEW_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 6.1m for new area.";
 	public static final String NO_OF_FLOORS = "Maximum number of floors allowed";
 	public static final String HEIGHT_BUILDING = "Maximum height of building allowed";
-
+	private static final String MIN_PLINTH_HEIGHT = " > 0.45";
+	public static final String MIN_PLINTH_HEIGHT_DESC = "Minimum plinth height";
+	private static final String MIN_INT_COURT_YARD = "0.15";
+	public static final String MIN_INT_COURT_YARD_DESC = "Minimum interior courtyard";
+	
 	@Override
 	public Plan validate(Plan pl) {
 		HashMap<String, String> errors = new HashMap<>();
@@ -148,6 +155,9 @@ public class AdditionalFeature extends FeatureProcess {
 			validateNumberOfFloors(pl, errors, typeOfArea, roadWidth);
 			validateHeightOfBuilding(pl, errors, typeOfArea, roadWidth);
 		}
+		
+		validatePlinthHeight(pl, errors);
+		//validateIntCourtYard(pl, errors);
 		return pl;
 	}
 
@@ -166,7 +176,7 @@ public class AdditionalFeature extends FeatureProcess {
 					errors.put(OLD_AREA_ERROR, OLD_AREA_ERROR_MSG);
 					pl.addErrors(errors);
 				} else if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOURFOUR) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) < 0) {
 					isAccepted = floorAbvGround.compareTo(TWO) <= 0;
 					requiredFloorCount = "<= 2";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
@@ -256,7 +266,7 @@ public class AdditionalFeature extends FeatureProcess {
 					errors.put(OLD_AREA_ERROR, OLD_AREA_ERROR_MSG);
 					pl.addErrors(errors);
 				} else if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOURFOUR) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) < 0) {
 					isAccepted = buildingHeight.compareTo(SEVEN) <= 0;
 					requiredBuildingHeight = "<= 7";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
@@ -333,6 +343,71 @@ public class AdditionalFeature extends FeatureProcess {
 			}
 		}
 	}
+	
+
+	
+	private void validatePlinthHeight(Plan pl, HashMap<String, String> errors) {
+		for (Block block : pl.getBlocks()) {
+
+			boolean isAccepted = false;
+			BigDecimal minPlinthHeight = BigDecimal.ZERO;
+			String blkNo = block.getNumber();
+			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Plinth");
+			List<BigDecimal> plinthHeights = block.getPlinthHeight();
+
+			if (!plinthHeights.isEmpty()) {
+				minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get();
+				if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) > 0) {
+					isAccepted = true;
+				}
+			}else {
+	        	String plinthHeightLayer = String.format(DxfFileConstants.LAYER_PLINTH_HEIGHT, block.getNumber());
+				  errors.put(plinthHeightLayer,"Plinth height is not defined in layer " + plinthHeightLayer );
+				  pl.addErrors(errors);
+			}
+
+			if (errors.isEmpty()) {
+				Map<String, String> details = new HashMap<>();
+				details.put(RULE_NO, RULE_41_I_A);
+				details.put(DESCRIPTION, MIN_PLINTH_HEIGHT_DESC);
+				details.put(REQUIRED, MIN_PLINTH_HEIGHT);
+				details.put(PROVIDED, String.valueOf(minPlinthHeight));
+				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+				scrutinyDetail.getDetail().add(details);
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			}
+		}
+	}
+	
+	private void validateIntCourtYard(Plan pl, HashMap<String, String> errors) {
+		for (Block block : pl.getBlocks()) {
+
+			boolean isAccepted = false;
+			BigDecimal minIntCourtYard = BigDecimal.ZERO;
+			String blkNo = block.getNumber();
+			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Interior Court Yard");
+			List<BigDecimal> interiorCourtYard = block.getInteriorCourtYard();
+
+			if (!interiorCourtYard.isEmpty()) {
+				minIntCourtYard = interiorCourtYard.stream().reduce(BigDecimal::min).get();
+				if (minIntCourtYard.compareTo(BigDecimal.valueOf(0.15)) >= 0) {
+					isAccepted = true;
+				}
+			}
+
+			if (errors.isEmpty()) {
+				Map<String, String> details = new HashMap<>();
+				details.put(RULE_NO, RULE_41_I_B);
+				details.put(DESCRIPTION, MIN_INT_COURT_YARD_DESC);
+				details.put(REQUIRED, MIN_INT_COURT_YARD);
+				details.put(PROVIDED, String.valueOf(minIntCourtYard));
+				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+				scrutinyDetail.getDetail().add(details);
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			}
+		}
+	}
+	 
 
 	private ScrutinyDetail getNewScrutinyDetail(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
