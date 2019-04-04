@@ -101,6 +101,12 @@ public class SiteDetail extends AbstractAuditable {
     @Length(min = 1, max = 24)
     private String townSurveyNumber;
     @Length(min = 1, max = 128)
+    private String plotNumber;
+    @Length(min = 1, max = 128)
+    private String khataNumber;
+    @Length(min = 1, max = 128)
+    private String holdingNumber;
+    @Length(min = 1, max = 128)
     private String streetaddress1;
     @Length(min = 1, max = 128)
     private String streetaddress2;
@@ -247,6 +253,30 @@ public class SiteDetail extends AbstractAuditable {
 
     public void setTownSurveyNumber(String townSurveyNumber) {
         this.townSurveyNumber = townSurveyNumber;
+    }
+    
+    public String getPlotNumber() {
+        return plotNumber;
+    }
+
+    public void setPlotNumber(String plotNumber) {
+        this.plotNumber = plotNumber;
+    }
+
+    public String getKhataNumber() {
+        return khataNumber;
+    }
+
+    public void setKhataNumber(String khataNumber) {
+        this.khataNumber = khataNumber;
+    }
+
+    public String getHoldingNumber() {
+        return holdingNumber;
+    }
+
+    public void setHoldingNumber(String holdingNumber) {
+        this.holdingNumber = holdingNumber;
     }
 
     public String getSurveynumberType() {
