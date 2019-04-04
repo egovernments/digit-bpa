@@ -656,4 +656,10 @@ public class BpaAjaxController {
         System.out.println("getChildBoundaries--->" + childBoundaryJson.toString());
         IOUtils.write(childBoundaryJson.toString(), response.getWriter());
     }
+    
+	@GetMapping(value = "/application/getapplicationsubtypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<ApplicationSubType> getApplicationSubType() {
+	  return applicationTypeService.getAllEnabledApplicationTypes();
+	}
 }

@@ -133,9 +133,9 @@ jQuery(document)
 					var table = tbody.length ? tbody : $('#bpaFeeMapping');
 					var row = '<tr>'
 							+ '<td ><select name="bpaFeeMapTemp[{{idx}}].serviceType" data-first-option="false" id="bpaFeeMap[{{idx}}]serviceType" class="form-control serviceType " required="required" > <option value="">Select</option><options items="${serviceTypeList}" itemValue="id" itemLabel="description" /></select></td>'
-							+ '<td ><select name="bpaFeeMapTemp[{{idx}}].applicationType" data-first-option="false" id="bpaFeeMap[{{idx}}]applicationType" class="form-control applicationType " required="required" > <option value="">Select</option><options items="${applicationTypes}" /></select></td>'
+							+ '<td ><select name="bpaFeeMapTemp[{{idx}}].applicationType" data-first-option="false" id="bpaFeeMap[{{idx}}]applicationType" class="form-control applicationType " required="required" > <option value="">Select</option><options items="${applicationTypes}" itemLabel="feeApplicationTypeVal"/></select></td>'
 							+ '<td ><select name="bpaFeeMapTemp[{{idx}}].applicationSubType" data-first-option="false" id="bpaFeeMap[{{idx}}]applicationSubType" class="form-control applicationSubType " required="required" > <option value="">Select</option><options items="${appSubTypes}" itemValue="id" itemLabel="description" /></select></td>'
-                            + '<td ><select name="bpaFeeMapTemp[{{idx}}].feeSubType" data-first-option="false" id="bpaFeeMap[{{idx}}]feeSubType" class="form-control feeSubType " required="required" > <option value="">Select</option><options items="${feeSubTypes}" /></select></td>'
+                            + '<td ><select name="bpaFeeMapTemp[{{idx}}].feeSubType" data-first-option="false" id="bpaFeeMap[{{idx}}]feeSubType" class="form-control feeSubType " required="required" > <option value="">Select</option><options items="${feeSubTypes}" itemLabel="feeSubTypeVal" /></select></td>'
 							+ '<td ><select name="bpaFeeMapTemp[{{idx}}].calculationType" data-first-option="false" id="bpaFeeMap[{{idx}}]calculationType" class="form-control calculationType " required="required" > <option value="">Select</option><options items="${calculationTypes}" /></select></td>'
 							+ '<td ><input type="text" class="form-control patternvalidation text-right" data-pattern="number" name="bpaFeeMapTemp[{{idx}}].amount" id="bpaFeeMapTemp[{{idx}}]amount" required="required" maxlength="8" /></td>'
 							+ '<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-danger" id="deleteFeeMapRow" ><i class="fa fa-trash"></i></a></td>'
@@ -355,11 +355,12 @@ function loadServiceTypes(selectBoxName) {
 		error : function(response) {
 		}
 	});
+}
 	
 	function loadAppSubTypes(selectBoxName) {
 
 		$.ajax({
-			url : "/bpa/application/getAppSubTypes",
+			url : "/bpa/application/getapplicationsubtypes",
 			type : "GET",
 			async : false,
 			dataType : "json",
@@ -367,7 +368,7 @@ function loadServiceTypes(selectBoxName) {
 				$('select[name="' + selectBoxName + '"]').empty();
 				$('select[name="' + selectBoxName + '"]').append(
 						$("<option value=''>Select </option>"));
-				$.each(response, function(index, serviceType) {
+				$.each(response, function(index, applicationSubType) {
 					$('select[name="' + selectBoxName + '"]').append(
 							$('<option>').val(applicationSubType.id).text(
 									applicationSubType.description));
@@ -377,3 +378,4 @@ function loadServiceTypes(selectBoxName) {
 			}
 		});
 }
+

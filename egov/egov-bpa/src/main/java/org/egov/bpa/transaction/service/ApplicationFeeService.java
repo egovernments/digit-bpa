@@ -43,14 +43,19 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.bpa.autonumber.ApplicationFeeNumberGenerator;
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
+import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.repository.ApplicationFeeRepository;
+import org.egov.bpa.transaction.repository.PermitFeeRepository;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.custom.CustomImplProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +72,12 @@ public class ApplicationFeeService {
     private BpaStatusService bpaStatusService;
     @Autowired
     private ApplicationFeeNumberGenerator applicationFeeNumberGenerator;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
+	@Autowired
+    private ApplicationFeeService applicationFeeService;
+    @Autowired
+	private PermitFeeRepository permitFeeRepository;
 
     @Transactional
     public ApplicationFee saveApplicationFee(ApplicationFee applicationFee) {
@@ -96,6 +107,19 @@ public class ApplicationFeeService {
         applicationFeeRepository.save(applicationFee);
         LOGGER.debug("Saved saveApplicationFee");
         return applicationFee;
+    }
+    
+    
+    public void setPermitFee(BpaApplication application, Map<String, BigDecimal> feeDetails) {
+    	ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+        PermitFee permitFee = feeCalculation.calculateBpaSanctionFees(application);
+        ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
+        permitFee.setApplicationFee(applicationFee);
+        permitFeeRepository.save(permitFee);
+        for(ApplicationFeeDetail appFee : applicationFee.getApplicationFeeDetail()) {
+                feeDetails.put(appFee.getBpaFeeMapping().getBpaFeeCommon().getCode(),appFee.getAmount());            
+        }
     }
 
 }

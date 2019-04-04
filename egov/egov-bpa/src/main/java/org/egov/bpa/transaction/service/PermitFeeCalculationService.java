@@ -105,7 +105,6 @@ import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
 import org.egov.bpa.transaction.entity.PermitFee;
-import org.egov.bpa.transaction.repository.PermitFeeRepository;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.common.entity.bpa.Occupancy;
@@ -152,12 +151,8 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 		private BpaFeeMappingService bpaFeeMappingService;
 		@Autowired
 		protected ApplicationBpaService applicationBpaService;			 
-		@Autowired
-	    private ApplicationFeeService applicationFeeService;
         @Autowired
 		private BpaDemandService bpaDemandService;
-        @Autowired
-		private PermitFeeRepository permitFeeRepository;
         @Autowired
 		private InstallmentDao installmentDao;
 		@Autowired
@@ -166,6 +161,8 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 		private ApplicationSubTypeService applicationSubTypeService;
 		@Autowired
 		private ServiceTypeService serviceTypeService;
+		@Autowired
+		private ApplicationFeeService applicationFeeService;
 		
 		
 	    
@@ -255,15 +252,7 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                for (BpaFeeMapping bpaFee : bpaFeeMappingService.getPermitFeesByAppType(application, serviceTypeId)) {
 	                    if (bpaFee != null) {
 	                        BigDecimal amount = BigDecimal.ZERO;
-	                        if (!application.getIsEconomicallyWeakerSection()) {// In
-	                                                                            // case
-	                                                                            // of
-	                                                                            // economically
-	                                                                            // weaker
-	                                                                            // section,
-	                                                                            // amount
-	                                                                            // will
-	                            // be zero.
+	                        if (!application.getIsEconomicallyWeakerSection()) {
 	                            BigDecimal inputArea = getBuiltUpInputUnitForEachServiceType(application,
 	                                    bpaFee.getServiceType().getCode());
 	                            List<Occupancy> selectdOccupancies = application.getPermitOccupancies();
@@ -321,11 +310,11 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                                            
 	                                            
 	                                            amount = amount
-	                                                    .add(calculatePermitFee(occupancyWiseArea.getValue(), BigDecimal.valueOf(bpaFee.getAmount())));
+	                                                    .add(calculatePermitFee(occupancyWiseArea.getValue(), BigDecimal.valueOf(bpaFee.getAmount()), false));
 	                                        }
 	                                    }
 	                                } else {
-	                                    amount = calculatePermitFee(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
+	                                    amount = calculatePermitFee(inputArea, BigDecimal.valueOf(bpaFee.getAmount()), application.getSiteDetail().get(0).getCharitableTrustBuilding());
 	                                }
 	                                }
 	                                
@@ -524,11 +513,11 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 												 * bpaFee);
 												 */
 	                                            amount = amount
-	                                                    .add(calculatePermitFee(occupancyWiseArea.getValue(), BigDecimal.valueOf(bpaFee.getAmount())));
+	                                                    .add(calculatePermitFee(occupancyWiseArea.getValue(), BigDecimal.valueOf(bpaFee.getAmount()), false));
 	                                        }
 	                                    }
 	                                } else {
-	                                    amount = calculatePermitFee(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
+	                                    amount = calculatePermitFee(inputArea, BigDecimal.valueOf(bpaFee.getAmount()),application.getSiteDetail().get(0).getCharitableTrustBuilding());
 	                                }
 	                                // CHECK WHETHER THIS APPLICABLE TO ONLY 701
 	                                // OCCUPANCY TYPE.. ALSO HERE WORK
@@ -672,16 +661,19 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	        return inputArea.multiply(feeAmount);
 	    }
 	    
-	    private BigDecimal calculatePermitFee(BigDecimal inputArea, BigDecimal feeAmount) {
-	        return inputArea.multiply(feeAmount);
-	    }
+		protected BigDecimal calculatePermitFee(BigDecimal inputArea, BigDecimal feeAmount, Boolean isCharitable) {
+			if(isCharitable)
+			    return inputArea.multiply(feeAmount).multiply(BigDecimal.valueOf(50)).divide(BigDecimal.valueOf(100));
+			else
+				return inputArea.multiply(feeAmount);
+		}
 
-	    private BigDecimal calculateShelterFundAmount(BigDecimal amount) {
+	    protected BigDecimal calculateShelterFundAmount(BigDecimal amount) {
 	        return amount.multiply(BigDecimal.valueOf(10)).divide(BigDecimal.valueOf(100));
 
 	    }
 	    
-	    private BigDecimal calculateLabourCessAmount(BigDecimal amount) {
+	    protected BigDecimal calculateLabourCessAmount(BigDecimal amount) {
 	        return amount.multiply(BigDecimal.valueOf(1)).divide(BigDecimal.valueOf(100));
 	    }
 
@@ -1211,7 +1203,7 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	    public EgDemand createDemand(final BpaApplication application) {
 	        final Map<String, BigDecimal> feeDetails = new HashMap<>();
 	        if (application.getApplicationType().getName().equals(LOWRISK)) {
-	            setPermitFee(application, feeDetails);
+	            applicationFeeService.setPermitFee(application, feeDetails);
 	        }
 
 	        EgDemand egDemand = null;
@@ -1242,16 +1234,6 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	        return egDemand;
 	    }
 	    
-	    public void setPermitFee(BpaApplication application, Map<String, BigDecimal> feeDetails) {
-	        PermitFee permitFee = calculateBpaSanctionFees(application);
-	        ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
-	        permitFee.setApplicationFee(applicationFee);
-	        permitFeeRepository.save(permitFee);
-	        for(ApplicationFeeDetail appFee : applicationFee.getApplicationFeeDetail()) {
-	                feeDetails.put(appFee.getBpaFeeMapping().getBpaFeeCommon().getCode(),appFee.getAmount());            
-	        }
-	    }
-	    
 	    public EgDemand createDemandWhenFeeCollectionNotRequire(BpaApplication application) {
 	        
 	        
@@ -1262,7 +1244,7 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
 	        Map<String, BigDecimal> feeDetails = new  HashMap<>();
 	        if (application.getApplicationType().getName().equals(LOWRISK) && installment!=null) {
-	        setPermitFee(application, feeDetails);
+	        	applicationFeeService.setPermitFee(application, feeDetails);
 	         for (final Entry<String, BigDecimal> demandReason : feeDetails.entrySet())
 	             dmdDetailSet.add(createDemandDetails(feeDetails.get(demandReason.getKey()), demandReason.getKey(), installment));
 	        }
