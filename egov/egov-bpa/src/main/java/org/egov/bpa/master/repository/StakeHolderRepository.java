@@ -62,7 +62,7 @@ public interface StakeHolderRepository extends JpaRepository<StakeHolder, Long>,
     StakeHolder findByLicenceNumberAndStatus(String licenseNo, StakeHolderStatus status);
     StakeHolder findByLicenceNumber(String licenseNo);
 	List<String> findNameByType(StakeHolderType type);
-    @Query("select stakeholder from StakeHolder stakeholder where stakeholder.stakeHolderType=:type and stakeholder.isActive=true")
+    @Query("select stakeholder from StakeHolder stakeholder where stakeholder.stakeHolderType=:type and stakeholder.active=true")
 	List<StakeHolder> findActiveByType(@Param("type")StakeHolderType stkHldrType);
     StakeHolder findByDemand(EgDemand demand);
 }

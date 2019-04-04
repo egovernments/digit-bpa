@@ -112,9 +112,6 @@ public class StakeHolder extends User {
     @Length(min = 1, max = 15)
     private String organizationMobNo;
     private Boolean isOnbehalfOfOrganization;
-    @NotNull
-    @Audited
-    private Boolean isActive;
     @Length(max = 11)
     private String tinNumber;
     @Length(max = 256)
@@ -194,14 +191,6 @@ public class StakeHolder extends User {
 
     public void setComments(String comments) {
         this.comments = comments;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
     }
 
     public String getCode() {

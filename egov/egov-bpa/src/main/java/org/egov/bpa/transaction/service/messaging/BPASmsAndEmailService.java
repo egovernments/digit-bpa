@@ -278,7 +278,7 @@ public class BPASmsAndEmailService {
 				password = mobileNo;
 				buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email, loginUserName, password, reportOutput, fileName);
 			}
-			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				applicantName = applnStakeHolder.getStakeHolder().getName();
 				email = applnStakeHolder.getStakeHolder().getEmailId();
 				mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();
@@ -297,7 +297,7 @@ public class BPASmsAndEmailService {
 				Applicant owner = applnStakeHolder.getApplication().getOwner();
 				buildSmsAndEmailForScheduleAppointment(scheduleDetails, bpaApplication, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
 			}
-			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
 				buildSmsAndEmailForScheduleAppointment(scheduleDetails, bpaApplication, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
 			}
@@ -313,7 +313,7 @@ public class BPASmsAndEmailService {
 				buildSmsAndEmailForBPANewAppln(bpaApplication, owner.getName(),
 						owner.getUser().getMobileNumber(), owner.getEmailId(), EMPTY, EMPTY, null, null);
 			}
-			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
 				buildSmsAndEmailForBPANewAppln(bpaApplication, stakeHolder.getName(),
 						stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), EMPTY, EMPTY, null, null);
@@ -514,7 +514,7 @@ public class BPASmsAndEmailService {
 				Applicant owner = applnStakeHolder.getApplication().getOwner();
 				buildSmsAndEmailForDocumentScrutiny(slotApplication, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
 			}
-			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
 				buildSmsAndEmailForDocumentScrutiny(slotApplication, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
 			}
@@ -620,7 +620,7 @@ public class BPASmsAndEmailService {
 				Applicant owner = applnStakeHolder.getApplication().getOwner();
 				buildSmsAndEmailOnApplicationApproval(application, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId(), reportOutput);
 			}
-			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
 				buildSmsAndEmailOnApplicationApproval(application, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), reportOutput);
 			}
@@ -678,7 +678,7 @@ public class BPASmsAndEmailService {
 				Applicant owner = applnStakeHolder.getApplication().getOwner();
 				buildSmsAndEmailOnPermitOrderGeneration(application, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId(), reportOutput);
 			}
-			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
 				buildSmsAndEmailOnPermitOrderGeneration(application, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), reportOutput);
 			}
@@ -721,7 +721,7 @@ public class BPASmsAndEmailService {
 					notificationService.sendSMS(owner.getUser().getMobileNumber(), msg);
 				}
 			}
-			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
 				if (isNotBlank(stakeHolder.getMobileNumber()) && isNotBlank(msg)) {
 					notificationService.sendSMS(stakeHolder.getMobileNumber(), msg);

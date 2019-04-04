@@ -156,7 +156,7 @@ public class OcSmsAndEmailService {
                 buildSmsAndEmailForDocumentScrutinyForOc(ocSlot, owner.getName(), owner.getUser().getMobileNumber(),
                         owner.getEmailId());
             }
-            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
                 StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
                 buildSmsAndEmailForDocumentScrutinyForOc(ocSlot, stakeHolder.getName(), stakeHolder.getMobileNumber(),
                         stakeHolder.getEmailId());
@@ -292,7 +292,7 @@ public class OcSmsAndEmailService {
                 buildSmsAndEmailForOCAppln(occupancyCertificate, applicantName, mobileNo, email, loginUserName, password,
                         reportOutput, fileName);
             }
-            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
                 applicantName = applnStakeHolder.getStakeHolder().getName();
                 email = applnStakeHolder.getStakeHolder().getEmailId();
                 mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();
@@ -316,7 +316,7 @@ public class OcSmsAndEmailService {
                     notificationService.sendSMS(owner.getUser().getMobileNumber(), msg);
                 }
             }
-            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
                 StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
                 if (isNotBlank(stakeHolder.getMobileNumber()) && isNotBlank(msg)) {
                     notificationService.sendSMS(stakeHolder.getMobileNumber(), msg);
@@ -358,7 +358,7 @@ public class OcSmsAndEmailService {
                 buildSmsAndEmailForOCAppln(occupancyCertificate, owner.getName(),
                         owner.getUser().getMobileNumber(), owner.getEmailId(), EMPTY, EMPTY, null, null);
             }
-            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
                 StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
                 buildSmsAndEmailForOCAppln(occupancyCertificate, stakeHolder.getName(),
                         stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), EMPTY, EMPTY, null, null);
@@ -511,7 +511,7 @@ public class OcSmsAndEmailService {
                 buildSmsAndEmailOnPermitOrderGeneration(occupancyCertificate, owner.getName(), owner.getUser().getMobileNumber(),
                         owner.getEmailId(), reportOutput);
             }
-            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
                 StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
                 buildSmsAndEmailOnPermitOrderGeneration(occupancyCertificate, stakeHolder.getName(),
                         stakeHolder.getMobileNumber(),
@@ -623,7 +623,7 @@ public class OcSmsAndEmailService {
                 buildSmsAndEmailForScheduleAppointment(scheduleDetails, occupancyCertificate, owner.getName(),
                         owner.getUser().getMobileNumber(), owner.getEmailId());
             }
-            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
+            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
                 StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
                 buildSmsAndEmailForScheduleAppointment(scheduleDetails, occupancyCertificate, stakeHolder.getName(),
                         stakeHolder.getMobileNumber(), stakeHolder.getEmailId());

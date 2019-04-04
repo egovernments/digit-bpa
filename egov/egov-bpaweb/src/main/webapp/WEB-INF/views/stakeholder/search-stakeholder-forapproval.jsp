@@ -113,7 +113,7 @@
 					<th><spring:message code="lbl.lic.no" /></th>
 					<th><spring:message code="lbl.buil.lic.iss.date" /></th>
 					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.isactive" /></th>
+					<%-- <th><spring:message code="lbl.isactive" /></th> --%>
 					<th><spring:message code="lbl.action" /></th>
 				</tr>
 			</thead>

@@ -512,7 +512,7 @@
 	</definition>
 	<definition name="stakeholder-approve" extends="base_layout">
 		<put-attribute name="page-title"
-			value="title.approve.stakeholder" cascade="true" />
+			value="title.stakehol.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/stakeholder-approve.jsp" />
 	</definition>

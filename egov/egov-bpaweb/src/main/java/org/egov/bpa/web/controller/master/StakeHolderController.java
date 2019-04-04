@@ -164,7 +164,7 @@ public class StakeHolderController extends GenericWorkFlowController {
     private void prepareModel(final Model model, final StakeHolder stakeHolder) {
 
         StakeHolderState stakeHolderState = new StakeHolderState();
-        stakeHolder.setIsActive(true);
+        stakeHolder.setActive(true);
         stakeHolderState.setStakeHolder(stakeHolder);
         model.addAttribute(STAKE_HOLDER, stakeHolderState.getStakeHolder());
         // check why is this required
@@ -206,7 +206,7 @@ public class StakeHolderController extends GenericWorkFlowController {
     public String showOnlineStakeHolder(final Model model) {
         StakeHolder stakeHolder = new StakeHolder();
         stakeHolder.setSource(Source.ONLINE);
-        stakeHolder.setIsActive(false);
+        stakeHolder.setActive(false);
         model.addAttribute("showNotification", true);
         prepareModel(model, stakeHolder);
         return STAKEHOLDER_NEW_BY_CITIZEN;
@@ -267,7 +267,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         }
         stakeHolder.setStatus(StakeHolderStatus.SUBMITTED);
         stakeHolder.setSource(Source.ONLINE);
-        stakeHolder.setIsActive(false);
+        stakeHolder.setActive(false);
         StakeHolder stakeHolderRes;
         if (existingStakeholder == null)
             stakeHolderRes = stakeHolderService.save(stakeHolder);

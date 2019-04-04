@@ -184,18 +184,19 @@ public class BpaAjaxController {
     public BigDecimal isConnectionPresentForProperty(@RequestParam final Long[] serviceTypeIds,
             @RequestParam final Long applicationTypeId) {
         BigDecimal amount = BigDecimal.ZERO;
-    	if (serviceTypeIds.length > 0) {
-    		 ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
-    	                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
-    		 amount = amount.add(feeCalculation.calculateAdmissionFeeAmount(Arrays.asList(serviceTypeIds), applicationTypeId));               
-        } 
-    	return amount;
+        if (serviceTypeIds.length > 0) {
+            ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                    .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+            amount = amount.add(feeCalculation.calculateAdmissionFeeAmount(Arrays.asList(serviceTypeIds), applicationTypeId));
+        }
+        return amount;
     }
 
     @GetMapping(value = "/ajax/getApplicationType", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ApplicationSubType getApplicationType(final BigDecimal height, @RequestParam final BigDecimal plotArea, @RequestParam String occupancy) {
-    	return bpaUtils.getBuildingType(height,plotArea,occupancy);
+    public ApplicationSubType getApplicationType(final BigDecimal height, @RequestParam final BigDecimal plotArea,
+            @RequestParam String occupancy) {
+        return bpaUtils.getBuildingType(height, plotArea, occupancy);
     }
 
     @GetMapping(value = "/bpaajaxWorkFlow-getDesignationsByObjectTypeAndDesignation", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -472,7 +473,7 @@ public class BpaAjaxController {
     @GetMapping(value = "/check/auto-generate-licence-details", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Boolean checkAutoGenerateLicenceDetails(@RequestParam final String code) {
-        return stakeholderTypeService.findByCode(code).getAutoGenerateLicenceDetails();
+        return code != null && !code.isEmpty() ? stakeholderTypeService.findByCode(code).getAutoGenerateLicenceDetails() : false;
     }
 
     @GetMapping(value = "/occupancy/sub-usages", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -630,29 +631,29 @@ public class BpaAjaxController {
     public List<ServiceType> getServiceTypeDetails() {
         return serviceTypeService.getAllActiveServiceTypes();
     }
-    
-	@GetMapping(value = "/boundary/ajax-child-boundary", produces = MediaType.APPLICATION_JSON_VALUE)
-	public void getBoundariesByparent(HttpServletResponse response, @RequestParam final String parent,
-			@RequestParam final String child, @RequestParam final String selectedParent) throws IOException {
-		JSONObject childBoundaryJson = new JSONObject();
-		List<Boundary> childBoundaries;
-		JSONObject boundaryJson = null;
-		JSONArray boundaryArray = null;
 
-    	String[] childBoundary = child.split(",");
-		if (selectedParent != null && !selectedParent.isEmpty()) {
-				childBoundaries = boundaryService.findActiveImmediateChildrenWithOutParent(Long.valueOf(selectedParent));
-				boundaryArray = new JSONArray();
-				for (final Boundary boundary : childBoundaries) {
-					boundaryJson = new JSONObject();
-					boundaryJson.put("id", boundary.getId());
-					boundaryJson.put("name", boundary.getName());
-					boundaryJson.put("materialpath", boundary.getMaterializedPath());
-					boundaryArray.put(boundaryJson);
-				}
-				childBoundaryJson.put(childBoundary[0].split(":")[0], boundaryArray);
-		}
-		System.out.println("getChildBoundaries--->" + childBoundaryJson.toString());
-		IOUtils.write(childBoundaryJson.toString(), response.getWriter());
-	}
+    @GetMapping(value = "/boundary/ajax-child-boundary", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void getBoundariesByparent(HttpServletResponse response, @RequestParam final String parent,
+            @RequestParam final String child, @RequestParam final String selectedParent) throws IOException {
+        JSONObject childBoundaryJson = new JSONObject();
+        List<Boundary> childBoundaries;
+        JSONObject boundaryJson = null;
+        JSONArray boundaryArray = null;
+
+        String[] childBoundary = child.split(",");
+        if (selectedParent != null && !selectedParent.isEmpty()) {
+            childBoundaries = boundaryService.findActiveImmediateChildrenWithOutParent(Long.valueOf(selectedParent));
+            boundaryArray = new JSONArray();
+            for (final Boundary boundary : childBoundaries) {
+                boundaryJson = new JSONObject();
+                boundaryJson.put("id", boundary.getId());
+                boundaryJson.put("name", boundary.getName());
+                boundaryJson.put("materialpath", boundary.getMaterializedPath());
+                boundaryArray.put(boundaryJson);
+            }
+            childBoundaryJson.put(childBoundary[0].split(":")[0], boundaryArray);
+        }
+        System.out.println("getChildBoundaries--->" + childBoundaryJson.toString());
+        IOUtils.write(childBoundaryJson.toString(), response.getWriter());
+    }
 }

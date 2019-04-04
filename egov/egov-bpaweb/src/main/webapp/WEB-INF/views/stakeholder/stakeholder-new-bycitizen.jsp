@@ -55,7 +55,6 @@
            enctype="multipart/form-data">
     <input type="hidden" name="isBusinessUser" id="isBusinessUser" value="${isBusinessUser}">
     <input type="hidden" name="source" id="source" value="${stakeHolder.source}">
-    <input type="hidden" name="isActive" value="${stakeHolder.isActive}">
     <input type="hidden" id="showNotification" value="${showNotification}">
     <ul class="nav nav-tabs" id="settingstab">
         <li class="active"><a data-toggle="tab" href="#applicant-info"

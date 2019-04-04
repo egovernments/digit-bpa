@@ -183,7 +183,6 @@ public class StakeHolderService {
         stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         stakeHolder.setPassword(passwordEncoder.encode("demo"));
         stakeHolder.addRole(roleService.getRoleByName(BpaConstants.ROLE_BUSINESS_USER));
-        stakeHolder.setActive(stakeHolder.getIsActive());
         stakeHolder.setCreatedUser(securityUtils.getCurrentUser());
         stakeHolder.setCreateDate(new Date());
         stakeHolder.setLastUpdatedDate(new Date());
@@ -328,7 +327,6 @@ public class StakeHolderService {
     public StakeHolder updateOnResubmit(final StakeHolder modelObj, final StakeHolder existingStakeholder) {
         if (null == modelObj.getCode())
             modelObj.setCode(stakeHolderCodeGenerator.generateStakeHolderCode(modelObj));
-        modelObj.setActive(modelObj.getIsActive());
         getStakeHolderWhenResubmit(modelObj, existingStakeholder);
         updateDocumentsOnResubmit(modelObj, existingStakeholder);
         StakeHolderState stakeHolderState = new StakeHolderState();
@@ -401,9 +399,7 @@ public class StakeHolderService {
         stakeHolder.setLastUpdatedDate(stakeHolder.getLastModifiedDate());
         stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
         processAndStoreApplicationDocuments(stakeHolder);
-        if ("Update".equals(workFlowAction)) {
-            stakeHolder.setActive(stakeHolder.getIsActive());
-        } else if (BLOCK.equals(workFlowAction)) {
+        if (BLOCK.equals(workFlowAction)) {
             stakeHolder.setStatus(StakeHolderStatus.BLOCKED);
             setActiveToStakeholder(stakeHolder);
             stakeHolder.setNoOfTimesBlocked(
@@ -432,7 +428,6 @@ public class StakeHolderService {
     }
 
     private void setActiveToStakeholder(StakeHolder stakeHolder) {
-        stakeHolder.setIsActive(true);
         stakeHolder.setActive(true);
     }
 
@@ -552,7 +547,7 @@ public class StakeHolderService {
         existingStakeHolder.setSource(modelObj.getSource());
         existingStakeHolder.setBuildingLicenceIssueDate(modelObj.getBuildingLicenceIssueDate());
         existingStakeHolder.setBuildingLicenceExpiryDate(modelObj.getBuildingLicenceExpiryDate());
-        existingStakeHolder.setIsActive(modelObj.getIsActive());
+        existingStakeHolder.setActive(modelObj.isActive());
         existingStakeHolder.setStatus(StakeHolderStatus.RE_SUBMITTED);
         existingStakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
         existingStakeHolder.setLastUpdatedDate(new Date());
@@ -666,7 +661,7 @@ public class StakeHolderService {
             srchForm.setIssueDate(stakeHolder.getBuildingLicenceIssueDate());
             srchForm.setLicenceNumber(stakeHolder.getLicenceNumber());
             srchForm.setType(stakeHolder.getStakeHolderType().getName());
-            srchForm.setActive(stakeHolder.getIsActive());
+            srchForm.setActive(stakeHolder.isActive());
             srchForm.setStatus(stakeHolder.getStatus().getStakeHolderStatusVal());
             srchForm.setCreatedDate(stakeHolder.getCreatedDate());
             srchFrmLst.add(srchForm);
@@ -709,7 +704,6 @@ public class StakeHolderService {
              */
 
         } else if ("Reject".equals(stkHldrStatus)) {
-            stakeHolder.setIsActive(false);
             stakeHolder.setActive(false);
             stakeHolder.setStatus(StakeHolderStatus.REJECTED);
             stakeHolder.setNoOfTimesRejected(

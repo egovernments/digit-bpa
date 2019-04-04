@@ -130,7 +130,7 @@
 			<spring:message code="lbl.isActive" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.isActive ? 'YES' : 'NO'}" default="N/A"></c:out>
+			<c:out value="${stakeHolder.active ? 'YES' : 'NO'}" default="N/A"></c:out>
 		</div>
 	</div>
 	</div>
