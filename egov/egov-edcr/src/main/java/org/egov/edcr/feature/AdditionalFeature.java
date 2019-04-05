@@ -166,7 +166,7 @@ public class AdditionalFeature extends FeatureProcess {
 		for (Block block : pl.getBlocks()) {
 
 			boolean isAccepted = false;
-			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail(
+			ScrutinyDetail scrutinyDetail = getNewScrutinyDetailRoadArea(
 					"Block_" + block.getNumber() + "_" + "Number of Floors Allowed");
 			BigDecimal floorAbvGround = block.getBuilding().getFloorsAboveGround();
 			String requiredFloorCount = StringUtils.EMPTY;
@@ -242,6 +242,8 @@ public class AdditionalFeature extends FeatureProcess {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, RULE_38);
 				details.put(DESCRIPTION, NO_OF_FLOORS);
+				details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
+				details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
 				details.put(REQUIRED, requiredFloorCount);
 				details.put(PROVIDED, String.valueOf(block.getBuilding().getFloorsAboveGround()));
 				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -256,7 +258,7 @@ public class AdditionalFeature extends FeatureProcess {
 		for (Block block : pl.getBlocks()) {
 
 			boolean isAccepted = false;
-			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail(
+			ScrutinyDetail scrutinyDetail = getNewScrutinyDetailRoadArea(
 					"Block_" + block.getNumber() + "_" + "Maximum Height of Building Allowed");
 			String requiredBuildingHeight = StringUtils.EMPTY;
 			BigDecimal buildingHeight = block.getBuilding().getBuildingHeight();
@@ -331,10 +333,12 @@ public class AdditionalFeature extends FeatureProcess {
 
 			}
 
-			if (errors.isEmpty()&& StringUtils.isNotBlank(requiredBuildingHeight)) {
+			if (errors.isEmpty() && StringUtils.isNotBlank(requiredBuildingHeight)) {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, RULE_38);
 				details.put(DESCRIPTION, HEIGHT_BUILDING);
+				details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
+				details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
 				details.put(REQUIRED, requiredBuildingHeight);
 				details.put(PROVIDED, String.valueOf(buildingHeight));
 				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -408,7 +412,20 @@ public class AdditionalFeature extends FeatureProcess {
 		}
 	}
 	 
-
+	
+	private ScrutinyDetail getNewScrutinyDetailRoadArea(String key) {
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, DxfFileConstants.AREA_TYPE);
+		scrutinyDetail.addColumnHeading(4, DxfFileConstants.ROAD_WIDTH);
+		scrutinyDetail.addColumnHeading(5, REQUIRED);
+		scrutinyDetail.addColumnHeading(6, PROVIDED);
+		scrutinyDetail.addColumnHeading(7, STATUS);
+		scrutinyDetail.setKey(key);
+		return scrutinyDetail;
+	}
+	
 	private ScrutinyDetail getNewScrutinyDetail(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);

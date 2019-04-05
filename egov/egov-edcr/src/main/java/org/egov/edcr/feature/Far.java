@@ -996,6 +996,8 @@ public class Far extends FeatureProcess {
 			Map<String, String> details = new HashMap<>();
 			details.put(RULE_NO, RULE_38);
 			details.put(OCCUPANCY, occupancyType);
+			details.put("Area Type",typeOfArea);
+			details.put("Road Width",roadWidth.toString());
 			details.put(REQUIRED, expectedResult);
 			details.put(PROVIDED, actualResult);
 			details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
@@ -1008,9 +1010,11 @@ public class Far extends FeatureProcess {
 	private ScrutinyDetail getNewScrutinyDetail(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+		scrutinyDetail.addColumnHeading(2, "Area Type");
+		scrutinyDetail.addColumnHeading(3, "Road Width");
+		scrutinyDetail.addColumnHeading(4, REQUIRED);
+		scrutinyDetail.addColumnHeading(5, PROVIDED);
+		scrutinyDetail.addColumnHeading(6, STATUS);
 		scrutinyDetail.setKey(key);
 		return scrutinyDetail;
 	}

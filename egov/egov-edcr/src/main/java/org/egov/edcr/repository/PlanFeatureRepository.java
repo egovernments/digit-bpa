@@ -54,6 +54,7 @@ import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.edcr.feature.AdditionalFeature;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Far;
+import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.PlanInfoFeature;
 import org.egov.edcr.feature.SetBackService;
 import org.springframework.stereotype.Service;
@@ -94,15 +95,14 @@ public class PlanFeatureRepository {
 		 * features.add(pf); pf = new PlanFeature(SolidLiquidWasteTreatment.class);
 		 * features.add(pf);
 		 */
-        /*
-         * pf = new PlanFeature(OverheadElectricalLine.class); features.add(pf); pf = new
-         * PlanFeature(MezzanineFloorService.class); features.add(pf);
-         */
+        
+		pf = new PlanFeature(OverheadElectricalLineService.class);
+		features.add(pf);
 		/*
+		 * pf = new PlanFeature(MezzanineFloorService.class); features.add(pf);
+		 * 
 		 * pf = new PlanFeature(RecreationalSpace.class); features.add(pf); pf = new
 		 * PlanFeature(TravelDistanceToExit.class); features.add(pf);
-		 * 
-		 * pf = new PlanFeature(AdditionalFeature.class); features.add(pf);
 		 */
         pf = new PlanFeature(AdditionalFeature.class); features.add(pf);
         /*

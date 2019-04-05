@@ -236,4 +236,7 @@ public class DxfFileConstants {
     public static final String DESAM = "DESAM";
     public static final Object NO_OF_BEDS = "NO_OF_BEDS";
     public static final int YARD_DIMENSION_COLOR = 2;
+    
+    public static final String AREA_TYPE = "Area Type";
+    public static final String ROAD_WIDTH = "Road Width";
 }
