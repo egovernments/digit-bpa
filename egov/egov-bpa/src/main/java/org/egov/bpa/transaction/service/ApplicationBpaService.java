@@ -149,6 +149,7 @@ import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -998,7 +999,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         citizen.addAddress(address);
         citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         citizen.setAadhaarNumber(bpaApplication.getOwner().getAadhaarNumber());
-        citizen.setTenantId(ApplicationThreadLocals.getTenantID());
+        citizen.setTenantId(ApplicationConstant.STATE_TENANTID);
         citizen.setActive(true);
         citizen.addRole(roleService.getRoleByName(ROLE_CITIZEN));
         return citizen;
