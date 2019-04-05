@@ -161,10 +161,14 @@ $(document).ready( function () {
 	$("input[name='isOnbehalfOfOrganization']").change(function(){
 		var isOnbehalfOfOrganization = $(this).val();
 		if(isOnbehalfOfOrganization === 'true') {
+			$('.decl1').show();
+    		$('.decl2').hide();
 			$('#showhide').removeClass('hide');
 			$('.addremoverequired').attr( "required", "true" );
 			$('.toggle-madatory').find("span").addClass( "mandatory" );
 		} else {
+			$('.decl2').show();
+    		$('.decl1').hide();
 			$('#showhide').addClass('hide');
 			$('.addremoverequired').removeAttr( "required" );
 			$('.toggle-madatory').find("span").removeClass( "mandatory" );
@@ -176,10 +180,14 @@ $(document).ready( function () {
 	}
 	
 	if($("input[name='isOnbehalfOfOrganization']:checked").val() === 'true'){
+		$('.decl1').show();
+		$('.decl2').hide();
 		$('#showhide').removeClass('hide');
 		$('.addremoverequired').attr( "required", "true" );
 		$('.toggle-madatory').find("span").addClass( "mandatory" );
 	} else {
+		$('.decl1').hide();
+		$('.decl2').show();
 		$('#showhide').addClass('hide');
 		$('.addremoverequired').removeAttr( "required" );
 		$('.toggle-madatory').find("span").removeClass( "mandatory" );

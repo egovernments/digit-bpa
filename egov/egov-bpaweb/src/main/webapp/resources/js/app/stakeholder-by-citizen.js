@@ -75,6 +75,11 @@ $(document).ready(function () {
     });
 
     $('#buttonSubmit').click(function (e) {
+    	if(($('#div1').is(":visible") && !$('#stkholderAccepted1').is(':checked')) 
+    			|| ($('#div2').is(":visible") && !$('#stkholderAccepted2').is(':checked')) ) {
+    		bootbox.alert($('#acceptDisclaimer').val());
+    		return false;
+    	}
         if (validateForm(validator)) {
             bootbox
                 .dialog({

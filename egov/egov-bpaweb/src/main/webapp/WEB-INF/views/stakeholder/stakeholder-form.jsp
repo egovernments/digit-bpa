@@ -60,10 +60,10 @@
 		<label class="col-sm-3 control-label text-right"> <spring:message
 				code="lbl.behalf.org" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			<form:radiobutton id="isOnbehalfOfOrganizationYes" path="isOnbehalfOfOrganization"
+			<form:radiobutton name="isOnbehalfOfOrganization" id="isOnbehalfOfOrganizationYes" path="isOnbehalfOfOrganization"
 				class="isOnbehalfOfOrganization" value="true" />
 			<spring:message code="lbl.yes" />
-			<form:radiobutton id="isOnbehalfOfOrganizationNo" path="isOnbehalfOfOrganization"
+			<form:radiobutton name="isOnbehalfOfOrganization" id="isOnbehalfOfOrganizationNo" path="isOnbehalfOfOrganization"
 				class="isOnbehalfOfOrganization" value="false" />
 			<spring:message code="lbl.no" />
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

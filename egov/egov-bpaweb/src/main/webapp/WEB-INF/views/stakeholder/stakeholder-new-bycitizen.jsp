@@ -94,12 +94,10 @@
                    for="activationcode">Required</label>
             <span class="mandatory set-mandatory"></span>
         </div>
-        <div class="col-sm-4" >
-
-        </div>
+       	<div >
+			<jsp:include page="declaration-stakeholder.jsp" />
+		</div>  
     </div>
-
-
     <div class="text-center" id="otpbtn-section">
         <form:errors path="activationCode" cssClass="add-margin error-msg"/>
         <button type="button" class="btn btn-primary" id="otpbtn">
@@ -152,7 +150,8 @@
 		  <input type="hidden" id="validAadhaar" value="<spring:message code='msg.validate.aadhaar' />"/>
 		  <input type="hidden" id="validPan" value="<spring:message code='msg.validate.pan' />"/>
 		  <input type="hidden" id="mobileNumberAlreadyExist" value="<spring:message code='msg.validate.mobilenumber.already.exist' />"/>
-		  <input type="hidden" id="emailAlreadyExist" value="<spring:message code='msg.validate.email.already.exist' />"/> 
+		  <input type="hidden" id="emailAlreadyExist" value="<spring:message code='msg.validate.email.already.exist' />"/>
+		  <input type="hidden" id="acceptDisclaimer" value="<spring:message code='msg.validate.accept.disclaimer'/>" /> 
 </div>
 
 <script src='https://www.google.com/recaptcha/api.js' async defer></script>

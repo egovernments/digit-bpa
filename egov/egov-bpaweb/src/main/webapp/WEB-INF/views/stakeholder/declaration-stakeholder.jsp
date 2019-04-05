@@ -42,36 +42,23 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-
-<div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		<spring:message code="lbl.disclaimer"/>
-	</div>
-</div>
-
-<div class="form-group">
-	<c:choose>
-	<c:when test="${isCitizen}"> <!-- for citizen user login -->
-		<div class="col-sm-8 col-sm-offset-2">
-			<div class="checkbox">
-				<label><form:checkbox path="citizenAccepted"
-				       id="citizenAccepted" /> <form:errors path="citizenAccepted"
-					   cssClass="error-msg" /><span class="mandatory"></span>&nbsp;&nbsp;<spring:message
-					   code="bpa.registration.citizen.declaration" /></label>
-			</div>
-			</div>
-	</c:when>
-		<c:otherwise>
-			<!-- for business user login -->
+<div class="form-group decl1" id="div1">
+	 
+			<!-- for builder registration -->
 			<div class="col-sm-8 col-sm-offset-2">
 				<div class="checkbox">
-					<label><form:checkbox path="architectAccepted"
-							id="architectAccepted" /> <form:errors path="architectAccepted"
-							cssClass="error-msg" /><span class="mandatory"></span>&nbsp;&nbsp;<spring:message
-							code="lbl.accepted" /><br>&nbsp;&nbsp;&nbsp;&nbsp;<spring:message
-							code="lbl.accpeted1" /></label>
+				<input type="checkbox" id="stkholderAccepted1"> <span class="mandatory"></span>&nbsp;&nbsp;<spring:message
+							code="stakeholder.registration.builder.declaration" /><BR>
 				</div>
 			</div>
-		</c:otherwise>
-	</c:choose>		
+</div>		
+<div class="form-group decl2" id="div2">
+			<!-- for technical user registration -->
+			<div class="col-sm-8 col-sm-offset-2">
+				<div class="checkbox">
+				<input type="checkbox" id="stkholderAccepted2"> <span class="mandatory"></span>&nbsp;&nbsp;<spring:message
+							code="stakeholder.registration.technical.declaration" /><BR>
+				</div>
+			</div>
+		
 </div>
