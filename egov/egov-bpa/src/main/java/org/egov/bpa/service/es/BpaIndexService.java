@@ -19,6 +19,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.egov.bpa.entity.es.BpaIndex;
 import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.repository.es.BpaIndexRepository;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -96,6 +97,12 @@ public class BpaIndexService {
 			bpaIndex.setStakeHolderType(bpaApplication.getStakeHolder().get(0).getStakeHolder() == null ? EMPTY
 					: bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName());
 		}
+		if (!bpaApplication.getPermitRevocation().isEmpty())
+			for (PermitRevocation revoke : bpaApplication.getPermitRevocation())
+				if (revoke.getRevocationDate() != null && revoke.getRevocationNumber() != null) {
+					bpaIndex.setRevocationDate(revoke.getRevocationDate());
+					bpaIndex.setRevocationNumber(revoke.getRevocationNumber());
+				}
 		bpaIndex.setRemarks(bpaApplication.getRemarks() == null ? EMPTY : bpaApplication.getRemarks());
 		bpaIndex.setPlanPermissionNumber(
 				bpaApplication.getPlanPermissionNumber() == null ? EMPTY : bpaApplication.getPlanPermissionNumber());

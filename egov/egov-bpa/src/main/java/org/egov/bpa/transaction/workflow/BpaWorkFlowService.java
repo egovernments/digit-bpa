@@ -293,7 +293,7 @@ public class BpaWorkFlowService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return Long.valueOf(json.get("wfMatrixRef").toString());
+        return json!=null ? Long.valueOf(json.get("wfMatrixRef").toString()) : 0;
     }
 
     public Long getTownSurveyorInspnInitiator(final List<StateHistory<Position>> stateHistories,

@@ -256,6 +256,13 @@ public class BpaIndex {
 
 	@Field(type = FieldType.Integer)
 	private Integer noOfDaysToProcess;
+	
+	@Field(type = FieldType.String, index = FieldIndex.not_analyzed) 
+	private String revocationNumber; 
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE) 
+	@Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT) 
+	private Date revocationDate;
 
 	public String geteDcrNumber() {
 		return eDcrNumber;
@@ -883,6 +890,22 @@ public class BpaIndex {
 
 	public void setNoOfDaysToProcess(Integer noOfDaysToProcess) {
 		this.noOfDaysToProcess = noOfDaysToProcess;
+	}
+
+	public String getRevocationNumber() {
+		return revocationNumber;
+	}
+
+	public void setRevocationNumber(String revocationNumber) {
+		this.revocationNumber = revocationNumber;
+	}
+
+	public Date getRevocationDate() {
+		return revocationDate;
+	}
+
+	public void setRevocationDate(Date revocationDate) {
+		this.revocationDate = revocationDate;
 	}
 
 }

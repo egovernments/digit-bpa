@@ -182,6 +182,10 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                    && (BpaConstants.APPLICATION_STATUS_APPROVED.equalsIgnoreCase(application.getStatus().getCode())
                        || BpaConstants.APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode()))) {
             if(!bpaUtils.checkAnyTaxIsPendingToCollect(application.getDemand()))
+            	if(application.getApplicationType().getName().equals(BpaConstants.LOWRISK))
+                wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null,
+                            additionalRule, "Application Approval Pending", "Forwarded to Assistant Engineer For Approval");
+            	else
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null,
                         additionalRule, "Final Approval Process initiated", "Permit Fee Collection Pending");
             else
@@ -342,8 +346,11 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                 ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0).getEmployee();
                 if (status != null)
                     application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
-
-                if (BpaConstants.GENERATEPERMITORDER.equalsIgnoreCase(workFlowAction))
+                
+				if (workFlowAction.equalsIgnoreCase(BpaConstants.GENERATEREVOCATIONNOTICE))
+					application.setStatus(getStatusByPassingCode("Revocated"));
+                
+                if (BpaConstants.GENERATEPERMITORDER.equalsIgnoreCase(workFlowAction) || wfmatrix.getNextAction().contains("END"))
                     application.transition().end()
                                .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                                .withComments(approvalComent).withDateInfo(currentDate.toDate())
