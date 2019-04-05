@@ -84,11 +84,13 @@
 			<div class="col-sm-3 add-margin">
 				<form:input type="text"
 					cssClass="form-control patternvalidation addremoverequired"
-					path="organizationMobNo" data-pattern="number" maxlength="11"
-					id="organizationMobNo" />
+					path="organizationMobNo" data-pattern="number" placeholder="Mobile Number" maxlength="10" id="mobileNumber1"/>
+		<%-- 		id="organizationMobNo" />   --%>	
+		         <span class=""></span>
 				<form:errors path="organizationMobNo" cssClass="error-msg" />
 			</div>
 		</div>
+		
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right toggle-madatory"><spring:message
 					code="lbl.addressof.org" /><span class="mandatory"></span></label>
@@ -154,10 +156,10 @@
 					code="lbl.stakeholder.ackno" /></label>
 			<div class="col-sm-3 add-margin">
 			<c:if test="${stakeHolder.id != null}">
-				<form:input type="text" cssClass="form-control" path="code" id="code" readonly="true" />
+				<form:input type="text" cssClass="form-control" path="code" id="code" readonly="true" maxlength="128" />
 			</c:if>
 			<c:if test="${stakeHolder.id == null}">
-				<form:input type="text" cssClass="form-control" path="code" id="code" />
+				<form:input type="text" cssClass="form-control" path="code" id="code" maxlength="128"/>
 			</c:if>
 				<form:errors path="code" cssClass="error-msg" />
 			</div>
