@@ -47,15 +47,21 @@
  */
 
 var $type = "";
-
+var $mode = "";
 $(document).ready( function () {
 	if($('#nextAction').val() == "END"){
 		$('#approverDetailBody').hide();
 	}
+	
+	$mode = $("#mode").val();
+	
+	if($mode!="edit")
 	 $('#licenceGroup').hide();
+	
 	$type = $("#stakeHolderType option:selected").text();
 	
-	loadLicenceNumber($type);
+	if($mode!="edit")
+		loadLicenceNumber($type);
 	
 	$('#stakeHolderType').change(function(e) {
 		loadLicenceNumber($("#stakeHolderType option:selected").text());

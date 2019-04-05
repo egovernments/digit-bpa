@@ -180,8 +180,8 @@ public class AdditionalFeature extends FeatureProcess {
 					requiredFloorCount = "<= 2";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
 						&& roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) <= 0) {
-					isAccepted = floorAbvGround.compareTo(THREE) < 0;
-					requiredFloorCount = "< 3";
+					isAccepted = floorAbvGround.compareTo(THREE) <= 0;
+					requiredFloorCount = "<= 3";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) >= 0
 						&& roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) <= 0) {
 					isAccepted = floorAbvGround.compareTo(THREE) <= 0;

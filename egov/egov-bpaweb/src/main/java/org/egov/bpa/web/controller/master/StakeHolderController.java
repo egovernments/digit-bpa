@@ -158,6 +158,7 @@ public class StakeHolderController extends GenericWorkFlowController {
     public String showStakeHolder(final Model model) {
         StakeHolder stakeHolder = new StakeHolder();
         prepareModel(model, stakeHolder);
+        model.addAttribute("mode", "new");
         return STAKEHOLDER_NEW;
     }
 
@@ -209,6 +210,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         stakeHolder.setActive(false);
         model.addAttribute("showNotification", true);
         prepareModel(model, stakeHolder);
+        model.addAttribute("mode", "new");
         return STAKEHOLDER_NEW_BY_CITIZEN;
     }
 
@@ -326,7 +328,7 @@ public class StakeHolderController extends GenericWorkFlowController {
             stakeHolder = stakeHolderService.findById(id);
         }
         preapreUpdateModel(stakeHolder, model);
-
+        model.addAttribute("mode", "edit");
         model.addAttribute(STAKE_HOLDER_TYPES, stakeholderTypeService.findAllIsActive());
         model.addAttribute("stakeHolderDocumentList", stakeHolder.getStakeHolderDocument());
         model.addAttribute(APPLICATION_HISTORY,
