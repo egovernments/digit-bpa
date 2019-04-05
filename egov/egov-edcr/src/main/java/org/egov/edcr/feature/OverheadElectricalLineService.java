@@ -66,8 +66,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OverheadElectricalLineService extends FeatureProcess {
 
-    private static final String SUB_RULE_5_DESCRIPTION = "Overhead Electric line and Voltage";
-    private static final String SUB_RULE_5 = "23(5)";
+    private static final String SUB_RULE_31 = "31";
 
     private static final BigDecimal VERTICAL_DISTANCE_11000 = BigDecimal.valueOf(2.5);
     private static final BigDecimal VERTICAL_DISTANCE_33000 = BigDecimal.valueOf(3.7);
@@ -150,17 +149,17 @@ public class OverheadElectricalLineService extends FeatureProcess {
                             }
                         }
                         if (horizontalDistancePassed) {
-                            setReportOutputDetails(pl, SUB_RULE_5, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
+                            setReportOutputDetails(pl, SUB_RULE_31, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
                                             electricalLine.getNumber(), expectedResult,
                                     actualResult, Result.Accepted.getResultVal(), "", electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
                         } else {
                             boolean verticalDistancePassed = processVerticalDistance(electricalLine, pl, "", "");
                             if (verticalDistancePassed) {
-                                setReportOutputDetails(pl, SUB_RULE_5, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
+                                setReportOutputDetails(pl, SUB_RULE_31, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
                                                 electricalLine.getNumber(), expectedResult,
                                         actualResult, Result.Verify.getResultVal(), String.format(DcrConstants.HORIZONTAL_ELINE_DISTANCE_NOC, electricalLine.getNumber()),electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
                             } else {
-                                setReportOutputDetails(pl, SUB_RULE_5, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
+                                setReportOutputDetails(pl, SUB_RULE_31, DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE +
                                                 electricalLine.getNumber(), expectedResult,
                                         actualResult, Result.Not_Accepted.getResultVal(), "", electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
                             }
@@ -224,10 +223,10 @@ public class OverheadElectricalLineService extends FeatureProcess {
                 }
             }
             if (verticalDistancePassed) {
-                setReportOutputDetails(planDetail, SUB_RULE_5, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
+                setReportOutputDetails(planDetail, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
                         actualResult, Result.Accepted.getResultVal(), remarks1,electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
             } else {
-                setReportOutputDetails(planDetail, SUB_RULE_5, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
+                setReportOutputDetails(planDetail, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
                         actualResult, Result.Not_Accepted.getResultVal(), remarks2,electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
             }
 
@@ -271,10 +270,10 @@ public class OverheadElectricalLineService extends FeatureProcess {
                 }
             }
             if (verticalDistancePassed) {
-              setReportOutputDetails(planDetail, SUB_RULE_5, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
+              setReportOutputDetails(planDetail, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
                         actualResult, Result.Accepted.getResultVal(), remarks1,electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
             } else {
-                setReportOutputDetails(planDetail, SUB_RULE_5, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
+                setReportOutputDetails(planDetail, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
                         actualResult, Result.Not_Accepted.getResultVal(), remarks2,electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
             }
 
