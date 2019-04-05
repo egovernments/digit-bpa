@@ -218,7 +218,7 @@
 						
 						<li class="dropdown">
 							<a href="http://www.egovernments.org" target="_blank">
-								<img src="<cdn:url value='/resources/global/images/logo@2x.png'/>" title="Powered by eGovernments" height="25px" style="padding-top:5px">
+								<img src="<c:url value='/resources/global/images/digit-logo-black.png' context='/egi'/>" title="Powered by eGovernments" height="35px" style="opacity: 0.8">
 							</a>
 						</li>
 					</ul>
@@ -229,7 +229,7 @@
 			<div class="home-container">
 				
 				<div id="menu" class="homepage">
-					
+				
 				</div>
 				
 				<div class="inline-main-content">

@@ -103,7 +103,7 @@
                     <ul class="hr-menu text-right">
                         <li class="ico-menu">
                             <a href="javascript:void(0);">
-                                <img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+                                <img src="<c:url value='/resources/global/images/digit-logo-black.png' context='/egi'/>" title="Powered by eGovernments" height="35px" style="opacity: 0.8">
                             </a>
                         </li>
 
