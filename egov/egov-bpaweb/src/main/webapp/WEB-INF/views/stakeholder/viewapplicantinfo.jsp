@@ -181,32 +181,33 @@
 			<c:out value="${stakeHolder.emailId}" default="N/A"></c:out>
 		</div>
 	</div>
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.lic.no" />
+	<c:if test="${stakeHolder.licenceNumber!=null && !stakeHolder.licenceNumber.isEmpty() }">
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.lic.no" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${stakeHolder.licenceNumber}" default="N/A"></c:out>
+			</div>
 		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.licenceNumber}" default="N/A"></c:out>
+		
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.buil.lic.iss.date" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<fmt:formatDate value="${stakeHolder.buildingLicenceIssueDate}" pattern="dd/MM/yyyy" var="buildingLicenceIssueDate" />
+				<c:out value="${buildingLicenceIssueDate}" default="N/A"></c:out>
+			</div>
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.build.lic.exp.date" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<fmt:formatDate value="${stakeHolder.buildingLicenceExpiryDate}" pattern="dd/MM/yyyy" var="buildingLicenceExpiryDate" />
+				<c:out value="${buildingLicenceExpiryDate}" default="N/A"></c:out>
+			</div>
 		</div>
-	</div>
-	
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.buil.lic.iss.date" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${stakeHolder.buildingLicenceIssueDate}" pattern="dd/MM/yyyy" var="buildingLicenceIssueDate" />
-			<c:out value="${buildingLicenceIssueDate}" default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.build.lic.exp.date" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${stakeHolder.buildingLicenceExpiryDate}" pattern="dd/MM/yyyy" var="buildingLicenceExpiryDate" />
-			<c:out value="${buildingLicenceExpiryDate}" default="N/A"></c:out>
-		</div>
-	</div>
-
+	</c:if>
 	<%-- <div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.coa.enrol.no" />
