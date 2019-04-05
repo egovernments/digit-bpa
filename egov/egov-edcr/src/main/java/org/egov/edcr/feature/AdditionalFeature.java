@@ -84,7 +84,6 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final BigDecimal ROAD_WIDTH_TWO_POINTFOUR = BigDecimal.valueOf(2.4);
 	private static final BigDecimal ROAD_WIDTH_TWO_POINTFOURFOUR = BigDecimal.valueOf(2.44);
 	private static final BigDecimal ROAD_WIDTH_THREE_POINTSIX = BigDecimal.valueOf(3.6);
-	private static final BigDecimal ROAD_WIDTH_THREE_POINTSIXSIX = BigDecimal.valueOf(3.66);
 	private static final BigDecimal ROAD_WIDTH_FOUR_POINTEIGHT = BigDecimal.valueOf(4.8);
 	private static final BigDecimal ROAD_WIDTH_SIX_POINTONE = BigDecimal.valueOf(6.1);
 	private static final BigDecimal ROAD_WIDTH_NINE_POINTONE = BigDecimal.valueOf(9.1);
@@ -176,7 +175,7 @@ public class AdditionalFeature extends FeatureProcess {
 					errors.put(OLD_AREA_ERROR, OLD_AREA_ERROR_MSG);
 					pl.addErrors(errors);
 				} else if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOURFOUR) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) < 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) < 0) {
 					isAccepted = floorAbvGround.compareTo(TWO) <= 0;
 					requiredFloorCount = "<= 2";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
@@ -268,7 +267,7 @@ public class AdditionalFeature extends FeatureProcess {
 					errors.put(OLD_AREA_ERROR, OLD_AREA_ERROR_MSG);
 					pl.addErrors(errors);
 				} else if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOURFOUR) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIXSIX) < 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) < 0) {
 					isAccepted = buildingHeight.compareTo(SEVEN) <= 0;
 					requiredBuildingHeight = "<= 7";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
