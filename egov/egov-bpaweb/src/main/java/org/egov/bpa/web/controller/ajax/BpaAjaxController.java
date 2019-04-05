@@ -503,6 +503,9 @@ public class BpaAjaxController {
             jsonObj.addProperty("electionWard", application.getSiteDetail().get(0).getElectionBoundary() != null
                     ? application.getSiteDetail().get(0).getElectionBoundary().getName() : "");
             jsonObj.addProperty("reSurveyNumber", application.getSiteDetail().get(0).getReSurveyNumber());
+            jsonObj.addProperty("khataNumber", application.getSiteDetail().get(0).getKhataNumber());
+            jsonObj.addProperty("holdingNumber", application.getSiteDetail().get(0).getHoldingNumber());
+            jsonObj.addProperty("mspPlotNumber", application.getSiteDetail().get(0).getMspPlotNumber());
             jsonObj.addProperty("village", application.getSiteDetail().get(0).getLocationBoundary() == null ? ""
                     : application.getSiteDetail().get(0).getLocationBoundary().getName());
             jsonObj.addProperty("plotArea", application.getSiteDetail().get(0).getExtentinsqmts());

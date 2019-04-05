@@ -65,7 +65,7 @@
 	
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.re.survey.no" /><span class="mandatory"></span></label>
+				code="lbl.re.survey" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control patternvalidation" maxlength="72"
 				data-pattern="alphanumericspecialcharacters" data-role="tagsinput" id="reSurveyNumber"
@@ -85,6 +85,33 @@
 				cssClass="add-margin error-msg" />
 		</div>
 	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message
+				code="lbl.khata.no" /><span class="mandatory"></span></label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" maxlength="72"
+				data-pattern="alphanumericspecialcharacters"  id="khataNumber"
+				path="siteDetail[0].khataNumber" required="required" />
+			<!--  	<small class="text-info view-content"><spring:message code="lbl.values.separated.comma"/></small>  --> 
+			<form:errors path="siteDetail[0].khataNumber"
+				cssClass="add-margin error-msg" />
+		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.holding.no" /><span class="mandatory"></span> </label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" maxlength="72"
+				data-pattern="alphanumericspecialcharacters"  id="holdingNumber"
+				path="siteDetail[0].holdingNumber" required="required" />
+		<!-- 	<small class="text-info view-content"><spring:message code="lbl.values.separated.comma"/></small>    -->
+			<form:errors path="siteDetail[0].holdingNumber"
+				cssClass="add-margin error-msg" />
+		</div>
+	</div>
+	
+	
+	
+	
 
 	<div class="form-group">
 		<%-- <label class="col-sm-3 control-label text-right"><spring:message
@@ -169,6 +196,16 @@
 			<form:errors path="siteDetail[0].citytown"
 				cssClass="add-margin error-msg" />
 		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.plot.no" /><span class="mandatory"></span> </label>
+		<div class="col-sm-3 add-margin">
+			<form:input class="form-control patternvalidation" maxlength="72"
+				data-pattern="alphanumericspecialcharacters"  id="mspPlotNumber"
+				path="siteDetail[0].mspPlotNumber" required="required" />
+			<form:errors path="siteDetail[0].mspPlotNumber"
+				cssClass="add-margin error-msg" />
+		</div>
+		
 		<%-- <label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.site.pincode" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
@@ -177,7 +214,8 @@
 					value="${bpaApplication.siteDetail[0].postalAddress.pincode}" />
 			<form:hidden path="siteDetail[0].postalAddress" value="${bpaApplication.siteDetail[0].postalAddress.id}" />
 			<form:hidden path="siteDetail[0].postalId" id="postalAddress" value="" />
-		</div> --%>
+		</div> --%>	
+		
 	</div>
 
 	<%-- <div class="form-group">

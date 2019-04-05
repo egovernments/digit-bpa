@@ -105,6 +105,8 @@ public class SiteDetail extends AbstractAuditable {
     @Length(min = 1, max = 128)
     private String holdingNumber;
     @Length(min = 1, max = 128)
+    private String mspPlotNumber;
+    @Length(min = 1, max = 128)
     private String streetaddress1;
     @Length(min = 1, max = 128)
     private String streetaddress2;
@@ -267,6 +269,14 @@ public class SiteDetail extends AbstractAuditable {
 
     public void setHoldingNumber(String holdingNumber) {
         this.holdingNumber = holdingNumber;
+    }
+    
+    public String getMspPlotNumber() {
+        return mspPlotNumber;
+    }
+
+    public void setMspPlotNumber(String mspPlotNumber) {
+        this.mspPlotNumber = mspPlotNumber;
     }
 
     public String getSurveynumberType() {

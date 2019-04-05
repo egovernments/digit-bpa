@@ -751,6 +751,9 @@ $(document).ready(
 	                $('#electionWard').val(response.electionWard);
 	                $('#revenueWard').val(response.revenueWard);
 	                $('#resurveyNumber').val(response.reSurveyNumber);
+	                $('#khataNumber').val(response.khataNumber);
+	                $('#holdingNumber').val(response.holdingNumber);
+	                $('#mspPlotNumber').val(response.mspPlotNumber);
 	                $('#village').val(response.village);
 	                $('#plotArea').val(response.plotArea);
 	            } else {

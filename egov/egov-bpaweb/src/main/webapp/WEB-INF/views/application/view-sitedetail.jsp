@@ -66,7 +66,7 @@
 
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.re.survey.no" />
+			<spring:message code="lbl.re.survey" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.siteDetail[0].reSurveyNumber}"
@@ -80,6 +80,24 @@
 				default="N/A"></c:out>
 		</div>
 	</div>
+	
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.khata.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.siteDetail[0].khataNumber}"
+				default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.holding.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.siteDetail[0].holdingNumber}"
+				default="N/A"></c:out>
+		</div>
+	</div>
+	
 
 	<%-- <div class="row add-border">
 		<div class="col-sm-3 add-margin">
@@ -140,6 +158,14 @@
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.siteDetail[0].citytown}" default="N/A"></c:out>
 		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.plot.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.siteDetail[0].mspPlotNumber}"
+				default="N/A"></c:out>
+		</div>
+				
 		<%-- <div class="col-sm-3 add-margin">
 			<spring:message code="lbl.site.pincode" />
 		</div>
@@ -147,6 +173,7 @@
 			<c:out value="${bpaApplication.siteDetail[0].postalAddress.pincode}"
 				default="N/A"></c:out>
 		</div> --%>
+		
 	</div>
 	<%-- <div class="row add-border">
 		<div class="col-sm-3 add-margin">
