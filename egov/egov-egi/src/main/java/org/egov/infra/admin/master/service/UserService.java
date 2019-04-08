@@ -108,8 +108,11 @@ public class UserService {
     }
 
     public User getUserByUsernameAndTenantIdForLogin(String userName) {
-        return userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID(),
-                ApplicationConstant.STATE_TENANTID);
+        User user = null;
+        user = userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
+        if (user == null)
+            user = userRepository.findByUsernameAndTenantId(userName, ApplicationConstant.STATE_TENANTID);
+        return user;
     }
 
     public User getUserByUsernameAndTenantId(String userName) {

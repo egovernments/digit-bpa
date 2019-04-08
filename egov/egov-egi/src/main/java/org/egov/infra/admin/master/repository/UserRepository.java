@@ -75,11 +75,6 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     User findByUsernameAndTenantId(String userName, String tenantId);
 
-    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
-    @Query("select distinct usr from User usr where usr.username = :usrName and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId)")
-    User findByUsernameAndTenantId(@Param("usrName") String userName, @Param("tenantId") String tenantId,
-            @Param("stateTenantId") String stateTenantId);
-
     List<User> findByNameContainingIgnoreCase(String userName);
 
     User findByEmailId(String emailId);
