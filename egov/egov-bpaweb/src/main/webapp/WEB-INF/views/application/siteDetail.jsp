@@ -85,27 +85,29 @@
 				cssClass="add-margin error-msg" />
 		</div>
 	</div>
-	
+	                                             
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.khata.no" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" maxlength="72"
+			<form:input class="form-control patternvalidation" maxlength="20"
 				data-pattern="alphanumericspecialcharacters"  id="khataNumber"
 				path="siteDetail[0].khataNumber" required="required" />
 			<!--  	<small class="text-info view-content"><spring:message code="lbl.values.separated.comma"/></small>  --> 
+	<%-- 	<small class="text-info view-content"><spring:message code="lbl.validate.msg"/></small>    --%>	
 			<form:errors path="siteDetail[0].khataNumber"
 				cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.holding.no" /><span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" maxlength="72"
+			<form:input class="form-control patternvalidation" maxlength="20"
 				data-pattern="alphanumericspecialcharacters"  id="holdingNumber"
 				path="siteDetail[0].holdingNumber" required="required" />
-		<!-- 	<small class="text-info view-content"><spring:message code="lbl.values.separated.comma"/></small>    -->
+		<%--  	<small class="text-info view-content"><spring:message code="lbl.values.separated.comma"/></small>   --%>
+	<%-- 	<small class="text-info view-content"><spring:message code="lbl.validate.msg"/></small>   --%> 
 			<form:errors path="siteDetail[0].holdingNumber"
-				cssClass="add-margin error-msg" />
+				cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 	
@@ -199,10 +201,11 @@
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.plot.no" /><span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation" maxlength="72"
+			<form:input class="form-control patternvalidation" maxlength="20"
 				data-pattern="alphanumericspecialcharacters"  id="mspPlotNumber"
 				path="siteDetail[0].mspPlotNumber" required="required" />
-			<form:errors path="siteDetail[0].mspPlotNumber"
+		<%-- 		<small class="text-info view-content"><spring:message code="lbl.validate.msg"/></small>    --%>	
+		<form:errors path="siteDetail[0].mspPlotNumber"
 				cssClass="add-margin error-msg" />
 		</div>
 		
