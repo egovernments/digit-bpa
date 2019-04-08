@@ -81,9 +81,10 @@ $(document).ready(function(){
                 ]
 
             } );
-        	$('#bpa-home-table tbody').on('click', 'tr', function () {
+        	$('#bpa-home-table tbody').on('click', 'tr', function (e) {
         	    var data = table.row( this ).data();
         	    var origin = window.origin.replace(clientId, data.tenantId);
+        	    e.stopImmediatePropagation();
         	    openPopUp(origin+data.link);
         	} );
         	
@@ -383,8 +384,9 @@ function initiateTable(tableData, serviceGroup, dataKey){
 	datatable.clear();
 	datatable.rows.add(finalData);
 	datatable.draw();
-	$('#bpa-home-table tbody').on('click', 'tr', function () {
+	$('#bpa-home-table tbody').on('click', 'tr', function (e) {
 	    var data = datatable.row( this ).data();
+	    e.stopImmediatePropagation();
 	    openPopUp(window.origin+data.link);
 	} );
 }
