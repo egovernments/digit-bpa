@@ -104,7 +104,10 @@ public class UserService {
     }
 
     public User getUserByUsername(String userName) {
-        return userRepository.findByUsernameAndTenantId(userName,ApplicationThreadLocals.getTenantID());
+        if (ApplicationConstant.ANONYMOUS_USERNAME.equals(userName))
+            return userRepository.findByUsernameAndTenantId(userName, ApplicationConstant.STATE_TENANTID);
+        else
+            return userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
     }
 
     public User getUserByUsernameAndTenantIdForLogin(String userName) {
