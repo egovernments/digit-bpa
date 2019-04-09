@@ -45,80 +45,42 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.common.entity.edcr;
+package org.egov.common.entity.dcr.helper;
 
 import java.io.Serializable;
 
-import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-
-public class OccupancyTypeHelper implements Serializable {
+public class OccupancyHelperDetail implements Serializable {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 80L;
+    private static final long serialVersionUID = 81L;
+    private Integer color;
+    private String code;
+    private String name;
 
-    private OccupancyHelperDetail type;
-    private OccupancyHelperDetail subtype;
-    private OccupancyHelperDetail usage;
-    private OccupancyHelperDetail convertedType;
-    private OccupancyHelperDetail convertedSubtype;
-    private OccupancyHelperDetail convertedUsage;
-
-    public OccupancyTypeHelper() {
-        //
+    public Integer getColor() {
+        return color;
     }
 
-    public OccupancyHelperDetail getType() {
-        return type;
+    public void setColor(Integer color) {
+        this.color = color;
     }
 
-    public void setType(OccupancyHelperDetail type) {
-        this.type = type;
+    public String getCode() {
+        return code;
     }
 
-    public OccupancyHelperDetail getSubtype() {
-        return subtype;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public void setSubtype(OccupancyHelperDetail subtype) {
-        this.subtype = subtype;
+    public String getName() {
+        return name;
     }
 
-    public OccupancyHelperDetail getUsage() {
-        return usage;
-    }
-
-    public void setUsage(OccupancyHelperDetail usage) {
-        this.usage = usage;
-    }
-
-    public OccupancyHelperDetail getConvertedType() {
-        return convertedType;
-    }
-
-    public void setConvertedType(OccupancyHelperDetail convertedType) {
-        this.convertedType = convertedType;
-    }
-
-    public OccupancyHelperDetail getConvertedSubtype() {
-        return convertedSubtype;
-    }
-
-    public void setConvertedSubtype(OccupancyHelperDetail convertedSubtype) {
-        this.convertedSubtype = convertedSubtype;
-    }
-
-    public OccupancyHelperDetail getConvertedUsage() {
-        return convertedUsage;
-    }
-
-    public void setConvertedUsage(OccupancyHelperDetail convertedUsage) {
-        this.convertedUsage = convertedUsage;
-    }
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
+    public void setName(String name) {
+        this.name = name;
     }
 
 }
