@@ -232,21 +232,16 @@ public final class SearchBpaApplnFormSpec {
         if (requestForm.getToPlotArea() != null)
             predicate.getExpressions()
                     .add(builder.lessThanOrEqualTo(siteDetailJoin.get("extentinsqmts"), requestForm.getToPlotArea()));
-
-        Join<SiteDetail, Boundary> adminBoundaryJoin = siteDetailJoin.join("adminBoundary");
-        if (requestForm.getElectionWardId() != null)
-            predicate.getExpressions()
-                    .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), requestForm.getElectionWardId()));
-        if (requestForm.getWardId() != null)
-            predicate.getExpressions()
-                    .add(builder.equal(adminBoundaryJoin.get("id"), requestForm.getWardId()));
-        if (requestForm.getZoneId() != null) {
-            predicate.getExpressions()
-                    .add(builder.equal(adminBoundaryJoin.get("parent").get("id"), requestForm.getZoneId()));
-        }
-        if (requestForm.getZoneId() == null && requestForm.getZone() != null)
-            predicate.getExpressions()
-                    .add(builder.equal(adminBoundaryJoin.get("parent").get("name"), requestForm.getZone()));
+        if(requestForm.getRevenueBoundary()!=null)
+        	predicate.getExpressions()
+            .add(builder.equal(siteDetailJoin.get("adminBoundary").get("id"), Long.valueOf(requestForm.getRevenueBoundary())));
+        	
+        if(requestForm.getLocationBoundary()!=null)
+        	predicate.getExpressions()
+            .add(builder.equal(siteDetailJoin.get("locationBoundary").get("id"), Long.valueOf(requestForm.getLocationBoundary())));
+        		
+        if(requestForm.getAdminBoundary()!=null)
+        	predicate.getExpressions()
+            .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), Long.valueOf(requestForm.getAdminBoundary())));
     }
-
 }

@@ -62,9 +62,7 @@
                         </form:select>
                         <form:errors path="statusId" cssClass="add-margin error-msg" />
                     </div>
-                </div>
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
+            		<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.user" /></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="userId" data-first-option="false"
@@ -76,48 +74,7 @@
 										  itemLabel="name" />
 						</form:select>
 					</div>
-                    <label class="col-sm-2 control-label text-right"> <spring:message
-                            code="lbl.zone" />
-                    </label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="zoneId" data-first-option="false" id="zone"
-                                     cssClass="form-control">
-                            <form:option value="">
-                                <spring:message code="lbl.select" />
-                            </form:option>
-                            <form:options items="${zones}" itemValue="id" itemLabel="name" />
-                        </form:select>
-                        <form:errors path="zoneId" cssClass="add-margin error-msg" />
-                    </div>
-				</div>
-				
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.rev.ward" /></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="wardId" data-first-option="false" id="ward"
-									 cssClass="form-control">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${wards}" itemValue="id" itemLabel="name" />
-						</form:select>
-						<form:errors path="wardId" cssClass="add-margin error-msg" />
-					</div>
-                    <label class="col-sm-2 control-label text-right"><spring:message
-                            code="lbl.election.ward" /></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:select path="electionWardId" data-first-option="false"
-                                     id="electionBoundary" cssClass="form-control">
-                            <form:option value="">
-                                <spring:message code="lbl.select" />
-                            </form:option>
-                            <form:options items="${electionwards}" itemValue="id"
-                                          itemLabel="name" />
-                        </form:select>
-                        <form:errors path="electionWardId" cssClass="add-margin error-msg" />
-                    </div>
-				</div>
+                </div>
 
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message
@@ -164,6 +121,8 @@
 						</form:select>
 						<form:errors path="occupancy" cssClass="add-margin error-msg" />
 					</div>
+				</div>
+				<div class="form-group" id="boundarysection">
 				</div>
 			</div>
 		</div>

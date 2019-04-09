@@ -67,7 +67,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private String currentOwner;
     private String pendingAction;
     private String ward;
-    private Long wardId;
+    private Long wardId; 
     private String electionWard;
     private Long electionWardId;
     private String zone;
@@ -92,6 +92,11 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private BigDecimal fromBuiltUpArea;
     private BigDecimal toBuiltUpArea;
     private Long applicationTypeId;
+	private Long adminBoundary;
+	private Long revenueBoundary;
+	private Long locationBoundary;
+    
+    
 
 
     public SearchBpaApplicationForm() {
@@ -523,5 +528,29 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
 
 	public void setApplicationTypeId(Long applicationTypeId) {
 		this.applicationTypeId = applicationTypeId;
+	}
+
+	public Long getAdminBoundary() {
+		return adminBoundary;
+	}
+
+	public void setAdminBoundary(Long adminBoundary) {
+		this.adminBoundary = adminBoundary;
+	}
+
+	public Long getRevenueBoundary() {
+		return revenueBoundary;
+	}
+
+	public void setRevenueBoundary(Long revenueBoundary) {
+		this.revenueBoundary = revenueBoundary;
+	}
+
+	public Long getLocationBoundary() {
+		return locationBoundary;
+	}
+
+	public void setLocationBoundary(Long locationBoundary) {
+		this.locationBoundary = locationBoundary;
 	}
 }

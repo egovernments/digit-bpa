@@ -111,8 +111,11 @@ public class PermitRevocationFormat {
         reportParams.put("logoPath", cityService.getCityLogoAsStream());
         reportParams.put("stateLogo", ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH));
         reportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
+        reportParams.put("rejectionReasons", bpaNoticeUtil.buildRejectionReasons(revocation.getApplication()));
 
         return reportParams;
 
     }
+    
+    
 }

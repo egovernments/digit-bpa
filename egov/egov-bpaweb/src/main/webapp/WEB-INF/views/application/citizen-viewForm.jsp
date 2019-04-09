@@ -250,7 +250,7 @@
 										 value="Cancel Application"> <spring:message code='lbl.btn.cancel.application' /> </form:button>&nbsp;
 							</c:if>
 						</td>
-						<c:if test="${(bpaApplication.status.code eq 'Order Issued to Applicant' || bpaApplication.applicationType.name eq 'Low Risk') && not empty bpaApplication.bpaNotice}">
+						<c:if test="${(bpaApplication.status.code eq 'Order Issued to Applicant' || bpaApplication.applicationType.name eq 'Low Risk') && (bpaApplication.status.code ne 'Revocated') && not empty bpaApplication.bpaNotice}">
 							<td>
 								<a href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}"
 								   target="popup" class="btn btn-primary"
@@ -259,6 +259,17 @@
 								</a>&nbsp;
 							</td> 
 						</c:if>
+						
+					   <c:if test="${bpaApplication.status.code eq 'Revocated' && bpaApplication.state ne null}">
+							<td>
+								<a href="/bpa/application/revocation/generateorder/${bpaApplication.permitRevocation[0].revocationNumber}"
+								   target="popup" class="btn btn-primary"
+								   onclick="window.open('/bpa/application/revocation/generateorder/${bpaApplication.permitRevocation[0].revocationNumber}','popup','width=1100,height=700'); return false;">
+									<spring:message code='lbl.btn.print.revocation.notice' />
+								</a>&nbsp;
+							</td>
+						</c:if>
+						
 
 						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null}">
 							<td>

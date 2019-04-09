@@ -106,47 +106,6 @@
 							id="applicantName" path="applicantName" />
 						<form:errors path="applicantName" cssClass="add-margin error-msg" />
 					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message
-							code="lbl.zone" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="zoneId" data-first-option="false" id="zone"
-							cssClass="form-control">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${zones}" itemValue="id" itemLabel="name" />
-						</form:select>
-						<form:errors path="zoneId" cssClass="add-margin error-msg" />
-					</div>
-				</div>
-
-				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message
-							code="lbl.rev.ward" /> </label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="wardId" data-first-option="false" id="ward"
-							cssClass="form-control">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${wards}" itemValue="id" itemLabel="name" />
-						</form:select>
-						<form:errors path="wardId" cssClass="add-margin error-msg" />
-					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.election.ward" /></label>
-					<div class="col-sm-3 add-margin">
-						<form:select path="electionWardId" data-first-option="false"
-							id="electionBoundary" cssClass="form-control">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${electionwards}" itemValue="id"
-								itemLabel="name" />
-						</form:select>
-						<form:errors path="electionWardId" cssClass="add-margin error-msg" />
-					</div>
 				</div>
 				<div class="form-group plotAreaHideShow">
 					<label class="col-sm-3 control-label text-right"><spring:message
@@ -193,6 +152,9 @@
                         <form:errors path="statusId" cssClass="add-margin error-msg"/>
                     </div>
 				</div>
+				<div class="form-group" id ="boundarysection">
+				</div>
+				
 			</div>
 		</div>
 	</div>
@@ -245,6 +207,7 @@
 <script src="<c:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/> "></script>
 <script src="<cdn:url value='/resources/js/app/occupancy-certificate/searchOCappln.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/genericBoundarySearchForm.js?rnd=${app_release_no}'/>"></script>
 
 
 

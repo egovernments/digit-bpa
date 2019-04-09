@@ -697,6 +697,11 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                         		FORWARDED_TO_CLERK.equals(application.getState().getNextAction()))) {
             model.addAttribute("createlettertoparty", true);
         }
+        
+        if(application.getApplicationType().getName().equals(BpaConstants.LOWRISK) && 
+        		FORWARDED_TO_CLERK.equals(application.getState().getNextAction())){
+        	model.addAttribute("showRejectionReasons", false);
+        }
 
     }
 

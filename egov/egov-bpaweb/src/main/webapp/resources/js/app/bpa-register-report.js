@@ -95,9 +95,9 @@ $(document)
                                                         "toDate": $("#toDate").val(),
                                                         "serviceTypeId": $("#serviceTypeId").val(),
                                                         "applicationTypeId": $("#applicationTypeId").val(),
-                                                        "zoneId": $("#zone").val(),
-                                                        "wardId": $("#ward").val(),
-                                                        "electionWardId": $("#electionBoundary").val(),
+                                                        "revenueBoundary" : $('select[name="revenueBoundary"]').val(),
+                                                       	"adminBoundary" : $('select[name="adminBoundary"]').val(),
+                                                       	"locationBoundary" : $('select[name="locationBoundary"]').val(),
                                                         "userId": $("#userId").val()
                                                     };
                                                 },

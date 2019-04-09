@@ -569,7 +569,13 @@ function validateOnRevert() {
 function validateOnRevokePermit() {
     makePermitConditionsNotMandatory();
     var approvalComent = $('#approvalComent').val();
-    if (approvalComent == "") {
+   
+    var revocationReasonsLength = $('.rejectionReasons:checked').length;
+    if (revocationReasonsLength <= 0) {
+        $('.rejectionReason').show();
+        bootbox.alert($('#revocationReasonMandatory').val());
+        return false;
+    } else if (approvalComent == "") {
         $('#approvalComent').focus();
         bootbox.alert($('#revokePermitCommentsRequired').val());
         return false;

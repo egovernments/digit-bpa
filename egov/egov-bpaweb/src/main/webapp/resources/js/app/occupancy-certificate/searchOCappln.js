@@ -117,13 +117,16 @@ $(document)
                                                         "fromDate": $("#fromDate").val(),
                                                         "toDate": $("#toDate").val(),
                                                         "serviceTypeId": $("#serviceTypeId").val(),
-                                                        "zoneId": $("#zone").val(),
+    /*                                                    "zoneId": $("#zone").val(),
                                                         "wardId": $("#ward").val(),
-                                                        "electionWardId": $("#electionBoundary").val(),
+                                                        "electionWardId": $("#electionBoundary").val(),*/
                                                         "fromPlotArea": $("#fromPlotArea").val(),
                                                         "toPlotArea": $("#toPlotArea").val(),
                                                         "fromBuiltUpArea": $("#fromBuiltUpArea").val(),
-                                                        "toBuiltUpArea": $("#toBuiltUpArea").val()
+                                                        "toBuiltUpArea": $("#toBuiltUpArea").val(),
+                                                        "revenueBoundary" : $('select[name="revenueBoundary"]').val(),
+                                                       	"adminBoundary" : $('select[name="adminBoundary"]').val(),
+                                                       	"locationBoundary" : $('select[name="locationBoundary"]').val()
                                                     };
                                                 },
 												complete : function() {

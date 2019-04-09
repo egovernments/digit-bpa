@@ -65,7 +65,9 @@ import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.GENERATEREVOCATIONNOTICE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.LOWRISK;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayInputStream;
@@ -587,7 +589,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)
                 || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
                 || (!WF_APPROVE_BUTTON.equals(workFlowAction)
-                        && APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode()))) {
+                        && APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode()))
+                || (GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction) && application.getApplicationType().getName().equals(LOWRISK))) {
             buildRejectionReasons(application);
         }
         application.setLPRequestInitiated(FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(application.getState().getNextAction()));

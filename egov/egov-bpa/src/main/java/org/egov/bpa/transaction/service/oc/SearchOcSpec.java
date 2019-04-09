@@ -83,19 +83,16 @@ public class SearchOcSpec {
             if (requestForm.getOccupancyId() != null)
                 predicate.getExpressions()
                         .add(builder.equal(bpaApplication.get("occupancy").get("id"), requestForm.getOccupancyId()));
-            if (requestForm.getElectionWardId() != null)
+            if(requestForm.getRevenueBoundary()!=null)
                 predicate.getExpressions()
-                        .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), requestForm.getElectionWardId()));
-            if (requestForm.getWardId() != null)
+                .add(builder.equal(siteDetailJoin.get("adminBoundary").get("id"), requestForm.getRevenueBoundary()));
+            if(requestForm.getAdminBoundary()!=null)
                 predicate.getExpressions()
-                        .add(builder.equal(adminBoundaryJoin.get("id"), requestForm.getWardId()));
-            if (requestForm.getZoneId() != null) {
+                .add(builder.equal(siteDetailJoin.get("electionBoundary").get("id"), requestForm.getAdminBoundary()));
+            if(requestForm.getLocationBoundary()!=null)
                 predicate.getExpressions()
-                        .add(builder.equal(adminBoundaryJoin.get("parent").get("id"), requestForm.getZoneId()));
-            }
-            if (requestForm.getZoneId() == null && requestForm.getZone() != null)
-                predicate.getExpressions()
-                        .add(builder.equal(adminBoundaryJoin.get("parent").get("name"), requestForm.getZone()));
+                .add(builder.equal(siteDetailJoin.get("locationBoundary").get("id"), requestForm.getLocationBoundary()));
+            
             if (requestForm.getFromDate() != null)
                 predicate.getExpressions()
                         .add(builder.greaterThanOrEqualTo(root.get("applicationDate"), requestForm.getFromDate()));

@@ -82,6 +82,8 @@
 	</div>
 	<input type="hidden" id="atleastOneInputReq" value="<spring:message code='msg.validate.atleast.oneinput.required'/>"/>
 </div>
+
+
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
@@ -92,4 +94,5 @@
 <script src="<c:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/> "></script>
 <script src="<cdn:url value='/resources/js/app/searchbpaappln.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/genericBoundarySearchForm.js?rnd=${app_release_no}'/>"></script>
 

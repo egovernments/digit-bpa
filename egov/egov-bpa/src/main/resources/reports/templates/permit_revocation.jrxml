@@ -17,6 +17,7 @@
 	<parameter name="approverName" class="java.lang.String"/>
 	<parameter name="designation" class="java.lang.String"/>
 	<parameter name="stateLogo" class="java.lang.String"/>
+	<parameter name="rejectionReasons" class="java.lang.String"/>
 	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="applicationDate" class="java.util.Date"/>
 	<field name="application" class="org.egov.bpa.transaction.entity.BpaApplication"/>
@@ -133,7 +134,7 @@
 				<textFieldExpression><![CDATA["Sir/Madam,"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="48" splitType="Stretch">
+		<band height="53" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="160" height="48" uuid="dcddb7b9-e898-4d49-a49a-10bd4bc46285">
 					<printWhenExpression><![CDATA[$F{approveCancelRemarks}!=null]]></printWhenExpression>
@@ -165,10 +166,10 @@
 				<textFieldExpression><![CDATA[$F{approveCancelRemarks}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="42" splitType="Stretch">
+		<band height="77" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="160" y="0" width="394" height="42" uuid="f84b9d17-6a03-4646-96c0-74b15323f22a">
-					<printWhenExpression><![CDATA[$F{initiateRemarks}!=null]]></printWhenExpression>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="-3" width="554" height="80" uuid="a3cb748e-0004-4bb2-8d64-bc6ec9340807">
+					<printWhenExpression><![CDATA[$F{approveCancelRemarks}!=null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -179,55 +180,40 @@
 				<textElement textAlignment="Justified">
 					<paragraph leftIndent="3" rightIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{initiateRemarks}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="160" height="42" uuid="3cec3f4c-6007-4027-b831-b99e97ce8009">
-					<printWhenExpression><![CDATA[$F{initiateRemarks}!=null]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<paragraph leftIndent="3"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Revocation initiation reason:- "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{rejectionReasons}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="50">
+		<band height="107">
 			<textField>
-				<reportElement x="65" y="10" width="155" height="19" uuid="b04d8a39-92ff-4b97-b634-e1ee6fb8c76c"/>
+				<reportElement x="65" y="60" width="155" height="19" uuid="b04d8a39-92ff-4b97-b634-e1ee6fb8c76c"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[DateUtils.toDefaultDateFormat($F{revocationDate})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="65" y="29" width="155" height="20" uuid="6620f73b-8541-4efd-abaa-2b560f0ea7e8"/>
+				<reportElement x="65" y="79" width="155" height="20" uuid="6620f73b-8541-4efd-abaa-2b560f0ea7e8"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="29" width="65" height="20" uuid="6ec2e595-557a-4348-bb73-b09b70f7a45e"/>
+				<reportElement x="0" y="79" width="65" height="20" uuid="6ec2e595-557a-4348-bb73-b09b70f7a45e"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Place        : ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="300" y="30" width="255" height="20" uuid="a67f4588-9df1-44f8-9ea5-f4dd4c5d9514"/>
+				<reportElement x="300" y="80" width="255" height="20" uuid="a67f4588-9df1-44f8-9ea5-f4dd4c5d9514"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Approved By " + $P{approverName} + ", " + $P{designation}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="9" width="65" height="20" uuid="4e4eb8e9-5fa0-4156-895b-3214d47f3736"/>
+				<reportElement x="0" y="59" width="65" height="20" uuid="4e4eb8e9-5fa0-4156-895b-3214d47f3736"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
