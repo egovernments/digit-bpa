@@ -94,9 +94,6 @@
                    for="activationcode">Required</label>
             <span class="mandatory set-mandatory"></span>
         </div>
-       	<div >
-			<jsp:include page="declaration-stakeholder.jsp" />
-		</div>  
     </div>
     <div class="text-center" id="otpbtn-section">
         <form:errors path="activationCode" cssClass="add-margin error-msg"/>
@@ -108,6 +105,7 @@
            onclick='self.close()'><spring:message code='lbl.close'/></a>
     </div>
     <div class="text-center" id="create-section">
+    <jsp:include page="declaration-stakeholder.jsp" />
         <button type="submit" class='btn btn-primary' id="buttonSubmit">
             <spring:message code="lbl.submit"/>
         </button>
