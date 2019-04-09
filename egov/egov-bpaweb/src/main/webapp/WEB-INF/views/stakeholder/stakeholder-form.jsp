@@ -83,9 +83,8 @@
 					code="lbl.contactNo" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input type="text"
-					cssClass="form-control patternvalidation addremoverequired"
-					path="organizationMobNo" data-pattern="number" placeholder="Mobile Number" maxlength="10" id="mobileNumber1"/>
-		<%-- 		id="organizationMobNo" />   --%>	
+					cssClass="form-control patternvalidation addremoverequired mobileno-field"
+					path="organizationMobNo" data-pattern="number" placeholder="Mobile Number" maxlength="10" id="organizationMobNo"/>
 		         <span class=""></span>
 				<form:errors path="organizationMobNo" cssClass="error-msg" />
 			</div>

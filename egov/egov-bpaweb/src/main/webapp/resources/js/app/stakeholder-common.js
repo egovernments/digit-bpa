@@ -126,6 +126,23 @@ $(document).ready( function () {
                 checkIsMobileNoIsExists();
 			}
 	});
+	
+	$('#organizationMobNo').blur( function () {
+		 var mobileno = $(this).val();
+			if (mobileno && mobileno.length < 10) {
+               var span = $(this).siblings('span');
+               $(span).addClass('error-msg');
+               $(span).text($('#validMobileNumber').val());
+               $(this).focus();
+               $(this).show();
+               $(this).val("");
+			} else {
+               var span1 = $(this).siblings('span');
+               $(span1).removeClass('error-msg');
+               $(span1).text('');
+               checkIsOrganizationMobNoIsExists();
+			}
+	});
 
 	// To coping present address to permanent address if both same
 	$('#isAddressSame').click(function(e) {
@@ -293,6 +310,38 @@ $(document).ready( function () {
                         $('#mobileNumber1').focus();
                     } else {
                         var span1 = $('#mobileNumber1').siblings('span');
+                        $(span1).removeClass('error-msg');
+                        $(span1).text('');
+                    }
+                },
+                error: function (response) {
+                    console.log('Error occured, while validating mobile number!!!!')
+                }
+            });
+        }
+	}
+    
+    function checkIsOrganizationMobNoIsExists() {
+        if($('#organizationMobNo').val()) {
+            $.ajax({
+                url: "/bpa/validate/emailandmobile",
+                type: "GET",
+                data: {
+                    inputType : 'mobile',
+                    inputValue : $('#organizationMobNo').val(),
+                },
+                cache: false,
+                dataType: "json",
+                success: function (response) {
+                    if(true == response) {
+                        var span = $('#organizationMobNo').siblings('span');
+                        $(span).addClass('error-msg');
+                        $(span).text($('#mobileNumberAlreadyExist').val());
+                        $('#organizationMobNo').show();
+                        $('#organizationMobNo').val('');
+                        $('#organizationMobNo').focus();
+                    } else {
+                        var span1 = $('#organizationMobNo').siblings('span');
                         $(span1).removeClass('error-msg');
                         $(span1).text('');
                     }
