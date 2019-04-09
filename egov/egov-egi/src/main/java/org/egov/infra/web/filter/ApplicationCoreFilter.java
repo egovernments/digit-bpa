@@ -111,22 +111,22 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareUserSession(HttpSession session) {
-        /*if (session.getAttribute(CITY_CODE_KEY) == null)*/
+        //if (session.getAttribute(CITY_CODE_KEY) == null)
             cityService.cityDataAsMap().forEach(session::setAttribute);
-        /*if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)*/
+        if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
             session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationRelease);
-        /*if (session.getAttribute(TENANTID_KEY) == null)*/
+        if (session.getAttribute(TENANTID_KEY) == null)
             session.setAttribute(TENANTID_KEY, ApplicationThreadLocals.getTenantID());
-        /*if (session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)*/
+        if (session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)
             session.getServletContext().setAttribute(CDN_ATTRIB_NAME, cdnURL);
-        /*if (session.getAttribute(USERID_KEY) == null) {*/
+        if (session.getAttribute(USERID_KEY) == null) {
             Optional<Authentication> authentication = getCurrentAuthentication();
             if (authentication.isPresent() && authentication.get().getPrincipal() instanceof CurrentUser) {
                 session.setAttribute(USERID_KEY, ((CurrentUser) authentication.get().getPrincipal()).getUserId());
             } else if (!authentication.isPresent() || !(authentication.get().getPrincipal() instanceof User)) {
                 session.setAttribute(USERID_KEY, securityUtils.getCurrentUser().getId());
             }
-        //}
+        }
     }
 
     private void prepareApplicationThreadLocal(HttpSession session) {
