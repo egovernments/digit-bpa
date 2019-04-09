@@ -412,7 +412,7 @@ html body .container-fluid .right-content .main-content .services-item [class*='
 	font-family: regular;
 	background: transparent;
 	box-shadow: none;
-	border-bottom: 2px solid #e4e4e4;
+	border: 1px solid rgba(0, 0, 0, 0.87);
 	color: #333
 }
 
@@ -457,11 +457,18 @@ html body .container-fluid .right-content .main-content .services-item [class*='
 	font-family: regular;
 	font-size: 24px;
 }
-
 .padding0{
 	padding:0
 }
-
+.pagination .active > a,
+.pagination .active > span,
+.pagination .active > a:hover,
+.pagination .active > span:hover,
+.pagination .active > a:focus,
+.pagination .active > span:focus {
+  background-color: rgb(254, 122, 81);
+  border-color: rgb(254, 122, 81);
+}
 .clearfix:after {
   visibility: hidden;
   display: block;
@@ -482,6 +489,8 @@ html body .container-fluid .right-content .main-content .services-item [class*='
 
 #bpa-home-table{
 	width: 100% !important;
+	margin-bottom: 8px !important;
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12);
 }
 
 #bpa-home-table thead tr th:after{
