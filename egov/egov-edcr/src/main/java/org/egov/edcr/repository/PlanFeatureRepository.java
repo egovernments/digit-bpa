@@ -53,6 +53,7 @@ import java.util.List;
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.edcr.feature.AdditionalFeature;
 import org.egov.edcr.feature.Coverage;
+import org.egov.edcr.feature.Distance;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.PlanInfoFeature;
@@ -71,6 +72,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(Coverage.class);
         features.add(pf);
         pf = new PlanFeature(SetBackService.class);
+        features.add(pf);
+        pf = new PlanFeature(Distance.class);
         features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
