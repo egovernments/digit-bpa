@@ -111,7 +111,7 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareUserSession(HttpSession session) {
-      //  if (session.getAttribute(CITY_CODE_KEY) == null)
+        if (session.getAttribute(CITY_CODE_KEY) == null)
             cityService.cityDataAsMap().forEach(session::setAttribute);
         if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
             session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationRelease);
