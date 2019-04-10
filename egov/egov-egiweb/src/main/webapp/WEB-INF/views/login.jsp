@@ -110,6 +110,7 @@
 									title="Powered by eGovernments" width = "100" alt="" />
 							</a>
 						</div>
+						<c:set var="tenantId" value="<%=tenantId%>" />
 						<div class = "new-login-content padding0 col-md-12">
 							<div class = "login-left-cont padding0 col-md-6">
 								<span class = "f-light login-title-2 color-white">Building Plan Approvals Made <span class = "f-medium">Easy</span></span>
@@ -126,14 +127,16 @@
 											<spring:message code="lbl.stakeholder.reg.fee.pay" />
 										</div>
 									</a> --%>
-								   <a class = "login-create-link padding0 col-md-6" href="#"
-										onclick="window.open('/bpa/stakeholder/createbycitizen','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
-										<div class = "create-button col-md-12">
-											<spring:message code="lbl.bldng.create.ac" />
-										</div>
-									</a>
+									<c:if test="${tenantId == 'state' }">
+									   <a class = "login-create-link padding0 col-md-6" href="#"
+											onclick="window.open('/bpa/stakeholder/createbycitizen','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
+											<div class = "create-button col-md-12">
+												<spring:message code="lbl.bldng.create.ac" />
+											</div>
+										</a>
+									</c:if>
 								</div>
-								<c:set var="tenantId" value="<%=tenantId%>" />
+								
 								<c:if test="${tenantId == 'state' }">
 									<div class = "application-action-cont">
 										<div class="application-card bpa-card-new card">
