@@ -609,7 +609,7 @@ table.dataTable {
   float: right;
   padding: 18px;
   overflow-x: hidden;
-  width: calc(100% - 250px);
+  width: calc(100% - 250px) !important;
   padding-bottom: 40px;
 }
 .table-header {
