@@ -52,6 +52,7 @@ import java.util.List;
 
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.edcr.feature.AdditionalFeature;
+import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Distance;
 import org.egov.edcr.feature.Far;
@@ -75,11 +76,13 @@ public class PlanFeatureRepository {
         features.add(pf);
         pf = new PlanFeature(Distance.class);
         features.add(pf);
+		pf = new PlanFeature(BlockDistancesService.class);
+		features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
 		 */
 		/*
-		 * pf = new PlanFeature(BlockDistancesService.class); features.add(pf); pf = new
+		 * pf = new
 		 * PlanFeature(MeanOfAccess.class); features.add(pf);
 		 */
 		/*
