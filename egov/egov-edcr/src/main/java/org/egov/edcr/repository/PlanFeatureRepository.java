@@ -54,7 +54,7 @@ import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.edcr.feature.AdditionalFeature;
 import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Coverage;
-import org.egov.edcr.feature.Distance;
+import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.PlanInfoFeature;
@@ -74,7 +74,7 @@ public class PlanFeatureRepository {
         features.add(pf);
         pf = new PlanFeature(SetBackService.class);
         features.add(pf);
-        pf = new PlanFeature(Distance.class);
+        pf = new PlanFeature(MonumentDistance.class);
         features.add(pf);
 		pf = new PlanFeature(BlockDistancesService.class);
 		features.add(pf);

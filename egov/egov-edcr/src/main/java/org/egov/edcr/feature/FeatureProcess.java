@@ -61,21 +61,16 @@ public abstract class FeatureProcess {
 
     protected ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
     public static final String STATUS = "Status";
-
     public static final String PROVIDED = "Provided";
     public static final String LEVEL = "Level";
     public static final String OCCUPANCY = "Occupancy";
     public static final String FIELDVERIFIED = "Field Verified";
     public static final String REQUIRED = "Required";
-
+    public static final String PERMITTED = "Permitted";
     public static final String DESCRIPTION = "Description";
-
     public static final String RULE_NO = "Bye Law";
-
     public abstract Map<String, Date> getAmendments();
-
     public abstract Plan validate(Plan pl);
-
     public abstract Plan process(Plan pl);
 
     @Autowired
