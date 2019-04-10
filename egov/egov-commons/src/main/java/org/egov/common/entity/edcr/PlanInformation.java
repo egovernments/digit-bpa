@@ -100,29 +100,29 @@ public class PlanInformation implements Serializable {
 
     private transient BigDecimal noOfBeds;
 
-    //private transient Boolean nocToAbutSide = false;
+    // private transient Boolean nocToAbutSide = false;
 
     private transient String nocToAbutSideDesc = NA;
 
-    //private transient Boolean nocToAbutRear = false;
+    // private transient Boolean nocToAbutRear = false;
 
     private transient String nocToAbutRearDesc = NA;
 
     private transient Boolean openingOnSide = false;
 
-   //private transient Boolean openingOnSideBelow2mts = false;
+    // private transient Boolean openingOnSideBelow2mts = false;
 
     private transient String openingOnSideBelow2mtsDesc = NA;
 
-   //private transient Boolean openingOnSideAbove2mts = false;
+    // private transient Boolean openingOnSideAbove2mts = false;
 
     private transient String openingOnSideAbove2mtsDesc = NA;
 
-    //private transient Boolean openingOnRearBelow2mts = false;
+    // private transient Boolean openingOnRearBelow2mts = false;
 
     private transient String openingOnRearBelow2mtsDesc = NA;
 
-    //private transient Boolean openingOnRearAbove2mts = false;
+    // private transient Boolean openingOnRearAbove2mts = false;
 
     private transient String openingOnRearAbove2mtsDesc = NA;
 
@@ -150,39 +150,39 @@ public class PlanInformation implements Serializable {
     private transient String zoneWise;
 
     private transient String landUseZone;
-    
+
     private transient String leaseHoldLand;
-            
+
     private BigDecimal roadWidth = BigDecimal.ZERO;
-    
+
     private BigDecimal roadLength = BigDecimal.ZERO;
-    
+
     private String typeOfArea;
 
     private BigDecimal depthOfPlot = BigDecimal.ZERO;
-    
+
     private BigDecimal widthOfPlot = BigDecimal.ZERO;
-    
+
     private transient String buildingNearMonument = NA;
-    
-    private transient String gvtBuildingWithin200Mt = NA;
-    
+
+    private transient String buildingNearGovtBuilding = NA;
+
     private transient String nocNearMonument = NA;
-    
+
     private transient String nocNearAirport = NA;
-    
+
     private transient String nocNearDefenceAerodomes = NA;
-    
+
     private transient String nocStateEnvImpact = NA;
-    
+
     private transient String nocRailways = NA;
-    
+
     private transient String nocCollectorGvtLand = NA;
-    
+
     private transient String nocIrrigationDept = NA;
-    
+
     private transient String nocFireDept = NA;
-    
+
     public Boolean getParkingToMainBuilding() {
         return parkingToMainBuilding;
     }
@@ -503,148 +503,149 @@ public class PlanInformation implements Serializable {
         this.depthCuttingDesc = depthCuttingDesc;
     }
 
-	public String getZoneWise() {
-		return zoneWise;
+    public String getZoneWise() {
+        return zoneWise;
+    }
+
+    public void setZoneWise(String zoneWise) {
+        this.zoneWise = zoneWise;
+    }
+
+    public String getLandUseZone() {
+        return landUseZone;
+    }
+
+    public void setLandUseZone(String landUseZone) {
+        this.landUseZone = landUseZone;
+    }
+
+    public String getLeaseHoldLand() {
+        return leaseHoldLand;
+    }
+
+    public void setLeaseHoldLand(String leaseHoldLand) {
+        this.leaseHoldLand = leaseHoldLand;
+    }
+
+    public BigDecimal getRoadWidth() {
+        return roadWidth;
+    }
+
+    public void setRoadWidth(BigDecimal roadWidth) {
+        this.roadWidth = roadWidth;
+    }
+
+    public String getTypeOfArea() {
+        return typeOfArea;
+    }
+
+    public void setTypeOfArea(String typeOfArea) {
+        this.typeOfArea = typeOfArea;
+    }
+
+    public BigDecimal getDepthOfPlot() {
+        return depthOfPlot;
+    }
+
+    public void setDepthOfPlot(BigDecimal depthOfPlot) {
+        this.depthOfPlot = depthOfPlot;
+    }
+
+    public BigDecimal getWidthOfPlot() {
+        return widthOfPlot;
+    }
+
+    public void setWidthOfPlot(BigDecimal widthOfPlot) {
+        this.widthOfPlot = widthOfPlot;
+    }
+
+    public String getBuildingNearMonument() {
+        return buildingNearMonument;
+    }
+
+    public void setBuildingNearMonument(String buildingNearMonument) {
+        this.buildingNearMonument = buildingNearMonument;
+    }
+
+
+    public String getBuildingNearGovtBuilding() {
+		return buildingNearGovtBuilding;
 	}
 
-	public void setZoneWise(String zoneWise) {
-		this.zoneWise = zoneWise;
-	}
-
-	public String getLandUseZone() {
-		return landUseZone;
-	}
-
-	public void setLandUseZone(String landUseZone) {
-		this.landUseZone = landUseZone;
-	}
-
-	public String getLeaseHoldLand() {
-		return leaseHoldLand;
-	}
-
-	public void setLeaseHoldLand(String leaseHoldLand) {
-		this.leaseHoldLand = leaseHoldLand;
-	}
-
-	public BigDecimal getRoadWidth() {
-		return roadWidth;
-	}
-
-	public void setRoadWidth(BigDecimal roadWidth) {
-		this.roadWidth = roadWidth;
-	}
-
-	public String getTypeOfArea() {
-		return typeOfArea;
-	}
-
-	public void setTypeOfArea(String typeOfArea) {
-		this.typeOfArea = typeOfArea;
-	}
-
-	public BigDecimal getDepthOfPlot() {
-		return depthOfPlot;
-	}
-
-	public void setDepthOfPlot(BigDecimal depthOfPlot) {
-		this.depthOfPlot = depthOfPlot;
-	}
-
-	public BigDecimal getWidthOfPlot() {
-		return widthOfPlot;
-	}
-
-	public void setWidthOfPlot(BigDecimal widthOfPlot) {
-		this.widthOfPlot = widthOfPlot;
-	}
-
-	public String getBuildingNearMonument() {
-		return buildingNearMonument;
-	}
-
-	public void setBuildingNearMonument(String buildingNearMonument) {
-		this.buildingNearMonument = buildingNearMonument;
-	}
-
-	public String getGvtBuildingWithin200Mt() {
-		return gvtBuildingWithin200Mt;
-	}
-
-	public void setGvtBuildingWithin200Mt(String gvtBuildingWithin200Mt) {
-		this.gvtBuildingWithin200Mt = gvtBuildingWithin200Mt;
+	public void setBuildingNearGovtBuilding(String buildingNearGovtBuilding) {
+		this.buildingNearGovtBuilding = buildingNearGovtBuilding;
 	}
 
 	public String getNocNearMonument() {
-		return nocNearMonument;
-	}
+        return nocNearMonument;
+    }
 
-	public void setNocNearMonument(String nocNearMonument) {
-		this.nocNearMonument = nocNearMonument;
-	}
+    public void setNocNearMonument(String nocNearMonument) {
+        this.nocNearMonument = nocNearMonument;
+    }
 
-	public String getNocNearAirport() {
-		return nocNearAirport;
-	}
+    public String getNocNearAirport() {
+        return nocNearAirport;
+    }
 
-	public void setNocNearAirport(String nocNearAirport) {
-		this.nocNearAirport = nocNearAirport;
-	}
+    public void setNocNearAirport(String nocNearAirport) {
+        this.nocNearAirport = nocNearAirport;
+    }
 
-	public String getNocNearDefenceAerodomes() {
-		return nocNearDefenceAerodomes;
-	}
+    public String getNocNearDefenceAerodomes() {
+        return nocNearDefenceAerodomes;
+    }
 
-	public void setNocNearDefenceAerodomes(String nocNearDefenceAerodomes) {
-		this.nocNearDefenceAerodomes = nocNearDefenceAerodomes;
-	}
+    public void setNocNearDefenceAerodomes(String nocNearDefenceAerodomes) {
+        this.nocNearDefenceAerodomes = nocNearDefenceAerodomes;
+    }
 
-	public String getNocStateEnvImpact() {
-		return nocStateEnvImpact;
-	}
+    public String getNocStateEnvImpact() {
+        return nocStateEnvImpact;
+    }
 
-	public void setNocStateEnvImpact(String nocStateEnvImpact) {
-		this.nocStateEnvImpact = nocStateEnvImpact;
-	}
+    public void setNocStateEnvImpact(String nocStateEnvImpact) {
+        this.nocStateEnvImpact = nocStateEnvImpact;
+    }
 
-	public String getNocRailways() {
-		return nocRailways;
-	}
+    public String getNocRailways() {
+        return nocRailways;
+    }
 
-	public void setNocRailways(String nocRailways) {
-		this.nocRailways = nocRailways;
-	}
+    public void setNocRailways(String nocRailways) {
+        this.nocRailways = nocRailways;
+    }
 
-	public String getNocCollectorGvtLand() {
-		return nocCollectorGvtLand;
-	}
+    public String getNocCollectorGvtLand() {
+        return nocCollectorGvtLand;
+    }
 
-	public void setNocCollectorGvtLand(String nocCollectorGvtLand) {
-		this.nocCollectorGvtLand = nocCollectorGvtLand;
-	}
+    public void setNocCollectorGvtLand(String nocCollectorGvtLand) {
+        this.nocCollectorGvtLand = nocCollectorGvtLand;
+    }
 
-	public String getNocIrrigationDept() {
-		return nocIrrigationDept;
-	}
+    public String getNocIrrigationDept() {
+        return nocIrrigationDept;
+    }
 
-	public void setNocIrrigationDept(String nocIrrigationDept) {
-		this.nocIrrigationDept = nocIrrigationDept;
-	}
+    public void setNocIrrigationDept(String nocIrrigationDept) {
+        this.nocIrrigationDept = nocIrrigationDept;
+    }
 
-	public String getNocFireDept() {
-		return nocFireDept;
-	}
+    public String getNocFireDept() {
+        return nocFireDept;
+    }
 
-	public void setNocFireDept(String nocFireDept) {
-		this.nocFireDept = nocFireDept;
-	}
+    public void setNocFireDept(String nocFireDept) {
+        this.nocFireDept = nocFireDept;
+    }
 
-	public BigDecimal getRoadLength() {
-		return roadLength;
-	}
+    public BigDecimal getRoadLength() {
+        return roadLength;
+    }
 
-	public void setRoadLength(BigDecimal roadLength) {
-		this.roadLength = roadLength;
-	}
-	
+    public void setRoadLength(BigDecimal roadLength) {
+        this.roadLength = roadLength;
+    }
+
 }

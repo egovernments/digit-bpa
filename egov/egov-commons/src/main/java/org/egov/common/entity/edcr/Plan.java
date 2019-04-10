@@ -128,6 +128,7 @@ public class Plan implements Serializable {
     private List<EdcrPdfDetail> edcrPdfDetails;
 
     private transient List<BigDecimal> distancesFromMonument = new ArrayList<>();
+    private transient List<BigDecimal> distancesFromGovtBuilding = new ArrayList<>();
 
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
@@ -499,5 +500,13 @@ public class Plan implements Serializable {
     public void setDistancesFromMonument(List<BigDecimal> distancesFromMonument) {
         this.distancesFromMonument = distancesFromMonument;
     }
+
+	public List<BigDecimal> getDistancesFromGovtBuilding() {
+		return distancesFromGovtBuilding;
+	}
+
+	public void setDistancesFromGovtBuilding(List<BigDecimal> distancesFromGovtBuilding) {
+		this.distancesFromGovtBuilding = distancesFromGovtBuilding;
+	}
 
 }
