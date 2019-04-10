@@ -360,7 +360,7 @@ public class AdditionalFeature extends FeatureProcess {
 
 			if (!plinthHeights.isEmpty()) {
 				minPlinthHeight = plinthHeights.stream().reduce(BigDecimal::min).get();
-				if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) > 0) {
+				if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0) {
 					isAccepted = true;
 				}
 			}else {

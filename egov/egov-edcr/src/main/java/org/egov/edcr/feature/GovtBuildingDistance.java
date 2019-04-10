@@ -130,7 +130,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 
 					} else {
 
-						details.put(DISTANCCE, "From 100 to 300");
+						details.put(DISTANCCE, "<=200");
 						details.put(PERMITTED, "Building Height: 10mt");
 						details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
 						details.put(STATUS, Result.Not_Accepted.getResultVal());
@@ -139,7 +139,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 					}
 				}
 			} else {
-				errors.put("Distance_From_Govt_Building", "No distance is provided");
+				errors.put("Distance_From_Govt_Building", "No distance is provided from government building");
 				pl.addErrors(errors);
 			}
 		}

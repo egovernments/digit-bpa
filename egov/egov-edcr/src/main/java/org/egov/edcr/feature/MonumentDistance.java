@@ -168,7 +168,7 @@ public class MonumentDistance extends FeatureProcess {
                     }
                 }
             } else {
-                errors.put("Distance_From_Monumnet", "No distance is provided");
+                errors.put("Distance_From_Monumnet", "No distance is provided from monument");
                 pl.addErrors(errors);
             }
         }
