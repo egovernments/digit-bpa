@@ -99,76 +99,79 @@ public class MonumentDistance extends FeatureProcess {
         List<BigDecimal> distancesFromMonument = pl.getDistancesFromMonument();
         List<Block> blocks = pl.getBlocks();
         Block maxBuildingHeightBlock = new Block();
-        if (!distancesFromMonument.isEmpty()) {
 
-            minDistanceFromMonument = distancesFromMonument.stream().reduce(BigDecimal::min).get();
+        if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearMonument())
+                && "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument())) {
+            if (!distancesFromMonument.isEmpty()) {
 
-            if (StringUtils.isNotBlank(pl.getPlanInformation().getNocNearMonuments())
-                    && "YES".equalsIgnoreCase(pl.getPlanInformation().getNocNearMonuments())) {
-                details.put(DISTANCCE, ">300");
-                details.put(PERMITTED, "Permitted with NOC");
-                details.put(PROVIDED, minDistanceFromMonument + " with NOC");
-                details.put(STATUS, Result.Accepted.getResultVal());
-                scrutinyDetail.getDetail().add(details);
-                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-            } else {
+                minDistanceFromMonument = distancesFromMonument.stream().reduce(BigDecimal::min).get();
 
-                for (Block b : blocks) {
-                    if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
-                        maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
-                        maxBuildingHeightBlock = b;
-                    }
-                }
-
-                if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) > 0) {
+                if (StringUtils.isNotBlank(pl.getPlanInformation().getNocNearMonument())
+                        && "YES".equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument())) {
                     details.put(DISTANCCE, ">300");
-                    details.put(PERMITTED, "ALL");
-                    details.put(PROVIDED, minDistanceFromMonument.toString());
+                    details.put(PERMITTED, "Permitted with NOC");
+                    details.put(PROVIDED, minDistanceFromMonument + " with NOC");
                     details.put(STATUS, Result.Accepted.getResultVal());
                     scrutinyDetail.getDetail().add(details);
                     pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                 } else {
-                    if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) <= 0) {
-                        details.put(DISTANCCE, ">300");
-                        details.put(PERMITTED, "No Construction is allowed with in 100 mts from monument");
-                        details.put(PROVIDED, minDistanceFromMonument.toString());
-                        details.put(STATUS, Result.Not_Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+                    for (Block b : blocks) {
+                        if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
+                            maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
+                            maxBuildingHeightBlock = b;
+                        }
                     }
 
-                    if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) > 0
-                            && minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) <= 0) {
-                        if (maxHeightOfBuilding.compareTo(BigDecimal.valueOf(7)) <= 0
-                                && maxBuildingHeightBlock.getBuilding().getFloorsAboveGround()
-                                        .compareTo(BigDecimal.valueOf(1)) <= 0) {
-
-                            details.put(DISTANCCE, "From 100 to 300");
-                            details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
-                            details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
-                                    + maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
-                            details.put(STATUS, Result.Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-                        } else {
-
-                            details.put(DISTANCCE, "From 100 to 300");
-                            details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
-                            details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
-                                    + maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
+                    if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) > 0) {
+                        details.put(DISTANCCE, ">300");
+                        details.put(PERMITTED, "ALL");
+                        details.put(PROVIDED, minDistanceFromMonument.toString());
+                        details.put(STATUS, Result.Accepted.getResultVal());
+                        scrutinyDetail.getDetail().add(details);
+                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                    } else {
+                        if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) <= 0) {
+                            details.put(DISTANCCE, ">300");
+                            details.put(PERMITTED, "No Construction is allowed with in 100 mts from monument");
+                            details.put(PROVIDED, minDistanceFromMonument.toString());
                             details.put(STATUS, Result.Not_Accepted.getResultVal());
                             scrutinyDetail.getDetail().add(details);
                             pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                         }
+
+                        if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) > 0
+                                && minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) <= 0) {
+                            if (maxHeightOfBuilding.compareTo(BigDecimal.valueOf(7)) <= 0
+                                    && maxBuildingHeightBlock.getBuilding().getFloorsAboveGround()
+                                            .compareTo(BigDecimal.valueOf(1)) <= 0) {
+
+                                details.put(DISTANCCE, "From 100 to 300");
+                                details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
+                                details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
+                                        + maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
+                                details.put(STATUS, Result.Accepted.getResultVal());
+                                scrutinyDetail.getDetail().add(details);
+                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+                            } else {
+
+                                details.put(DISTANCCE, "From 100 to 300");
+                                details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
+                                details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
+                                        + maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
+                                details.put(STATUS, Result.Not_Accepted.getResultVal());
+                                scrutinyDetail.getDetail().add(details);
+                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                            }
+                        }
                     }
                 }
+            } else {
+                errors.put("Distance_From_Monumnet", "No distance is provided");
+                pl.addErrors(errors);
             }
-        } else {
-            errors.put("Distance_From_Monumnet", "No distance is provided");
-            pl.addErrors(errors);
         }
-
         return pl;
     }
 

@@ -163,11 +163,11 @@ public class PlanInformation implements Serializable {
     
     private BigDecimal widthOfPlot = BigDecimal.ZERO;
     
-    private transient String buildingNearMonuments = NA;
+    private transient String buildingNearMonument = NA;
     
     private transient String gvtBuildingWithin200Mt = NA;
     
-    private transient String nocNearMonuments = NA;
+    private transient String nocNearMonument = NA;
     
     private transient String nocNearAirport = NA;
     
@@ -559,12 +559,12 @@ public class PlanInformation implements Serializable {
 		this.widthOfPlot = widthOfPlot;
 	}
 
-	public String getBuildingNearMonuments() {
-		return buildingNearMonuments;
+	public String getBuildingNearMonument() {
+		return buildingNearMonument;
 	}
 
-	public void setBuildingNearMonuments(String buildingNearMonuments) {
-		this.buildingNearMonuments = buildingNearMonuments;
+	public void setBuildingNearMonument(String buildingNearMonument) {
+		this.buildingNearMonument = buildingNearMonument;
 	}
 
 	public String getGvtBuildingWithin200Mt() {
@@ -575,12 +575,12 @@ public class PlanInformation implements Serializable {
 		this.gvtBuildingWithin200Mt = gvtBuildingWithin200Mt;
 	}
 
-	public String getNocNearMonuments() {
-		return nocNearMonuments;
+	public String getNocNearMonument() {
+		return nocNearMonument;
 	}
 
-	public void setNocNearMonuments(String nocNearMonuments) {
-		this.nocNearMonuments = nocNearMonuments;
+	public void setNocNearMonument(String nocNearMonument) {
+		this.nocNearMonument = nocNearMonument;
 	}
 
 	public String getNocNearAirport() {
