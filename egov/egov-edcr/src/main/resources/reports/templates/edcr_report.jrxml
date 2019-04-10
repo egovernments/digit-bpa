@@ -1082,7 +1082,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getNocNearMonuments()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getNocNearMonument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement x="12" y="420" width="16" height="30" uuid="41df6618-b136-4128-9eef-e9cfb4c946b8"/>
@@ -1292,7 +1292,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getBuildingNearMonuments()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getBuildingNearMonument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement x="12" y="540" width="16" height="40" uuid="dc76f7c2-e44d-4674-8950-3f55f8d76414"/>
