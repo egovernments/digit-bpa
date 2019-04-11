@@ -56,6 +56,7 @@ import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.GovtBuildingDistance;
+import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.PlanInfoFeature;
@@ -81,11 +82,13 @@ public class PlanFeatureRepository {
 		features.add(pf);
 		pf = new PlanFeature(GovtBuildingDistance.class);
         features.add(pf);
+        pf = new PlanFeature(LandUse.class);
+        features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
 		 */
 		/*
-		 * pf = new
+		 * pf = ne
 		 * PlanFeature(MeanOfAccess.class); features.add(pf);
 		 */
 		/*

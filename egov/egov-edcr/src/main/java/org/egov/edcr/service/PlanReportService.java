@@ -198,11 +198,20 @@ public class PlanReportService {
 
             FastReportBuilder frb = new FastReportBuilder();
             int size = detail.getColumnHeading().keySet().size();
-            Double columnSize = 595d / size;
-            for (Integer s : detail.getColumnHeading().keySet()) {
-                ColumnHeadingDetail columnHeading = detail.getColumnHeading().get(s);
-                frb.addColumn(columnHeading.name, columnHeading.name, String.class.getName(), columnSize.intValue());
-            }
+            Double byeLawColumnSize = 40d;
+            Double statusColumnSize = 60d;
+            Double columnSize = (595d -( byeLawColumnSize + statusColumnSize)) / (size -2) ;
+			for (Integer s : detail.getColumnHeading().keySet()) {
+				ColumnHeadingDetail columnHeading = detail.getColumnHeading().get(s);
+				int columnWidth = columnSize.intValue();
+				if ("Bye Law".equalsIgnoreCase(columnHeading.name)) {
+					columnWidth = byeLawColumnSize.intValue();
+				}
+				if ("Status".equalsIgnoreCase(columnHeading.name)) {
+					columnWidth = statusColumnSize.intValue();
+				}
+				frb.addColumn(columnHeading.name, columnHeading.name, String.class.getName(), columnWidth);
+			}
             frb.setMargins(0, 0, 0, 0);
             frb.setUseFullPageWidth(true);
 
