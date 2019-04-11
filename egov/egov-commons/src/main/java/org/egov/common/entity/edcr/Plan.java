@@ -135,6 +135,7 @@ public class Plan implements Serializable {
 	private transient List<BigDecimal> distancesFromEmbankmentGanga = new ArrayList<>();
 
 	private transient List<SepticTank> septicTanks = new ArrayList<>();
+	private transient Plantation plantation;
 
 	public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
 		return canopyDistanceFromPlotBoundary;
@@ -553,6 +554,14 @@ public class Plan implements Serializable {
 
 	public void setDistancesFromEmbankmentGanga(List<BigDecimal> distancesFromEmbankmentGanga) {
 		this.distancesFromEmbankmentGanga = distancesFromEmbankmentGanga;
+	}
+
+	public Plantation getPlantation() {
+		return plantation;
+	}
+
+	public void setPlantation(Plantation plantation) {
+		this.plantation = plantation;
 	}
 
 }
