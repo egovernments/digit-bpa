@@ -854,7 +854,7 @@ $(document).ready(function() {
                 $('#isEDCRIntegrationRequire').val(response);
                 if(response) {
                     showDCRDetails();
-                    $('#applicationType').attr('readonly',true);
+                    $('#applicationType').attr('disabled', true);
                 } else {
                     hideDcrDetails();
                 }
