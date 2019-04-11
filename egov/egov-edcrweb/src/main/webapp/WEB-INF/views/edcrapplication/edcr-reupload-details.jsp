@@ -75,7 +75,7 @@
                     </div>
                 </div>
             </div>
-            <small class="error-msg"><spring:message
+            <small class="text-info view-content"><spring:message
                     code="lbl.dcr.upload.help" /></small>
         </div>
     </div>
