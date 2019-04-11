@@ -1,5 +1,7 @@
 package org.egov.edcr.constants;
 
+import java.math.BigDecimal;
+
 public class DxfFileConstants {
 
     public static final String VERT_CLEAR_OHE = "VERT_CLEAR_OHEL";
@@ -239,4 +241,6 @@ public class DxfFileConstants {
     
     public static final String AREA_TYPE = "Area Type";
     public static final String ROAD_WIDTH = "Road Width";
+    public static final String COMMERCIAL = "COMMERCIAL";
+    public static final String RULE_28 = "28";
 }
