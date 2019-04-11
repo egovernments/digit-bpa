@@ -61,6 +61,7 @@ import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.PlanInfoFeature;
 import org.egov.edcr.feature.RiverDistance;
+import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +88,8 @@ public class PlanFeatureRepository {
 		features.add(pf);
 		pf = new PlanFeature(RiverDistance.class);
 		features.add(pf);
-
+		pf = new PlanFeature(SepticTank.class);
+		features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
 		 */
