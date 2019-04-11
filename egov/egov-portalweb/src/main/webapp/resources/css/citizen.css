@@ -85,7 +85,7 @@ html body .modal.in .modal-dialog {
   right: 0;
   margin: 0; }
 html body .modal.in .modal-dialog .modal-title {
-  color: #26A69A; }
+  color: rgb(254, 122, 81); }
 html body .modal.in .modal-dialog .modal-body [class*='col-'] {
   margin: 10px 0; }
 html body .modal.in .modal-dialog .modal-body [class*='col-'] label {
@@ -469,6 +469,22 @@ html body .container-fluid .right-content .main-content .services-item [class*='
   background-color: rgb(254, 122, 81);
   border-color: rgb(254, 122, 81);
 }
+.btn-primary, .btn-primary:hover{
+	background-color: rgb(254, 122, 81);
+    border-color: rgb(254, 122, 81);
+}
+.btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: rgb(254, 122, 81);
+}
+.btn-default:hover {
+     color: #fff;
+  opacity: 0.9;
+  background-color: #FE7A51;
+  border-color: rgb(254, 122, 81);
+  outline: none;
+}
 .clearfix:after {
   visibility: hidden;
   display: block;
@@ -487,6 +503,15 @@ html body .container-fluid .right-content .main-content .services-item [class*='
 	padding-top: 20px;
 }
 
+.module-heading{
+	color: rgba(0, 0, 0, 0.87);
+    font-family: regular;
+    font-size: 24px;
+    vertical-align: top;
+    float: left;
+    padding-left: 15px;
+    line-height: 2.3;
+}
 #bpa-home-table{
 	width: 100% !important;
 	margin-bottom: 8px !important;

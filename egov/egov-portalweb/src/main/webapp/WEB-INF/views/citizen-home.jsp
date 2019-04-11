@@ -77,8 +77,7 @@
 			<div style="justify-content: flex-end;"
 				class="center-align-flex col-md-6 col-sm-5 col-xs-12 right-section">
 
-				<span class="pull-right profile-dd"><a href="/egi/logout"><i
-						class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a></span> <span
+				<span
 					class="pull-right profile-name"> <span
 					class="text hidden-sm">${userName }</span> <span><i
 						class="fa fa-caret-down" aria-hidden="true"></i></span>
@@ -90,6 +89,7 @@
 						<li><a href="javascript:void(0)"
 							onclick="jQuery('.change-password').modal('show', {backdrop: 'static'});">Change
 								Password</a></li>
+						<li><a href="/egi/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a></li>
 					</ul>
 				</span> <span class="pull-right profile-dd"> <a
 					href="http://www.egovernments.org" target="_blank"> <img
@@ -132,6 +132,8 @@
 					<div class="action-item">
 						<i class="material-icons">search</i>
 					</div>
+					<div class="module-heading">
+					</div>				
 				</div>
 				<div class="inbox-modules clearfix">
 					<div id="showServiceGroup" class = "col-md-12 clearfix">

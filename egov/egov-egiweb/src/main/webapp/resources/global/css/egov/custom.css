@@ -283,7 +283,7 @@ label.error {
 .page-container.horizontal-menu .search {
   position: fixed;
   top: 63px;
-  left: -1px;
+  left: -2px;
   z-index: 10;
   width: 250px;
   background: #fff;

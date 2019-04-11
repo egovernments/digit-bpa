@@ -204,12 +204,13 @@ $(document).ready(function(){
       inboxloadmethod();
     }
     else{
-      $('.inbox-modules').hide();
-      $('[data-services="'+module+'"]').show();
-      $('.action-bar').removeClass('hide');
+    	  $('.inbox-modules').hide();
+    	  $('.module-heading').text(module);  
+          $('[data-services="'+module+'"]').show();
+          $('.action-bar').removeClass('hide');
     }
-  })
-
+  })  
+	  
   $( window ).resize(function() {
     leftmenuheight();
     rightcontentheight();
