@@ -8,7 +8,7 @@ public class GuardRoom {
 
 	private List<Measurement> guardRooms = new ArrayList<>();
 
-	protected List<BigDecimal> cabinHeight = new ArrayList<>();
+	protected List<BigDecimal> cabinHeights = new ArrayList<>();
 
 	public List<Measurement> getGuardRooms() {
 		return guardRooms;
@@ -18,12 +18,12 @@ public class GuardRoom {
 		this.guardRooms = guardRooms;
 	}
 
-	public List<BigDecimal> getCabinHeight() {
-		return cabinHeight;
+	public List<BigDecimal> getCabinHeights() {
+		return cabinHeights;
 	}
 
-	public void setCabinHeight(List<BigDecimal> cabinHeight) {
-		this.cabinHeight = cabinHeight;
+	public void setCabinHeights(List<BigDecimal> cabinHeights) {
+		this.cabinHeights = cabinHeights;
 	}
 
 }

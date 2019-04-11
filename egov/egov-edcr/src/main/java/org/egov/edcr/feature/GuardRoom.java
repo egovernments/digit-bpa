@@ -102,7 +102,7 @@ public class GuardRoom extends FeatureProcess {
 			List<BigDecimal> atreaList = pl.getGuardRoom().getGuardRooms().stream().map(Measurement::getArea)
 					.collect(Collectors.toList());
 
-			List<BigDecimal> cabinHeightList = pl.getGuardRoom().getCabinHeight();
+			List<BigDecimal> cabinHeightList = pl.getGuardRoom().getCabinHeights();
 
 			minHeight = heightList.stream().reduce(BigDecimal::min).get();
 			minWidth = widthList.stream().reduce(BigDecimal::min).get();
