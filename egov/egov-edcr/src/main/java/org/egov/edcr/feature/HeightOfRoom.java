@@ -47,6 +47,19 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_AC_ROOM_BCEFHI_OCCUPANCIES;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_ASSEMBLY_AC_HALL;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_ASSEMBLY_ROOM;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_CAR_AND_TWO_WHEELER_PARKING_ROOM;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_GENERALAC_STORE_TOILET_LAMBER_CELLAR_ROOM;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_HEAD_ROOM_BENEATH_OR_ABOVE_BALCONY;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_HEAD_ROOM_IN_GENERAL_AC_ROOM_IN_ASSEMBLY_OCCUPANCY;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_LAB_ENTRANCE_HALL_CANTEEN_CLOAK_ROOM;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_MEZZANINE_HEAD_ROOM;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_NORMAL_ROOM_BCEFHI_OCCUPANCIES;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_STORE_TOILET_ROOM_IN_INDUSTRIES;
+import static org.egov.edcr.constants.DxfFileConstants.COLOR_KEY_WORK_ROOM_UNDER_OCCUPANCY_G;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +77,6 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.Room;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.stereotype.Service;
@@ -120,16 +132,15 @@ public class HeightOfRoom extends FeatureProcess {
                     scrutinyDetail.addColumnHeading(4, REQUIRED);
                     scrutinyDetail.addColumnHeading(5, PROVIDED);
                     scrutinyDetail.addColumnHeading(6, STATUS);
-                    List<Integer> colorCodesForExemption = getColorCodesListForExemption();
-                    if (pl.getPlot() != null) {
-                        if (ProcessHelper.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)) {
-                            continue blk;
-                        }
+                    List<Integer> colorCodesForExemption = getColorCodesListForExemption(pl);
+                    if (pl.getPlot() != null
+                            && ProcessHelper.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)) {
+                        continue blk;
                     }
                     scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Height Of Room");
                     for (Floor floor : block.getBuilding().getFloors()) {
                         if (!floor.getHabitableRooms().isEmpty()) {
-                            List<Integer> colorCodesList = floor.getHabitableRooms().stream().map(room -> room.getColorCode())
+                            List<Integer> colorCodesList = floor.getHabitableRooms().stream().map(Room::getColorCode)
                                     .collect(Collectors.toList());
                             Set<Integer> coloursUniqueSet = new HashSet<>(colorCodesList);
                             for (Integer colorCode : coloursUniqueSet) {
@@ -137,62 +148,75 @@ public class HeightOfRoom extends FeatureProcess {
                                 String subRule = null;
                                 String subRuleDesc = null;
                                 List<BigDecimal> distancesList = new ArrayList<>();
+
                                 for (Room room : floor.getHabitableRooms()) {
                                     if (room.getColorCode() == colorCode) {
-                                        if (room.getColorCode() == DxfFileConstants.MEZZANINE_HEAD_ROOM_COLOR_CODE) {
+                                        if (room.getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                .get(COLOR_KEY_MEZZANINE_HEAD_ROOM)) {
                                             minimumHeight = MINIMUM_HEIGHT_2_2;
                                             subRule = SUBRULE_35_2;
                                             subRuleDesc = SUBRULE_35_2_DESC;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.NORMAL_ROOM_BCEFHI_OCCUPANCIES_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_NORMAL_ROOM_BCEFHI_OCCUPANCIES)) {
                                             minimumHeight = MINIMUM_HEIGHT_3;
                                             subRule = SUBRULE_36;
                                             subRuleDesc = SUBRULE_36_DESC_NORMAL_ROOMS;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.AC_ROOM_BCEFHI_OCCUPANCIES_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_AC_ROOM_BCEFHI_OCCUPANCIES)) {
                                             minimumHeight = MINIMUM_HEIGHT_2_4;
                                             subRule = SUBRULE_36;
                                             subRuleDesc = SUBRULE_36_DESC_AC_ROOMS;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.CAR_AND_TWO_WHEELER_PARKING_ROOM_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_CAR_AND_TWO_WHEELER_PARKING_ROOM)) {
                                             minimumHeight = MINIMUM_HEIGHT_2_2;
                                             subRule = SUBRULE_36;
                                             subRuleDesc = SUBRULE_36_DESC_PARKING_ROOMS;
-                                        } else if (room.getColorCode() == DxfFileConstants.ASSEMBLY_ROOM_COLOR_CODE) {
+                                        } else if (room.getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                .get(COLOR_KEY_ASSEMBLY_ROOM)) {
                                             minimumHeight = MINIMUM_HEIGHT_4;
                                             subRule = SUBRULE_55_3;
                                             subRuleDesc = SUBRULE_55_3_DESC_ASSEMBLY_ROOMS;
-                                        } else if (room.getColorCode() == DxfFileConstants.ASSEMBLY_AC_HALL_COLOR_CODE) {
+                                        } else if (room.getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                .get(COLOR_KEY_ASSEMBLY_AC_HALL)) {
                                             minimumHeight = MINIMUM_HEIGHT_3;
                                             subRule = SUBRULE_55_3;
                                             subRuleDesc = SUBRULE_55_3_DESC_ASSEMBLY_AC_ROOMS;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.HEAD_ROOM_BENEATH_OR_ABOVE_BALCONY_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_HEAD_ROOM_BENEATH_OR_ABOVE_BALCONY)) {
                                             minimumHeight = MINIMUM_HEIGHT_3;
                                             subRule = SUBRULE_55_4;
                                             subRuleDesc = SUBRULE_55_4_DESC;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.HEAD_ROOM_IN_GENERAL_AC_ROOM_IN_ASSEMBLY_OCCUPANCY_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_HEAD_ROOM_IN_GENERAL_AC_ROOM_IN_ASSEMBLY_OCCUPANCY)) {
                                             minimumHeight = MINIMUM_HEIGHT_2_4;
                                             subRule = SUBRULE_55_5;
                                             subRuleDesc = SUBRULE_55_5_DESC;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.GENERALAC_STORE_TOILET_LAMBER_CELLAR_ROOM_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_GENERALAC_STORE_TOILET_LAMBER_CELLAR_ROOM)) {
                                             minimumHeight = MINIMUM_HEIGHT_2_4;
                                             subRule = SUBRULE_55_6;
                                             subRuleDesc = SUBRULE_55_6_DESC;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.WORK_ROOM_UNDER_OCCUPANCY_G_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_WORK_ROOM_UNDER_OCCUPANCY_G)) {
                                             minimumHeight = MINIMUM_HEIGHT_3_6;
                                             subRule = SUBRULE_55_7;
                                             subRuleDesc = SUBRULE_55_7_DESC;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.LAB_ENTRANCE_HALL_CANTEEN_CLOAK_ROOM_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_LAB_ENTRANCE_HALL_CANTEEN_CLOAK_ROOM)) {
                                             minimumHeight = MINIMUM_HEIGHT_3;
                                             subRule = SUBRULE_55_8;
                                             subRuleDesc = SUBRULE_55_8_DESC;
                                         } else if (room
-                                                .getColorCode() == DxfFileConstants.STORE_TOILET_ROOM_IN_INDUSTRIES_COLOR_CODE) {
+                                                .getColorCode() == pl.getSubFeatureColorCodesMaster()
+                                                        .get(COLOR_KEY_STORE_TOILET_ROOM_IN_INDUSTRIES)) {
                                             minimumHeight = MINIMUM_HEIGHT_2_4;
                                             subRule = SUBRULE_55_9;
                                             subRuleDesc = SUBRULE_55_9_DESC;
@@ -246,12 +270,12 @@ public class HeightOfRoom extends FeatureProcess {
 
     }
 
-    private List<Integer> getColorCodesListForExemption() {
+    private List<Integer> getColorCodesListForExemption(Plan pl) {
         List<Integer> colorCodesForExemption = new ArrayList<>();
-        colorCodesForExemption.add(DxfFileConstants.MEZZANINE_HEAD_ROOM_COLOR_CODE);
-        colorCodesForExemption.add(DxfFileConstants.NORMAL_ROOM_BCEFHI_OCCUPANCIES_COLOR_CODE);
-        colorCodesForExemption.add(DxfFileConstants.AC_ROOM_BCEFHI_OCCUPANCIES_COLOR_CODE);
-        colorCodesForExemption.add(DxfFileConstants.CAR_AND_TWO_WHEELER_PARKING_ROOM_COLOR_CODE);
+        colorCodesForExemption.add(pl.getSubFeatureColorCodesMaster().get(COLOR_KEY_MEZZANINE_HEAD_ROOM));
+        colorCodesForExemption.add(pl.getSubFeatureColorCodesMaster().get(COLOR_KEY_NORMAL_ROOM_BCEFHI_OCCUPANCIES));
+        colorCodesForExemption.add(pl.getSubFeatureColorCodesMaster().get(COLOR_KEY_AC_ROOM_BCEFHI_OCCUPANCIES));
+        colorCodesForExemption.add(pl.getSubFeatureColorCodesMaster().get(COLOR_KEY_CAR_AND_TWO_WHEELER_PARKING_ROOM));
         return colorCodesForExemption;
     }
 

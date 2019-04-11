@@ -388,7 +388,7 @@ $(document).ready(
                     var occupancy = floorObj.occupancies[j];
                     // Will auto populate floor details in proposed building
                     if(occupancy.builtUpArea && occupancy.floorArea) {
-                        addFloorDetailsIntoTable(blkIdx, floorIdx, $(tableId+" tbody tr").length, floorObj.name, floorObj.number, subOccupancyResponseByName[occupancy.type],occupancyResponseByName[occupancy.type],occupancy.builtUpArea, occupancy.floorArea, occupancy.carpetArea);
+                        addFloorDetailsIntoTable(blkIdx, floorIdx, $(tableId+" tbody tr").length, floorObj.name, floorObj.number, subOccupancyResponseByName[occupancy.typeHelper.subtype.name],occupancyResponseByName[occupancy.typeHelper.type.name],occupancy.builtUpArea, occupancy.floorArea, occupancy.carpetArea);
                         floorIdx++;
                     }
                 }
@@ -404,7 +404,7 @@ $(document).ready(
                     var occupancy = floorObj.occupancies[j];
                     // Will auto populate floor details in existing building
                     if(occupancy.existingBuiltUpArea && occupancy.existingFloorArea) {
-                        addExistBldgFloorDetailsIntoTable(blkIdx, floorIdx, $('.existingBuildingAreaDetails'+blkIdx+' tbody tr').length, floorObj.name, floorObj.number, subOccupancyResponseByName[occupancy.type],occupancyResponseByName[occupancy.type],occupancy.existingBuiltUpArea, occupancy.existingFloorArea, occupancy.existingCarpetArea);
+                        addExistBldgFloorDetailsIntoTable(blkIdx, floorIdx, $('.existingBuildingAreaDetails'+blkIdx+' tbody tr').length, floorObj.name, floorObj.number, subOccupancyResponseByName[occupancy.typeHelper.subtype.name],occupancyResponseByName[occupancy.typeHelper.type.name],occupancy.existingBuiltUpArea, occupancy.existingFloorArea, occupancy.existingCarpetArea);
                         floorIdx++;
                     }
                 }
@@ -520,7 +520,7 @@ $(document).ready(
                             type: "GET",
                             url: '/bpa/occupancy/sub-usages/',
                             data: {
-                                occupancy: occupancy.type
+                                occupancy: occupancy.typeHelper.type.name
                             },
                             contentType: 'application/json; charset=utf-8',
                             success: function (response) {
@@ -660,7 +660,7 @@ $(document).ready(
 	                                    $.each(response.plan.occupancies, function(index, occupancy) {
 	                                        if(response.plan.planInformation.roadWidth < 12 && occupancy.type == 'Industrial')
                                                bootbox.alert('Road width cannot be less than 12m for industrial occupancy');
-	                                    	occupancies.push(occupancy.type);
+	                                    	occupancies.push(occupancy.typeHelper.type.name);
 	                                    });
 	                                    
 	                                    $('[name=permitOccupanciesTemp] option').filter(function () {
@@ -678,21 +678,15 @@ $(document).ready(
                                      }
                                     
                                     setProposedBuildingDetailFromEdcrs(response.plan);
-                                    var occupancy = "";
                                     
-
+                                    //Get application type and set to application
+                                    var occupancy = "";
                                 	if (response.plan.occupancies.length == 1) {
-                                    occupancy = response.plan.occupancies[0].type;    
+                                		occupancy = response.plan.occupancies[0].typeHelper.type.name;    
+                                	} else {
+                                		if(response.plan.virtualBuilding)
+                                			occupancy=response.plan.virtualBuilding.mostRestrictiveFarHelper.type.name;
                                 	}
-                                	else {
-                                		$.each(response.plan.occupancies, function(index, occupancy){
-                                			if(occupancy.type=='Industrial')
-                                				occupancy=occupancy.type;
-                                			else
-                                				occupancy='Mixed';
-                                		});
-                                	}
-                                	
                                     var area =response.plotArea.toFixed(2);
                                     getApplicationType(area, response.plan.blocks[0].building.buildingHeight,occupancy);
 

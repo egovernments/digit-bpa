@@ -1,9 +1,22 @@
 package org.egov.edcr.constants;
 
-import java.math.BigDecimal;
-
 public class DxfFileConstants {
 
+    //occupancies code
+    public static final String A = "A"; //Residential
+    public static final String B = "B"; //Educational
+    public static final String C = "C"; //Medical/Hospital
+    public static final String D = "D"; //Assembly
+    public static final String E = "E"; //Office/Business
+    public static final String F = "F"; //Mercantile / Commercial
+    public static final String G = "G"; //Industrial
+    public static final String H = "H"; //Storage
+    public static final String I = "I"; //Hazardous
+    
+    //sub occupancies code
+    public static final String A_R = "A-R"; //Single family Residential
+    public static final String A_AF = "A-AF"; //Apartment/Flat
+    
     public static final String VERT_CLEAR_OHE = "VERT_CLEAR_OHEL";
     public static final String REAR_YARD = "REAR_YARD";
     public static final String BUILDING_FOOT_PRINT = "BLDG_FOOT_PRINT";

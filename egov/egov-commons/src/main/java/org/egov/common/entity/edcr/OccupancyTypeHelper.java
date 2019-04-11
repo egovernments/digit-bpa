@@ -48,6 +48,7 @@
 package org.egov.common.entity.edcr;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 
@@ -121,4 +122,18 @@ public class OccupancyTypeHelper implements Serializable {
         return serialVersionUID;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof OccupancyTypeHelper))
+            return false;
+        final OccupancyTypeHelper that = (OccupancyTypeHelper) other;
+        return that.type != null && Objects.equals(type.getCode(), that.type.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type.getCode());
+    }
 }

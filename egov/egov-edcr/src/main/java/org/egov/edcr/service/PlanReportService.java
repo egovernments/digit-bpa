@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,6 @@ import org.egov.common.entity.edcr.DcrReportPlanDetail;
 import org.egov.common.entity.edcr.ElectricLine;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -201,17 +199,17 @@ public class PlanReportService {
             Double byeLawColumnSize = 40d;
             Double statusColumnSize = 60d;
             Double columnSize = (595d -( byeLawColumnSize + statusColumnSize)) / (size -2) ;
-			for (Integer s : detail.getColumnHeading().keySet()) {
-				ColumnHeadingDetail columnHeading = detail.getColumnHeading().get(s);
-				int columnWidth = columnSize.intValue();
-				if ("Bye Law".equalsIgnoreCase(columnHeading.name)) {
-					columnWidth = byeLawColumnSize.intValue();
-				}
-				if ("Status".equalsIgnoreCase(columnHeading.name)) {
-					columnWidth = statusColumnSize.intValue();
-				}
-				frb.addColumn(columnHeading.name, columnHeading.name, String.class.getName(), columnWidth);
-			}
+            for (Integer s : detail.getColumnHeading().keySet()) {
+                ColumnHeadingDetail columnHeading = detail.getColumnHeading().get(s);
+                int columnWidth = columnSize.intValue();
+                if ("Bye Law".equalsIgnoreCase(columnHeading.name)) {
+                    columnWidth = byeLawColumnSize.intValue();
+                }
+                if ("Status".equalsIgnoreCase(columnHeading.name)) {
+                    columnWidth = statusColumnSize.intValue();
+                }
+                frb.addColumn(columnHeading.name, columnHeading.name, String.class.getName(), columnWidth);
+            }
             frb.setMargins(0, 0, 0, 0);
             frb.setUseFullPageWidth(true);
 
@@ -527,18 +525,10 @@ public class PlanReportService {
                 : "NA";
         String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
             
-        if (plan.getVirtualBuilding() != null && plan.getVirtualBuilding().getOccupancies() != null
-                && !plan.getVirtualBuilding().getOccupancies().isEmpty()) {
-            EnumSet<OccupancyType> occupancies = plan.getVirtualBuilding().getOccupancies();
-
-            StringBuffer occupancyList = new StringBuffer();
-
-            for (OccupancyType occupancyType : occupancies) {
-                occupancyList = occupancyList.append(occupancyType.getOccupancyTypeVal()).append(", ");
-            }
-
-            plan.getPlanInformation().setOccupancy(occupancyList.substring(0, occupancyList.length() - 2).toString());
-
+        if (plan.getVirtualBuilding() != null && !plan.getVirtualBuilding().getOccupancyTypes().isEmpty()) {
+            List<String> occupancies = new ArrayList<>();
+            plan.getVirtualBuilding().getOccupancyTypes().forEach(occ -> occupancies.add(occ.getType().getName()));
+            plan.getPlanInformation().setOccupancy(occupancies.stream().map(String::new).collect(Collectors.joining(",")));
         }
         boolean reportStatus = false;
         boolean finalReportStatus = true;
@@ -868,10 +858,15 @@ public class PlanReportService {
                             if (!occupancies.isEmpty()) {
 
                                 for (Occupancy occupancy : occupancies) {
+                                    String occupancyName;
+                                    if(occupancy.getTypeHelper().getSubtype() != null)
+                                        occupancyName = occupancy.getTypeHelper().getSubtype().getName();
+                                    else
+                                        occupancyName = occupancy.getTypeHelper().getType().getName();
                                     DcrReportFloorDetail dcrReportFloorDetail = new DcrReportFloorDetail();
                                     dcrReportFloorDetail
                                             .setFloorNo(floor.getTerrace() ? "Terrace" : floor.getNumber().toString());
-                                    dcrReportFloorDetail.setOccupancy(occupancy.getType().getOccupancyType());
+                                    dcrReportFloorDetail.setOccupancy(occupancyName);
                                     dcrReportFloorDetail.setBuiltUpArea(
                                             occupancy.getExistingBuiltUpArea().compareTo(BigDecimal.ZERO) > 0
                                                     ? occupancy.getBuiltUpArea()
@@ -915,7 +910,7 @@ public class PlanReportService {
 
         List<Block> blocks = plan.getBlocks();
 
-        if (blocks.size() > 0) {
+        if (!blocks.isEmpty()) {
 
             for (Block block : blocks) {
 
@@ -937,12 +932,17 @@ public class PlanReportService {
                             if (!occupancies.isEmpty()) {
 
                                 for (Occupancy occupancy : occupancies) {
+                                    String occupancyName;
+                                    if(occupancy.getTypeHelper().getSubtype() != null)
+                                        occupancyName = occupancy.getTypeHelper().getSubtype().getName();
+                                    else
+                                        occupancyName = occupancy.getTypeHelper().getType().getName();
                                     if (occupancy != null
                                             && occupancy.getExistingBuiltUpArea().compareTo(BigDecimal.ZERO) > 0) {
                                         DcrReportFloorDetail dcrReportFloorDetail = new DcrReportFloorDetail();
                                         dcrReportFloorDetail.setFloorNo(
                                                 floor.getTerrace() ? "Terrace" : floor.getNumber().toString());
-                                        dcrReportFloorDetail.setOccupancy(occupancy.getType().getOccupancyType());
+                                        dcrReportFloorDetail.setOccupancy(occupancyName);
                                         dcrReportFloorDetail.setBuiltUpArea(occupancy.getExistingBuiltUpArea());
                                         dcrReportFloorDetail.setFloorArea(occupancy.getExistingFloorArea());
                                         dcrReportFloorDetail.setCarpetArea(occupancy.getExistingCarpetArea());
