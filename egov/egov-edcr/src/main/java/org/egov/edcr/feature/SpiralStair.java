@@ -62,13 +62,12 @@ import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.common.entity.edcr.SpiralStair;
 import org.egov.edcr.utility.Util;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SpiralStairService extends FeatureProcess {
-	private static final Logger LOG = Logger.getLogger(SpiralStairService.class);
+public class SpiralStair extends FeatureProcess {
+	private static final Logger LOG = Logger.getLogger(SpiralStair.class);
 	private static final String FLOOR = "Floor";
 	private static final String EXPECTED_DIAMETER = "1.50";
 	private static final String RULE114_7 = "114(6)";
@@ -101,12 +100,12 @@ public class SpiralStairService extends FeatureProcess {
 					Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
 							isTypicalRepititiveFloor);
 
-					List<SpiralStair> spiralStairs = floor.getSpiralStairs();
+					List<org.egov.common.entity.edcr.SpiralStair> spiralStairs = floor.getSpiralStairs();
 
 					if (spiralStairs.size() != 0) {
 						boolean valid = false;
 
-						for (SpiralStair spiralStair : spiralStairs) {
+						for (org.egov.common.entity.edcr.SpiralStair spiralStair : spiralStairs) {
 							List<Circle> spiralPolyLines = spiralStair.getCircles();
 
 							if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {

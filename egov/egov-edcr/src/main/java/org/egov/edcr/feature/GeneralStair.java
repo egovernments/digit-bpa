@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.GeneralStair;
 import org.egov.common.entity.edcr.Line;
 import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
@@ -24,8 +23,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GeneralStairService extends FeatureProcess {
-	private static final Logger LOG = Logger.getLogger(GeneralStairService.class);
+public class GeneralStair extends FeatureProcess {
+	private static final Logger LOG = Logger.getLogger(GeneralStair.class);
 	private static final String EXPECTED_WIDTH = "1.2";
 	private static final String EXPECTED_TREAD = "0.3";
 	private static final String EXPECTED_LINE_LENGTH = "0.75";
@@ -110,7 +109,7 @@ public class GeneralStairService extends FeatureProcess {
 					Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
 							isTypicalRepititiveFloor);
 
-					List<GeneralStair> generalStairs = floor.getGeneralStairs();
+					List<org.egov.common.entity.edcr.GeneralStair> generalStairs = floor.getGeneralStairs();
 
 					generalStairCount = Util
 							.roundOffTwoDecimal(generalStairCount.add(BigDecimal.valueOf(generalStairs.size())));
@@ -148,7 +147,7 @@ public class GeneralStairService extends FeatureProcess {
 							}
 						}
 
-						for (GeneralStair generalStair : generalStairs) {
+						for (org.egov.common.entity.edcr.GeneralStair generalStair : generalStairs) {
 
 							List<Measurement> flightPolyLines = generalStair.getFlightPolyLines();
 							List<BigDecimal> flightLengths = generalStair.getLengthOfFlights();

@@ -59,7 +59,6 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.FireStair;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Line;
 import org.egov.common.entity.edcr.Measurement;
@@ -76,8 +75,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FireStairService extends FeatureProcess {
-	private static final Logger LOG = Logger.getLogger(FireStairService.class);
+public class FireStair extends FeatureProcess {
+	private static final Logger LOG = Logger.getLogger(FireStair.class);
 	private static final String FLOOR = "Floor";
 	private static final String RULE114 = "114";
 	private static final String RULE42 = "42";
@@ -178,13 +177,13 @@ public class FireStairService extends FeatureProcess {
 					Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
 							isTypicalRepititiveFloor);
 
-					List<FireStair> fireStairs = floor.getFireStairs();
+					List<org.egov.common.entity.edcr.FireStair> fireStairs = floor.getFireStairs();
 					fireStairCount = fireStairCount + fireStairs.size();
 					spiralStairCount = spiralStairCount + floor.getSpiralStairs().size();
 
 					if (fireStairs.size() != 0) {
 
-						for (FireStair fireStair : fireStairs) {
+						for (org.egov.common.entity.edcr.FireStair fireStair : fireStairs) {
 							List<Measurement> flightPolyLines = fireStair.getFlightPolyLines();
 							List<BigDecimal> flightLengths = fireStair.getLengthOfFlights();
 							List<BigDecimal> flightWidths = fireStair.getWidthOfFlights();
