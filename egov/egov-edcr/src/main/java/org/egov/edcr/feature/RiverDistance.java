@@ -125,6 +125,8 @@ public class RiverDistance extends FeatureProcess {
 
 				}
 			} else if (!distancesFromEmbankmentGanga.isEmpty()) {
+				details = new HashMap<>();
+				details.put(RULE_NO, RULE_22);
 
 				minDistanceFromEmbankmentGanga = distancesFromEmbankmentGanga.stream().reduce(BigDecimal::min).get();
 
@@ -145,6 +147,8 @@ public class RiverDistance extends FeatureProcess {
 
 				}
 			} else if (!distancesFromRiverGangaEdge.isEmpty()) {
+				details = new HashMap<>();
+				details.put(RULE_NO, RULE_22);
 
 				minDistanceFromRiverGangaEdge = distancesFromRiverGangaEdge.stream().reduce(BigDecimal::min).get();
 
@@ -169,6 +173,8 @@ public class RiverDistance extends FeatureProcess {
 			if (!distancesFromRiverNonGanga.isEmpty()) {
 
 				minDistanceFromRiverNonGanga = distancesFromRiverNonGanga.stream().reduce(BigDecimal::min).get();
+				details = new HashMap<>();
+				details.put(RULE_NO, RULE_22);
 
 				if (minDistanceFromRiverNonGanga.compareTo(BigDecimal.valueOf(100)) > 0) {
 					details.put(DESCRIPTION, RIVER_NON_GANGA_DESCRIPTION);
