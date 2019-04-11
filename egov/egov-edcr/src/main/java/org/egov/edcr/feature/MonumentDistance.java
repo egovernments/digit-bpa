@@ -65,119 +65,116 @@ import org.springframework.stereotype.Service;
 @Service
 public class MonumentDistance extends FeatureProcess {
 
-    private static final Logger LOG = Logger.getLogger(MonumentDistance.class);
-    private static final String RULE_20 = "20";
-    public static final String MONUMENT_DESCRIPTION = "Distancce from monument";
-    public static final String MIN_DISTANCE_FROM_MONUMENTT_DESC = "Minimum distancce fcrom monument";
-    public static final String DISTANCCE = "Distancce";
+	private static final Logger LOG = Logger.getLogger(MonumentDistance.class);
+	private static final String RULE_20 = "20";
+	public static final String MONUMENT_DESCRIPTION = "Distancce from monument";
 
-    @Override
-    public Plan validate(Plan pl) {
+	@Override
+	public Plan validate(Plan pl) {
 
-        return pl;
-    }
+		return pl;
+	}
 
-    @Override
-    public Plan process(Plan pl) {
+	@Override
+	public Plan process(Plan pl) {
 
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Monument Distance");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, DISTANCCE);
-        scrutinyDetail.addColumnHeading(4, PERMITTED);
-        scrutinyDetail.addColumnHeading(5, PROVIDED);
-        scrutinyDetail.addColumnHeading(6, STATUS);
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey("Common_Monument Distance");
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, DISTANCCE);
+		scrutinyDetail.addColumnHeading(4, PERMITTED);
+		scrutinyDetail.addColumnHeading(5, PROVIDED);
+		scrutinyDetail.addColumnHeading(6, STATUS);
 
-        HashMap<String, String> errors = new HashMap<>();
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_20);
-        details.put(DESCRIPTION, MONUMENT_DESCRIPTION);
+		HashMap<String, String> errors = new HashMap<>();
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, RULE_20);
+		details.put(DESCRIPTION, MONUMENT_DESCRIPTION);
 
-        BigDecimal minDistanceFromMonument = BigDecimal.ZERO;
-        BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-        List<BigDecimal> distancesFromMonument = pl.getDistancesFromMonument();
-        List<Block> blocks = pl.getBlocks();
-        Block maxBuildingHeightBlock = new Block();
+		BigDecimal minDistanceFromMonument = BigDecimal.ZERO;
+		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
+		List<BigDecimal> distancesFromMonument = pl.getDistancesFromMonument();
+		List<Block> blocks = pl.getBlocks();
+		Block maxBuildingHeightBlock = new Block();
 
-        if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearMonument())
-                && "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument())) {
-            if (!distancesFromMonument.isEmpty()) {
+		if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearMonument())
+				&& "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument())) {
+			if (!distancesFromMonument.isEmpty()) {
 
-                minDistanceFromMonument = distancesFromMonument.stream().reduce(BigDecimal::min).get();
+				minDistanceFromMonument = distancesFromMonument.stream().reduce(BigDecimal::min).get();
 
-                if (StringUtils.isNotBlank(pl.getPlanInformation().getNocNearMonument())
-                        && "YES".equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument())) {
-                    details.put(DISTANCCE, ">300");
-                    details.put(PERMITTED, "Permitted with NOC");
-                    details.put(PROVIDED, minDistanceFromMonument + " with NOC");
-                    details.put(STATUS, Result.Accepted.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                } else {
+				if (StringUtils.isNotBlank(pl.getPlanInformation().getNocNearMonument())
+						&& "YES".equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument())) {
+					details.put(DISTANCCE, ">300");
+					details.put(PERMITTED, "Permitted with NOC");
+					details.put(PROVIDED, minDistanceFromMonument + " with NOC");
+					details.put(STATUS, Result.Accepted.getResultVal());
+					scrutinyDetail.getDetail().add(details);
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				} else {
 
-                    for (Block b : blocks) {
-                        if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
-                            maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
-                            maxBuildingHeightBlock = b;
-                        }
-                    }
+					for (Block b : blocks) {
+						if (b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
+							maxHeightOfBuilding = b.getBuilding().getBuildingHeight();
+							maxBuildingHeightBlock = b;
+						}
+					}
 
-                    if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) > 0) {
-                        details.put(DISTANCCE, ">300");
-                        details.put(PERMITTED, "ALL");
-                        details.put(PROVIDED, minDistanceFromMonument.toString());
-                        details.put(STATUS, Result.Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                    } else {
-                        if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) <= 0) {
-                            details.put(DISTANCCE, ">300");
-                            details.put(PERMITTED, "No Construction is allowed with in 100 mts from monument");
-                            details.put(PROVIDED, minDistanceFromMonument.toString());
-                            details.put(STATUS, Result.Not_Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                        }
+					if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) > 0) {
+						details.put(DISTANCCE, ">300");
+						details.put(PERMITTED, "ALL");
+						details.put(PROVIDED, minDistanceFromMonument.toString());
+						details.put(STATUS, Result.Accepted.getResultVal());
+						scrutinyDetail.getDetail().add(details);
+						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					} else {
+						if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) <= 0) {
+							details.put(DISTANCCE, ">300");
+							details.put(PERMITTED, "No Construction is allowed with in 100 mts from monument");
+							details.put(PROVIDED, minDistanceFromMonument.toString());
+							details.put(STATUS, Result.Not_Accepted.getResultVal());
+							scrutinyDetail.getDetail().add(details);
+							pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+						}
 
-                        if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) > 0
-                                && minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) <= 0) {
-                            if (maxHeightOfBuilding.compareTo(BigDecimal.valueOf(7)) <= 0
-                                    && maxBuildingHeightBlock.getBuilding().getFloorsAboveGround()
-                                            .compareTo(BigDecimal.valueOf(1)) <= 0) {
+						if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) > 0
+								&& minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) <= 0) {
+							if (maxHeightOfBuilding.compareTo(BigDecimal.valueOf(7)) <= 0 && maxBuildingHeightBlock
+									.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(1)) <= 0) {
 
-                                details.put(DISTANCCE, "From 100 to 300");
-                                details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
-                                details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
-                                        + maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
-                                details.put(STATUS, Result.Accepted.getResultVal());
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+								details.put(DISTANCCE, "From 100 to 300");
+								details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
+								details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
+										+ maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
+								details.put(STATUS, Result.Accepted.getResultVal());
+								scrutinyDetail.getDetail().add(details);
+								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
-                            } else {
+							} else {
 
-                                details.put(DISTANCCE, "From 100 to 300");
-                                details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
-                                details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
-                                        + maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
-                                details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            }
-                        }
-                    }
-                }
-            } else {
-                errors.put("Distance_From_Monumnet", "No distance is provided from monument");
-                pl.addErrors(errors);
-            }
-        }
-        return pl;
-    }
+								details.put(DISTANCCE, "From 100 to 300");
+								details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
+								details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
+										+ maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
+								details.put(STATUS, Result.Not_Accepted.getResultVal());
+								scrutinyDetail.getDetail().add(details);
+								pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+							}
+						}
+					}
+				}
+			} else {
+				errors.put("Distance_From_Monumnet", "No distance is provided from monument");
+				pl.addErrors(errors);
+			}
+		}
+		return pl;
+	}
 
-    @Override
-    public Map<String, Date> getAmendments() {
-        return new LinkedHashMap<>();
-    }
+	@Override
+	public Map<String, Date> getAmendments() {
+		return new LinkedHashMap<>();
+	}
 
 }

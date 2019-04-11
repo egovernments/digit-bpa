@@ -68,8 +68,6 @@ public class GovtBuildingDistance extends FeatureProcess {
 	private static final Logger LOG = Logger.getLogger(GovtBuildingDistance.class);
 	private static final String RULE_21 = "21";
 	public static final String GOVTBUILDING_DESCRIPTION = "Distancce from Government Building";
-	public static final String MIN_DISTANCE_FROM_GOVTBUILDING_DESC = "Minimum distancce fcrom government building";
-	public static final String DISTANCCE = "Distancce";
 
 	@Override
 	public Plan validate(Plan pl) {

@@ -69,6 +69,7 @@ public abstract class FeatureProcess {
     public static final String PERMITTED = "Permitted";
     public static final String DESCRIPTION = "Description";
     public static final String RULE_NO = "Bye Law";
+    public static final String DISTANCCE = "Distancce";
     public abstract Map<String, Date> getAmendments();
     public abstract Plan validate(Plan pl);
     public abstract Plan process(Plan pl);

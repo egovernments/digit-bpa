@@ -56,519 +56,528 @@ import javax.persistence.Id;
 
 public class PlanInformation implements Serializable {
 
-    private static final String NA = "NA";
-    public static final String SEQ_EDCR_PLANINFO = "SEQ_EDCR_PLANINFO";
-    private static final long serialVersionUID = 4L;
+	private static final String NA = "NA";
+	public static final String SEQ_EDCR_PLANINFO = "SEQ_EDCR_PLANINFO";
+	private static final long serialVersionUID = 4L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EDCR_PLANINFO, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_EDCR_PLANINFO, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    private BigDecimal plotArea = BigDecimal.ZERO;
+	private BigDecimal plotArea = BigDecimal.ZERO;
 
-    private String ownerName;
+	private String ownerName;
 
-    private String occupancy;
+	private String occupancy;
 
-    private String serviceType;
+	private String serviceType;
 
-    private String amenities;
+	private String amenities;
 
-    private String architectInformation;
+	private String architectInformation;
 
-    private Long acchitectId;
+	private Long acchitectId;
 
-    private String applicantName;
+	private String applicantName;
 
-    private Boolean crzZoneArea = true;
+	private Boolean crzZoneArea = true;
 
-    private transient String crzZoneDesc = NA;
+	private transient String crzZoneDesc = NA;
 
-    private BigDecimal demolitionArea = BigDecimal.ZERO;
+	private BigDecimal demolitionArea = BigDecimal.ZERO;
 
-    private transient Boolean depthCutting;
+	private transient Boolean depthCutting;
 
-    private transient String depthCuttingDesc = NA;
+	private transient String depthCuttingDesc = NA;
 
-    private transient Boolean governmentOrAidedSchool;
+	private transient Boolean governmentOrAidedSchool;
 
-    private transient Boolean securityZone = true;
+	private transient Boolean securityZone = true;
 
-    private transient String securityZoneDesc = NA;
+	private transient String securityZoneDesc = NA;
 
-    private transient BigDecimal accessWidth;
+	private transient BigDecimal accessWidth;
 
-    private transient BigDecimal noOfBeds;
+	private transient BigDecimal noOfBeds;
 
-    // private transient Boolean nocToAbutSide = false;
+	// private transient Boolean nocToAbutSide = false;
 
-    private transient String nocToAbutSideDesc = NA;
+	private transient String nocToAbutSideDesc = NA;
 
-    // private transient Boolean nocToAbutRear = false;
+	// private transient Boolean nocToAbutRear = false;
 
-    private transient String nocToAbutRearDesc = NA;
+	private transient String nocToAbutRearDesc = NA;
 
-    private transient Boolean openingOnSide = false;
+	private transient Boolean openingOnSide = false;
 
-    // private transient Boolean openingOnSideBelow2mts = false;
+	// private transient Boolean openingOnSideBelow2mts = false;
 
-    private transient String openingOnSideBelow2mtsDesc = NA;
+	private transient String openingOnSideBelow2mtsDesc = NA;
 
-    // private transient Boolean openingOnSideAbove2mts = false;
+	// private transient Boolean openingOnSideAbove2mts = false;
 
-    private transient String openingOnSideAbove2mtsDesc = NA;
+	private transient String openingOnSideAbove2mtsDesc = NA;
 
-    // private transient Boolean openingOnRearBelow2mts = false;
+	// private transient Boolean openingOnRearBelow2mts = false;
 
-    private transient String openingOnRearBelow2mtsDesc = NA;
+	private transient String openingOnRearBelow2mtsDesc = NA;
 
-    // private transient Boolean openingOnRearAbove2mts = false;
+	// private transient Boolean openingOnRearAbove2mts = false;
 
-    private transient String openingOnRearAbove2mtsDesc = NA;
+	private transient String openingOnRearAbove2mtsDesc = NA;
 
-    /*
-     * private transient Boolean nocToAbutAdjascentSide = false;
-     */
-    private transient Boolean openingOnRear = false;
+	/*
+	 * private transient Boolean nocToAbutAdjascentSide = false;
+	 */
+	private transient Boolean openingOnRear = false;
 
-    private transient Boolean parkingToMainBuilding = false;
+	private transient Boolean parkingToMainBuilding = false;
 
-    private transient Integer noOfSeats = 0;
+	private transient Integer noOfSeats = 0;
 
-    private transient Integer noOfMechanicalParking = 0;
+	private transient Integer noOfMechanicalParking = 0;
 
-    private transient Boolean singleFamilyBuilding;
+	private transient Boolean singleFamilyBuilding;
 
-    private String reSurveyNo;
+	private String reSurveyNo;
 
-    private String revenueWard;
+	private String revenueWard;
 
-    private String desam;
+	private String desam;
 
-    private String village;
+	private String village;
 
-    private transient String zoneWise;
+	private transient String zoneWise;
 
-    private transient String landUseZone;
+	private transient String landUseZone;
 
-    private transient String leaseHoldLand;
+	private transient String leaseHoldLand;
 
-    private BigDecimal roadWidth = BigDecimal.ZERO;
+	private BigDecimal roadWidth = BigDecimal.ZERO;
 
-    private BigDecimal roadLength = BigDecimal.ZERO;
+	private BigDecimal roadLength = BigDecimal.ZERO;
 
-    private String typeOfArea;
+	private String typeOfArea;
 
-    private BigDecimal depthOfPlot = BigDecimal.ZERO;
+	private BigDecimal depthOfPlot = BigDecimal.ZERO;
 
-    private BigDecimal widthOfPlot = BigDecimal.ZERO;
+	private BigDecimal widthOfPlot = BigDecimal.ZERO;
 
-    private transient String buildingNearMonument = NA;
+	private transient String buildingNearMonument = NA;
 
-    private transient String buildingNearGovtBuilding = NA;
+	private transient String buildingNearGovtBuilding = NA;
 
-    private transient String nocNearMonument = NA;
+	private transient String nocNearMonument = NA;
 
-    private transient String nocNearAirport = NA;
+	private transient String nocNearAirport = NA;
 
-    private transient String nocNearDefenceAerodomes = NA;
+	private transient String nocNearDefenceAerodomes = NA;
 
-    private transient String nocStateEnvImpact = NA;
+	private transient String nocStateEnvImpact = NA;
 
-    private transient String nocRailways = NA;
+	private transient String nocRailways = NA;
 
-    private transient String nocCollectorGvtLand = NA;
+	private transient String nocCollectorGvtLand = NA;
 
-    private transient String nocIrrigationDept = NA;
+	private transient String nocIrrigationDept = NA;
 
-    private transient String nocFireDept = NA;
+	private transient String nocFireDept = NA;
 
-    public Boolean getParkingToMainBuilding() {
-        return parkingToMainBuilding;
-    }
+	private transient String buildingNearToRiver = NA;
 
-    public void setParkingToMainBuilding(Boolean parkingToMainBuilding) {
-        this.parkingToMainBuilding = parkingToMainBuilding;
-    }
+	public Boolean getParkingToMainBuilding() {
+		return parkingToMainBuilding;
+	}
 
-    public Boolean getGovernmentOrAidedSchool() {
-        return governmentOrAidedSchool;
-    }
+	public void setParkingToMainBuilding(Boolean parkingToMainBuilding) {
+		this.parkingToMainBuilding = parkingToMainBuilding;
+	}
 
-    public void setGovernmentOrAidedSchool(Boolean governmentOrAidedSchool) {
-        this.governmentOrAidedSchool = governmentOrAidedSchool;
-    }
+	public Boolean getGovernmentOrAidedSchool() {
+		return governmentOrAidedSchool;
+	}
 
-    public Boolean getCrzZoneArea() {
-        return crzZoneArea;
-    }
+	public void setGovernmentOrAidedSchool(Boolean governmentOrAidedSchool) {
+		this.governmentOrAidedSchool = governmentOrAidedSchool;
+	}
 
-    public void setCrzZoneArea(Boolean crzZoneArea) {
-        this.crzZoneArea = crzZoneArea;
-    }
+	public Boolean getCrzZoneArea() {
+		return crzZoneArea;
+	}
 
-    public BigDecimal getPlotArea() {
-        return plotArea;
-    }
+	public void setCrzZoneArea(Boolean crzZoneArea) {
+		this.crzZoneArea = crzZoneArea;
+	}
 
-    public void setPlotArea(BigDecimal plotArea) {
-        this.plotArea = plotArea;
-    }
+	public BigDecimal getPlotArea() {
+		return plotArea;
+	}
 
-    public String getOwnerName() {
-        return ownerName;
-    }
+	public void setPlotArea(BigDecimal plotArea) {
+		this.plotArea = plotArea;
+	}
 
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
-    }
+	public String getOwnerName() {
+		return ownerName;
+	}
 
-    public String getServiceType() {
-        return serviceType;
-    }
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
 
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
+	public String getServiceType() {
+		return serviceType;
+	}
 
-    public String getAmenities() {
-        return amenities;
-    }
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
 
-    public void setAmenities(String amenities) {
-        this.amenities = amenities;
-    }
+	public String getAmenities() {
+		return amenities;
+	}
 
-    public String getArchitectInformation() {
-        return architectInformation;
-    }
+	public void setAmenities(String amenities) {
+		this.amenities = amenities;
+	}
 
-    public void setArchitectInformation(String architectInformation) {
-        this.architectInformation = architectInformation;
-    }
+	public String getArchitectInformation() {
+		return architectInformation;
+	}
 
-    public Long getAcchitectId() {
-        return acchitectId;
-    }
+	public void setArchitectInformation(String architectInformation) {
+		this.architectInformation = architectInformation;
+	}
 
-    public void setAcchitectId(Long acchitectId) {
-        this.acchitectId = acchitectId;
-    }
+	public Long getAcchitectId() {
+		return acchitectId;
+	}
 
-    public String getOccupancy() {
-        return occupancy;
-    }
+	public void setAcchitectId(Long acchitectId) {
+		this.acchitectId = acchitectId;
+	}
 
-    public void setOccupancy(String occupancy) {
-        this.occupancy = occupancy;
-    }
+	public String getOccupancy() {
+		return occupancy;
+	}
 
-    public Boolean getSecurityZone() {
-        return securityZone;
-    }
+	public void setOccupancy(String occupancy) {
+		this.occupancy = occupancy;
+	}
 
-    public void setSecurityZone(Boolean securityZone) {
-        this.securityZone = securityZone;
-    }
+	public Boolean getSecurityZone() {
+		return securityZone;
+	}
 
-    public BigDecimal getAccessWidth() {
-        return accessWidth;
-    }
+	public void setSecurityZone(Boolean securityZone) {
+		this.securityZone = securityZone;
+	}
 
-    public Boolean getDepthCutting() {
-        return depthCutting;
-    }
+	public BigDecimal getAccessWidth() {
+		return accessWidth;
+	}
 
-    public void setDepthCutting(Boolean depthCutting) {
-        this.depthCutting = depthCutting;
-    }
+	public Boolean getDepthCutting() {
+		return depthCutting;
+	}
 
-    public void setAccessWidth(BigDecimal accessWidth) {
-        this.accessWidth = accessWidth;
-    }
+	public void setDepthCutting(Boolean depthCutting) {
+		this.depthCutting = depthCutting;
+	}
 
-    /*
-     * public Boolean getNocToAbutSide() { return nocToAbutSide; } public void setNocToAbutSide(Boolean nocToAbutSide) {
-     * this.nocToAbutSide = nocToAbutSide; }
-     */
-    /*
-     * public Boolean getNocToAbutRear() { return nocToAbutRear; } public void setNocToAbutRear(Boolean nocToAbutRear) {
-     * this.nocToAbutRear = nocToAbutRear; }
-     */
+	public void setAccessWidth(BigDecimal accessWidth) {
+		this.accessWidth = accessWidth;
+	}
 
-    public Boolean getOpeningOnSide() {
-        return openingOnSide;
-    }
+	/*
+	 * public Boolean getNocToAbutSide() { return nocToAbutSide; } public void
+	 * setNocToAbutSide(Boolean nocToAbutSide) { this.nocToAbutSide =
+	 * nocToAbutSide; }
+	 */
+	/*
+	 * public Boolean getNocToAbutRear() { return nocToAbutRear; } public void
+	 * setNocToAbutRear(Boolean nocToAbutRear) { this.nocToAbutRear =
+	 * nocToAbutRear; }
+	 */
 
-    public void setOpeningOnSide(Boolean openingOnSide) {
-        this.openingOnSide = openingOnSide;
-    }
+	public Boolean getOpeningOnSide() {
+		return openingOnSide;
+	}
 
-    /*
-     * public Boolean getOpeningOnSideBelow2mts() { return openingOnSideBelow2mts; }
-     */
+	public void setOpeningOnSide(Boolean openingOnSide) {
+		this.openingOnSide = openingOnSide;
+	}
 
-    /*
-     * public void setOpeningOnSideBelow2mts(Boolean openingOnSideBelow2mts) { this.openingOnSideBelow2mts =
-     * openingOnSideBelow2mts; }
-     */
-    /*
-     * public Boolean getOpeningOnSideAbove2mts() { return openingOnSideAbove2mts; }
-     */
+	/*
+	 * public Boolean getOpeningOnSideBelow2mts() { return
+	 * openingOnSideBelow2mts; }
+	 */
 
-    /*
-     * public void setOpeningOnSideAbove2mts(Boolean openingOnSideAbove2mts) { this.openingOnSideAbove2mts =
-     * openingOnSideAbove2mts; }
-     */
+	/*
+	 * public void setOpeningOnSideBelow2mts(Boolean openingOnSideBelow2mts) {
+	 * this.openingOnSideBelow2mts = openingOnSideBelow2mts; }
+	 */
+	/*
+	 * public Boolean getOpeningOnSideAbove2mts() { return
+	 * openingOnSideAbove2mts; }
+	 */
 
-    /*
-     * public Boolean getOpeningOnRearBelow2mts() { return openingOnRearBelow2mts; }
-     */
+	/*
+	 * public void setOpeningOnSideAbove2mts(Boolean openingOnSideAbove2mts) {
+	 * this.openingOnSideAbove2mts = openingOnSideAbove2mts; }
+	 */
 
-    /*
-     * public void setOpeningOnRearBelow2mts(Boolean openingOnRearBelow2mts) { this.openingOnRearBelow2mts =
-     * openingOnRearBelow2mts; }
-     */
-    /*
-     * public Boolean getOpeningOnRearAbove2mts() { return openingOnRearAbove2mts; }
-     */
+	/*
+	 * public Boolean getOpeningOnRearBelow2mts() { return
+	 * openingOnRearBelow2mts; }
+	 */
 
-    /*
-     * public void setOpeningOnRearAbove2mts(Boolean openingOnRearAbove2mts) { this.openingOnRearAbove2mts =
-     * openingOnRearAbove2mts; }
-     */
+	/*
+	 * public void setOpeningOnRearBelow2mts(Boolean openingOnRearBelow2mts) {
+	 * this.openingOnRearBelow2mts = openingOnRearBelow2mts; }
+	 */
+	/*
+	 * public Boolean getOpeningOnRearAbove2mts() { return
+	 * openingOnRearAbove2mts; }
+	 */
 
-    /*
-     * public Boolean getNocToAbutAdjascentSide() { return nocToAbutAdjascentSide; } public void setNocToAbutAdjascentSide(Boolean
-     * nocToAbutAdjascentSide) { this.nocToAbutAdjascentSide = nocToAbutAdjascentSide; }
-     */
+	/*
+	 * public void setOpeningOnRearAbove2mts(Boolean openingOnRearAbove2mts) {
+	 * this.openingOnRearAbove2mts = openingOnRearAbove2mts; }
+	 */
 
-    public Boolean getOpeningOnRear() {
-        return openingOnRear;
-    }
+	/*
+	 * public Boolean getNocToAbutAdjascentSide() { return
+	 * nocToAbutAdjascentSide; } public void setNocToAbutAdjascentSide(Boolean
+	 * nocToAbutAdjascentSide) { this.nocToAbutAdjascentSide =
+	 * nocToAbutAdjascentSide; }
+	 */
 
-    public void setOpeningOnRear(Boolean openingOnRear) {
-        this.openingOnRear = openingOnRear;
-    }
+	public Boolean getOpeningOnRear() {
+		return openingOnRear;
+	}
 
-    public String getApplicantName() {
-        return applicantName;
-    }
+	public void setOpeningOnRear(Boolean openingOnRear) {
+		this.openingOnRear = openingOnRear;
+	}
 
-    public void setApplicantName(String applicantName) {
-        this.applicantName = applicantName;
-    }
+	public String getApplicantName() {
+		return applicantName;
+	}
 
-    public BigDecimal getNoOfBeds() {
-        return noOfBeds;
-    }
+	public void setApplicantName(String applicantName) {
+		this.applicantName = applicantName;
+	}
 
-    public void setNoOfBeds(BigDecimal noOfBeds) {
-        this.noOfBeds = noOfBeds;
-    }
+	public BigDecimal getNoOfBeds() {
+		return noOfBeds;
+	}
 
-    public Integer getNoOfSeats() {
-        return noOfSeats;
-    }
+	public void setNoOfBeds(BigDecimal noOfBeds) {
+		this.noOfBeds = noOfBeds;
+	}
 
-    public void setNoOfSeats(Integer noOfSeats) {
-        this.noOfSeats = noOfSeats;
-    }
+	public Integer getNoOfSeats() {
+		return noOfSeats;
+	}
 
-    public Integer getNoOfMechanicalParking() {
-        return noOfMechanicalParking;
-    }
+	public void setNoOfSeats(Integer noOfSeats) {
+		this.noOfSeats = noOfSeats;
+	}
 
-    public void setNoOfMechanicalParking(Integer noOfMechanicalParking) {
-        this.noOfMechanicalParking = noOfMechanicalParking;
-    }
+	public Integer getNoOfMechanicalParking() {
+		return noOfMechanicalParking;
+	}
 
-    public Boolean getSingleFamilyBuilding() {
-        return singleFamilyBuilding;
-    }
+	public void setNoOfMechanicalParking(Integer noOfMechanicalParking) {
+		this.noOfMechanicalParking = noOfMechanicalParking;
+	}
 
-    public void setSingleFamilyBuilding(Boolean singleFamilyBuilding) {
-        this.singleFamilyBuilding = singleFamilyBuilding;
-    }
+	public Boolean getSingleFamilyBuilding() {
+		return singleFamilyBuilding;
+	}
 
-    public BigDecimal getDemolitionArea() {
-        return demolitionArea;
-    }
+	public void setSingleFamilyBuilding(Boolean singleFamilyBuilding) {
+		this.singleFamilyBuilding = singleFamilyBuilding;
+	}
 
-    public void setDemolitionArea(BigDecimal demolitionArea) {
-        this.demolitionArea = demolitionArea;
-    }
+	public BigDecimal getDemolitionArea() {
+		return demolitionArea;
+	}
 
-    public String getReSurveyNo() {
-        return reSurveyNo;
-    }
+	public void setDemolitionArea(BigDecimal demolitionArea) {
+		this.demolitionArea = demolitionArea;
+	}
 
-    public void setReSurveyNo(String reSurveyNo) {
-        this.reSurveyNo = reSurveyNo;
-    }
+	public String getReSurveyNo() {
+		return reSurveyNo;
+	}
 
-    public String getRevenueWard() {
-        return revenueWard;
-    }
+	public void setReSurveyNo(String reSurveyNo) {
+		this.reSurveyNo = reSurveyNo;
+	}
 
-    public void setRevenueWard(String revenueWard) {
-        this.revenueWard = revenueWard;
-    }
+	public String getRevenueWard() {
+		return revenueWard;
+	}
 
-    public String getDesam() {
-        return desam;
-    }
+	public void setRevenueWard(String revenueWard) {
+		this.revenueWard = revenueWard;
+	}
 
-    public void setDesam(String desam) {
-        this.desam = desam;
-    }
+	public String getDesam() {
+		return desam;
+	}
 
-    public String getVillage() {
-        return village;
-    }
+	public void setDesam(String desam) {
+		this.desam = desam;
+	}
 
-    public void setVillage(String village) {
-        this.village = village;
-    }
+	public String getVillage() {
+		return village;
+	}
 
-    public String getCrzZoneDesc() {
-        return crzZoneDesc;
-    }
+	public void setVillage(String village) {
+		this.village = village;
+	}
 
-    public void setCrzZoneDesc(String crzZoneDesc) {
-        this.crzZoneDesc = crzZoneDesc;
-    }
+	public String getCrzZoneDesc() {
+		return crzZoneDesc;
+	}
 
-    public String getSecurityZoneDesc() {
-        return securityZoneDesc;
-    }
+	public void setCrzZoneDesc(String crzZoneDesc) {
+		this.crzZoneDesc = crzZoneDesc;
+	}
 
-    public void setSecurityZoneDesc(String securityZoneDesc) {
-        this.securityZoneDesc = securityZoneDesc;
-    }
+	public String getSecurityZoneDesc() {
+		return securityZoneDesc;
+	}
 
-    public String getOpeningOnSideBelow2mtsDesc() {
-        return openingOnSideBelow2mtsDesc;
-    }
+	public void setSecurityZoneDesc(String securityZoneDesc) {
+		this.securityZoneDesc = securityZoneDesc;
+	}
 
-    public void setOpeningOnSideBelow2mtsDesc(String openingOnSideBelow2mtsDesc) {
-        this.openingOnSideBelow2mtsDesc = openingOnSideBelow2mtsDesc;
-    }
+	public String getOpeningOnSideBelow2mtsDesc() {
+		return openingOnSideBelow2mtsDesc;
+	}
 
-    public String getOpeningOnSideAbove2mtsDesc() {
-        return openingOnSideAbove2mtsDesc;
-    }
+	public void setOpeningOnSideBelow2mtsDesc(String openingOnSideBelow2mtsDesc) {
+		this.openingOnSideBelow2mtsDesc = openingOnSideBelow2mtsDesc;
+	}
 
-    public void setOpeningOnSideAbove2mtsDesc(String openingOnSideAbove2mtsDesc) {
-        this.openingOnSideAbove2mtsDesc = openingOnSideAbove2mtsDesc;
-    }
+	public String getOpeningOnSideAbove2mtsDesc() {
+		return openingOnSideAbove2mtsDesc;
+	}
 
-    public String getOpeningOnRearBelow2mtsDesc() {
-        return openingOnRearBelow2mtsDesc;
-    }
+	public void setOpeningOnSideAbove2mtsDesc(String openingOnSideAbove2mtsDesc) {
+		this.openingOnSideAbove2mtsDesc = openingOnSideAbove2mtsDesc;
+	}
 
-    public void setOpeningOnRearBelow2mtsDesc(String openingOnRearBelow2mtsDesc) {
-        this.openingOnRearBelow2mtsDesc = openingOnRearBelow2mtsDesc;
-    }
+	public String getOpeningOnRearBelow2mtsDesc() {
+		return openingOnRearBelow2mtsDesc;
+	}
 
-    public String getOpeningOnRearAbove2mtsDesc() {
-        return openingOnRearAbove2mtsDesc;
-    }
+	public void setOpeningOnRearBelow2mtsDesc(String openingOnRearBelow2mtsDesc) {
+		this.openingOnRearBelow2mtsDesc = openingOnRearBelow2mtsDesc;
+	}
 
-    public void setOpeningOnRearAbove2mtsDesc(String openingOnRearAbove2mtsDesc) {
-        this.openingOnRearAbove2mtsDesc = openingOnRearAbove2mtsDesc;
-    }
+	public String getOpeningOnRearAbove2mtsDesc() {
+		return openingOnRearAbove2mtsDesc;
+	}
 
-    public String getNocToAbutSideDesc() {
-        return nocToAbutSideDesc;
-    }
+	public void setOpeningOnRearAbove2mtsDesc(String openingOnRearAbove2mtsDesc) {
+		this.openingOnRearAbove2mtsDesc = openingOnRearAbove2mtsDesc;
+	}
 
-    public void setNocToAbutSideDesc(String nocToAbutSideDesc) {
-        this.nocToAbutSideDesc = nocToAbutSideDesc;
-    }
+	public String getNocToAbutSideDesc() {
+		return nocToAbutSideDesc;
+	}
 
-    public String getNocToAbutRearDesc() {
-        return nocToAbutRearDesc;
-    }
+	public void setNocToAbutSideDesc(String nocToAbutSideDesc) {
+		this.nocToAbutSideDesc = nocToAbutSideDesc;
+	}
 
-    public void setNocToAbutRearDesc(String nocToAbutRearDesc) {
-        this.nocToAbutRearDesc = nocToAbutRearDesc;
-    }
+	public String getNocToAbutRearDesc() {
+		return nocToAbutRearDesc;
+	}
 
-    public String getDepthCuttingDesc() {
-        return depthCuttingDesc;
-    }
+	public void setNocToAbutRearDesc(String nocToAbutRearDesc) {
+		this.nocToAbutRearDesc = nocToAbutRearDesc;
+	}
 
-    public void setDepthCuttingDesc(String depthCuttingDesc) {
-        this.depthCuttingDesc = depthCuttingDesc;
-    }
+	public String getDepthCuttingDesc() {
+		return depthCuttingDesc;
+	}
 
-    public String getZoneWise() {
-        return zoneWise;
-    }
+	public void setDepthCuttingDesc(String depthCuttingDesc) {
+		this.depthCuttingDesc = depthCuttingDesc;
+	}
 
-    public void setZoneWise(String zoneWise) {
-        this.zoneWise = zoneWise;
-    }
+	public String getZoneWise() {
+		return zoneWise;
+	}
 
-    public String getLandUseZone() {
-        return landUseZone;
-    }
+	public void setZoneWise(String zoneWise) {
+		this.zoneWise = zoneWise;
+	}
 
-    public void setLandUseZone(String landUseZone) {
-        this.landUseZone = landUseZone;
-    }
+	public String getLandUseZone() {
+		return landUseZone;
+	}
 
-    public String getLeaseHoldLand() {
-        return leaseHoldLand;
-    }
+	public void setLandUseZone(String landUseZone) {
+		this.landUseZone = landUseZone;
+	}
 
-    public void setLeaseHoldLand(String leaseHoldLand) {
-        this.leaseHoldLand = leaseHoldLand;
-    }
+	public String getLeaseHoldLand() {
+		return leaseHoldLand;
+	}
 
-    public BigDecimal getRoadWidth() {
-        return roadWidth;
-    }
+	public void setLeaseHoldLand(String leaseHoldLand) {
+		this.leaseHoldLand = leaseHoldLand;
+	}
 
-    public void setRoadWidth(BigDecimal roadWidth) {
-        this.roadWidth = roadWidth;
-    }
+	public BigDecimal getRoadWidth() {
+		return roadWidth;
+	}
 
-    public String getTypeOfArea() {
-        return typeOfArea;
-    }
+	public void setRoadWidth(BigDecimal roadWidth) {
+		this.roadWidth = roadWidth;
+	}
 
-    public void setTypeOfArea(String typeOfArea) {
-        this.typeOfArea = typeOfArea;
-    }
+	public String getTypeOfArea() {
+		return typeOfArea;
+	}
 
-    public BigDecimal getDepthOfPlot() {
-        return depthOfPlot;
-    }
+	public void setTypeOfArea(String typeOfArea) {
+		this.typeOfArea = typeOfArea;
+	}
 
-    public void setDepthOfPlot(BigDecimal depthOfPlot) {
-        this.depthOfPlot = depthOfPlot;
-    }
+	public BigDecimal getDepthOfPlot() {
+		return depthOfPlot;
+	}
 
-    public BigDecimal getWidthOfPlot() {
-        return widthOfPlot;
-    }
+	public void setDepthOfPlot(BigDecimal depthOfPlot) {
+		this.depthOfPlot = depthOfPlot;
+	}
 
-    public void setWidthOfPlot(BigDecimal widthOfPlot) {
-        this.widthOfPlot = widthOfPlot;
-    }
+	public BigDecimal getWidthOfPlot() {
+		return widthOfPlot;
+	}
 
-    public String getBuildingNearMonument() {
-        return buildingNearMonument;
-    }
+	public void setWidthOfPlot(BigDecimal widthOfPlot) {
+		this.widthOfPlot = widthOfPlot;
+	}
 
-    public void setBuildingNearMonument(String buildingNearMonument) {
-        this.buildingNearMonument = buildingNearMonument;
-    }
+	public String getBuildingNearMonument() {
+		return buildingNearMonument;
+	}
 
+	public void setBuildingNearMonument(String buildingNearMonument) {
+		this.buildingNearMonument = buildingNearMonument;
+	}
 
-    public String getBuildingNearGovtBuilding() {
+	public String getBuildingNearGovtBuilding() {
 		return buildingNearGovtBuilding;
 	}
 
@@ -577,75 +586,83 @@ public class PlanInformation implements Serializable {
 	}
 
 	public String getNocNearMonument() {
-        return nocNearMonument;
-    }
+		return nocNearMonument;
+	}
 
-    public void setNocNearMonument(String nocNearMonument) {
-        this.nocNearMonument = nocNearMonument;
-    }
+	public void setNocNearMonument(String nocNearMonument) {
+		this.nocNearMonument = nocNearMonument;
+	}
 
-    public String getNocNearAirport() {
-        return nocNearAirport;
-    }
+	public String getNocNearAirport() {
+		return nocNearAirport;
+	}
 
-    public void setNocNearAirport(String nocNearAirport) {
-        this.nocNearAirport = nocNearAirport;
-    }
+	public void setNocNearAirport(String nocNearAirport) {
+		this.nocNearAirport = nocNearAirport;
+	}
 
-    public String getNocNearDefenceAerodomes() {
-        return nocNearDefenceAerodomes;
-    }
+	public String getNocNearDefenceAerodomes() {
+		return nocNearDefenceAerodomes;
+	}
 
-    public void setNocNearDefenceAerodomes(String nocNearDefenceAerodomes) {
-        this.nocNearDefenceAerodomes = nocNearDefenceAerodomes;
-    }
+	public void setNocNearDefenceAerodomes(String nocNearDefenceAerodomes) {
+		this.nocNearDefenceAerodomes = nocNearDefenceAerodomes;
+	}
 
-    public String getNocStateEnvImpact() {
-        return nocStateEnvImpact;
-    }
+	public String getNocStateEnvImpact() {
+		return nocStateEnvImpact;
+	}
 
-    public void setNocStateEnvImpact(String nocStateEnvImpact) {
-        this.nocStateEnvImpact = nocStateEnvImpact;
-    }
+	public void setNocStateEnvImpact(String nocStateEnvImpact) {
+		this.nocStateEnvImpact = nocStateEnvImpact;
+	}
 
-    public String getNocRailways() {
-        return nocRailways;
-    }
+	public String getNocRailways() {
+		return nocRailways;
+	}
 
-    public void setNocRailways(String nocRailways) {
-        this.nocRailways = nocRailways;
-    }
+	public void setNocRailways(String nocRailways) {
+		this.nocRailways = nocRailways;
+	}
 
-    public String getNocCollectorGvtLand() {
-        return nocCollectorGvtLand;
-    }
+	public String getNocCollectorGvtLand() {
+		return nocCollectorGvtLand;
+	}
 
-    public void setNocCollectorGvtLand(String nocCollectorGvtLand) {
-        this.nocCollectorGvtLand = nocCollectorGvtLand;
-    }
+	public void setNocCollectorGvtLand(String nocCollectorGvtLand) {
+		this.nocCollectorGvtLand = nocCollectorGvtLand;
+	}
 
-    public String getNocIrrigationDept() {
-        return nocIrrigationDept;
-    }
+	public String getNocIrrigationDept() {
+		return nocIrrigationDept;
+	}
 
-    public void setNocIrrigationDept(String nocIrrigationDept) {
-        this.nocIrrigationDept = nocIrrigationDept;
-    }
+	public void setNocIrrigationDept(String nocIrrigationDept) {
+		this.nocIrrigationDept = nocIrrigationDept;
+	}
 
-    public String getNocFireDept() {
-        return nocFireDept;
-    }
+	public String getNocFireDept() {
+		return nocFireDept;
+	}
 
-    public void setNocFireDept(String nocFireDept) {
-        this.nocFireDept = nocFireDept;
-    }
+	public void setNocFireDept(String nocFireDept) {
+		this.nocFireDept = nocFireDept;
+	}
 
-    public BigDecimal getRoadLength() {
-        return roadLength;
-    }
+	public BigDecimal getRoadLength() {
+		return roadLength;
+	}
 
-    public void setRoadLength(BigDecimal roadLength) {
-        this.roadLength = roadLength;
-    }
+	public void setRoadLength(BigDecimal roadLength) {
+		this.roadLength = roadLength;
+	}
+
+	public String getBuildingNearToRiver() {
+		return buildingNearToRiver;
+	}
+
+	public void setBuildingNearToRiver(String buildingNearToRiver) {
+		this.buildingNearToRiver = buildingNearToRiver;
+	}
 
 }
