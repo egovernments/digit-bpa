@@ -108,7 +108,7 @@
 							<spring:message code="lbl.lpdescription" />
 						</div>
 						<div class="col-sm-9 add-margin  view-content">
-							<c:out value="${lettertoParty.lpDesc}" />
+							<c:out value="${permitLetterToParty.letterToParty.lpDesc}" />
 						</div>
 					</div>
 
