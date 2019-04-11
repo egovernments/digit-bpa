@@ -779,46 +779,44 @@ public class BpaUtils {
         return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
     }
 
-    public ApplicationSubType getBuildingType(BigDecimal plotArea, BigDecimal heightOfTheBuilding, String occupancy) {
+    public ApplicationSubType getBuildingType(BigDecimal heightOfTheBuilding, BigDecimal plotArea, String occupancy) {
 		if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
 			return getResidentialApplicationType(plotArea, heightOfTheBuilding);
 		} else if (BpaConstants.BPA_INDUSTRIAL.equalsIgnoreCase(occupancy)) {
 			return getIndustrialApplicationType(plotArea, heightOfTheBuilding);
 		} else {
-			return getMixedOccAppType(plotArea, heightOfTheBuilding);
+			return getMostRestrOccAppType(plotArea, heightOfTheBuilding);
 		}
 	}
 	
 	public ApplicationSubType getResidentialApplicationType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
-		if (plotArea.compareTo(BigDecimal.valueOf(300)) <= 0
-				|| heightOfTheBuilding.compareTo(BigDecimal.TEN) <= 0) {
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
-		} else if (plotArea.compareTo(BigDecimal.valueOf(300)) >= 0
+		if(plotArea.compareTo(BigDecimal.valueOf(500)) > 0 || 
+				heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) > 0)
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+		else if (plotArea.compareTo(BigDecimal.valueOf(300)) >= 0
 				&& plotArea.compareTo(BigDecimal.valueOf(500)) <= 0
 				|| heightOfTheBuilding.compareTo(BigDecimal.TEN) >= 0
 						&& heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) <= 0) {
 			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
 		} else
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
 	}
 	
 
 	public ApplicationSubType getIndustrialApplicationType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
-		if (plotArea.compareTo(BigDecimal.valueOf(1000)) <= 0
-				|| heightOfTheBuilding.compareTo(BigDecimal.valueOf(11)) <= 0) {
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
-		} else {
+		if(plotArea.compareTo(BigDecimal.valueOf(1000)) > 0 
+				|| heightOfTheBuilding.compareTo(BigDecimal.valueOf(11)) > 0)
 			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
-		}
+		else
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
 	}
 	
-	public ApplicationSubType getMixedOccAppType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
-		if (plotArea.compareTo(BigDecimal.valueOf(300)) >= 0 && plotArea.compareTo(BigDecimal.valueOf(500)) <= 0
-				|| heightOfTheBuilding.compareTo(BigDecimal.TEN) >= 0
-						&& heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) <= 0) {
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
-		} else
+	public ApplicationSubType getMostRestrOccAppType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
+		if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0 || 
+				heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) > 0)
 			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+	    else
+			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
 	}
 
 }
