@@ -60,6 +60,7 @@ import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.PlanInfoFeature;
+import org.egov.edcr.feature.Plantation;
 import org.egov.edcr.feature.RiverDistance;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
@@ -89,6 +90,8 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(RiverDistance.class);
 		features.add(pf);
 		pf = new PlanFeature(SepticTank.class);
+		features.add(pf);
+		pf = new PlanFeature(Plantation.class);
 		features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
