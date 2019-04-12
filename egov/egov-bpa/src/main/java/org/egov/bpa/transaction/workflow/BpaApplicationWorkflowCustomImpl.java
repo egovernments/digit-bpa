@@ -192,12 +192,25 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, amountRule,
                     additionalRule, application.getCurrentState().getValue(), application.getState().getNextAction());
 
-            BpaStatus status = bpaStatusService
+            BpaStatus status;
+            if(application.getApplicationType().getName().equals(BpaConstants.LOWRISK))
+            	status = bpaStatusService
+                .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, BpaConstants.APPLICATION_STATUS_ORDER_ISSUED);
+            else
+             status = bpaStatusService
                     .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, BpaConstants.APPLICATION_STATUS_APPROVED);
             if (status != null)
                 application.setStatus(status);
 
-            application.transition().progressWithStateCopy()
+        	if(application.getApplicationType().getName().equals(BpaConstants.LOWRISK))
+        		application.transition().end()
+                .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+                .withComments(approvalComent)
+                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                .withOwner(pos).withOwner(ownerUser)
+                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
+        	else
+               application.transition().progressWithStateCopy()
                        .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                        .withComments(approvalComent)
                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
