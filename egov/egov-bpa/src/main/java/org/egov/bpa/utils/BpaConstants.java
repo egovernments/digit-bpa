@@ -181,6 +181,8 @@ public class BpaConstants {
     public static final String CHECKLIST_TYPE = "DOCUMENTATION";
     public static final String LP_CHECKLIST = "LTP";
     public static final String DCR_CHECKLIST = "BPADCRDOCUMENTS";
+    
+    public static final String PERMIT_DEFAULT_CONDITIONS = "PERMITDEFAULTCONDITIONS";
     // Sms And Email config constants
     public static final String SENDSMSFORBPA = "SENDSMSFROOMBPAMODULE";
     public static final String SENDEMAILFORBPA = "SENDEMAILFROOMBPAMODULE";

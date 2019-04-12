@@ -251,6 +251,9 @@ public class BpaApplication extends StateAware<Position> {
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationPermitConditions> rejectionReasons = new ArrayList<>(0);
+    @OrderBy(ORDER_BY_ID_ASC)
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ApplicationPermitConditions> defaultPermitConditions = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BpaNotice> bpaNotice = new ArrayList<>(0);
     @OrderBy(ORDER_BY_ID_ASC)
@@ -1092,4 +1095,13 @@ public class BpaApplication extends StateAware<Position> {
 	public void setPermitRevocation(List<PermitRevocation> permitRevocation) {
 		this.permitRevocation = permitRevocation;
 	}
+
+	public List<ApplicationPermitConditions> getDefaultPermitConditions() {
+		return defaultPermitConditions;
+	}
+
+	public void setDefaultPermitConditions(List<ApplicationPermitConditions> defaultPermitConditions) {
+		this.defaultPermitConditions = defaultPermitConditions;
+	}
+	
 }

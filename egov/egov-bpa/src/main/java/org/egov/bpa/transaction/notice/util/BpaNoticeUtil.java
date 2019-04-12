@@ -699,6 +699,15 @@ public class BpaNoticeUtil {
                 order++;
             }
         }
+        
+        for (ApplicationPermitConditions applnPermit : bpaApplication.getDefaultPermitConditions()) {
+            if (applnPermit.getNoticeCondition().isRequired()
+                    && ConditionType.PERMITDEFAULTCONDITIONS.equals(applnPermit.getNoticeCondition().getType())) {
+                permitConditions
+                        .append(String.valueOf(order) + ") " + applnPermit.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription() + TWO_NEW_LINE);
+                order++;
+            }
+        }
         return order;
     }
 

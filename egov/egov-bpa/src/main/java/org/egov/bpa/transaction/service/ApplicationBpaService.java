@@ -55,6 +55,9 @@ import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
+import static org.egov.bpa.utils.BpaConstants.GENERATEREVOCATIONNOTICE;
+import static org.egov.bpa.utils.BpaConstants.LOWRISK;
+import static org.egov.bpa.utils.BpaConstants.PERMIT_DEFAULT_CONDITIONS;
 import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
 import static org.egov.bpa.utils.BpaConstants.ROOF_CONVERSION;
 import static org.egov.bpa.utils.BpaConstants.SHUTTER_DOOR_CONVERSION;
@@ -65,9 +68,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.GENERATEREVOCATIONNOTICE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.LOWRISK;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayInputStream;
@@ -94,6 +95,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
 import org.egov.bpa.autonumber.RevocationNumberGenerator;
 import org.egov.bpa.master.entity.BpaFeeMapping;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
@@ -120,7 +122,9 @@ import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.common.DcrDocument;
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.bpa.transaction.entity.common.NocDocument;
+import org.egov.bpa.transaction.entity.common.NoticeCondition;
 import org.egov.bpa.transaction.entity.common.StoreDcrFiles;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
@@ -141,7 +145,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -315,6 +318,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, currentState, null, null,
                     null);
         }
+        buildDefaultPermitConditionsList(application);
         BpaApplication bpaApplicationResponse = applicationBpaRepository.saveAndFlush(application);
         application.setPermitDcrDocuments(persistApplnDCRDocuments(permitDcrDocuments));
         applicationBpaRepository.save(bpaApplicationResponse);
@@ -365,6 +369,23 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     private Long getZone(final BpaApplication application) {
         return application.getZoneId();
+    }
+
+    public void buildDefaultPermitConditionsList(final BpaApplication application) {
+        List<ChecklistServiceTypeMapping> defaultChecklist = checklistServicetypeMappingService
+                .findByActiveByServiceTypeAndChecklist(application.getServiceType().getId(), PERMIT_DEFAULT_CONDITIONS);
+        for(ChecklistServiceTypeMapping permitDefaultChecklist:defaultChecklist){
+        	//application.setDefaultPermitConditions(defaultPermitConditions);
+        	ApplicationPermitConditions appPermitCondition = new ApplicationPermitConditions();
+        	appPermitCondition.setApplication(application);
+        	NoticeCondition nc= new NoticeCondition();
+        	nc.setType(ConditionType.PERMITDEFAULTCONDITIONS);
+        	nc.setRequired(true);
+        	nc.setChecklistServicetype(permitDefaultChecklist);
+        	appPermitCondition.setNoticeCondition(nc);//getNoticeCondition().setChecklistServicetype(permitDefaultChecklist);
+        	application.getDefaultPermitConditions().add(appPermitCondition);
+        }
+        
     }
 
     private void buildPermitConditions(final BpaApplication application) {
