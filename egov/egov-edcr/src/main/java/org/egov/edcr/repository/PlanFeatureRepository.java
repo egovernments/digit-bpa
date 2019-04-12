@@ -55,6 +55,7 @@ import org.egov.edcr.feature.AdditionalFeature;
 import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Far;
+import org.egov.edcr.feature.FireStair;
 import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
 import org.egov.edcr.feature.LandUse;
@@ -65,6 +66,7 @@ import org.egov.edcr.feature.Plantation;
 import org.egov.edcr.feature.RiverDistance;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
+import org.egov.edcr.feature.SpiralStair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -95,6 +97,10 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(Plantation.class);
 		features.add(pf);
 		pf = new PlanFeature(GuardRoom.class);
+		features.add(pf);
+		pf = new PlanFeature(SpiralStair.class);
+		features.add(pf);
+		pf = new PlanFeature(FireStair.class);
 		features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);

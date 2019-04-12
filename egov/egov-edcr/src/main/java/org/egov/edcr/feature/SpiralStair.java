@@ -70,18 +70,18 @@ public class SpiralStair extends FeatureProcess {
 	private static final Logger LOG = Logger.getLogger(SpiralStair.class);
 	private static final String FLOOR = "Floor";
 	private static final String EXPECTED_DIAMETER = "1.50";
-	private static final String RULE114_7 = "114(6)";
-	private static final String RULE47_1 = "47(1)";
+	private static final String RULE42_5_IV = "42(5)(iv)";
 	private static final String DIAMETER_DESCRIPTION = "Minimum diameter for spiral fire stair %s";
 
 	@Override
 	public Plan process(Plan planDetail) {
 		blk: for (Block block : planDetail.getBlocks()) {
 			if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
-				if (Util.checkExemptionConditionForBuildingParts(block)
-						|| Util.checkExemptionConditionForSmallPlotAtBlkLevel(planDetail.getPlot(), block)) {
-					continue blk;
-				}
+				/*
+				 * if (Util.checkExemptionConditionForBuildingParts(block) ||
+				 * Util.checkExemptionConditionForSmallPlotAtBlkLevel(planDetail.getPlot(),
+				 * block)) { continue blk; }
+				 */
 
 				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 				scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -119,7 +119,7 @@ public class SpiralStair extends FeatureProcess {
 										: " floor " + floor.getNumber();
 
 								if (valid) {
-									setReportOutputDetailsFloorStairWise(planDetail, RULE47_1, value,
+									setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_IV, value,
 											spiralStair.getNumber(), "",
 											"spiral stair of fire stair not allowed for building with height > 9 for block "
 													+ block.getNumber() + " " + value,
@@ -138,12 +138,12 @@ public class SpiralStair extends FeatureProcess {
 										BigDecimal minDiameter = Util.roundOffTwoDecimal(BigDecimal.valueOf(1.50));
 
 										if (diameter.compareTo(minDiameter) >= 0) {
-											setReportOutputDetailsFloorStairWise(planDetail, RULE114_7, value,
+											setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_IV, value,
 													String.format(DIAMETER_DESCRIPTION, spiralStair.getNumber()),
 													EXPECTED_DIAMETER, String.valueOf(diameter),
 													Result.Accepted.getResultVal(), scrutinyDetail);
 										} else {
-											setReportOutputDetailsFloorStairWise(planDetail, RULE114_7, value,
+											setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_IV, value,
 													String.format(DIAMETER_DESCRIPTION, spiralStair.getNumber()),
 													EXPECTED_DIAMETER, String.valueOf(diameter),
 													Result.Not_Accepted.getResultVal(), scrutinyDetail);

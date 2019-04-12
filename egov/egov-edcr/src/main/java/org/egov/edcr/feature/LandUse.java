@@ -73,7 +73,6 @@ public class LandUse extends FeatureProcess {
 	private static final Logger LOG = Logger.getLogger(LandUse.class);
 	private static final String RULE_28 = "28";
 	public static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
-	private static final String ONE_FLOOR_COMMERCIAL = "for 40 feet road , atleast one floor should be commercial";
 	private static final String ROAD_WIDTH = "Road Width";
 
 	@Override

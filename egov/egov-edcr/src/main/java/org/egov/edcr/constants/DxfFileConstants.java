@@ -16,7 +16,7 @@ public class DxfFileConstants {
     //sub occupancies code
     public static final String A_R = "A-R"; //Single family Residential
     public static final String A_AF = "A-AF"; //Apartment/Flat
-    
+    public static final String A_AF_GH = "A-AF-GH";
     public static final String VERT_CLEAR_OHE = "VERT_CLEAR_OHEL";
     public static final String REAR_YARD = "REAR_YARD";
     public static final String BUILDING_FOOT_PRINT = "BLDG_FOOT_PRINT";
