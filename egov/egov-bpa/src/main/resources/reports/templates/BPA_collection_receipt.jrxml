@@ -374,7 +374,9 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("BPA_collection_receipt_instruments.jasper")]]></subreportExpression>
 			</subreport>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="122" width="280" height="20" uuid="122a3fca-9810-429e-8315-7b1078f5f564"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="122" width="280" height="20" uuid="122a3fca-9810-429e-8315-7b1078f5f564">
+					<printWhenExpression><![CDATA[$F{collectionType}.charAt( 0 )!=CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION]]></printWhenExpression>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
@@ -388,7 +390,9 @@
 				<textFieldExpression><![CDATA["Collected By : "+$F{createdBy}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="446" y="122" width="109" height="20" uuid="0d6b3c60-d125-42dc-8c5c-9cc3d2963160"/>
+				<reportElement stretchType="RelativeToTallestObject" x="446" y="122" width="109" height="20" uuid="0d6b3c60-d125-42dc-8c5c-9cc3d2963160">
+					<printWhenExpression><![CDATA[$F{collectionType}.charAt( 0 )!=CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION]]></printWhenExpression>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
