@@ -50,6 +50,14 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <form:hidden id="mode" path="" value="${mode}"/>
+
+	<c:if test="${not empty error}">
+	<div class="alert alert-danger" role="alert">
+			<strong>${error}</strong>
+	</div>
+			
+	</c:if>
+
 <div class="panel-body">
 	<input type="hidden" name="username" value="${stakeHolder.username}">
 	<input type="hidden" name="password" value="${stakeHolder.password}">

@@ -230,7 +230,9 @@ public class StakeHolderController extends GenericWorkFlowController {
                 return genericBillGeneratorService.generateBillAndRedirectToCollection(stakeHolder, model);
             } else if (stakeHolder.getStatus() != null
                     && BpaConstants.APPLICATION_STATUS_SUBMITTED.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
-                model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.not.approved", new String[] {}, null));
+                model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.not.approved", new String[] {
+                		acknum, stakeHolder.getStakeHolderType().getName()
+                }, null));
                 return COMMON_ERROR;
             } else if (stakeHolder.getStatus() != null
                     && BpaConstants.APPLICATION_STATUS_SUBMITTED.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
@@ -238,7 +240,7 @@ public class StakeHolderController extends GenericWorkFlowController {
                 return COMMON_ERROR;
             } else {
                 model.addAttribute(MESSAGE,
-                        messageSource.getMessage("msg.stakeholder.pay.fee.generic.issue", new String[] {}, null));
+                        messageSource.getMessage("msg.stakeholder.pay.fee.paid", new String[] {acknum, stakeHolder.getLicenceNumber()  }, null));
                 return COMMON_ERROR;
             }
         }
@@ -251,29 +253,33 @@ public class StakeHolderController extends GenericWorkFlowController {
             final Model model, final BindingResult errors, final RedirectAttributes redirectAttributes,
             HttpServletRequest request) {
 
-        if (!captchaUtils.captchaIsValid(request))
-            errors.reject("captcha.not.valid");
+    	 if (!captchaUtils.captchaIsValid(request))
+             errors.reject("captcha.not.valid");
 
-        StakeHolder existingStakeholder = stakeHolderService.validateStakeHolderIsRejected(
-                stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), stakeHolder.getAadhaarNumber(),
-                stakeHolder.getPan(), stakeHolder.getLicenceNumber());
-        if (existingStakeholder == null)
-            validateStakeholder(stakeHolder, errors);
-        if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM)
-                && !citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber()))
-            errors.rejectValue("activationCode", "error.otp.verification.failed");
+         StakeHolder existingStakeholder = stakeHolderService.validateStakeHolderIsRejected(
+                 stakeHolder.getMobileNumber(), stakeHolder.getEmailId(), stakeHolder.getAadhaarNumber(),
+                 stakeHolder.getPan(), stakeHolder.getLicenceNumber());
+         if (existingStakeholder == null)
+             validateStakeholder(stakeHolder, errors);
+         if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM)
+                 && !citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber()))
+             errors.rejectValue("activationCode", "error.otp.verification.failed");
+
 
         if (errors.hasErrors()) {
             prepareModel(model, stakeHolder);
             return STAKEHOLDER_NEW_BY_CITIZEN;
         }
+        try {
         stakeHolder.setStatus(StakeHolderStatus.SUBMITTED);
         stakeHolder.setSource(Source.ONLINE);
         stakeHolder.setActive(false);
-        StakeHolder stakeHolderRes;
+        StakeHolder stakeHolderRes=null;
         if (existingStakeholder == null)
-            stakeHolderRes = stakeHolderService.save(stakeHolder);
-        else
+			
+				stakeHolderRes = stakeHolderService.save(stakeHolder);
+			
+		else
             stakeHolderRes = stakeHolderService.updateOnResubmit(stakeHolder, existingStakeholder);
 
         stakeHolderIndexService.updateIndexes(stakeHolderRes);
@@ -290,6 +296,12 @@ public class StakeHolderController extends GenericWorkFlowController {
                             null));
         }
         return RDRCT_STKHLDR_RSLT + stakeHolderRes.getId();
+        } catch (Exception e) {
+        	    model.addAttribute("error", e.getMessage());
+                prepareModel(model, stakeHolder);
+                return STAKEHOLDER_NEW_BY_CITIZEN;
+             
+		}
     }
 
     private boolean checkIsUserExists(@ModelAttribute(STAKE_HOLDER) StakeHolder stakeHolder, Model model) {

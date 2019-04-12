@@ -267,6 +267,10 @@ public class StakeHolderService {
                                 designationService.getDesignationByName(wfmatrix.getNextDesignation()).getId());
                         if (!assignments.isEmpty())
                             ownerPos = assignments.get(0).getPosition();
+                        if(ownerPos==null)
+                        {
+                        	throw new RuntimeException("No employee assignment to forward the application");
+                        }
                     }
 
                     stakeHolderState.transition().start()
