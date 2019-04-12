@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,52 +43,27 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
-package org.egov.bpa.web.controller.common;
+package org.egov.infra.admin.master.service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import java.util.List;
 
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.TenantService;
+import org.egov.infra.admin.master.entity.Tenant;
+import org.egov.infra.admin.master.repository.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Controller
-@RequestMapping("/common")
-public class CommonController {
+@Service
+@Transactional(readOnly = true)
+public class TenantService {
 
-    @Value("${client.id}")
-    private String clientId;
-    
-    @Autowired
-    private TenantService tenantService;
+	@Autowired
+	private TenantRepository tenantRepository;
 
-    @GetMapping("/city/selection-form")
-    public String showNewApplicationForm(@RequestParam(name = "url") final String url, final Model model,
-            final HttpServletRequest request) {
-    	
-        model.addAttribute("tenants", tenantService.findAll());
-        model.addAttribute("city", new City());
-        model.addAttribute("clientId", clientId);
-        model.addAttribute("url", url);
+	public List<Tenant> findAll() {
+		return tenantRepository.findAll();
+	}
 
-        return "city-selection";
-    }
-
-    @PostMapping("/application-create")
-    public String redirect(@Valid @ModelAttribute final City city, final HttpServletRequest request, final Model model,
-            final BindingResult errors, final RedirectAttributes redirectAttributes) {
-
-        return "";
-    }
 }

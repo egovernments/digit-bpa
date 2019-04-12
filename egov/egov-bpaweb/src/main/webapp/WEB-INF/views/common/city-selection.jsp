@@ -56,7 +56,7 @@
 		<div class="col-sm-3 add-margin">
 			<form:select path="tenantId" id="tenantId" required="required" cssClass="form-control" cssErrorClass="form-control error"> 
 				<form:option value=""> <spring:message code="lbl.select" /> </form:option>
-				<form:options items="${cityNameTenantIdMap}"/>
+				<form:options items="${tenants}" itemValue="code" itemLabel="name"/>
 			</form:select>
 			<form:errors path="tenantId" cssClass="error-msg" />
 		</div>
