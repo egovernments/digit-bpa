@@ -73,7 +73,7 @@ public class ParkingDetails implements Serializable {
     private List<Measurement> mechParking = new ArrayList<>();
     private List<Measurement> twoWheelers = new ArrayList<>();
     private List<Measurement> disabledPersons = new ArrayList<>();
-    private Integer validSpecialParkingSlots = 0;
+    private Integer validDAParkingSlots = 0;
     private BigDecimal distFromDAToMainEntrance = BigDecimal.ZERO;
     private List<Measurement> special = new ArrayList<>();
 
@@ -125,30 +125,6 @@ public class ParkingDetails implements Serializable {
         this.validCarParkingSlots = validCarParkingSlots;
     }
 
-    public Integer getValidOpenCarSlots() {
-        return validOpenCarSlots;
-    }
-
-    public void setValidOpenCarSlots(Integer validOpenCarSlots) {
-        this.validOpenCarSlots = validOpenCarSlots;
-    }
-
-    public Integer getValidCoverCarSlots() {
-        return validCoverCarSlots;
-    }
-
-    public void setValidCoverCarSlots(Integer validCoverCarSlots) {
-        this.validCoverCarSlots = validCoverCarSlots;
-    }
-
-    public Integer getValidBasementCarSlots() {
-        return validBasementCarSlots;
-    }
-
-    public void setValidBasementCarSlots(Integer validBasementCarSlots) {
-        this.validBasementCarSlots = validBasementCarSlots;
-    }
-
     public Integer getDiningSeats() {
         return diningSeats;
     }
@@ -189,12 +165,12 @@ public class ParkingDetails implements Serializable {
         this.disabledPersons = disabledPersons;
     }
 
-    public Integer getValidSpecialParkingSlots() {
-        return validSpecialParkingSlots;
+    public Integer getValidDAParkingSlots() {
+        return validDAParkingSlots;
     }
 
-    public void setValidSpecialParkingSlots(Integer validSpecialParkingSlots) {
-        this.validSpecialParkingSlots = validSpecialParkingSlots;
+    public void setValidDAParkingSlots(Integer validDAParkingSlots) {
+        this.validDAParkingSlots = validDAParkingSlots;
     }
 
     public BigDecimal getDistFromDAToMainEntrance() {
@@ -211,6 +187,30 @@ public class ParkingDetails implements Serializable {
 
     public void setSpecial(List<Measurement> special) {
         this.special = special;
+    }
+
+    public Integer getValidOpenCarSlots() {
+        return validOpenCarSlots;
+    }
+
+    public void setValidOpenCarSlots(Integer validOpenCarSlots) {
+        this.validOpenCarSlots = validOpenCarSlots;
+    }
+
+    public Integer getValidCoverCarSlots() {
+        return validCoverCarSlots;
+    }
+
+    public void setValidCoverCarSlots(Integer validCoverCarSlots) {
+        this.validCoverCarSlots = validCoverCarSlots;
+    }
+
+    public Integer getValidBasementCarSlots() {
+        return validBasementCarSlots;
+    }
+
+    public void setValidBasementCarSlots(Integer validBasementCarSlots) {
+        this.validBasementCarSlots = validBasementCarSlots;
     }
 
 }
