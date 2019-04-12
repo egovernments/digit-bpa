@@ -44,9 +44,11 @@ import java.util.List;
 
 import org.egov.bpa.master.entity.StakeHolderType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface StakeholderTypeRepository extends JpaRepository<StakeHolderType, Long> {
 
+    @Query("select A from StakeHolderType A where A.isActive=true order by A.name asc ")
 	List<StakeHolderType> findByIsActiveTrue();
 	StakeHolderType findByCode(String code);
 }

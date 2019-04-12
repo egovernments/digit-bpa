@@ -285,7 +285,7 @@ public class StakeHolderController extends GenericWorkFlowController {
                     messageSource.getMessage("msg.update.stakeholder.success", null, null));
         } else {
             redirectAttributes.addFlashAttribute(MESSAGE,
-                    messageSource.getMessage("msg.create.stakeholder.ctizen.request", new String[] {
+                    messageSource.getMessage("msg.create.stakeholder.citizen.success", new String[] {
                             stakeHolderRes.getStakeHolderType().getName(), stakeHolderRes.getCode() },
                             null));
         }
