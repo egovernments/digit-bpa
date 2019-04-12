@@ -134,6 +134,6 @@ public class OccupancyTypeHelper implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(type.getCode());
+        return Objects.hash(type != null ? type.getCode() : "");
     }
 }

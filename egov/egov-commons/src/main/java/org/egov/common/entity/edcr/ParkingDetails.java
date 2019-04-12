@@ -65,12 +65,15 @@ public class ParkingDetails implements Serializable {
     private List<Measurement> basementCars = new ArrayList<>();
     private List<Measurement> visitors = new ArrayList<>();
     private Integer validCarParkingSlots = 0;
+    private Integer validOpenCarSlots = 0;
+    private Integer validCoverCarSlots = 0;
+    private Integer validBasementCarSlots = 0;
     private Integer diningSeats = 0;
     private List<Measurement> loadUnload = new ArrayList<>();
     private List<Measurement> mechParking = new ArrayList<>();
     private List<Measurement> twoWheelers = new ArrayList<>();
     private List<Measurement> disabledPersons = new ArrayList<>();
-    private Integer validDAParkingSlots = 0;
+    private Integer validSpecialParkingSlots = 0;
     private BigDecimal distFromDAToMainEntrance = BigDecimal.ZERO;
     private List<Measurement> special = new ArrayList<>();
 
@@ -122,6 +125,30 @@ public class ParkingDetails implements Serializable {
         this.validCarParkingSlots = validCarParkingSlots;
     }
 
+    public Integer getValidOpenCarSlots() {
+        return validOpenCarSlots;
+    }
+
+    public void setValidOpenCarSlots(Integer validOpenCarSlots) {
+        this.validOpenCarSlots = validOpenCarSlots;
+    }
+
+    public Integer getValidCoverCarSlots() {
+        return validCoverCarSlots;
+    }
+
+    public void setValidCoverCarSlots(Integer validCoverCarSlots) {
+        this.validCoverCarSlots = validCoverCarSlots;
+    }
+
+    public Integer getValidBasementCarSlots() {
+        return validBasementCarSlots;
+    }
+
+    public void setValidBasementCarSlots(Integer validBasementCarSlots) {
+        this.validBasementCarSlots = validBasementCarSlots;
+    }
+
     public Integer getDiningSeats() {
         return diningSeats;
     }
@@ -162,12 +189,12 @@ public class ParkingDetails implements Serializable {
         this.disabledPersons = disabledPersons;
     }
 
-    public Integer getValidDAParkingSlots() {
-        return validDAParkingSlots;
+    public Integer getValidSpecialParkingSlots() {
+        return validSpecialParkingSlots;
     }
 
-    public void setValidDAParkingSlots(Integer validDAParkingSlots) {
-        this.validDAParkingSlots = validDAParkingSlots;
+    public void setValidSpecialParkingSlots(Integer validSpecialParkingSlots) {
+        this.validSpecialParkingSlots = validSpecialParkingSlots;
     }
 
     public BigDecimal getDistFromDAToMainEntrance() {
