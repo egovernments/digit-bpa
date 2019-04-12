@@ -56,6 +56,7 @@ import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.GovtBuildingDistance;
+import org.egov.edcr.feature.GuardRoom;
 import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.OverheadElectricalLineService;
@@ -92,6 +93,8 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(SepticTank.class);
 		features.add(pf);
 		pf = new PlanFeature(Plantation.class);
+		features.add(pf);
+		pf = new PlanFeature(GuardRoom.class);
 		features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
