@@ -185,6 +185,8 @@ public class PlanInformation implements Serializable {
 
 	private transient String buildingNearToRiver = NA;
 
+	private transient String barrierFreeAccessForPhyChlngdPpl = NA;
+
 	public Boolean getParkingToMainBuilding() {
 		return parkingToMainBuilding;
 	}
@@ -663,6 +665,14 @@ public class PlanInformation implements Serializable {
 
 	public void setBuildingNearToRiver(String buildingNearToRiver) {
 		this.buildingNearToRiver = buildingNearToRiver;
+	}
+
+	public String getBarrierFreeAccessForPhyChlngdPpl() {
+		return barrierFreeAccessForPhyChlngdPpl;
+	}
+
+	public void setBarrierFreeAccessForPhyChlngdPpl(String barrierFreeAccessForPhyChlngdPpl) {
+		this.barrierFreeAccessForPhyChlngdPpl = barrierFreeAccessForPhyChlngdPpl;
 	}
 
 }
