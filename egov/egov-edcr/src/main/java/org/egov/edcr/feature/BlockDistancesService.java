@@ -255,8 +255,8 @@ public class BlockDistancesService extends FeatureProcess {
 		HashMap<BigDecimal, Block> blockMap = new HashMap();
 		blockMap.put(bHeight, b);
 		blockMap.put(blockHeight, block);
-		List<BigDecimal> heights = Arrays.asList(bHeight, blockHeight);
-		BigDecimal maxHeight = heights.stream().reduce(BigDecimal::max).get();
+		List<BigDecimal> blkHeights = Arrays.asList(bHeight, blockHeight);
+		BigDecimal maxHeight = blkHeights.stream().reduce(BigDecimal::max).get();
 
 		ArrayList<BigDecimal> setBacksValues = new ArrayList();
 		setBacksValues.add(THREE);
@@ -274,7 +274,11 @@ public class BlockDistancesService extends FeatureProcess {
 		BigDecimal dividedHeight = maxHeight.divide(THREE, DcrConstants.DECIMALDIGITS_MEASUREMENTS,
 				DcrConstants.ROUNDMODE_MEASUREMENTS);
 
-		if (actualDistance.compareTo(dividedHeight) >= 0 || actualDistance.compareTo(BigDecimal.valueOf(18)) >= 0) {
+		
+		List<BigDecimal> heights = Arrays.asList(dividedHeight, BigDecimal.valueOf(18));
+		BigDecimal minHeight = heights.stream().reduce(BigDecimal::min).get();
+
+		if (actualDistance.compareTo(minHeight) >= 0) {
 			valid1 = true;
 		}
 

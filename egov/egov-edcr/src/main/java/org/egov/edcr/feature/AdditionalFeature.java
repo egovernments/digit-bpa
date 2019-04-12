@@ -47,6 +47,9 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
+import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +62,8 @@ import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.SetBack;
+import org.egov.common.entity.edcr.Yard;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.utils.StringUtils;
@@ -70,9 +75,11 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final Logger LOG = Logger.getLogger(AdditionalFeature.class);
 
 	private static final String RULE_38 = "38";
+	private static final String RULE_39 = "39";
 	private static final String RULE_41_I_A = "41(i)(a)";
 	private static final String RULE_41_I_B = "41(i)(b)";
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
+	private static final BigDecimal ONE_POINTFIVE = BigDecimal.valueOf(1.5);
 	private static final BigDecimal THREE = BigDecimal.valueOf(3);
 	private static final BigDecimal FOUR = BigDecimal.valueOf(4);
 	private static final BigDecimal SIX = BigDecimal.valueOf(6);
@@ -109,7 +116,7 @@ public class AdditionalFeature extends FeatureProcess {
 	public static final String MIN_PLINTH_HEIGHT_DESC = "Minimum plinth height";
 	private static final String MIN_INT_COURT_YARD = "0.15";
 	public static final String MIN_INT_COURT_YARD_DESC = "Minimum interior courtyard";
-	
+
 	@Override
 	public Plan validate(Plan pl) {
 		HashMap<String, String> errors = new HashMap<>();
@@ -154,9 +161,9 @@ public class AdditionalFeature extends FeatureProcess {
 			validateNumberOfFloors(pl, errors, typeOfArea, roadWidth);
 			validateHeightOfBuilding(pl, errors, typeOfArea, roadWidth);
 		}
-		
+
 		validatePlinthHeight(pl, errors);
-		//validateIntCourtYard(pl, errors);
+		// validateIntCourtYard(pl, errors);
 		return pl;
 	}
 
@@ -254,9 +261,11 @@ public class AdditionalFeature extends FeatureProcess {
 
 	private void validateHeightOfBuilding(Plan pl, HashMap<String, String> errors, String typeOfArea,
 			BigDecimal roadWidth) {
+
 		for (Block block : pl.getBlocks()) {
 
 			boolean isAccepted = false;
+			String ruleNo = RULE_38;
 			ScrutinyDetail scrutinyDetail = getNewScrutinyDetailRoadArea(
 					"Block_" + block.getNumber() + "_" + "Maximum Height of Building Allowed");
 			String requiredBuildingHeight = StringUtils.EMPTY;
@@ -282,6 +291,12 @@ public class AdditionalFeature extends FeatureProcess {
 						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
 					isAccepted = buildingHeight.compareTo(TWELVE) <= 0;
 					requiredBuildingHeight = "<= 12";
+				} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) > 0) {
+					List<SetBack> setBacks = block.getSetBacks();
+					BigDecimal permitedHeight = getPermitedHeight(roadWidth, setBacks);
+					isAccepted = buildingHeight.compareTo(permitedHeight) <= 0;
+					requiredBuildingHeight = "<=" + permitedHeight.toString();
+					ruleNo = RULE_39;
 				}
 				/*
 				 * else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0 &&
@@ -315,6 +330,11 @@ public class AdditionalFeature extends FeatureProcess {
 						&& roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) <= 0) {
 					isAccepted = buildingHeight.compareTo(NINETEEN) <= 0;
 					requiredBuildingHeight = "<= 19";
+				} else if (roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) > 0) {
+					List<SetBack> setBacks = block.getSetBacks();
+					BigDecimal permitedHeight = getPermitedHeight(roadWidth, setBacks);
+					isAccepted = buildingHeight.compareTo(permitedHeight) <= 0;
+					requiredBuildingHeight = "<=" + permitedHeight.toString();
 				} /*
 					 * else if (roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0 &&
 					 * roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) <= 0) { return
@@ -334,7 +354,7 @@ public class AdditionalFeature extends FeatureProcess {
 
 			if (errors.isEmpty() && StringUtils.isNotBlank(requiredBuildingHeight)) {
 				Map<String, String> details = new HashMap<>();
-				details.put(RULE_NO, RULE_38);
+				details.put(RULE_NO, ruleNo);
 				details.put(DESCRIPTION, HEIGHT_BUILDING);
 				details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
 				details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
@@ -346,9 +366,20 @@ public class AdditionalFeature extends FeatureProcess {
 			}
 		}
 	}
-	
 
-	
+	private BigDecimal getPermitedHeight(BigDecimal roadWidth, List<SetBack> setBacks) {
+		BigDecimal frontYardHeight = BigDecimal.ZERO;
+		for (SetBack setBack : setBacks) {
+			Yard frontYard = setBack.getFrontYard();
+			frontYardHeight = frontYard != null && frontYard.getMinimumDistance() != null ? frontYard.getMinimumDistance()
+					: frontYardHeight;
+		}
+
+		BigDecimal sum = roadWidth.add(frontYardHeight);
+		return ONE_POINTFIVE.multiply(sum).setScale(DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+	}
+
+
 	private void validatePlinthHeight(Plan pl, HashMap<String, String> errors) {
 		for (Block block : pl.getBlocks()) {
 
@@ -363,10 +394,10 @@ public class AdditionalFeature extends FeatureProcess {
 				if (minPlinthHeight.compareTo(BigDecimal.valueOf(0.45)) >= 0) {
 					isAccepted = true;
 				}
-			}else {
-	        	String plinthHeightLayer = String.format(DxfFileConstants.LAYER_PLINTH_HEIGHT, block.getNumber());
-				  errors.put(plinthHeightLayer,"Plinth height is not defined in layer " + plinthHeightLayer );
-				  pl.addErrors(errors);
+			} else {
+				String plinthHeightLayer = String.format(DxfFileConstants.LAYER_PLINTH_HEIGHT, block.getNumber());
+				errors.put(plinthHeightLayer, "Plinth height is not defined in layer " + plinthHeightLayer);
+				pl.addErrors(errors);
 			}
 
 			if (errors.isEmpty()) {
@@ -381,37 +412,30 @@ public class AdditionalFeature extends FeatureProcess {
 			}
 		}
 	}
-	
-	private void validateIntCourtYard(Plan pl, HashMap<String, String> errors) {
-		for (Block block : pl.getBlocks()) {
 
-			boolean isAccepted = false;
-			BigDecimal minIntCourtYard = BigDecimal.ZERO;
-			String blkNo = block.getNumber();
-			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Interior Court Yard");
-			List<BigDecimal> interiorCourtYard = block.getInteriorCourtYard();
+	/*
+	 * private void validateIntCourtYard(Plan pl, HashMap<String, String> errors) {
+	 * for (Block block : pl.getBlocks()) {
+	 * 
+	 * boolean isAccepted = false; BigDecimal minIntCourtYard = BigDecimal.ZERO;
+	 * String blkNo = block.getNumber(); ScrutinyDetail scrutinyDetail =
+	 * getNewScrutinyDetail("Block_" + blkNo + "_" + "Interior Court Yard");
+	 * List<BigDecimal> interiorCourtYard = block.getInteriorCourtYard();
+	 * 
+	 * if (!interiorCourtYard.isEmpty()) { minIntCourtYard =
+	 * interiorCourtYard.stream().reduce(BigDecimal::min).get(); if
+	 * (minIntCourtYard.compareTo(BigDecimal.valueOf(0.15)) >= 0) { isAccepted =
+	 * true; } }
+	 * 
+	 * if (errors.isEmpty()) { Map<String, String> details = new HashMap<>();
+	 * details.put(RULE_NO, RULE_41_I_B); details.put(DESCRIPTION,
+	 * MIN_INT_COURT_YARD_DESC); details.put(REQUIRED, MIN_INT_COURT_YARD);
+	 * details.put(PROVIDED, String.valueOf(minIntCourtYard)); details.put(STATUS,
+	 * isAccepted ? Result.Accepted.getResultVal() :
+	 * Result.Not_Accepted.getResultVal()); scrutinyDetail.getDetail().add(details);
+	 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); } } }
+	 */
 
-			if (!interiorCourtYard.isEmpty()) {
-				minIntCourtYard = interiorCourtYard.stream().reduce(BigDecimal::min).get();
-				if (minIntCourtYard.compareTo(BigDecimal.valueOf(0.15)) >= 0) {
-					isAccepted = true;
-				}
-			}
-
-			if (errors.isEmpty()) {
-				Map<String, String> details = new HashMap<>();
-				details.put(RULE_NO, RULE_41_I_B);
-				details.put(DESCRIPTION, MIN_INT_COURT_YARD_DESC);
-				details.put(REQUIRED, MIN_INT_COURT_YARD);
-				details.put(PROVIDED, String.valueOf(minIntCourtYard));
-				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
-				scrutinyDetail.getDetail().add(details);
-				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-			}
-		}
-	}
-	 
-	
 	private ScrutinyDetail getNewScrutinyDetailRoadArea(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -424,7 +448,7 @@ public class AdditionalFeature extends FeatureProcess {
 		scrutinyDetail.setKey(key);
 		return scrutinyDetail;
 	}
-	
+
 	private ScrutinyDetail getNewScrutinyDetail(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
