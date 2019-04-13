@@ -52,7 +52,7 @@
 	<field name="electricLine" class="org.egov.common.entity.edcr.ElectricLine"/>
 	<variable name="SUB_REPORT_ROW_CNT" class="java.lang.Integer"/>
 	<title>
-		<band height="638" splitType="Stretch">
+		<band height="641" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
 				<reportElement x="112" y="27" width="306" height="20" uuid="8a112e59-5ebc-4b5b-ac94-947d91b2912e"/>
@@ -163,7 +163,7 @@
 				<textFieldExpression><![CDATA[$P{reportStatus}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="9" y="585" width="193" height="19" isRemoveLineWhenBlank="true" uuid="1bc539b3-3399-4906-9c6d-2f6ce7399eb8">
+				<reportElement x="9" y="588" width="193" height="19" isRemoveLineWhenBlank="true" uuid="1bc539b3-3399-4906-9c6d-2f6ce7399eb8">
 					<printWhenExpression><![CDATA[!$P{errors}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left">
@@ -172,7 +172,7 @@
 				<text><![CDATA[Errors ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="9" y="604" width="537" height="34" isRemoveLineWhenBlank="true" uuid="3993cc76-bd9f-4699-897a-2330010ece90">
+				<reportElement stretchType="RelativeToTallestObject" x="9" y="607" width="537" height="34" isRemoveLineWhenBlank="true" uuid="3993cc76-bd9f-4699-897a-2330010ece90">
 					<printWhenExpression><![CDATA[!$P{errors}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{errorString}]]></textFieldExpression>
@@ -527,7 +527,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" PLOT RE‐SURVEY NUMBER"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" PLOT  NO"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="108" width="130" height="21" uuid="ebc6335a-c403-4524-8218-61738726fdf6"/>
@@ -542,7 +542,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getReSurveyNo()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getPlotNo()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="129" width="146" height="21" uuid="bb2a1837-c7d6-4af1-a38e-360b9b266495"/>
@@ -617,7 +617,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" REVENUE WARD"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["KHATA NO"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="129" width="130" height="21" uuid="a3b7760f-a182-4336-91dc-39f9c990f235"/>
@@ -632,7 +632,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getRevenueWard()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getKhataNo()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="150" width="146" height="21" uuid="7776029d-8555-4904-8dbe-2a76cae77301"/>
@@ -707,7 +707,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" DESAM"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["MAUZA"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="150" width="130" height="21" uuid="83458a69-6cf0-44af-b9f1-d27925ba674b"/>
@@ -722,7 +722,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getDesam()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getMauza()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="171" width="146" height="21" uuid="eb3c9a40-3143-4f3c-b8a7-1bc769be2c4d"/>
@@ -797,7 +797,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" VILLAGE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["DISTRICT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="171" width="130" height="21" uuid="f1329572-0b6b-4770-b290-d9167fa99096"/>
@@ -812,7 +812,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getVillage()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getDistrict()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="192" width="146" height="21" uuid="34708d02-2315-4393-84d4-4c61443c9a75"/>
