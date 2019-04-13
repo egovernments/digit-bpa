@@ -187,6 +187,14 @@ public class PlanInformation implements Serializable {
 
 	private transient String barrierFreeAccessForPhyChlngdPpl = NA;
 
+	private String plotNo;
+
+	private String khataNo;
+
+	private String mauza;
+
+	private String district;
+	
 	public Boolean getParkingToMainBuilding() {
 		return parkingToMainBuilding;
 	}
@@ -673,6 +681,38 @@ public class PlanInformation implements Serializable {
 
 	public void setBarrierFreeAccessForPhyChlngdPpl(String barrierFreeAccessForPhyChlngdPpl) {
 		this.barrierFreeAccessForPhyChlngdPpl = barrierFreeAccessForPhyChlngdPpl;
+	}
+
+	public String getPlotNo() {
+		return plotNo;
+	}
+
+	public void setPlotNo(String plotNo) {
+		this.plotNo = plotNo;
+	}
+
+	public String getKhataNo() {
+		return khataNo;
+	}
+
+	public void setKhataNo(String khataNo) {
+		this.khataNo = khataNo;
+	}
+
+	public String getMauza() {
+		return mauza;
+	}
+
+	public void setMauza(String mauza) {
+		this.mauza = mauza;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
 	}
 
 }
