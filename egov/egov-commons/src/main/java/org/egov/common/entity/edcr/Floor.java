@@ -76,7 +76,7 @@ public class Floor extends Measurement {
     private List<FireStair> fireStairs = new ArrayList<>();
     private List<GeneralStair> generalStairs = new ArrayList<>();
     private List<SpiralStair> spiralStairs = new ArrayList<>();
-    private List<ParkingDetails> parkings = new ArrayList<>();
+    private ParkingDetails parking = new ParkingDetails();
 
     private List<BigDecimal> floorHeights;
 
@@ -347,12 +347,12 @@ public class Floor extends Measurement {
         this.terrace = terrace;
     }
 
-    public List<ParkingDetails> getParkings() {
-        return parkings;
+    public ParkingDetails getParking() {
+        return parking;
     }
 
-    public void setParkings(List<ParkingDetails> parkings) {
-        this.parkings = parkings;
+    public void setParking(ParkingDetails parking) {
+        this.parking = parking;
     }
 
 }
