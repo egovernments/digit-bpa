@@ -527,7 +527,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[" PLOT  NO"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PLOT NO"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="108" width="130" height="21" uuid="ebc6335a-c403-4524-8218-61738726fdf6"/>
