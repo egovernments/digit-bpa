@@ -82,6 +82,10 @@ public class Block extends Measurement {
     private List<Measurement> openStairs = new ArrayList<>();
     private List<BigDecimal> plinthHeight ;
     private List<BigDecimal> interiorCourtYard ;
+    private List<Measurement> overHangs;
+    private List<Measurement> protectedBalconies;
+    private List<Measurement> plantationGreenStripes;
+    
     
     @Override
     public String toString() {
@@ -314,6 +318,30 @@ public class Block extends Measurement {
 
 	public void setInteriorCourtYard(List<BigDecimal> interiorCourtYard) {
 		this.interiorCourtYard = interiorCourtYard;
+	}
+
+	public List<Measurement> getOverHangs() {
+		return overHangs;
+	}
+
+	public void setOverHangs(List<Measurement> overHangs) {
+		this.overHangs = overHangs;
+	}
+
+	public List<Measurement> getProtectedBalconies() {
+		return protectedBalconies;
+	}
+
+	public void setProtectedBalconies(List<Measurement> protectedBalconies) {
+		this.protectedBalconies = protectedBalconies;
+	}
+
+	public List<Measurement> getPlantationGreenStripes() {
+		return plantationGreenStripes;
+	}
+
+	public void setPlantationGreenStripes(List<Measurement> plantationGreenStripes) {
+		this.plantationGreenStripes = plantationGreenStripes;
 	}
 	
 }

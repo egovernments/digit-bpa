@@ -137,7 +137,8 @@ public class Plan implements Serializable {
 	private transient List<SepticTank> septicTanks = new ArrayList<>();
 	private transient Plantation plantation;
 	private transient GuardRoom guardRoom;
-
+	private transient SegregatedToilet segregatedToilet;
+	
 	public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
 		return canopyDistanceFromPlotBoundary;
 	}
@@ -571,6 +572,14 @@ public class Plan implements Serializable {
 
 	public void setGuardRoom(GuardRoom guardRoom) {
 		this.guardRoom = guardRoom;
+	}
+
+	public SegregatedToilet getSegregatedToilet() {
+		return segregatedToilet;
+	}
+
+	public void setSegregatedToilet(SegregatedToilet segregatedToilet) {
+		this.segregatedToilet = segregatedToilet;
 	}
 
 }
