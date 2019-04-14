@@ -60,10 +60,18 @@
 			<spring:message code="lbl.behalf.org" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.isOnbehalfOfOrganization  ? 'YES' : 'NO'}" default="N/A"></c:out>
+			<c:out
+				value="${stakeHolder.isOnbehalfOfOrganization  ? 'YES' : 'NO'}"
+				default="N/A"></c:out>
 		</div>
 	</div>
+	
 	<c:if test="${stakeHolder.isOnbehalfOfOrganization}">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title">
+			<spring:message code="lbl.org.details" />
+		</div>
+	</div>
 		<div class="row add-border">
 			<div class="col-sm-3 control-div add-margin">
 				<spring:message code="lbl.nameof.org" />
@@ -102,7 +110,12 @@
 			</div>
 		</div>
 	</c:if>
-	
+
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title">
+			<spring:message code="lbl.buildinglicensee.details" />
+		</div>
+	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.applicant.name" />
@@ -117,7 +130,7 @@
 			<c:out value="${stakeHolder.code}" default="N/A"></c:out>
 		</div>
 	</div>
-	
+
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.stakeholder.type" />
@@ -126,27 +139,29 @@
 			<c:out value="${stakeHolder.stakeHolderType.name}"></c:out>
 		</div>
 		<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.isActive" />
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.isActive" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${stakeHolder.active ? 'YES' : 'NO'}" default="N/A"></c:out>
+			</div>
 		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.active ? 'YES' : 'NO'}" default="N/A"></c:out>
-		</div>
-	</div>
 	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.application.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${stakeHolder.createdDate}" pattern="dd/MM/yyyy" var="createdDate" />
+			<fmt:formatDate value="${stakeHolder.createdDate}"
+				pattern="dd/MM/yyyy" var="createdDate" />
 			<c:out value="${createdDate}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.status" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.status.stakeHolderStatusVal}" default="N/A"></c:out>
+			<c:out value="${stakeHolder.status.stakeHolderStatusVal}"
+				default="N/A"></c:out>
 		</div>
 	</div>
 
@@ -155,7 +170,8 @@
 			<spring:message code="lbl.dob" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${stakeHolder.dob}" pattern="dd/MM/yyyy" var="dob" />
+			<fmt:formatDate value="${stakeHolder.dob}" pattern="dd/MM/yyyy"
+				var="dob" />
 			<c:out value="${dob}" default="N/A"></c:out>
 		</div>
 
@@ -166,7 +182,7 @@
 			<c:out value="${stakeHolder.gender}" default="N/A"></c:out>
 		</div>
 	</div>
-	
+
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.mobileNo" />
@@ -181,7 +197,8 @@
 			<c:out value="${stakeHolder.emailId}" default="N/A"></c:out>
 		</div>
 	</div>
-	<c:if test="${stakeHolder.licenceNumber!=null && !stakeHolder.licenceNumber.isEmpty() }">
+	<c:if
+		test="${stakeHolder.licenceNumber!=null && !stakeHolder.licenceNumber.isEmpty() }">
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.lic.no" />
@@ -190,20 +207,22 @@
 				<c:out value="${stakeHolder.licenceNumber}" default="N/A"></c:out>
 			</div>
 		</div>
-		
+
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.buil.lic.iss.date" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<fmt:formatDate value="${stakeHolder.buildingLicenceIssueDate}" pattern="dd/MM/yyyy" var="buildingLicenceIssueDate" />
+				<fmt:formatDate value="${stakeHolder.buildingLicenceIssueDate}"
+					pattern="dd/MM/yyyy" var="buildingLicenceIssueDate" />
 				<c:out value="${buildingLicenceIssueDate}" default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.build.lic.exp.date" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<fmt:formatDate value="${stakeHolder.buildingLicenceExpiryDate}" pattern="dd/MM/yyyy" var="buildingLicenceExpiryDate" />
+				<fmt:formatDate value="${stakeHolder.buildingLicenceExpiryDate}"
+					pattern="dd/MM/yyyy" var="buildingLicenceExpiryDate" />
 				<c:out value="${buildingLicenceExpiryDate}" default="N/A"></c:out>
 			</div>
 		</div>
@@ -336,19 +355,21 @@
 			</div>
 		</div>
 	</div>
-	
-	</c:forEach>
+
+</c:forEach>
 <div class="panel-body">
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.comments" />
 		</div>
 		<div class="col-sm-9 add-margin view-content">
-			<c:out value="${stakeHolder.comments eq '' ? 'N/A' : stakeHolder.comments}" default="N/A"></c:out>
+			<c:out
+				value="${stakeHolder.comments eq '' ? 'N/A' : stakeHolder.comments}"
+				default="N/A"></c:out>
 		</div>
 	</div>
 </div>
 
-	
-	
+
+
 
