@@ -89,28 +89,30 @@ public class OverHangs extends FeatureProcess {
 		details.put(RULE_NO, RULE_45);
 		details.put(DESCRIPTION, OVERHANGS_DESCRIPTION);
 
-		BigDecimal maxHeight = BigDecimal.ZERO;
+		BigDecimal minWidth = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
-			maxHeight = BigDecimal.ZERO;
-			for (Measurement m : b.getOverHangs()) {
-				if (m.getHeight().compareTo(maxHeight) > 0) {
-					maxHeight = m.getHeight();
+			minWidth = BigDecimal.ZERO;
+			if (b.getOverHangs() != null) {
+				for (Measurement m : b.getOverHangs()) {
+					if (m.getWidth().compareTo(minWidth) < 0) {
+						minWidth = m.getWidth();
+					}
 				}
-			}
 
-			if (maxHeight.compareTo(new BigDecimal("0.75")) > 0) {
-				details.put(REQUIRED, ">0.75");
-				details.put(PROVIDED, maxHeight.toString());
-				details.put(STATUS, Result.Accepted.getResultVal());
-				scrutinyDetail.getDetail().add(details);
-				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-			} else {
-				details.put(REQUIRED, ">0.75");
-				details.put(PROVIDED, maxHeight.toString());
-				details.put(STATUS, Result.Not_Accepted.getResultVal());
-				scrutinyDetail.getDetail().add(details);
-				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				if (minWidth.compareTo(new BigDecimal("0.75")) > 0) {
+					details.put(REQUIRED, ">0.75");
+					details.put(PROVIDED, minWidth.toString());
+					details.put(STATUS, Result.Accepted.getResultVal());
+					scrutinyDetail.getDetail().add(details);
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				} else {
+					details.put(REQUIRED, ">0.75");
+					details.put(PROVIDED, minWidth.toString());
+					details.put(STATUS, Result.Not_Accepted.getResultVal());
+					scrutinyDetail.getDetail().add(details);
+					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				}
 			}
 
 		}

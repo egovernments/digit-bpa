@@ -60,6 +60,7 @@ import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
 import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.MonumentDistance;
+import org.egov.edcr.feature.OverHangs;
 import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.PlanInfoFeature;
 import org.egov.edcr.feature.Plantation;
@@ -101,6 +102,8 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(SpiralStair.class);
 		features.add(pf);
 		pf = new PlanFeature(FireStair.class);
+		features.add(pf);
+		pf = new PlanFeature(OverHangs.class);
 		features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
