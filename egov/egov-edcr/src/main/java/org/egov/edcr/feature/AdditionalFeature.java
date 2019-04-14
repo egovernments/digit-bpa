@@ -56,7 +56,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -121,7 +120,7 @@ public class AdditionalFeature extends FeatureProcess {
 	public static final String HEIGHT_BUILDING = "Maximum height of building allowed";
 	private static final String MIN_PLINTH_HEIGHT = " > 0.45";
 	public static final String MIN_PLINTH_HEIGHT_DESC = "Minimum plinth height";
-	public static final String MAX_BSMNT_CELLAR = "Maximum basement/cellar allowed";
+	public static final String MAX_BSMNT_CELLAR = "Number of basement/cellar allowed";
 	private static final String MIN_INT_COURT_YARD = "0.15";
 	public static final String MIN_INT_COURT_YARD_DESC = "Minimum interior courtyard";
 	public static final String BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC = "Barrier free access for physically challenged people";
@@ -484,7 +483,6 @@ public class AdditionalFeature extends FeatureProcess {
 		for (Block block : pl.getBlocks()) {
 
 			boolean isAccepted = false;
-			BigDecimal minPlinthHeight = BigDecimal.ZERO;
 			String allowedBsmnt = null;
 			String blkNo = block.getNumber();
 			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Basement/Cellar");
@@ -495,7 +493,9 @@ public class AdditionalFeature extends FeatureProcess {
 
 			if (!basementSetbacks.isEmpty()) {
 				if (mostRestrictiveFarHelper.getType() != null
-						&& (DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())
+						&& (DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
+								|| DxfFileConstants.A_R
+										.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
 								|| DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()))
 						&& pl.getPlot() != null
 						&& pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_300)) <= 0) {
@@ -503,7 +503,7 @@ public class AdditionalFeature extends FeatureProcess {
 					allowedBsmnt = "1";
 				} else if (mostRestrictiveFarHelper.getType() != null && mostRestrictiveFarHelper.getSubtype() != null
 						&& (DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
-								|| DxfFileConstants.A_AF_GH
+								|| DxfFileConstants.A_R
 										.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
 								|| DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()))) {
 					isAccepted = basementSetbacks.size() <= 2 ? true : false;

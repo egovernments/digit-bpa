@@ -48,80 +48,101 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.common.entity.edcr.SetBack;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OverHangs extends FeatureProcess {
+public class PlantationGreenStrip extends FeatureProcess {
 
-	private static final Logger LOG = Logger.getLogger(OverHangs.class);
-	private static final String RULE_45 = "45";
-	public static final String OVERHANGS_DESCRIPTION = "Over hangs";
+	private static final String RULE_37_6 = "37-6";
 
 	@Override
 	public Plan validate(Plan pl) {
-
-		return pl;
+		return null;
 	}
 
 	@Override
 	public Plan process(Plan pl) {
+		if (pl.getPlot() != null && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(300)) > 0) {
+			for (Block block : pl.getBlocks()) {
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Over hangs");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+				scrutinyDetail.addColumnHeading(1, RULE_NO);
+				scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+				scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
+				scrutinyDetail.addColumnHeading(4, PROVIDED);
+				scrutinyDetail.addColumnHeading(5, STATUS);
+				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Continuous Green Planting Strip");
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_45);
-		details.put(DESCRIPTION, OVERHANGS_DESCRIPTION);
+				boolean isWidthAccepted = false;
+				boolean isHeightAccepted = false;
+				BigDecimal minWidth = BigDecimal.ZERO;
+				BigDecimal minHeight = BigDecimal.ZERO;
+				List<BigDecimal> widths = block.getPlantationGreenStripes().stream()
+						.map(greenStripe -> greenStripe.getWidth()).collect(Collectors.toList());
+				List<BigDecimal> heights = block.getPlantationGreenStripes().stream()
+						.map(greenStripe -> greenStripe.getHeight()).collect(Collectors.toList());
+				List<BigDecimal> minimumDistances = new ArrayList<>();
 
-		BigDecimal minWidth = BigDecimal.ZERO;
-
-		for (Block b : pl.getBlocks()) {
-			minWidth = BigDecimal.ZERO;
-			if (!b.getOverHangs().isEmpty()) {
-				for (Measurement m : b.getOverHangs()) {
-					if (m.getWidth().compareTo(minWidth) < 0) {
-						minWidth = m.getWidth();
-					}
+				for (SetBack setBack : block.getSetBacks()) {
+					if (setBack.getRearYard() != null)
+						minimumDistances.add(setBack.getRearYard().getMinimumDistance());
+					if (setBack.getSideYard1() != null)
+						minimumDistances.add(setBack.getSideYard1().getMinimumDistance());
+					if (setBack.getSideYard2() != null)
+						minimumDistances.add(setBack.getSideYard2().getMinimumDistance());
 				}
 
-				if (minWidth.compareTo(new BigDecimal("0.75")) > 0) {
-					details.put(REQUIRED, ">0.75");
-					details.put(PROVIDED, minWidth.toString());
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					details.put(REQUIRED, ">0.75");
-					details.put(PROVIDED, minWidth.toString());
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+				if (!widths.isEmpty()) {
+					minWidth = widths.stream().reduce(BigDecimal::min).get();
+					minHeight = heights.stream().reduce(BigDecimal::min).get();
+
+					if (minWidth.compareTo(BigDecimal.valueOf(0.6)) >= 0) {
+						isWidthAccepted = true;
+
+					}
+
+					if (minimumDistances.contains(minHeight)) {
+						isHeightAccepted = true;
+					}
+
+					buildResult(pl, scrutinyDetail, isWidthAccepted, "Width of continuos plantation green strip",
+							">= 0.6", minWidth.toString());
+					buildResult(pl, scrutinyDetail, isHeightAccepted, "length of continuos plantation green strip ",
+							"should be equal to rear or side yard", minWidth.toString());
+
 				}
 			}
-
 		}
 		return pl;
+	}
+
+	private void buildResult(Plan pl, ScrutinyDetail scrutinyDetail, boolean valid, String description, String permited,
+			String provided) {
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, RULE_37_6);
+		details.put(DESCRIPTION, description);
+		details.put(PERMISSIBLE, permited);
+		details.put(PROVIDED, provided);
+		details.put(STATUS, valid ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+		scrutinyDetail.getDetail().add(details);
+		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 	}
 
 	@Override
 	public Map<String, Date> getAmendments() {
 		return new LinkedHashMap<>();
 	}
-
 }
