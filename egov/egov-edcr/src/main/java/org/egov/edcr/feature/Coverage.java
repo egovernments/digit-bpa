@@ -228,7 +228,7 @@ public class Coverage extends FeatureProcess {
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         //scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-        scrutinyDetail.addColumnHeading(4, REQUIRED);
+        scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
         scrutinyDetail.addColumnHeading(5, PROVIDED);
         scrutinyDetail.addColumnHeading(6, STATUS);
 
@@ -240,7 +240,7 @@ public class Coverage extends FeatureProcess {
             details.put(RULE_NO, RULE_38);
             details.put(DESCRIPTION, desc);
            // details.put(OCCUPANCY, occupancy);
-            details.put(REQUIRED, expectedResult);
+            details.put(PERMISSIBLE, expectedResult);
             details.put(PROVIDED, actualResult);
             details.put(STATUS, Result.Accepted.getResultVal());
             scrutinyDetail.getDetail().add(details);
@@ -251,7 +251,7 @@ public class Coverage extends FeatureProcess {
             details.put(RULE_NO, RULE_38);
             details.put(DESCRIPTION, desc);
            // details.put(OCCUPANCY, occupancy);
-            details.put(REQUIRED, expectedResult);
+            details.put(PERMISSIBLE, expectedResult);
             details.put(PROVIDED, actualResult);
             details.put(STATUS, Result.Not_Accepted.getResultVal());
             scrutinyDetail.getDetail().add(details);

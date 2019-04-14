@@ -56,9 +56,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -77,6 +80,7 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final String RULE_38 = "38";
 	private static final String RULE_39 = "39";
 	private static final String RULE_41_I_A = "41(i)(a)";
+	private static final String RULE_47 = "47";
 	private static final String RULE_41_I_B = "41(i)(b)";
 	private static final String RULE_50 = "50";
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
@@ -96,6 +100,8 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final BigDecimal ROAD_WIDTH_SIX_POINTONE = BigDecimal.valueOf(6.1);
 	private static final BigDecimal ROAD_WIDTH_NINE_POINTONE = BigDecimal.valueOf(9.1);
 	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
+	
+	private static final int PLOTAREA_300 = 300;
 	/*
 	 * private static final BigDecimal ROAD_WIDTH_EIGHTEEN_POINTTHREE =
 	 * BigDecimal.valueOf(18.3); private static final BigDecimal
@@ -115,6 +121,7 @@ public class AdditionalFeature extends FeatureProcess {
 	public static final String HEIGHT_BUILDING = "Maximum height of building allowed";
 	private static final String MIN_PLINTH_HEIGHT = " > 0.45";
 	public static final String MIN_PLINTH_HEIGHT_DESC = "Minimum plinth height";
+	public static final String MAX_BSMNT_CELLAR = "Maximum basement/cellar allowed";
 	private static final String MIN_INT_COURT_YARD = "0.15";
 	public static final String MIN_INT_COURT_YARD_DESC = "Minimum interior courtyard";
 	public static final String BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC = "Barrier free access for physically challenged people";
@@ -168,6 +175,7 @@ public class AdditionalFeature extends FeatureProcess {
 		validatePlinthHeight(pl, errors);
 		// validateIntCourtYard(pl, errors);
 		validateBarrierFreeAccess(pl, errors);
+		validateBasement(pl,errors);
 
 		return pl;
 	}
@@ -186,7 +194,7 @@ public class AdditionalFeature extends FeatureProcess {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, RULE_50);
 				details.put(DESCRIPTION, BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC);
-				details.put(REQUIRED, "YES");
+				details.put(PERMISSIBLE, "YES");
 				details.put(PROVIDED, "YES");
 				details.put(STATUS, Result.Accepted.getResultVal());
 				scrutinyDetail.getDetail().add(details);
@@ -196,7 +204,7 @@ public class AdditionalFeature extends FeatureProcess {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, RULE_50);
 				details.put(DESCRIPTION, BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC);
-				details.put(REQUIRED, "YES");
+				details.put(PERMISSIBLE, "YES");
 				details.put(PROVIDED, pl.getPlanInformation().getBarrierFreeAccessForPhyChlngdPpl());
 				details.put(STATUS, Result.Not_Accepted.getResultVal());
 				scrutinyDetail.getDetail().add(details);
@@ -302,7 +310,7 @@ public class AdditionalFeature extends FeatureProcess {
 				details.put(DESCRIPTION, NO_OF_FLOORS);
 				details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
 				details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
-				details.put(REQUIRED, requiredFloorCount);
+				details.put(PERMISSIBLE, requiredFloorCount);
 				details.put(PROVIDED, String.valueOf(block.getBuilding().getFloorsAboveGround()));
 				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 				scrutinyDetail.getDetail().add(details);
@@ -418,7 +426,7 @@ public class AdditionalFeature extends FeatureProcess {
 				details.put(DESCRIPTION, HEIGHT_BUILDING);
 				details.put(DxfFileConstants.AREA_TYPE, typeOfArea);
 				details.put(DxfFileConstants.ROAD_WIDTH, roadWidth.toString());
-				details.put(REQUIRED, requiredBuildingHeight);
+				details.put(PERMISSIBLE, requiredBuildingHeight);
 				details.put(PROVIDED, String.valueOf(buildingHeight));
 				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 				scrutinyDetail.getDetail().add(details);
@@ -463,7 +471,7 @@ public class AdditionalFeature extends FeatureProcess {
 				Map<String, String> details = new HashMap<>();
 				details.put(RULE_NO, RULE_41_I_A);
 				details.put(DESCRIPTION, MIN_PLINTH_HEIGHT_DESC);
-				details.put(REQUIRED, MIN_PLINTH_HEIGHT);
+				details.put(PERMISSIBLE, MIN_PLINTH_HEIGHT);
 				details.put(PROVIDED, String.valueOf(minPlinthHeight));
 				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
 				scrutinyDetail.getDetail().add(details);
@@ -471,7 +479,49 @@ public class AdditionalFeature extends FeatureProcess {
 			}
 		}
 	}
+	
+	private void validateBasement(Plan pl, HashMap<String, String> errors) {
+		for (Block block : pl.getBlocks()) {
 
+			boolean isAccepted = false;
+			BigDecimal minPlinthHeight = BigDecimal.ZERO;
+			String allowedBsmnt = null;
+			String blkNo = block.getNumber();
+			ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Block_" + blkNo + "_" + "Basement/Cellar");
+			List<SetBack> setBacks = block.getSetBacks();
+			List<SetBack> basementSetbacks = setBacks.stream().filter(setback -> setback.getLevel() < 0)
+					.collect(Collectors.toList());
+			OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+
+			if (!basementSetbacks.isEmpty()) {
+				if (mostRestrictiveFarHelper.getType() != null
+						&& (DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())
+								|| DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()))
+						&& pl.getPlot() != null
+						&& pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_300)) <= 0) {
+					isAccepted = basementSetbacks.size() <= 1 ? true : false;
+					allowedBsmnt = "1";
+				} else if (mostRestrictiveFarHelper.getType() != null && mostRestrictiveFarHelper.getSubtype() != null
+						&& (DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
+								|| DxfFileConstants.A_AF_GH
+										.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
+								|| DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()))) {
+					isAccepted = basementSetbacks.size() <= 2 ? true : false;
+					allowedBsmnt = "2";
+				}
+
+				Map<String, String> details = new HashMap<>();
+				details.put(RULE_NO, RULE_47);
+				details.put(DESCRIPTION, MAX_BSMNT_CELLAR);
+				details.put(PERMISSIBLE, allowedBsmnt);
+				details.put(PROVIDED, String.valueOf(basementSetbacks.size()));
+				details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+				scrutinyDetail.getDetail().add(details);
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+			}
+		}
+	}
+	 
 	/*
 	 * private void validateIntCourtYard(Plan pl, HashMap<String, String>
 	 * errors) { for (Block block : pl.getBlocks()) {
@@ -488,7 +538,7 @@ public class AdditionalFeature extends FeatureProcess {
 	 * 
 	 * if (errors.isEmpty()) { Map<String, String> details = new HashMap<>();
 	 * details.put(RULE_NO, RULE_41_I_B); details.put(DESCRIPTION,
-	 * MIN_INT_COURT_YARD_DESC); details.put(REQUIRED, MIN_INT_COURT_YARD);
+	 * MIN_INT_COURT_YARD_DESC); details.put(PERMISSIBLE, MIN_INT_COURT_YARD);
 	 * details.put(PROVIDED, String.valueOf(minIntCourtYard));
 	 * details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() :
 	 * Result.Not_Accepted.getResultVal());
@@ -502,7 +552,7 @@ public class AdditionalFeature extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
 		scrutinyDetail.addColumnHeading(3, DxfFileConstants.AREA_TYPE);
 		scrutinyDetail.addColumnHeading(4, DxfFileConstants.ROAD_WIDTH);
-		scrutinyDetail.addColumnHeading(5, REQUIRED);
+		scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(6, PROVIDED);
 		scrutinyDetail.addColumnHeading(7, STATUS);
 		scrutinyDetail.setKey(key);
@@ -513,7 +563,7 @@ public class AdditionalFeature extends FeatureProcess {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(3, PERMISSIBLE);
 		scrutinyDetail.addColumnHeading(4, PROVIDED);
 		scrutinyDetail.addColumnHeading(5, STATUS);
 		scrutinyDetail.setKey(key);

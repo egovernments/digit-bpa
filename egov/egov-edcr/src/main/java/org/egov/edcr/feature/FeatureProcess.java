@@ -67,8 +67,9 @@ public abstract class FeatureProcess {
     public static final String FIELDVERIFIED = "Field Verified";
     public static final String REQUIRED = "Required";
     public static final String PERMITTED = "Permitted";
+    public static final String PERMISSIBLE = "Permissible";
     public static final String DESCRIPTION = "Description";
-    public static final String RULE_NO = "Bye Law";
+    public static final String RULE_NO = "Byelaw";
     public static final String DISTANCCE = "Distancce";
     public abstract Map<String, Date> getAmendments();
     public abstract Plan validate(Plan pl);
