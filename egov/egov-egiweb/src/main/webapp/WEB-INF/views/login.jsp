@@ -100,6 +100,7 @@
 		<div class="padding0 login-main-content">
 			<div class = "padding0 login-cont">
 				<div class = "login-bg-cont clearfix">
+					<div class = "blue-background"></div>
 					<div class = "login-content-wrapper page-common-padding col-md-12">
 						<div class = "new-login-header padding0 col-md-12">
 							<span class="f-medium login-title-1 bold color-white">${sessionScope.citymunicipalityname}</span>
