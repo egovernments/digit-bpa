@@ -93,8 +93,10 @@ public class SegregatedToilet extends FeatureProcess {
 		BigDecimal minDimension = BigDecimal.ZERO;
 		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
 		BigDecimal maxNumOfFloorsOfBuilding = BigDecimal.ZERO;
+
 		if (pl.getSegregatedToilet() != null && pl.getSegregatedToilet().getDistancesToMainEntrance() != null)
 			minDimension = pl.getSegregatedToilet().getDistancesToMainEntrance().stream().reduce(BigDecimal::min).get();
+
 		for (Block b : pl.getBlocks()) {
 			if (b.getBuilding().getBuildingHeight() != null) {
 				if (b.getBuilding() != null && b.getBuilding().getBuildingHeight().compareTo(maxHeightOfBuilding) > 0) {
@@ -106,24 +108,25 @@ public class SegregatedToilet extends FeatureProcess {
 				}
 			}
 		}
+
 		if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
-				&& pl.getVirtualBuilding().getMostRestrictiveCoverageHelper().getType() != null
+				&& pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null
 				&& StringUtils
-						.isNotBlank(pl.getVirtualBuilding().getMostRestrictiveCoverageHelper().getType().getCode())
+						.isNotBlank(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
 				&& DxfFileConstants.A
-						.equals(pl.getVirtualBuilding().getMostRestrictiveCoverageHelper().getType().getCode())
+						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
 				&& maxHeightOfBuilding.compareTo(new BigDecimal(15)) >= 0
 				|| ((DxfFileConstants.I
-						.equals(pl.getVirtualBuilding().getMostRestrictiveCoverageHelper().getType().getCode())
+						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
 						|| DxfFileConstants.A
-								.equals(pl.getVirtualBuilding().getMostRestrictiveCoverageHelper().getType().getCode())
+								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
 						|| DxfFileConstants.E
-								.equals(pl.getVirtualBuilding().getMostRestrictiveCoverageHelper().getType().getCode()))
+								.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode()))
 						&& pl.getVirtualBuilding().getTotalBuitUpArea() != null
 						&& pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(new BigDecimal(1000)) >= 0
 						&& maxNumOfFloorsOfBuilding.compareTo(new BigDecimal(2)) >= 0)
 				|| (DxfFileConstants.C
-						.equals(pl.getVirtualBuilding().getMostRestrictiveCoverageHelper().getType().getCode())
+						.equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
 						&& pl.getVirtualBuilding().getTotalBuitUpArea() != null
 						&& pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(new BigDecimal(500)) >= 0)) {
 

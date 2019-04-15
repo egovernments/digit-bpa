@@ -67,6 +67,7 @@ import org.egov.edcr.feature.Plantation;
 import org.egov.edcr.feature.PlantationGreenStrip;
 import org.egov.edcr.feature.RainWaterHarvesting;
 import org.egov.edcr.feature.RiverDistance;
+import org.egov.edcr.feature.SegregatedToilet;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
 import org.egov.edcr.feature.SpiralStair;
@@ -108,6 +109,8 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(OverHangs.class);
 		features.add(pf);
 		pf = new PlanFeature(PlantationGreenStrip.class);
+		features.add(pf);
+		pf = new PlanFeature(SegregatedToilet.class);
 		features.add(pf);
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
