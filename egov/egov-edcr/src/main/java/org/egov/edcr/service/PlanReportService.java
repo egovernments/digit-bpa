@@ -202,7 +202,7 @@ public class PlanReportService {
             for (Integer s : detail.getColumnHeading().keySet()) {
                 ColumnHeadingDetail columnHeading = detail.getColumnHeading().get(s);
                 int columnWidth = columnSize.intValue();
-                if ("Bye Law".equalsIgnoreCase(columnHeading.name)) {
+                if ("Byelaw".equalsIgnoreCase(columnHeading.name)) {
                     columnWidth = byeLawColumnSize.intValue();
                 }
                 if ("Status".equalsIgnoreCase(columnHeading.name)) {
@@ -252,10 +252,10 @@ public class PlanReportService {
             FastReportBuilder frb = new FastReportBuilder();
 
             AbstractColumn floor = ColumnBuilder.getNew().setColumnProperty("floorNo", String.class.getName())
-                    .setTitle("Floor").setWidth(50).setHeaderStyle(reportService.getBldgDetlsHeaderStyle()).build();
+                    .setTitle("Floor").setWidth(45).setHeaderStyle(reportService.getBldgDetlsHeaderStyle()).build();
 
             AbstractColumn occupancy = ColumnBuilder.getNew().setColumnProperty("occupancy", String.class.getName())
-                    .setTitle("Occupancy").setWidth(120).setHeaderStyle(reportService.getBldgDetlsHeaderStyle())
+                    .setTitle("Occupancy/Sub Occupancy").setWidth(125).setHeaderStyle(reportService.getBldgDetlsHeaderStyle())
                     .build();
 
             AbstractColumn builtUpArea = ColumnBuilder.getNew()
