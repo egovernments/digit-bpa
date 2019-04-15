@@ -86,7 +86,7 @@ public class FireStair extends FeatureProcess {
 	// private static final String EXPECTED_TREAD = "0.15";
 	private static final String EXPECTED_NO_OF_RISE = "12";
 	// private static final String EXPECTED_TREAD_HIGHRISE = "0.2";
-	private static final String NO_OF_RISE_DESCRIPTION = "Minimum no of rises required per flight for fire stair %s";
+	private static final String NO_OF_RISE_DESCRIPTION = "Maximum no of rises required per flight for fire stair %s";
 	private static final String WIDTH_DESCRIPTION = "Minimum width for fire stair %s";
 	private static final String TREAD_DESCRIPTION = "Minimum tread for fire stair %s";
 	// private static final String LINE_DESCRIPTION = "Minimum length of line for
