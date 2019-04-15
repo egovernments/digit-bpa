@@ -85,14 +85,22 @@
 					<form:hidden id="stakeHolderDocument${status.index}.checkListDetail.isMandatory"
 						path="stakeHolderDocument[${status.index}].checkListDetail.isMandatory"
 						value="${doc.checkListDetail.isMandatory}" />
-			<div class="col-sm-4 add-margin ">
+						
+			  <c:set var="checklistName" value="${doc.checkListDetail.code}"/> 
+						
+			<div class="col-sm-4 add-margin">
 				<c:out value="${doc.checkListDetail.description}"></c:out>
 				<c:if test="${doc.checkListDetail.isMandatory}">
-					<span class="mandatory"></span>
+					<span class="mandatory ${checklistName}"></span>
 				</c:if>
 			</div>
+			
+		<%-- <c:set var="splittedString" value="${fn:split(doc.checkListDetail.code, '-')}"/>
+			 <c:set var="checklistName" value="${fn:join(splittedString, '_')}"/>  --%>
+			 
+           
 			<div class="col-sm-8 add-margin">
-					<div class="files-upload-container"
+					<div class="files-upload-container ${checklistName}"
 					    data-file-max-size="5"
 					    <c:if test="${doc.checkListDetail.isMandatory eq true && fn:length(doc.getSupportDocs()) eq 0}">required</c:if>
 						data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
@@ -133,10 +141,10 @@
 								</div>
 							</c:forEach>
 
-							<a href="javascript:void(0);" class="file-add"
+							<a href="javascript:void(0);" class="file-add "
 								data-unlimited-files="true"
 								data-file-input-name="stakeHolderDocument[${status.index}].files">
-								<i class="fa fa-plus"></i>
+								<i class="fa fa-plus ${checklistName} "></i>
 							</a>
 
 						</div>

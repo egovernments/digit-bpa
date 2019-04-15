@@ -65,6 +65,18 @@ $(document).ready( function () {
 	
 	$('#stakeHolderType').change(function(e) {
 		loadLicenceNumber($("#stakeHolderType option:selected").text());
+		if($("#stakeHolderType option:selected").text() == 'Architect'){
+			$('div.RGSTRTNCER').attr("required","true");
+			$('i.RGSTRTNCER').attr("required","true");
+			var span =$(this).siblings('span');
+            $(span).addClass('mandatory');
+			$('div.span.RGSTRTNCER').show();
+		}else{
+			$('div.RGSTRTNCER').removeAttr( "required" );
+			$('i.RGSTRTNCER').removeAttr( "required" );
+			$('div.span.RGSTRTNCER').hide();
+		}
+		
 	});
 	
 
