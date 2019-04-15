@@ -110,6 +110,8 @@ public class PortalServiceType extends AbstractAuditable {
 
     @Column(name = "HELPDOCLINK")
     private String helpDocLink;
+    
+    private Integer orderNumber;
 
     public Long getId() {
         return id;
@@ -190,5 +192,13 @@ public class PortalServiceType extends AbstractAuditable {
     public void setName(String name) {
         this.name = name;
     }
+
+	public Integer getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(Integer orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 
 }
