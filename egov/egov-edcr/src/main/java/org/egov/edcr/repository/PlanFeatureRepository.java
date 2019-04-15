@@ -110,8 +110,9 @@ public class PlanFeatureRepository {
 		features.add(pf);
 		pf = new PlanFeature(PlantationGreenStrip.class);
 		features.add(pf);
-		pf = new PlanFeature(SegregatedToilet.class);
-		features.add(pf);
+		/*
+		 * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
+		 */
 		/*
 		 * pf = new PlanFeature(Sanitation.class); features.add(pf);
 		 */
