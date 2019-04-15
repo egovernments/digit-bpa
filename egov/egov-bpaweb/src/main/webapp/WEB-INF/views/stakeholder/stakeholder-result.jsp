@@ -53,7 +53,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title text-center no-float">
+	<div class="panel-title text-left no-float">
 		<c:if test="${not empty message}">
 			<strong>${message}</strong>
 		</c:if>
