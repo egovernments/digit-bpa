@@ -65,6 +65,7 @@ import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.PlanInfoFeature;
 import org.egov.edcr.feature.Plantation;
 import org.egov.edcr.feature.PlantationGreenStrip;
+import org.egov.edcr.feature.RainWaterHarvesting;
 import org.egov.edcr.feature.RiverDistance;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
@@ -132,6 +133,8 @@ public class PlanFeatureRepository {
 		 */
 
 		pf = new PlanFeature(OverheadElectricalLineService.class);
+		features.add(pf);
+		pf = new PlanFeature(RainWaterHarvesting.class);
 		features.add(pf);
 		/*
 		 * pf = new PlanFeature(MezzanineFloorService.class); features.add(pf);
