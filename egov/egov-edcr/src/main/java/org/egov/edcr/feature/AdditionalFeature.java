@@ -232,15 +232,15 @@ public class AdditionalFeature extends FeatureProcess {
 					isAccepted = floorAbvGround.compareTo(TWO) <= 0;
 					requiredFloorCount = "<= 2";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) <  0) {
 					isAccepted = floorAbvGround.compareTo(THREE) <= 0;
 					requiredFloorCount = "<= 3";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) <  0) {
 					isAccepted = floorAbvGround.compareTo(THREE) <= 0;
 					requiredFloorCount = "<= 3";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) < 0) {
 					isAccepted = floorAbvGround.compareTo(FOUR) <= 0;
 					requiredFloorCount = "<= 4";
 				} /*
@@ -273,11 +273,11 @@ public class AdditionalFeature extends FeatureProcess {
 					errors.put(NEW_AREA_ERROR, NEW_AREA_ERROR_MSG);
 					pl.addErrors(errors);
 				} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) < 0) {
 					isAccepted = floorAbvGround.compareTo(FOUR) <= 0;
 					requiredFloorCount = "<= 4";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0) {
 					isAccepted = floorAbvGround.compareTo(SIX) <= 0;
 					requiredFloorCount = "<= 6";
 				} /*
@@ -339,18 +339,18 @@ public class AdditionalFeature extends FeatureProcess {
 					isAccepted = buildingHeight.compareTo(SEVEN) <= 0;
 					requiredBuildingHeight = "<= 7";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) < 0) {
 					isAccepted = buildingHeight.compareTo(TEN) <= 0;
 					requiredBuildingHeight = "<= 10";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) < 0) {
 					isAccepted = buildingHeight.compareTo(TEN) <= 0;
 					requiredBuildingHeight = "<= 10";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <  0) {
 					isAccepted = buildingHeight.compareTo(TWELVE) <= 0;
 					requiredBuildingHeight = "<= 12";
-				} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) > 0) {
+				} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0) {
 					List<SetBack> setBacks = block.getSetBacks();
 					BigDecimal permitedHeight = getPermitedHeight(roadWidth, setBacks);
 					isAccepted = buildingHeight.compareTo(permitedHeight) <= 0;
@@ -383,11 +383,11 @@ public class AdditionalFeature extends FeatureProcess {
 					errors.put(NEW_AREA_ERROR, NEW_AREA_ERROR_MSG);
 					pl.addErrors(errors);
 				} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <  0) {
 					isAccepted = buildingHeight.compareTo(TWELVE) <= 0;
 					requiredBuildingHeight = "<= 12";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) <= 0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0) {
 					isAccepted = buildingHeight.compareTo(NINETEEN) <= 0;
 					requiredBuildingHeight = "<= 19";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) > 0) {

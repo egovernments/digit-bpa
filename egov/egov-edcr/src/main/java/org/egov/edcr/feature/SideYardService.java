@@ -222,7 +222,8 @@ public class SideYardService extends GeneralRule {
 								}
 
 								if ((occupancy.getTypeHelper().getSubtype() != null
-										&& A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode()))
+										&& A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
+										|| A_AF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode()))
 										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
 									if (buildingHeight.compareTo(BigDecimal.valueOf(10)) <= 0 && block.getBuilding()
 											.getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {

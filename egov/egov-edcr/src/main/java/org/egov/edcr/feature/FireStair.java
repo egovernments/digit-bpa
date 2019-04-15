@@ -93,7 +93,7 @@ public class FireStair extends FeatureProcess {
 	// fire stair %s flight layer";
 	// private static final String HEIGHT_FLOOR_DESCRIPTION = "Height of floor in
 	// layer ";
-	private static final String NO_OF_RISES = "Number of rises";
+	private static final String NO_OF_RISES = "Number of rises ";
 	private static final String FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION = "Flight polyline is not defined in layer ";
 	private static final String FLIGHT_LENGTH_DEFINED_DESCRIPTION = "Flight polyline length is not defined in layer ";
 	private static final String FLIGHT_WIDTH_DEFINED_DESCRIPTION = "Flight polyline width is not defined in layer ";
@@ -421,12 +421,14 @@ public class FireStair extends FeatureProcess {
 					}
 				}
 			} else {
+				if(fireStair.getNoOfRises().compareTo(BigDecimal.ZERO) > 0) {
 				String flightLayerName = String.format(DxfFileConstants.LAYER_FIRESTAIR_FLIGHT_FLOOR, block.getNumber(),
 						floor.getNumber(), fireStair.getNumber());
 				errors.put("NoOfRisesCount" + flightLayerName,
-						"Number of rises count should be greater than the count of length of flight dimensions defined in layer"
+						"Number of rises count should be greater than the count of length of flight dimensions defined in layer "
 								+ flightLayerName);
 				planDetail.addErrors(errors);
+				}
 			}
 		}
 		return minTread;

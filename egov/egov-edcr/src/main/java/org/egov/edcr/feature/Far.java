@@ -517,27 +517,27 @@ public class Far extends FeatureProcess {
                 isAccepted = far.compareTo(ONE_POINTTWO) <= 0;
                 expectedResult = "<= 1.2";
             } else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) < 0) {
                 isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
                 expectedResult = "<= 1.5";
             } else if (roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) < 0) {
                 isAccepted = far.compareTo(ONE_POINTEIGHT) <= 0;
                 expectedResult = "<= 1.8";
             } else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) < 0) {
                 isAccepted = far.compareTo(TWO) <= 0;
                 expectedResult = "<= 2";
             } else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0) {
                 isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
                 expectedResult = "<= 2.5";
             } else if (roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) < 0) {
                 isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
                 expectedResult = "<= 2.5";
             } else if (roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_TWENTYFOUR_POINTFOUR) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_TWENTYFOUR_POINTFOUR) < 0) {
                 isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
                 expectedResult = "<= 2.5";
             }
@@ -549,27 +549,27 @@ public class Far extends FeatureProcess {
                 errors.put(NEW_AREA_ERROR, NEW_AREA_ERROR_MSG);
                 pl.addErrors(errors);
             } else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) < 0) {
                 isAccepted = far.compareTo(TWO) <= 0;
                 expectedResult = "<= 2";
             } else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) < 0) {
                 isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
                 expectedResult = "<= 2.5";
             } else if (roadWidth.compareTo(ROAD_WIDTH_TWELVE_POINTTWO) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) < 0) {
                 isAccepted = far.compareTo(TWO_POINTFIVE) <= 0;
                 expectedResult = "<= 2.5";
             } else if (roadWidth.compareTo(ROAD_WIDTH_EIGHTEEN_POINTTHREE) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_TWENTYFOUR_POINTFOUR) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_TWENTYFOUR_POINTFOUR) < 0) {
                 isAccepted = far.compareTo(THREE) <= 0;
                 expectedResult = "<= 3";
             } else if (roadWidth.compareTo(ROAD_WIDTH_TWENTYFOUR_POINTFOUR) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_TWENTYSEVEN_POINTFOUR) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_TWENTYSEVEN_POINTFOUR) < 0) {
                 isAccepted = far.compareTo(THREE_POINTTWOFIVE) <= 0;
                 expectedResult = "<= 3.25";
             } else if (roadWidth.compareTo(ROAD_WIDTH_TWENTYSEVEN_POINTFOUR) >= 0
-                    && roadWidth.compareTo(ROAD_WIDTH_THIRTY_POINTFIVE) <= 0) {
+                    && roadWidth.compareTo(ROAD_WIDTH_THIRTY_POINTFIVE) < 0) {
                 isAccepted = far.compareTo(THREE_POINTFIVE) <= 0;
                 expectedResult = "<= 3.5";
             }
