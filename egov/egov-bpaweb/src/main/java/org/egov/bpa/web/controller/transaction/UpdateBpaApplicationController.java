@@ -734,7 +734,9 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                             application.getServiceType().getDescription(), "PERMITREJECTIONREASONS");
 
             List<ApplicationPermitConditions> rejectionApplnPermitConditions = new ArrayList<>();
-            if (application.getRejectionReasons() == null || application.getRejectionReasons().isEmpty()) {
+            List<ApplicationPermitConditions> rejectionReasons = bpaApplicationPermitConditionsService.
+            		findAllByApplicationAndPermitConditionType(application, ConditionType.REJECTIONREASONS);
+            if (rejectionReasons == null || rejectionReasons.isEmpty()) {
                 for (ChecklistServiceTypeMapping checklistServicetype : rejectionReasonList) {
                     ApplicationPermitConditions condition = new ApplicationPermitConditions();
                     NoticeCondition noticeCondtion = new NoticeCondition();
