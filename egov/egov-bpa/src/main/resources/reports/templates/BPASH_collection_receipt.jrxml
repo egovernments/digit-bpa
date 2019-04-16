@@ -389,9 +389,7 @@
 				<patternExpression><![CDATA[$F{collectionType}.charAt( 0 )!=CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="446" y="122" width="109" height="20" uuid="0d6b3c60-d125-42dc-8c5c-9cc3d2963160">
-					<printWhenExpression><![CDATA[$F{collectionType}.charAt( 0 )!=CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION]]></printWhenExpression>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" x="446" y="122" width="109" height="20" uuid="0d6b3c60-d125-42dc-8c5c-9cc3d2963160"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0"/>
