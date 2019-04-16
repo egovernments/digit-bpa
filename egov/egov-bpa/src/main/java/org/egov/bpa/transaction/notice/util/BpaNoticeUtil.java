@@ -652,8 +652,7 @@ public class BpaNoticeUtil {
                     order);
             StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication.getStateHistory());
             rejectReasons.append(String.valueOf(additionalOrder) + ") "
-                    + (stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY)
-                    + TWO_NEW_LINE);
+                    + (stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments()+TWO_NEW_LINE : EMPTY));
         } else {
             rejectReasons.append(bpaApplication.getState().getComments() != null
                     && bpaApplication.getState().getComments().equalsIgnoreCase("Application cancelled by citizen")
