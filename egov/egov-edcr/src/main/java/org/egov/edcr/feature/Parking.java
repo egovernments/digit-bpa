@@ -79,10 +79,10 @@ import org.springframework.stereotype.Service;
 public class Parking extends FeatureProcess {
 
     private static final String OUT_OF = "Out of ";
-    private static final String PARKING_SLOT_POLYGON_NOT_HAVING_ONLY_4_POINTS = " number of polygon not having only 4 points.";
+    private static final String SLOT_HAVING_GT_4_PTS = " number of polygon not having only 4 points.";
     private static final String LOADING_UNLOADING_DESC = "Minimum required Loading/Unloading area";
     private static final String MINIMUM_AREA_OF_EACH_DA_PARKING = " Minimum Area of Each DA parking";
-    private static final String DA_PARKING_SLOT_AREA = "DA Parking Slot Area";
+    private static final String DA_PARKING_SLOT_AREA = "Special Parking Slot Area";
     private static final String NO_VIOLATION_OF_AREA = "No violation of area in ";
     private static final String MIN_AREA_EACH_CAR_PARKING = " Minimum Area of Each ECS parking";
     private static final String PARKING_VIOLATED_MINIMUM_AREA = " parking violated minimum area.";
@@ -93,28 +93,15 @@ public class Parking extends FeatureProcess {
     private static final String TWO_WHEELER_PARK_AREA = "Two Wheeler Parking Area";
     private static final String DA_PARKING = "DA parking";
     private static final Logger LOGGER = Logger.getLogger(Parking.class);
-    private static final String SUB_RULE_34_1 = "34(1)";
     private static final String SUB_RULE_34_1_DESCRIPTION = "Parking Slots Area";
     private static final String SUB_RULE_34_2 = "34(2)";
-    private static final String SUB_RULE_40A__5 = "40A(5)";
-    private static final String SUB_RULE_34_2_DESCRIPTION = "Car Parking ";
+    private static final String SUB_RULE_40_8 = "40(8)";
     private static final String PARKING_MIN_AREA = "5 M x 2 M";
     private static final double PARKING_SLOT_WIDTH = 2;
     private static final double PARKING_SLOT_HEIGHT = 5;
     private static final double DA_PARKING_SLOT_WIDTH = 3.6;
     private static final double DA_PARKING_SLOT_HEIGHT = 5.5;
     private static final String DA_PARKING_MIN_AREA = " 3.60 M x 5.50 M";
-    private static final String ZERO_TO_60 = "0-60";
-    private static final String SIXTY_TO_150 = "60-150";
-    private static final String HUNDRED_FIFTY_TO_250 = "150-250";
-    private static final String GREATER_THAN_TWO_HUNDRED_FIFTY = ">250";
-    private static final String ZERO_TO_5 = "0-5";
-    private static final String FIVE_TO_12 = "5-12";
-    private static final String GREATER_THAN_TWELVE = ">12";
-    private static final String ZERO_TO_12 = "0-12";
-    private static final String TWELVE_TO_20 = "12-20";
-    private static final String GREATER_THAN_TWENTY = ">20";
-    private static final String ZERO_TO_N = ">0";
     public static final String NO_OF_UNITS = "No of apartment units";
 
     private static final double OPEN_ECS = 23;
@@ -162,7 +149,7 @@ public class Parking extends FeatureProcess {
                 if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0)
                     count++;
             if (count > 0)
-                pl.addError(PARKING_SLOT, PARKING_SLOT + count + PARKING_SLOT_POLYGON_NOT_HAVING_ONLY_4_POINTS);
+                pl.addError(PARKING_SLOT, PARKING_SLOT + count + SLOT_HAVING_GT_4_PTS);
         }
 
         if (!parkDtls.getOpenCars().isEmpty()) {
@@ -171,7 +158,7 @@ public class Parking extends FeatureProcess {
                 if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0)
                     count++;
             if (count > 0)
-                pl.addError(OPEN_PARKING_DIM_DESC, OPEN_PARKING_DIM_DESC + count + PARKING_SLOT_POLYGON_NOT_HAVING_ONLY_4_POINTS);
+                pl.addError(OPEN_PARKING_DIM_DESC, OPEN_PARKING_DIM_DESC + count + SLOT_HAVING_GT_4_PTS);
         }
 
         if (!parkDtls.getCoverCars().isEmpty()) {
@@ -181,7 +168,7 @@ public class Parking extends FeatureProcess {
                     count++;
             if (count > 0)
                 pl.addError(COVER_PARKING_DIM_DESC,
-                        COVER_PARKING_DIM_DESC + count + PARKING_SLOT_POLYGON_NOT_HAVING_ONLY_4_POINTS);
+                        COVER_PARKING_DIM_DESC + count + SLOT_HAVING_GT_4_PTS);
         }
 
         if (!parkDtls.getCoverCars().isEmpty()) {
@@ -191,7 +178,7 @@ public class Parking extends FeatureProcess {
                     count++;
             if (count > 0)
                 pl.addError(BSMNT_PARKING_DIM_DESC,
-                        BSMNT_PARKING_DIM_DESC + count + PARKING_SLOT_POLYGON_NOT_HAVING_ONLY_4_POINTS);
+                        BSMNT_PARKING_DIM_DESC + count + SLOT_HAVING_GT_4_PTS);
         }
 
         if (!parkDtls.getSpecial().isEmpty()) {
@@ -269,8 +256,10 @@ public class Parking extends FeatureProcess {
                 requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_F;
             }
         }
-
-        if (requiredCarParkArea > 0 && totalProvidedCarParkArea.doubleValue() < requiredCarParkArea) {
+        
+        if(totalProvidedCarParkArea.doubleValue() == 0) {
+            pl.addError(SUB_RULE_40_2_DESCRIPTION, getLocaleMessage("msg.error.not.defined", SUB_RULE_40_2_DESCRIPTION));
+        } else if (requiredCarParkArea > 0 && totalProvidedCarParkArea.doubleValue() < requiredCarParkArea) {
             setReportOutputDetails(pl, SUB_RULE_40_2, SUB_RULE_40_2_DESCRIPTION,
                     requiredCarParkArea + SQMTRS, totalProvidedCarParkArea + SQMTRS,
                     Result.Not_Accepted.getResultVal());
@@ -311,32 +300,16 @@ public class Parking extends FeatureProcess {
         Boolean isValid = true;
         if (pl.getParkingDetails().getDisabledPersons().isEmpty()) {
             isValid = false;
-            errors.put(SUB_RULE_40A__5, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.DAPARKING_UNIT));
+            errors.put(SUB_RULE_40_8, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.DAPARKING_UNIT));
             pl.addErrors(errors);
-        } else if (pl.getParkingDetails().getDistFromDAToMainEntrance() == null
-                || pl.getParkingDetails().getDistFromDAToMainEntrance().compareTo(BigDecimal.ZERO) == 0) {
-            isValid = false;
-            errors.put(SUB_RULE_40A__5,
-                    getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.DIST_FROM_DA_TO_ENTRANCE));
-            pl.addErrors(errors);
-        } else if (pl.getParkingDetails().getDistFromDAToMainEntrance().compareTo(BigDecimal.valueOf(30)) > 0) {
-            isValid = false;
-            setReportOutputDetails(pl, SUB_RULE_40A__5, DcrConstants.DIST_FROM_DA_TO_ENTRANCE,
-                    "Should be less than 30" + DcrConstants.IN_METER,
-                    pl.getParkingDetails().getDistFromDAToMainEntrance() + DcrConstants.IN_METER,
-                    Result.Not_Accepted.getResultVal());
         } else if (pl.getParkingDetails().getValidSpecialSlots() < helper.daParking) {
-            setReportOutputDetails(pl, SUB_RULE_40A__5, DA_PARKING, helper.daParking.intValue() + NUMBERS,
+            setReportOutputDetails(pl, SUB_RULE_40_8, DA_PARKING, helper.daParking.intValue() + NUMBERS,
                     pl.getParkingDetails().getValidSpecialSlots() + NUMBERS, Result.Not_Accepted.getResultVal());
         } else {
-            setReportOutputDetails(pl, SUB_RULE_40A__5, DA_PARKING, helper.daParking.intValue() + NUMBERS,
+            setReportOutputDetails(pl, SUB_RULE_40_8, DA_PARKING, helper.daParking.intValue() + NUMBERS,
                     pl.getParkingDetails().getValidSpecialSlots() + NUMBERS, Result.Accepted.getResultVal());
         }
-        if (isValid) {
-            setReportOutputDetails(pl, SUB_RULE_40A__5, DcrConstants.DIST_FROM_DA_TO_ENTRANCE,
-                    "Less than 30" + DcrConstants.IN_METER,
-                    pl.getParkingDetails().getDistFromDAToMainEntrance() + DcrConstants.IN_METER, Result.Accepted.getResultVal());
-        }
+        
     }
 
     private void processTwoWheelerParking(Plan pl, ParkingHelper helper) {
@@ -558,18 +531,18 @@ public class Parking extends FeatureProcess {
         if (daParkingCount > 0)
             if (daFailedCount > 0) {
                 if (helper.daParking.intValue() == pl.getParkingDetails().getValidSpecialSlots()) {
-                    setReportOutputDetails(pl, SUB_RULE_40A__5, DA_PARKING_SLOT_AREA,
+                    setReportOutputDetails(pl, SUB_RULE_40_8, DA_PARKING_SLOT_AREA,
                             DA_PARKING_MIN_AREA + MINIMUM_AREA_OF_EACH_DA_PARKING,
                             NO_VIOLATION_OF_AREA + pl.getParkingDetails().getValidSpecialSlots() + PARKING,
                             Result.Accepted.getResultVal());
                 } else {
-                    setReportOutputDetails(pl, SUB_RULE_40A__5, DA_PARKING_SLOT_AREA,
+                    setReportOutputDetails(pl, SUB_RULE_40_8, DA_PARKING_SLOT_AREA,
                             DA_PARKING_MIN_AREA + MINIMUM_AREA_OF_EACH_DA_PARKING,
                             OUT_OF + daParkingCount + PARKING + daFailedCount + PARKING_VIOLATED_MINIMUM_AREA,
                             Result.Not_Accepted.getResultVal());
                 }
             } else {
-                setReportOutputDetails(pl, SUB_RULE_40A__5, DA_PARKING_SLOT_AREA,
+                setReportOutputDetails(pl, SUB_RULE_40_8, DA_PARKING_SLOT_AREA,
                         DA_PARKING_MIN_AREA + MINIMUM_AREA_OF_EACH_DA_PARKING, NO_VIOLATION_OF_AREA + daParkingCount + PARKING,
                         Result.Accepted.getResultVal());
             }
