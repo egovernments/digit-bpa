@@ -47,8 +47,30 @@
 
 package org.egov.common.entity.edcr;
 
-public class Room extends Measurement {
+import java.util.List;
+
+public class Room {
 
     private static final long serialVersionUID = 28L;
+
+    private List<HeightOfRoom> heightOfRooms;
+
+    private List<Measurement> rooms;
+
+    public List<HeightOfRoom> getHeights() {
+        return heightOfRooms;
+    }
+
+    public void setHeights(List<HeightOfRoom> heights) {
+        this.heightOfRooms = heights;
+    }
+
+    public List<Measurement> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(List<Measurement> rooms) {
+        this.rooms = rooms;
+    }
 
 }
