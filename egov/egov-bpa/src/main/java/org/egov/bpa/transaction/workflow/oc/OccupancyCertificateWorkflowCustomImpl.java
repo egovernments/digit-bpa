@@ -251,7 +251,7 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
             StateHistory<Position> stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(oc.getStateHistory(),
                     letterToParties.get(0).getLetterToParty().getStateForOwnerPosition());
             wfMatrix = workFlowMatrixService
-                    .getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(oc.getStateHistory()));
+                    .getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(oc.getStateHistory(),oc.getState()));
             if (null == wfMatrix)
                 wfMatrix = bpaApplicationWorkflowService.getWfMatrix(oc.getStateType(), null, null, wfBean.getAdditionalRule(),
                         letterToParties.get(0).getLetterToParty().getCurrentStateValueOfLP(), null);
@@ -269,7 +269,7 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
                 oc.setSentToPreviousOwner(true);
                 pos = oc.getCurrentState().getPreviousOwner();
                 wfMatrix = workFlowMatrixService
-                        .getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(oc.getStateHistory()));
+                        .getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(oc.getStateHistory(),oc.getState()));
             } else if (BpaConstants.WF_AUTO_RESCHDLE_APPMNT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
                 wfMatrix = bpaApplicationWorkflowService.getWfMatrix(oc.getStateType(), null,
                         wfBean.getAmountRule(), wfBean.getAdditionalRule(),

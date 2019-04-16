@@ -153,12 +153,14 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                     if(!assignments.isEmpty())
                         ownerUser = assignments.get(0).getEmployee();
                 }
+                BpaStateInfo bpaStateInfo = bpaWorkFlowService.getBpaStateInfo(application.getCurrentState(), application.getStateHistory(), application.getTownSurveyorInspectionRequire(), new BpaStateInfo(), wfmatrix, workFlowAction);
+
                 application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 application.transition().start()
                            .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                            .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                            .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos).withOwner(ownerUser)
-                           .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
+                           .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK).withExtraInfo(bpaStateInfo);
             }
 
         } else if (BpaConstants.WF_PERMIT_FEE_COLL_PENDING.equalsIgnoreCase(workFlowAction)) {
@@ -259,6 +261,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         } else if (BpaConstants.LETTERTOPARTYINITIATE.equalsIgnoreCase(workFlowAction)) {
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                     null, additionalRule, workFlowAction, null);
+
             if (wfmatrix != null) {
                 application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 application.transition().progressWithStateCopy()
@@ -281,7 +284,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         } else if (BpaConstants.LPREPLYRECEIVED.equalsIgnoreCase(workFlowAction)) {
             List<PermitLetterToParty> letterToParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
             StateHistory<Position> stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(application.getStateHistory(), letterToParties.get(0).getLetterToParty().getStateForOwnerPosition());
-            wfmatrix = workFlowMatrixService.getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(application.getStateHistory()));
+            wfmatrix = workFlowMatrixService.getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(application.getStateHistory(),application.getState()));
             if(null == wfmatrix)
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null, additionalRule,
                         letterToParties.get(0).getLetterToParty().getCurrentStateValueOfLP(), null);
@@ -298,7 +301,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
             if (BpaConstants.WF_REVERT_BUTTON.equalsIgnoreCase(workFlowAction)) {
                 application.setSentToPreviousOwner(true);
                 pos = application.getCurrentState().getPreviousOwner();
-                wfmatrix = workFlowMatrixService.getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(application.getStateHistory()));
+                wfmatrix = workFlowMatrixService.getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(application.getStateHistory(),application.getState()));
             } else if (BpaConstants.WF_AUTO_RESCHDLE_APPMNT_BUTTON.equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                         amountRule, additionalRule,

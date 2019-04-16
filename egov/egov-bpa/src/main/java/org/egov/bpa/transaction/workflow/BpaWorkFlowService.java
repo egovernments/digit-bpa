@@ -262,9 +262,9 @@ public class BpaWorkFlowService {
         bpaStateInfo.setWfMatrixRef(wfmatrix.getId());
         List<Assignment> assignments = getAssignmentByUserAsOnDate(securityUtils.getCurrentUser().getId(), new Date());
         if ((state != null
-                && state.getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
+                && (state.getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
                 state.getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
-                || state.getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED))
+                || state.getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED)))
                 && !assignments.isEmpty()) {
             bpaStateInfo.setScrutinizedBy(assignments.get(0).getPosition().getId());
             bpaStateInfo.setScrutinizedUser(assignments.get(0).getEmployee().getId());
@@ -283,14 +283,18 @@ public class BpaWorkFlowService {
         return bpaStateInfo;
     }
 
-    public Long getPreviousWfMatrixId(final List<StateHistory<Position>> stateHistories) {
+    public Long getPreviousWfMatrixId(final List<StateHistory<Position>> stateHistories,final State<Position> state) {
         Optional<StateHistory<Position>> stateHistory = getLastStateHstryObj(stateHistories);
         JSONParser parser = new JSONParser();
         JSONObject json = null;
         try {
-            if (stateHistory.isPresent() && StringUtils.isNotEmpty(stateHistory.get().getExtraInfo()))
+        if(stateHistories.isEmpty() && StringUtils.isNotEmpty(state.getExtraInfo())) {
+            json = (JSONObject) parser.parse(state.getExtraInfo());
+        }
+        else if (stateHistory.isPresent() && StringUtils.isNotEmpty(stateHistory.get().getExtraInfo()))
                 json = (JSONObject) parser.parse(stateHistory.get().getExtraInfo());
-        } catch (ParseException e) {
+    
+        }catch (ParseException e) {
             e.printStackTrace();
         }
         return json!=null ? Long.valueOf(json.get("wfMatrixRef").toString()) : 0;
