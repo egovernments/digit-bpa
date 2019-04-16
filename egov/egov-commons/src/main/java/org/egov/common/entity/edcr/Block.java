@@ -56,253 +56,255 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Block extends Measurement {
 
-    private static final String SIDE_YARD1_DESC = "Side Yard1";
-    private static final String SIDE_YARD2_DESC = "Side Yard2";
-    private static final long serialVersionUID = 12L;
+	private static final String SIDE_YARD1_DESC = "Side Yard1";
+	private static final String SIDE_YARD2_DESC = "Side Yard2";
+	private static final long serialVersionUID = 12L;
 
-    private Building building = new Building();
-    private String name;
-    private String number;
-    private String numberOfLifts;
-    private List<SetBack> setBacks = new ArrayList<>();
-    private List<Measurement> coverage = new ArrayList<>();
-    private List<Measurement> coverageDeductions = new ArrayList<>();
-    private List<TypicalFloor> typicalFloor = new ArrayList<>();
-    private List<BlockDistances> disBetweenBlocks = new ArrayList<>();
-    private List<Hall> hallAreas = new ArrayList<>();
-    private List<Measurement> diningSpaces = new ArrayList<>();
-    private List<Balcony> balconyAreas = new ArrayList<>();
-    private SanityDetails sanityDetails = new SanityDetails();
-    private transient Boolean singleFamilyBuilding = false;
-    private transient Boolean residentialBuilding = false;
-    private transient Boolean residentialOrCommercialBuilding = false;
-    private transient Boolean highRiseBuilding = false;
-    private transient Boolean completelyExisting = false;
-    private List<DARamp> daRamps = new ArrayList<>();
-    private List<Measurement> openStairs = new ArrayList<>();
-    private List<BigDecimal> plinthHeight ;
-    private List<BigDecimal> interiorCourtYard ;
-    private List<Measurement> overHangs;
-    private List<Measurement> protectedBalconies;
-    private List<Measurement> plantationGreenStripes;
-    
-    
-    @Override
-    public String toString() {
-        return "Block [building=" + building + ", name=" + name + ", number=" + number + ", setBacks=" + setBacks
-                + ", presentInDxf=" + presentInDxf + "]";
-    }
+	private Building building = new Building();
+	private String name;
+	private String number;
+	private String numberOfLifts;
+	private List<SetBack> setBacks = new ArrayList<>();
+	private List<Measurement> coverage = new ArrayList<>();
+	private List<Measurement> coverageDeductions = new ArrayList<>();
+	private List<TypicalFloor> typicalFloor = new ArrayList<>();
+	private List<BlockDistances> disBetweenBlocks = new ArrayList<>();
+	private List<Hall> hallAreas = new ArrayList<>();
+	private List<Measurement> diningSpaces = new ArrayList<>();
+	private List<Balcony> balconyAreas = new ArrayList<>();
+	private SanityDetails sanityDetails = new SanityDetails();
+	private transient Boolean singleFamilyBuilding = false;
+	private transient Boolean residentialBuilding = false;
+	private transient Boolean residentialOrCommercialBuilding = false;
+	private transient Boolean highRiseBuilding = false;
+	private transient Boolean completelyExisting = false;
+	private List<DARamp> daRamps = new ArrayList<>();
+	private List<Measurement> openStairs = new ArrayList<>();
+	private List<BigDecimal> plinthHeight;
+	private List<BigDecimal> interiorCourtYard;
+	private List<Measurement> overHangs;
+	private List<Measurement> protectedBalconies;
+	private List<Measurement> plantationGreenStripes;
+	private List<Measurement> roofTanks;
+	private List<Measurement> stairCovers;
+	private List<Measurement> chimneys;
 
-    public List<SetBack> getSetBacks() {
-        return setBacks;
-    }
+	@Override
+	public String toString() {
+		return "Block [building=" + building + ", name=" + name + ", number=" + number + ", setBacks=" + setBacks
+				+ ", presentInDxf=" + presentInDxf + "]";
+	}
 
-    public SetBack getLevelZeroSetBack() {
-        SetBack setBack = null;
+	public List<SetBack> getSetBacks() {
+		return setBacks;
+	}
 
-        for (SetBack setback : getSetBacks()) {
-            if (setback.getLevel() == 0)
-                return setback;
-        }
-        return setBack;
-    }
+	public SetBack getLevelZeroSetBack() {
+		SetBack setBack = null;
 
-    public String getNumberOfLifts() {
-        return numberOfLifts;
-    }
+		for (SetBack setback : getSetBacks()) {
+			if (setback.getLevel() == 0)
+				return setback;
+		}
+		return setBack;
+	}
 
-    public void setNumberOfLifts(String numberOfLifts) {
-        this.numberOfLifts = numberOfLifts;
-    }
+	public String getNumberOfLifts() {
+		return numberOfLifts;
+	}
 
-    public void setDisBetweenBlocks(List<BlockDistances> disBetweenBlocks) {
-        this.disBetweenBlocks = disBetweenBlocks;
-    }
+	public void setNumberOfLifts(String numberOfLifts) {
+		this.numberOfLifts = numberOfLifts;
+	}
 
-    public SetBack getSetBackByLevel(String level) {
+	public void setDisBetweenBlocks(List<BlockDistances> disBetweenBlocks) {
+		this.disBetweenBlocks = disBetweenBlocks;
+	}
 
-        SetBack setBack = null;
-        Integer lvl = Integer.valueOf(level);
-        for (SetBack setback : getSetBacks()) {
-            if (setback.getLevel() == lvl)
-                return setback;
-        }
-        return setBack;
-    }
+	public SetBack getSetBackByLevel(String level) {
 
-    public Boolean getResidentialOrCommercialBuilding() {
-        return residentialOrCommercialBuilding;
-    }
+		SetBack setBack = null;
+		Integer lvl = Integer.valueOf(level);
+		for (SetBack setback : getSetBacks()) {
+			if (setback.getLevel() == lvl)
+				return setback;
+		}
+		return setBack;
+	}
 
-    public void setResidentialOrCommercialBuilding(Boolean residentialOrCommercialBuilding) {
-        this.residentialOrCommercialBuilding = residentialOrCommercialBuilding;
-    }
+	public Boolean getResidentialOrCommercialBuilding() {
+		return residentialOrCommercialBuilding;
+	}
 
-    public List<DARamp> getDARamps() {
-        return daRamps;
-    }
+	public void setResidentialOrCommercialBuilding(Boolean residentialOrCommercialBuilding) {
+		this.residentialOrCommercialBuilding = residentialOrCommercialBuilding;
+	}
 
-    public void addDARamps(DARamp daRamps) {
-        this.daRamps.add(daRamps);
-    }
+	public List<DARamp> getDARamps() {
+		return daRamps;
+	}
 
-    public List<BlockDistances> getDistanceBetweenBlocks() {
-        return disBetweenBlocks;
-    }
+	public void addDARamps(DARamp daRamps) {
+		this.daRamps.add(daRamps);
+	}
 
-    public void setSetBacks(List<SetBack> setBacks) {
-        this.setBacks = setBacks;
-    }
+	public List<BlockDistances> getDistanceBetweenBlocks() {
+		return disBetweenBlocks;
+	}
 
-    public String getNumber() {
-        return number;
-    }
+	public void setSetBacks(List<SetBack> setBacks) {
+		this.setBacks = setBacks;
+	}
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+	public String getNumber() {
+		return number;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setNumber(String number) {
+		this.number = number;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Building getBuilding() {
-        return building;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setBuilding(Building building) {
-        this.building = building;
-    }
+	public Building getBuilding() {
+		return building;
+	}
 
-    public Boolean getResidentialBuilding() {
-        return residentialBuilding;
-    }
+	public void setBuilding(Building building) {
+		this.building = building;
+	}
 
-    public void setResidentialBuilding(Boolean residentialBuilding) {
-        this.residentialBuilding = residentialBuilding;
-    }
+	public Boolean getResidentialBuilding() {
+		return residentialBuilding;
+	}
 
-    public SetBack getLowerLevelSetBack(Integer level, String yardDesc) {
+	public void setResidentialBuilding(Boolean residentialBuilding) {
+		this.residentialBuilding = residentialBuilding;
+	}
 
-        SetBack setBack = null;
-        if (level == 0)
-            return null;
+	public SetBack getLowerLevelSetBack(Integer level, String yardDesc) {
 
-        while (level > 0) {
-            level--;
-            for (SetBack setback : getSetBacks()) {
-                if (setback.getLevel() == level && yardDesc.equalsIgnoreCase(SIDE_YARD1_DESC)
-                        && setback.getSideYard1() != null)
-                    return setback;
-                else if (setback.getLevel() == level && yardDesc.equalsIgnoreCase(SIDE_YARD2_DESC)
-                        && setback.getSideYard2() != null)
-                    return setback;
-            }
+		SetBack setBack = null;
+		if (level == 0)
+			return null;
 
-        }
-        return setBack;
+		while (level > 0) {
+			level--;
+			for (SetBack setback : getSetBacks()) {
+				if (setback.getLevel() == level && yardDesc.equalsIgnoreCase(SIDE_YARD1_DESC)
+						&& setback.getSideYard1() != null)
+					return setback;
+				else if (setback.getLevel() == level && yardDesc.equalsIgnoreCase(SIDE_YARD2_DESC)
+						&& setback.getSideYard2() != null)
+					return setback;
+			}
 
-    }
+		}
+		return setBack;
 
-    public List<TypicalFloor> getTypicalFloor() {
-        return typicalFloor;
-    }
+	}
 
-    public void setTypicalFloor(List<TypicalFloor> typicalFloor) {
-        this.typicalFloor = typicalFloor;
-    }
+	public List<TypicalFloor> getTypicalFloor() {
+		return typicalFloor;
+	}
 
-    public List<Hall> getHallAreas() {
-        return hallAreas;
-    }
+	public void setTypicalFloor(List<TypicalFloor> typicalFloor) {
+		this.typicalFloor = typicalFloor;
+	}
 
-    public void setHallAreas(List<Hall> hallAreas) {
-        this.hallAreas = hallAreas;
-    }
+	public List<Hall> getHallAreas() {
+		return hallAreas;
+	}
 
-    public List<Measurement> getDiningSpaces() {
-        return diningSpaces;
-    }
+	public void setHallAreas(List<Hall> hallAreas) {
+		this.hallAreas = hallAreas;
+	}
 
-    public void setDiningSpaces(List<Measurement> diningSpaces) {
-        this.diningSpaces = diningSpaces;
-    }
+	public List<Measurement> getDiningSpaces() {
+		return diningSpaces;
+	}
 
-    public List<Balcony> getBalconyAreas() {
-        return balconyAreas;
-    }
+	public void setDiningSpaces(List<Measurement> diningSpaces) {
+		this.diningSpaces = diningSpaces;
+	}
 
-    public void setBalconyAreas(List<Balcony> balconyAreas) {
-        this.balconyAreas = balconyAreas;
-    }
+	public List<Balcony> getBalconyAreas() {
+		return balconyAreas;
+	}
 
-    public SanityDetails getSanityDetails() {
-        return sanityDetails;
-    }
+	public void setBalconyAreas(List<Balcony> balconyAreas) {
+		this.balconyAreas = balconyAreas;
+	}
 
-    public void setSanityDetails(SanityDetails sanityDetails) {
-        this.sanityDetails = sanityDetails;
-    }
+	public SanityDetails getSanityDetails() {
+		return sanityDetails;
+	}
 
-    public Boolean getSingleFamilyBuilding() {
-        return singleFamilyBuilding;
-    }
+	public void setSanityDetails(SanityDetails sanityDetails) {
+		this.sanityDetails = sanityDetails;
+	}
 
-    public void setSingleFamilyBuilding(Boolean singleFamilyBuilding) {
-        this.singleFamilyBuilding = singleFamilyBuilding;
-    }
+	public Boolean getSingleFamilyBuilding() {
+		return singleFamilyBuilding;
+	}
 
-    public Boolean getHighRiseBuilding() {
-        return highRiseBuilding;
-    }
+	public void setSingleFamilyBuilding(Boolean singleFamilyBuilding) {
+		this.singleFamilyBuilding = singleFamilyBuilding;
+	}
 
-    public void setHighRiseBuilding(Boolean highRiseBuilding) {
-        this.highRiseBuilding = highRiseBuilding;
-    }
+	public Boolean getHighRiseBuilding() {
+		return highRiseBuilding;
+	}
 
-    public List<Measurement> getCoverage() {
-        return coverage;
-    }
+	public void setHighRiseBuilding(Boolean highRiseBuilding) {
+		this.highRiseBuilding = highRiseBuilding;
+	}
 
-    public List<Measurement> getCoverageDeductions() {
-        return coverageDeductions;
-    }
+	public List<Measurement> getCoverage() {
+		return coverage;
+	}
 
-    public List<BlockDistances> getDisBetweenBlocks() {
-        return disBetweenBlocks;
-    }
+	public List<Measurement> getCoverageDeductions() {
+		return coverageDeductions;
+	}
 
-    public void setCoverage(List<Measurement> coverage) {
-        this.coverage = coverage;
-    }
+	public List<BlockDistances> getDisBetweenBlocks() {
+		return disBetweenBlocks;
+	}
 
-    public void setCoverageDeductions(List<Measurement> coverageDeductions) {
-        this.coverageDeductions = coverageDeductions;
-    }
+	public void setCoverage(List<Measurement> coverage) {
+		this.coverage = coverage;
+	}
 
-    public void setDaRamps(List<DARamp> daRamps) {
-        this.daRamps = daRamps;
-    }
+	public void setCoverageDeductions(List<Measurement> coverageDeductions) {
+		this.coverageDeductions = coverageDeductions;
+	}
 
-    public Boolean getCompletelyExisting() {
-        return completelyExisting;
-    }
+	public void setDaRamps(List<DARamp> daRamps) {
+		this.daRamps = daRamps;
+	}
 
-    public void setCompletelyExisting(Boolean completelyExisting) {
-        this.completelyExisting = completelyExisting;
-    }
+	public Boolean getCompletelyExisting() {
+		return completelyExisting;
+	}
 
-    public List<Measurement> getOpenStairs() {
-        return openStairs;
-    }
+	public void setCompletelyExisting(Boolean completelyExisting) {
+		this.completelyExisting = completelyExisting;
+	}
 
-    public void setOpenStairs(List<Measurement> openStairs) {
-        this.openStairs = openStairs;
-    }
+	public List<Measurement> getOpenStairs() {
+		return openStairs;
+	}
+
+	public void setOpenStairs(List<Measurement> openStairs) {
+		this.openStairs = openStairs;
+	}
 
 	public List<BigDecimal> getPlinthHeight() {
 		return plinthHeight;
@@ -343,5 +345,29 @@ public class Block extends Measurement {
 	public void setPlantationGreenStripes(List<Measurement> plantationGreenStripes) {
 		this.plantationGreenStripes = plantationGreenStripes;
 	}
-	
+
+	public List<Measurement> getRoofTanks() {
+		return roofTanks;
+	}
+
+	public void setRoofTanks(List<Measurement> roofTanks) {
+		this.roofTanks = roofTanks;
+	}
+
+	public List<Measurement> getStairCovers() {
+		return stairCovers;
+	}
+
+	public void setStairCovers(List<Measurement> stairCovers) {
+		this.stairCovers = stairCovers;
+	}
+
+	public List<Measurement> getChimneys() {
+		return chimneys;
+	}
+
+	public void setChimneys(List<Measurement> chimneys) {
+		this.chimneys = chimneys;
+	}
+
 }
