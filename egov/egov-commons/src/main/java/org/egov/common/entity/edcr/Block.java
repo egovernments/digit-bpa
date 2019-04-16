@@ -88,6 +88,7 @@ public class Block extends Measurement {
 	private List<BigDecimal> roofTanks;
 	private List<BigDecimal> stairCovers;
 	private List<BigDecimal> chimneys;
+	private List<BigDecimal> parapets;
 
 	@Override
 	public String toString() {
@@ -368,6 +369,14 @@ public class Block extends Measurement {
 
 	public void setChimneys(List<BigDecimal> chimneys) {
 		this.chimneys = chimneys;
+	}
+
+	public List<BigDecimal> getParapets() {
+		return parapets;
+	}
+
+	public void setParapets(List<BigDecimal> parapets) {
+		this.parapets = parapets;
 	}
 
 }
