@@ -374,17 +374,24 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public void buildDefaultPermitConditionsList(final BpaApplication application) {
         List<ChecklistServiceTypeMapping> defaultChecklist = checklistServicetypeMappingService
                 .findByActiveByServiceTypeAndChecklist(application.getServiceType().getId(), PERMIT_DEFAULT_CONDITIONS);
+        List<ApplicationPermitConditions> appPermitConditiontemp = new ArrayList<ApplicationPermitConditions>();
+        if(application.getApplicationType().getName().equals(LOWRISK)){
+        	bpaApplicationPermitConditionsService.delete(application.getDefaultPermitConditions());
+        	application.getDefaultPermitConditions().clear();
+        }
+        if(!application.getApplicationType().getName().equals(LOWRISK))
+        	appPermitConditiontemp = application.getDefaultPermitConditions();
         for(ChecklistServiceTypeMapping permitDefaultChecklist:defaultChecklist){
-        	//application.setDefaultPermitConditions(defaultPermitConditions);
         	ApplicationPermitConditions appPermitCondition = new ApplicationPermitConditions();
         	appPermitCondition.setApplication(application);
         	NoticeCondition nc= new NoticeCondition();
         	nc.setType(ConditionType.PERMITDEFAULTCONDITIONS);
         	nc.setRequired(true);
         	nc.setChecklistServicetype(permitDefaultChecklist);
-        	appPermitCondition.setNoticeCondition(nc);//getNoticeCondition().setChecklistServicetype(permitDefaultChecklist);
-        	application.getDefaultPermitConditions().add(appPermitCondition);
+        	appPermitCondition.setNoticeCondition(nc);
+        	appPermitConditiontemp.add(appPermitCondition);
         }
+        application.setDefaultPermitConditions(appPermitConditiontemp);
         
     }
 
@@ -615,6 +622,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             buildRejectionReasons(application);
         }
         application.setLPRequestInitiated(FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(application.getState().getNextAction()));
+        List<ApplicationPermitConditions> defaultPermitCondition = bpaApplicationPermitConditionsService.
+        		findAllByApplicationAndPermitConditionType(application, ConditionType.PERMITDEFAULTCONDITIONS);
+        if(defaultPermitCondition==null || defaultPermitCondition.isEmpty())
+        	buildDefaultPermitConditionsList(application);
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && updatedApplication.getCurrentState() != null
                 && !updatedApplication.getCurrentState().getValue().equals(WF_NEW_STATE)) {
