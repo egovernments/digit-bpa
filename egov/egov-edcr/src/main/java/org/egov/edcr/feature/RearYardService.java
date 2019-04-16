@@ -78,7 +78,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RearYardService extends GeneralRule {
-	private static final String LEVEL = " Level ";
 	private static final String RULE_35 = "35 Table-8";
 	private static final String RULE_36 = "36";
 	private static final String RULE_37_TWO_A = "37(2)(A)";
