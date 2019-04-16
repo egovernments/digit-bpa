@@ -70,16 +70,16 @@ public interface PortalServiceTypeRepository
     @Query("select distinct(module.displayName) from PortalServiceType as pst")
     List<String> getDistinctModuleNames();
 
-    @Query("select distinct(pst.module.displayName) from PortalServiceType as pst where pst.isActive=true and pst.businessUserService=true order by pst.module.displayName desc")
-    List<String> getDistinctModuleNamesForBusinessUser();
+    @Query("select distinct pst.module from PortalServiceType as pst where pst.isActive=true and pst.businessUserService=true order by pst.module.orderNumber")
+    List<Module> getDistinctModuleNamesForBusinessUser();
 
-    @Query("select distinct(pst.module.displayName) from PortalServiceType as pst where pst.isActive=true and pst.userService=true order by pst.module.displayName desc")
-    List<String> getDistinctModuleNamesForCitizen();
+    @Query("select distinct pst.module from PortalServiceType as pst where pst.isActive=true and pst.userService=true order by pst.module.orderNumber")
+    List<Module> getDistinctModuleNamesForCitizen();
 
-    @Query("from PortalServiceType pst where pst.isActive=true  and pst.businessUserService=true order by pst.orderNumber asc")
+    @Query("from PortalServiceType pst where pst.isActive=true  and pst.businessUserService=true order by pst.moduleOrder, pst.serviceOrder ")
     List<PortalServiceType> findAllServiceTypesForBusinessUser();
 
-    @Query("from PortalServiceType pst where pst.isActive=true and pst.userService=true  order by pst.orderNumber asc")
+    @Query("from PortalServiceType pst where pst.isActive=true and pst.userService=true  order by pst.moduleOrder, pst.serviceOrder ")
     List<PortalServiceType> findAllServiceTypesForCitizenUser();
 
 }

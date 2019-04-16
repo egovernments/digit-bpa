@@ -68,6 +68,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
@@ -138,10 +139,14 @@ public class HomeController {
         if (null != user) {
 
             if (user.getType().equals(BUSINESS)) {
-                modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNamesForBusinessUser());
+
+            	List<String> businessUserModules = portalServiceTypeService.getDistinctModuleNamesForBusinessUser().stream().map(md -> md.getDisplayName()).collect(Collectors.toList());
+                modelData.addAttribute(moduleName, businessUserModules);
                 modelData.addAttribute(services, portalServiceTypeService.findAllServiceTypesForBusinessUser());
             } else if (user.getType().equals(CITIZEN)) {
-                modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNamesForCitizen());
+            	List<String> citizenUserModules = portalServiceTypeService.getDistinctModuleNamesForCitizen().stream().map(md -> md.getDisplayName()).collect(Collectors.toList());
+
+                modelData.addAttribute(moduleName, citizenUserModules);
                 modelData.addAttribute(services, portalServiceTypeService.findAllServiceTypesForCitizenUser());
             } else {
                 modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNames());

@@ -86,11 +86,11 @@ public class PortalServiceTypeService {
         portalServiceTypeRepository.save(portalService);
     }
 
-    public List<String> getDistinctModuleNamesForCitizen() {
+    public List<Module> getDistinctModuleNamesForCitizen() {
         return portalServiceTypeRepository.getDistinctModuleNamesForCitizen();
     }
 
-    public List<String> getDistinctModuleNamesForBusinessUser() {
+    public List<Module> getDistinctModuleNamesForBusinessUser() {
         return portalServiceTypeRepository.getDistinctModuleNamesForBusinessUser();
     }
 
