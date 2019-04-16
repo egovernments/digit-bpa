@@ -219,7 +219,7 @@ public class AdditionalFeature extends FeatureProcess {
 
 			boolean isAccepted = false;
 			ScrutinyDetail scrutinyDetail = getNewScrutinyDetailRoadArea(
-					"Block_" + block.getNumber() + "_" + "Number of Floors Allowed");
+					"Block_" + block.getNumber() + "_" + "Number of Floors");
 			BigDecimal floorAbvGround = block.getBuilding().getFloorsAboveGround();
 			String requiredFloorCount = StringUtils.EMPTY;
 
@@ -326,7 +326,7 @@ public class AdditionalFeature extends FeatureProcess {
 			boolean isAccepted = false;
 			String ruleNo = RULE_38;
 			ScrutinyDetail scrutinyDetail = getNewScrutinyDetailRoadArea(
-					"Block_" + block.getNumber() + "_" + "Maximum Height of Building Allowed");
+					"Block_" + block.getNumber() + "_" + "Height of Building");
 			String requiredBuildingHeight = StringUtils.EMPTY;
 			BigDecimal buildingHeight = block.getBuilding().getBuildingHeight();
 

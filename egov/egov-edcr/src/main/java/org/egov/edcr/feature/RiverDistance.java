@@ -66,10 +66,10 @@ public class RiverDistance extends FeatureProcess {
 
 	private static final Logger LOG = Logger.getLogger(RiverDistance.class);
 	private static final String RULE_22 = "22";
-	public static final String RIVER_GANGA_DESCRIPTION = "Distancce from ganga river";
-	public static final String RIVER_NON_GANGA_DESCRIPTION = "Distancce from non ganga river";
-	public static final String PROTECTION_WALL_GANGA_DESCRIPTION = "Distancce from protection wall ganga";
-	public static final String EMBANKMENT_GANGA_DESCRIPTION = "Distancce from embankment ganga";
+	public static final String RIVER_GANGA_DESCRIPTION = "Distance from ganga river";
+	public static final String RIVER_NON_GANGA_DESCRIPTION = "Distance from non ganga river";
+	public static final String PROTECTION_WALL_GANGA_DESCRIPTION = "Distance from protection wall ganga";
+	public static final String EMBANKMENT_GANGA_DESCRIPTION = "Distance from embankment ganga";
 
 	@Override
 	public Plan validate(Plan pl) {

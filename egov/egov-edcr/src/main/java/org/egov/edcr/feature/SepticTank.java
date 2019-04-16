@@ -94,21 +94,25 @@ public class SepticTank extends FeatureProcess {
 			boolean validWaterSrcDistance = false;
 			boolean validBuildingDistance = false;
 
-			BigDecimal minDistWaterSrc = septicTank.getDistanceFromWaterSource().stream().reduce(BigDecimal::min).get();
-			BigDecimal minDistBuilding = septicTank.getDistanceFromBuilding().stream().reduce(BigDecimal::min).get();
-
-			if (minDistWaterSrc != null && minDistWaterSrc.compareTo(MIN_DIS_WATERSRC) >= 0) {
-				validWaterSrcDistance = true;
+			if (!septicTank.getDistanceFromWaterSource().isEmpty()) {
+				BigDecimal minDistWaterSrc = septicTank.getDistanceFromWaterSource().stream().reduce(BigDecimal::min)
+						.get();
+				if (minDistWaterSrc != null && minDistWaterSrc.compareTo(MIN_DIS_WATERSRC) >= 0) {
+					validWaterSrcDistance = true;
+				}
+				buildResult(pl, scrutinyDetail, validWaterSrcDistance, DISTANCE_FROM_WATERSOURCE, ">= 18",
+						minDistWaterSrc.toString());
 			}
 
-			if (minDistBuilding != null && minDistBuilding.compareTo(MIN_DIS_BUILDING) >= 0) {
-				validBuildingDistance = true;
+			if (!septicTank.getDistanceFromBuilding().isEmpty()) {
+				BigDecimal minDistBuilding = septicTank.getDistanceFromBuilding().stream().reduce(BigDecimal::min)
+						.get();
+				if (minDistBuilding != null && minDistBuilding.compareTo(MIN_DIS_BUILDING) >= 0) {
+					validBuildingDistance = true;
+				}
+				buildResult(pl, scrutinyDetail, validBuildingDistance, DISTANCE_FROM_BUILDING, ">= 6",
+						minDistBuilding.toString());
 			}
-
-			buildResult(pl, scrutinyDetail, validWaterSrcDistance, DISTANCE_FROM_WATERSOURCE, ">= 18",
-					minDistWaterSrc.toString());
-			buildResult(pl, scrutinyDetail, validBuildingDistance, DISTANCE_FROM_BUILDING, ">= 6",
-					minDistBuilding.toString());
 		}
 
 		return pl;

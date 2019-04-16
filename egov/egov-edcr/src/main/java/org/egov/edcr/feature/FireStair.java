@@ -48,28 +48,21 @@
 package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.Line;
 import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Occupancy;
-import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.service.ProcessHelper;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -118,7 +111,7 @@ public class FireStair extends FeatureProcess {
 				scrutinyDetail2.addColumnHeading(1, RULE_NO);
 				scrutinyDetail2.addColumnHeading(2, FLOOR);
 				scrutinyDetail2.addColumnHeading(3, DESCRIPTION);
-				scrutinyDetail2.addColumnHeading(4, REQUIRED);
+				scrutinyDetail2.addColumnHeading(4, PERMISSIBLE);
 				scrutinyDetail2.addColumnHeading(5, PROVIDED);
 				scrutinyDetail2.addColumnHeading(6, STATUS);
 				scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Width");
@@ -127,7 +120,7 @@ public class FireStair extends FeatureProcess {
 				scrutinyDetail3.addColumnHeading(1, RULE_NO);
 				scrutinyDetail3.addColumnHeading(2, FLOOR);
 				scrutinyDetail3.addColumnHeading(3, DESCRIPTION);
-				scrutinyDetail3.addColumnHeading(4, REQUIRED);
+				scrutinyDetail3.addColumnHeading(4, PERMISSIBLE);
 				scrutinyDetail3.addColumnHeading(5, PROVIDED);
 				scrutinyDetail3.addColumnHeading(6, STATUS);
 				scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Tread");
@@ -136,7 +129,7 @@ public class FireStair extends FeatureProcess {
 				scrutinyDetailRise.addColumnHeading(1, RULE_NO);
 				scrutinyDetailRise.addColumnHeading(2, FLOOR);
 				scrutinyDetailRise.addColumnHeading(3, DESCRIPTION);
-				scrutinyDetailRise.addColumnHeading(4, REQUIRED);
+				scrutinyDetailRise.addColumnHeading(4, PERMISSIBLE);
 				scrutinyDetailRise.addColumnHeading(5, PROVIDED);
 				scrutinyDetailRise.addColumnHeading(6, STATUS);
 				scrutinyDetailRise.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Number of rises");
@@ -484,7 +477,7 @@ public class FireStair extends FeatureProcess {
 		details.put(RULE_NO, ruleNo);
 		details.put(FLOOR, floor);
 		details.put(DESCRIPTION, description);
-		details.put(REQUIRED, expected);
+		details.put(PERMISSIBLE, expected);
 		details.put(PROVIDED, actual);
 		details.put(STATUS, status);
 		scrutinyDetail.getDetail().add(details);
