@@ -53,6 +53,7 @@ import java.util.List;
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.edcr.feature.AdditionalFeature;
 import org.egov.edcr.feature.BlockDistancesService;
+import org.egov.edcr.feature.Chimney;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.FireStair;
@@ -68,9 +69,11 @@ import org.egov.edcr.feature.Plantation;
 import org.egov.edcr.feature.PlantationGreenStrip;
 import org.egov.edcr.feature.RainWaterHarvesting;
 import org.egov.edcr.feature.RiverDistance;
+import org.egov.edcr.feature.RoofTank;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
 import org.egov.edcr.feature.SpiralStair;
+import org.egov.edcr.feature.StairCover;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -87,7 +90,7 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(SetBackService.class);
 		features.add(pf);
 		pf = new PlanFeature(Parking.class);
-                features.add(pf);
+		features.add(pf);
 		pf = new PlanFeature(MonumentDistance.class);
 		features.add(pf);
 		pf = new PlanFeature(BlockDistancesService.class);
@@ -111,6 +114,12 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(OverHangs.class);
 		features.add(pf);
 		pf = new PlanFeature(PlantationGreenStrip.class);
+		features.add(pf);
+		pf = new PlanFeature(RoofTank.class);
+		features.add(pf);
+		pf = new PlanFeature(StairCover.class);
+		features.add(pf);
+		pf = new PlanFeature(Chimney.class);
 		features.add(pf);
 		/*
 		 * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
