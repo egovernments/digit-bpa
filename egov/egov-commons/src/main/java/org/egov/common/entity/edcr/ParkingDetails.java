@@ -76,6 +76,7 @@ public class ParkingDetails implements Serializable {
     private Integer validDAParkingSlots = 0;
     private BigDecimal distFromDAToMainEntrance = BigDecimal.ZERO;
     private List<Measurement> special = new ArrayList<>();
+    private Integer validSpecialSlots = 0;
     private List<Measurement> stilts = new ArrayList<>();
 
     public List<Measurement> getCars() {
@@ -212,6 +213,14 @@ public class ParkingDetails implements Serializable {
 
     public void setValidBasementCarSlots(Integer validBasementCarSlots) {
         this.validBasementCarSlots = validBasementCarSlots;
+    }
+
+    public Integer getValidSpecialSlots() {
+        return validSpecialSlots;
+    }
+
+    public void setValidSpecialSlots(Integer validSpecialSlots) {
+        this.validSpecialSlots = validSpecialSlots;
     }
 
     public List<Measurement> getStilts() {
