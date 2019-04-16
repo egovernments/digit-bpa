@@ -2,7 +2,7 @@ package org.egov.common.entity.edcr;
 
 import java.math.BigDecimal;
 
-public class HeightOfRoom {
+public class RoomHeight {
 
     private static final long serialVersionUID = 54L;
     

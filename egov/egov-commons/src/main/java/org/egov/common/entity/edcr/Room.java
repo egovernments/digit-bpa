@@ -53,15 +53,15 @@ public class Room {
 
     private static final long serialVersionUID = 28L;
 
-    private List<HeightOfRoom> heightOfRooms;
+    private List<RoomHeight> heightOfRooms;
 
     private List<Measurement> rooms;
 
-    public List<HeightOfRoom> getHeights() {
+    public List<RoomHeight> getHeights() {
         return heightOfRooms;
     }
 
-    public void setHeights(List<HeightOfRoom> heights) {
+    public void setHeights(List<RoomHeight> heights) {
         this.heightOfRooms = heights;
     }
 
