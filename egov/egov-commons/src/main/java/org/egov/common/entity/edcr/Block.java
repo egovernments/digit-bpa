@@ -85,9 +85,9 @@ public class Block extends Measurement {
 	private List<Measurement> overHangs;
 	private List<Measurement> protectedBalconies;
 	private List<Measurement> plantationGreenStripes;
-	private List<Measurement> roofTanks;
-	private List<Measurement> stairCovers;
-	private List<Measurement> chimneys;
+	private List<BigDecimal> roofTanks;
+	private List<BigDecimal> stairCovers;
+	private List<BigDecimal> chimneys;
 
 	@Override
 	public String toString() {
@@ -346,27 +346,27 @@ public class Block extends Measurement {
 		this.plantationGreenStripes = plantationGreenStripes;
 	}
 
-	public List<Measurement> getRoofTanks() {
+	public List<BigDecimal> getRoofTanks() {
 		return roofTanks;
 	}
 
-	public void setRoofTanks(List<Measurement> roofTanks) {
+	public void setRoofTanks(List<BigDecimal> roofTanks) {
 		this.roofTanks = roofTanks;
 	}
 
-	public List<Measurement> getStairCovers() {
+	public List<BigDecimal> getStairCovers() {
 		return stairCovers;
 	}
 
-	public void setStairCovers(List<Measurement> stairCovers) {
+	public void setStairCovers(List<BigDecimal> stairCovers) {
 		this.stairCovers = stairCovers;
 	}
 
-	public List<Measurement> getChimneys() {
+	public List<BigDecimal> getChimneys() {
 		return chimneys;
 	}
 
-	public void setChimneys(List<Measurement> chimneys) {
+	public void setChimneys(List<BigDecimal> chimneys) {
 		this.chimneys = chimneys;
 	}
 
