@@ -58,7 +58,6 @@ public class Floor extends Measurement {
     private List<Occupancy> occupancies = new ArrayList<>();
     private List<Occupancy> convertedOccupancies = new ArrayList<>();
     private List<FloorUnit> units = new ArrayList<>();
-    private List<Room> habitableRooms = new ArrayList<>();
     private List<DARoom> daRooms = new ArrayList<>();
     private List<Ramp> ramps = new ArrayList<>();
     private List<Lift> lifts = new ArrayList<>();
@@ -77,8 +76,10 @@ public class Floor extends Measurement {
     private List<GeneralStair> generalStairs = new ArrayList<>();
     private List<SpiralStair> spiralStairs = new ArrayList<>();
     private ParkingDetails parking = new ParkingDetails();
-
     private List<BigDecimal> floorHeights;
+    private Room acRoom ;
+    private Room regularRoom ;
+    private Room kitchen ;
 
     public List<FireStair> getFireStairs() {
         return fireStairs;
@@ -232,14 +233,6 @@ public class Floor extends Measurement {
         this.number = number;
     }
 
-    public List<Room> getHabitableRooms() {
-        return habitableRooms;
-    }
-
-    public void setHabitableRooms(List<Room> habitableRooms) {
-        this.habitableRooms = habitableRooms;
-    }
-
     public Measurement getExterior() {
         return exterior;
     }
@@ -259,7 +252,7 @@ public class Floor extends Measurement {
     @Override
     public String toString() {
 
-        return "Floor :" + number + " [habitableRooms Count" + habitableRooms.size() + "\n exterior=" + exterior
+        return "Floor :" + number + " [\n exterior=" + exterior
                 + "\n openSpaces Count=" + openSpaces.size() + "]";
 
     }
@@ -355,4 +348,27 @@ public class Floor extends Measurement {
         this.parking = parking;
     }
 
+    public Room getAcRoom() {
+        return acRoom;
+    }
+
+    public void setAcRoom(Room acRoom) {
+        this.acRoom = acRoom;
+    }
+
+    public Room getRegularRoom() {
+        return regularRoom;
+    }
+
+    public void setRegularRoom(Room regularRoom) {
+        this.regularRoom = regularRoom;
+    }
+
+    public Room getKitchen() {
+        return kitchen;
+    }
+
+    public void setKitchen(Room kitchen) {
+        this.kitchen = kitchen;
+    }
 }
