@@ -54,7 +54,7 @@
 
 <div class="panel-heading toggle-header custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.build.details" />
+		<spring:message code="lbl.cmplted.bldg.dtl" />
 	</div>
 	<div class="history-icon toggle-icon">
 		<i class="fa fa-angle-up fa-2x"></i>

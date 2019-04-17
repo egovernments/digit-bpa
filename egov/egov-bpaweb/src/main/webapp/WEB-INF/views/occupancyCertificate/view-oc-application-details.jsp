@@ -61,6 +61,22 @@
 <div class="panel-body">
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.edcr.number" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<input type="hidden" id="ocEDcrNumber"
+				value="${occupancyCertificate.eDcrNumber}">
+			<c:out value="${occupancyCertificate.eDcrNumber}" default="N/A"></c:out>
+		</div>
+		<div class="col-sm-6 add-margin view-content">
+			<a target="popup" class="btn btn-primary"
+				onclick="window.open('/bpa/application/citizen/occupancy-certificate/comparison-report/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
+				class="btn btn-primary"><spring:message
+					code="lbl.oc.comparison.report" /></a>
+		</div>
+	</div>
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.app.num" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
@@ -97,17 +113,10 @@
 	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.edcr.number" />
+			<spring:message code="lbl.extentin.sqmts" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-		<input type="hidden" id="ocEDcrNumber" value="${occupancyCertificate.eDcrNumber}">
-			<c:out value="${occupancyCertificate.eDcrNumber}" default="N/A"></c:out>
-		</div>
-		<div class="col-sm-6 add-margin view-content">
-			<a target="popup" class="btn btn-primary"
-				onclick="window.open('/bpa/application/citizen/occupancy-certificate/comparison-report/${occupancyCertificate.applicationNumber}','popup','width=1100,height=700'); return false;"
-				class="btn btn-primary"><spring:message
-					code="lbl.oc.comparison.report" /></a>
+			<c:out value="${occupancyCertificate.extentInSqmts}" default="N/A"></c:out>
 		</div>
 	</div>
 </div>

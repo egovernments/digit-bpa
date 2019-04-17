@@ -128,8 +128,8 @@
 													minFractionDigits="2" maxFractionDigits="2"
 													value="${bpaFloor.plinthArea}" /></td>
 											<td class="text-right"><c:set var="pinthAreaPercent"
-													value="${(ocFloor.plinthArea - bpaFloor.plinthArea)*10/100}"></c:set>
-												<fmt:formatNumber type="number" maxFractionDigits="4"
+													value="${(ocFloor.plinthArea - bpaFloor.plinthArea) * 100 / bpaFloor.plinthArea}"></c:set>
+												<fmt:formatNumber type="number" maxFractionDigits="2"
 													value="${pinthAreaPercent}" /></td>
 											<td class="text-right"><fmt:formatNumber type="number"
 													minFractionDigits="2" maxFractionDigits="2"
@@ -138,8 +138,8 @@
 													minFractionDigits="2" maxFractionDigits="2"
 													value="${bpaFloor.floorArea}" /></td>
 											<td class="text-right"><c:set var="floorAreaPercent"
-													value="${(ocFloor.floorArea - bpaFloor.floorArea)*10/100}"></c:set>
-												<fmt:formatNumber type="number" maxFractionDigits="4"
+													value="${(ocFloor.floorArea - bpaFloor.floorArea) * 100 / bpaFloor.floorArea}"></c:set>
+												<fmt:formatNumber type="number" maxFractionDigits="2"
 													value="${floorAreaPercent}" /></td>
 											<td class="text-right"><fmt:formatNumber type="number"
 													minFractionDigits="2" maxFractionDigits="2"
@@ -148,8 +148,8 @@
 													minFractionDigits="2" maxFractionDigits="2"
 													value="${bpaFloor.carpetArea}" /></td>
 											<td class="text-right"><c:set var="carpetAreaPercent"
-													value="${(ocFloor.carpetArea - bpaFloor.carpetArea)*10/100}"></c:set>
-												<fmt:formatNumber type="number" maxFractionDigits="4"
+													value="${(ocFloor.carpetArea - bpaFloor.carpetArea) * 100 / bpaFloor.carpetArea}"></c:set>
+												<fmt:formatNumber type="number" maxFractionDigits="2"
 													value="${carpetAreaPercent}" /></td>
 										</tr>
 									</c:forEach>
@@ -166,8 +166,8 @@
 												value="${bpaPlinthAreaTotal}" /></td>
 										<td class="text-right view-content"><c:set
 												var="ocPlinthAreaTotalPercent"
-												value="${(ocPlinthAreaTotal*10/100) - (bpaPlinthAreaTotal * 10 / 100)}" />
-											<fmt:formatNumber type="number" maxFractionDigits="4"
+												value="${(ocPlinthAreaTotal - bpaPlinthAreaTotal)  * 100 / bpaPlinthAreaTotal}" />
+											<fmt:formatNumber type="number" maxFractionDigits="2"
 												value="${ocPlinthAreaTotalPercent}" /></td>
 										<td class="text-right view-content"><fmt:formatNumber
 												type="number" maxFractionDigits="2"
@@ -177,8 +177,8 @@
 												value="${bpaFloorAreaTotal}" /></td>
 										<td class="text-right view-content"><c:set
 												var="ocFloorAreaTotalPercent"
-												value="${(ocFloorAreaTotal - bpaFloorAreaTotal) * 10 / 100}" />
-											<fmt:formatNumber type="number" maxFractionDigits="4"
+												value="${(ocFloorAreaTotal - bpaFloorAreaTotal) * 100 / bpaFloorAreaTotal}" />
+											<fmt:formatNumber type="number" maxFractionDigits="2"
 												value="${ocFloorAreaTotalPercent}" /></td>
 										<td class="text-right view-content"><fmt:formatNumber
 												type="number" maxFractionDigits="2"
@@ -188,8 +188,8 @@
 												value="${bpaCarpetAreaTotal}" /></td>
 										<td class="text-right view-content"><c:set
 												var="ocCarpetAreaTotalPercent"
-												value="${(ocCarpetAreaTotal - bpaCarpetAreaTotal) * 10 / 100}" />
-											<fmt:formatNumber type="number" maxFractionDigits="4"
+												value="${(ocCarpetAreaTotal - bpaCarpetAreaTotal) * 100 / bpaCarpetAreaTotal}" />
+											<fmt:formatNumber type="number" maxFractionDigits="2"
 												value="${ocCarpetAreaTotalPercent}" /></td>
 									</tr>
 								</tfoot>

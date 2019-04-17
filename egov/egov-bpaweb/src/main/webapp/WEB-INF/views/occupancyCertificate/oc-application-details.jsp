@@ -151,21 +151,20 @@
 	</div>
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.extentin.sqmts" /> </label>
-		<div class="col-sm-3 add-margin">
-			<input type="text" name="" id="plotArea"
-				class="form-control plotArea resetValues decimalfixed"
-				value="${occupancyCertificate.parent.siteDetail[0].extentinsqmts}"
-				readonly="readonly">
-		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.re.survey.no" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="" id="resurveyNumber"
 				class="form-control resurveyNumber resetValues"
 				value="${occupancyCertificate.parent.siteDetail[0].reSurveyNumber}"
 				readonly="readonly">
-
+		</div>
+		<label class="col-sm-2 control-label text-right"><spring:message
+				code="lbl.extentin.sqmts" /> </label>
+		<div class="col-sm-3 add-margin">
+			<input type="text" name="extentInSqmts" id="extentInSqmts"
+				class="form-control extentInSqmts resetValues decimalfixed"
+				value="${occupancyCertificate.extentInSqmts}"
+				readonly="readonly">
 		</div>
 	</div>
 	<div class="form-group">
@@ -183,6 +182,7 @@
 			<form:input path="completionDate" class="form-control datepicker"
 				data-date-end-date="0d" id="completionDate"
 				data-inputmask="'mask': 'd/m/y'" required="required" />
+				<small class="view-content text-info">Make sure date of construction completion is appropriate</small>
 			<form:errors path="completionDate" cssClass="add-margin error-msg" />
 		</div>
 	</div>

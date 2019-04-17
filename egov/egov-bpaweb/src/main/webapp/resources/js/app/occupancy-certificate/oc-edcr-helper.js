@@ -591,8 +591,7 @@ $(document).ready(
                                 console.log("Error occurred when de-serialize, please check!!!!!!!");
                             }
                             if(response.plotArea) {
-                                $('#extentOfLand').val(response.plotArea.toFixed(2));
-                                setExtentOfLand();
+                            	$('#extentInSqmts').val(response.plotArea.toFixed(2));
                             }
                         }
                     },

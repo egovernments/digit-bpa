@@ -49,7 +49,7 @@
 		<div class="panel-heading">
 			<div class="panel-title text-center no-float">
 				<c:if test="${not empty OcComparisonValidation}">
-					<strong class="error-msg">${OcComparisonValidation}</strong>
+					<strong class="error-msg" style="font-size: 97%;">${OcComparisonValidation}</strong>
 				</c:if>
 			</div>
 		</div>

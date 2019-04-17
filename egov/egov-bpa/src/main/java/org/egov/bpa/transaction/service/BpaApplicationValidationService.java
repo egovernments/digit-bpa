@@ -90,6 +90,7 @@ import org.springframework.ui.Model;
 @Transactional(readOnly = true)
 public class BpaApplicationValidationService {
 
+    private static final String OC_COMPARISON_VALIDATION = "OcComparisonValidation";
     private static final String BUILDINGDETAILSVALIDATIONREQUIRED = "BUILDINGDETAILSVALIDATIONREQUIRED";
     private static final String MSG_VIOLATION_WO_ADDNL_FEE = "msg.violation.wo.addnl.fee";
     private static final String MSG_VIOLATION_WITH_ADDNL_FEE = "msg.violation.with.addnl.fee";
@@ -116,7 +117,7 @@ public class BpaApplicationValidationService {
      * @return
      */
     public Map<Boolean, String> checkStakeholderIsValid(final BpaApplication bpaApplication) {
-    	 
+
         Integer noOfFloors = 0;
         BigDecimal totalPlinthArea = BigDecimal.ZERO;
         BigDecimal heightOfBuilding = BigDecimal.ZERO;
@@ -135,12 +136,13 @@ public class BpaApplicationValidationService {
         if (sValidator == null) {
             throw new RuntimeException("Unable to find Stakeholder validator service");
         } else {
-            return sValidator.validateStakeholder(bpaApplication.getServiceType().getCode(),bpaApplication.getServiceType().getDescription(),
+            return sValidator.validateStakeholder(bpaApplication.getServiceType().getCode(),
+                    bpaApplication.getServiceType().getDescription(),
                     bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName(),
                     bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
                     noOfFloors, heightOfBuilding, totalPlinthArea, bpaApplication.getAuthorizedToSubmitPlan());
         }
-      
+
     }
 
     /**
@@ -239,7 +241,7 @@ public class BpaApplicationValidationService {
      * @param bpaApplication
      * @return error message if building licensee is not meeting eligible criteria.
      */
- public String getValidationMessageForBusinessResgistration(final BpaApplication bpaApplication) {
+    public String getValidationMessageForBusinessResgistration(final BpaApplication bpaApplication) {
         String stakeHolderType = bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType()
                 .getName();
         String serviceType = bpaApplication.getServiceType().getCode();
@@ -315,11 +317,7 @@ public class BpaApplicationValidationService {
                     LocaleContextHolder.getLocale());
         }
         return message;
-    }    
-    
-    
-  
-    
+    }
 
     /**
      * checking each floor wise coverage area is violating for all occupancy where ever building details capturing to those
@@ -491,88 +489,113 @@ public class BpaApplicationValidationService {
     }
 
     public Boolean validateOcApplnWithPermittedBpaAppln(final Model model, final OccupancyCertificate occupancyCertificate) {
+
         Boolean isValid = Boolean.FALSE;
         List<OCBuilding> ocBuildings = occupancyCertificate.getBuildings();
-        List<BuildingDetail> bpaBuildingDetail = occupancyCertificate.getParent().getBuildingDetail();
-        // check number of blocks same are not
-        if (ocBuildings.size() > bpaBuildingDetail.size()) {
-            model.addAttribute("OcComparisonValidation",
-                    bpaMessageSource.getMessage("msg.oc.appln.comparison.validation1", null, null));
+        List<BuildingDetail> permitBuildings = occupancyCertificate.getParent().getBuildingDetail();
+
+        // 1.Validate plot area
+        double ocPlotArea = occupancyCertificate.getExtentInSqmts().setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP)
+                .doubleValue();
+        double permitPlotArea = occupancyCertificate.getParent().getSiteDetail().get(0).getExtentinsqmts()
+                .setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP).doubleValue();
+        if (ocPlotArea > permitPlotArea) {
+            model.addAttribute(OC_COMPARISON_VALIDATION,
+                    bpaMessageSource.getMessage("msg.oc.comp.plot.area.more",
+                            new String[] { String.valueOf(ocPlotArea), String.valueOf(permitPlotArea) },
+                            LocaleContextHolder.getLocale()));
             return isValid;
         }
 
-        // check building number exist in permitted building details.
+        // check number of blocks same are not
+        int ocExistingBldgSize = occupancyCertificate.getExistingBuildings().size();
+        int permitExistingBldgSize = occupancyCertificate.getParent().getExistingBuildingDetails().size();
+        int totalOcBldgs = ocBuildings.size() + ocExistingBldgSize;
+        int totalPermitBldgs = permitBuildings.size() + permitExistingBldgSize;
+        if (ocBuildings.size() > permitBuildings.size()) {
+            model.addAttribute(OC_COMPARISON_VALIDATION,
+                    bpaMessageSource.getMessage("msg.oc.comp.blks.count.not.match",
+                            new String[] { String.valueOf(totalOcBldgs), String.valueOf(totalPermitBldgs) },
+                            LocaleContextHolder.getLocale()));
+            return isValid;
+        }
+
+        // Validate block's number is same
         for (OCBuilding oc : ocBuildings) {
             boolean buildingExist = false;
-            for (BuildingDetail bpa : bpaBuildingDetail) {
-                if (oc.getBuildingNumber() == bpa.getNumber())
+            Integer permitBldgNo = 0;
+            for (BuildingDetail bpa : permitBuildings) {
+                permitBldgNo = bpa.getNumber();
+                if (oc.getBuildingNumber().equals(bpa.getNumber()))
                     buildingExist = true;
             }
             if (!buildingExist) {
-                model.addAttribute("OcComparisonValidation", bpaMessageSource.getMessage("msg.oc.appln.comparison.validation2",
-                        new String[] { oc.getBuildingNumber().toString() }, null));
+                model.addAttribute(OC_COMPARISON_VALIDATION,
+                        bpaMessageSource.getMessage("msg.oc.comp.blk.no.not.match",
+                                new String[] { String.valueOf(oc.getBuildingNumber()), String.valueOf(permitBldgNo) },
+                                LocaleContextHolder.getLocale()));
                 return isValid;
             }
         }
+
         // check the floor count for particular building same or not
         for (OCBuilding oc : ocBuildings) {
-            Integer size = oc.getFloorDetailsForUpdate().size();
-            for (BuildingDetail bpa : bpaBuildingDetail) {
-                if (oc.getBuildingNumber() == bpa.getNumber()) {
-                    if (size > bpa.getApplicationFloorDetails().size()) {
-                        model.addAttribute("OcComparisonValidation",
-                                bpaMessageSource.getMessage("msg.oc.appln.comparison.validation3",
-                                        new String[] { oc.getBuildingNumber().toString(), size.toString(),
-                                                bpa.getNumber().toString(),
-                                                String.valueOf(bpa.getApplicationFloorDetails().size()) },
-                                        null));
-                        return isValid;
-                    }
+            int ocFloorsCount = oc.getFloorDetailsForUpdate().size();
+            for (BuildingDetail bpa : permitBuildings) {
+                int permitFloorsCount = bpa.getApplicationFloorDetails().size();
+                if (oc.getBuildingNumber().equals(bpa.getNumber()) && ocFloorsCount > permitFloorsCount) {
+                    model.addAttribute(OC_COMPARISON_VALIDATION,
+                            bpaMessageSource.getMessage("msg.oc.comp.blk.flr.count.not.match",
+                                    new String[] { String.valueOf(oc.getBuildingNumber()), String.valueOf(ocFloorsCount),
+                                            String.valueOf(bpa.getNumber()), String.valueOf(permitFloorsCount) },
+                                    LocaleContextHolder.getLocale()));
+                    return isValid;
                 }
             }
         }
-        // check floor wise floor area same or not
+
+        // 3.Building height is same or not
+        for (OCBuilding oc : ocBuildings) {
+            boolean isHeightSame = false;
+            BigDecimal permitBldgHgt = BigDecimal.ZERO;
+            for (BuildingDetail bpa : permitBuildings) {
+                permitBldgHgt = bpa.getHeightFromGroundWithOutStairRoom().setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
+                if (oc.getHeightFromGroundWithOutStairRoom().setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP)
+                        .doubleValue() <= permitBldgHgt.doubleValue())
+                    isHeightSame = true;
+            }
+            if (!isHeightSame) {
+                model.addAttribute(OC_COMPARISON_VALIDATION,
+                        bpaMessageSource.getMessage("msg.oc.comp.blk.hgt.not.match",
+                                new String[] {
+                                        String.valueOf(oc.getHeightFromGroundWithOutStairRoom().setScale(SCALING_FACTOR,
+                                                BigDecimal.ROUND_HALF_UP)),
+                                        String.valueOf(permitBldgHgt) },
+                                LocaleContextHolder.getLocale()));
+                return isValid;
+            }
+        }
+
         BigDecimal hundred = new BigDecimal(100);
         BigDecimal percent = new BigDecimal(bpaUtils.getAppConfigForOcAllowDeviation());
-        for (OCBuilding oc : ocBuildings) {
-            for (BuildingDetail bpa : bpaBuildingDetail) {
-                if (oc.getBuildingNumber() == bpa.getNumber()) {
-                    for (OCFloor ocFloor : oc.getFloorDetailsForUpdate()) {
-                        int floorNumber = ocFloor.getFloorNumber();
-                        for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
-                            if (floorNumber == bpaFloor.getFloorNumber()) {
-                                BigDecimal allowDeviation = bpaFloor.getFloorArea().multiply(percent).divide(hundred);
-                                BigDecimal total = bpaFloor.getFloorArea().add(allowDeviation);
-                                if (ocFloor.getFloorArea().compareTo(total) > 0) {
-                                    model.addAttribute("OcComparisonValidation", bpaMessageSource.getMessage(
-                                            "msg.oc.appln.comparison.validation4",
-                                            new String[] { oc.getBuildingNumber().toString(), String.valueOf(floorNumber),
-                                                    String.valueOf(bpa.getNumber()), bpaFloor.getFloorNumber().toString() },
-                                            null));
-                                    return isValid;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
         // check floor wise occupancy same are not
         for (OCBuilding oc : ocBuildings) {
-            for (BuildingDetail bpa : bpaBuildingDetail) {
-                if (oc.getBuildingNumber() == bpa.getNumber()) {
+            for (BuildingDetail bpa : permitBuildings) {
+                if (oc.getBuildingNumber().equals(bpa.getNumber())) {
                     for (OCFloor ocFloor : oc.getFloorDetailsForUpdate()) {
                         int floorNumber = ocFloor.getFloorNumber();
                         for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
-                            if (floorNumber == bpaFloor.getFloorNumber()) {
-                                if (!ocFloor.getSubOccupancy().getCode().equals(bpaFloor.getSubOccupancy().getCode())) {
-                                    model.addAttribute("OcComparisonValidation", bpaMessageSource.getMessage(
-                                            "msg.oc.appln.comparison.validation5",
-                                            new String[] { oc.getBuildingNumber().toString(), String.valueOf(floorNumber),
-                                                    String.valueOf(bpa.getNumber()), bpaFloor.getFloorNumber().toString() },
-                                            null));
-                                    return isValid;
-                                }
+                            if (floorNumber == bpaFloor.getFloorNumber()
+                                    && !ocFloor.getSubOccupancy().getCode().equals(bpaFloor.getSubOccupancy().getCode())) {
+                                model.addAttribute(OC_COMPARISON_VALIDATION,
+                                        bpaMessageSource.getMessage("msg.oc.comp.blk.flr.occupancy.not.match",
+                                                new String[] { String.valueOf(oc.getBuildingNumber()),
+                                                        String.valueOf(floorNumber), ocFloor.getSubOccupancy().getDescription(),
+                                                        String.valueOf(bpa.getNumber()),
+                                                        String.valueOf(bpaFloor.getFloorNumber()),
+                                                        bpaFloor.getSubOccupancy().getDescription() },
+                                                LocaleContextHolder.getLocale()));
+                                return isValid;
                             }
                         }
                     }
@@ -582,22 +605,26 @@ public class BpaApplicationValidationService {
         // check block wise floor area same are not
         BigDecimal limitSqurMtrs = new BigDecimal(40);
         for (OCBuilding oc : ocBuildings) {
-            for (BuildingDetail bpa : bpaBuildingDetail) {
-                if (oc.getBuildingNumber() == bpa.getNumber()) {
+            for (BuildingDetail bpa : permitBuildings) {
+                if (oc.getBuildingNumber().equals(bpa.getNumber())) {
                     BigDecimal totalOcFloor = getOcTotalFloorArea(oc.getFloorDetailsForUpdate());
                     BigDecimal totalBpaFloor = getBpaTotalFloorArea(bpa.getApplicationFloorDetails());
                     BigDecimal allowDeviation = totalBpaFloor.multiply(percent).divide(hundred);
                     BigDecimal totalBpaWithAllowDeviation = totalBpaFloor.add(allowDeviation);
                     if (totalBpaWithAllowDeviation.compareTo(totalOcFloor) < 0) {
-                        model.addAttribute("OcComparisonValidation",
-                                bpaMessageSource.getMessage("msg.oc.appln.comparison.validation6",
-                                        new String[] { oc.getBuildingNumber().toString() }, null));
+                        model.addAttribute(OC_COMPARISON_VALIDATION,
+                                bpaMessageSource.getMessage("msg.oc.comp.blk.area.not.match1",
+                                        new String[] { String.valueOf(oc.getBuildingNumber()), String.valueOf(totalOcFloor),
+                                                String.valueOf(bpa.getNumber()), String.valueOf(totalBpaFloor) },
+                                        LocaleContextHolder.getLocale()));
                         return isValid;
                     }
                     if (totalOcFloor.subtract(totalBpaFloor).compareTo(limitSqurMtrs) > 0) {
-                        model.addAttribute("OcComparisonValidation",
-                                bpaMessageSource.getMessage("msg.oc.appln.comparison.validation7",
-                                        new String[] { oc.getBuildingNumber().toString() }, null));
+                        model.addAttribute(OC_COMPARISON_VALIDATION,
+                                bpaMessageSource.getMessage("msg.oc.comp.blk.area.not.match2",
+                                        new String[] { String.valueOf(oc.getBuildingNumber()), String.valueOf(totalOcFloor),
+                                                String.valueOf(bpa.getNumber()), String.valueOf(totalBpaFloor) },
+                                        LocaleContextHolder.getLocale()));
                         return isValid;
                     }
                 }

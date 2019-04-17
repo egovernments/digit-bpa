@@ -69,6 +69,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
@@ -152,8 +153,8 @@ public class OccupancyCertificate extends StateAware<Position> {
     private Boolean failureInScheduler = false;
 
     private String schedulerFailedRemarks;
-    
-	private BigDecimal admissionfeeAmount;
+
+    private BigDecimal admissionfeeAmount;
 
     @Length(min = 1, max = 5000)
     private String townSurveyorRemarks;
@@ -162,13 +163,16 @@ public class OccupancyCertificate extends StateAware<Position> {
 
     private Boolean isLPRequestInitiated;
 
+    @NotNull
+    private BigDecimal extentInSqmts = BigDecimal.ZERO;
+
     @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("buildingNumber ASC")
     private List<OCBuilding> buildings = new ArrayList<>();
 
     @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OccupancyFee> occupancyFee = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("buildingNumber ASC")
     private List<OCExistingBuilding> existingBuildings = new ArrayList<>();
@@ -311,14 +315,14 @@ public class OccupancyCertificate extends StateAware<Position> {
     }
 
     public List<OccupancyFee> getOccupancyFee() {
-		return occupancyFee;
-	}
+        return occupancyFee;
+    }
 
-	public void setOccupancyFee(List<OccupancyFee> occupancyFee) {
-		this.occupancyFee = occupancyFee;
-	}
+    public void setOccupancyFee(List<OccupancyFee> occupancyFee) {
+        this.occupancyFee = occupancyFee;
+    }
 
-	public Date getCommencedDate() {
+    public Date getCommencedDate() {
         return commencedDate;
     }
 
@@ -405,14 +409,14 @@ public class OccupancyCertificate extends StateAware<Position> {
     public void setSchedulerFailedRemarks(String schedulerFailedRemarks) {
         this.schedulerFailedRemarks = schedulerFailedRemarks;
     }
-    
-    public BigDecimal getAdmissionfeeAmount() {
-		return admissionfeeAmount;
-	}
 
-	public void setAdmissionfeeAmount(final BigDecimal admissionfeeAmount) {
-		this.admissionfeeAmount = admissionfeeAmount;
-	}
+    public BigDecimal getAdmissionfeeAmount() {
+        return admissionfeeAmount;
+    }
+
+    public void setAdmissionfeeAmount(final BigDecimal admissionfeeAmount) {
+        this.admissionfeeAmount = admissionfeeAmount;
+    }
 
     public String getTownSurveyorRemarks() {
         return townSurveyorRemarks;
@@ -436,6 +440,14 @@ public class OccupancyCertificate extends StateAware<Position> {
 
     public void setLPRequestInitiated(Boolean LPRequestInitiated) {
         isLPRequestInitiated = LPRequestInitiated;
+    }
+
+    public BigDecimal getExtentInSqmts() {
+        return extentInSqmts;
+    }
+
+    public void setExtentInSqmts(BigDecimal extentInSqmts) {
+        this.extentInSqmts = extentInSqmts;
     }
 
     public List<OCBuilding> getBuildings() {
