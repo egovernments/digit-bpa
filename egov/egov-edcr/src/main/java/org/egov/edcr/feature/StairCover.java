@@ -87,24 +87,24 @@ public class StairCover extends FeatureProcess {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_44_C);
 
-		BigDecimal minWidth = BigDecimal.ZERO;
+		BigDecimal minHeight = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
-			minWidth = BigDecimal.ZERO;
+			minHeight = BigDecimal.ZERO;
 			if (b.getStairCovers() != null && !b.getStairCovers().isEmpty()) {
-				minWidth = b.getStairCovers().stream().reduce(BigDecimal::min).get();
+				minHeight = b.getStairCovers().stream().reduce(BigDecimal::min).get();
 
-				if (minWidth.compareTo(new BigDecimal(3)) <= 0) {
+				if (minHeight.compareTo(new BigDecimal(3)) <= 0) {
 					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
 					details.put(REQUIRED, "<= 3");
-					details.put(PROVIDED, minWidth.toString());
+					details.put(PROVIDED, minHeight.toString());
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
 					details.put(DESCRIPTION, "Verify building height is includes the stair cover height or not");
 					details.put(REQUIRED, "<= 3");
-					details.put(PROVIDED, minWidth.toString());
+					details.put(PROVIDED, minHeight.toString());
 					details.put(STATUS, Result.Verify.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

@@ -87,24 +87,24 @@ public class RoofTank extends FeatureProcess {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_44_A);
 
-		BigDecimal minWidth = BigDecimal.ZERO;
+		BigDecimal minHeight = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
-			minWidth = BigDecimal.ZERO;
+			minHeight = BigDecimal.ZERO;
 			if (b.getRoofTanks() != null && !b.getRoofTanks().isEmpty()) {
-				minWidth = b.getRoofTanks().stream().reduce(BigDecimal::min).get();
+				minHeight = b.getRoofTanks().stream().reduce(BigDecimal::min).get();
 
-				if (minWidth.compareTo(new BigDecimal(1)) <= 0) {
+				if (minHeight.compareTo(new BigDecimal(1)) <= 0) {
 					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
 					details.put(REQUIRED, "<= 1");
-					details.put(PROVIDED, minWidth.toString());
+					details.put(PROVIDED, minHeight.toString());
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
 					details.put(DESCRIPTION, "Verify building height is includes the roof tank height or not");
 					details.put(REQUIRED, "<= 1");
-					details.put(PROVIDED, minWidth.toString());
+					details.put(PROVIDED, minHeight.toString());
 					details.put(STATUS, Result.Verify.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
