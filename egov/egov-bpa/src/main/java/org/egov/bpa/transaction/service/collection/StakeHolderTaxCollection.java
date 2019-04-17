@@ -57,6 +57,7 @@ import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.CollectionApportioner;
+import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -107,10 +108,10 @@ public class StakeHolderTaxCollection extends TaxCollection {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsDAO;
     
-/*    @Autowired
+    @Autowired
     private BPASmsAndEmailService bpaSmsAndEmailService;
     
-    @Autowired
+   /* @Autowired
     private BpaIndexService bpaIndexService;*/
     
     @Autowired
@@ -275,8 +276,7 @@ public class StakeHolderTaxCollection extends TaxCollection {
                 }
         
         updateStakeholder(demand);
-        //TODO:Need to send sms regard payment success to citizen
-       //bpaSmsAndEmailService.sendSmsForCollection(totalAmount, stakeHolder, billRcptInfo);
+       bpaSmsAndEmailService.sendSmsEmailForStakeholderCollection(totalAmount, stakeHolder, billRcptInfo);
     }
 
     public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,

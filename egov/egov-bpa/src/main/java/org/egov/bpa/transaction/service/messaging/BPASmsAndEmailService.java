@@ -142,6 +142,9 @@ public class BPASmsAndEmailService {
 	private static final String MSG_KEY_SMS_STAKEHOLDER_NEW_PP = "msg.newstakeholder.paymentpending.sms";
 	private static final String SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_PP = "msg.newstakeholder.email.paymentpending.subject";
 	private static final String BODY_KEY_EMAIL_STAKEHOLDER_NEW_PP = "msg.newstakeholder.email.paymentpending.body";
+	private static final String STAKEHOLDER_PAYMENT_CONFIM_SMS= "msg.newstakeholder.paymentconfirmation.sms";
+	private static final String STAKEHOLDER_PAYMENT_CONFIM_EMAIL_SUB= "msg.newstakeholder.paymentconfirmation.email.subject";
+	private static final String STAKEHOLDER_PAYMENT_CONFIM_EMAIL_BODY= "msg.newstakeholder.paymentconfirmation.email.body";
 
 
 	@Autowired
@@ -162,11 +165,12 @@ public class BPASmsAndEmailService {
 		String message;
 
 		if (isCitizenCrtn) {
-			message = bpaMessageSource.getMessage(SMS_STK_CTZ, new String[] { stakeHolder.getCode() }, null);
+			message = bpaMessageSource.getMessage(SMS_STK_CTZ,
+					new String[] { stakeHolder.getStakeHolderType().getName(), stakeHolder.getCode() }, null);
 		} else {
 			if (stakeHolder.getStatus().equals(StakeHolderStatus.PAYMENT_PENDING)) {
 				message = bpaMessageSource.getMessage(MSG_KEY_SMS_STAKEHOLDER_NEW_PP,
-						new String[] { stakeHolder.getCode() }, null);
+						new String[] { stakeHolder.getCode(), stakeHolder.getStakeHolderType().getName() }, null);
 
 			} else {
 				message = bpaMessageSource.getMessage(MSG_KEY_SMS_STAKEHOLDER_NEW, new String[] {
@@ -182,7 +186,8 @@ public class BPASmsAndEmailService {
 	public void sendSMSToStkHldrForRejection(final StakeHolder stakeHolder) {
 		String msgKey = SMS_STK_RJCT;
 		if (isSmsEnabled() && stakeHolder.getMobileNumber() != null) {
-			String message = bpaMessageSource.getMessage(msgKey, new String[]{stakeHolder.getCode(), stakeHolder.getComments()},
+			String message = bpaMessageSource.getMessage(msgKey, new String[] { stakeHolder.getCode(),
+					stakeHolder.getStakeHolderType().getName(), stakeHolder.getComments(), getMunicipalityName() },
 					null);
 			notificationService.sendSMS(stakeHolder.getMobileNumber(), message);
 		}
@@ -192,8 +197,10 @@ public class BPASmsAndEmailService {
 		String msgKeyMail = EMLB_STK_RJCT;
 		String msgKeyMailSubject = EMLS_STK_RJCT;
 		if (isEmailEnabled() && stakeHolder.getEmailId() != null) {
-			final String message = bpaMessageSource.getMessage(msgKeyMail, new String[]{stakeHolder.getName(),
-							stakeHolder.getStakeHolderType().getName(), stakeHolder.getCode(), stakeHolder.getComments(), getMunicipalityName()},
+			final String message = bpaMessageSource.getMessage(msgKeyMail,
+					new String[] { stakeHolder.getName(), stakeHolder.getStakeHolderType().getName(),
+							stakeHolder.getCode(), stakeHolder.getComments(), getMunicipalityName(),
+							getMunicipalityName() },
 					null);
 			final String subject = bpaMessageSource.getMessage(msgKeyMailSubject, null, null);
 			notificationService.sendEmail(stakeHolder.getEmailId(), subject, message);
@@ -216,9 +223,8 @@ public class BPASmsAndEmailService {
 			if (stakeHolder.getStatus().equals(StakeHolderStatus.PAYMENT_PENDING)) {
 				msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_PP;
 				message = bpaMessageSource.getMessage(BODY_KEY_EMAIL_STAKEHOLDER_NEW_PP,
-						new String[] { stakeHolder.getName(), stakeHolder.getStakeHolderType().getName(),
-								stakeHolder.getUsername(), "demo", ApplicationThreadLocals.getDomainURL(),
-								getMunicipalityName() },
+						new String[] { stakeHolder.getName(), stakeHolder.getCode(),
+								stakeHolder.getStakeHolderType().getName(), getMunicipalityName() },
 						null);
 			} else {
 				msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW;
@@ -731,6 +737,30 @@ public class BPASmsAndEmailService {
 							bpaMessageSource.getMessage("msg.email.subject.collection",
 									new String[]{billRcptInfo.getServiceName()}, null), buildEmailBodyForCollection(totalAmount, application, billRcptInfo));
 			}
+		}
+	}
+	
+	public void sendSmsEmailForStakeholderCollection(BigDecimal totalAmount, StakeHolder stakeHolder,
+			BillReceiptInfo billRcptInfo) {
+		if (isSmsEnabled()) {
+			String smsMsg = bpaMessageSource.getMessage(STAKEHOLDER_PAYMENT_CONFIM_SMS,
+					new String[] { totalAmount.toString(), stakeHolder.getCode(), stakeHolder.getUsername(),
+							ApplicationThreadLocals.getDomainURL() },
+					null);
+			if (isNotBlank(stakeHolder.getMobileNumber()) && isNotBlank(smsMsg)) {
+				notificationService.sendSMS(stakeHolder.getMobileNumber(), smsMsg);
+			}
+		}
+		if (isEmailEnabled() && isNotBlank(stakeHolder.getEmailId())) {
+			String emailMsg = bpaMessageSource.getMessage(STAKEHOLDER_PAYMENT_CONFIM_EMAIL_BODY,
+					new String[] { stakeHolder.getName(), totalAmount.toString(), stakeHolder.getCode(),
+							billRcptInfo.getReceiptDate().toString(), stakeHolder.getUsername(),
+							getMunicipalityName() },
+					null);
+			notificationService.sendEmail(stakeHolder.getEmailId(),
+					bpaMessageSource.getMessage(STAKEHOLDER_PAYMENT_CONFIM_EMAIL_SUB,
+							new String[] { billRcptInfo.getServiceName() }, null),
+					emailMsg);
 		}
 	}
 
