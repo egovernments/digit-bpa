@@ -80,8 +80,8 @@ public class RoofTank extends FeatureProcess {
 		scrutinyDetail.setKey("Common_Roof Tanks");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(3, VERIFIED);
+		scrutinyDetail.addColumnHeading(4, ACTION);
 		scrutinyDetail.addColumnHeading(5, STATUS);
 
 		Map<String, String> details = new HashMap<>();
@@ -96,15 +96,15 @@ public class RoofTank extends FeatureProcess {
 
 				if (minHeight.compareTo(new BigDecimal(1)) <= 0) {
 					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
-					details.put(REQUIRED, "<= 1");
-					details.put(PROVIDED, minHeight.toString());
+					details.put(VERIFIED, "Verified whether roof tank height is <= 1 meters");
+					details.put(ACTION, "Not included roof tank height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
-					details.put(DESCRIPTION, "Verify building height is includes the roof tank height or not");
-					details.put(REQUIRED, "<= 1");
-					details.put(PROVIDED, minHeight.toString());
+					details.put(DESCRIPTION, ROOFTANK_DESCRIPTION);
+					details.put(VERIFIED, "Verified whether roof tank height is <= 1 meters");
+					details.put(ACTION, "Included roof tank height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Verify.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

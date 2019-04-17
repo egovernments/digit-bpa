@@ -80,8 +80,8 @@ public class Chimney extends FeatureProcess {
 		scrutinyDetail.setKey("Common_Chimney");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(3, VERIFIED);
+		scrutinyDetail.addColumnHeading(4, ACTION);
 		scrutinyDetail.addColumnHeading(5, STATUS);
 
 		Map<String, String> details = new HashMap<>();
@@ -96,15 +96,15 @@ public class Chimney extends FeatureProcess {
 
 				if (minHeight.compareTo(new BigDecimal(1)) <= 0) {
 					details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
-					details.put(REQUIRED, "<= 1");
-					details.put(PROVIDED, minHeight.toString());
+					details.put(VERIFIED, "Verified whether chimney height is <= 1 meters");
+					details.put(ACTION, "Not included chimney height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
-					details.put(DESCRIPTION, "Verify building height is includes the chimney height or not");
-					details.put(REQUIRED, "<= 1");
-					details.put(PROVIDED, minHeight.toString());
+					details.put(DESCRIPTION, CHIMNEY_DESCRIPTION);
+					details.put(VERIFIED, "Verified whether chimney height is <= 1 meters");
+					details.put(ACTION, "Included chimney height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Verify.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

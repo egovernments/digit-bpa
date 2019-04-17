@@ -80,8 +80,8 @@ public class StairCover extends FeatureProcess {
 		scrutinyDetail.setKey("Common_Stair Cover");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(3, VERIFIED);
+		scrutinyDetail.addColumnHeading(4, ACTION);
 		scrutinyDetail.addColumnHeading(5, STATUS);
 
 		Map<String, String> details = new HashMap<>();
@@ -96,15 +96,15 @@ public class StairCover extends FeatureProcess {
 
 				if (minHeight.compareTo(new BigDecimal(3)) <= 0) {
 					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-					details.put(REQUIRED, "<= 3");
-					details.put(PROVIDED, minHeight.toString());
+					details.put(VERIFIED, "Verified whether stair cover height is <= 3 meters");
+					details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
-					details.put(DESCRIPTION, "Verify building height is includes the stair cover height or not");
-					details.put(REQUIRED, "<= 3");
-					details.put(PROVIDED, minHeight.toString());
+					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
+					details.put(VERIFIED, "Verified whether stair cover height is <= 3 meters");
+					details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
 					details.put(STATUS, Result.Verify.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
