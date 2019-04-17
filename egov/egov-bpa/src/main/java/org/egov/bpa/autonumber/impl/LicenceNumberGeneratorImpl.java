@@ -41,6 +41,7 @@ package org.egov.bpa.autonumber.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.egov.bpa.autonumber.LicenceNumberGenerator;
 import org.egov.bpa.master.entity.StakeHolder;
@@ -48,17 +49,25 @@ import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
+
 @Service
 public class LicenceNumberGeneratorImpl implements LicenceNumberGenerator {
 
     private static final String SEQ_BPA_LICENCE_NUMBER = "state.SEQ_BPA_LICENCE_NUMBER";
-
+    
+    private static final Map<String, String> code = new ImmutableMap.Builder<String, String>()
+            .put("Architect", "ARCT").put("Structural_Engineer", "STENG").put("Supervisor", "SUPV")
+            .put("Engineer","ENG").put("Town_Planner","TPL").put("Builder","BLD").build();
+    
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateNumber(StakeHolder stakeHolder) {
-        return String.format("%s%s%s%06d", "BR/", stakeHolder.getStakeHolderType().getCode() + "/",
+    	String shtypecode = code.get(stakeHolder.getStakeHolderType().getCode())!=null?
+    			code.get(stakeHolder.getStakeHolderType().getCode()) : stakeHolder.getStakeHolderType().getCode();
+        return String.format("%s%s%s%06d", "BR/",shtypecode+ "/",
                 new SimpleDateFormat("yyyy").format(new Date()) + "/",
                 genericSequenceNumberGenerator.getNextSequence(SEQ_BPA_LICENCE_NUMBER));
     }
