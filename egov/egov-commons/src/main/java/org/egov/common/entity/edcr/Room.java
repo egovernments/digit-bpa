@@ -47,15 +47,16 @@
 
 package org.egov.common.entity.edcr;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
 
     private static final long serialVersionUID = 28L;
 
-    private List<RoomHeight> heightOfRooms;
+    private List<RoomHeight> heightOfRooms = new ArrayList<>();
 
-    private List<Measurement> rooms;
+    private List<Measurement> rooms = new ArrayList<>();
 
     public List<RoomHeight> getHeights() {
         return heightOfRooms;

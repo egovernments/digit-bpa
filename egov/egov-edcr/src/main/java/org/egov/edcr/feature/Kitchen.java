@@ -72,24 +72,28 @@ import org.egov.edcr.utility.DcrConstants;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HeightOfRoom extends FeatureProcess {
+public class Kitchen extends FeatureProcess {
 
-    private static final String SUBRULE_41_II_A = "41-ii-a";
-    private static final String SUBRULE_41_II_B = "41-ii-b";
+    private static final String SUBRULE_41_III = "41-iii";
 
-    private static final String SUBRULE_41_II_A_AC_DESC = "Minimum height of ac room";
-    private static final String SUBRULE_41_II_A_REGULAR_DESC = "Minimum height of regular room";
-    private static final String SUBRULE_41_II_B_AREA_DESC = "Total area of rooms";
-    private static final String SUBRULE_41_II_B_TOTAL_WIDTH = "Minimum Width of room";
+    private static final String SUBRULE_41_III_DESC = "Minimum height of kitchen";
+    private static final String SUBRULE_41_III_AREA_DESC = "Total area of %s";
+    private static final String SUBRULE_41_III_TOTAL_WIDTH = "Minimum Width of %s";
 
     public static final BigDecimal MINIMUM_HEIGHT_2_75 = BigDecimal.valueOf(2.75);
     public static final BigDecimal MINIMUM_HEIGHT_2_4 = BigDecimal.valueOf(2.4);
-    public static final BigDecimal MINIMUM_AREA_9_5 = BigDecimal.valueOf(9.5);
-    public static final BigDecimal MINIMUM_WIDTH_2_4 = BigDecimal.valueOf(2.4);
+    public static final BigDecimal MINIMUM_AREA_4_5 = BigDecimal.valueOf(4.5);
+    public static final BigDecimal MINIMUM_AREA_7_5 = BigDecimal.valueOf(7.5);
+    public static final BigDecimal MINIMUM_AREA_5 = BigDecimal.valueOf(5);
+
+    public static final BigDecimal MINIMUM_WIDTH_1_8 = BigDecimal.valueOf(1.8);
     public static final BigDecimal MINIMUM_WIDTH_2_1 = BigDecimal.valueOf(2.1);
     private static final String FLOOR = "Floor";
-    private static final String ROOM_HEIGHT_NOTDEFINED = "Room height is not defined in layer ";
+    private static final String ROOM_HEIGHT_NOTDEFINED = "Kitchen height is not defined in layer ";
     private static final String LAYER_ROOM_HEIGHT = "BLK_%s_FLR_%s_%s";
+    private static final String KITCHEN = "kitchen";
+    private static final String KITCHEN_STORE = "kitchen with store room";
+    private static final String KITCHEN_DINING = "kitchen with dining hall";
 
     @Override
     public Plan validate(Plan pl) {
@@ -115,87 +119,57 @@ public class HeightOfRoom extends FeatureProcess {
                         scrutinyDetail.addColumnHeading(5, PROVIDED);
                         scrutinyDetail.addColumnHeading(6, STATUS);
 
-                        scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Room");
+                        scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Kitchen");
 
                         for (Floor floor : block.getBuilding().getFloors()) {
-                            List<BigDecimal> roomAreas = new ArrayList<>();
-                            List<BigDecimal> roomWidths = new ArrayList<>();
+                            List<BigDecimal> kitchenAreas = new ArrayList<>();
+                            List<BigDecimal> kitchenStoreAreas = new ArrayList<>();
+                            List<BigDecimal> kitchenDiningAreas = new ArrayList<>();
+                            List<BigDecimal> kitchenWidths = new ArrayList<>();
+                            List<BigDecimal> kitchenStoreWidths = new ArrayList<>();
+                            List<BigDecimal> kitchenDiningWidths = new ArrayList<>();
                             BigDecimal minimumHeight = BigDecimal.ZERO;
                             BigDecimal totalArea = BigDecimal.ZERO;
                             BigDecimal minWidth = BigDecimal.ZERO;
                             String subRule = null;
                             String subRuleDesc = null;
 
-                            if (floor.getAcRoom() != null) {
-                                List<BigDecimal> residentialAcRoomHeights = new ArrayList<>();
-                                List<RoomHeight> acHeights = floor.getAcRoom().getHeights();
-                                List<Measurement> acRooms = floor.getAcRoom().getRooms();
-
-                                for (RoomHeight roomHeight : acHeights) {
-                                    if (pl.getSubFeatureColorCodesMaster()
-                                            .get(DxfFileConstants.COLOR_RESIDENTIAL_ROOM) == roomHeight
-                                                    .getColorCode()) {
-                                        residentialAcRoomHeights.add(roomHeight.getHeight());
-                                    }
-                                }
-
-                                for (Measurement acRoom : acRooms) {
-                                    if (pl.getSubFeatureColorCodesMaster().get(DxfFileConstants.COLOR_RESIDENTIAL_ROOM) == acRoom
-                                            .getColorCode()) {
-                                        roomAreas.add(acRoom.getArea());
-                                        roomWidths.add(acRoom.getWidth());
-                                    }
-                                }
-
-                                if (!residentialAcRoomHeights.isEmpty()) {
-                                    BigDecimal minHeight = residentialAcRoomHeights.stream().reduce(BigDecimal::min).get();
-
-                                    minimumHeight = MINIMUM_HEIGHT_2_4;
-                                    subRule = SUBRULE_41_II_A;
-                                    subRuleDesc = SUBRULE_41_II_A_AC_DESC;
-
-                                    boolean valid = false;
-                                    boolean isTypicalRepititiveFloor = false;
-                                    Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
-                                            isTypicalRepititiveFloor);
-                                    buildResult(pl, floor, minimumHeight, subRule, subRuleDesc, minHeight, valid,
-                                            typicalFloorValues);
-                                } else {
-                                    String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(),
-                                            "AC_ROOM");
-                                    errors.put(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
-                                    pl.addErrors(errors);
-                                }
-
-                            }
-
-                            if (floor.getRegularRoom() != null) {
-                                List<BigDecimal> residentialRoomHeights = new ArrayList<>();
-                                List<RoomHeight> heights = floor.getRegularRoom().getHeights();
-                                List<Measurement> rooms = floor.getRegularRoom().getRooms();
+                            if (floor.getKitchen() != null) {
+                                List<BigDecimal> kitchenHeights = new ArrayList<>();
+                                List<RoomHeight> heights = floor.getKitchen().getHeights();
+                                List<Measurement> kitchenRooms = floor.getKitchen().getRooms();
 
                                 for (RoomHeight roomHeight : heights) {
+                                    kitchenHeights.add(roomHeight.getHeight());
+                                }
+
+                                for (Measurement kitchen : kitchenRooms) {
                                     if (pl.getSubFeatureColorCodesMaster()
-                                            .get(DxfFileConstants.COLOR_RESIDENTIAL_ROOM) == roomHeight
+                                            .get(DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR) == kitchen
                                                     .getColorCode()) {
-                                        residentialRoomHeights.add(roomHeight.getHeight());
+                                        kitchenAreas.add(kitchen.getArea());
+                                        kitchenWidths.add(kitchen.getWidth());
+                                    }
+                                    if (pl.getSubFeatureColorCodesMaster()
+                                            .get(DxfFileConstants.RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR) == kitchen
+                                                    .getColorCode()) {
+                                        kitchenStoreAreas.add(kitchen.getArea());
+                                        kitchenStoreWidths.add(kitchen.getWidth());
+                                    }
+                                    if (pl.getSubFeatureColorCodesMaster()
+                                            .get(DxfFileConstants.RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR) == kitchen
+                                                    .getColorCode()) {
+                                        kitchenDiningAreas.add(kitchen.getArea());
+                                        kitchenDiningWidths.add(kitchen.getWidth());
                                     }
                                 }
 
-                                for (Measurement room : rooms) {
-                                    if (pl.getSubFeatureColorCodesMaster().get(DxfFileConstants.COLOR_RESIDENTIAL_ROOM) == room
-                                            .getColorCode()) {
-                                        roomAreas.add(room.getArea());
-                                        roomWidths.add(room.getWidth());
-                                    }
-                                }
-
-                                if (!residentialRoomHeights.isEmpty()) {
-                                    BigDecimal minHeight = residentialRoomHeights.stream().reduce(BigDecimal::min).get();
+                                if (!kitchenHeights.isEmpty()) {
+                                    BigDecimal minHeight = kitchenHeights.stream().reduce(BigDecimal::min).get();
 
                                     minimumHeight = MINIMUM_HEIGHT_2_75;
-                                    subRule = SUBRULE_41_II_A;
-                                    subRuleDesc = SUBRULE_41_II_A_REGULAR_DESC;
+                                    subRule = SUBRULE_41_III;
+                                    subRuleDesc = SUBRULE_41_III_DESC;
 
                                     boolean valid = false;
                                     boolean isTypicalRepititiveFloor = false;
@@ -205,27 +179,19 @@ public class HeightOfRoom extends FeatureProcess {
                                             typicalFloorValues);
                                 } else {
                                     String layerName = String.format(LAYER_ROOM_HEIGHT, block.getNumber(), floor.getNumber(),
-                                            "REGULAR_ROOM");
-                                    errors.put(layerName, ROOM_HEIGHT_NOTDEFINED + layerName);
+                                            "KITCHEN");
+                                    errors.put(layerName,
+                                            ROOM_HEIGHT_NOTDEFINED + layerName);
                                     pl.addErrors(errors);
                                 }
 
                             }
+                            subRule = SUBRULE_41_III;
 
-                            if (!roomAreas.isEmpty()) {
-                                totalArea = roomAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-                                BigDecimal minRoomWidth = roomWidths.stream().reduce(BigDecimal::min).get();
-                                if (roomAreas.size() == 1) {
-                                    minimumHeight = MINIMUM_AREA_9_5;
-                                    minWidth = MINIMUM_WIDTH_2_4;
-                                }
-
-                                else if (roomAreas.size() == 2) {
-                                    minimumHeight = MINIMUM_AREA_9_5;
-                                    minWidth = MINIMUM_WIDTH_2_1;
-                                }
-                                subRule = SUBRULE_41_II_B;
-                                subRuleDesc = SUBRULE_41_II_B_AREA_DESC;
+                            if (!kitchenAreas.isEmpty()) {
+                                totalArea = kitchenAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+                                minimumHeight = MINIMUM_AREA_5;
+                                subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN);
 
                                 boolean valid = false;
                                 boolean isTypicalRepititiveFloor = false;
@@ -233,7 +199,64 @@ public class HeightOfRoom extends FeatureProcess {
                                         isTypicalRepititiveFloor);
                                 buildResult(pl, floor, minimumHeight, subRule, subRuleDesc, totalArea, valid, typicalFloorValues);
 
-                                subRuleDesc = SUBRULE_41_II_B_TOTAL_WIDTH;
+                            }
+
+                            if (!kitchenWidths.isEmpty()) {
+                                boolean valid = false;
+                                boolean isTypicalRepititiveFloor = false;
+                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
+                                        isTypicalRepititiveFloor);
+                                BigDecimal minRoomWidth = kitchenWidths.stream().reduce(BigDecimal::min).get();
+                                minWidth = MINIMUM_WIDTH_1_8;
+                                subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN);
+                                buildResult(pl, floor, minWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);
+                            }
+
+                            if (!kitchenStoreAreas.isEmpty()) {
+                                totalArea = kitchenStoreAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+                                minimumHeight = MINIMUM_AREA_4_5;
+                                subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN_STORE);
+
+                                boolean valid = false;
+                                boolean isTypicalRepititiveFloor = false;
+                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
+                                        isTypicalRepititiveFloor);
+                                buildResult(pl, floor, minimumHeight, subRule, subRuleDesc, totalArea, valid, typicalFloorValues);
+
+                            }
+
+                            if (!kitchenStoreWidths.isEmpty()) {
+                                boolean valid = false;
+                                boolean isTypicalRepititiveFloor = false;
+                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
+                                        isTypicalRepititiveFloor);
+                                BigDecimal minRoomWidth = kitchenStoreWidths.stream().reduce(BigDecimal::min).get();
+                                minWidth = MINIMUM_WIDTH_1_8;
+                                subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN_STORE);
+                                buildResult(pl, floor, minWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);
+                            }
+
+                            if (!kitchenDiningAreas.isEmpty()) {
+                                totalArea = kitchenDiningAreas.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+                                minimumHeight = MINIMUM_AREA_7_5;
+                                subRuleDesc = String.format(SUBRULE_41_III_AREA_DESC, KITCHEN_DINING);
+
+                                boolean valid = false;
+                                boolean isTypicalRepititiveFloor = false;
+                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
+                                        isTypicalRepititiveFloor);
+                                buildResult(pl, floor, minimumHeight, subRule, subRuleDesc, totalArea, valid, typicalFloorValues);
+
+                            }
+
+                            if (!kitchenDiningWidths.isEmpty()) {
+                                boolean valid = false;
+                                boolean isTypicalRepititiveFloor = false;
+                                Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
+                                        isTypicalRepititiveFloor);
+                                BigDecimal minRoomWidth = kitchenDiningWidths.stream().reduce(BigDecimal::min).get();
+                                minWidth = MINIMUM_WIDTH_2_1;
+                                subRuleDesc = String.format(SUBRULE_41_III_TOTAL_WIDTH, KITCHEN_DINING);
                                 buildResult(pl, floor, minWidth, subRule, subRuleDesc, minRoomWidth, valid, typicalFloorValues);
                             }
                         }

@@ -59,6 +59,8 @@ import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.FireStair;
 import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
+import org.egov.edcr.feature.HeightOfRoom;
+import org.egov.edcr.feature.Kitchen;
 import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.OverHangs;
@@ -121,6 +123,10 @@ public class PlanFeatureRepository {
 		features.add(pf);
 		pf = new PlanFeature(Chimney.class);
 		features.add(pf);
+		pf = new PlanFeature(HeightOfRoom.class);
+		features.add(pf);
+		pf = new PlanFeature(Kitchen.class);
+                features.add(pf);
 		/*
 		 * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
 		 */

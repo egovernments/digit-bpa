@@ -113,9 +113,10 @@ public class OverheadElectricalLineService extends FeatureProcess {
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
         scrutinyDetail.addColumnHeading(3, REQUIRED);
         scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.addColumnHeading(6, REMARKS);
-        scrutinyDetail.addColumnHeading(7, VOLTAGE);
+        scrutinyDetail.addColumnHeading(6, VOLTAGE);
+        scrutinyDetail.addColumnHeading(7, REMARKS);
+        scrutinyDetail.addColumnHeading(8, STATUS);
+
         for (ElectricLine electricalLine : pl.getElectricLine()) {
             if (electricalLine.getPresentInDxf())
                 if (electricalLine.getVoltage() != null
@@ -287,9 +288,9 @@ public class OverheadElectricalLineService extends FeatureProcess {
         details.put(DESCRIPTION, ruleDesc);
         details.put(REQUIRED, expected);
         details.put(PROVIDED, actual);
-        details.put(STATUS, status);
         details.put(REMARKS, remarks);
         details.put(VOLTAGE,voltage);
+        details.put(STATUS, status);
         scrutinyDetail.getDetail().add(details);
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }

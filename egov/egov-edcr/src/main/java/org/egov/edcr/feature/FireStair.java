@@ -101,7 +101,8 @@ public class FireStair extends FeatureProcess {
 		// validate(planDetail);
 		HashMap<String, String> errors = new HashMap<>();
 		blk: for (Block block : planDetail.getBlocks()) {
-			if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
+			if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()
+			        && block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.ONE) > 0) {
 				/*
 				 * if (Util.checkExemptionConditionForBuildingParts(block) ||
 				 * Util.checkExemptionConditionForSmallPlotAtBlkLevel(planDetail.getPlot(),
