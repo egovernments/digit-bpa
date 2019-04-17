@@ -219,7 +219,8 @@ public class Parking extends FeatureProcess {
         Double requiredVisitorParkArea = 0d;
         BigDecimal providedVisitorParkArea = BigDecimal.ZERO;
         if (pl.getPlot().getArea() != null && pl.getPlot().getArea().doubleValue() <= 300) {
-            if (A.equals(mostRestrictiveOccupancy.getType().getCode())) {
+        	 
+            if (mostRestrictiveOccupancy!=null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
                 if (openParkingArea.doubleValue() > 0 && coverParkingArea.doubleValue() > 0)
                     requiredCarParkArea += COVER_ECS * 2;
                 else if (coverParkingArea.doubleValue() > 0)

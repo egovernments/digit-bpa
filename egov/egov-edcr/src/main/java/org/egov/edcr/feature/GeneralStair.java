@@ -208,7 +208,7 @@ public class GeneralStair extends FeatureProcess {
                     }
                 }
  
-                    if (block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.ONE) > 0
+                    if (block.getBuilding().getFloors().size() > 1
                             && generalStairCount == 0) {
                         errors.put("General Stair not defined in blk " + block.getNumber(),
                                 "General Stair not defined in block " + block.getNumber() + ", it is mandatory for building with floors more than one.");

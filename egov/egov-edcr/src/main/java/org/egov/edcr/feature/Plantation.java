@@ -93,19 +93,22 @@ public class Plantation extends FeatureProcess {
 
 		BigDecimal totalArea = BigDecimal.ZERO;
 		BigDecimal plotArea = BigDecimal.ZERO;
+		BigDecimal plantationPer =BigDecimal.ZERO;
 		String subType = null;
 		if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null
 				&& !pl.getPlantation().getPlantations().isEmpty()) {
 			for (Measurement m : pl.getPlantation().getPlantations()) {
 				totalArea = totalArea.add(m.getArea());
 			}
+			
 
 			if (pl.getPlot() != null)
 				plotArea = pl.getPlot().getArea();
 
-			if (pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null)
+			if (pl.getVirtualBuilding().getMostRestrictiveFarHelper()!=null && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null)
 				subType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
-			BigDecimal plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+			if(totalArea.intValue()>0 && plotArea!=null && plotArea.intValue()>0)
+			  plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
 			if (StringUtils.isNotEmpty(subType) && DxfFileConstants.A_R.equals(subType)) {
 
 				if (plantationPer.compareTo(new BigDecimal("0.05")) < 0) {

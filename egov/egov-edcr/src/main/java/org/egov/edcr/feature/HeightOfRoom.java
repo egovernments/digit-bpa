@@ -102,9 +102,9 @@ public class HeightOfRoom extends FeatureProcess {
         HashMap<String, String> errors = new HashMap<>();
         if (pl != null && pl.getBlocks() != null) {
             OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
-            if (mostRestrictiveOccupancy.getSubtype() != null
-                    && A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
-                    || A_AF.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())) {
+            if (mostRestrictiveOccupancy!=null && mostRestrictiveOccupancy.getSubtype() != null
+                    && (A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
+                    || A_AF.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode()))) {
                 blk: for (Block block : pl.getBlocks()) {
                     if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                         scrutinyDetail = new ScrutinyDetail();
