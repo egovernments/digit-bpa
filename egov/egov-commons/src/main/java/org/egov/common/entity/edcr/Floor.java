@@ -143,6 +143,10 @@ public class Floor extends Measurement {
 	public void addLifts(Lift lift) {
 		this.lifts.add(lift);
 	}
+	
+	public void addDaLifts(Lift daLift) {
+		this.daLifts.add(daLift);
+	}
 
 	public List<Ramp> getRamps() {
 		return ramps;
