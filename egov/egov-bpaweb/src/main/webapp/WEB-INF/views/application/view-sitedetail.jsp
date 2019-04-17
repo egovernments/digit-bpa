@@ -282,7 +282,7 @@
 	
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.construction.cost" />
+			<spring:message code="lbl.annual.expenditure" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<input type="hidden" id="governmentType"

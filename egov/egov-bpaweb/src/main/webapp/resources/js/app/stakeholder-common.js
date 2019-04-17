@@ -50,7 +50,7 @@ var $type = "";
 var $mode = "";
 $(document).ready( function () {
 	if($('#nextAction').val() == "END"){
-		$('#approverDetailBody').hide();
+	//	$('#approverDetailBody').hide();
 	}
 	
 	$mode = $("#mode").val();
@@ -299,6 +299,8 @@ $(document).ready( function () {
     if(stakeHolderId){
         $('#emailId1').prop("disabled", true);
         $('#mobileNumber1').prop("disabled", true);
+        $('#stakeHolderType').prop("disabled", true);
+        
     }
 
     function checkIsMobileNoIsExists() {
