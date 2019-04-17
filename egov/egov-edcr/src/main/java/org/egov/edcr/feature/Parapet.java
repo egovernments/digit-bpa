@@ -91,7 +91,7 @@ public class Parapet extends FeatureProcess {
 		BigDecimal minHeight = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
-			if (b.getParapets() != null) {
+			if (b.getParapets() != null && !b.getParapets().isEmpty()) {
 				minHeight = b.getParapets().stream().reduce(BigDecimal::min).get();
 
 				if (minHeight.compareTo(new BigDecimal(1.2)) >= 0 && minHeight.compareTo(new BigDecimal(1.5)) <= 0) {

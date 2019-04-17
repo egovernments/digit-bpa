@@ -61,6 +61,7 @@ public class Floor extends Measurement {
 	private List<DARoom> daRooms = new ArrayList<>();
 	private List<Ramp> ramps = new ArrayList<>();
 	private List<Lift> lifts = new ArrayList<>();
+	private List<Lift> daLifts = new ArrayList<>();
 	private Measurement exterior;
 	private List<Measurement> openSpaces = new ArrayList<>();
 	// this is for differently able people
@@ -396,5 +397,13 @@ public class Floor extends Measurement {
 
 	public void setBathRoomWaterClosets(Room bathRoomWaterClosets) {
 		this.bathRoomWaterClosets = bathRoomWaterClosets;
+	}
+
+	public List<Lift> getDaLifts() {
+		return daLifts;
+	}
+
+	public void setDaLifts(List<Lift> daLifts) {
+		this.daLifts = daLifts;
 	}
 }

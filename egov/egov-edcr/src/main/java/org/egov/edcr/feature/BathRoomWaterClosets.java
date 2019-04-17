@@ -64,9 +64,9 @@ import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BathroomWaterClosets extends FeatureProcess {
+public class BathRoomWaterClosets extends FeatureProcess {
 
-	private static final Logger LOG = Logger.getLogger(BathroomWaterClosets.class);
+	private static final Logger LOG = Logger.getLogger(BathRoomWaterClosets.class);
 	private static final String RULE_41_IV = "41(iv)";
 	public static final String BathroomWaterClosets_DESCRIPTION = "Bathroom Water Closets";
 
