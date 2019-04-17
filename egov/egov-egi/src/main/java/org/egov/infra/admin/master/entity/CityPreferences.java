@@ -89,7 +89,7 @@ public class CityPreferences extends AbstractAuditable {
 
     @NotNull
     @SafeHtml
-    @Length(max = 50)
+    @Length(max = 75)
     private String municipalityName;
 
     @SafeHtml
