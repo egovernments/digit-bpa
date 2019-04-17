@@ -146,10 +146,10 @@
 								data-collapsed="0">
 								<jsp:include page="edcr-existing-bldg-details.jsp" />
 							</div>
-							<div class="panel panel-primary edcrbuildingdetails"
+				 		<div class="panel panel-primary edcrbuildingdetails"
 								data-collapsed="0">
 								<jsp:include page="edcr-buildingdetails.jsp" />
-							</div>
+							</div>    
 						</c:when>
 						<c:otherwise>
 							<div class="panel panel-primary existingbuildingdetails"

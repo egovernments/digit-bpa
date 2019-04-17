@@ -225,7 +225,7 @@
 						var="heightFromGroundWithOutStairRoom" />
 					<c:out value="${heightFromGroundWithOutStairRoom}" default="N/A"></c:out>
 				</div>
-				<div class="col-sm-3 add-margin">
+			<%-- 	<div class="col-sm-3 add-margin">
 					<spring:message code="lbl.grnd.with.stair" />
 				</div>
 				<div class="col-sm-3 add-margin view-content">
@@ -233,10 +233,10 @@
 						value="${bldg.heightFromGroundWithStairRoom}"
 						var="heightFromGroundWithStairRoom" />
 					<c:out value="${heightFromGroundWithStairRoom}" default="N/A"></c:out>
-				</div>
+				</div>     --%>
 			</div>
 
-			<div class="row add-border">
+	<%-- 		<div class="row add-border">
 				<div class="col-sm-3 add-margin">
 					<spring:message code="lbl.street.wo.stair" />
 				</div>
@@ -255,9 +255,9 @@
 						var="fromStreetLevelWithStairRoom" />
 					<c:out value="${fromStreetLevelWithStairRoom}" default="N/A"></c:out>
 				</div>
-			</div>
+			</div>   --%>
 
-			<%--<c:if test="${bpaApplication.isExistingApprovedPlan}">
+			<%-- <c:if test="${bpaApplication.isExistingApprovedPlan}">
                 <div class="row add-border">
                     <div class="col-sm-3 add-margin">
                         <spring:message code="lbl.permt.plan.obtain" />
@@ -295,7 +295,7 @@
                         <c:out value="${bpaApplication.approvedReceiptDate}" default="N/A"></c:out>
                     </div>
                 </div>
-            </c:if>--%>
+            </c:if>   --%>
 		</c:forEach>
 	</c:if>
 </div>

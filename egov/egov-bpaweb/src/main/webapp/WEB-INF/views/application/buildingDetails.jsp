@@ -383,7 +383,7 @@
 							path="buildingDetail[${bldgCounter.index}].heightFromGroundWithOutStairRoom"
 							cssClass="add-margin error-msg" />
 					</div>
-					<label
+			<%-- 		<label
 						class="col-sm-2 control-label text-right handle-mandatory heightFromGroundWithStairRoom"><spring:message
 							code="lbl.grnd.with.stair" /></label>
 					<div class="col-sm-3 add-margin">
@@ -424,7 +424,7 @@
 							path="buildingDetail[${bldgCounter.index}].fromStreetLevelWithStairRoom"
 							cssClass="add-margin error-msg" />
 					</div>
-				</div>
+				</div>    --%>
 
 				<%-- <div class="form-group">
 	<label

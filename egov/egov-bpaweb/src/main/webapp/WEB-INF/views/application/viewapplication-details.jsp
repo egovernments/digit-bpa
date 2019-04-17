@@ -252,19 +252,27 @@
 		</div>
 	</div>
 
-	<div class="row add-border">
+	
+		
 		<%--<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.project.type" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.projectName}" default="N/A"></c:out>
 		</div>--%>
+		<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.remarks" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.remarks}" default="N/A"></c:out>
 		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.application.type" />
+		</div>
+		<div class="col-sm-3 add-margin view-content text-justify">
+			<c:out value="${bpaApplication.applicationType.name}" default="N/A"></c:out>
+		</div>
 	</div>
-
 </div>
+

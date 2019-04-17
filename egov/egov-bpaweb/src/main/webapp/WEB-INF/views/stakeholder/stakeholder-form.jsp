@@ -163,7 +163,7 @@
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.stakeholder.type" /> <span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="stakeHolderType" id="stakeHolderType"
+			<form:select path="stakeHolderType" id="stakeHolderType"  
 				required="required" cssClass="form-control stakeHolderType"
 				cssErrorClass="form-control error">
 				<form:option value="">
@@ -225,7 +225,8 @@
 
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.mobileNo" /><span class="mandatory"></span></label>
+				code="lbl.mobileNo" />   <span class="mandatory"></span>
+		</label>
 		<div class="col-sm-3 add-margin">
 			<form:input type="text"
 				cssClass="form-control patternvalidation mobileno-field"
@@ -340,11 +341,12 @@
 	</div>
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.aadhar" /><span class="mandatory"></span></label>
+				code="lbl.aadhar" />  
+				</label>
 		<div class="col-sm-3 add-margin">
 			<form:input type="text" cssClass="form-control patternvalidation"
 				path="aadhaarNumber" data-pattern="number" maxlength="12"
-				id="aadhaarNumber" required="required"/>
+				id="aadhaarNumber"  />
 				<span class=""></span>
 			<form:errors path="aadhaarNumber" cssClass="error-msg" />
 		</div>

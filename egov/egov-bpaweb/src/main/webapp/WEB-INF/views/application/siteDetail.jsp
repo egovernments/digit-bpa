@@ -145,10 +145,11 @@
 
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.nearest.build.no" /><span class="mandatory"></span> </label>
+				code="lbl.nearest.build.no" /> 
+				</label>
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control patternvalidation" maxlength="12"
-				required="required" data-pattern="alphanumericspecialcharacters"
+			 data-pattern="alphanumericspecialcharacters"
 				id="nearestbuildingnumber"
 				path="siteDetail[0].nearestbuildingnumber" />
 			<form:errors path="siteDetail[0].nearestbuildingnumber"
@@ -322,7 +323,7 @@
 	</div>
     <div class="form-group">
 			<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.construction.cost" /><span class="mandatory"></span></label>
+				code="lbl.annual.expenditure" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input class="form-control patternvalidation" maxlength="12"
 					data-pattern="number" id="constructionCost" required="required" 
