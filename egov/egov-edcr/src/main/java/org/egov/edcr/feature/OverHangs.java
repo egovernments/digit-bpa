@@ -92,8 +92,9 @@ public class OverHangs extends FeatureProcess {
 		BigDecimal minWidth = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
-			minWidth = BigDecimal.ZERO;
-			if (!b.getOverHangs().isEmpty()) {
+
+			if (b.getOverHangs() != null && !b.getOverHangs().isEmpty()) {
+				minWidth = b.getOverHangs().get(0).getWidth();
 				for (Measurement m : b.getOverHangs()) {
 					if (m.getWidth().compareTo(minWidth) < 0) {
 						minWidth = m.getWidth();

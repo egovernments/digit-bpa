@@ -94,25 +94,33 @@ public class WaterClosets extends FeatureProcess {
 		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null) {
+			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+					&& !b.getBuilding().getFloors().isEmpty()) {
+
 				for (Floor f : b.getBuilding().getFloors()) {
 
-					if (f.getWaterClosets() != null) {
+					if (f.getWaterClosets() != null && f.getWaterClosets().getHeights() != null
+							&& !f.getWaterClosets().getHeights().isEmpty() && f.getWaterClosets().getRooms() != null
+							&& !f.getWaterClosets().getRooms().isEmpty()) {
 
-						if (f.getWaterClosets().getHeights() != null)
+						if (f.getWaterClosets().getHeights() != null && !f.getWaterClosets().getHeights().isEmpty()) {
+							minHeight = f.getWaterClosets().getHeights().get(0).getHeight();
 							for (RoomHeight rh : f.getWaterClosets().getHeights()) {
 								if (rh.getHeight().compareTo(minHeight) < 0) {
 									minHeight = rh.getHeight();
 								}
 							}
+						}
 
-						if (f.getWaterClosets().getRooms() != null)
+						if (f.getWaterClosets().getRooms() != null && !f.getWaterClosets().getRooms().isEmpty()) {
+							minWidth = f.getWaterClosets().getRooms().get(0).getWidth();
 							for (Measurement m : f.getWaterClosets().getRooms()) {
 								totalArea = totalArea.add(m.getArea());
 								if (m.getWidth().compareTo(minWidth) < 0) {
 									minWidth = m.getWidth();
 								}
 							}
+						}
 
 						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
 								&& totalArea.compareTo(new BigDecimal(1.2)) >= 0

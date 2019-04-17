@@ -94,25 +94,33 @@ public class BathRoom extends FeatureProcess {
 		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null) {
+			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+					&& !b.getBuilding().getFloors().isEmpty()) {
+
 				for (Floor f : b.getBuilding().getFloors()) {
 
-					if (f.getBathRoom() != null) {
+					if (f.getBathRoom() != null && f.getBathRoom().getHeights() != null
+							&& !f.getBathRoom().getHeights().isEmpty() && f.getBathRoom().getRooms() != null
+							&& !f.getBathRoom().getRooms().isEmpty()) {
 
-						if (f.getBathRoom().getHeights() != null)
+						if (f.getBathRoom().getHeights() != null && !f.getBathRoom().getHeights().isEmpty()) {
+							minHeight = f.getBathRoom().getHeights().get(0).getHeight();
 							for (RoomHeight rh : f.getBathRoom().getHeights()) {
 								if (rh.getHeight().compareTo(minHeight) < 0) {
 									minHeight = rh.getHeight();
 								}
 							}
+						}
 
-						if (f.getBathRoom().getRooms() != null)
+						if (f.getBathRoom().getRooms() != null && !f.getBathRoom().getRooms().isEmpty()) {
+							minWidth = f.getBathRoom().getRooms().get(0).getWidth();
 							for (Measurement m : f.getBathRoom().getRooms()) {
 								totalArea = totalArea.add(m.getArea());
 								if (m.getWidth().compareTo(minWidth) < 0) {
 									minWidth = m.getWidth();
 								}
 							}
+						}
 
 						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
 								&& totalArea.compareTo(new BigDecimal(1.8)) >= 0

@@ -94,25 +94,36 @@ public class BathroomWaterClosets extends FeatureProcess {
 		BigDecimal minHeight = BigDecimal.ZERO, totalArea = BigDecimal.ZERO, minWidth = BigDecimal.ZERO;
 
 		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getFloors() != null) {
+			if (b.getBuilding() != null && b.getBuilding().getFloors() != null
+					&& !b.getBuilding().getFloors().isEmpty()) {
+
 				for (Floor f : b.getBuilding().getFloors()) {
 
-					if (f.getBathRoomWaterClosets() != null) {
+					if (f.getBathRoomWaterClosets() != null && f.getBathRoomWaterClosets().getHeights() != null
+							&& !f.getBathRoomWaterClosets().getHeights().isEmpty()
+							&& f.getBathRoomWaterClosets().getRooms() != null
+							&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
 
-						if (f.getBathRoomWaterClosets().getHeights() != null)
+						if (f.getBathRoomWaterClosets().getHeights() != null
+								&& !f.getBathRoomWaterClosets().getHeights().isEmpty()) {
+							minHeight = f.getBathRoomWaterClosets().getHeights().get(0).getHeight();
 							for (RoomHeight rh : f.getBathRoomWaterClosets().getHeights()) {
 								if (rh.getHeight().compareTo(minHeight) < 0) {
 									minHeight = rh.getHeight();
 								}
 							}
+						}
 
-						if (f.getBathRoomWaterClosets().getRooms() != null)
+						if (f.getBathRoomWaterClosets().getRooms() != null
+								&& !f.getBathRoomWaterClosets().getRooms().isEmpty()) {
+							minWidth = f.getBathRoomWaterClosets().getRooms().get(0).getWidth();
 							for (Measurement m : f.getBathRoomWaterClosets().getRooms()) {
 								totalArea = totalArea.add(m.getArea());
 								if (m.getWidth().compareTo(minWidth) < 0) {
 									minWidth = m.getWidth();
 								}
 							}
+						}
 
 						if (minHeight.compareTo(new BigDecimal(2.4)) >= 0
 								&& totalArea.compareTo(new BigDecimal(2.8)) >= 0

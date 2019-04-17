@@ -52,6 +52,8 @@ import java.util.List;
 
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.edcr.feature.AdditionalFeature;
+import org.egov.edcr.feature.BathRoom;
+import org.egov.edcr.feature.BathroomWaterClosets;
 import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Chimney;
 import org.egov.edcr.feature.Coverage;
@@ -65,6 +67,7 @@ import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.OverHangs;
 import org.egov.edcr.feature.OverheadElectricalLineService;
+import org.egov.edcr.feature.Parapet;
 import org.egov.edcr.feature.Parking;
 import org.egov.edcr.feature.PlanInfoFeature;
 import org.egov.edcr.feature.Plantation;
@@ -76,6 +79,7 @@ import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
 import org.egov.edcr.feature.SpiralStair;
 import org.egov.edcr.feature.StairCover;
+import org.egov.edcr.feature.WaterClosets;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -126,7 +130,15 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(HeightOfRoom.class);
 		features.add(pf);
 		pf = new PlanFeature(Kitchen.class);
-                features.add(pf);
+		features.add(pf);
+		pf = new PlanFeature(BathRoom.class);
+		features.add(pf);
+		pf = new PlanFeature(BathroomWaterClosets.class);
+		features.add(pf);
+		pf = new PlanFeature(WaterClosets.class);
+		features.add(pf);
+		pf = new PlanFeature(Parapet.class);
+		features.add(pf);
 		/*
 		 * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
 		 */
