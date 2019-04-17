@@ -683,9 +683,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             actions = attributes.get("validActionList") == null ? Collections.emptyList()
                     : (List<String>) attributes.get("validActionList");
 
-        if ((APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+        if (!application.getApplicationType().getName().equals(BpaConstants.LOWRISK)
+        		&& ((APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                 || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode()))
-                || (!actions.isEmpty() && actions.contains(WF_APPROVE_BUTTON)))
+                || (!actions.isEmpty() && actions.contains(WF_APPROVE_BUTTON))))
             buildApplicationPermitConditions(application, model);
 
         prepareActions(model, application);
