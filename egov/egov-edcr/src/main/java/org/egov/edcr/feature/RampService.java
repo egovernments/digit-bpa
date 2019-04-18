@@ -55,14 +55,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.DARamp;
 import org.egov.common.entity.edcr.Floor;
-import org.egov.common.entity.edcr.FloorUnit;
 import org.egov.common.entity.edcr.Measurement;
-import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Ramp;
@@ -74,26 +71,28 @@ import org.egov.edcr.utility.Util;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class RampService extends FeatureProcess {
 
-    private static final String SUBRULE_40_A3 = "40A(3)";
+    private static final String SUBRULE_42_5_V = "42-5-v";
     private static final String SUBRULE_40_A7 = "40A(7)";
     private static final String SUBRULE_40 = "40";
-    private static final String SUBRULE_40_A1 = "40A(1)";
-    private static final String SUBRULE_40_A_7_DESC = "Minimum number of DA Rooms in block %s ";
-    private static final String SUBRULE_40_A_3_WIDTH_DESC = "Minimum Width of Ramp %s for block %s ";
-    private static final String SUBRULE_40_DESC = "Maximum slope of ramp %s for block %s ";
-    private static final String SUBRULE_40_DESCRIPTION = "Maximum slope of ramp %s";
+    /*
+     * private static final String SUBRULE_40_A1 = "40A(1)"; private static final String SUBRULE_40_A_7_DESC =
+     * "Minimum number of DA Rooms in block %s "; private static final String SUBRULE_40_A_3_WIDTH_DESC =
+     * "Minimum Width of Ramp %s for block %s "; private static final String SUBRULE_40_DESC =
+     * "Maximum slope of ramp %s for block %s ";
+     */
+    private static final String SUBRULE_42_5_V_DESCRIPTION = "Maximum slope of ramp %s";
 
-    private static final String SUBRULE_40_A_1_DESC = "DA Ramp";
-    private static final String SUBRULE_40_A_3_SLOPE_DESC = "Maximum Slope of DA Ramp %s for block %s";
-    private static final String SUBRULE_40_A_3_SLOPE_DESCRIPTION = "Maximum Slope of DA Ramp %s";
+    /*
+     * private static final String SUBRULE_40_A_1_DESC = "DA Ramp"; private static final String SUBRULE_40_A_3_SLOPE_DESC =
+     * "Maximum Slope of DA Ramp %s for block %s";
+     */
+    private static final String SUBRULE_42_5_V_SLOPE_DESCRIPTION = "Maximum Slope of DA Ramp %s";
     private static final String FLOOR = "Floor";
-    private static final String SUBRULE_40_A_3_WIDTH_DESCRIPTION = "Minimum Width of Ramp %s";
-    private static final String SUBRULE_40_A_3_SLOPE_MAN_DESC = "Slope of DA Ramp";
-
+    // private static final String SUBRULE_40_A_3_WIDTH_DESCRIPTION = "Minimum Width of Ramp %s";
+    private static final String SUBRULE_42_5_V_SLOPE_MAN_DESC = "Slope of DA Ramp";
 
     @Override
     public Plan validate(Plan pl) {
@@ -105,7 +104,8 @@ public class RampService extends FeatureProcess {
                         for (Ramp ramp : ramps) {
                             List<Measurement> rampPolyLines = ramp.getRampPolyLines();
                             if (rampPolyLines != null && !rampPolyLines.isEmpty()) {
-                                validateDimensions(pl, block.getNumber(), floor.getNumber(), ramp.getNumber().toString(), rampPolyLines);
+                                validateDimensions(pl, block.getNumber(), floor.getNumber(), ramp.getNumber().toString(),
+                                        rampPolyLines);
                             }
                         }
                     }
@@ -116,40 +116,30 @@ public class RampService extends FeatureProcess {
         // validate necessary
         HashMap<String, String> errors = new HashMap<>();
         if (pl != null && !pl.getBlocks().isEmpty()) {
-            blk:
-            for (Block block : pl.getBlocks()) {
-                if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
-                    if (Util.checkExemptionConditionForBuildingParts(block)) {
-                        continue blk;
-                    }
-                    List<OccupancyType> occupancyTypeList = block.getBuilding().getOccupancies().stream()
-                            .map(occupancy -> occupancy.getType()).collect(Collectors.toList());
-                    for (OccupancyType occupancyType : occupancyTypeList) {
-                        if (getOccupanciesForRamp(occupancyType)) {
-                            if (block.getDARamps().isEmpty()) {
-                                errors.put(String.format(DcrConstants.RAMP, block.getNumber()),
-                                        edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                                new String[]{String.format(DcrConstants.RAMP, block.getNumber())},
-                                                LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                                break;
-                            }
-
-                        }
-                    }
-                }
-                if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)) {
+            blk: for (Block block : pl.getBlocks()) {
+                /*
+                 * if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) { if
+                 * (Util.checkExemptionConditionForBuildingParts(block)) { continue blk; } List<OccupancyType> occupancyTypeList =
+                 * block.getBuilding().getOccupancies().stream() .map(occupancy ->
+                 * occupancy.getType()).collect(Collectors.toList()); for (OccupancyType occupancyType : occupancyTypeList) { if
+                 * (getOccupanciesForRamp(occupancyType)) { if (block.getDARamps().isEmpty()) {
+                 * errors.put(String.format(DcrConstants.RAMP, block.getNumber()),
+                 * edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{String.format(DcrConstants.RAMP,
+                 * block.getNumber())}, LocaleContextHolder.getLocale())); pl.addErrors(errors); break; } } } }
+                 */
+                if (pl.getPlot() != null /* && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block) */) {
                     if (!block.getDARamps().isEmpty()) {
                         boolean isSlopeDefined = false;
                         for (DARamp daRamp : block.getDARamps()) {
-                            if (daRamp != null && daRamp.getSlope() != null && daRamp.getSlope().compareTo(BigDecimal.valueOf(0)) > 0) {
+                            if (daRamp != null && daRamp.getSlope() != null
+                                    && daRamp.getSlope().compareTo(BigDecimal.valueOf(0)) > 0) {
                                 isSlopeDefined = true;
                             }
                         }
                         if (!isSlopeDefined) {
                             errors.put(String.format(DcrConstants.RAMP_SLOPE, "", block.getNumber()),
                                     edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                            new String[]{String.format(DcrConstants.RAMP_SLOPE, "", block.getNumber())},
+                                            new String[] { String.format(DcrConstants.RAMP_SLOPE, "", block.getNumber()) },
                                             LocaleContextHolder.getLocale()));
                             pl.addErrors(errors);
                         }
@@ -159,7 +149,6 @@ public class RampService extends FeatureProcess {
         }
         return pl;
     }
-
 
     private boolean getOccupanciesForRamp(OccupancyType occupancyType) {
         return occupancyType.equals(OccupancyType.OCCUPANCY_A2) ||
@@ -180,8 +169,7 @@ public class RampService extends FeatureProcess {
         validate(pl);
         boolean valid;
         if (pl != null && !pl.getBlocks().isEmpty()) {
-            blk:
-            for (Block block : pl.getBlocks()) {
+            blk: for (Block block : pl.getBlocks()) {
                 scrutinyDetail = new ScrutinyDetail();
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
                 scrutinyDetail.addColumnHeading(2, DESCRIPTION);
@@ -233,173 +221,173 @@ public class RampService extends FeatureProcess {
                 scrutinyDetail5.addColumnHeading(6, STATUS);
                 scrutinyDetail5.setKey("Block_" + block.getNumber() + "_" + "Ramp - Maximum Slope");
 
-
                 if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
-                    if (Util.checkExemptionConditionForBuildingParts(block)) {
-                        continue blk;
-                    }
-                    List<OccupancyType> occupancyTypeList = block.getBuilding().getOccupancies().stream()
-                            .map(occupancy -> occupancy.getType()).collect(Collectors.toList());
-                    for (OccupancyType occupancyType : occupancyTypeList) {
-                        if (getOccupanciesForRamp(occupancyType)) {
+                    if (block.getBuilding().getBuildingHeight().compareTo(new BigDecimal(15)) > 0) {
+                        /*
+                         * if (Util.checkExemptionConditionForBuildingParts(block)) { continue blk; }
+                         */
+                        /*
+                         * List<OccupancyType> occupancyTypeList = block.getBuilding().getOccupancies().stream() .map(occupancy ->
+                         * occupancy.getType()).collect(Collectors.toList());
+                         */
+                        /*
+                         * for (OccupancyType occupancyType : occupancyTypeList) { if (getOccupanciesForRamp(occupancyType)) { if
+                         * (!block.getDARamps().isEmpty()) { setReportOutputDetails(pl, SUBRULE_40_A1, SUBRULE_40_A_1_DESC, "",
+                         * DcrConstants.OBJECTDEFINED_DESC, Result.Accepted.getResultVal(), scrutinyDetail); break; } else {
+                         * setReportOutputDetails(pl, SUBRULE_40_A1, SUBRULE_40_A_1_DESC, "", DcrConstants.OBJECTNOTDEFINED_DESC,
+                         * Result.Not_Accepted.getResultVal(), scrutinyDetail); break; } } } }
+                         */
+                        if (pl.getPlot() != null /* && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block) */) {
                             if (!block.getDARamps().isEmpty()) {
-                                setReportOutputDetails(pl, SUBRULE_40_A1, SUBRULE_40_A_1_DESC, "",
-                                        DcrConstants.OBJECTDEFINED_DESC, Result.Accepted.getResultVal(), scrutinyDetail);
-
-                                break;
-                            } else {
-                                setReportOutputDetails(pl, SUBRULE_40_A1, SUBRULE_40_A_1_DESC, "",
-                                        DcrConstants.OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal(), scrutinyDetail);
-                                break;
-                            }
-
-                        }
-                    }
-                }
-                if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)) {
-                    if (!block.getDARamps().isEmpty()) {
-                        boolean isSlopeDefined = false;
-                        for (DARamp daRamp : block.getDARamps()) {
-                            if (daRamp != null && daRamp.getSlope() != null && daRamp.getSlope().compareTo(BigDecimal.valueOf(0)) > 0) {
-                                isSlopeDefined = true;
-                            }
-                        }
-                        if (isSlopeDefined) {
-                            setReportOutputDetails(pl, SUBRULE_40_A3, SUBRULE_40_A_3_SLOPE_MAN_DESC, "", DcrConstants.OBJECTDEFINED_DESC, Result.Accepted.getResultVal(), scrutinyDetail1);
-                        } else {
-                            setReportOutputDetails(pl, SUBRULE_40_A3, SUBRULE_40_A_3_SLOPE_MAN_DESC, "", DcrConstants.OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal(), scrutinyDetail1);
-                        }
-                        valid = false;
-                        if (isSlopeDefined) {
-                            Map<String, String> mapOfRampNumberAndSlopeValues = new HashMap<>();
-                            BigDecimal expectedSlope = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP);
-                            for (DARamp daRamp : block.getDARamps()) {
-                                BigDecimal slope = daRamp.getSlope();
-                                if (slope != null && slope.compareTo(BigDecimal.valueOf(0)) > 0 && expectedSlope != null) {
-                                    if (slope.compareTo(expectedSlope) <= 0) {
-                                        valid = true;
-                                        mapOfRampNumberAndSlopeValues.put("daRampNumber", daRamp.getNumber().toString());
-                                        mapOfRampNumberAndSlopeValues.put("slope", slope.toString());
-                                        break;
+                                boolean isSlopeDefined = false;
+                                for (DARamp daRamp : block.getDARamps()) {
+                                    if (daRamp != null && daRamp.getSlope() != null
+                                            && daRamp.getSlope().compareTo(BigDecimal.valueOf(0)) > 0) {
+                                        isSlopeDefined = true;
                                     }
                                 }
-                            }
-                            if (valid) {
-                                setReportOutputDetails(pl, SUBRULE_40_A3, String.format(SUBRULE_40_A_3_SLOPE_DESCRIPTION, mapOfRampNumberAndSlopeValues.get("daRampNumber")), expectedSlope.toString(),
-                                        mapOfRampNumberAndSlopeValues.get("slope"), Result.Accepted.getResultVal(), scrutinyDetail2);
-                            } else {
-                                setReportOutputDetails(pl, SUBRULE_40_A3, String.format(SUBRULE_40_A_3_SLOPE_DESCRIPTION, ""), expectedSlope.toString(),
-                                        "Less than 0.08 for all da ramps", Result.Not_Accepted.getResultVal(), scrutinyDetail2);
-                            }
-                        }
-
-                    }
-                }
-                if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
-                    for (Floor floor : block.getBuilding().getFloors()) {
-                        if (!floor.getConvertedOccupancies().isEmpty()) {
-                            for (Occupancy occupancy : floor.getConvertedOccupancies()) {
-                                if (occupancy.getType().equals(OccupancyType.OCCUPANCY_A2) && !floor.getDaRooms().isEmpty() && !floor.getUnits().isEmpty()) {
-                                    valid = false;
-                                    int noOfDaRooms = floor.getDaRooms().size();
-                                    int noOfFloorUnitsInColorCode23And3 = 0;
-                                    if (!floor.getUnits().isEmpty()) {
-                                        for (FloorUnit floorUnit : floor.getUnits()) {
-                                            if (floorUnit != null &&
-                                                    (floorUnit.getColorCode() == 23 || floorUnit.getColorCode() == 3)) {
-                                                noOfFloorUnitsInColorCode23And3++;
-                                            }
-                                        }
-                                    }
-                                    if (noOfFloorUnitsInColorCode23And3 != 0) {
-                                        BigDecimal expectedNoOfDARooms = BigDecimal.valueOf(Double.valueOf
-                                                (String.valueOf(noOfFloorUnitsInColorCode23And3))).divide(BigDecimal.valueOf(25), 2, RoundingMode.HALF_UP);
-                                        boolean isTypicalRepititiveFloor = false;
-                                        Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
-                                        if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-                                            if (BigDecimal.valueOf(Double.valueOf(String.valueOf(noOfDaRooms))).compareTo(expectedNoOfDARooms) >= 0) {
+                                if (isSlopeDefined) {
+                                    setReportOutputDetails(pl, SUBRULE_42_5_V, SUBRULE_42_5_V_SLOPE_MAN_DESC, "",
+                                            DcrConstants.OBJECTDEFINED_DESC, Result.Accepted.getResultVal(), scrutinyDetail1);
+                                } else {
+                                    setReportOutputDetails(pl, SUBRULE_42_5_V, SUBRULE_42_5_V_SLOPE_MAN_DESC, "",
+                                            DcrConstants.OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal(),
+                                            scrutinyDetail1);
+                                }
+                                valid = false;
+                                if (isSlopeDefined) {
+                                    Map<String, String> mapOfRampNumberAndSlopeValues = new HashMap<>();
+                                    BigDecimal expectedSlope = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(12), 2,
+                                            RoundingMode.HALF_UP);
+                                    for (DARamp daRamp : block.getDARamps()) {
+                                        BigDecimal slope = daRamp.getSlope();
+                                        if (slope != null && slope.compareTo(BigDecimal.valueOf(0)) > 0
+                                                && expectedSlope != null) {
+                                            if (slope.compareTo(expectedSlope) <= 0) {
                                                 valid = true;
+                                                mapOfRampNumberAndSlopeValues.put("daRampNumber", daRamp.getNumber().toString());
+                                                mapOfRampNumberAndSlopeValues.put("slope", slope.toString());
+                                                break;
                                             }
-                                            String value = typicalFloorValues.get("typicalFloors") != null ? (String) typicalFloorValues.get("typicalFloors") : " floor " + floor.getNumber();
-                                            if (valid) {
-                                                setReportOutputDetailsFloorWise(pl, SUBRULE_40_A7, value, expectedNoOfDARooms.toString(), String.valueOf(noOfDaRooms), Result.Accepted.getResultVal(), scrutinyDetail3);
-                                            } else {
-                                                setReportOutputDetailsFloorWise(pl, SUBRULE_40_A7, value, expectedNoOfDARooms.toString(), String.valueOf(noOfDaRooms), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
+                                        }
+                                    }
+                                    if (valid) {
+                                        setReportOutputDetails(pl, SUBRULE_42_5_V,
+                                                String.format(SUBRULE_42_5_V_SLOPE_DESCRIPTION,
+                                                        mapOfRampNumberAndSlopeValues.get("daRampNumber")),
+                                                expectedSlope.toString(),
+                                                mapOfRampNumberAndSlopeValues.get("slope"), Result.Accepted.getResultVal(),
+                                                scrutinyDetail2);
+                                    } else {
+                                        setReportOutputDetails(pl, SUBRULE_42_5_V,
+                                                String.format(SUBRULE_42_5_V_SLOPE_DESCRIPTION, ""), expectedSlope.toString(),
+                                                "Less than 0.08 for all da ramps", Result.Not_Accepted.getResultVal(),
+                                                scrutinyDetail2);
+                                    }
+                                }
 
+                            }
+                        }
+
+                        if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
+                            for (Floor floor : block.getBuilding().getFloors()) {
+                                /*
+                                 * if (!floor.getConvertedOccupancies().isEmpty()) { for (Occupancy occupancy :
+                                 * floor.getConvertedOccupancies()) { if (occupancy.getType().equals(OccupancyType.OCCUPANCY_A2)
+                                 * && !floor.getDaRooms().isEmpty() && !floor.getUnits().isEmpty()) { valid = false; int
+                                 * noOfDaRooms = floor.getDaRooms().size(); int noOfFloorUnitsInColorCode23And3 = 0; if
+                                 * (!floor.getUnits().isEmpty()) { for (FloorUnit floorUnit : floor.getUnits()) { if (floorUnit !=
+                                 * null && (floorUnit.getColorCode() == 23 || floorUnit.getColorCode() == 3)) {
+                                 * noOfFloorUnitsInColorCode23And3++; } } } if (noOfFloorUnitsInColorCode23And3 != 0) { BigDecimal
+                                 * expectedNoOfDARooms = BigDecimal
+                                 * .valueOf(Double.valueOf(String.valueOf(noOfFloorUnitsInColorCode23And3)))
+                                 * .divide(BigDecimal.valueOf(25), 2, RoundingMode.HALF_UP); boolean isTypicalRepititiveFloor =
+                                 * false; Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
+                                 * isTypicalRepititiveFloor); if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+                                 * if (BigDecimal.valueOf(Double.valueOf(String.valueOf(noOfDaRooms)))
+                                 * .compareTo(expectedNoOfDARooms) >= 0) { valid = true; } String value =
+                                 * typicalFloorValues.get("typicalFloors") != null ? (String)
+                                 * typicalFloorValues.get("typicalFloors") : " floor " + floor.getNumber(); if (valid) {
+                                 * setReportOutputDetailsFloorWise(pl, SUBRULE_40_A7, value, expectedNoOfDARooms.toString(),
+                                 * String.valueOf(noOfDaRooms), Result.Accepted.getResultVal(), scrutinyDetail3); } else {
+                                 * setReportOutputDetailsFloorWise(pl, SUBRULE_40_A7, value, expectedNoOfDARooms.toString(),
+                                 * String.valueOf(noOfDaRooms), Result.Not_Accepted.getResultVal(), scrutinyDetail3); } } } } } }
+                                 */
+                                for (Ramp ramp : floor.getRamps()) {
+                                    if (ramp.getRampPolyLineClosed()) {
+                                        List<BigDecimal> rampWidths = new ArrayList<>();
+                                        List<BigDecimal> rampLengths = new ArrayList<>();
+                                        for (Measurement measurement : ramp.getRampPolyLines()) {
+                                            rampWidths.add(measurement.getWidth());
+                                            rampLengths.add(measurement.getHeight());
+                                        }
+                                        /*
+                                         * if (!rampWidths.isEmpty()) { BigDecimal minimumWidth = rampWidths.get(0); for
+                                         * (BigDecimal width : rampWidths) { if (width.compareTo(minimumWidth) < 0) { minimumWidth
+                                         * = width; } } boolean isTypicalRepititiveFloor = false; valid = false; Map<String,
+                                         * Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
+                                         * isTypicalRepititiveFloor); if (!(Boolean)
+                                         * typicalFloorValues.get("isTypicalRepititiveFloor")) { if
+                                         * (minimumWidth.compareTo(BigDecimal.valueOf(1.2)) >= 0) { valid = true; } String value =
+                                         * typicalFloorValues.get("typicalFloors") != null ? (String)
+                                         * typicalFloorValues.get("typicalFloors") : " floor " + floor.getNumber(); if (valid) {
+                                         * setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40_A3,
+                                         * String.format(SUBRULE_40_A_3_WIDTH_DESCRIPTION, ramp.getNumber()), value,
+                                         * BigDecimal.valueOf(1.2).toString() + DcrConstants.IN_METER, String.valueOf(
+                                         * Math.round(minimumWidth.doubleValue() * Double.valueOf(100)) / Double.valueOf(100)) +
+                                         * DcrConstants.IN_METER, Result.Accepted.getResultVal(), scrutinyDetail4); } else {
+                                         * setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40_A3,
+                                         * String.format(SUBRULE_40_A_3_WIDTH_DESCRIPTION, ramp.getNumber()), value,
+                                         * BigDecimal.valueOf(1.2).toString() + DcrConstants.IN_METER, String.valueOf(
+                                         * Math.round(minimumWidth.doubleValue() * Double.valueOf(100)) / Double.valueOf(100)) +
+                                         * DcrConstants.IN_METER, Result.Not_Accepted.getResultVal(), scrutinyDetail4); } } }
+                                         */
+                                        if (pl.getPlot() != null
+                                        /* && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block) */) {
+                                            BigDecimal rampTotalLength = BigDecimal.ZERO;
+                                            for (BigDecimal length : rampLengths) {
+                                                rampTotalLength = rampTotalLength.add(length);
+                                            }
+                                            if (rampTotalLength.compareTo(BigDecimal.valueOf(0)) > 0
+                                                    && ramp.getFloorHeight() != null) {
+                                                boolean isTypicalRepititiveFloor = false;
+                                                BigDecimal rampSlope = ramp.getFloorHeight().divide(rampTotalLength, 2,
+                                                        RoundingMode.HALF_UP);
+                                                ramp.setSlope(rampSlope);
+                                                BigDecimal expectedSlope = ramp.getFloorHeight()
+                                                        .compareTo(BigDecimal.valueOf(2.4)) > 0 ? BigDecimal.valueOf(0.08)
+                                                                : BigDecimal.valueOf(0.1);
+                                                valid = false;
+                                                Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
+                                                        isTypicalRepititiveFloor);
+                                                if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
+                                                    if (rampSlope.compareTo(expectedSlope) <= 0) {
+                                                        valid = true;
+                                                    }
+                                                    String value = typicalFloorValues.get("typicalFloors") != null
+                                                            ? (String) typicalFloorValues.get("typicalFloors")
+                                                            : " floor " + floor.getNumber();
+                                                    if (valid) {
+                                                        setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40,
+                                                                String.format(SUBRULE_42_5_V_DESCRIPTION,
+                                                                        ramp.getNumber()),
+                                                                value, expectedSlope.toString(), rampSlope.toString(),
+                                                                Result.Accepted.getResultVal(), scrutinyDetail5);
+                                                    } else {
+                                                        setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40,
+                                                                String.format(SUBRULE_42_5_V_DESCRIPTION,
+                                                                        ramp.getNumber()),
+                                                                value, expectedSlope.toString(), rampSlope.toString(),
+                                                                Result.Not_Accepted.getResultVal(), scrutinyDetail5);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                        for (Ramp ramp : floor.getRamps()) {
-                            if (ramp.getRampPolyLineClosed()) {
-                                List<BigDecimal> rampWidths = new ArrayList<>();
-                                List<BigDecimal> rampLengths = new ArrayList<>();
-                                for (Measurement measurement : ramp.getRampPolyLines()) {
-                                    rampWidths.add(measurement.getWidth());
-                                    rampLengths.add(measurement.getHeight());
-                                }
 
-                                if (!rampWidths.isEmpty()) {
-                                    BigDecimal minimumWidth = rampWidths.get(0);
-                                    for (BigDecimal width : rampWidths) {
-                                        if (width.compareTo(minimumWidth) < 0) {
-                                            minimumWidth = width;
-                                        }
-                                    }
-                                    boolean isTypicalRepititiveFloor = false;
-                                    valid = false;
-                                    Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
-                                    if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-                                        if (minimumWidth.compareTo(BigDecimal.valueOf(1.2)) >= 0) {
-                                            valid = true;
-                                        }
-                                        String value = typicalFloorValues.get("typicalFloors") != null ? (String) typicalFloorValues.get("typicalFloors") : " floor " + floor.getNumber();
-                                        if (valid) {
-                                            
-                                            setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40_A3, String.format(SUBRULE_40_A_3_WIDTH_DESCRIPTION, ramp.getNumber()),
-                                                    value, BigDecimal.valueOf(1.2).toString() + DcrConstants.IN_METER, String.valueOf(Math.round(minimumWidth.doubleValue() * Double.valueOf(100)) / Double.valueOf(100)) +
-                                                            DcrConstants.IN_METER, Result.Accepted.getResultVal(), scrutinyDetail4);
-
-                                        } else {
-                                           
-                                            setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40_A3, String.format(SUBRULE_40_A_3_WIDTH_DESCRIPTION, ramp.getNumber()),
-                                                    value, BigDecimal.valueOf(1.2).toString() + DcrConstants.IN_METER, String.valueOf(Math.round(minimumWidth.doubleValue() * Double.valueOf(100)) / Double.valueOf(100)) +
-                                                            DcrConstants.IN_METER, Result.Not_Accepted.getResultVal(), scrutinyDetail4);
-                                        }
-                                    }
-                                }
-                                if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)) {
-                                    BigDecimal rampTotalLength = BigDecimal.ZERO;
-                                    for (BigDecimal length : rampLengths) {
-                                        rampTotalLength = rampTotalLength.add(length);
-                                    }
-                                    if (rampTotalLength.compareTo(BigDecimal.valueOf(0)) > 0 && ramp.getFloorHeight() != null) {
-                                        boolean isTypicalRepititiveFloor = false;
-                                        BigDecimal rampSlope = ramp.getFloorHeight().divide(rampTotalLength, 2, RoundingMode.HALF_UP);
-                                        ramp.setSlope(rampSlope);
-                                        valid = false;
-                                        Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor, isTypicalRepititiveFloor);
-                                        if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
-                                            if (rampSlope.compareTo(BigDecimal.valueOf(0.1)) <= 0) {
-                                                valid = true;
-                                            }
-                                            String value = typicalFloorValues.get("typicalFloors") != null ? (String) typicalFloorValues.get("typicalFloors") : " floor " + floor.getNumber();
-                                            if (valid) {
-                                               
-                                                setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40, String.format(SUBRULE_40_DESCRIPTION, ramp.getNumber()), value,
-                                                        BigDecimal.valueOf(0.1).toString(), rampSlope.toString(), Result.Accepted.getResultVal(), scrutinyDetail5);
-                                            } else {
-                                               
-                                                setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40, String.format(SUBRULE_40_DESCRIPTION, ramp.getNumber()), value,
-                                                        BigDecimal.valueOf(0.1).toString(), rampSlope.toString(), Result.Not_Accepted.getResultVal(), scrutinyDetail5);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -407,7 +395,8 @@ public class RampService extends FeatureProcess {
         return pl;
     }
 
-    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
+    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual, String status,
+            ScrutinyDetail scrutinyDetail) {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, ruleNo);
         details.put(DESCRIPTION, ruleDesc);
@@ -418,7 +407,8 @@ public class RampService extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
-    private void setReportOutputDetailsFloorWise(Plan pl, String ruleNo, String floor, String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
+    private void setReportOutputDetailsFloorWise(Plan pl, String ruleNo, String floor, String expected, String actual,
+            String status, ScrutinyDetail scrutinyDetail) {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, ruleNo);
         details.put(FLOOR, floor);
@@ -429,7 +419,8 @@ public class RampService extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
-    private void setReportOutputDetailsFloorWiseWithDescription(Plan pl, String ruleNo, String ruleDesc, String floor, String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
+    private void setReportOutputDetailsFloorWiseWithDescription(Plan pl, String ruleNo, String ruleDesc, String floor,
+            String expected, String actual, String status, ScrutinyDetail scrutinyDetail) {
         Map<String, String> details = new HashMap<>();
         details.put(RULE_NO, ruleNo);
         details.put(DESCRIPTION, ruleDesc);
@@ -441,7 +432,8 @@ public class RampService extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
-    private void validateDimensions(Plan planDetail, String blockNo, int floorNo, String rampNo, List<Measurement> rampPolylines) {
+    private void validateDimensions(Plan planDetail, String blockNo, int floorNo, String rampNo,
+            List<Measurement> rampPolylines) {
         int count = 0;
         for (Measurement m : rampPolylines) {
             if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0) {
@@ -449,16 +441,15 @@ public class RampService extends FeatureProcess {
             }
         }
         if (count > 0) {
-            planDetail.addError(String.format(DxfFileConstants.
-                    LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo), count + " number of ramp polyline not having only 4 points in layer " + String.format(DxfFileConstants.
-                    LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo));
+            planDetail.addError(String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo),
+                    count + " number of ramp polyline not having only 4 points in layer "
+                            + String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo));
 
         }
     }
 
-
-	@Override
-	public Map<String, Date> getAmendments() {
+    @Override
+    public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();
-	}
+    }
 }

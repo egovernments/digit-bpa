@@ -56,6 +56,7 @@ import org.egov.edcr.feature.BathRoom;
 import org.egov.edcr.feature.BathRoomWaterClosets;
 import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Chimney;
+import org.egov.edcr.feature.CommonFeature;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.FireStair;
@@ -74,6 +75,7 @@ import org.egov.edcr.feature.PlanInfoFeature;
 import org.egov.edcr.feature.Plantation;
 import org.egov.edcr.feature.PlantationGreenStrip;
 import org.egov.edcr.feature.RainWaterHarvesting;
+import org.egov.edcr.feature.RampService;
 import org.egov.edcr.feature.RiverDistance;
 import org.egov.edcr.feature.RoofTank;
 import org.egov.edcr.feature.SepticTank;
@@ -143,6 +145,10 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(LiftService.class);
 		features.add(pf);
 		pf = new PlanFeature(GeneralStair.class);
+                features.add(pf);
+                pf = new PlanFeature(RampService.class);
+                features.add(pf);
+                pf = new PlanFeature(CommonFeature.class);
                 features.add(pf);
 		/*
 		 * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
