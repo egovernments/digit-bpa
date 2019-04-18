@@ -60,6 +60,10 @@ import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_SEND_BUTTON;
+
+
 import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 
 import java.util.ArrayList;
@@ -483,7 +487,11 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
-
+        
+        if(workFlowAction.equals(WF_SEND_BUTTON))
+        	bpaApplication.setSentToCitizen(true);
+        else
+        	bpaApplication.setSentToCitizen(false);
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
 
         if (citizenOrBusinessUser)
@@ -531,10 +539,14 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
 
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-        } else
+        } else if(workFlowAction.equals(WF_SAVE_BUTTON))
             redirectAttributes.addFlashAttribute(MESSAGE,
                     "Successfully saved with application number " + bpaApplicationRes.getApplicationNumber() + ".");
-        if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted())
+        else 
+        	redirectAttributes.addFlashAttribute(MESSAGE,
+                    "Successfully forwarded application to the citizen with application number " + bpaApplicationRes.getApplicationNumber() + ".");
+        
+        if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted() && workFlowAction.equals(WF_SEND_BUTTON))
             bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
 
         return "redirect:/application/citizen/success/" + bpaApplicationRes.getApplicationNumber();

@@ -199,6 +199,10 @@
 									value="Save">
 									<spring:message code="lbl.save" />
 								</form:button>
+								<form:button type="submit" id="bpaSend" class="btn btn-primary"
+									value="Send">
+									<spring:message code="lbl.send.citizen" />
+								</form:button>
 							</c:otherwise>
 						</c:choose>
 					</c:when>
@@ -273,7 +277,8 @@
 	<input type="hidden" id="submitMoreThanPermiPlotArea"
 		value="<spring:message code='msg.validate.onsubmit.morethan.permissible.plotarea'/>" />
 	<input type="hidden" id="saveApplication"
-		value="<spring:message code='msg.confirm.save.appln'/>" /> <input
+		value="<spring:message code='msg.confirm.save.appln'/>" /> 
+	<input
 		type="hidden" id="submitApplication"
 		value="<spring:message code='msg.confirm.submit.appln'/>" /> <input
 		type="hidden" id="acceptDisclaimer"
@@ -318,6 +323,7 @@
 		value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />
 	<input type="hidden" id="dcrforoc"
 		value="<spring:message code='msg.dcr.for.oc' arguments="${currentuser}" htmlEscape="false" argumentSeparator=";"/>" />
+	
 	<c:set var="currentuser" value="${currentuser}" />
 
 </div>

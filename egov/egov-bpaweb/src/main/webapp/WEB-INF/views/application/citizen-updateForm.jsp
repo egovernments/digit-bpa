@@ -177,8 +177,38 @@
 			<div class="buttonbottom" align="center" id="buttonDiv">
 				<table>
 					<tr>
-						<td><c:if test="${isReconciliationInProgress ne true}">
-								<form:button type="submit" id="buttonSave"
+						<td><c:choose>
+						<c:when test="${isReconciliationInProgress ne true}">
+						<c:choose>
+					<c:when test="${validateCitizenAcceptance}">
+						<c:choose>
+							<c:when test="${citizenDisclaimerAccepted }">
+								<form:button type="submit" id="buttonSubmit"
+										class="btn btn-primary" value="Submit">
+										<spring:message code='lbl.btn.submit' />
+								</form:button>
+							</c:when>
+							<c:when test="${bpaApplication.sentToCitizen ne true }">
+								<form:button type="submit" id="buttonSave" class="btn btn-primary"
+									value="Save">
+									<spring:message code="lbl.save" />
+								</form:button>
+								<form:button type="submit" id="buttonSend" class="btn btn-primary"
+									value="Send">
+									<spring:message code="lbl.send.citizen" />
+								</form:button>
+								
+							</c:when>
+						</c:choose>
+						<form:button type="button" id="buttonCancel"
+										class="btn btn-danger" value="Cancel Application">
+										<spring:message code='lbl.btn.cancel.application' />
+									</form:button>
+							
+						
+					</c:when>
+					<c:otherwise>
+						<form:button type="submit" id="buttonSave"
 									class="btn btn-primary" value="Save">
 									<spring:message code='lbl.btn.save' />
 								</form:button>
@@ -192,8 +222,12 @@
 										class="btn btn-danger" value="Cancel Application">
 										<spring:message code='lbl.btn.cancel.application' />
 									</form:button>
-								</c:if>
-							</c:if> <input type="button" name="button2" id="button2" value="Close"
+									</c:if>
+					</c:otherwise>
+				</c:choose>
+				</c:when>
+				</c:choose>
+								 <input type="button" name="button2" id="button2" value="Close"
 							class="btn btn-default" onclick="window.close();" /></td>
 					</tr>
 				</table>
@@ -303,7 +337,9 @@
 	<input type="hidden" id="floorDetailsNotExtracted"
 		value="<spring:message code='msg.validate.floordetsil.not.extracted' />" />
 	<input type="hidden" id="existingBuildDetailsNotPresent"
-		value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />
+		value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />	
+				<input id="sentToCitizen" name="sentToCitizen" type="hidden" value="${bpaApplication.sentToCitizen}" /> 
+		
 
 </div>
 

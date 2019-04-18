@@ -259,7 +259,7 @@ public class BpaUtils {
     public void createPortalUserinbox(final BpaApplication application, final List<User> portalInboxUser,
             final String workFlowAction) {
         String status = StringUtils.EMPTY;
-        if ("Save".equalsIgnoreCase(workFlowAction)) {
+        if ("Save".equalsIgnoreCase(workFlowAction) || "Send".equalsIgnoreCase(workFlowAction)) {
             status = "To be submitted";
         } else if (null != application.getStatus().getDescription()
                 && WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(workFlowAction)) {

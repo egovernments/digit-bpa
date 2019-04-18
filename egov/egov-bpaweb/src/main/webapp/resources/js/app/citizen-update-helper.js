@@ -40,6 +40,9 @@
 
 
 $(document).ready(function ($) {
+	
+	if($('#sentToCitizen').val()==='true')
+         $('form :not([type=button])').prop('disabled',true);	    
 
     if($('#isReconciliationInProgress').val() === 'true')
         bootbox.alert($('#applnPaymtReconciProg').val())
@@ -103,6 +106,17 @@ $(document).ready(function ($) {
                 $(element).fadeIn();
             });
         }
+    });
+    
+    $('#buttonSend').click(function (e) {
+        var button = $('#buttonSend').val();
+        if (validateEditFormOnSave(button, validator)) {
+                                removeDisabledAttribute();
+	                            $('#editCitizenApplicationform').trigger('submit');
+	                        } else {
+            e.preventDefault();
+        }
+        return false;
     });
 
 

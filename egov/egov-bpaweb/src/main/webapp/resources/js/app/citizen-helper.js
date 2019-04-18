@@ -236,6 +236,18 @@ jQuery(document).ready(function ($) {
         }
         return false;
     });
+    
+    $('#bpaSend').click(function (e) {
+        var msg = getValidationMessageOnCreate();
+        var button = $('#bpaSend').val();
+        if (validateFormOnSave(button, validator)) {
+            removeDisabledAttribute();
+            $('#newCitizenApplicationform').trigger('submit');
+        } else {
+            e.preventDefault();
+        }
+        return false;
+    });
 
 
     $('#bpaCreate').click(function (e) {

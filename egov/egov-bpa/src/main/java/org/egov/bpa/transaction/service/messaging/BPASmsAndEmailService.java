@@ -284,7 +284,7 @@ public class BPASmsAndEmailService {
 				password = mobileNo;
 				buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email, loginUserName, password, reportOutput, fileName);
 			}
-			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive() && (bpaUtils.isCitizenAcceptanceRequired() && bpaApplication.isCitizenAccepted())) {
 				applicantName = applnStakeHolder.getStakeHolder().getName();
 				email = applnStakeHolder.getStakeHolder().getEmailId();
 				mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();

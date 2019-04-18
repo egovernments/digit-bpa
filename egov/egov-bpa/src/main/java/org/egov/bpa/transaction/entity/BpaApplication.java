@@ -175,6 +175,7 @@ public class BpaApplication extends StateAware<Position> {
     private Boolean isExistingApprovedPlan = false;
     private boolean citizenAccepted;
     private boolean architectAccepted;
+    private boolean sentToCitizen;
     private Boolean isEconomicallyWeakerSection;
     private String additionalRejectionReasons;
     private Boolean isSentToPreviousOwner = false;
@@ -737,7 +738,15 @@ public class BpaApplication extends StateAware<Position> {
         this.architectAccepted = architectAccepted;
     }
 
-    public Set<Receipt> getReceipts() {
+    public boolean getSentToCitizen() {
+		return sentToCitizen;
+	}
+
+	public void setSentToCitizen(boolean sentToCitizen) {
+		this.sentToCitizen = sentToCitizen;
+	}
+
+	public Set<Receipt> getReceipts() {
         return receipts;
     }
 

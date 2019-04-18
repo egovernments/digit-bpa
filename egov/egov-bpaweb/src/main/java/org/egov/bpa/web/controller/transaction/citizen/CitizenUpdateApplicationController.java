@@ -58,6 +58,8 @@ import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_SEND_BUTTON;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -396,7 +398,11 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                     occupancyName);
             bpaApplication.setApplicationType(applicationType);
         }
-        
+        if(workFlowAction.equals(WF_SEND_BUTTON))
+        	bpaApplication.setSentToCitizen(true);
+        else
+        	bpaApplication.setSentToCitizen(false);
+
         applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
         bpaUtils.updatePortalUserinbox(bpaApplication, null);
 
@@ -447,7 +453,12 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             String successMessage = messageSource.getMessage("msg.appln.accepted.succes",
                     new String[] { bpaApplication.getApplicationNumber() }, null);
             redirectAttributes.addFlashAttribute(MESSAGE, successMessage.concat(DISCLIMER_MESSAGE_ONSAVE));
-        } else
+        } else if(bpaUtils.isCitizenAcceptanceRequired() && !bpaApplication.isCitizenAccepted() && workFlowAction.equals(WF_SEND_BUTTON)) {
+            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
+        	redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.appln.send.succes",
+                    new String[] { bpaApplication.getApplicationNumber() }, null));
+        }
+        else
             redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.appln.saved.succes",
                     new String[] { bpaApplication.getApplicationNumber() }, null));
 
