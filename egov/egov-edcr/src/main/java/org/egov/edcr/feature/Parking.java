@@ -97,6 +97,7 @@ public class Parking extends FeatureProcess {
 	private static final String SUB_RULE_34_1_DESCRIPTION = "Parking Slots Area";
 	private static final String SUB_RULE_34_2 = "34(2)";
 	private static final String SUB_RULE_40_8 = "40(8)";
+	private static final String SUB_RULE_40_11 = "40(11)";
 	private static final String PARKING_MIN_AREA = "5 M x 2 M";
 	private static final double PARKING_SLOT_WIDTH = 2;
 	private static final double PARKING_SLOT_HEIGHT = 5;
@@ -319,16 +320,16 @@ public class Parking extends FeatureProcess {
 		if (maxHeightOfBuilding.compareTo(new BigDecimal(15)) >= 0
 				|| totalBuiltupArea.compareTo(new BigDecimal(500)) > 0) {
 			if (pl.getParkingDetails().getValidSpecialSlots() == 0) {
-				pl.addError(SUB_RULE_40_8, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
+				pl.addError(SUB_RULE_40_11, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
 			} else {
 				for (Measurement m : pl.getParkingDetails().getSpecial()) {
 					if (m.getMinimumSide().compareTo(new BigDecimal(0)) > 0
 							&& m.getMinimumSide().compareTo(new BigDecimal(3.6)) >= 0) {
-						setReportOutputDetails(pl, SUB_RULE_40_8, SP_PARKING, 1 + NUMBERS,
+						setReportOutputDetails(pl, SUB_RULE_40_11, SP_PARKING, 1 + NUMBERS,
 								pl.getParkingDetails().getValidSpecialSlots() + NUMBERS,
 								Result.Accepted.getResultVal());
 					} else if (m.getMinimumSide().compareTo(new BigDecimal(0)) > 0) {
-						setReportOutputDetails(pl, SUB_RULE_40_8, SP_PARKING, 1 + NUMBERS,
+						setReportOutputDetails(pl, SUB_RULE_40_11, SP_PARKING, 1 + NUMBERS,
 								pl.getParkingDetails().getValidSpecialSlots() + NUMBERS,
 								Result.Not_Accepted.getResultVal());
 					}
