@@ -270,15 +270,15 @@ public class BuildingHeight extends FeatureProcess {
         return maximumDistanceToRoadEdge;
     }
 
-    private BigDecimal getMaximumDistanceFromSetBackToBuildingLine(BigDecimal distancceFromSetbackToBuildingLine, Block block) {
+    private BigDecimal getMaximumDistanceFromSetBackToBuildingLine(BigDecimal distanceFromSetbackToBuildingLine, Block block) {
         if (block.getBuilding().getDistanceFromSetBackToBuildingLine() != null) {
             for (BigDecimal distance : block.getBuilding().getDistanceFromSetBackToBuildingLine()) {
-                if (distance.compareTo(distancceFromSetbackToBuildingLine) > 0) {
-                    distancceFromSetbackToBuildingLine = distance;
+                if (distance.compareTo(distanceFromSetbackToBuildingLine) > 0) {
+                    distanceFromSetbackToBuildingLine = distance;
                 }
             }
         }
-        return distancceFromSetbackToBuildingLine;
+        return distanceFromSetbackToBuildingLine;
     }
 
     private BigDecimal getMaximimShortestdistanceFromRoad(Plan Plan, BigDecimal maximumDistanceToRoad) {

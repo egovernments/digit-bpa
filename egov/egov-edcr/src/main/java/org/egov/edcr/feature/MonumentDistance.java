@@ -67,7 +67,7 @@ public class MonumentDistance extends FeatureProcess {
 
 	private static final Logger LOG = Logger.getLogger(MonumentDistance.class);
 	private static final String RULE_20 = "20";
-	public static final String MONUMENT_DESCRIPTION = "Distancce from monument";
+	public static final String MONUMENT_DESCRIPTION = "Distance from monument";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -82,7 +82,7 @@ public class MonumentDistance extends FeatureProcess {
 		scrutinyDetail.setKey("Common_Monument Distance");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, DISTANCCE);
+		scrutinyDetail.addColumnHeading(3, DISTANCE);
 		scrutinyDetail.addColumnHeading(4, PERMITTED);
 		scrutinyDetail.addColumnHeading(5, PROVIDED);
 		scrutinyDetail.addColumnHeading(6, STATUS);
@@ -106,7 +106,7 @@ public class MonumentDistance extends FeatureProcess {
 
 				if (StringUtils.isNotBlank(pl.getPlanInformation().getNocNearMonument())
 						&& "YES".equalsIgnoreCase(pl.getPlanInformation().getNocNearMonument())) {
-					details.put(DISTANCCE, ">300");
+					details.put(DISTANCE, ">300");
 					details.put(PERMITTED, "Permitted with NOC");
 					details.put(PROVIDED, minDistanceFromMonument + " with NOC");
 					details.put(STATUS, Result.Accepted.getResultVal());
@@ -122,7 +122,7 @@ public class MonumentDistance extends FeatureProcess {
 					}
 
 					if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) > 0) {
-						details.put(DISTANCCE, ">300");
+						details.put(DISTANCE, ">300");
 						details.put(PERMITTED, "ALL");
 						details.put(PROVIDED, minDistanceFromMonument.toString());
 						details.put(STATUS, Result.Accepted.getResultVal());
@@ -130,7 +130,7 @@ public class MonumentDistance extends FeatureProcess {
 						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 					} else {
 						if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(100)) <= 0) {
-							details.put(DISTANCCE, ">300");
+							details.put(DISTANCE, ">300");
 							details.put(PERMITTED, "No Construction is allowed with in 100 mts from monument");
 							details.put(PROVIDED, minDistanceFromMonument.toString());
 							details.put(STATUS, Result.Not_Accepted.getResultVal());
@@ -143,7 +143,7 @@ public class MonumentDistance extends FeatureProcess {
 							if (maxHeightOfBuilding.compareTo(BigDecimal.valueOf(7)) <= 0 && maxBuildingHeightBlock
 									.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(1)) <= 0) {
 
-								details.put(DISTANCCE, "From 100 to 300");
+								details.put(DISTANCE, "From 100 to 300");
 								details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
 								details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
 										+ maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());
@@ -153,7 +153,7 @@ public class MonumentDistance extends FeatureProcess {
 
 							} else {
 
-								details.put(DISTANCCE, "From 100 to 300");
+								details.put(DISTANCE, "From 100 to 300");
 								details.put(PERMITTED, "Building Height: 7mt, No of floors: 1");
 								details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt, No of floors: "
 										+ maxBuildingHeightBlock.getBuilding().getFloorsAboveGround());

@@ -69,7 +69,7 @@ public class SepticTank extends FeatureProcess {
 	private static final String RULE_45_E = "45(e)";
 	public static final String DISTANCE_FROM_WATERSOURCE = "Distance from watersource";
 	public static final String DISTANCE_FROM_BUILDING = "Distance from Building";
-	public static final String MIN_DISTANCE_FROM_GOVTBUILDING_DESC = "Minimum distancce fcrom government building";
+	public static final String MIN_DISTANCE_FROM_GOVTBUILDING_DESC = "Minimum distance fcrom government building";
 	public static final BigDecimal MIN_DIS_WATERSRC = BigDecimal.valueOf(18);
 	public static final BigDecimal MIN_DIS_BUILDING = BigDecimal.valueOf(6);
 

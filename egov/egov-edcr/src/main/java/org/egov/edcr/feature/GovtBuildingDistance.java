@@ -67,7 +67,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 
 	private static final Logger LOG = Logger.getLogger(GovtBuildingDistance.class);
 	private static final String RULE_21 = "21";
-	public static final String GOVTBUILDING_DESCRIPTION = "Distancce from Government Building";
+	public static final String GOVTBUILDING_DESCRIPTION = "Distance from Government Building";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -82,7 +82,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 		scrutinyDetail.setKey("Common_Government Building Distance");
 		scrutinyDetail.addColumnHeading(1, RULE_NO);
 		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, DISTANCCE);
+		scrutinyDetail.addColumnHeading(3, DISTANCE);
 		scrutinyDetail.addColumnHeading(4, PERMITTED);
 		scrutinyDetail.addColumnHeading(5, PROVIDED);
 		scrutinyDetail.addColumnHeading(6, STATUS);
@@ -110,7 +110,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 				}
 
 				if (minDistanceFromGovtBuilding.compareTo(BigDecimal.valueOf(200)) > 0) {
-					details.put(DISTANCCE, ">200");
+					details.put(DISTANCE, ">200");
 					details.put(PERMITTED, "ALL");
 					details.put(PROVIDED, minDistanceFromGovtBuilding.toString());
 					details.put(STATUS, Result.Accepted.getResultVal());
@@ -119,7 +119,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 				} else {
 					if (maxHeightOfBuilding.compareTo(BigDecimal.valueOf(10)) <= 0) {
 
-						details.put(DISTANCCE, "<=200");
+						details.put(DISTANCE, "<=200");
 						details.put(PERMITTED, "Building Height: 10mt");
 						details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
 						details.put(STATUS, Result.Accepted.getResultVal());
@@ -128,7 +128,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 
 					} else {
 
-						details.put(DISTANCCE, "<=200");
+						details.put(DISTANCE, "<=200");
 						details.put(PERMITTED, "Building Height: 10mt");
 						details.put(PROVIDED, "Building Height: " + maxHeightOfBuilding + "mt");
 						details.put(STATUS, Result.Not_Accepted.getResultVal());
