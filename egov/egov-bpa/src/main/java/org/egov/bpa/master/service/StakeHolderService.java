@@ -708,6 +708,7 @@ public class StakeHolderService {
              */
 
         } else if ("Reject".equals(stkHldrStatus)) {
+            stakeHolder.setComments(stakeHolder.getApprovalComent());
             stakeHolder.setActive(false);
             stakeHolder.setStatus(StakeHolderStatus.REJECTED);
             stakeHolder.setNoOfTimesRejected(
