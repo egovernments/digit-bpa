@@ -45,33 +45,41 @@
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.disclaimer"/>
+		<spring:message code="lbl.disclaimer" />
 	</div>
 </div>
-
-<div class="form-group">
-	<c:choose>
-	<c:when test="${isCitizen}"> <!-- for citizen user login -->
-		<div class="col-sm-8 col-sm-offset-2">
-			<div class="checkbox">
-				<label><form:checkbox path="citizenAccepted"
-				       id="citizenAccepted" /> <form:errors path="citizenAccepted"
-					   cssClass="error-msg" /><span class="mandatory"></span>&nbsp;&nbsp;<spring:message
-					   code="bpa.registration.citizen.declaration" /></label>
-			</div>
-			</div>
-	</c:when>
-		<c:otherwise>
-			<!-- for business user login -->
-			<div class="col-sm-8 col-sm-offset-2">
-				<div class="checkbox">
-					<label><form:checkbox path="architectAccepted"
-							id="architectAccepted" /> <form:errors path="architectAccepted"
-							cssClass="error-msg" /><span class="mandatory"></span>&nbsp;&nbsp;<spring:message
-							code="lbl.accepted" /><br>&nbsp;&nbsp;&nbsp;&nbsp;<spring:message
-							code="lbl.accpeted1" /></label>
+<div class="panel-body">
+	<div class="form-group">
+		<c:choose>
+			<c:when test="${isCitizen}">
+				<!-- for citizen user login -->
+				<div class="col-sm-9 col-sm-offset-2">
+					<div class="checkbox view-content">
+						<form:checkbox path="citizenAccepted" id="citizenAccepted"
+							required="required" />
+						<span class="mandatory"></span>&nbsp;<spring:message code="lbl.ack.accpt" />
+						<ul style="list-style-type: none; padding-left: 10px">
+							<li></li>
+							<li><spring:message code="bpa.registration.citizen.declaration" /></li>
+						</ul>
+					</div>
 				</div>
-			</div>
-		</c:otherwise>
-	</c:choose>		
+			</c:when>
+			<c:otherwise>
+				<!-- for business user login -->
+				<div class="col-sm-9 col-sm-offset-2">
+					<div class="checkbox view-content">
+						<form:checkbox path="architectAccepted" id="architectAccepted"
+							required="required" />
+						<span class="mandatory"></span>&nbsp;<spring:message code="lbl.ack.accpt" />
+						<ul style="list-style-type: none; padding-left: 10px">
+							<li></li>
+							<li><spring:message code="lbl.accepted" /></li>
+							<li><spring:message code="lbl.accpeted1" /></li>
+						</ul>
+					</div>
+				</div>
+			</c:otherwise>
+		</c:choose>
+	</div>
 </div>

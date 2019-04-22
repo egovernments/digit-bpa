@@ -238,16 +238,36 @@ jQuery(document).ready(function ($) {
     });
     
     $('#bpaSend').click(function (e) {
-        var msg = getValidationMessageOnCreate();
         var button = $('#bpaSend').val();
-        if (validateFormOnSave(button, validator)) {
-            removeDisabledAttribute();
-            $('#newCitizenApplicationform').trigger('submit');
+        if (validateFormOnSubmit(button, validator)) {
+            bootbox
+                .dialog({
+                    message: $('#sendToCtzAccept').val(),
+                    buttons: {
+                        'confirm': {
+                            label: 'Yes',
+                            className: 'btn-primary',
+	                        callback: function (result) {
+	                            removeDisabledAttribute();
+	                            $('#newCitizenApplicationform').trigger('submit');
+	                        }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
+                        }
+                    }
+                });
         } else {
             e.preventDefault();
         }
         return false;
     });
+
 
 
     $('#bpaCreate').click(function (e) {

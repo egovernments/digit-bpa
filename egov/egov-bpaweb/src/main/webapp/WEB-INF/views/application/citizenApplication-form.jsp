@@ -323,7 +323,8 @@
 		value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />
 	<input type="hidden" id="dcrforoc"
 		value="<spring:message code='msg.dcr.for.oc' arguments="${currentuser}" htmlEscape="false" argumentSeparator=";"/>" />
-	
+	<input type="hidden" id="sendToCtzAccept"
+			value="<spring:message code='msg.confirm.send.ctzn.accept' />" />
 	<c:set var="currentuser" value="${currentuser}" />
 
 </div>

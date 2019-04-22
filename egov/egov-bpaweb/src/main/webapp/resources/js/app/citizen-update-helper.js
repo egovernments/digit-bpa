@@ -110,10 +110,30 @@ $(document).ready(function ($) {
     
     $('#buttonSend').click(function (e) {
         var button = $('#buttonSend').val();
-        if (validateEditFormOnSave(button, validator)) {
-                                removeDisabledAttribute();
+        if (validateEditFormOnSubmit(button, validator)) {
+            bootbox
+                .dialog({
+                    message: $('#sendToCtzAccept').val(),
+                    buttons: {
+                        'confirm': {
+                            label: 'Yes',
+                            className: 'btn-primary',
+	                        callback: function (result) {
+	                            removeDisabledAttribute();
 	                            $('#editCitizenApplicationform').trigger('submit');
-	                        } else {
+	                        }
+                        },
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
+                        }
+                    }
+                });
+        } else {
             e.preventDefault();
         }
         return false;

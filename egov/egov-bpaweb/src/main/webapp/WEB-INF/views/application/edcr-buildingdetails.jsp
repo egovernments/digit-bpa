@@ -251,7 +251,7 @@
                                 cssClass="add-margin error-msg"/>
                     </div>
                     
-              <%--       <label
+                    <%-- <label
                             class="col-sm-2 control-label text-right heightFromGroundWithStairRoom"><spring:message
                             code="lbl.grnd.with.stair"/></label>
                     <div class="col-sm-3 add-margin">
@@ -266,9 +266,9 @@
                                 value="${bldg.heightFromGroundWithStairRoom}"/>
                         <form:errors path="buildingDetailFromEdcr[${bldgCounter.index}].heightFromGroundWithStairRoom"
                                      cssClass="add-margin error-msg"/>
-                    </div>
+                    </div> --%>
                 </div>
-                <div class="form-group">
+                <%-- <div class="form-group">
                     <label
                             class="col-sm-3 control-label text-right fromStreetLevelWithOutStairRoom"><spring:message
                             code="lbl.street.wo.stair"/></label>
