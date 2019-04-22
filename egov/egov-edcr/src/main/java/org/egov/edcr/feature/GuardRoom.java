@@ -87,7 +87,6 @@ public class GuardRoom extends FeatureProcess {
 		scrutinyDetail.addColumnHeading(4, PROVIDED);
 		scrutinyDetail.addColumnHeading(5, STATUS);
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_48_A);
 		HashMap<String, String> errors = new HashMap<>();
 		BigDecimal minHeight = BigDecimal.ZERO;
 		BigDecimal minWidth = BigDecimal.ZERO;
@@ -113,59 +112,60 @@ public class GuardRoom extends FeatureProcess {
 				minCabinHeight = cabinHeightList.stream().reduce(BigDecimal::min).get();
 
 				if (minHeight.compareTo(new BigDecimal("4")) >= 0 && minWidth.compareTo(new BigDecimal("3")) >= 0) {
+					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-					details.put(REQUIRED, "Dimension > 3x4, Area < = 10,Height >= 0.75m and <= 2.2m");
-					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight + ", Area: " + minArea
-							+ ",Height: " + minCabinHeight + "m");
+					details.put(REQUIRED, "Dimension > 3x4");
+					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight);
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
 				} else {
+					details = new HashMap<>();
+					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_DIMENSION_DESCRIPTION);
-					details.put(REQUIRED, "Dimension > 3x4, Area < = 10,Height >= 0.75m and <= 2.2m");
-					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight + ", Area: " + minArea
-							+ ",Height: " + minCabinHeight + "m");
+					details.put(REQUIRED, "Dimension > 3x4");
+					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight);
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				}
 
 				if (minArea.compareTo(new BigDecimal("10")) <= 0) {
+					details = new HashMap<>();
+					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-					details.put(REQUIRED, "Dimension > 3x4, Area < = 10,Height >= 0.75m and <= 2.2m");
-					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight + ", Area: " + minArea
-							+ ",Height: " + minCabinHeight + "m");
+					details.put(REQUIRED, "Area < = 10");
+					details.put(PROVIDED, "Area: " + minArea);
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
+					details = new HashMap<>();
+					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_AREA_DESCRIPTION);
-					details.put(REQUIRED, "Dimension > 3x4, Area < = 10,Height >= 0.75m and <= 2.2m");
-					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight + ", Area: " + minArea
-							+ ",Height: " + minCabinHeight + "m");
+					details.put(REQUIRED, "Area < = 10");
+					details.put(PROVIDED, "Area: " + minArea);
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				}
 
 				if (minCabinHeight.compareTo(new BigDecimal("0.75")) >= 0
 						&& minCabinHeight.compareTo(new BigDecimal("2.2")) <= 0) {
+					details = new HashMap<>();
+					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
-					details.put(REQUIRED, "Dimension > 3x4, Area < = 10,Height >= 0.75m and <= 2.2m");
-					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight + ", Area: " + minArea
-							+ ",Height: " + minCabinHeight + "m");
+					details.put(REQUIRED, "Height >= 0.75m and <= 2.2m");
+					details.put(PROVIDED, "Height: " + minCabinHeight + "m");
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
+					details = new HashMap<>();
+					details.put(RULE_NO, RULE_48_A);
 					details.put(DESCRIPTION, GUARD_ROOM_HEIGHT_DESCRIPTION);
-					details.put(REQUIRED, "Dimension > 3x4, Area < = 10,Height >= 0.75m and <= 2.2m");
-					details.put(PROVIDED, "Dimension: " + minWidth + "x" + minHeight + ", Area: " + minArea
-							+ ",Height: " + minCabinHeight + "m");
+					details.put(REQUIRED, "Height >= 0.75m and <= 2.2m");
+					details.put(PROVIDED, "Height: " + minCabinHeight + "m");
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				}
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 			} else {
 				errors.put("Distance_Guard Room", "Cabin heights is not provided in layer GUARD_ROOM");
 				pl.addErrors(errors);
