@@ -577,7 +577,7 @@ function onLoad(){
 																class="mandatory1">*</span></span></td>
 														<td class="blueborderfortd text-right bg-gray"><s:textfield
 																label="paymentAmount" id="paymentAmount" maxlength="12"
-																name="paymentAmount" size="12"
+																name="paymentAmount" size="12" value="%{totalAmountToBeCollected}"
 																cssClass="form-control patternvalidation text-right"
 																data-pattern="number" placeholder="0"
 																onkeyup="populateapportioningamountnew()"
