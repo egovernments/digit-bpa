@@ -69,6 +69,7 @@ public class Occupancy extends Measurement {
     private Boolean withOutAttachedBath = false;
     private Boolean withDinningSpace = false;
     private List<Measurement> recreationalSpace = new ArrayList<>();
+    private String mezzanineNumber;
     private Boolean isMezzanine = false;
 
     public void setExistingBuiltUpArea(BigDecimal existingBuiltUpArea) {
@@ -209,6 +210,14 @@ public class Occupancy extends Measurement {
 
     public void setRecreationalSpace(List<Measurement> recreationalSpace) {
         this.recreationalSpace = recreationalSpace;
+    }
+
+    public String getMezzanineNumber() {
+        return mezzanineNumber;
+    }
+
+    public void setMezzanineNumber(String mezzanineNumber) {
+        this.mezzanineNumber = mezzanineNumber;
     }
 
     public Boolean getIsMezzanine() {
