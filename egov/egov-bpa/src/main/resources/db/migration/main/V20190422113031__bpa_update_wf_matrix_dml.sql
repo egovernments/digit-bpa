@@ -1,0 +1,1 @@
+update eg_wf_matrix set validactions ='Approve,Revert,Revoke Permit' where nextstate='END' and nextaction='END' and additionalrule ='Low Risk' and objecttype='BpaApplication';

@@ -298,7 +298,7 @@ jQuery(document)
                                 e.preventDefault();
                             }
                             return false;
-                        } if (action == 'Revoke Permit') {
+                        } else if (action == 'Revoke Permit') {
                             $('#Revoke Permit').attr('formnovalidate', 'true');
                             if (validateOnRevokePermit() && validateForm(validator)) {
                                 bootbox

@@ -478,8 +478,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         } else if (isNotBlank(workFlowAction) && GENERATEREJECTNOTICE.equalsIgnoreCase(workFlowAction))
             return "redirect:/application/rejectionnotice/" + bpaAppln.getApplicationNumber();
         
-        if(isNotBlank(workFlowAction) && GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction) && 
-        		bpaApplication.getApplicationType().getName().equals(LOWRISK)){
+        if(isNotBlank(workFlowAction) && GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction)) {
             PermitRevocationFormat permitRevocationFormatFeature = (PermitRevocationFormat) findImplementationBean
                     .find(PermitRevocationFormat.class, findImplementationBean.getCityDetails());
             ReportOutput reportOutput = permitRevocationFormatFeature
