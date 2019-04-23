@@ -141,6 +141,15 @@
 					placeholder="" />
 				<form:errors path="designation" cssClass="error-msg" />
 			</div>
+			<label class="col-sm-2 control-label text-right toggle-madatory"><spring:message
+					code="lbl.cin.no" /><span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:input type="text" cssClass="form-control patternvalidation"
+					path="cinNumber" data-pattern="alphanumeric" id="cinNumber"
+					maxlength="64" />
+				<span class=""></span>
+				<form:errors path="cinNumber" cssClass="error-msg" />
+			</div>
 		</div>
 	</div>
 

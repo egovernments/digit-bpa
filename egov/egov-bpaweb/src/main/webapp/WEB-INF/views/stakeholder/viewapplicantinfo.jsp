@@ -108,7 +108,14 @@
 			<div class="col-sm-3 add-margin view-content">
 				<c:out value="${stakeHolder.designation}" default="N/A"></c:out>
 			</div>
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.cin.no" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${stakeHolder.cinNumber}" default="N/A"></c:out>
+			</div>
 		</div>
+		
 	</c:if>
 
 	<div class="panel-heading custom_form_panel_heading">
@@ -297,7 +304,7 @@
 	<div class="panel-body">
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
-				<spring:message code="lbl.addr.dno" />
+				<spring:message code="lbl.house.dno" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out value="${address.houseNoBldgApt}" default="N/A"></c:out>

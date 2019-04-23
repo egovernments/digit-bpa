@@ -62,7 +62,7 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label"> <spring:message
-			code="lbl.addr.dno" /><span class="mandatory"></span>
+			code="lbl.house.dno" /><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3">
 		<form:input path="${address}.houseNoBldgApt" id="${address}.houseNoBldgApt"

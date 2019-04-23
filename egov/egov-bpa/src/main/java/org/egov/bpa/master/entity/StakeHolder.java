@@ -118,6 +118,8 @@ public class StakeHolder extends User {
     private String contactPerson;
     @Length(max = 50)
     private String designation;
+    @Length(max = 64)
+    private String cinNumber;
     private transient CorrespondenceAddress correspondenceAddress = new CorrespondenceAddress();
     private transient PermanentAddress permanentAddress = new PermanentAddress();
     private transient List<CheckListDetail> checkListDocuments = new ArrayList<>(0);
@@ -462,5 +464,14 @@ public class StakeHolder extends User {
     public void setApprovalDesignation(final Long approvalDesignation) {
         this.approvalDesignation = approvalDesignation;
     }
+
+    public String getCinNumber() {
+        return cinNumber;
+    }
+
+    public void setCinNumber(String cinNumber) {
+        this.cinNumber = cinNumber;
+    }
+    
 
 }
