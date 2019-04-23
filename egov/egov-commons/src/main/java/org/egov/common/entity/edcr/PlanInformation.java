@@ -187,6 +187,8 @@ public class PlanInformation implements Serializable {
 
 	private transient String barrierFreeAccessForPhyChlngdPpl = NA;
 
+	private transient String provisionsForGreenBuildingsAndSustainability = NA;
+
 	private String plotNo;
 
 	private String khataNo;
@@ -194,7 +196,7 @@ public class PlanInformation implements Serializable {
 	private String mauza;
 
 	private String district;
-	
+
 	public Boolean getParkingToMainBuilding() {
 		return parkingToMainBuilding;
 	}
@@ -713,6 +715,14 @@ public class PlanInformation implements Serializable {
 
 	public void setDistrict(String district) {
 		this.district = district;
+	}
+
+	public String getProvisionsForGreenBuildingsAndSustainability() {
+		return provisionsForGreenBuildingsAndSustainability;
+	}
+
+	public void setProvisionsForGreenBuildingsAndSustainability(String provisionsForGreenBuildingsAndSustainability) {
+		this.provisionsForGreenBuildingsAndSustainability = provisionsForGreenBuildingsAndSustainability;
 	}
 
 }
