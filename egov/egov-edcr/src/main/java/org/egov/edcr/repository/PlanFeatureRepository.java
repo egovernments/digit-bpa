@@ -52,6 +52,7 @@ import java.util.List;
 
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.edcr.feature.AdditionalFeature;
+import org.egov.edcr.feature.Basement;
 import org.egov.edcr.feature.BathRoom;
 import org.egov.edcr.feature.BathRoomWaterClosets;
 import org.egov.edcr.feature.BlockDistancesService;
@@ -109,8 +110,9 @@ public class PlanFeatureRepository {
 		features.add(pf);
 		pf = new PlanFeature(GovtBuildingDistance.class);
 		features.add(pf);
-		/*pf = new PlanFeature(LandUse.class);
-		features.add(pf);*/
+		/*
+		 * pf = new PlanFeature(LandUse.class); features.add(pf);
+		 */
 		pf = new PlanFeature(RiverDistance.class);
 		features.add(pf);
 		pf = new PlanFeature(SepticTank.class);
@@ -148,11 +150,13 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(LiftService.class);
 		features.add(pf);
 		pf = new PlanFeature(GeneralStair.class);
-                features.add(pf);
-                pf = new PlanFeature(RampService.class);
-                features.add(pf);
-                pf = new PlanFeature(CommonFeature.class);
-                features.add(pf);
+		features.add(pf);
+		pf = new PlanFeature(RampService.class);
+		features.add(pf);
+		pf = new PlanFeature(CommonFeature.class);
+		features.add(pf);
+		pf = new PlanFeature(Basement.class);
+		features.add(pf);
 		/*
 		 * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
 		 */
