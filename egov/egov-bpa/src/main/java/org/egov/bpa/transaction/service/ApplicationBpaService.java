@@ -624,7 +624,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.setLPRequestInitiated(FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(application.getState().getNextAction()));
         List<ApplicationPermitConditions> defaultPermitCondition = bpaApplicationPermitConditionsService.
         		findAllByApplicationAndPermitConditionType(application, ConditionType.PERMITDEFAULTCONDITIONS);
-        if(defaultPermitCondition==null || defaultPermitCondition.isEmpty())
+        if(defaultPermitCondition==null || defaultPermitCondition.isEmpty() && !GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction))
         	buildDefaultPermitConditionsList(application);
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && updatedApplication.getCurrentState() != null
