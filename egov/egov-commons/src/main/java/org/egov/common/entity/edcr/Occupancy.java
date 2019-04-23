@@ -61,9 +61,11 @@ public class Occupancy extends Measurement {
     private BigDecimal builtUpArea = BigDecimal.ZERO;
     private BigDecimal floorArea = BigDecimal.ZERO;
     private BigDecimal carpetArea = BigDecimal.ZERO;
+    private BigDecimal carpetAreaDeduction = BigDecimal.ZERO;
     private BigDecimal existingBuiltUpArea = BigDecimal.ZERO;
     private BigDecimal existingFloorArea = BigDecimal.ZERO;
     private BigDecimal existingCarpetArea = BigDecimal.ZERO;
+    private BigDecimal existingCarpetAreaDeduction = BigDecimal.ZERO;
     private BigDecimal existingDeduction = BigDecimal.ZERO;
     private Boolean withAttachedBath = false;
     private Boolean withOutAttachedBath = false;
@@ -226,6 +228,22 @@ public class Occupancy extends Measurement {
 
     public void setIsMezzanine(Boolean isMezzanine) {
         this.isMezzanine = isMezzanine;
+    }
+
+    public BigDecimal getCarpetAreaDeduction() {
+        return carpetAreaDeduction;
+    }
+
+    public void setCarpetAreaDeduction(BigDecimal carpetAreaDeduction) {
+        this.carpetAreaDeduction = carpetAreaDeduction;
+    }
+
+    public BigDecimal getExistingCarpetAreaDeduction() {
+        return existingCarpetAreaDeduction;
+    }
+
+    public void setExistingCarpetAreaDeduction(BigDecimal existingCarpetAreaDeduction) {
+        this.existingCarpetAreaDeduction = existingCarpetAreaDeduction;
     }
     
 }

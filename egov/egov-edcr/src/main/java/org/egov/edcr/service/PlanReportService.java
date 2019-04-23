@@ -727,8 +727,10 @@ public class PlanReportService {
 						// List<Map<String, String>> detail = allMap.get(blkName +
 						// blkFeature).getDetail();
 						List<Map<String, String>> detail = side.getDetail();
-												
+								
+						if(front != null) 
 						detail.add(0, front.getDetail().get(0));
+						if(rear != null)
 						detail.add(1, rear.getDetail().get(0));
 						
 						for(Map<String, String> d : detail) {

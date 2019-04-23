@@ -138,7 +138,7 @@ public class LiftService extends FeatureProcess {
 							valid = true;
 						}
 						if (valid) {
-							setReportOutputDetails(plan, SUBRULE_48 + ", " + SUBRULE_40A_3, SUBRULE_48_DESCRIPTION,
+							setReportOutputDetails(plan, SUBRULE_48, SUBRULE_48_DESCRIPTION,
 									noOfLiftsRqrd.toString(), block.getNumberOfLifts(), Result.Accepted.getResultVal(),
 									"", scrutinyDetail);
 						} else {
