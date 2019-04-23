@@ -48,24 +48,20 @@ package org.egov.bpa.autonumber.impl;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.StringUtils.upperCase;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 
 import java.time.LocalDateTime;
 
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlanPermissionNumberGeneratorImpl implements PlanPermissionNumberGenerator {
 
     @Override
-    public String generatePlanPermissionNumber(final ServiceType serviceType) {
+    public String generatePlanPermissionNumber(final BpaApplication application) {
         String cityCode = ApplicationThreadLocals.getCityCode();
         return String.format( "%s", new StringBuilder().append("BPA").append(cityCode)
 				  .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear())

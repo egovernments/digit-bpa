@@ -65,11 +65,11 @@
 	
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.re.survey" /><span class="mandatory"></span></label>
+				code="lbl.re.survey" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control patternvalidation" maxlength="72"
 				data-pattern="alphanumericspecialcharacters" data-role="tagsinput" id="reSurveyNumber"
-				path="siteDetail[0].reSurveyNumber" required="required" />
+				path="siteDetail[0].reSurveyNumber" />
 				<small class="text-info view-content"><spring:message code="lbl.values.separated.comma"/></small>
 			<form:errors path="siteDetail[0].reSurveyNumber"
 				cssClass="add-margin error-msg" />

@@ -949,7 +949,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public String generatePlanPermissionNumber(final BpaApplication application) {
         final PlanPermissionNumberGenerator planPermissionNumber = beanResolver
                 .getAutoNumberServiceFor(PlanPermissionNumberGenerator.class);
-        return planPermissionNumber.generatePlanPermissionNumber(application.getServiceType());
+        return planPermissionNumber.generatePlanPermissionNumber(application);
     }
 
     public Boolean checkAnyTaxIsPendingToCollect(BpaApplication bpaApplication) {

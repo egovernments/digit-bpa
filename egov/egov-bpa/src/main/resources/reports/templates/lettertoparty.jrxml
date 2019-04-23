@@ -46,10 +46,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="484" y="0" width="60" height="60" uuid="434901eb-07c1-4c6e-9545-ccba42fb3aaf"/>
-				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
-			</image>
 			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
 				<reportElement mode="Transparent" x="10" y="1" width="90" height="61" uuid="6a556704-57e8-4103-85f1-29ad03e4af14">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>

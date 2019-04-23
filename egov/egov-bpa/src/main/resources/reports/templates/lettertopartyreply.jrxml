@@ -47,10 +47,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="485" y="10" width="60" height="60" uuid="91880e92-b25a-4548-b6f0-3c47ed4e3542"/>
-				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
-			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="156" y="81" width="142" height="27" uuid="3ff18553-88a3-4498-9dd9-e015e00ed8da"/>
 				<box leftPadding="1" rightPadding="1">

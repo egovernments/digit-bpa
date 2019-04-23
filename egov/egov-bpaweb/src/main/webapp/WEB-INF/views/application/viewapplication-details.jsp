@@ -196,7 +196,7 @@
 			<c:out value="${bpaApplication.serviceType.description}"
 				default="N/A"></c:out>
 		</div>
-		<div class="amenityHideShow">
+		<%-- <div class="amenityHideShow">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.amenity.type" />
 			</div>
@@ -204,7 +204,7 @@
 				<c:out
 					value="${bpaApplication.amenityName ne '' ?  bpaApplication.amenityName : 'N/A'}"></c:out>
 			</div>
-		</div>
+		</div> --%>
 	</div>
 	<c:if
 		test="${ empty  bpaApplication.receipts && (bpaApplication.status.code eq 'Created' || bpaApplication.status.code eq 'Registered')}">

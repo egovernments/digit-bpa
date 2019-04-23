@@ -236,7 +236,7 @@
 				</form:select>
 				<form:errors path="serviceType" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label amenityHideShow text-right">
+			<%-- <label class="col-sm-2 control-label amenityHideShow text-right">
 				<spring:message code="lbl.amenity.type" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -250,7 +250,7 @@
 				</select>
 				<form:errors path="applicationAmenityTemp"
 					cssClass="add-margin error-msg" />
-			</div>
+			</div> --%>
 
 		</div>
 

@@ -39,10 +39,10 @@
  */
 package org.egov.bpa.autonumber;
 
-import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.transaction.entity.BpaApplication;
 
 @FunctionalInterface
 public interface PlanPermissionNumberGenerator {
 
-    public String generatePlanPermissionNumber(ServiceType serviceType);
+    public String generatePlanPermissionNumber(BpaApplication application);
 }

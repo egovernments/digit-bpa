@@ -40,10 +40,6 @@
 				<reportElement x="40" y="21" width="80" height="79" uuid="6d654527-5c3f-4db6-8537-52067ceec582"/>
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
-			<image hAlign="Center">
-				<reportElement isPrintRepeatedValues="false" x="457" y="21" width="83" height="79" uuid="d163ddf0-22ef-4e54-bdcb-5cab48e70f7b"/>
-				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
-			</image>
 		</band>
 	</title>
 	<pageHeader>
