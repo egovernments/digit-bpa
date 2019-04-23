@@ -64,9 +64,9 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="132" splitType="Stretch">
+		<band height="105" splitType="Stretch">
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="112" width="125" height="20" uuid="42764850-9dce-4f40-8bc1-127b817f22ee"/>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="85" width="125" height="20" uuid="42764850-9dce-4f40-8bc1-127b817f22ee"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -80,7 +80,7 @@
 				<text><![CDATA[Receipt No:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="125" y="112" width="185" height="20" uuid="484a0123-29db-4954-98b1-cfd88b5060e8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="125" y="85" width="185" height="20" uuid="484a0123-29db-4954-98b1-cfd88b5060e8"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -94,7 +94,7 @@
 				<textFieldExpression><![CDATA[$F{receiptNum}+($F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()==null? "":"("+$F{receiptMisc}.getReceiptHeader().getManualreceiptnumber()+")")]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="310" y="112" width="113" height="20" uuid="989f2cb5-d44b-4fff-8128-9190397a3772"/>
+				<reportElement stretchType="RelativeToTallestObject" x="310" y="85" width="113" height="20" uuid="989f2cb5-d44b-4fff-8128-9190397a3772"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -108,7 +108,7 @@
 				<text><![CDATA[Receipt Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy HH:mm:ss">
-				<reportElement stretchType="RelativeToTallestObject" x="423" y="112" width="132" height="20" uuid="78344be2-2a07-4e90-beea-2a61c850e882"/>
+				<reportElement stretchType="RelativeToTallestObject" x="423" y="85" width="132" height="20" uuid="78344be2-2a07-4e90-beea-2a61c850e882"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -126,27 +126,20 @@
 				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="132" y="37" width="291" height="43" uuid="2e4dabdc-58c3-4512-b1e9-10f0de235034"/>
+				<reportElement x="132" y="10" width="291" height="43" uuid="2e4dabdc-58c3-4512-b1e9-10f0de235034"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="16" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+					<font fontName="SansSerif" size="18" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="132" y="80" width="291" height="20" uuid="7fa2a9dc-05e7-4b1e-a990-30bef838cf6d">
+				<reportElement x="132" y="53" width="291" height="20" uuid="7fa2a9dc-05e7-4b1e-a990-30bef838cf6d">
 					<printWhenExpression><![CDATA[!$F{description}.startsWith( "Service Charges" )]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[BUILDING PERMISSION FEE RECEIPT]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="70" y="13" width="485" height="33" uuid="47d53b06-0345-47e7-ace8-4e1465789f25"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Urban Development And Housing Department, Govt of Bihar]]></text>
 			</staticText>
 		</band>
 		<band height="20">
