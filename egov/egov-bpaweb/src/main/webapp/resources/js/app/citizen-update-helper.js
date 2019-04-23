@@ -41,8 +41,15 @@
 
 $(document).ready(function ($) {
 	
-	if($('#sentToCitizen').val()==='true')
-         $('form :not([type=button])').prop('disabled',true);	    
+	if($('#sentToCitizen').val()==='true') {
+		$('#editCitizenApplicationform').find(':input:not([type="button"], [type="submit"])', ':select', ':textarea').each(function () {
+	        $(this).attr("disabled","disabled");
+	    });
+		$('a.file-add').on("click", function (e) {
+	        e.preventDefault();
+	        e.stopPropagation();
+	    });
+	}
 
     if($('#isReconciliationInProgress').val() === 'true')
         bootbox.alert($('#applnPaymtReconciProg').val())

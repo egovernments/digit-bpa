@@ -105,11 +105,6 @@
 						<jsp:include page="permit-general-documents.jsp"></jsp:include>
 					</div>
 				</div>
-				<div id="noc-document-info" class="tab-pane fade">
-					<div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="permit-noc-documents.jsp"></jsp:include>
-					</div>
-				</div>
 				<div id="appliccation-info" class="tab-pane fade in active">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="applicationDetails.jsp"></jsp:include>
@@ -172,6 +167,11 @@
 							<jsp:include page="disclaimer.jsp" />
 						</div>
 					</c:if>
+				</div>
+				<div id="noc-document-info" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="permit-noc-documents.jsp"></jsp:include>
+					</div>
 				</div>
 			</div>
 			<div class="buttonbottom" align="center" id="buttonDiv">
