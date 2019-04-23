@@ -102,10 +102,13 @@ public class PlanService {
 
     private Plan applyRules(Plan plan, Map<String, String> cityDetails) {
         for (PlanFeature ruleClass : featureService.getFeatures()) {
+            LOG.info("getting bean " + new Date());
             FeatureProcess rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass(), cityDetails);
+            LOG.info("got bean :" + rule.getClass().getSimpleName() + " : " + new Date());
             rule.process(plan);
-			if (plan.getErrors().containsKey("onlyresidential_allowed"))
-				return plan;
+            LOG.info("Completed Process " + rule.getClass().getSimpleName() + "  " + new Date());
+            if (plan.getErrors().containsKey("onlyresidential_allowed"))
+                return plan;
         }
         return plan;
     }
