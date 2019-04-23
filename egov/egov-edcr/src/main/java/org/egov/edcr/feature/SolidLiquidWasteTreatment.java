@@ -66,7 +66,7 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
 
     public static final String SUBRULE_55_11_DESC = "Collection and disposal of solid and liquid Waste";
 
-    private static final String SUBRULE_55_11 = "55(11)";
+    private static final String SUBRULE_55_11 = "55-11";
 
     @Override
     public Plan validate(Plan pl) {

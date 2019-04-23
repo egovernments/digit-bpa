@@ -65,7 +65,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PetrolFillingStation extends FeatureProcess {
-    private static final String SUBRULE_59_10 = "59-(10)";
+    private static final String SUBRULE_59_10 = "59-10";
     private static final String SUBRULE_59_10_DESC = "Minimum distance from canopy to plot boundary";
 
     @Override

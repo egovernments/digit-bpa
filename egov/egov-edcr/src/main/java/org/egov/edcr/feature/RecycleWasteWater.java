@@ -68,7 +68,7 @@ import org.springframework.stereotype.Service;
 public class RecycleWasteWater extends FeatureProcess {
     private static final BigDecimal ONETHOUSANDFIVEHUNDER = BigDecimal.valueOf(1500);
     private static final String SUB_RULE_53_6_DESCRIPTION = "Recycling and reuse of waste water generated facility ";
-    private static final String SUB_RULE_53_6 = "53(6)";
+    private static final String SUB_RULE_53_6 = "53-6";
     private static final BigDecimal TWOTHOUSANDFIVEHUNDER = BigDecimal.valueOf(2500);
 
     @Override

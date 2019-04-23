@@ -114,11 +114,11 @@ public class Sanitation extends FeatureProcess {
 	private static final String FEATURE_NAME = "Sanitary Detail";
 	private static final String SIDE = "SIDE";
 	private static final String AREA = "AREA";
-	private static final String RULE_38_1 = "38(1)";
+	private static final String RULE_38_1 = "38-1";
 	private static final String NOOFBEDS = "No Of Beds";
-	public static final String RULE_55_12 = "55(12)";
-	public static final String RULE_40_A_4 = "40A(4)";
-	public static final String RULE_54_6 = "54(6)";
+	public static final String RULE_55_12 = "55-12";
+	public static final String RULE_40_A_4 = "40A-4";
+	public static final String RULE_54_6 = "54-6";
 	public static final BigDecimal MINAREAOFSPWC = BigDecimal.valueOf(2.625);
 	public static final BigDecimal MINDIMENSIONOFSPWC = BigDecimal.valueOf(1.5);
 	public static final String MINIMUM_AREA_SPWC = "2.625 M2";

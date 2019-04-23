@@ -71,10 +71,10 @@ public class AccessoryBuildingService extends FeatureProcess{
     private static final String SUBRULE_88_1_DESC = "Maximum area of accessory block %s";
     private static final String SUBRULE_88_3_DESC = "Maximum height of accessory block %s";
 
-    private static final String SUBRULE_88_1 = "88(1)";
-    private static final String SUBULE_88_3 = "88(3)";
-    private static final String SUBRULE_88_4 = "88(4)";
-    private static final String SUBRULE_88_5 = "88(5)";
+    private static final String SUBRULE_88_1 = "88-1";
+    private static final String SUBULE_88_3 = "88-3";
+    private static final String SUBRULE_88_4 = "88-4";
+    private static final String SUBRULE_88_5 = "88-5";
 
     private static final String MIN_DIS_NOTIFIED_ROAD_FROM_ACC_BLDG = "Minimum distance from accessory block to notified road";
     private static final String MIN_DIS_NON_NOTIFIED_ROAD_FROM_ACC_BLDG = "Minimum distance from accessory building to non notified road";

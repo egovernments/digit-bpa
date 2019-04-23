@@ -87,7 +87,7 @@ public class Far extends FeatureProcess {
     private static final String VALIDATION_NEGATIVE_EXISTING_FLOOR_AREA = "msg.error.negative.existing.floorarea.occupancy.floor";
     private static final String VALIDATION_NEGATIVE_BUILTUP_AREA = "msg.error.negative.builtuparea.occupancy.floor";
     private static final String VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA = "msg.error.negative.existing.builtuparea.occupancy.floor";
-    public static final String RULE_31_1 = "31(1)";
+    public static final String RULE_31_1 = "31-1";
     public static final String RULE_38 = "38";
 
     private static final BigDecimal ONE_POINTTWO = BigDecimal.valueOf(1.2);

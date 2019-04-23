@@ -80,8 +80,8 @@ public class BuildingHeight extends FeatureProcess {
     private static final String SECURITYZONE_RULE_EXPECTED_KEY = "securityzone.expected";
     private static final String SECURITYZONE_RULE_ACTUAL_KEY = "securityzone.actual";
 
-    private static final String SUB_RULE_32_1A = "32(1A)";
-    private static final String SUB_RULE_32_3 = "32(3)";
+    private static final String SUB_RULE_32_1A = "32-1A";
+    private static final String SUB_RULE_32_3 = "32-3";
     public static final String UPTO = "Up To";
     public static final String DECLARED = "Declared";
     private static final BigDecimal TWELVE = BigDecimal.valueOf(12);

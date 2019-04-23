@@ -69,18 +69,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BlockDistancesService extends FeatureProcess {
-	public static final String SUBRULE_54_3 = "54-(3)";
-	public static final String SUBRULE_55_2 = "55-(2)";
-	public static final String SUBRULE_57_4 = "57-(4)";
-	public static final String SUBRULE_58_3_A = "58-(3-a)";
-	public static final String SUBRULE_59_3 = "59-(3)";
-	public static final String SUBRULE_117_3 = "117-(3)";
+	public static final String SUBRULE_54_3 = "54-3";
+	public static final String SUBRULE_55_2 = "55-2";
+	public static final String SUBRULE_57_4 = "57-4";
+	public static final String SUBRULE_58_3_A = "58-3-a";
+	public static final String SUBRULE_59_3 = "59-3";
+	public static final String SUBRULE_117_3 = "117-3";
 	public static final BigDecimal DIS_7_5 = BigDecimal.valueOf(7.5);
 	public static final String BLK_NUMBER = "blkNumber";
 	public static final String SUBRULE = "subrule";
 	public static final String MIN_DISTANCE = "minimumDistance";
 	public static final String OCCUPANCY = "occupancy";
-	private static final String SUBRULE_37_1 = "37(1)";
+	private static final String SUBRULE_37_1 = "37-1";
 	private static final String SUB_RULE_DES = "Minimum distance between blocks %s and %s";
 	public static final String MINIMUM_DISTANCE_SETBACK = "Minimum distance should not be less than setback of tallest building or 3m";
 	public static final String MINIMUM_DISTANCE_BUILDING = "Minimum distance should not be less than 1/3 of height of tallest building or 18m";

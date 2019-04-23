@@ -65,7 +65,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TravelDistanceToExit extends FeatureProcess {
 
-    private static final String SUBRULE_43_2 = "43(2)";
+    private static final String SUBRULE_43_2 = "43-2";
     private static final String SUBRULE_43_2_DESC = "Maximum travel distance to emergency exit";
     public static final BigDecimal VAL_30 = BigDecimal.valueOf(30);
 

@@ -104,13 +104,13 @@ public class SideYardService extends GeneralRule {
 
 	private static final String RULE_35 = "35 Table-9";
 	private static final String RULE_36 = "36";
-	private static final String RULE_37_TWO_A = "37(2)(A)";
-	private static final String RULE_37_TWO_B = "37(2)(B)";
-	private static final String RULE_37_TWO_C = "37(2)(C)";
-	private static final String RULE_37_TWO_D = "37(2)(D)";
-	private static final String RULE_37_TWO_G = "37(2)(G)";
-	private static final String RULE_37_TWO_H = "37(2)(H)";
-	private static final String RULE_37_TWO_I = "37(2)(I)";
+	private static final String RULE_37_TWO_A = "37-2-A";
+	private static final String RULE_37_TWO_B = "37-2-B";
+	private static final String RULE_37_TWO_C = "37-2-C";
+	private static final String RULE_37_TWO_D = "37-2-D";
+	private static final String RULE_37_TWO_G = "37-2-G";
+	private static final String RULE_37_TWO_H = "37-2-H";
+	private static final String RULE_37_TWO_I = "37-2-I";
 	private static final String RULE_47 = "47";
 
 	public static final String BSMT_SIDE_YARD_DESC = "Basement Side Yard";

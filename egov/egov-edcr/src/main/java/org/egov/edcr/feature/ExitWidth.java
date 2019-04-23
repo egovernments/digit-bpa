@@ -77,11 +77,11 @@ import org.springframework.stereotype.Service;
 public class ExitWidth extends FeatureProcess {
 
     private static final String EXIT_WIDTH_DESC = "Exit Width";
-    private static final String SUBRULE_46_2 = "46(2)";
+    private static final String SUBRULE_46_2 = "46-2";
     private static final String SUB_RULE_DESCRIPTION = "Minimum exit width";
     public static final BigDecimal VAL_0_75 = BigDecimal.valueOf(0.75);
     public static final BigDecimal VAL_1_2 = BigDecimal.valueOf(1.2);
-    private static final String SUBRULE_45_1 = "45(1)";
+    private static final String SUBRULE_45_1 = "45-1";
     private static final String SUB_RULE_OCCUPANTS_DESCRIPTION = "Maximum number of occupants that can be allowed through";
     private static final String OCCUPANCY = "Occupancy";
     private static final String EXIT_WIDTH = "Exit Width";

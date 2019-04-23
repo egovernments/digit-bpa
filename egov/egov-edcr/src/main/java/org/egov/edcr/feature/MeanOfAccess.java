@@ -76,12 +76,12 @@ public class MeanOfAccess extends FeatureProcess {
 
     public static final BigDecimal VAL_4000 = BigDecimal.valueOf(4000);
     private static final String ACCESS_WIDTH = "Access Width";
-    private static final String SUBRULE_57_5 = "57-(5)";
-    private static final String SUBRULE_58_3b = "58-(3-b)";
-    private static final String SUBRULE_59_4 = "59-(4)";
+    private static final String SUBRULE_57_5 = "57-5";
+    private static final String SUBRULE_58_3b = "58-3-b";
+    private static final String SUBRULE_59_4 = "59-4";
     private static final String SUB_RULE_DESCRIPTION = "Minimum access width for plan for %s";
     public static final String OCCUPANCY = "occupancy";
-    private static final String SUBRULE_33_1 = "33-(1)";
+    private static final String SUBRULE_33_1 = "33-1";
     public static final BigDecimal VAL_300 = BigDecimal.valueOf(300);
     public static final BigDecimal VAL_600 = BigDecimal.valueOf(600);
     public static final BigDecimal VAL_1000 = BigDecimal.valueOf(1000);

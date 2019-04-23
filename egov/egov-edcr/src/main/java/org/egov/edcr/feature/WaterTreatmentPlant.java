@@ -67,7 +67,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WaterTreatmentPlant extends FeatureProcess {
     private static final String SUB_RULE_53_5_DESCRIPTION = "Liquid waste management treatment plant ";
-    private static final String SUB_RULE_53_5 = "53(5)";
+    private static final String SUB_RULE_53_5 = "53-5";
     private static final BigDecimal TWOTHOUSANDFIVEHUNDER = BigDecimal.valueOf(2500);
 
     @Override

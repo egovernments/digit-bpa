@@ -82,14 +82,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DistanceToRoad extends FeatureProcess {
-    private static final String SUB_RULE_25_1 = "25(1)";
-    private static final String SUB_RULE_25_1_PROVISIO = "25(1) Provisio";
+    private static final String SUB_RULE_25_1 = "25-1";
+    private static final String SUB_RULE_25_1_PROVISIO = "25-1 Provisio";
     private static final String SUB_RULE_25_1_PROVISIO_DESC = "Distance from building to street boundary";
     private static final String SUB_RULE_26_DESCRIPTION = "Prohibition for constructions abutting public roads.";
     private static final String SUB_RULE_62_1DESCRIPTION = "Minimum distance between plot boundary and abutting Street.";
     private static final String SUB_RULE_26 = "26";
     private static final String RULE_62 = "62";
-    private static final String SUB_RULE_62_1 = "62(1)";
+    private static final String SUB_RULE_62_1 = "62-1";
     private static BigDecimal FIVE = BigDecimal.valueOf(5);
     private static BigDecimal THREE = BigDecimal.valueOf(3);
     private static BigDecimal SEVEN = BigDecimal.valueOf(7);

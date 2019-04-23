@@ -69,7 +69,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Solar extends FeatureProcess {
     private static final String SUB_RULE_109_C_DESCRIPTION = "Solar Assisted Water Heating / Lighting system ";
-    private static final String SUB_RULE_109_C = "109(C)";
+    private static final String SUB_RULE_109_C = "109-C";
     private static final BigDecimal FOURHUNDRED = BigDecimal.valueOf(400);
 
     @Override

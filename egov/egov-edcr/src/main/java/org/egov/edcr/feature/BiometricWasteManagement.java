@@ -67,7 +67,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BiometricWasteManagement extends FeatureProcess {
     private static final String SUBRULE_54_4_DESC = "Biomedical Waste Treatment";
-    private static final String SUBRULE_54_4 = "54(4)";
+    private static final String SUBRULE_54_4 = "54-4";
 
     @Override
     public Plan validate(Plan pl) {

@@ -75,7 +75,7 @@ import org.springframework.stereotype.Service;
 public class RampService extends FeatureProcess {
 
     private static final String SUBRULE_42_5_V = "42-5-v";
-    private static final String SUBRULE_40_A7 = "40A(7)";
+    private static final String SUBRULE_40_A7 = "40A-7";
     private static final String SUBRULE_40 = "40";
     /*
      * private static final String SUBRULE_40_A1 = "40A(1)"; private static final String SUBRULE_40_A_7_DESC =

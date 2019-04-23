@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class GeneralStair extends FeatureProcess {
     private static final Logger LOG = Logger.getLogger(GeneralStair.class);
     private static final String FLOOR = "Floor";
-    private static final String RULE42_5_II = "42(5)(ii)";
+    private static final String RULE42_5_II = "42-5-ii";
     // private static final String RULE42 = "42";
     // private static final String EXPECTED_WIDTH = "0.75";
     // private static final String EXPECTED_LINE = "0.75";

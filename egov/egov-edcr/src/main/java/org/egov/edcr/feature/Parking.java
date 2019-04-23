@@ -95,9 +95,9 @@ public class Parking extends FeatureProcess {
 	private static final String TWO_WHEELER_PARK_AREA = "Two Wheeler Parking Area";
 	private static final String SP_PARKING = "Special parking";
 	private static final String SUB_RULE_34_1_DESCRIPTION = "Parking Slots Area";
-	private static final String SUB_RULE_34_2 = "34(2)";
-	private static final String SUB_RULE_40_8 = "40(8)";
-	private static final String SUB_RULE_40_11 = "40(11)";
+	private static final String SUB_RULE_34_2 = "34-2";
+	private static final String SUB_RULE_40_8 = "40-8";
+	private static final String SUB_RULE_40_11 = "40-11";
 	private static final String PARKING_MIN_AREA = "5 M x 2 M";
 	private static final double PARKING_SLOT_WIDTH = 2;
 	private static final double PARKING_SLOT_HEIGHT = 5;
@@ -112,9 +112,9 @@ public class Parking extends FeatureProcess {
 	private static final double PARK_F = 0.30;
 	private static final double PARK_VISITOR = 0.15;
 	private static final String SUB_RULE_40 = "40";
-	private static final String SUB_RULE_40_2 = "40(2)";
+	private static final String SUB_RULE_40_2 = "40-2";
 	private static final String SUB_RULE_40_2_DESCRIPTION = "Parking space";
-	private static final String SUB_RULE_40_10 = "40(10)";
+	private static final String SUB_RULE_40_10 = "40-10";
 	private static final String SUB_RULE_40_10_DESCRIPTION = "Visitor’s Parking";
 	public static final String OPEN_PARKING_DIM_DESC = "Open parking ECS dimension ";
 	public static final String COVER_PARKING_DIM_DESC = "Cover parking ECS dimension ";

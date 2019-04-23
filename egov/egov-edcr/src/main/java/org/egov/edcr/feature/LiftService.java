@@ -73,7 +73,7 @@ public class LiftService extends FeatureProcess {
 	private static final String SUBRULE_48 = "48";
 	private static final String REMARKS = "Remarks";
 	private static final String SUBRULE_48_DESCRIPTION = "Minimum number of lifts";
-	private static final String SUBRULE_40A_3 = "40A(3)";
+	private static final String SUBRULE_40A_3 = "40A-3";
 	private static final String SUBRULE_118 = "118";
 	private static final String SUBRULE_118_DESCRIPTION = "Minimum dimension Of lift %s on floor %s";
 	private static final String SUBRULE_118_DESC = "Minimum dimension Of lift";

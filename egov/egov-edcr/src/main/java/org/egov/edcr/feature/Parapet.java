@@ -64,7 +64,7 @@ import org.springframework.stereotype.Service;
 public class Parapet extends FeatureProcess {
 
 	private static final Logger LOG = Logger.getLogger(Parapet.class);
-	private static final String RULE_41_V = "41(v)";
+	private static final String RULE_41_V = "41-v";
 	public static final String PARAPET_DESCRIPTION = "Parapet";
 
 	@Override

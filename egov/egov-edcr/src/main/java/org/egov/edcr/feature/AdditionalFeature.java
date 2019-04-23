@@ -78,9 +78,9 @@ public class AdditionalFeature extends FeatureProcess {
 
 	private static final String RULE_38 = "38";
 	private static final String RULE_39 = "39";
-	private static final String RULE_41_I_A = "41(i)(a)";
+	private static final String RULE_41_I_A = "41-i-a";
 	private static final String RULE_47 = "47";
-	private static final String RULE_41_I_B = "41(i)(b)";
+	private static final String RULE_41_I_B = "41-i-b";
 	private static final String RULE_50 = "50";
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	private static final BigDecimal ONE_POINTFIVE = BigDecimal.valueOf(1.5);

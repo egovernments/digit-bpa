@@ -73,8 +73,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class WasteDisposal extends FeatureProcess {
     private static final String SUB_RULE_26A_DESCRIPTION = "Waste Disposal";
-    private static final String SUB_RULE_26A = "26(A)";
-    private static final String SUB_RULE_104_4_WD = "104(4)";
+    private static final String SUB_RULE_26A = "26-A";
+    private static final String SUB_RULE_104_4_WD = "104-4";
     private static final String SUB_RULE_104_4_PLOT_DESCRIPTION_WD = "Minimum distance from waste treatment facility like: leach pit,soak pit etc to nearest point on the plot boundary";
 
     @Override

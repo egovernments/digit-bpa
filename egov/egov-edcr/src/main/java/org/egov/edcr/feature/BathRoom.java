@@ -67,7 +67,7 @@ import org.springframework.stereotype.Service;
 public class BathRoom extends FeatureProcess {
 
 	private static final Logger LOG = Logger.getLogger(BathRoom.class);
-	private static final String RULE_41_IV = "41(iv)";
+	private static final String RULE_41_IV = "41-iv";
 	public static final String BATHROOM_DESCRIPTION = "Bathroom";
 
 	@Override

@@ -62,7 +62,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DepthCuttingService extends FeatureProcess {
 	private static final String SUBRULE_11_A_DESC = "Maximum depth of cutting from ground level";
-	private static final String SUBRULE_11_A = "11(A)";
+	private static final String SUBRULE_11_A = "11-A";
 
 	@Override
 	public Plan validate(Plan pl) {

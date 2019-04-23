@@ -82,9 +82,9 @@ public class Well extends FeatureProcess {
     private static final String SUB_RULE_104_2_DESCRIPTION = "Minimum distance from well to nearest point on plot boundary";
     private static final String SUB_RULE_104_4_DESCRIPTION = "Minimum distance from well to nearest point on leach pit, soak pit, refuse pit, earth closet or septic tanks ";
 
-    private static final String SUB_RULE_104_1 = "104(1)";
-    private static final String SUB_RULE_104_2 = "104(2)";
-    private static final String SUB_RULE_104_4 = "104(4)";
+    private static final String SUB_RULE_104_1 = "104-1";
+    private static final String SUB_RULE_104_2 = "104-2";
+    private static final String SUB_RULE_104_4 = "104-4";
 
     private static final BigDecimal three = BigDecimal.valueOf(3);
     private static final BigDecimal TWO_MTR = BigDecimal.valueOf(2);

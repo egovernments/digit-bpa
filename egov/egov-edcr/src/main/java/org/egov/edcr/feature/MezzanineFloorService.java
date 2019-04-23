@@ -30,7 +30,7 @@ public class MezzanineFloorService extends FeatureProcess {
     private static final String RULE46_MINAREA_DESC = "Minimum area of mezzanine floor";
     private static final String RULE46_DIM_DESC = "Minimum height of mezzanine floor";
     public static final String SUB_RULE_55_7_DESC = "Maximum allowed area of balcony";
-    public static final String SUB_RULE_55_7 = "55(7)";
+    public static final String SUB_RULE_55_7 = "55-7";
     private static final String FLOOR = "Floor";
     public static final String HALL_NUMBER = "Hall Number";
     private static final BigDecimal AREA_9_POINT_5 = BigDecimal.valueOf(9.5);

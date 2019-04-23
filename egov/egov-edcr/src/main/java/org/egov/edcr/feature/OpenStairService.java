@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OpenStairService extends FeatureProcess {
     private static final Logger LOG = Logger.getLogger(OpenStairService.class);
-    private static final String SUB_RULE_24_11 = "24(11)";
+    private static final String SUB_RULE_24_11 = "24-11";
     private static final BigDecimal OPENSTAIR_DISTANCE = BigDecimal.valueOf(0.60);
 
     @Override
