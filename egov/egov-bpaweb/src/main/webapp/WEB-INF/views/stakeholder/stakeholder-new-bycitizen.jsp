@@ -128,7 +128,7 @@
             <div class="modal-body">
                 <ul>
                     <li><spring:message code="alrt.needto.have"/> <span class="view-content"><spring:message code="alrt.mobile.email.aadhaar"/> </span> <spring:message code="alrt.details"/></li>
-                    <li><spring:message code="alrt.haveto.submit.documents"/><span class="view-content"><spring:message code="alrt.documentdetails"/></span><spring:message code="alrt.tabfor.more.details"/> </li>
+                    <li><spring:message code="alrt.haveto.submit.documents"/> <span class="view-content"><spring:message code="alrt.documentdetails"/> </span><spring:message code="alrt.tabfor.more.details"/> </li>
                     <li><spring:message code="alrt.makesure.all.required.documents"/></li>
                     <li><spring:message code="alrt.mandatory.details.marked"/> <span class="view-content">Asterisk</span> <span class="error-msg">(*)</span> symbol.</li>
                 </ul>
