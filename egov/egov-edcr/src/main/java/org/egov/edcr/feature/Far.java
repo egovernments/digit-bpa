@@ -180,7 +180,8 @@ public class Far extends FeatureProcess {
             Set<OccupancyTypeHelper> occupancyByBlock = new HashSet<>();
             for (Floor flr : building.getFloors()) {
                 for (Occupancy occupancy : flr.getOccupancies()) {
-                    occupancyByBlock.add(occupancy.getTypeHelper());
+                    if(occupancy.getTypeHelper() != null)
+                        occupancyByBlock.add(occupancy.getTypeHelper());
                 }
             }
 
@@ -197,6 +198,7 @@ public class Far extends FeatureProcess {
                 for (Floor flr : blk.getBuilding().getFloors()) {
                     for (Occupancy occupancy : flr.getOccupancies()) {
                         if (occupancyType.getType() != null
+                                && occupancy.getTypeHelper() != null
                                 && occupancy.getTypeHelper().getType().equals(occupancyType.getType())) {
                             blockWiseFloorArea = blockWiseFloorArea
                                     .add(occupancy.getFloorArea());

@@ -66,6 +66,7 @@ import org.egov.edcr.feature.GuardRoom;
 import org.egov.edcr.feature.HeightOfRoom;
 import org.egov.edcr.feature.Kitchen;
 import org.egov.edcr.feature.LiftService;
+import org.egov.edcr.feature.MezzanineFloorService;
 import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.OverHangs;
 import org.egov.edcr.feature.OverheadElectricalLineService;
@@ -98,6 +99,8 @@ public class PlanFeatureRepository {
 		features.add(pf);
 		pf = new PlanFeature(SetBackService.class);
 		features.add(pf);
+		pf = new PlanFeature(MezzanineFloorService.class);
+                features.add(pf);
 		pf = new PlanFeature(Parking.class);
 		features.add(pf);
 		pf = new PlanFeature(MonumentDistance.class);
