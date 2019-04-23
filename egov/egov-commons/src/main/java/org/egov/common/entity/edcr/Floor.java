@@ -84,6 +84,8 @@ public class Floor extends Measurement {
 	private Room bathRoom;
 	private Room waterClosets;
 	private Room bathRoomWaterClosets;
+	private List<BigDecimal> heightFromTheFloorToCeiling;
+	private List<BigDecimal> heightOfTheCeilingOfUpperBasement;
 
 	public List<FireStair> getFireStairs() {
 		return fireStairs;
@@ -143,7 +145,7 @@ public class Floor extends Measurement {
 	public void addLifts(Lift lift) {
 		this.lifts.add(lift);
 	}
-	
+
 	public void addDaLifts(Lift daLift) {
 		this.daLifts.add(daLift);
 	}
@@ -208,26 +210,26 @@ public class Floor extends Measurement {
 			occupancies.add(occupancy);
 
 	}
-	
-    public void addCarpetDeductionArea(Occupancy occupancy) {
-        if (occupancies == null) {
-            occupancies = new ArrayList<>();
-            occupancies.add(occupancy);
-        } else if (occupancies.contains(occupancy)) {
-            occupancies.get(occupancies.indexOf(occupancy))
-                    .setCarpetAreaDeduction((occupancies.get(occupancies.indexOf(occupancy)).getCarpetAreaDeduction() == null
-                            ? BigDecimal.ZERO
-                            : occupancies.get(occupancies.indexOf(occupancy)).getCarpetAreaDeduction())
-                                    .add(occupancy.getCarpetAreaDeduction()));
-            
-            occupancies.get(occupancies.indexOf(occupancy)).setExistingCarpetAreaDeduction(
-                    (occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetAreaDeduction() == null ? BigDecimal.ZERO
-                            : occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetAreaDeduction())
-                                    .add(occupancy.getExistingCarpetAreaDeduction()));
-        } else
-            occupancies.add(occupancy);
 
-    }
+	public void addCarpetDeductionArea(Occupancy occupancy) {
+		if (occupancies == null) {
+			occupancies = new ArrayList<>();
+			occupancies.add(occupancy);
+		} else if (occupancies.contains(occupancy)) {
+			occupancies.get(occupancies.indexOf(occupancy)).setCarpetAreaDeduction(
+					(occupancies.get(occupancies.indexOf(occupancy)).getCarpetAreaDeduction() == null ? BigDecimal.ZERO
+							: occupancies.get(occupancies.indexOf(occupancy)).getCarpetAreaDeduction())
+									.add(occupancy.getCarpetAreaDeduction()));
+
+			occupancies.get(occupancies.indexOf(occupancy)).setExistingCarpetAreaDeduction(
+					(occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetAreaDeduction() == null
+							? BigDecimal.ZERO
+							: occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetAreaDeduction())
+									.add(occupancy.getExistingCarpetAreaDeduction()));
+		} else
+			occupancies.add(occupancy);
+
+	}
 
 	public List<Occupancy> getOccupancies() {
 		return occupancies;
@@ -429,5 +431,21 @@ public class Floor extends Measurement {
 
 	public void setDaLifts(List<Lift> daLifts) {
 		this.daLifts = daLifts;
+	}
+
+	public List<BigDecimal> getHeightFromTheFloorToCeiling() {
+		return heightFromTheFloorToCeiling;
+	}
+
+	public void setHeightFromTheFloorToCeiling(List<BigDecimal> heightFromTheFloorToCeiling) {
+		this.heightFromTheFloorToCeiling = heightFromTheFloorToCeiling;
+	}
+
+	public List<BigDecimal> getHeightOfTheCeilingOfUpperBasement() {
+		return heightOfTheCeilingOfUpperBasement;
+	}
+
+	public void setHeightOfTheCeilingOfUpperBasement(List<BigDecimal> heightOfTheCeilingOfUpperBasement) {
+		this.heightOfTheCeilingOfUpperBasement = heightOfTheCeilingOfUpperBasement;
 	}
 }
