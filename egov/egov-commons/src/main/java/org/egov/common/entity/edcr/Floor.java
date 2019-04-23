@@ -208,6 +208,26 @@ public class Floor extends Measurement {
 			occupancies.add(occupancy);
 
 	}
+	
+    public void addCarpetDeductionArea(Occupancy occupancy) {
+        if (occupancies == null) {
+            occupancies = new ArrayList<>();
+            occupancies.add(occupancy);
+        } else if (occupancies.contains(occupancy)) {
+            occupancies.get(occupancies.indexOf(occupancy))
+                    .setCarpetAreaDeduction((occupancies.get(occupancies.indexOf(occupancy)).getCarpetAreaDeduction() == null
+                            ? BigDecimal.ZERO
+                            : occupancies.get(occupancies.indexOf(occupancy)).getCarpetAreaDeduction())
+                                    .add(occupancy.getCarpetAreaDeduction()));
+            
+            occupancies.get(occupancies.indexOf(occupancy)).setExistingCarpetAreaDeduction(
+                    (occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetAreaDeduction() == null ? BigDecimal.ZERO
+                            : occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetAreaDeduction())
+                                    .add(occupancy.getExistingCarpetAreaDeduction()));
+        } else
+            occupancies.add(occupancy);
+
+    }
 
 	public List<Occupancy> getOccupancies() {
 		return occupancies;
