@@ -55,8 +55,7 @@
 				<!-- for citizen user login -->
 				<div class="col-sm-9 col-sm-offset-2">
 					<div class="checkbox view-content">
-						<form:checkbox path="citizenAccepted" id="citizenAccepted"
-							required="required" />
+						<form:checkbox path="citizenAccepted" id="citizenAccepted" />
 						<span class="mandatory"></span>&nbsp;<spring:message code="lbl.ack.accpt" />
 						<ul style="list-style-type: none; padding-left: 10px">
 							<li></li>
@@ -69,8 +68,7 @@
 				<!-- for business user login -->
 				<div class="col-sm-9 col-sm-offset-2">
 					<div class="checkbox view-content">
-						<form:checkbox path="architectAccepted" id="architectAccepted"
-							required="required" />
+						<form:checkbox path="architectAccepted" id="architectAccepted" />
 						<span class="mandatory"></span>&nbsp;<spring:message code="lbl.ack.accpt" />
 						<ul style="list-style-type: none; padding-left: 10px">
 							<li></li>
