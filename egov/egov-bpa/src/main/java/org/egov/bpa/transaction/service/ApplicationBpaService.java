@@ -947,8 +947,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     public String generatePlanPermissionNumber(final BpaApplication application) {
-        final PlanPermissionNumberGenerator planPermissionNumber = beanResolver
-                .getAutoNumberServiceFor(PlanPermissionNumberGenerator.class);
+        final PlanPermissionNumberGenerator planPermissionNumber = (PlanPermissionNumberGenerator) specificNoticeService
+                .find(PlanPermissionNumberGenerator.class, specificNoticeService.getCityDetails());
+
         return planPermissionNumber.generatePlanPermissionNumber(application);
     }
 
