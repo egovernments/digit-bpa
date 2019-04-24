@@ -82,6 +82,7 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final String RULE_47 = "47";
 	private static final String RULE_41_I_B = "41-i-b";
 	private static final String RULE_50 = "50";
+	private static final String RULE_55_2 = "50-2";
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	private static final BigDecimal ONE_POINTFIVE = BigDecimal.valueOf(1.5);
 	private static final BigDecimal THREE = BigDecimal.valueOf(3);
@@ -99,8 +100,12 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final BigDecimal ROAD_WIDTH_SIX_POINTONE = BigDecimal.valueOf(6.1);
 	private static final BigDecimal ROAD_WIDTH_NINE_POINTONE = BigDecimal.valueOf(9.1);
 	private static final BigDecimal ROAD_WIDTH_TWELVE_POINTTWO = BigDecimal.valueOf(12.2);
-	
+
+	private static final int PLOTAREA_100 = 100;
 	private static final int PLOTAREA_300 = 300;
+	private static final int PLOTAREA_500 = 500;
+	private static final int PLOTAREA_1000 = 1000;
+	private static final int PLOTAREA_3000 = 3000;
 	/*
 	 * private static final BigDecimal ROAD_WIDTH_EIGHTEEN_POINTTHREE =
 	 * BigDecimal.valueOf(18.3); private static final BigDecimal
@@ -124,6 +129,9 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final String MIN_INT_COURT_YARD = "0.15";
 	public static final String MIN_INT_COURT_YARD_DESC = "Minimum interior courtyard";
 	public static final String BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC = "Barrier free access for physically challenged people";
+	public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY_PROVISIONS_ERROR_CODE = "Green buildings and sustainability provisions";
+	public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY_PROVISIONS_ERROR_MSG = "Green buildings and sustainability provision should be YES";
+	public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY = "Green buildings and sustainability provisions";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -174,7 +182,8 @@ public class AdditionalFeature extends FeatureProcess {
 		validatePlinthHeight(pl, errors);
 		// validateIntCourtYard(pl, errors);
 		validateBarrierFreeAccess(pl, errors);
-		validateBasement(pl,errors);
+		validateBasement(pl, errors);
+		validateGreenBuildingsAndSustainability(pl, errors);
 
 		return pl;
 	}
@@ -232,11 +241,11 @@ public class AdditionalFeature extends FeatureProcess {
 					isAccepted = floorAbvGround.compareTo(TWO) <= 0;
 					requiredFloorCount = "<= 2";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_THREE_POINTSIX) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) <  0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) < 0) {
 					isAccepted = floorAbvGround.compareTo(THREE) <= 0;
 					requiredFloorCount = "<= 3";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_FOUR_POINTEIGHT) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) <  0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) < 0) {
 					isAccepted = floorAbvGround.compareTo(THREE) <= 0;
 					requiredFloorCount = "<= 3";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
@@ -347,7 +356,7 @@ public class AdditionalFeature extends FeatureProcess {
 					isAccepted = buildingHeight.compareTo(TEN) <= 0;
 					requiredBuildingHeight = "<= 10";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <  0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) < 0) {
 					isAccepted = buildingHeight.compareTo(TWELVE) <= 0;
 					requiredBuildingHeight = "<= 12";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0) {
@@ -383,7 +392,7 @@ public class AdditionalFeature extends FeatureProcess {
 					errors.put(NEW_AREA_ERROR, NEW_AREA_ERROR_MSG);
 					pl.addErrors(errors);
 				} else if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) >= 0
-						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) <  0) {
+						&& roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) < 0) {
 					isAccepted = buildingHeight.compareTo(TWELVE) <= 0;
 					requiredBuildingHeight = "<= 12";
 				} else if (roadWidth.compareTo(ROAD_WIDTH_NINE_POINTONE) >= 0
@@ -478,7 +487,7 @@ public class AdditionalFeature extends FeatureProcess {
 			}
 		}
 	}
-	
+
 	private void validateBasement(Plan pl, HashMap<String, String> errors) {
 		for (Block block : pl.getBlocks()) {
 
@@ -521,7 +530,147 @@ public class AdditionalFeature extends FeatureProcess {
 			}
 		}
 	}
-	 
+
+	private void validateGreenBuildingsAndSustainability(Plan pl, HashMap<String, String> errors) {
+		OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+		scrutinyDetail.setKey("Common_Green buildings and sustainability provisions");
+		scrutinyDetail.addColumnHeading(1, RULE_NO);
+		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+		scrutinyDetail.addColumnHeading(3, REQUIRED);
+		scrutinyDetail.addColumnHeading(4, PROVIDED);
+		scrutinyDetail.addColumnHeading(5, STATUS);
+		if (pl.getPlot() != null && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_100)) >= 0) {
+
+			if (StringUtils.isNotBlank(pl.getPlanInformation().getProvisionsForGreenBuildingsAndSustainability())
+					&& pl.getPlanInformation().getProvisionsForGreenBuildingsAndSustainability().equals("YES")) {
+
+				if (mostRestrictiveFarHelper.getType() != null
+						&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
+
+					if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_100)) >= 0
+							&& pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_500)) < 0) {
+
+						validate1a(pl, scrutinyDetail);
+						validate2a(pl, scrutinyDetail);
+						validate2b(pl, scrutinyDetail);
+						validate4a(pl, scrutinyDetail);
+
+					} else if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_500)) >= 0
+							&& pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_1000)) < 0) {
+
+						validate1a(pl, scrutinyDetail);
+						validate2b(pl, scrutinyDetail);
+						validate4a(pl, scrutinyDetail);
+
+					} else if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_1000)) >= 0
+							&& pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_3000)) < 0) {
+
+						validate1a(pl, scrutinyDetail);
+						validate2a(pl, scrutinyDetail);
+						validate2b(pl, scrutinyDetail);
+						validate4a(pl, scrutinyDetail);
+
+					} else {
+
+						validate1a(pl, scrutinyDetail);
+						validate2a(pl, scrutinyDetail);
+						validate2b(pl, scrutinyDetail);
+						validate4a(pl, scrutinyDetail);
+
+					}
+				} else {
+
+					if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_100)) >= 0
+							&& pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_500)) < 0) {
+
+						validate1a(pl, scrutinyDetail);
+						validate2b(pl, scrutinyDetail);
+						validate4a(pl, scrutinyDetail);
+
+					} else if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_500)) >= 0
+							&& pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_1000)) < 0) {
+
+						validate1a(pl, scrutinyDetail);
+						validate2a(pl, scrutinyDetail);
+						validate2b(pl, scrutinyDetail);
+						validate4a(pl, scrutinyDetail);
+
+					} else if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_1000)) >= 0
+							&& pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_3000)) < 0) {
+
+						validate1a(pl, scrutinyDetail);
+						validate2a(pl, scrutinyDetail);
+						validate2b(pl, scrutinyDetail);
+						validate4a(pl, scrutinyDetail);
+
+					} else {
+
+						validate1a(pl, scrutinyDetail);
+						validate2a(pl, scrutinyDetail);
+						validate2b(pl, scrutinyDetail);
+						validate4a(pl, scrutinyDetail);
+
+					}
+
+				}
+
+				pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+			} else {
+				errors.put(GREEN_BUILDINGS_AND_SUSTAINABILITY_PROVISIONS_ERROR_CODE,
+						GREEN_BUILDINGS_AND_SUSTAINABILITY_PROVISIONS_ERROR_MSG);
+				pl.addErrors(errors);
+			}
+		}
+
+	}
+
+	private void validate4a(Plan pl, ScrutinyDetail scrutinyDetail) {
+		if (pl.getUtility().getSegregationOfWaste() != null && !pl.getUtility().getSegregationOfWaste().isEmpty()) {
+			addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
+					"Provided segregation of waste details", Result.Accepted.getResultVal());
+		} else {
+			addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
+					"Not provided segregation of waste details", Result.Not_Accepted.getResultVal());
+		}
+	}
+
+	private void validate2b(Plan pl, ScrutinyDetail scrutinyDetail) {
+		if (pl.getUtility().getSolarWaterHeatingSystems() != null
+				&& !pl.getUtility().getSolarWaterHeatingSystems().isEmpty()) {
+			addDetails(scrutinyDetail, "55-2-b", "Installation of Solar Assisted Water Heating Systems",
+					"Solar assisted water heating system details",
+					"Provided solar assisted water heating system details", Result.Accepted.getResultVal());
+		} else {
+			addDetails(scrutinyDetail, "55-2-b", "Installation of Solar Assisted Water Heating Systems",
+					"Solar assisted water heating system details",
+					"Not provided solar assisted water heating system details", Result.Not_Accepted.getResultVal());
+		}
+	}
+
+	private void validate2a(Plan pl, ScrutinyDetail scrutinyDetail) {
+		if (pl.getUtility().getSolar() != null && !pl.getUtility().getSolar().isEmpty()) {
+			addDetails(scrutinyDetail, "55-2-a", "Installation of Solar Photovoltaic Panels",
+					"Solar photovoltaic panel details", "Provided solar photovoltaic panel details",
+					Result.Accepted.getResultVal());
+		} else {
+			addDetails(scrutinyDetail, "55-2-a", "Installation of Solar Photovoltaic Panels",
+					"Solar photovoltaic panel details", "Not provided solar photovoltaic panel details",
+					Result.Not_Accepted.getResultVal());
+		}
+	}
+
+	private void validate1a(Plan pl, ScrutinyDetail scrutinyDetail) {
+		if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
+			addDetails(scrutinyDetail, "55-1-a", "Rain Water Harvesting", "Rain water harvesting details",
+					"Provided rain water harvesting", Result.Accepted.getResultVal());
+		} else {
+			addDetails(scrutinyDetail, "55-1-a", "Rain Water Harvesting", "Rain water harvesting details",
+					"Not Provided rain water harvesting", Result.Not_Accepted.getResultVal());
+		}
+	}
+
 	/*
 	 * private void validateIntCourtYard(Plan pl, HashMap<String, String>
 	 * errors) { for (Block block : pl.getBlocks()) {
@@ -545,6 +694,17 @@ public class AdditionalFeature extends FeatureProcess {
 	 * scrutinyDetail.getDetail().add(details);
 	 * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); } } }
 	 */
+
+	private void addDetails(ScrutinyDetail scrutinyDetail, String rule, String description, String required,
+			String provided, String status) {
+		Map<String, String> details = new HashMap<>();
+		details.put(RULE_NO, rule);
+		details.put(DESCRIPTION, description);
+		details.put(REQUIRED, required);
+		details.put(PROVIDED, provided);
+		details.put(STATUS, status);
+		scrutinyDetail.getDetail().add(details);
+	}
 
 	private ScrutinyDetail getNewScrutinyDetailRoadArea(String key) {
 		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
