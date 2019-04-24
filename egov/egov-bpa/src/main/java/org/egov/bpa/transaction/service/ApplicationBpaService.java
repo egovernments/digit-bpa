@@ -94,6 +94,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
 import org.egov.bpa.autonumber.RevocationNumberGenerator;
+import org.egov.bpa.autonumber.impl.PlanPermissionNumberGeneratorImpl;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.PermitRevocation;
@@ -947,9 +948,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     public String generatePlanPermissionNumber(final BpaApplication application) {
-        final PlanPermissionNumberGenerator planPermissionNumber = (PlanPermissionNumberGenerator) specificNoticeService
-                .find(PlanPermissionNumberGenerator.class, specificNoticeService.getCityDetails());
-
+        PlanPermissionNumberGenerator planPermissionNumber = (PlanPermissionNumberGenerator) specificNoticeService
+                .find(PlanPermissionNumberGeneratorImpl.class, specificNoticeService.getCityDetails());
         return planPermissionNumber.generatePlanPermissionNumber(application);
     }
 
