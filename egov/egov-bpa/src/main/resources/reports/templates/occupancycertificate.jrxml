@@ -21,16 +21,16 @@
 		<![CDATA[]]>
 	</queryString>
 	<title>
-		<band height="100" splitType="Stretch">
+		<band height="120" splitType="Stretch">
 			<textField>
-				<reportElement x="180" y="30" width="200" height="20" uuid="2121a076-60d8-443b-b5a1-a49d3a778e54"/>
+				<reportElement x="180" y="48" width="200" height="20" uuid="2121a076-60d8-443b-b5a1-a49d3a778e54"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["APPENDIX H"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="170" y="50" width="220" height="20" uuid="cf69cf5a-5ae2-4b8a-b3e6-9efce4782ecf"/>
+				<reportElement x="170" y="68" width="220" height="20" uuid="cf69cf5a-5ae2-4b8a-b3e6-9efce4782ecf"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>
 				</textElement>
@@ -40,6 +40,13 @@
 				<reportElement x="40" y="21" width="80" height="79" uuid="6d654527-5c3f-4db6-8537-52067ceec582"/>
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
+			<staticText>
+				<reportElement x="108" y="27" width="357" height="20" uuid="c36fa071-2d51-423f-9e8c-dfb4dba19316"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Urban Development And Housing Department, Govt of Bihar]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>

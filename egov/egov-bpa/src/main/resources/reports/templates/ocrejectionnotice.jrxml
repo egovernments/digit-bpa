@@ -29,7 +29,7 @@
 	<title>
 		<band height="96" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="88" y="0" width="428" height="20" uuid="ba5c4563-d93c-483f-86e2-5aae2755cd2f"/>
+				<reportElement x="88" y="29" width="428" height="20" uuid="ba5c4563-d93c-483f-86e2-5aae2755cd2f"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -67,6 +67,13 @@
 				<reportElement x="12" y="0" width="60" height="60" uuid="81d01a85-baca-4d87-a163-f1f059c78074"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
+			<staticText>
+				<reportElement x="88" y="6" width="428" height="20" uuid="47a89ac7-ee81-4110-8781-02f638ae6777"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Urban Development And Housing Department, Govt of Bihar]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
