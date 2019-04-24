@@ -201,10 +201,10 @@ public class Parking extends FeatureProcess {
 		BigDecimal basementParkingArea = BigDecimal.ZERO;
 		for (Block block : pl.getBlocks()) {
 			for (Floor floor : block.getBuilding().getFloors()) {
-				coverParkingArea = floor.getParking().getCoverCars().stream().map(Measurement::getArea)
-						.reduce(BigDecimal.ZERO, BigDecimal::add);
-				basementParkingArea = floor.getParking().getBasementCars().stream().map(Measurement::getArea)
-						.reduce(BigDecimal.ZERO, BigDecimal::add);
+				coverParkingArea =coverParkingArea.add( floor.getParking().getCoverCars().stream().map(Measurement::getArea)
+						.reduce(BigDecimal.ZERO, BigDecimal::add));
+				basementParkingArea = basementParkingArea.add(floor.getParking().getBasementCars().stream().map(Measurement::getArea)
+						.reduce(BigDecimal.ZERO, BigDecimal::add));
 			}
 		}
 		BigDecimal openParkingArea = pl.getParkingDetails().getOpenCars().stream().map(Measurement::getArea)
