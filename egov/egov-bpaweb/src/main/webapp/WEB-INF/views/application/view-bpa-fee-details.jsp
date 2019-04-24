@@ -54,14 +54,57 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
+<div class="panel-body">
+<c:if test="${bpaApplication.demand ne null}">
+
+
+<div class="panel-heading custom_form_panel_heading">
+    <div class="panel-title">
+        <spring:message code="lbl.admission.fees"/>
+    </div>
+</div>
+
+ <table class="table table-striped table-bordered" id="bpaapplFeeDetail" style="width:50%;margin:0 auto;">
+            <thead>
+            <tr>
+                <th class="text-center"><spring:message code="lbl.slno"/></th>
+                <th style="width:50%;"><spring:message code="lbl.applicationFee.feeType"/></th>
+                <th class="text-right"><spring:message code="lbl.applicationFee.amount"/></th>
+            </tr>
+            </thead>
+            <tbody id="tblBody">
+            <c:set var="totalAmount" value="${0}"/>
+           
+                <tr>
+                    <td class="text-center view-content"><c:out value="1"/></td>
+                    <td id="description" class="view-content"><spring:message code="lbl.admission.fees"/></td>
+                    <td class="text-right view-content"><c:set var="totalAmount"
+                                                               value="${bpaApplication.admissionfeeAmount}"/>
+                        <fmt:formatNumber type="number" maxFractionDigits="2" value="${bpaApplication.admissionfeeAmount}"/>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td></td>
+                <td class="text-right view-content"><spring:message code="lbl.total.amount"/></td>
+                <td class="text-right view-content"><fmt:formatNumber type="number" maxFractionDigits="2"
+                                                                      value="${totalAmount}"/></td>
+            </tr>
+            </tfoot>
+        </table>
+</c:if>
+
+
+
+<c:if test="${!bpaApplication.permitFee.isEmpty()}">
+
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title">
         <spring:message code="lbl.fee.details"/>
     </div>
 </div>
 
-<div class="panel-body">
-    <c:if test="${!applicationFeeDetail.isEmpty()}">
         <table class="table table-striped table-bordered" id="bpaChargesDetail" style="width:50%;margin:0 auto;">
             <thead>
             <tr>

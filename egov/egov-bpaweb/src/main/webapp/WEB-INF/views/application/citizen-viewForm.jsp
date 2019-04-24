@@ -96,9 +96,9 @@
 								code='lbl.noc.details' /></a></li>
 				</c:if>
 				<c:if
-					test="${not empty bpaApplication.permitFee && bpaApplication.status.code ne 'Created'}">
+					test="${ bpaApplication.status.code ne 'Created'}">
 					<li><a data-toggle="tab" href="#view-fee" data-tabidx=5><spring:message
-								code='lbl.fee.details' /></a></li>
+								code='lbl.fees.details' /></a></li>
 				</c:if>
 				<c:if
 					test="${not empty lettertopartylist && mode eq 'showLPDetails'}">
