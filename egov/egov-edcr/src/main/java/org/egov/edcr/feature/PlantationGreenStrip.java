@@ -49,6 +49,7 @@ package org.egov.edcr.feature;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -61,6 +62,7 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.SetBack;
+import org.egov.edcr.utility.DcrConstants;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -96,34 +98,43 @@ public class PlantationGreenStrip extends FeatureProcess {
 						.map(greenStripe -> greenStripe.getHeight()).collect(Collectors.toList());
 				List<BigDecimal> minimumDistances = new ArrayList<>();
 
+				if(widths.isEmpty())
+				{
+					 pl.addError("RULE_37_6", getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, "Block " + block.getNumber() + " " + "Continuous Green Planting Strip"));
+				}
 				for (SetBack setBack : block.getSetBacks()) {
 					if (setBack.getRearYard() != null)
-						minimumDistances.add(setBack.getRearYard().getMinimumDistance());
+						minimumDistances.add(setBack.getRearYard().getHeight());
 					if (setBack.getSideYard1() != null)
-						minimumDistances.add(setBack.getSideYard1().getMinimumDistance());
+						minimumDistances.add(setBack.getSideYard1().getHeight());
 					if (setBack.getSideYard2() != null)
-						minimumDistances.add(setBack.getSideYard2().getMinimumDistance());
+						minimumDistances.add(setBack.getSideYard2().getHeight());
 				}
 
 				if (!widths.isEmpty()) {
 					minWidth = widths.stream().reduce(BigDecimal::min).get();
 					minHeight = heights.stream().reduce(BigDecimal::min).get();
+					BigDecimal minLength = Collections.min(minimumDistances);
 
 					if (minWidth.compareTo(BigDecimal.valueOf(0.6)) >= 0) {
 						isWidthAccepted = true;
 
 					}
-
-					if (minimumDistances.contains(minHeight)) {
+					
+					if (minHeight.doubleValue()>=1d) {
 						isHeightAccepted = true;
 					}
 
+				/*	if (minHeight.doubleValue()>=minLength.doubleValue()) {
+						isHeightAccepted = true;
+					}
+*/
 					buildResult(pl, scrutinyDetail, isWidthAccepted, "Width of continuos plantation green strip",
-							">= 0.6", minWidth.toString());
+							">= 0.6", minWidth.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,DcrConstants.ROUNDMODE_MEASUREMENTS).toString());
 					buildResult(pl, scrutinyDetail, isHeightAccepted, "length of continuos plantation green strip ",
-							"should be equal to rear or side yard", minWidth.toString());
+							"should be equal to rear or side yard", minHeight.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,DcrConstants.ROUNDMODE_MEASUREMENTS).toString());
 
-				}
+				} 
 			}
 		}
 		return pl;
