@@ -627,7 +627,8 @@ public class AdditionalFeature extends FeatureProcess {
 	}
 
 	private void validate4a(Plan pl, ScrutinyDetail scrutinyDetail) {
-		if (pl.getUtility().getSegregationOfWaste() != null && !pl.getUtility().getSegregationOfWaste().isEmpty()) {
+		if (pl.getUtility().getSegregationOfWaste() != null && !pl.getUtility().getSegregationOfWaste().isEmpty()
+				&& pl.getUtility().getSegregationOfWaste().size() > 1) {
 			addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
 					"Provided segregation of waste details", Result.Accepted.getResultVal());
 		} else {
