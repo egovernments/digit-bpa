@@ -149,16 +149,19 @@
 						</div>
 					</td>
 					<td>
-					 <c:set var="splittedString" value="${fn:split(doc.nocDocument.serviceChecklist.checklist.description, ' ')}"/>
-            		 <c:set var="checklistName" value="${fn:join(splittedString, '_')}"/>
-					
-						<div class="files-upload-container ${checklistName}" data-file-max-size="5"
+						<c:forTokens var="splittedString"
+							items="${doc.nocDocument.serviceChecklist.checklist.description}"
+							delims="\ " varStatus="stat">
+							<c:set var="checklistName"
+								value="${stat.first ? '' : checklistName}_${splittedString}" />
+						</c:forTokens>
+						<div class="files-upload-container ${checklistName}"
+							data-file-max-size="5"
 							<c:if test="${isEDCRIntegrationRequire eq true && docs.nocDocument.serviceChecklistMapping.isMandatory eq true && fn:length(docs.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
 							data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 							<div class="files-viewer">
-
-								<c:forEach items="${doc.nocDocument.getNocSupportDocs()}" var="file"
-									varStatus="status1">
+								<c:forEach items="${doc.nocDocument.getNocSupportDocs()}"
+									var="file" varStatus="status1">
 									<div class="file-viewer" data-toggle="tooltip"
 										data-placement="top" title="${file.fileName}">
 										<a class="download" target="_blank"
@@ -201,6 +204,7 @@
 
 							</div>
 						</div>
+					</td>
 				</tr>
 			</c:forEach>
 

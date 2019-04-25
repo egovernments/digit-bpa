@@ -729,13 +729,15 @@ $(document).ready(
         //to update noc document is required
         function updateNocRequired(planInformation){
         	if(planInformation.nocIrrigationDept === 'YES')
-                $('div.NOC_from_Irrigation_Department').attr('required','required');
+                $('div._NOC_from_Irrigation_Department').attr('required','required');
         	if(planInformation.nocNearMonuments=== 'YES')
-                $('div.NOC_from_Heritage_Conservation_Committee_(National_Monuments_Authority)').attr('required','required');
+                $('div._NOC_from_Heritage_Conservation_Committee_(National_Monuments_Authority)').attr('required','required');
             if(planInformation.nocNearAirport=== 'YES')
-                $('div.NOC_from_Airport_Authority').attr('required','required');
+                $('div._NOC_from_Airport_Authority').attr('required','required');
             if(planInformation.nocFireDept=== 'YES')
-                $('div.NOC_from_Fire_Authority').attr('required','required');
+                $('div._NOC_from_Fire_Authority').attr('required','required');
+            if(planInformation.nocStateEnvImpact=== 'YES')
+            	$('div._MOEF_environment_clearance').attr('required','required'); 
         }
         // Auto populate system generated plan scrutiny checklist documents
         function autoPopulatePlanScrutinyGeneratedPdfFiles(planScrutinyPdfs) {
