@@ -83,6 +83,7 @@ import org.egov.edcr.feature.RoofTank;
 import org.egov.edcr.feature.SegregationOfWaste;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
+import org.egov.edcr.feature.Solar;
 import org.egov.edcr.feature.SolarWaterHeating;
 import org.egov.edcr.feature.SpiralStair;
 import org.egov.edcr.feature.StairCover;
@@ -150,8 +151,8 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(Parapet.class);
 		features.add(pf);
 		pf = new PlanFeature(LiftService.class);
-		features.add(pf);
-		pf = new PlanFeature(GeneralStair.class);
+		/*features.add(pf);
+		pf = new PlanFeature(GeneralStair.class);*/
 		features.add(pf);
 		pf = new PlanFeature(RampService.class);
 		features.add(pf);
@@ -162,6 +163,8 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(SolarWaterHeating.class);
 		features.add(pf);
 		pf = new PlanFeature(SegregationOfWaste.class);
+		features.add(pf);
+		pf = new PlanFeature(Solar.class);
 		features.add(pf);
 		/*
 		 * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
