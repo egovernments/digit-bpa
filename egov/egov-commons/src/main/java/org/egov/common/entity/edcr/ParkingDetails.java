@@ -58,177 +58,186 @@ import java.util.List;
  *
  */
 public class ParkingDetails implements Serializable {
-    private static final long serialVersionUID = 8L;
-    private List<Measurement> cars = new ArrayList<>();
-    private List<Measurement> openCars = new ArrayList<>();
-    private List<Measurement> coverCars = new ArrayList<>();
-    private List<Measurement> basementCars = new ArrayList<>();
-    private List<Measurement> visitors = new ArrayList<>();
-    private Integer validCarParkingSlots = 0;
-    private Integer validOpenCarSlots = 0;
-    private Integer validCoverCarSlots = 0;
-    private Integer validBasementCarSlots = 0;
-    private Integer diningSeats = 0;
-    private List<Measurement> loadUnload = new ArrayList<>();
-    private List<Measurement> mechParking = new ArrayList<>();
-    private List<Measurement> twoWheelers = new ArrayList<>();
-    private List<Measurement> disabledPersons = new ArrayList<>();
-    private Integer validDAParkingSlots = 0;
-    private BigDecimal distFromDAToMainEntrance = BigDecimal.ZERO;
-    private List<Measurement> special = new ArrayList<>();
-    private Integer validSpecialSlots = 0;
-    private List<Measurement> stilts = new ArrayList<>();
+	private static final long serialVersionUID = 8L;
+	private List<Measurement> cars = new ArrayList<>();
+	private List<Measurement> openCars = new ArrayList<>();
+	private List<Measurement> coverCars = new ArrayList<>();
+	private List<Measurement> basementCars = new ArrayList<>();
+	private List<Measurement> visitors = new ArrayList<>();
+	private Integer validCarParkingSlots = 0;
+	private Integer validOpenCarSlots = 0;
+	private Integer validCoverCarSlots = 0;
+	private Integer validBasementCarSlots = 0;
+	private Integer diningSeats = 0;
+	private List<Measurement> loadUnload = new ArrayList<>();
+	private List<Measurement> mechParking = new ArrayList<>();
+	private List<Measurement> twoWheelers = new ArrayList<>();
+	private List<Measurement> disabledPersons = new ArrayList<>();
+	private Integer validDAParkingSlots = 0;
+	private BigDecimal distFromDAToMainEntrance = BigDecimal.ZERO;
+	private List<Measurement> special = new ArrayList<>();
+	private Integer validSpecialSlots = 0;
+	private List<Measurement> stilts = new ArrayList<>();
+	private List<Measurement> mechanicalLifts = new ArrayList<>();
 
-    public List<Measurement> getCars() {
-        return cars;
-    }
+	public List<Measurement> getCars() {
+		return cars;
+	}
 
-    public void setCars(List<Measurement> cars) {
-        this.cars = cars;
-    }
+	public void setCars(List<Measurement> cars) {
+		this.cars = cars;
+	}
 
-    public List<Measurement> getOpenCars() {
-        return openCars;
-    }
+	public List<Measurement> getOpenCars() {
+		return openCars;
+	}
 
-    public void setOpenCars(List<Measurement> openCars) {
-        this.openCars = openCars;
-    }
+	public void setOpenCars(List<Measurement> openCars) {
+		this.openCars = openCars;
+	}
 
-    public List<Measurement> getCoverCars() {
-        return coverCars;
-    }
+	public List<Measurement> getCoverCars() {
+		return coverCars;
+	}
 
-    public void setCoverCars(List<Measurement> coverCars) {
-        this.coverCars = coverCars;
-    }
+	public void setCoverCars(List<Measurement> coverCars) {
+		this.coverCars = coverCars;
+	}
 
-    public List<Measurement> getBasementCars() {
-        return basementCars;
-    }
+	public List<Measurement> getBasementCars() {
+		return basementCars;
+	}
 
-    public void setBasementCars(List<Measurement> basementCars) {
-        this.basementCars = basementCars;
-    }
+	public void setBasementCars(List<Measurement> basementCars) {
+		this.basementCars = basementCars;
+	}
 
-    public List<Measurement> getVisitors() {
-        return visitors;
-    }
+	public List<Measurement> getVisitors() {
+		return visitors;
+	}
 
-    public void setVisitors(List<Measurement> visitors) {
-        this.visitors = visitors;
-    }
+	public void setVisitors(List<Measurement> visitors) {
+		this.visitors = visitors;
+	}
 
-    public Integer getValidCarParkingSlots() {
-        return validCarParkingSlots;
-    }
+	public Integer getValidCarParkingSlots() {
+		return validCarParkingSlots;
+	}
 
-    public void setValidCarParkingSlots(Integer validCarParkingSlots) {
-        this.validCarParkingSlots = validCarParkingSlots;
-    }
+	public void setValidCarParkingSlots(Integer validCarParkingSlots) {
+		this.validCarParkingSlots = validCarParkingSlots;
+	}
 
-    public Integer getDiningSeats() {
-        return diningSeats;
-    }
+	public Integer getDiningSeats() {
+		return diningSeats;
+	}
 
-    public void setDiningSeats(Integer diningSeats) {
-        this.diningSeats = diningSeats;
-    }
+	public void setDiningSeats(Integer diningSeats) {
+		this.diningSeats = diningSeats;
+	}
 
-    public List<Measurement> getLoadUnload() {
-        return loadUnload;
-    }
+	public List<Measurement> getLoadUnload() {
+		return loadUnload;
+	}
 
-    public void setLoadUnload(List<Measurement> loadUnload) {
-        this.loadUnload = loadUnload;
-    }
+	public void setLoadUnload(List<Measurement> loadUnload) {
+		this.loadUnload = loadUnload;
+	}
 
-    public List<Measurement> getMechParking() {
-        return mechParking;
-    }
+	public List<Measurement> getMechParking() {
+		return mechParking;
+	}
 
-    public void setMechParking(List<Measurement> mechParking) {
-        this.mechParking = mechParking;
-    }
+	public void setMechParking(List<Measurement> mechParking) {
+		this.mechParking = mechParking;
+	}
 
-    public List<Measurement> getTwoWheelers() {
-        return twoWheelers;
-    }
+	public List<Measurement> getTwoWheelers() {
+		return twoWheelers;
+	}
 
-    public void setTwoWheelers(List<Measurement> twoWheelers) {
-        this.twoWheelers = twoWheelers;
-    }
+	public void setTwoWheelers(List<Measurement> twoWheelers) {
+		this.twoWheelers = twoWheelers;
+	}
 
-    public List<Measurement> getDisabledPersons() {
-        return disabledPersons;
-    }
+	public List<Measurement> getDisabledPersons() {
+		return disabledPersons;
+	}
 
-    public void setDisabledPersons(List<Measurement> disabledPersons) {
-        this.disabledPersons = disabledPersons;
-    }
+	public void setDisabledPersons(List<Measurement> disabledPersons) {
+		this.disabledPersons = disabledPersons;
+	}
 
-    public Integer getValidDAParkingSlots() {
-        return validDAParkingSlots;
-    }
+	public Integer getValidDAParkingSlots() {
+		return validDAParkingSlots;
+	}
 
-    public void setValidDAParkingSlots(Integer validDAParkingSlots) {
-        this.validDAParkingSlots = validDAParkingSlots;
-    }
+	public void setValidDAParkingSlots(Integer validDAParkingSlots) {
+		this.validDAParkingSlots = validDAParkingSlots;
+	}
 
-    public BigDecimal getDistFromDAToMainEntrance() {
-        return distFromDAToMainEntrance;
-    }
+	public BigDecimal getDistFromDAToMainEntrance() {
+		return distFromDAToMainEntrance;
+	}
 
-    public void setDistFromDAToMainEntrance(BigDecimal distFromDAToMainEntrance) {
-        this.distFromDAToMainEntrance = distFromDAToMainEntrance;
-    }
+	public void setDistFromDAToMainEntrance(BigDecimal distFromDAToMainEntrance) {
+		this.distFromDAToMainEntrance = distFromDAToMainEntrance;
+	}
 
-    public List<Measurement> getSpecial() {
-        return special;
-    }
+	public List<Measurement> getSpecial() {
+		return special;
+	}
 
-    public void setSpecial(List<Measurement> special) {
-        this.special = special;
-    }
+	public void setSpecial(List<Measurement> special) {
+		this.special = special;
+	}
 
-    public Integer getValidOpenCarSlots() {
-        return validOpenCarSlots;
-    }
+	public Integer getValidOpenCarSlots() {
+		return validOpenCarSlots;
+	}
 
-    public void setValidOpenCarSlots(Integer validOpenCarSlots) {
-        this.validOpenCarSlots = validOpenCarSlots;
-    }
+	public void setValidOpenCarSlots(Integer validOpenCarSlots) {
+		this.validOpenCarSlots = validOpenCarSlots;
+	}
 
-    public Integer getValidCoverCarSlots() {
-        return validCoverCarSlots;
-    }
+	public Integer getValidCoverCarSlots() {
+		return validCoverCarSlots;
+	}
 
-    public void setValidCoverCarSlots(Integer validCoverCarSlots) {
-        this.validCoverCarSlots = validCoverCarSlots;
-    }
+	public void setValidCoverCarSlots(Integer validCoverCarSlots) {
+		this.validCoverCarSlots = validCoverCarSlots;
+	}
 
-    public Integer getValidBasementCarSlots() {
-        return validBasementCarSlots;
-    }
+	public Integer getValidBasementCarSlots() {
+		return validBasementCarSlots;
+	}
 
-    public void setValidBasementCarSlots(Integer validBasementCarSlots) {
-        this.validBasementCarSlots = validBasementCarSlots;
-    }
+	public void setValidBasementCarSlots(Integer validBasementCarSlots) {
+		this.validBasementCarSlots = validBasementCarSlots;
+	}
 
-    public Integer getValidSpecialSlots() {
-        return validSpecialSlots;
-    }
+	public Integer getValidSpecialSlots() {
+		return validSpecialSlots;
+	}
 
-    public void setValidSpecialSlots(Integer validSpecialSlots) {
-        this.validSpecialSlots = validSpecialSlots;
-    }
+	public void setValidSpecialSlots(Integer validSpecialSlots) {
+		this.validSpecialSlots = validSpecialSlots;
+	}
 
-    public List<Measurement> getStilts() {
-        return stilts;
-    }
+	public List<Measurement> getStilts() {
+		return stilts;
+	}
 
-    public void setStilts(List<Measurement> stilts) {
-        this.stilts = stilts;
-    }
+	public void setStilts(List<Measurement> stilts) {
+		this.stilts = stilts;
+	}
+
+	public List<Measurement> getMechanicalLifts() {
+		return mechanicalLifts;
+	}
+
+	public void setMechanicalLifts(List<Measurement> mechanicalLifts) {
+		this.mechanicalLifts = mechanicalLifts;
+	}
 
 }
