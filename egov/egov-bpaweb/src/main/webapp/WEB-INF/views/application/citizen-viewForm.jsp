@@ -157,7 +157,7 @@
 						<jsp:include page="view-building-details.jsp" />
 					</div>
 					<c:if
-						test="${(isCitizen && validateCitizenAcceptance && (bpaApplication.status.code ne 'Cancelled') && !citizenDisclaimerAccepted)}">
+						test="${(isCitizen && validateCitizenAcceptance && (bpaApplication.status.code ne 'Cancelled') && !citizenDisclaimerAccepted && bpaApplication.sentToCitizen)}">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="disclaimer.jsp" />
 						</div>
@@ -222,7 +222,7 @@
 				<table>
 					<tr>
 						<td><c:if
-								test="${isCitizen && validateCitizenAcceptance && (bpaApplication.status.code ne 'Cancelled') && !citizenDisclaimerAccepted}">
+								test="${isCitizen && validateCitizenAcceptance && (bpaApplication.status.code ne 'Cancelled') && !citizenDisclaimerAccepted && bpaApplication.sentToCitizen}">
 								<form:button type="button" id="buttonAccept"
 									class="btn btn-primary" value="Save">
 									<spring:message code='lbl.btn.accpt' />
@@ -275,7 +275,8 @@
 							</a>&nbsp;</td>
 						</c:if>
 						<td><c:if
-								test="${citizenOrBusinessUser && bpaApplication.id != null && bpaApplication.state == null && bpaApplication.status.code ne 'Cancelled'}">
+								test="${citizenOrBusinessUser && bpaApplication.id != null && bpaApplication.state == null && bpaApplication.status.code ne 'Cancelled'
+								    && (validateCitizenAcceptance && (bpaApplication.status.code ne 'Cancelled') && !citizenDisclaimerAccepted &&  bpaApplication.sentToCitizen)}">
 								<form:button type="button" id="buttonCancel"
 									class="btn btn-danger" value="Cancel Application">
 									<spring:message code='lbl.btn.cancel.application' />

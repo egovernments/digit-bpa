@@ -398,10 +398,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                     occupancyName);
             bpaApplication.setApplicationType(applicationType);
         }
-        if(workFlowAction.equals(WF_SEND_BUTTON))
+        if(workFlowAction.equals(WF_SEND_BUTTON) )
         	bpaApplication.setSentToCitizen(true);
-        else
-        	bpaApplication.setSentToCitizen(false);
 
         applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
         bpaUtils.updatePortalUserinbox(bpaApplication, null);

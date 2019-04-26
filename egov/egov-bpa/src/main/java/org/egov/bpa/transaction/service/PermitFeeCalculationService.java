@@ -255,7 +255,6 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                for (BpaFeeMapping bpaFee : bpaFeeMappingService.getPermitFeesByAppType(application, serviceTypeId)) {
 	                    if (bpaFee != null) {
 	                        BigDecimal amount = BigDecimal.ZERO;
-	                        if (!application.getIsEconomicallyWeakerSection()) {
 	                            BigDecimal inputArea = getBuiltUpInputUnitForEachServiceType(application,
 	                                    bpaFee.getServiceType().getCode());
 	                            List<Occupancy> selectdOccupancies = application.getPermitOccupancies();
@@ -375,7 +374,6 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	                        
 	                        if(BpaConstants.DEV_PERMIT_FEE.equals(bpaFee.getBpaFeeCommon().getCode()) && application.getBuildingDetail().size() > 1) {
 	                        	amount = BigDecimal.valueOf(bpaFee.getAmount());
-	                        }
 	                        }
 	                        
 	                        if (checkIsWorkAlreadyStarted(application)) {
