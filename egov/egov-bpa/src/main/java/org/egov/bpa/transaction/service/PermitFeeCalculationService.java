@@ -131,6 +131,9 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 	    private static final BigDecimal ONE_HUNDRED_FIFTY = BigDecimal.valueOf(150);
 	    private static final BigDecimal THREE_HUNDRED = BigDecimal.valueOf(300);
 	    private static final BigDecimal FIFTY = BigDecimal.valueOf(50);
+	    private static final BigDecimal TEN = BigDecimal.valueOf(10);
+	    private static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
+
 	    /*
 	     * private static final String OCCUPANCY_A1 = "Residential"; private static final String OCCUPANCY_A2 = "Special Residential";
 	     * private static final String OCCUPANCY_A5 = "Professional Office"; private static final String OCCUPANCY_B1 = "Educational";
@@ -364,7 +367,7 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 									&& inputArea.compareTo(BigDecimal.valueOf(500)) > 0
 									&& inputArea.compareTo(BigDecimal.valueOf(4000)) < 0
 									&& !application.getSiteDetail().get(0).getAffordableHousingScheme()) {
-	                        	amount = calculateShelterFundAmount(BigDecimal.valueOf(bpaFee.getAmount()));
+	                        	amount = calculateShelterFundAmount(inputArea, BigDecimal.valueOf(bpaFee.getAmount()));
 	                        }
 	                        if(LABOURCESS.equals(bpaFee.getBpaFeeCommon().getName()) && application.getConstructionCost() != null) {
 	                        	amount = calculateLabourCessAmount(application.getConstructionCost());
@@ -668,13 +671,12 @@ public class PermitFeeCalculationService implements ApplicationBpaFeeCalculation
 				return inputArea.multiply(feeAmount);
 		}
 
-	    protected BigDecimal calculateShelterFundAmount(BigDecimal amount) {
-	        return amount.multiply(BigDecimal.valueOf(10)).divide(BigDecimal.valueOf(100));
-
+	    protected BigDecimal calculateShelterFundAmount(BigDecimal area, BigDecimal amount) {
+	        return amount.multiply(area.multiply(TEN).divide(HUNDRED));
 	    }
 	    
 	    protected BigDecimal calculateLabourCessAmount(BigDecimal amount) {
-	        return amount.multiply(BigDecimal.valueOf(1)).divide(BigDecimal.valueOf(100));
+	        return amount.multiply(BigDecimal.valueOf(1)).divide(HUNDRED);
 	    }
 
 	    /**
