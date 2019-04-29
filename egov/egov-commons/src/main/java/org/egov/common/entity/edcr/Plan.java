@@ -126,6 +126,7 @@ public class Plan implements Serializable {
 	@Transient
 	@JsonIgnore
 	private List<EdcrPdfDetail> edcrPdfDetails;
+	private FarDetails farDetails;
 
 	private transient List<BigDecimal> distancesFromMonument = new ArrayList<>();
 	private transient List<BigDecimal> distancesFromGovtBuilding = new ArrayList<>();
@@ -138,7 +139,7 @@ public class Plan implements Serializable {
 	private transient Plantation plantation;
 	private transient GuardRoom guardRoom;
 	private transient SegregatedToilet segregatedToilet;
-	
+
 	public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
 		return canopyDistanceFromPlotBoundary;
 	}
@@ -580,6 +581,14 @@ public class Plan implements Serializable {
 
 	public void setSegregatedToilet(SegregatedToilet segregatedToilet) {
 		this.segregatedToilet = segregatedToilet;
+	}
+
+	public FarDetails getFarDetails() {
+		return farDetails;
+	}
+
+	public void setFarDetails(FarDetails farDetails) {
+		this.farDetails = farDetails;
 	}
 
 }
