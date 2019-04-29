@@ -114,14 +114,14 @@
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="119" y="21" width="342" height="15" uuid="01431d36-b938-4dc4-b9ea-1ceef1169192"/>
+				<reportElement positionType="Float" x="119" y="14" width="342" height="15" uuid="01431d36-b938-4dc4-b9ea-1ceef1169192"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="125" y="36" width="328" height="20" uuid="b1e45416-1e0f-4ca0-b260-077e25569613"/>
+				<reportElement x="125" y="29" width="328" height="20" uuid="b1e45416-1e0f-4ca0-b260-077e25569613"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Inspection Report]]></text>
 			</staticText>
@@ -539,13 +539,13 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Application No"]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="111" y="1" width="357" height="20" uuid="4146e27e-c787-4284-97ed-5f1ef023cf93"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Urban Development And Housing Department, Govt of Bihar]]></text>
-			</staticText>
+			<image>
+				<reportElement x="476" y="2" width="66" height="54" uuid="3b411ad4-7a4b-4cdc-b804-23a36660e7a8">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<columnHeader>

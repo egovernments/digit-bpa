@@ -21,16 +21,16 @@
 		<![CDATA[]]>
 	</queryString>
 	<title>
-		<band height="120" splitType="Stretch">
+		<band height="105" splitType="Stretch">
 			<textField>
-				<reportElement x="180" y="48" width="200" height="20" uuid="2121a076-60d8-443b-b5a1-a49d3a778e54"/>
+				<reportElement x="180" y="31" width="200" height="20" uuid="2121a076-60d8-443b-b5a1-a49d3a778e54"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["APPENDIX H"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="170" y="68" width="220" height="20" uuid="cf69cf5a-5ae2-4b8a-b3e6-9efce4782ecf"/>
+				<reportElement x="170" y="51" width="220" height="20" uuid="cf69cf5a-5ae2-4b8a-b3e6-9efce4782ecf"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>
 				</textElement>
@@ -40,19 +40,19 @@
 				<reportElement x="40" y="21" width="80" height="79" uuid="6d654527-5c3f-4db6-8537-52067ceec582"/>
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
-			<staticText>
-				<reportElement x="108" y="27" width="357" height="20" uuid="c36fa071-2d51-423f-9e8c-dfb4dba19316"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Urban Development And Housing Department, Govt of Bihar]]></text>
-			</staticText>
+			<image>
+				<reportElement x="460" y="21" width="76" height="75" uuid="39164e9d-9c9a-42b1-a444-cd2e65c9be01">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="66">
 			<textField>
-				<reportElement x="160" y="-20" width="240" height="20" uuid="78b393c4-2537-48d0-a845-740d95d5608d"/>
+				<reportElement x="160" y="-21" width="240" height="20" uuid="78b393c4-2537-48d0-a845-740d95d5608d"/>
 				<textElement textAlignment="Center">
 					<font size="11" isBold="true"/>
 				</textElement>

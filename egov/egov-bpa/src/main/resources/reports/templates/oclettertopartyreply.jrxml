@@ -27,30 +27,30 @@
 		<band height="100" splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="210" splitType="Stretch">
+		<band height="194" splitType="Stretch">
 			<staticText>
-				<reportElement x="129" y="66" width="342" height="20" uuid="58e1974e-c738-46d8-8c58-f5f6a4e1b962"/>
+				<reportElement x="129" y="52" width="342" height="20" uuid="58e1974e-c738-46d8-8c58-f5f6a4e1b962"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Letter to Party Reply Acknowledgement]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="129" y="47" width="342" height="18" uuid="67ea5c35-8b79-4289-9647-3815a7b81375"/>
+				<reportElement x="129" y="33" width="342" height="18" uuid="67ea5c35-8b79-4289-9647-3815a7b81375"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Town Planning Section-Works Department]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="129" y="26" width="342" height="20" uuid="fb0fe1f0-6a41-4333-b2e3-6af102647660"/>
+				<reportElement positionType="Float" x="129" y="12" width="342" height="20" uuid="fb0fe1f0-6a41-4333-b2e3-6af102647660"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="156" y="101" width="142" height="27" uuid="3ff18553-88a3-4498-9dd9-e015e00ed8da"/>
+				<reportElement x="156" y="84" width="142" height="27" uuid="3ff18553-88a3-4498-9dd9-e015e00ed8da"/>
 				<box leftPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -65,7 +65,7 @@
 				<textFieldExpression><![CDATA[$F{letterToParty}.getAcknowledgementNumber()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="156" y="128" width="142" height="27" uuid="9cfd5e71-9d9f-4068-8591-6331a7944db6"/>
+				<reportElement x="156" y="111" width="142" height="27" uuid="9cfd5e71-9d9f-4068-8591-6331a7944db6"/>
 				<box leftPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -80,7 +80,7 @@
 				<textFieldExpression><![CDATA[$F{letterToParty}.getSentDate()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="128" width="142" height="27" uuid="d6adf61d-6c64-470c-b6cb-ebc1fe0e28d3"/>
+				<reportElement x="418" y="111" width="142" height="27" uuid="d6adf61d-6c64-470c-b6cb-ebc1fe0e28d3"/>
 				<box leftPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -95,7 +95,7 @@
 				<textFieldExpression><![CDATA[$F{letterToParty}.getLpNumber()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="156" y="155" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="104a7d6b-303e-49a5-86ad-734af5d7d94c"/>
+				<reportElement x="156" y="138" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="104a7d6b-303e-49a5-86ad-734af5d7d94c"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -106,7 +106,7 @@
 				<textFieldExpression><![CDATA[$F{oc}.getParent().getOwner().getName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="156" y="182" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="5dc50064-3e71-4b95-86ba-99bcebfe8f0f"/>
+				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="156" y="165" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="5dc50064-3e71-4b95-86ba-99bcebfe8f0f"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -117,42 +117,42 @@
 				<textFieldExpression><![CDATA[$P{lpReason}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="14" y="101" width="142" height="27" uuid="8a96635a-65e9-48cc-974b-614b683b1bb7"/>
+				<reportElement x="14" y="84" width="142" height="27" uuid="8a96635a-65e9-48cc-974b-614b683b1bb7"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Acknowledgement No."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="14" y="128" width="142" height="27" uuid="300bb440-43c1-4638-819c-8fd046768198"/>
+				<reportElement x="14" y="111" width="142" height="27" uuid="300bb440-43c1-4638-819c-8fd046768198"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Letter to Party Date"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="14" y="155" width="142" height="27" uuid="b7e1e5be-c3dd-47b5-acde-c026d6a1750a"/>
+				<reportElement x="14" y="138" width="142" height="27" uuid="b7e1e5be-c3dd-47b5-acde-c026d6a1750a"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Applicant Name"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="14" y="182" width="142" height="27" uuid="83a5b2ac-1351-404e-acca-5a2e1a6cc8f4"/>
+				<reportElement stretchType="RelativeToBandHeight" x="14" y="165" width="142" height="27" uuid="83a5b2ac-1351-404e-acca-5a2e1a6cc8f4"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Letter to Party Reason"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="298" y="101" width="120" height="27" uuid="fedf74d3-0f77-4d0a-8484-9f0c165bf96b"/>
+				<reportElement x="298" y="84" width="120" height="27" uuid="fedf74d3-0f77-4d0a-8484-9f0c165bf96b"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Reply Date"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="101" width="142" height="27" uuid="cdf2efad-7dc8-4ef4-8070-e32192e730cb"/>
+				<reportElement x="418" y="84" width="142" height="27" uuid="cdf2efad-7dc8-4ef4-8070-e32192e730cb"/>
 				<box leftPadding="1" rightPadding="1">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -167,7 +167,7 @@
 				<textFieldExpression><![CDATA[$F{letterToParty}.getReplyDate()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="298" y="128" width="120" height="27" uuid="d8e689eb-c180-4ddf-98a8-794bb217ed14"/>
+				<reportElement x="298" y="111" width="120" height="27" uuid="d8e689eb-c180-4ddf-98a8-794bb217ed14"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -180,13 +180,13 @@
 				</reportElement>
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
-			<staticText>
-				<reportElement x="121" y="5" width="357" height="20" uuid="306e86ac-00ba-4edb-a420-951e1df43c08"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Urban Development And Housing Department, Govt of Bihar]]></text>
-			</staticText>
+			<image>
+				<reportElement x="479" y="12" width="66" height="56" uuid="6395e71d-d4da-4eee-9dde-c403cea68bc4">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>

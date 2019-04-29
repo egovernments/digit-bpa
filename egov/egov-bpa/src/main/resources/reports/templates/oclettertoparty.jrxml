@@ -33,16 +33,16 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="88" splitType="Stretch">
+		<band height="80" splitType="Stretch">
 			<staticText>
-				<reportElement x="119" y="44" width="342" height="16" uuid="58e1974e-c738-46d8-8c58-f5f6a4e1b962"/>
+				<reportElement x="119" y="32" width="342" height="16" uuid="58e1974e-c738-46d8-8c58-f5f6a4e1b962"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Letter To Party]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="119" y="25" width="342" height="15" uuid="01431d36-b938-4dc4-b9ea-1ceef1169192"/>
+				<reportElement positionType="Float" x="119" y="13" width="342" height="15" uuid="01431d36-b938-4dc4-b9ea-1ceef1169192"/>
 				<textElement textAlignment="Center" markup="none">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
@@ -55,13 +55,13 @@
 				</reportElement>
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
-			<staticText>
-				<reportElement x="111" y="3" width="357" height="20" uuid="beecf115-cf9c-48df-9578-c936092f1c90"/>
-				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Urban Development And Housing Department, Govt of Bihar]]></text>
-			</staticText>
+			<image>
+				<reportElement x="470" y="2" width="66" height="58" uuid="9efab700-eca6-47ea-80af-577e95450b45">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -70,7 +70,7 @@
 	<columnHeader>
 		<band splitType="Stretch">
 			<staticText>
-				<reportElement x="119" y="-22" width="342" height="16" uuid="a49e10c9-5f51-45ad-9a73-414622e37c9c"/>
+				<reportElement x="119" y="-21" width="342" height="16" uuid="a49e10c9-5f51-45ad-9a73-414622e37c9c"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
