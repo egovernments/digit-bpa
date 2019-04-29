@@ -60,6 +60,7 @@ public class Floor extends Measurement {
 	private List<FloorUnit> units = new ArrayList<>();
 	private List<DARoom> daRooms = new ArrayList<>();
 	private List<Ramp> ramps = new ArrayList<>();
+	private List<VehicleRamp> vehicleRamps = new ArrayList<>();
 	private List<Lift> lifts = new ArrayList<>();
 	private List<Lift> daLifts = new ArrayList<>();
 	private Measurement exterior;
@@ -193,26 +194,24 @@ public class Floor extends Measurement {
 
 	}
 
+	public void addCarpetArea(Occupancy occupancy) {
+		if (occupancies == null) {
+			occupancies = new ArrayList<>();
+			occupancies.add(occupancy);
+		} else if (occupancies.contains(occupancy)) {
+			occupancies.get(occupancies.indexOf(occupancy))
+					.setCarpetArea((occupancies.get(occupancies.indexOf(occupancy)).getCarpetArea() == null
+							? BigDecimal.ZERO : occupancies.get(occupancies.indexOf(occupancy)).getCarpetArea())
+									.add(occupancy.getCarpetArea()));
 
-    public void addCarpetArea(Occupancy occupancy) {
-        if (occupancies == null) {
-            occupancies = new ArrayList<>();
-            occupancies.add(occupancy);
-        } else if (occupancies.contains(occupancy)) {
-            occupancies.get(occupancies.indexOf(occupancy))
-                    .setCarpetArea((occupancies.get(occupancies.indexOf(occupancy)).getCarpetArea() == null
-                            ? BigDecimal.ZERO
-                            : occupancies.get(occupancies.indexOf(occupancy)).getCarpetArea())
-                                    .add(occupancy.getCarpetArea()));
+			occupancies.get(occupancies.indexOf(occupancy)).setExistingCarpetArea(
+					(occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetArea() == null ? BigDecimal.ZERO
+							: occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetArea())
+									.add(occupancy.getExistingCarpetArea()));
+		} else
+			occupancies.add(occupancy);
 
-            occupancies.get(occupancies.indexOf(occupancy)).setExistingCarpetArea(
-                    (occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetArea() == null ? BigDecimal.ZERO
-                            : occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetArea())
-                                    .add(occupancy.getExistingCarpetArea()));
-        } else
-            occupancies.add(occupancy);
-
-    }
+	}
 
 	public void addDeductionArea(Occupancy occupancy) {
 		if (occupancies == null) {
@@ -468,5 +467,17 @@ public class Floor extends Measurement {
 
 	public void setHeightOfTheCeilingOfUpperBasement(List<BigDecimal> heightOfTheCeilingOfUpperBasement) {
 		this.heightOfTheCeilingOfUpperBasement = heightOfTheCeilingOfUpperBasement;
+	}
+
+	public List<VehicleRamp> getVehicleRamps() {
+		return vehicleRamps;
+	}
+
+	public void setVehicleRamps(List<VehicleRamp> vehicleRamps) {
+		this.vehicleRamps = vehicleRamps;
+	}
+
+	public void addVehicleRamps(VehicleRamp vehicleRamp) {
+		this.vehicleRamps.add(vehicleRamp);
 	}
 }
