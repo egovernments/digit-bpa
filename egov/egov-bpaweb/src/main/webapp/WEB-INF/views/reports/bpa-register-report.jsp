@@ -86,8 +86,6 @@
                         <th colspan="1"></th>
                         <th colspan="1"></th>
                         <th colspan="1"></th>
-                        <th colspan="1"></th>
-                        <th colspan="1"></th>
                         <th colspan="3"><spring:message code="lbl.fee.details"/></th>
                         <th colspan="1"></th>
                         <th colspan="1"></th>
@@ -97,14 +95,12 @@
                         <th><spring:message code="lbl.slno"/></th>
                         <th><spring:message code="lbl.app.num"/></th>
                         <th><spring:message code="lbl.applctn.type"/></th>
-                        <th><spring:message code="lbl.permit.type"/></th>
+                        <th><spring:message code="lbl.service.type"/></th>
                         <th><spring:message code="lbl.date.admison"/></th>
                         <th><spring:message code="lbl.applicant.name"/></th>
                         <th><spring:message code="lbl.owner.address"/></th>
                         <th><spring:message code="lbl.survey.no"/></th>
-                        <th><spring:message code="lbl.locality"/></th>
                         <th><spring:message code="lbl.reven.ward"/></th>
-                        <th><spring:message code="lbl.electn.ward"/></th>
                         <th><spring:message code="lbl.natur.occupan"/></th>
                         <th><spring:message code="lbl.totl.floorarea"/></th>
                         <th><spring:message code="lbl.no.floors"/></th>
@@ -115,8 +111,9 @@
                         <th><spring:message code="lbl.noc.details"/></th>
                         <th><spring:message code="lbl.building.permit.number"/></th>
                         <th><spring:message code="lbl.permit.fee"/></th>
-                        <th><spring:message code="lbl.additional.fee"/></th>
-                        <th><spring:message code="lbl.other.fee"/></th>
+                        <th><spring:message code="lbl.shelterfund.type"/></th>
+                        <th><spring:message code="lbl.labourcess.type"/></th>
+                        <th><spring:message code="lbl.devpermitfee.type"/></th>
                         <th><spring:message code="lbl.rejection.reasons"/></th>
                         <th><spring:message code="lbl.final.approval.date"/></th>
                         <th><spring:message code="lbl.approved.rejected.by"/></th>

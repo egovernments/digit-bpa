@@ -54,7 +54,10 @@ import static org.egov.bpa.utils.BpaConstants.NEW_CONSTRUCTION;
 import static org.egov.bpa.utils.BpaConstants.PERM_FOR_HUT_OR_SHED;
 import static org.egov.bpa.utils.BpaConstants.POLE_STRUCTURES;
 import static org.egov.bpa.utils.BpaConstants.RECONSTRUCTION;
+import static org.egov.bpa.utils.BpaConstants.SHELTERFUND;
 import static org.egov.bpa.utils.BpaConstants.TOWER_CONSTRUCTION;
+import static org.egov.bpa.utils.BpaConstants.DEV_PERMIT_FEE;
+import static org.egov.bpa.utils.BpaConstants.LABOURCESS;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -291,7 +294,8 @@ public class BpaReportsService {
             BpaRegisterReportHelper bpaRegister = new BpaRegisterReportHelper();
             bpaRegister.setId(application.getId());
             bpaRegister.setApplicationNumber(application.getApplicationNumber());
-            bpaRegister.setApplicationType(application.getServiceType().getDescription());
+            bpaRegister.setServiceType(application.getServiceType().getDescription());
+            bpaRegister.setApplicationType(application.getApplicationType().getDescription());
             bpaRegister.setDateOfAdmission(application.getApplicationDate());
             bpaRegister.setPermitType(
                     application.getIsOneDayPermitApplication() ? APPLICATION_TYPE_ONEDAYPERMIT
@@ -333,19 +337,31 @@ public class BpaReportsService {
                 BigDecimal permitFee = BigDecimal.ZERO;
                 BigDecimal additionalFee = BigDecimal.ZERO;
                 BigDecimal otherFee = BigDecimal.ZERO;
+                BigDecimal shelterFund = BigDecimal.ZERO;
+                BigDecimal labourcess = BigDecimal.ZERO;
+                BigDecimal developmentPermitFees = BigDecimal.ZERO;
                 for (ApplicationFeeDetail appFeeDtl : application.getPermitFee().get(0).getApplicationFee()
                         .getApplicationFeeDetail()) {
                     if (appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getDescription().equalsIgnoreCase(BPA_ADDITIONAL_FEE))
                         additionalFee = appFeeDtl.getAmount();
                     else if (appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getDescription().equalsIgnoreCase(BPA_OTHER_FEE))
                         otherFee = appFeeDtl.getAmount();
-                    else {
+                    else if(SHELTERFUND.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())){
+                    	shelterFund = appFeeDtl.getAmount();
+                    }else if(LABOURCESS.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())){
+                    	labourcess = appFeeDtl.getAmount();
+                    }else if(DEV_PERMIT_FEE.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())){
+                    	developmentPermitFees = appFeeDtl.getAmount();
+                    }else {
                         permitFee = permitFee.add(appFeeDtl.getAmount());
                     }
                 }
                 bpaRegister.setPermitFee(permitFee);
                 bpaRegister.setAdditionalFee(additionalFee);
                 bpaRegister.setOtherFee(otherFee);
+                bpaRegister.setShelterFund(shelterFund);
+                bpaRegister.setLabourcess(labourcess);
+                bpaRegister.setDevelopmentPermitFees(developmentPermitFees);
             }
             if (application.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CANCELLED)) {
                 bpaRegister.setRejectionReason(bpaNoticeUtil.buildRejectionReasons(application));

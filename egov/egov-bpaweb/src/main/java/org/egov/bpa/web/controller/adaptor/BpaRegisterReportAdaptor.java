@@ -27,6 +27,7 @@ public class BpaRegisterReportAdaptor implements DataTableJsonAdapter<BpaRegiste
 			final JsonObject jsonObject = new JsonObject();
 			jsonObject.addProperty("applicationNumber", defaultString(baseForm.getApplicationNumber()));
 			jsonObject.addProperty("applicationType", defaultString(baseForm.getApplicationType()));
+			jsonObject.addProperty("serviceType", defaultString(baseForm.getServiceType()));
 			jsonObject.addProperty("permitType", defaultString(baseForm.getPermitType()));
 			jsonObject.addProperty("dateOfAdmission", toDefaultDateFormat(baseForm.getDateOfAdmission()));
 			jsonObject.addProperty("applicantName", defaultString(baseForm.getApplicantName()));
@@ -47,6 +48,9 @@ public class BpaRegisterReportAdaptor implements DataTableJsonAdapter<BpaRegiste
 			jsonObject.addProperty("permitFee", baseForm.getPermitFee());
 			jsonObject.addProperty("additionalFee", baseForm.getAdditionalFee());
 			jsonObject.addProperty("otherFee", baseForm.getOtherFee());
+			jsonObject.addProperty("shelterFund", baseForm.getShelterFund());
+			jsonObject.addProperty("labourcess", baseForm.getLabourcess());
+			jsonObject.addProperty("developmentPermitFees", baseForm.getDevelopmentPermitFees());
 			jsonObject.addProperty("rejectionReason", defaultString(baseForm.getRejectionReason(), N_A));
 			jsonObject.addProperty("finalApprovalDate", baseForm.getFinalApprovalDate() != null
 														? toDefaultDateFormat(baseForm.getFinalApprovalDate()) : N_A);

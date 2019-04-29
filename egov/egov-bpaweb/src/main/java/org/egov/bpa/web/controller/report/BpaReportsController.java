@@ -327,7 +327,7 @@ public class BpaReportsController extends BpaGenericApplicationController {
 			model.addAttribute("wards", revenueWards.stream().sorted(Comparator.comparing(Boundary::getId)).collect(Collectors.toSet()));
 			model.addAttribute("electionwards", mappedElectionWard.stream().sorted(Comparator.comparing(Boundary::getId)).collect(Collectors.toSet()));
 			model.addAttribute("userList", Arrays.asList(employee));
-			List<ApplicationSubType> appTypes = applicationTypeService.getAllSlotRequiredApplicationTypes();
+			List<ApplicationSubType> appTypes = applicationTypeService.getAllEnabledApplicationTypes();
 			List<ApplicationSubType> applicationTypes = new ArrayList<>();
 	                for (ApplicationSubType applType : appTypes)
 	                    if (applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))

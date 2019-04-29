@@ -31,7 +31,11 @@ public class BpaRegisterReportHelper {
 	private String rejectionReason;
 	private Date finalApprovalDate;
 	private String apprvd_rejected_by;
-
+	private String serviceType;
+	private BigDecimal shelterFund;
+	private BigDecimal labourcess;
+	private BigDecimal developmentPermitFees; 
+	
 	public Long getId() {
 		return id;
 	}
@@ -238,6 +242,38 @@ public class BpaRegisterReportHelper {
 
 	public void setApprvd_rejected_by(String apprvd_rejected_by) {
 		this.apprvd_rejected_by = apprvd_rejected_by;
+	}
+
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	public BigDecimal getShelterFund() {
+		return shelterFund;
+	}
+
+	public void setShelterFund(BigDecimal shelterFund) {
+		this.shelterFund = shelterFund;
+	}
+
+	public BigDecimal getLabourcess() {
+		return labourcess;
+	}
+
+	public void setLabourcess(BigDecimal labourcess) {
+		this.labourcess = labourcess;
+	}
+
+	public BigDecimal getDevelopmentPermitFees() {
+		return developmentPermitFees;
+	}
+
+	public void setDevelopmentPermitFees(BigDecimal developmentPermitFees) {
+		this.developmentPermitFees = developmentPermitFees;
 	}
 
 	@Override
