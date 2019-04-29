@@ -162,6 +162,8 @@ public class StakeHolderService {
     private LicenceNumberGenerator licenceNumberGenerator;
     @Autowired
     private BPASmsAndEmailService bpaSmsAndEmailService;
+    @Autowired 
+    private StakeHolderStateService stakeHolderStateService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -191,9 +193,9 @@ public class StakeHolderService {
         StakeHolderState stakeHolderState = new StakeHolderState();
         stakeHolderState.setStakeHolder(stakeHolder);
         if (stakeHolder.getSource().equals(Source.ONLINE))
-            transition(stakeHolderState, null, null, null, null);
+            transition(stakeHolderState, null, null,"CREATESTAKEHOLDER", null);
         else
-            transition(stakeHolderState, DATA_ENTRY, null, null, null);
+            transition(stakeHolderState, DATA_ENTRY, null, "CREATESTAKEHOLDER", null);
         stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
         populateLicenceDetails(stakeHolder);
         if (stakeHolder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
@@ -265,11 +267,12 @@ public class StakeHolderService {
                     if (wfmatrix.getNextDesignation() != null && !wfmatrix.getNextDesignation().isEmpty()) {
                         final List<Assignment> assignments = assignmentService.getAllActiveAssignments(
                                 designationService.getDesignationByName(wfmatrix.getNextDesignation()).getId());
-                        if (!assignments.isEmpty())
+                        if (!assignments.isEmpty()) {
                             ownerPos = assignments.get(0).getPosition();
-                        if(ownerPos==null)
-                        {
-                        	throw new RuntimeException("No employee assignment to forward the application");
+                            ownerUser = assignments.get(0).getEmployee();
+                        }
+                        if (ownerPos == null) {
+                            throw new RuntimeException("No employee assignment to forward the application");
                         }
                     }
 
@@ -285,7 +288,7 @@ public class StakeHolderService {
 
                 }
             }
-        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject")) {
+        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction()!=null && stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject")) {
             wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
                     additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
             stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.REJECTED);
@@ -295,7 +298,7 @@ public class StakeHolderService {
                     .withStateValue("Rejected").withDateInfo(currentDate.toDate()).withOwner(ownerPos)
                     .withOwner(ownerUser).withNextAction(wfmatrix.getNextAction())
                     .withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
-        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("approve")) {
+        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction()!=null && stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("approve")) {
             stakeHolderState.transition().end()
                     .withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
                     .withComments(approvalComment).withStateValue("END").withDateInfo(currentDate.toDate())
@@ -315,6 +318,25 @@ public class StakeHolderService {
                 stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.APPROVED);
             }
 
+        } else if (stakeHolderState.getStakeHolder().getStatus().equals(StakeHolderStatus.RE_SUBMITTED)) {
+            wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
+                    additionalRule, "Resubmit", pendingAction);
+            if (wfmatrix.getNextDesignation() != null && !wfmatrix.getNextDesignation().isEmpty()) {
+                final List<Assignment> assignments = assignmentService.getAllActiveAssignments(
+                        designationService.getDesignationByName(wfmatrix.getNextDesignation()).getId());
+                if (!assignments.isEmpty()) {
+                    ownerPos = assignments.get(0).getPosition();
+                    ownerUser = assignments.get(0).getEmployee();
+                }
+                if (ownerPos == null) {
+                    throw new RuntimeException("No employee assignment to forward the application");
+                }
+            }
+            stakeHolderState.transition().reopen()
+            .withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
+            .withComments(approvalComment).withStateValue(wfmatrix.getNextState())
+            .withDateInfo(currentDate.toDate()).withOwner(ownerPos).withOwner(ownerUser)
+            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
         } else {
             wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
                     additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
@@ -333,13 +355,19 @@ public class StakeHolderService {
             modelObj.setCode(stakeHolderCodeGenerator.generateStakeHolderCode(modelObj));
         getStakeHolderWhenResubmit(modelObj, existingStakeholder);
         updateDocumentsOnResubmit(modelObj, existingStakeholder);
-        StakeHolderState stakeHolderState = new StakeHolderState();
+        StakeHolderState stakeHolderState = stakeHolderStateService.findByStakeHolderId(existingStakeholder.getId());
+        //StakeHolderState stakeHolderState = new StakeHolderState();
         populateLicenceDetails(existingStakeholder);
         if (existingStakeholder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
             setActiveToStakeholder(existingStakeholder);
         }
         stakeHolderRepository.save(existingStakeholder);
         stakeHolderState.setStakeHolder(existingStakeholder);
+        
+        if (modelObj.getSource().equals(Source.ONLINE))
+            transition(stakeHolderState, null, null,"RESUBMITSTAKEHOLDER", null);
+         else
+            transition(stakeHolderState, DATA_ENTRY, null, "RESUBMITSTAKEHOLDER", null);
         stakeHolderStateRepository.save(stakeHolderState);
         return existingStakeholder;
     }
