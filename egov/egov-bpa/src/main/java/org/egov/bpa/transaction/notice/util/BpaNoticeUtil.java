@@ -399,7 +399,7 @@ public class BpaNoticeUtil {
                             ? EMPTY
                             : bpaApplication.getSiteDetail().get(0).getNearestbuildingnumber());
             reportParams.put("surveyNo", bpaApplication.getSiteDetail().get(0).getReSurveyNumber() == null
-                    ? EMPTY
+                    ? "N/A"
                     : bpaApplication.getSiteDetail().get(0).getReSurveyNumber());
             reportParams.put("village", bpaApplication.getSiteDetail().get(0).getLocationBoundary() == null
                     ? EMPTY
