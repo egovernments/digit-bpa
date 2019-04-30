@@ -162,7 +162,7 @@ public class StakeHolderService {
     private LicenceNumberGenerator licenceNumberGenerator;
     @Autowired
     private BPASmsAndEmailService bpaSmsAndEmailService;
-    @Autowired 
+    @Autowired
     private StakeHolderStateService stakeHolderStateService;
 
     public Session getCurrentSession() {
@@ -193,7 +193,7 @@ public class StakeHolderService {
         StakeHolderState stakeHolderState = new StakeHolderState();
         stakeHolderState.setStakeHolder(stakeHolder);
         if (stakeHolder.getSource().equals(Source.ONLINE))
-            transition(stakeHolderState, null, null,"CREATESTAKEHOLDER", null);
+            transition(stakeHolderState, null, null, "CREATESTAKEHOLDER", null);
         else
             transition(stakeHolderState, DATA_ENTRY, null, "CREATESTAKEHOLDER", null);
         stakeHolder.setTenantId(ApplicationConstant.STATE_TENANTID);
@@ -288,7 +288,8 @@ public class StakeHolderService {
 
                 }
             }
-        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction()!=null && stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject")) {
+        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction() != null
+                && stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("reject")) {
             wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
                     additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
             stakeHolderState.getStakeHolder().setStatus(StakeHolderStatus.REJECTED);
@@ -298,7 +299,8 @@ public class StakeHolderService {
                     .withStateValue("Rejected").withDateInfo(currentDate.toDate()).withOwner(ownerPos)
                     .withOwner(ownerUser).withNextAction(wfmatrix.getNextAction())
                     .withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
-        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction()!=null && stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("approve")) {
+        } else if (stakeHolderState.getStakeHolder().getWorkFlowAction() != null
+                && stakeHolderState.getStakeHolder().getWorkFlowAction().toLowerCase().contains("approve")) {
             stakeHolderState.transition().end()
                     .withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
                     .withComments(approvalComment).withStateValue("END").withDateInfo(currentDate.toDate())
@@ -333,10 +335,10 @@ public class StakeHolderService {
                 }
             }
             stakeHolderState.transition().reopen()
-            .withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
-            .withComments(approvalComment).withStateValue(wfmatrix.getNextState())
-            .withDateInfo(currentDate.toDate()).withOwner(ownerPos).withOwner(ownerUser)
-            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
+                    .withSenderName(currentUser.getUsername() + BpaConstants.COLON_CONCATE + currentUser.getName())
+                    .withComments(approvalComment).withStateValue(wfmatrix.getNextState())
+                    .withDateInfo(currentDate.toDate()).withOwner(ownerPos).withOwner(ownerUser)
+                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_STAKEHOLDER);
         } else {
             wfmatrix = stakeHolderWorkflowService.getWfMatrix(stakeHolderState.getStateType(), null, null,
                     additionalRule, stakeHolderState.getCurrentState().getValue(), pendingAction);
@@ -356,17 +358,17 @@ public class StakeHolderService {
         getStakeHolderWhenResubmit(modelObj, existingStakeholder);
         updateDocumentsOnResubmit(modelObj, existingStakeholder);
         StakeHolderState stakeHolderState = stakeHolderStateService.findByStakeHolderId(existingStakeholder.getId());
-        //StakeHolderState stakeHolderState = new StakeHolderState();
+        // StakeHolderState stakeHolderState = new StakeHolderState();
         populateLicenceDetails(existingStakeholder);
         if (existingStakeholder.getStatus().compareTo(StakeHolderStatus.APPROVED) == 0) {
             setActiveToStakeholder(existingStakeholder);
         }
         stakeHolderRepository.save(existingStakeholder);
         stakeHolderState.setStakeHolder(existingStakeholder);
-        
+
         if (modelObj.getSource().equals(Source.ONLINE))
-            transition(stakeHolderState, null, null,"RESUBMITSTAKEHOLDER", null);
-         else
+            transition(stakeHolderState, null, null, "RESUBMITSTAKEHOLDER", null);
+        else
             transition(stakeHolderState, DATA_ENTRY, null, "RESUBMITSTAKEHOLDER", null);
         stakeHolderStateRepository.save(stakeHolderState);
         return existingStakeholder;
@@ -426,8 +428,14 @@ public class StakeHolderService {
 
     @Transactional
     public StakeHolder update(final StakeHolder stakeHolder, final String workFlowAction) {
-        stakeHolder.addAddress(updateCorrespondenceAddress(stakeHolder, stakeHolder.getAddress()));
-        stakeHolder.addAddress(updatePermanentAddress(stakeHolder, stakeHolder.getAddress()));
+        if (stakeHolder.getCorrespondenceAddress() != null
+                && StringUtils.isNoneBlank(stakeHolder.getCorrespondenceAddress().getHouseNoBldgApt())
+                && StringUtils.isNoneBlank(stakeHolder.getCorrespondenceAddress().getStreetRoadLine()))
+            stakeHolder.addAddress(updateCorrespondenceAddress(stakeHolder, stakeHolder.getAddress()));
+        if (stakeHolder.getPermanentAddress() != null
+                && StringUtils.isNoneBlank(stakeHolder.getPermanentAddress().getHouseNoBldgApt())
+                && StringUtils.isNoneBlank(stakeHolder.getPermanentAddress().getStreetRoadLine()))
+            stakeHolder.addAddress(updatePermanentAddress(stakeHolder, stakeHolder.getAddress()));
         stakeHolder.setLastUpdatedDate(stakeHolder.getLastModifiedDate());
         stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
         processAndStoreApplicationDocuments(stakeHolder);
