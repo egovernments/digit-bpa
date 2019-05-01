@@ -46,19 +46,21 @@
 	 
 			<!-- for builder registration -->
 			<div class="col-sm-8 col-sm-offset-2">
-				<div class="checkbox">
+				<div class="checkbox text-justify">  
 				<input type="checkbox" id="stkholderAccepted1"> <span class="mandatory"></span>&nbsp;&nbsp;<spring:message
-							code="stakeholder.registration.builder.declaration" /><BR>
+							code="stakeholder.registration.builder.declaration" /><BR>  
 				</div>
 			</div>
 </div>		
 <div class="form-group decl2" id="div2">
 			<!-- for technical user registration -->
 			<div class="col-sm-8 col-sm-offset-2">
-				<div class="checkbox">
+			
+				<div class="checkbox text-justify">  
 				<input type="checkbox" id="stkholderAccepted2"> <span class="mandatory"></span>&nbsp;&nbsp;<spring:message
 							code="stakeholder.registration.technical.declaration" /><BR>
-				</div>
+			</div>
+				
 			</div>
 		
 </div>
