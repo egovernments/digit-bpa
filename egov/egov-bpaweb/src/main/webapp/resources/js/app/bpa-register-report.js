@@ -176,10 +176,6 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "surveyNumber",
-														"sClass" : "text-left"
-													},
-													{
 														"data" : "revenueWard",
 														"sClass" : "text-left"
 													},
@@ -252,7 +248,7 @@ $(document)
 									     	                   "render": function ( data, type, row ) {
 									     	                       return type === 'display' && '<div><span>'+(data.length > 100 ? data.substr( 0, 100 )+'</span> <button class="details" data-text="'+escape(data)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : data+"</p>");
 									     	                   },
-									     	                   "targets": [18,24]
+									     	                   "targets": [18,23]
 										     	           }
 						]  
 										});

@@ -99,7 +99,6 @@
                         <th><spring:message code="lbl.date.admison"/></th>
                         <th><spring:message code="lbl.applicant.name"/></th>
                         <th><spring:message code="lbl.owner.address"/></th>
-                        <th><spring:message code="lbl.survey.no"/></th>
                         <th><spring:message code="lbl.reven.ward"/></th>
                         <th><spring:message code="lbl.natur.occupan"/></th>
                         <th><spring:message code="lbl.totl.floorarea"/></th>

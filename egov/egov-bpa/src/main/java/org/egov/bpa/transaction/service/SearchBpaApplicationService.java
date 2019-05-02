@@ -98,8 +98,8 @@ public class SearchBpaApplicationService {
 	private ApplicationBpaRepository applicationBpaRepository;
 	@Autowired
 	private SlotApplicationRepository slotApplicationRepository;
-	//@Autowired
-	//private ApplicationBpaFeeCalculationService bpaCalculationService;
+	@Autowired
+	private ApplicationBpaService bpaCalculationService;
 	@Autowired
 	private ApplicationSubTypeService applicationTypeService;
 	@PersistenceContext
@@ -356,8 +356,8 @@ public class SearchBpaApplicationService {
 		BigDecimal plotArea = application.getSiteDetail().get(0).getExtentinsqmts();
 		BigDecimal far = BigDecimal.ZERO;
 		if (!application.getBuildingDetail().isEmpty()) {
-			BigDecimal totalFloorArea = BigDecimal.ZERO; //bpaCalculationService.getTotalFloorArea(application);
-			BigDecimal existBldgFloorArea = BigDecimal.ZERO;//bpaCalculationService.getExistBldgTotalFloorArea(application);
+			BigDecimal totalFloorArea = bpaCalculationService.getTotalFloorArea(application);
+			BigDecimal existBldgFloorArea = bpaCalculationService.getExistBldgTotalFloorArea(application);
 			totalFloorArea = totalFloorArea.add(existBldgFloorArea);
 			if (totalFloorArea != null)
 				far = totalFloorArea.divide(plotArea, 3, RoundingMode.HALF_UP);
