@@ -126,101 +126,97 @@ public class VehicleRamp extends FeatureProcess {
 					scrutinyDetail.addColumnHeading(6, STATUS);
 					scrutinyDetail.setKey("Vehicle Ramp");
 
-					if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
-						if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
-							for (Floor floor : block.getBuilding().getFloors()) {
-								for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
-									if (vehicleRamp.getRampPolyLineClosed()) {
-										vehicleRampLengths = new ArrayList<>();
-										for (Measurement measurement : vehicleRamp.getRampPolyLines()) {
-											vehicleRampLengths.add(measurement.getHeight());
-										}
-										vehicleRampTotalLength = BigDecimal.ZERO;
-										for (BigDecimal length : vehicleRampLengths) {
-											vehicleRampTotalLength = vehicleRampTotalLength.add(length);
-										}
-										if (vehicleRampTotalLength.compareTo(BigDecimal.valueOf(0)) > 0
-												&& vehicleRamp.getFloorHeight() != null) {
-											vehicleRampSlope = vehicleRamp.getFloorHeight()
-													.divide(vehicleRampTotalLength, 2, RoundingMode.HALF_UP);
-											vehicleRamp.setSlope(vehicleRampSlope);
-										}
+					if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
+						for (Floor floor : block.getBuilding().getFloors()) {
+							for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
+								if (vehicleRamp.getRampPolyLineClosed()) {
+									vehicleRampLengths = new ArrayList<>();
+									for (Measurement measurement : vehicleRamp.getRampPolyLines()) {
+										vehicleRampLengths.add(measurement.getHeight());
 									}
-								}
-
-								if (floor.getNumber() != 0) {
-									if ((floor.getParking() != null && floor.getParking().getMechanicalLifts() != null
-											&& !floor.getParking().getMechanicalLifts().isEmpty())
-											|| (floor.getVehicleRamps() != null
-													&& !floor.getVehicleRamps().isEmpty())) {
-
-										if (floor.getParking().getMechanicalLifts() == null
-												|| floor.getParking().getMechanicalLifts().isEmpty()) {
-											valid = false;
-											valid1 = false;
-											valid2 = false;
-											for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor
-													.getVehicleRamps()) {
-												minWidth = BigDecimal.ZERO;
-												for (Measurement polyLine : vehicleRamp.getRampPolyLines()) {
-													if (polyLine.getWidth().compareTo(minWidth) < 0) {
-														minWidth = polyLine.getWidth();
-													}
-												}
-
-												if (minWidth.compareTo(new BigDecimal(5.4)) >= 0
-														&& vehicleRamp.getSlope() != null && vehicleRamp.getSlope()
-																.compareTo(new BigDecimal(0.12)) <= 0) {
-													valid = true;
-												}
-
-												if (valid1 && minWidth.compareTo(new BigDecimal(3.6)) >= 0
-														&& vehicleRamp.getSlope() != null && vehicleRamp.getSlope()
-																.compareTo(new BigDecimal(0.12)) <= 0) {
-													valid2 = true;
-												}
-
-												if (!valid1 && minWidth.compareTo(new BigDecimal(3.6)) >= 0
-														&& vehicleRamp.getSlope() != null && vehicleRamp.getSlope()
-																.compareTo(new BigDecimal(0.12)) <= 0) {
-													valid1 = true;
-												}
-
-											}
-
-											if (valid || (valid1 && valid2)) {
-												details.put(FLOOR, "Floor " + floor.getNumber());
-												details.put(REQUIRED,
-														"At least two vehicle ramps of minimum 3.6 m width or one vehicle ramp of minimum 5.4 m width and in maximum 1:8 slope");
-												details.put(PROVIDED,
-														valid ? "Provided vehicle ramp with minimum 5.4 width"
-																: "Provided two vehicle ramps of minimum 3.6 m width");
-												details.put(STATUS, Result.Accepted.getResultVal());
-												scrutinyDetail.getDetail().add(details);
-												pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-											} else {
-												details.put(FLOOR, "Floor " + floor.getNumber());
-												details.put(REQUIRED,
-														"At least two vehicle ramps of minimum 3.6 m width or one vehicle ramp of minimum 5.4 m width and in maximum 1:8 slope");
-												details.put(PROVIDED,
-														"Not Provided vehicle ramp with minimum 5.4 width or  two vehicle ramps of minimum 3.6 m width");
-												details.put(STATUS, Result.Not_Accepted.getResultVal());
-												scrutinyDetail.getDetail().add(details);
-												pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-											}
-
-										}
-
-									} else {
-										errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
-										pl.addErrors(errors);
-
+									vehicleRampTotalLength = BigDecimal.ZERO;
+									for (BigDecimal length : vehicleRampLengths) {
+										vehicleRampTotalLength = vehicleRampTotalLength.add(length);
+									}
+									if (vehicleRampTotalLength.compareTo(BigDecimal.valueOf(0)) > 0
+											&& vehicleRamp.getFloorHeight() != null) {
+										vehicleRampSlope = vehicleRamp.getFloorHeight().divide(vehicleRampTotalLength,
+												2, RoundingMode.HALF_UP);
+										vehicleRamp.setSlope(vehicleRampSlope);
 									}
 								}
 							}
-						}
 
+							if (floor.getNumber() != 0) {
+								if ((floor.getParking() != null && floor.getParking().getMechanicalLifts() != null
+										&& !floor.getParking().getMechanicalLifts().isEmpty())
+										|| (floor.getVehicleRamps() != null && !floor.getVehicleRamps().isEmpty())) {
+
+									if (floor.getParking().getMechanicalLifts() == null
+											|| floor.getParking().getMechanicalLifts().isEmpty()) {
+										valid = false;
+										valid1 = false;
+										valid2 = false;
+										for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor
+												.getVehicleRamps()) {
+											minWidth = BigDecimal.ZERO;
+											for (Measurement polyLine : vehicleRamp.getRampPolyLines()) {
+												if (polyLine.getWidth().compareTo(minWidth) < 0) {
+													minWidth = polyLine.getWidth();
+												}
+											}
+
+											if (minWidth.compareTo(new BigDecimal(5.4)) >= 0
+													&& vehicleRamp.getSlope() != null
+													&& vehicleRamp.getSlope().compareTo(new BigDecimal(0.12)) <= 0) {
+												valid = true;
+											}
+
+											if (valid1 && minWidth.compareTo(new BigDecimal(3.6)) >= 0
+													&& vehicleRamp.getSlope() != null
+													&& vehicleRamp.getSlope().compareTo(new BigDecimal(0.12)) <= 0) {
+												valid2 = true;
+											}
+
+											if (!valid1 && minWidth.compareTo(new BigDecimal(3.6)) >= 0
+													&& vehicleRamp.getSlope() != null
+													&& vehicleRamp.getSlope().compareTo(new BigDecimal(0.12)) <= 0) {
+												valid1 = true;
+											}
+
+										}
+
+										if (valid || (valid1 && valid2)) {
+											details.put(FLOOR, "Floor " + floor.getNumber());
+											details.put(REQUIRED,
+													"At least two vehicle ramps of minimum 3.6 m width or one vehicle ramp of minimum 5.4 m width and in maximum 1:8 slope");
+											details.put(PROVIDED, valid ? "Provided vehicle ramp with minimum 5.4 width"
+													: "Provided two vehicle ramps of minimum 3.6 m width");
+											details.put(STATUS, Result.Accepted.getResultVal());
+											scrutinyDetail.getDetail().add(details);
+											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+										} else {
+											details.put(FLOOR, "Floor " + floor.getNumber());
+											details.put(REQUIRED,
+													"At least two vehicle ramps of minimum 3.6 m width or one vehicle ramp of minimum 5.4 m width and in maximum 1:8 slope");
+											details.put(PROVIDED,
+													"Not Provided vehicle ramp with minimum 5.4 width or  two vehicle ramps of minimum 3.6 m width");
+											details.put(STATUS, Result.Not_Accepted.getResultVal());
+											scrutinyDetail.getDetail().add(details);
+											pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+										}
+
+									}
+
+								} else {
+									errors.put("Vehicle Ramp", "Either ramp or mechanical lift is required");
+									pl.addErrors(errors);
+
+								}
+							}
+						}
 					}
+
 				}
 			}
 		}
