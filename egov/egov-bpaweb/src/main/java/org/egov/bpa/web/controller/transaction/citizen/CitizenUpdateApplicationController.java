@@ -60,7 +60,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SEND_BUTTON;
 
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -213,8 +213,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         model.addAttribute("permitApplnFeeRequired", bpaUtils.isApplicationFeeCollectionRequired());
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
-        model.addAttribute("admissionFee",
+        if (bpaUtils.isApplicationFeeCollectionRequired())
+          model.addAttribute("admissionFee",
                 feeCalculation.setAdmissionFeeAmount(application, application.getApplicationAmenity()));
+
         if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getLetterToParty().getSentDate() != null)
             model.addAttribute("mode", "showLPDetails");
         buildAppointmentDetailsOfScutinyAndInspection(model, application);
@@ -357,10 +359,12 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
 
-        bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
-        if (bpaUtils.isApplicationFeeCollectionRequired())
+        if (bpaUtils.isApplicationFeeCollectionRequired()) {
+            bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
         	bpaApplication.setDemand(feeCalculation.createDemand(bpaApplication));
+        }
         else
+            bpaApplication.setAdmissionfeeAmount(BigDecimal.valueOf(0));
         	bpaApplication.setDemand(feeCalculation.createDemandWhenFeeCollectionNotRequire(bpaApplication));
 
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);

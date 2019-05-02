@@ -44,6 +44,7 @@ $(document).ready(function ($) {
 	if($('#sentToCitizen').val()==='true') {
 		$('#editCitizenApplicationform').find(':input:not([type="button"], [type="submit"])', ':select', ':textarea').each(function () {
 	        $(this).attr("disabled","disabled");
+	        $(this).attr("readonly","readonly");
 	    });
 		$('a.file-add').on("click", function (e) {
 	        e.preventDefault();

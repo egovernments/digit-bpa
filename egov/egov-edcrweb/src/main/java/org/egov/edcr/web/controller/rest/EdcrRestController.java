@@ -52,12 +52,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.util.Date;
 
+import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
+import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.egov.edcr.entity.dto.EdcrApplicationInfo;
 import org.egov.edcr.service.EdcrApplicationDetailService;
 import org.egov.edcr.service.EdcrExternalService;
 import org.egov.edcr.utility.DcrConstants;
-import org.egov.eis.contract.ErrorDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

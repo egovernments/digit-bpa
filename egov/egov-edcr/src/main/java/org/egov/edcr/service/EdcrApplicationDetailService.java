@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.Floor;
@@ -20,7 +21,6 @@ import org.egov.common.entity.edcr.OccupancyType;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanInformation;
 import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.egov.edcr.entity.dto.EdcrApplicationInfo;
 import org.egov.edcr.repository.EdcrApplicationDetailRepository;
 import org.hibernate.Query;
 import org.hibernate.Session;

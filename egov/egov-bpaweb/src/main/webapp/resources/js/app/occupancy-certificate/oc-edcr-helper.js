@@ -279,7 +279,7 @@ $(document).ready(
                         'name': block.name,
                         'number': block.number,
                         'height': block.building.buildingHeight,
-                        'totalPlinthArea':block.building.totalBuitUpArea,
+                        'totalPlinthArea':block.building.totalBuitUpArea.toFixed(2),
                         'floorCount':block.building.floorsAboveGround
                     };
                     addOtherProposedBldgDtls(otherProposedBldgDtls, blockIdx, planDetail.blocks.length);

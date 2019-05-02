@@ -38,7 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.edcr.entity.dto;
+package org.egov.common.entity.dcr.helper;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.Plan;
-import org.egov.eis.contract.ErrorDetail;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 
 public class EdcrApplicationInfo implements Serializable {

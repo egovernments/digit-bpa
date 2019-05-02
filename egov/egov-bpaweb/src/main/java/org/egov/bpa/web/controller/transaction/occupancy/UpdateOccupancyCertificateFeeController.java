@@ -60,7 +60,6 @@ import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.bpa.transaction.service.BpaStatusService;
-import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
 import org.egov.bpa.transaction.service.PermitFeeService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
@@ -122,8 +121,6 @@ public class UpdateOccupancyCertificateFeeController {
     @Autowired
     protected OccupancyFeeService ocFeeService;
     @Autowired
-    protected OccupancyCertificateFeeCalculation occupancyCertificateFeeCalculation;
-    @Autowired
     protected OccupancyFeeRepository ocFeeRepository;
     @Autowired
     protected BpaUtils bpaUtils;
@@ -165,12 +162,8 @@ public class UpdateOccupancyCertificateFeeController {
                     feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 // calculate fee by passing sanction list, inspection latest object.
                 // based on fee code, define calculation logic for each servicewise.
-                try {
-                    ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(ocFee.getOc());
-                } catch (IOException ioe) {
-                    // TODO do what here to do else rethrow exception, remove this comment if it can be ignored
-                    LOGGER.error("Error occurred while occupancy certificate fee calculation", ioe);
-                }
+            	
+                ocFee = ocService.calculateOCSanctionFees(ocFee.getOc());
                 model.addAttribute(OC_FEE, ocFee);
 
                 return MODIFYOCFEE_FORM;

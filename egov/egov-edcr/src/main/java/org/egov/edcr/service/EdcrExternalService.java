@@ -46,13 +46,13 @@ import java.math.BigDecimal;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.FloorDescription;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.egov.edcr.entity.dto.EdcrApplicationInfo;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.DateUtils;

@@ -60,14 +60,18 @@ import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.BpaApplicationValidationService;
+import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateValidationService;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +115,9 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
     private BpaApplicationValidationService validationService;
     @Autowired
     protected SubOccupancyService subOccupancyService;
-
+    @Autowired
+    private CustomImplProvider specificNoticeService;
+    
     @GetMapping("/occupancy-certificate/apply")
     public String newOCForm(final Model model, final HttpServletRequest request) {
 
@@ -146,7 +152,9 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
             return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
         }
         occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
-        Boolean result = validationService.validateOcApplnWithPermittedBpaAppln(model, occupancyCertificate);
+        OccupancyCertificateValidationService ocService =  (OccupancyCertificateValidationService) specificNoticeService
+                .find(OccupancyCertificateValidationService.class, specificNoticeService.getCityDetails());
+        Boolean result = ocService.validateOcApplnWithPermittedBpaAppln(model, occupancyCertificate);
         if (occupancyCertificate.getParent() != null && occupancyCertificate.getParent().geteDcrNumber() != null && !result) {
             occupancyCertificate.getBuildingDetailFromEdcr().clear();
             occupancyCertificate.getBuildings().clear();

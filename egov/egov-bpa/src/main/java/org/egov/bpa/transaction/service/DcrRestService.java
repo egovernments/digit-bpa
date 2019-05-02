@@ -4,8 +4,9 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
+import org.egov.common.entity.edcr.Plan;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.web.utils.WebUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
@@ -22,7 +23,17 @@ public class DcrRestService {
 
         return restTemplate.getForObject(url, String.class, dcrNumber);
     }
+    
+    private static final String EDCR_PLANIFO_RESTURL = "%s/edcr/rest/approved-plan-details/by-edcr-number/{dcrNumber}";
 
+    public  EdcrApplicationInfo getDcrPlanInfo(final String dcrNumber, final HttpServletRequest request) {
+        final RestTemplate restTemplate = new RestTemplate();
+
+        final String url = String.format(EDCR_PLANIFO_RESTURL,ApplicationThreadLocals.getDomainURL());
+
+        return restTemplate.getForObject(url, EdcrApplicationInfo.class, dcrNumber);
+   }
+    
     private static final String EDCR_CONVERTED_PDF_RESTURL = "%s/edcr/rest/converted-pdf/by-edcr-number/{dcrNumber}";
 
     public String getConvertedPdfs(final String dcrNumber, final HttpServletRequest request) {

@@ -110,9 +110,9 @@ import org.egov.bpa.transaction.repository.oc.OccupancyCertificateRepository;
 import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
-import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.OccupancyCertificateBillService;
+import org.egov.bpa.transaction.service.impl.OccupancyCertificateFeeService;
 import org.egov.bpa.transaction.service.messaging.oc.OcSmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
@@ -181,8 +181,6 @@ public class OccupancyCertificateService {
     @Autowired
     private OCNoticeConditionsService ocNoticeConditionsService;
     @Autowired
-    private OccupancyCertificateFeeCalculation occupancyCertificateFeeCalculation;
-    @Autowired
     private ApplicationFeeService applicationFeeService;
     @Autowired
     private BpaDemandService bpaDemandService;
@@ -196,6 +194,8 @@ public class OccupancyCertificateService {
     private OCDcrDocumentRepository ocDcrDocumentRepository;
     @Autowired
     private ServiceTypeService serviceTypeService;
+    @Autowired
+    protected OccupancyFeeService ocFeeService;
     
     public List<OccupancyCertificate> findByEdcrNumber(String edcrNumber) {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
@@ -328,11 +328,7 @@ public class OccupancyCertificateService {
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
                     feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 OccupancyFee ocFee = new OccupancyFee();
-                try {
-                    ocFee = occupancyCertificateFeeCalculation.calculateOCSanctionFees(oc);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                ocFee = calculateOCSanctionFees(oc);
                 if (!ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
                     ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(ocFee.getApplicationFee());
                     ocFee.setApplicationFee(applicationFee);
@@ -594,5 +590,36 @@ public class OccupancyCertificateService {
                 }
             }
         }
+    }
+    
+
+    private OccupancyFee getOCFee(final OccupancyCertificate oc) {
+        OccupancyFee ocFee = null;
+        if (oc != null) {
+            List<OccupancyFee> ocFeeList = ocFeeService
+                    .getOCFeeListByApplicationId(oc.getId());
+            if (ocFeeList.isEmpty()) {
+                ocFee = new OccupancyFee();
+                ocFee.setApplicationFee(new ApplicationFee());
+                ocFee.setOc(oc);
+                return ocFee;
+            } else {
+                return ocFeeList.get(0);
+            }
+        }
+        return ocFee;
+    }
+
+    public OccupancyFee calculateOCSanctionFees(final OccupancyCertificate oc) {
+
+        OccupancyFee ocFee = getOCFee(oc);
+
+        if (ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
+        	OccupancyCertificateFeeService ocFeeCalculationService = (OccupancyCertificateFeeService) specificNoticeService
+                    .find(OccupancyCertificateFeeService.class, specificNoticeService.getCityDetails());
+        	ocFeeCalculationService.calculateOCFees(oc, ocFee);
+        }
+
+        return ocFee;
     }
 }

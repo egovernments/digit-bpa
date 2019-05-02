@@ -66,6 +66,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_SEND_BUTTON;
 
 import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -482,8 +483,11 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         }
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
-        bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
-
+        if (bpaUtils.isApplicationFeeCollectionRequired())
+           bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
+        else
+           bpaApplication.setAdmissionfeeAmount(BigDecimal.valueOf(0));
+        
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);

@@ -60,7 +60,6 @@ import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.entity.oc.OccupancyFee;
-import org.egov.bpa.transaction.service.OccupancyCertificateFeeCalculation;
 import org.egov.bpa.transaction.service.oc.OccupancyFeeService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
@@ -70,9 +69,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Service
 @Transactional(readOnly = true)
-public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertificateFeeCalculation {
+public class OccupancyCertificateFeeService  {
     private static final String TOTAL_FLOOR_AREA = "totalFloorArea";
     private static final String OTHERS = "Others";
     private static final String RESIDENTIAL_DESC = "Residential";
@@ -91,38 +91,6 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
     
     @Autowired
     protected BpaFeeCommonService bpaFeeCommonService;
-
-    // .setScale(0, BigDecimal.ROUND_HALF_UP)
-
-    private OccupancyFee getOCFee(final OccupancyCertificate oc) {
-        OccupancyFee ocFee = null;
-        if (oc != null) {
-            List<OccupancyFee> ocFeeList = ocFeeService
-                    .getOCFeeListByApplicationId(oc.getId());
-            if (ocFeeList.isEmpty()) {
-                ocFee = new OccupancyFee();
-                ocFee.setApplicationFee(new ApplicationFee());
-                ocFee.setOc(oc);
-                return ocFee;
-            } else {
-                return ocFeeList.get(0);
-            }
-        }
-        return ocFee;
-    }
-
-    @Override
-    public OccupancyFee calculateOCSanctionFees(final OccupancyCertificate oc) {
-
-        OccupancyFee ocFee = getOCFee(oc);
-        // If record rejected and recalculation required again, then this logic
-        // has to be change.
-        if (ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
-            calculateOCFees(oc, ocFee);
-        }
-
-        return ocFee;
-    }
 
     public void calculateOCFees(OccupancyCertificate oc, OccupancyFee ocFee) {
         Map<String, BigDecimal> ocProposedArea = bpaUtils.getProposedBuildingAreasOfOC(oc.getBuildings());
@@ -184,7 +152,7 @@ public class OccupancyCertificateFeeCalculationImpl implements OccupancyCertific
         return rate;
     }
 
-    private ApplicationFeeDetail buildApplicationFeeDetail(final BpaFeeMapping bpaFee, final ApplicationFee applicationFee,
+    protected ApplicationFeeDetail buildApplicationFeeDetail(final BpaFeeMapping bpaFee, final ApplicationFee applicationFee,
             BigDecimal amount) {
         ApplicationFeeDetail feeDetail = new ApplicationFeeDetail();
         feeDetail.setAmount(amount.setScale(0, BigDecimal.ROUND_HALF_UP));
