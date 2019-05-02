@@ -89,6 +89,7 @@ public class Block extends Measurement {
 	private List<BigDecimal> stairCovers;
 	private List<BigDecimal> chimneys;
 	private List<BigDecimal> parapets;
+	private FireTenderMovement fireTenderMovement; 
 
 	@Override
 	public String toString() {
@@ -378,5 +379,13 @@ public class Block extends Measurement {
 	public void setParapets(List<BigDecimal> parapets) {
 		this.parapets = parapets;
 	}
+
+    public FireTenderMovement getFireTenderMovement() {
+        return fireTenderMovement;
+    }
+
+    public void setFireTenderMovement(FireTenderMovement fireTenderMovement) {
+        this.fireTenderMovement = fireTenderMovement;
+    }
 
 }
