@@ -143,25 +143,33 @@ public class Far extends FeatureProcess {
 		BigDecimal totalExistingFloorArea = BigDecimal.ZERO;
 		BigDecimal totalBuiltUpArea = BigDecimal.ZERO;
 		BigDecimal totalFloorArea = BigDecimal.ZERO;
+		BigDecimal totalCarpetArea = BigDecimal.ZERO;
+		BigDecimal totalExistingCarpetArea = BigDecimal.ZERO;
 		Set<OccupancyTypeHelper> distinctOccupancyTypesHelper = new HashSet<>();
 		for (Block blk : pl.getBlocks()) {
 			BigDecimal flrArea = BigDecimal.ZERO;
 			BigDecimal bltUpArea = BigDecimal.ZERO;
 			BigDecimal existingFlrArea = BigDecimal.ZERO;
 			BigDecimal existingBltUpArea = BigDecimal.ZERO;
+			BigDecimal carpetArea = BigDecimal.ZERO;
+			BigDecimal existingCarpetArea = BigDecimal.ZERO;
 			Building building = blk.getBuilding();
 			for (Floor flr : building.getFloors()) {
 				for (Occupancy occupancy : flr.getOccupancies()) {
 					validate2(pl, blk, flr, occupancy);
-					occupancy.setCarpetArea(occupancy.getFloorArea().multiply(BigDecimal.valueOf(0.80)));
-					occupancy
-							.setExistingCarpetArea(occupancy.getExistingFloorArea().multiply(BigDecimal.valueOf(0.80)));
+                    /*
+                     * occupancy.setCarpetArea(occupancy.getFloorArea().multiply(BigDecimal.valueOf(0.80))); occupancy
+                     * .setExistingCarpetArea(occupancy.getExistingFloorArea().multiply(BigDecimal.valueOf(0.80)));
+                     */
+					
 					bltUpArea = bltUpArea.add(
 							occupancy.getBuiltUpArea() == null ? BigDecimal.valueOf(0) : occupancy.getBuiltUpArea());
-					flrArea = flrArea.add(occupancy.getFloorArea());
-					existingFlrArea = existingFlrArea.add(occupancy.getExistingFloorArea());
 					existingBltUpArea = existingBltUpArea.add(occupancy.getExistingBuiltUpArea() == null
 							? BigDecimal.valueOf(0) : occupancy.getExistingBuiltUpArea());
+					flrArea = flrArea.add(occupancy.getFloorArea());
+                                        existingFlrArea = existingFlrArea.add(occupancy.getExistingFloorArea());
+                                        carpetArea = carpetArea.add(occupancy.getCarpetArea());
+                                        existingCarpetArea = existingCarpetArea.add(occupancy.getExistingCarpetArea());
 				}
 			}
 			building.setTotalFloorArea(flrArea);
@@ -177,6 +185,8 @@ public class Far extends FeatureProcess {
 			totalBuiltUpArea = totalBuiltUpArea.add(bltUpArea);
 			totalExistingBuiltUpArea = totalExistingBuiltUpArea.add(existingBltUpArea);
 			totalExistingFloorArea = totalExistingFloorArea.add(existingFlrArea);
+			totalCarpetArea = totalCarpetArea.add(carpetArea);
+                        totalExistingCarpetArea = totalExistingCarpetArea.add(existingCarpetArea);
 
 			// Find Occupancies by block and add
 			Set<OccupancyTypeHelper> occupancyByBlock = new HashSet<>();
@@ -399,10 +409,10 @@ public class Far extends FeatureProcess {
 
 		pl.setOccupancies(occupanciesForPlan);
 		pl.getVirtualBuilding().setTotalFloorArea(totalFloorArea);
-		pl.getVirtualBuilding().setTotalCarpetArea(totalFloorArea.multiply(BigDecimal.valueOf(0.80)));
+		pl.getVirtualBuilding().setTotalCarpetArea(totalCarpetArea);
 		pl.getVirtualBuilding().setTotalExistingBuiltUpArea(totalExistingBuiltUpArea);
 		pl.getVirtualBuilding().setTotalExistingFloorArea(totalExistingFloorArea);
-		pl.getVirtualBuilding().setTotalExistingCarpetArea(totalExistingFloorArea.multiply(BigDecimal.valueOf(0.80)));
+		pl.getVirtualBuilding().setTotalExistingCarpetArea(totalExistingCarpetArea);
 		pl.getVirtualBuilding().setOccupancyTypes(distinctOccupancyTypesHelper);
 		pl.getVirtualBuilding().setTotalBuitUpArea(totalBuiltUpArea);
 		pl.getVirtualBuilding().setMostRestrictiveFarHelper(getMostRestrictiveFar(setOfDistinctOccupancyTypes));
