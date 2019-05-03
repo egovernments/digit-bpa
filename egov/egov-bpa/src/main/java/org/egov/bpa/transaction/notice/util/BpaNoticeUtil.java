@@ -679,6 +679,14 @@ public class BpaNoticeUtil {
     private int buildApplicationPermitConditions(final BpaApplication bpaApplication,
             StringBuilder permitConditions) {
         int order = 1;
+        for (ApplicationPermitConditions applnPermit : bpaApplication.getDefaultPermitConditions()) {
+            if (applnPermit.getNoticeCondition().isRequired()
+                    && ConditionType.PERMITDEFAULTCONDITIONS.equals(applnPermit.getNoticeCondition().getType())) {
+                permitConditions
+                        .append(String.valueOf(order) + ") " + applnPermit.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription() + TWO_NEW_LINE);
+                order++;
+            }
+        }
         for (ApplicationPermitConditions applnPermit : bpaApplication.getDynamicPermitConditions()) {
             if (applnPermit.getNoticeCondition().isRequired()
                     && ConditionType.NOCCONDITIONS.equals(applnPermit.getNoticeCondition().getType())) {
@@ -693,15 +701,6 @@ public class BpaNoticeUtil {
         for (ApplicationPermitConditions applnPermit : bpaApplication.getStaticPermitConditions()) {
             if (applnPermit.getNoticeCondition().isRequired()
                     && ConditionType.GENERALCONDITIONS.equals(applnPermit.getNoticeCondition().getType())) {
-                permitConditions
-                        .append(String.valueOf(order) + ") " + applnPermit.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription() + TWO_NEW_LINE);
-                order++;
-            }
-        }
-        
-        for (ApplicationPermitConditions applnPermit : bpaApplication.getDefaultPermitConditions()) {
-            if (applnPermit.getNoticeCondition().isRequired()
-                    && ConditionType.PERMITDEFAULTCONDITIONS.equals(applnPermit.getNoticeCondition().getType())) {
                 permitConditions
                         .append(String.valueOf(order) + ") " + applnPermit.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription() + TWO_NEW_LINE);
                 order++;
