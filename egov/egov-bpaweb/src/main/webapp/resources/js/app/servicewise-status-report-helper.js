@@ -88,8 +88,8 @@ $(document)
 												"data" : getFormData($('form')),
 												"dataSrc": function ( json ) {
 													json.data.forEach(function(item){
-														item["rowTotal"] = item.serviceType01 + item.serviceType02 + item.serviceType03 + item.serviceType04 + item.serviceType05 
-															+ item.serviceType06 + item.serviceType07 + item.serviceType08 + item.serviceType09 + item.serviceType14 + item.serviceType15;
+														item["rowTotal"] = item.serviceType01/* + item.serviceType02*/ + item.serviceType03 + item.serviceType04 /*+ item.serviceType05 */
+															+ item.serviceType06 + item.serviceType07 /*+ item.serviceType08 + item.serviceType09 + item.serviceType14*/;
 													});
 									                return json.data;
 									            },   
@@ -158,17 +158,17 @@ $(document)
 																	+ '&'
 																	+ 'toDate='+to
 																	+ '&'
-																	+ 'ward='+wardId
+																	+ 'ward='
 																	+ '&'
-																	+ 'electionWard='+electionWardId
+																	+ 'electionWard='
 																	+ '&'
-																	+ 'zoneId='+zoneId
+																	+ 'zoneId='
 																	+ '&'
 																	+ 'zone='
 																	+ '&'
 																	+ 'status='+row.status
 																	+ '&'
-																	+ 'revenueWard='+wardId
+																	+ 'revenueWard='
                                                                     + '&'
                                                                     + 'serviceTypeEnum='+serviceTypeEnum
 																	+ '\')" href="javascript:void(0);">'
@@ -176,7 +176,7 @@ $(document)
 														},
 														"sClass" : "text-center"
 													},
-													{
+													/*{
 														"data" : "serviceType02",
 														render : function(data, type, row, meta) {
 															return parseInt(row.serviceType02)!==0? '<a onclick="openPopup(\'/bpa/reports/servicewise-statusreport/view?'
@@ -207,7 +207,7 @@ $(document)
 																	+ row.serviceType02 + '</a>':row.serviceType02;
 														},
 														"sClass" : "text-center"
-													},
+													},*/
 													{
 														"data" : "serviceType03",
 														render : function(data, type, row, meta) {
@@ -222,17 +222,17 @@ $(document)
 																	+ '&'
 																	+ 'toDate='+to
 																	+ '&'
-																	+ 'ward='+wardId
+																	+ 'ward='/*+wardId*/
 																	+ '&'
-																	+ 'electionWard='+electionWardId
+																	+ 'electionWard='/*+electionWardId*/
 																	+ '&'
-																	+ 'zoneId='+zoneId
+																	+ 'zoneId='/*+zoneId*/
 																	+ '&'
 																	+ 'zone='
 																	+ '&'
 																	+ 'status='+row.status
 																	+ '&'
-																	+ 'revenueWard='+wardId
+																	+ 'revenueWard='/*+wardId*/
                                                                     + '&'
                                                                     + 'serviceTypeEnum='+serviceTypeEnum
 																	+ '\')" href="javascript:void(0);">'
@@ -254,17 +254,17 @@ $(document)
 																	+ '&'
 																	+ 'toDate='+to
 																	+ '&'
-																	+ 'ward='+wardId
+																	+ 'ward='/*+wardId*/
 																	+ '&'
-																	+ 'electionWard='+electionWardId
+																	+ 'electionWard='/*+electionWardId*/
 																	+ '&'
-																	+ 'zoneId='+zoneId
+																	+ 'zoneId='/*+zoneId*/
 																	+ '&'
 																	+ 'zone='
 																	+ '&'
 																	+ 'status='+row.status
 																	+ '&'
-																	+ 'revenueWard='+wardId
+																	+ 'revenueWard='/*+wardId*/
                                                                     + '&'
                                                                     + 'serviceTypeEnum='+serviceTypeEnum
 																	+ '\')" href="javascript:void(0);">'
@@ -272,7 +272,7 @@ $(document)
 														},
 														"sClass" : "text-center"
 													},
-													{
+													/*{
 														"data" : "serviceType05",
 														render : function(data, type, row, meta) {
 						    									return parseInt(row.serviceType05)!== 0 ? '<a onclick="openPopup(\'/bpa/reports/servicewise-statusreport/view?'
@@ -303,7 +303,7 @@ $(document)
 																	+ row.serviceType05 + '</a>':row.serviceType05;
 														},
 														"sClass" : "text-center"
-													},
+													},*/
 													{
 														"data" : "serviceType06",
 														render : function(data, type, row, meta) {
@@ -318,17 +318,17 @@ $(document)
 																	+ '&'
 																	+ 'toDate='+to
 																	+ '&'
-																	+ 'ward='+wardId
+																	+ 'ward='/*+wardId*/
 																	+ '&'
-																	+ 'electionWard='+electionWardId
+																	+ 'electionWard='/*+electionWardId*/
 																	+ '&'
-																	+ 'zoneId='+zoneId
+																	+ 'zoneId='/*+zoneId*/
 																	+ '&'
 																	+ 'zone='
 																	+ '&'
 																	+ 'status='+row.status
 																	+ '&'
-																	+ 'revenueWard='+wardId
+																	+ 'revenueWard='/*+wardId*/
                                                                     + '&'
                                                                     + 'serviceTypeEnum='+serviceTypeEnum
 																	+ '\')" href="javascript:void(0);">'
@@ -350,17 +350,17 @@ $(document)
 																	+ '&'
 																	+ 'toDate='+to
 																	+ '&'
-																	+ 'ward='+wardId
+																	+ 'ward='/*+wardId*/
 																	+ '&'
-																	+ 'electionWard='+electionWardId
+																	+ 'electionWard='/*+electionWardId*/
 																	+ '&'
-																	+ 'zoneId='+zoneId
+																	+ 'zoneId='/*+zoneId*/
 																	+ '&'
 																	+ 'zone='
 																	+ '&'
 																	+ 'status='+row.status
 																	+ '&'
-																	+ 'revenueWard='+wardId
+																	+ 'revenueWard='/*+wardId*/
 																    + '&'
                                                                     + 'serviceTypeEnum='+serviceTypeEnum
 																	+ '\')" href="javascript:void(0);">'
@@ -368,7 +368,7 @@ $(document)
 														},
 														"sClass" : "text-center"
 													},
-													{
+													/*{
 														"data" : "serviceType08",
 														render : function(data, type, row, meta) {
 															return parseInt(row.serviceType08)!== 0 ? '<a onclick="openPopup(\'/bpa/reports/servicewise-statusreport/view?'
@@ -462,38 +462,7 @@ $(document)
 																	+ row.serviceType14 + '</a>':row.serviceType14;
 														},
 														"sClass" : "text-center"
-													},{
-														"data" : "serviceType15",
-														render : function(data, type, row, meta) {
-															return parseInt(row.serviceType15)!==0 ? '<a onclick="openPopup(\'/bpa/reports/servicewise-statusreport/view?'
-																	+ 'serviceType=Pole Structures'
-																	+ '&'
-																	+ 'applicantName='+applicantName
-																	+ '&'
-																	+ 'applicationNumber='+applicationNumber
-																	+ '&'
-																	+ 'fromDate='+from
-																	+ '&'
-																	+ 'toDate='+to
-																	+ '&'
-																	+ 'ward='+wardId
-																	+ '&'
-																	+ 'electionWard='+electionWardId
-																	+ '&'
-																	+ 'zoneId='+zoneId
-																	+ '&'
-																	+ 'zone='
-																	+ '&'
-																	+ 'status='+row.status
-																	+ '&'
-																	+ 'revenueWard='+wardId
-																	+ '&'
-																	+ 'serviceTypeEnum='+serviceTypeEnum
-																	+ '\')" href="javascript:void(0);">'
-																	+ row.serviceType15 + '</a>':row.serviceType15;
-														},
-														"sClass" : "text-center"
-													},{
+													},*/{
 														"data":"rowTotal",
 														"sClass" : "text-center"
 													}],
@@ -507,21 +476,20 @@ $(document)
 														}
 														if (data.length > 0) {
 															updateTotalFooter(2, api);
+															/*updateTotalFooter(3, api);*/
 															updateTotalFooter(3, api);
 															updateTotalFooter(4, api);
+															/*updateTotalFooter(6, api);*/
 															updateTotalFooter(5, api);
 															updateTotalFooter(6, api);
-															updateTotalFooter(7, api);
-															updateTotalFooter(8, api);
-															updateTotalFooter(9, api);
+															/*updateTotalFooter(9, api);
 															updateTotalFooter(10, api);
-															updateTotalFooter(11, api);
-															updateTotalFooter(12, api);
-															updateTotalFooter(13, api);
+															updateTotalFooter(11, api);*/
+															updateTotalFooter(7, api);
 															}
 													},
 													"aoColumnDefs" : [ {
-														"aTargets" : [2,3,4,5,6,7,8,9,10,11,12,13],
+														"aTargets" : /*[2,3,4,5,6,7,8,9,10,11,12]*/ [2,3,4,5,6,7],
 														"mRender" : function(data, type, full) {
 															return formatNumberInr(data);    
 														}
