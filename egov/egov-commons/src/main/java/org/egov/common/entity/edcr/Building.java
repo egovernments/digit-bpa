@@ -102,6 +102,7 @@ public class Building extends Measurement {
 
 	private OccupancyType mostRestrictiveOccupancy;
 	private OccupancyType mostRestrictiveOccupancyType;
+	private OccupancyTypeHelper mostRestrictiveFarHelper;
 	// this is converted Occupancies to base type
 	private List<Occupancy> occupancies = new ArrayList<>();
 
@@ -336,4 +337,13 @@ public class Building extends Measurement {
 		this.heightIncreasedBy = heightIncreasedBy;
 	}
 
+    public OccupancyTypeHelper getMostRestrictiveFarHelper() {
+        return mostRestrictiveFarHelper;
+    }
+
+    public void setMostRestrictiveFarHelper(OccupancyTypeHelper mostRestrictiveFarHelper) {
+        this.mostRestrictiveFarHelper = mostRestrictiveFarHelper;
+    }
+
+	
 }
