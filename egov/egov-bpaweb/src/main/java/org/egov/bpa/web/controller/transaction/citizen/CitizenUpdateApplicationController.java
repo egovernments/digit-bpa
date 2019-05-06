@@ -363,9 +363,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
         	bpaApplication.setDemand(feeCalculation.createDemand(bpaApplication));
         }
-        else
+        else {
             bpaApplication.setAdmissionfeeAmount(BigDecimal.valueOf(0));
         	bpaApplication.setDemand(feeCalculation.createDemandWhenFeeCollectionNotRequire(bpaApplication));
+        }
 
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
 

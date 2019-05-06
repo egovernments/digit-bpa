@@ -131,24 +131,7 @@
 				readonly="readonly">
 		</div>
 	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.locality" /> </label>
-		<div class="col-sm-3 add-margin">
-			<input type="text" name="" id="village"
-				class="form-control village resetValues"
-				value="${occupancyCertificate.parent.siteDetail[0].locationBoundary.name}"
-				readonly="readonly">
-		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.election.ward" /> </label>
-		<div class="col-sm-3 add-margin">
-			<input type="text" name="" id="electionWard"
-				class="form-control electionWard resetValues"
-				value="${occupancyCertificate.parent.siteDetail[0].electionBoundary.name}"
-				readonly="readonly">
-		</div>
-	</div>
+	
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.re.survey.no" /> </label>

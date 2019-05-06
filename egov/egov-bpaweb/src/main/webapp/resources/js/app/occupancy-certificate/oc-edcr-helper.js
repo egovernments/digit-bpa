@@ -159,7 +159,7 @@ $(document).ready(
             '                    name="buildingDetailFromEdcr[{{bldgIdx}}].heightFromGroundWithOutStairRoom"' +
             '                    value="{{height}}"/>' +
             '        </div>' +
-            '        <label' +
+            /*'        <label' +
             '                class="col-sm-2 control-label text-right heightFromGroundWithStairRoom{{bldgIdx}}">' +
             '                Height From Ground Level with stair Room (In Mtrs)</label>' +
             '        <div class="col-sm-3 add-margin">' +
@@ -172,9 +172,9 @@ $(document).ready(
             '                    id="heightFromGroundWithStairRoomFromEdcr{{bldgIdx}}"' +
             '                    name="buildingDetailFromEdcr[{{bldgIdx}}].heightFromGroundWithStairRoom"' +
             '                    value="{{height}}"/>' +
-            '        </div>' +
+            '        </div>' +*/
             '    </div>' +
-            '    <div class="form-group">' +
+           /* '    <div class="form-group">' +
             '        <label' +
             '                class="col-sm-3 control-label text-right fromStreetLevelWithOutStairRoom{{bldgIdx}}">' +
             '                Height From Street Level without stair Room (In Mtrs)</label>' +
@@ -202,7 +202,7 @@ $(document).ready(
             '                    id="fromStreetLevelWithStairRoomFromEdcr{{bldgIdx}}"' +
             '                    name="buildingDetailFromEdcr[{{bldgIdx}}].fromStreetLevelWithStairRoom"' +
             '                    value="{{height}}"/>' +
-            '        </div>' +
+            '        </div>' +*/
             '    </div>' +
             '    </div>';
 
