@@ -116,7 +116,8 @@
 			<spring:message code="lbl.extentin.sqmts" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.extentInSqmts}" default="N/A"></c:out>
+			<fmt:formatNumber type="number" maxFractionDigits="2"
+						value="${occupancyCertificate.extentInSqmts}" />
 		</div>
 	</div>
 </div>

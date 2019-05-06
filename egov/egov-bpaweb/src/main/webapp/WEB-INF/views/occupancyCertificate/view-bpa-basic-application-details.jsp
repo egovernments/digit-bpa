@@ -97,7 +97,7 @@
 			<spring:message code="lbl.stakeholder.type"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.parent.stakeHolder[0].stakeHolder.stakeHolderType}" default="N/A"></c:out>
+			<c:out value="${occupancyCertificate.parent.stakeHolder[0].stakeHolder.stakeHolderType.name}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.stakeholder.name"/>
@@ -128,12 +128,12 @@
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${occupancyCertificate.parent.serviceType.description}" default="N/A"></c:out>
 		</div>
-		<div class="col-sm-3 add-margin">
+		<%-- <div class="col-sm-3 add-margin">
 			<spring:message code="lbl.amenity.type"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${occupancyCertificate.parent.amenityName ne '' ?  occupancyCertificate.parent.amenityName : 'N/A'}"></c:out>
-		</div>
+		</div> --%>
 	</div>
 
 	<div class="row add-border">
@@ -152,12 +152,12 @@
 	</div>
 
 	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
+		<%-- <div class="col-sm-3 add-margin">
 			<spring:message code="lbl.election.ward"/>
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${occupancyCertificate.parent.siteDetail[0].electionBoundary.name}" default="N/A"></c:out>
-		</div>
+		</div> --%>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.re.survey.no"/>
 		</div>
