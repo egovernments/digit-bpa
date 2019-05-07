@@ -55,7 +55,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="panel-body">
-<c:if test="${bpaApplication.demand ne null}">
+<c:if test="${bpaApplication.admissionfeeAmount > 0}">
 
 
 <div class="panel-heading custom_form_panel_heading">
