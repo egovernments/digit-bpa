@@ -56,7 +56,7 @@ jQuery(document).ready(function() {
     '<th class="text-center">Srl.no</th>'+
     '<th class="text-center bldg-floor-toggle-mandatory">Floor Description</th>'+
     '<th class="text-center bldg-floor-toggle-mandatory">Level</th>'+
-    '<th class="text-center bldg-floor-toggle-mandatory">Sub Occupancy</th>'+
+    '<th class="text-center bldg-floor-toggle-mandatory">Occupancy/Sub Occupancy</th>'+
     '<th class="text-center bldg-floor-toggle-mandatory">Usage</th>'+
     '<th class="text-center bldg-floor-toggle-mandatory">Builtup Area (m²)</th>'+
     '<th class="text-center bldg-floor-toggle-mandatory">Floor Area (m²)</th>'+
