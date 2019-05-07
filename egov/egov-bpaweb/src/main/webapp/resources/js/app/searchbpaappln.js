@@ -169,10 +169,6 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "electionWard",
-														"sClass" : "text-left"
-													},
-													{
 														"data" : "status",
 														"sClass" : "text-left"
 													},

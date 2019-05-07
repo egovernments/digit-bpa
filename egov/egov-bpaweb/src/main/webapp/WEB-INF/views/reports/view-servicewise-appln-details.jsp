@@ -82,7 +82,6 @@
 					<th><spring:message code="lbl.service.type" /></th>
 					<th><spring:message code="lbl.zone" /></th>
 					<th><spring:message code="lbl.rev.ward" /></th>
-					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.re.survey.no" /></th>
 					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.current.owner" /></th>

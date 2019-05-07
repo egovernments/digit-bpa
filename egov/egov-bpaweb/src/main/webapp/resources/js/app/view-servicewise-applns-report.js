@@ -133,10 +133,6 @@ $(document)
 												"sClass" : "text-left"
 											},
 											{
-												"data" : "electionWard",
-												"sClass" : "text-left"
-											},
-											{
 												"data" : "reSurveyNumber",
 												"sClass" : "text-left"
 											},
