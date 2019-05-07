@@ -93,31 +93,31 @@ public class SetBackService extends FeatureProcess {
                         // for level 0, all the yards are mandatory. Else throw error.
                         if (setback.getFrontYard() == null)
                             errors.put("frontyardNodeDefined",
-                                    getLocaleMessage(OBJECTNOTDEFINED, " Set Back of " + block.getName() + "  at level zero "));
+                                    getLocaleMessage(OBJECTNOTDEFINED, " SetBack of " + block.getName() + "  at level zero "));
                         if (setback.getRearYard() == null
                                 && !pl.getPlanInformation().getNocToAbutRearDesc().equalsIgnoreCase(DcrConstants.YES))
                             errors.put("rearyardNodeDefined",
-                                    getLocaleMessage(OBJECTNOTDEFINED, " Rear Yard of  " + block.getName() + "  at level zero "));
+                                    getLocaleMessage(OBJECTNOTDEFINED, " Rear Setback of  " + block.getName() + "  at level zero "));
                         if (setback.getSideYard1() == null)
                             errors.put("side1yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
-                                    " Side Yard 1 of block " + block.getName() + " at level zero"));
+                                    " Side Setback 1 of block " + block.getName() + " at level zero"));
                         if (setback.getSideYard2() == null
                                 && !pl.getPlanInformation().getNocToAbutSideDesc().equalsIgnoreCase(DcrConstants.YES))
                             errors.put("side2yardNodeDefined", getLocaleMessage(OBJECTNOTDEFINED,
-                                    " Side Yard 2 of block " + block.getName() + " at level zero "));
+                                    " Side Setback 2 of block " + block.getName() + " at level zero "));
                     } else if (setback.getLevel() > 0) {
                         // height defined in level other than zero must contain height
                         if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() == null)
-                            errors.put("frontyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Front Yard ",
+                            errors.put("frontyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Front Setback ",
                                     block.getName(), setback.getLevel().toString()));
                         if (setback.getRearYard() != null && setback.getRearYard().getHeight() == null)
-                            errors.put("rearyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Rear Yard ",
+                            errors.put("rearyardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Rear Setback ",
                                     block.getName(), setback.getLevel().toString()));
                         if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() == null)
-                            errors.put("side1yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Yard 1 ",
+                            errors.put("side1yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 1 ",
                                     block.getName(), setback.getLevel().toString()));
                         if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() == null)
-                            errors.put("side2yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Yard 2 ",
+                            errors.put("side2yardnotDefinedHeight", getLocaleMessage(HEIGHTNOTDEFINED, "Side Setback 2 ",
                                     block.getName(), setback.getLevel().toString()));
                     }
 
@@ -127,19 +127,19 @@ public class SetBackService extends FeatureProcess {
                     if (setback.getLevel() > 0 && block.getSetBacks().size() == i) {
                         if (setback.getFrontYard() != null && setback.getFrontYard().getHeight() != null
                                 && setback.getFrontYard().getHeight().compareTo(heightOfBuilding) != 0)
-                            errors.put("frontyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Front Yard ",
+                            errors.put("frontyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Front Setback ",
                                     block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
                         if (setback.getRearYard() != null && setback.getRearYard().getHeight() != null
                                 && setback.getRearYard().getHeight().compareTo(heightOfBuilding) != 0)
-                            errors.put("rearyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Rear Yard ",
+                            errors.put("rearyardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Rear Setback ",
                                     block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
                         if (setback.getSideYard1() != null && setback.getSideYard1().getHeight() != null
                                 && setback.getSideYard1().getHeight().compareTo(heightOfBuilding) != 0)
-                            errors.put("side1yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Yard 1 ",
+                            errors.put("side1yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 1 ",
                                     block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
                         if (setback.getSideYard2() != null && setback.getSideYard2().getHeight() != null
                                 && setback.getSideYard2().getHeight().compareTo(heightOfBuilding) != 0)
-                            errors.put("side2yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Yard 2 ",
+                            errors.put("side2yardDefinedWrongHeight", getLocaleMessage(WRONGHEIGHTDEFINED, "Side Setback 2 ",
                                     block.getName(), setback.getLevel().toString(), heightOfBuilding.toString()));
                     }
                 }
