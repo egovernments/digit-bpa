@@ -76,7 +76,7 @@
 			<div class="col-sm-3 control-div add-margin">
 				<spring:message code="lbl.nameof.org" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${stakeHolder.organizationName}" default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
@@ -91,13 +91,13 @@
 			<div class="col-sm-3 control-div add-margin">
 				<spring:message code="lbl.addressof.org" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${stakeHolder.organizationAddress}" default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.contact.person" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${stakeHolder.contactPerson}" default="N/A"></c:out>
 			</div>
 		</div>
@@ -105,7 +105,7 @@
 			<div class="col-sm-3 control-div add-margin">
 				<spring:message code="lbl.designation" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${stakeHolder.designation}" default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
@@ -127,7 +127,7 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.applicant.name" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${stakeHolder.name}"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
@@ -301,19 +301,19 @@
 		</div>
 	</div>
 
-	<div class="panel-body">
+	<div class="panel-body text-justify">
 		<div class="row add-border">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.house.dno" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${address.houseNoBldgApt}" default="N/A"></c:out>
 			</div>
 
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.addr.Steet.name" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${address.streetRoadLine}" default="N/A"></c:out>
 			</div>
 		</div>
@@ -321,14 +321,14 @@
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.locality" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${address.areaLocalitySector}" default="N/A"></c:out>
 			</div>
 
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.city" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${address.cityTownVillage}" default="N/A"></c:out>
 			</div>
 		</div>
@@ -336,14 +336,14 @@
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.district" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${address.district}" default="N/A"></c:out>
 			</div>
 
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.state" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${address.state}" default="N/A"></c:out>
 			</div>
 		</div>
@@ -351,7 +351,7 @@
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.post.office" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${address.postOffice}" default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">

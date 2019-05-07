@@ -60,7 +60,7 @@
 		<i class="fa fa-angle-up fa-2x"></i>
 	</div>
 </div>
-<div class="panel-body display-hide">
+<div class="panel-body display-hide ">
 
 	<jsp:include page="view-amenities-details.jsp"></jsp:include>
 
@@ -68,14 +68,14 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.re.survey" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].reSurveyNumber}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.nature.of.ownership" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].natureofOwnership}"
 				default="N/A"></c:out>
 		</div>
@@ -85,14 +85,14 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.khata.no" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].khataNumber}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.holding.no" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].holdingNumber}"
 				default="N/A"></c:out>
 		</div>
@@ -119,7 +119,7 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.nearest.build.no" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].nearestbuildingnumber}"
 				default="N/A"></c:out>
 		</div>
@@ -127,7 +127,7 @@
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.addr.dno" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			<div class="col-sm-3 add-margin view-content text-justify">
 				<c:out value="${bpaApplication.siteDetail[0].plotdoornumber}"
 					default="N/A"></c:out>
 			</div>
@@ -138,14 +138,14 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.street.address1" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].streetaddress1}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.street.address2" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].streetaddress2}"
 				default="N/A"></c:out>
 		</div>
@@ -155,13 +155,13 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.city" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].citytown}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.plot.no" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].mspPlotNumber}"
 				default="N/A"></c:out>
 		</div>
@@ -229,14 +229,14 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.town.plan.zone" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].scheme.description}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.proposed.land.use" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].landUsage.description}"
 				default="N/A"></c:out>
 		</div>
@@ -245,14 +245,14 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.previousowner.details" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].previousownerdetails}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.landregistration.details" />
 		</div>
-		<div class="col-sm-3 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content text-justify">
 			<c:out value="${bpaApplication.siteDetail[0].landregistrationdetails}"
 				default="N/A"></c:out>
 		</div>
