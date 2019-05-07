@@ -111,4 +111,9 @@
         <put-attribute name="page-title" value="title.servicetype" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-ack.jsp"/>
     </definition>
+
+     <definition name="city-selection" extends="base_layout">
+        <put-attribute name="page-title" value="title.common.city.selection" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/common/city-selection.jsp"/>
+    </definition>
 </tiles-definitions>

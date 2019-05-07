@@ -47,9 +47,17 @@
  */
 package org.egov.portal.web.controller.citizen;
 
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
+import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.service.CitizenInboxService;
@@ -66,12 +74,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
-import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -126,8 +128,11 @@ public class HomeController {
         modelData.addAttribute("cityName", cityService.getMunicipalityName());
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
         //modelData.addAttribute("userType", user.getType());
-
-
+        boolean isState = false;
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+        	isState = true;
+        }
+        modelData.addAttribute("isState", isState);
 
         if (!devMode) {
             modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPasswordResetRequired(user));
