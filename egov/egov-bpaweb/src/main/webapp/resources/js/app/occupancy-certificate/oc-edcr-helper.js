@@ -250,9 +250,9 @@ $(document).ready(
                 'floorNo': floorNo,
                 'occupancyId': occupancyId,
                 'occupancyDesc': occupancyDesc,
-                'plinthArea': builtupArea,
-                'floorArea': floorArea,
-                'carpetArea': carpetArea
+                'plinthArea': builtupArea.toFixed(2),
+                'floorArea': floorArea.toFixed(2),
+                'carpetArea': carpetArea.toFixed(2)
             };
             addNewRowFromObject(rowJsonObj);
             setDCRFloorCount();

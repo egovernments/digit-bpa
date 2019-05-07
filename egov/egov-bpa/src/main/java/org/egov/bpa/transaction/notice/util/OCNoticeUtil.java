@@ -235,7 +235,7 @@ public class OCNoticeUtil {
         StringBuilder rejectReasons = new StringBuilder();
         if (!oc.getRejectionReasons().isEmpty()) {
             List<OCNoticeConditions> additionalPermitConditions = ocNoticeConditionsService
-                    .findAllOcConditionsByOcAndType(oc, ConditionType.ADDITIONALCONDITIONS);
+                    .findAllOcConditionsByOcAndType(oc, ConditionType.ADDITIONALREJECTIONREASONS);
             int order = buildPredefinedRejectReasons(oc, rejectReasons);
             int additionalOrder = buildAdditionalNoticeConditions(rejectReasons, additionalPermitConditions,
                     order);
