@@ -114,7 +114,7 @@ public class PlantationGreenStrip extends FeatureProcess {
 				if (!widths.isEmpty()) {
 					minWidth = widths.stream().reduce(BigDecimal::min).get();
 					minHeight = heights.stream().reduce(BigDecimal::min).get();
-					BigDecimal minLength = Collections.min(minimumDistances);
+					//BigDecimal minLength = Collections.min(minimumDistances);
 
 					if (minWidth.compareTo(BigDecimal.valueOf(0.6)) >= 0) {
 						isWidthAccepted = true;
