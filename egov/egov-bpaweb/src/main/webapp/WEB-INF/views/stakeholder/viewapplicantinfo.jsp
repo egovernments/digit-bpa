@@ -364,19 +364,3 @@
 	</div>
 
 </c:forEach>
-<div class="panel-body">
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.comments" />
-		</div>
-		<div class="col-sm-9 add-margin view-content">
-			<c:out
-				value="${stakeHolder.comments eq '' ? 'N/A' : stakeHolder.comments}"
-				default="N/A"></c:out>
-		</div>
-	</div>
-</div>
-
-
-
-
