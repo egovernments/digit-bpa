@@ -77,7 +77,7 @@
 	<div class="col-sm-3">
 		<form:input path="${address}.streetRoadLine" id="${address}.streetRoadLine"
 			type="text" cssClass="form-control inline-elem"
-			placeholder="" maxlength="256" autocomplete="off" required="required" />
+			placeholder="" maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="${address}.streetRoadLine"
 			cssClass="add-margin error-msg" />
 	</div>
@@ -90,7 +90,7 @@
 	<div class="col-sm-3">
 		<form:input path="${address}.areaLocalitySector" id="${address}.areaLocalitySector"
 			type="text" cssClass="form-control inline-elem"
-			placeholder="" maxlength="256" autocomplete="off" required="required" />
+			placeholder="" maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="${address}.areaLocalitySector"
 			cssClass="add-margin error-msg" />
 	</div>
@@ -100,7 +100,7 @@
 	<div class="col-sm-3">
 		<form:input path="${address}.cityTownVillage" id="${address}.cityTownVillage"
 			type="text" cssClass="form-control inline-elem"
-			placeholder="" maxlength="256" autocomplete="off" required="required" />
+			placeholder="" maxlength="100" autocomplete="off" required="required" />
 		<form:errors path="${address}.cityTownVillage"
 			cssClass="add-margin error-msg" />
 	</div>
