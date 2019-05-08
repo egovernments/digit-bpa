@@ -17,6 +17,44 @@ public class DxfFileConstants {
 	public static final String A_R = "A-R"; // Single family Residential
 	public static final String A_AF = "A-AF"; // Apartment/Flat
 	public static final String A_AF_GH = "A-AF-GH";
+	public static final String S_ECFG = "S-ECFG"; // Exhibition cum Fair Ground
+	public static final String A_FH = "A-FH"; // Farm House
+	public static final String S_SAS = "S-SAS"; // Sports and amenity structures
+	public static final String D_B = "D-B"; // At sub city level in urban
+											// extension
+	public static final String D_C = "D-C"; // Anganwari
+	public static final String D_A = "D-A"; // Religious
+	public static final String H_PP = "H-PP"; // Petrol Pump
+	public static final String E_NS = "E-NS";// Nursury Schools
+	public static final String M_DFPAB = "M-DFPAB";// Dispensary for pet animals
+													// and birds
+	public static final String E_PS = "E-PS";// Primary School
+	public static final String E_SFMC = "E-SFMC";// School for Mentally
+													// Challenged
+	public static final String E_SFDAP = "E-SFDAP";// School for differently
+													// abled persons
+	public static final String E_EARC = "E-EARC";// Academic, including
+													// administration
+	public static final String S_MCH = "S-MCH";// Multipurpose Community Hall
+	public static final String S_BH = "S-BH";// Banquet hall
+	public static final String S_CRC = "S-CRC";// Community Recreational Club
+	public static final String S_CA = "S-CA";// Cultural activities
+	public static final String S_SC = "S-SC";// Science centre
+	public static final String S_ICC = "S-ICC";// International Convention
+												// Centre
+	public static final String A2 = "A2";// Old Age Home
+	public static final String B2 = "B2";
+	public static final String E_CLG = "E-CLG";// College
+	public static final String M_OHF = "M-OHF";// Other Health Facilities
+	public static final String M_VH = "M-VH";// Veterinary Hospital for pet
+												// animals and birds
+	public static final String M_NAPI = "M-NAPI";// Nursing and Paramedic
+													// Institute
+	public static final String A_SA = "A-SA";// Service Apartment
+	public static final String M_HOTHC = "M-HOTHC";// Hospital/Teritary Health
+													// care Centre
+	public static final String E_SACA = "E-SACA";// Sports and Cultural
+													// Activities
 	public static final String VERT_CLEAR_OHE = "VERT_CLEAR_OHEL";
 	public static final String REAR_YARD = "REAR_YARD";
 	public static final String BUILDING_FOOT_PRINT = "BLDG_FOOT_PRINT";
