@@ -126,14 +126,14 @@
 				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="132" y="10" width="291" height="43" uuid="2e4dabdc-58c3-4512-b1e9-10f0de235034"/>
+				<reportElement x="132" y="9" width="291" height="43" uuid="2e4dabdc-58c3-4512-b1e9-10f0de235034"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="18" isBold="true" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[ReportUtil.getCityName()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="132" y="53" width="291" height="20" uuid="7fa2a9dc-05e7-4b1e-a990-30bef838cf6d">
+				<reportElement x="132" y="52" width="291" height="20" uuid="7fa2a9dc-05e7-4b1e-a990-30bef838cf6d">
 					<printWhenExpression><![CDATA[!$F{description}.startsWith( "Service Charges" )]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
