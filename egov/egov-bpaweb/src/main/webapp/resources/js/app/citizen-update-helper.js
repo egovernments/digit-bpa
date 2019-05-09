@@ -243,6 +243,7 @@ $(document).ready(function ($) {
                     }
                 });
         } else {
+        	validateMandatoryAndFocus(validator);
             e.stopPropagation();
             e.preventDefault();
         }
