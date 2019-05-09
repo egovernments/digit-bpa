@@ -82,6 +82,7 @@ public class AdditionalFeature extends FeatureProcess {
 	private static final String RULE_47 = "47";
 	private static final String RULE_41_I_B = "41-i-b";
 	private static final String RULE_50 = "50";
+	private static final String RULE_56 = "56";
 	private static final String RULE_55_2 = "50-2";
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	private static final BigDecimal ONE_POINTFIVE = BigDecimal.valueOf(1.5);
@@ -132,6 +133,7 @@ public class AdditionalFeature extends FeatureProcess {
 	public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY_PROVISIONS_ERROR_CODE = "Green buildings and sustainability provisions";
 	public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY_PROVISIONS_ERROR_MSG = "Green buildings and sustainability provision should be YES";
 	public static final String GREEN_BUILDINGS_AND_SUSTAINABILITY = "Green buildings and sustainability provisions";
+	public static final String FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS_DESC = "Fire Protection And Fire Safety Requirements";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -184,8 +186,40 @@ public class AdditionalFeature extends FeatureProcess {
 		validateBarrierFreeAccess(pl, errors);
 		validateBasement(pl, errors);
 		validateGreenBuildingsAndSustainability(pl, errors);
+		validateFireDeclaration(pl, errors);
 
 		return pl;
+	}
+
+	private void validateFireDeclaration(Plan pl, HashMap<String, String> errors) {
+		ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Fire Protection And Fire Safety Requirements");
+
+		if (pl.getBlocks() != null && !pl.getBlocks().isEmpty()) {
+			for (Block b : pl.getBlocks()) {
+				if (b.getBuilding() != null && b.getBuilding().getBuildingHeight().compareTo(new BigDecimal("15")) >= 0)
+					if (pl.getPlanInformation() != null
+							&& !pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements().isEmpty()) {
+						Map<String, String> details = new HashMap<>();
+						details.put(RULE_NO, RULE_56);
+						details.put(DESCRIPTION, FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS_DESC);
+						details.put(PERMISSIBLE, "YES/NO/NA");
+						details.put(PROVIDED, pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements());
+						details.put(STATUS, Result.Accepted.getResultVal());
+						scrutinyDetail.getDetail().add(details);
+						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					} else {
+						Map<String, String> details = new HashMap<>();
+						details.put(RULE_NO, RULE_56);
+						details.put(DESCRIPTION, FIRE_PROTECTION_AND_FIRE_SAFETY_REQUIREMENTS_DESC);
+						details.put(PERMISSIBLE, "YES/NO/NA");
+						details.put(PROVIDED, pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements());
+						details.put(STATUS, Result.Not_Accepted.getResultVal());
+						scrutinyDetail.getDetail().add(details);
+						pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+					}
+			}
+		}
+
 	}
 
 	private void validateBarrierFreeAccess(Plan pl, HashMap<String, String> errors) {
