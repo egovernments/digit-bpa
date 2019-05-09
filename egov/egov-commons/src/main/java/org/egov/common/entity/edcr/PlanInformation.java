@@ -189,6 +189,8 @@ public class PlanInformation implements Serializable {
 
 	private transient String provisionsForGreenBuildingsAndSustainability = NA;
 
+	private transient String fireProtectionAndFireSafetyRequirements = NA;
+
 	private String plotNo;
 
 	private String khataNo;
@@ -723,6 +725,14 @@ public class PlanInformation implements Serializable {
 
 	public void setProvisionsForGreenBuildingsAndSustainability(String provisionsForGreenBuildingsAndSustainability) {
 		this.provisionsForGreenBuildingsAndSustainability = provisionsForGreenBuildingsAndSustainability;
+	}
+
+	public String getFireProtectionAndFireSafetyRequirements() {
+		return fireProtectionAndFireSafetyRequirements;
+	}
+
+	public void setFireProtectionAndFireSafetyRequirements(String fireProtectionAndFireSafetyRequirements) {
+		this.fireProtectionAndFireSafetyRequirements = fireProtectionAndFireSafetyRequirements;
 	}
 
 }
