@@ -102,6 +102,10 @@
 						<jsp:include
 							page="../../application/edcr-application-details-form.jsp"></jsp:include>
 					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include
+							page="../../common/boundary-view.jsp"></jsp:include>
+					</div>
 					<div class="panel panel-primary existingbuildingdetails" data-collapsed="0">
 						<jsp:include page="../oc-edcr-existing-bldg-details.jsp" />
 					</div>
@@ -157,7 +161,9 @@
 		<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
 		<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
 		<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>
-		<!-- End --- For javascript messages localization purpose following hidden input tags used -->
+	   	<input type="hidden" id="zone"/>
+	   	<input type="hidden" id="revenueWard" />
+       <!-- End --- For javascript messages localization purpose following hidden input tags used -->
 	</div>
 </div>
 

@@ -137,21 +137,6 @@
 	</div>
 
 	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.zonal.office"/>
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.parent.siteDetail[0].adminBoundary.parent.name}" default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.rev.ward"/>
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.parent.siteDetail[0].adminBoundary.name}" default="N/A"></c:out>
-		</div>
-	</div>
-
-	<div class="row add-border">
 		<%-- <div class="col-sm-3 add-margin">
 			<spring:message code="lbl.election.ward"/>
 		</div>

@@ -494,6 +494,10 @@ $(document).ready(
                     success: function (response) {
                     	if($('#mode').val() === 'new') {
                     		getApplicationByPermitNo(response.planPermitNumber);
+                    		var zone= $('#zone').val();
+                    		var wrd = $('#revenueWard').val();
+                    		$('#circle').html(zone);
+                    		$('#revenueward').html(wrd);
                     	}
                     	// Citizen only can submit for single family plans
                     	var isSingleFamily = false;

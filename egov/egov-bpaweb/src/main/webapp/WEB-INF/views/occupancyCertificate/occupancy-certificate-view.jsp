@@ -152,6 +152,11 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-bpa-basic-application-details.jsp"></jsp:include>
 					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+	                    <jsp:include page="../common/generic-boundary-view.jsp">
+	                    <jsp:param name="boundaryData" value="${occupancyCertificate.parent.adminBoundary}:${occupancyCertificate.parent.revenueBoundary}:${occupancyCertificate.parent.locationBoundary}" />
+	                    </jsp:include>
+                    </div>
 					<c:if test="${not empty occupancyCertificate.existingBuildings}">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="view-oc-existing-building-details.jsp"></jsp:include>

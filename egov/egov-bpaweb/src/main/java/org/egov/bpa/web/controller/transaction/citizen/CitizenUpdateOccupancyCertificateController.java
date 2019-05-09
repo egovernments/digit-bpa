@@ -86,6 +86,7 @@ import org.egov.bpa.transaction.service.oc.OCAppointmentScheduleService;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.service.PositionMasterService;
@@ -135,6 +136,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private OCInspectionService ocInspectionService;
     @Autowired
     protected SubOccupancyService subOccupancyService;
+    @Autowired
+    private BpaUtils bpaUtils;
 
     @GetMapping("/occupancy-certificate/update/{applicationNumber}")
     public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
@@ -146,6 +149,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         prepareCommonModelAttribute(model, oc.isCitizenAccepted());
         loadData(oc, model);
         model.addAttribute("occupancyCertificate", oc);
+        bpaUtils.loadBoundary(oc.getParent());
         if (APPLICATION_STATUS_CREATED.equals(oc.getStatus().getCode()))
             return OCCUPANCY_CERTIFICATE_UPDATE;
         else {

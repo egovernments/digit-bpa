@@ -86,6 +86,11 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="../../application/edcr-application-details-form.jsp"></jsp:include>
 					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+	                    <jsp:include page="../../common/generic-boundary-view.jsp">
+	                    <jsp:param name="boundaryData" value="${occupancyCertificate.parent.adminBoundary}:${occupancyCertificate.parent.revenueBoundary}:${occupancyCertificate.parent.locationBoundary}" />
+	                    </jsp:include>
+                    </div>
 					<c:choose>
 						<c:when test="${isEDCRIntegrationRequire && loadingFloorDetailsFromEdcrRequire}">
 							<c:if test="${not empty occupancyCertificate.existingBuildings}">
