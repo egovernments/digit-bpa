@@ -70,7 +70,7 @@ public class SpiralStair extends FeatureProcess {
 	private static final Logger LOG = Logger.getLogger(SpiralStair.class);
 	private static final String FLOOR = "Floor";
 	private static final String EXPECTED_DIAMETER = "1.50";
-	private static final String RULE42_5_IV = "42(5)(iv)";
+	private static final String RULE42_5_IV = "42-5-iv";
 	private static final String DIAMETER_DESCRIPTION = "Minimum diameter for spiral fire stair %s";
 
 	@Override

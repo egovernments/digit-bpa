@@ -61,6 +61,7 @@ import org.egov.edcr.feature.CommonFeature;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.FireStair;
+import org.egov.edcr.feature.FireTenderMovement;
 import org.egov.edcr.feature.GeneralStair;
 import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
@@ -204,6 +205,10 @@ public class PlanFeatureRepository {
 		 */
 		pf = new PlanFeature(AdditionalFeature.class);
 		features.add(pf);
+        
+        pf = new PlanFeature(FireTenderMovement.class);
+        features.add(pf);
+         
 		/*
 		 * pf = new PlanFeature(OverHangs.class); features.add(pf); pf = new
 		 * PlanFeature(FireStairService.class); features.add(pf); pf = new
