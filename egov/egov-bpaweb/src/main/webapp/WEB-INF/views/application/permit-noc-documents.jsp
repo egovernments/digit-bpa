@@ -84,11 +84,16 @@
 					path="permitNocDocuments[${status.index}].id" value="${doc.id}" />
 				<tr>
 					<td><c:out value="${status.index+1}"></c:out></td>
+					<c:forTokens var="splittedString"
+							items="${doc.nocDocument.serviceChecklist.checklist.description}"
+							delims="\ ()" varStatus="stat">
+							<c:set var="checklistName"
+								value="${stat.first ? '' : checklistName}_${splittedString}" />
+						</c:forTokens>
 					<td style="font-size: 100%;"><c:out
-							value="${doc.nocDocument.serviceChecklist.checklist.description}"></c:out> <c:if
-							test="${doc.nocDocument.serviceChecklist.mandatory}">
-							<span class="mandatory"></span>
-						</c:if></td>
+							value="${doc.nocDocument.serviceChecklist.checklist.description}"></c:out> 
+							<span class="mandatory ${checklistName}" style="display:none"></span>
+					</td>
 					<td>
 
 						<div class="input-group">
@@ -149,12 +154,6 @@
 						</div>
 					</td>
 					<td>
-						<c:forTokens var="splittedString"
-							items="${doc.nocDocument.serviceChecklist.checklist.description}"
-							delims="\ " varStatus="stat">
-							<c:set var="checklistName"
-								value="${stat.first ? '' : checklistName}_${splittedString}" />
-						</c:forTokens>
 						<div class="files-upload-container ${checklistName}"
 							data-file-max-size="5"
 							<c:if test="${isEDCRIntegrationRequire eq true && docs.nocDocument.serviceChecklistMapping.isMandatory eq true && fn:length(docs.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>

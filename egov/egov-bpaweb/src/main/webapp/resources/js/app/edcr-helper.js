@@ -728,16 +728,26 @@ $(document).ready(
             }
         //to update noc document is required
         function updateNocRequired(planInformation){
-        	if(planInformation.nocIrrigationDept === 'YES')
+        	if(planInformation.nocIrrigationDept === 'YES'){
                 $('div._NOC_from_Irrigation_Department').attr('required','required');
-        	if(planInformation.nocNearMonuments=== 'YES')
-                $('div._NOC_from_Heritage_Conservation_Committee_(National_Monuments_Authority)').attr('required','required');
-            if(planInformation.nocNearAirport=== 'YES')
+                $('span.mandatory._NOC_from_Irrigation_Department').show();
+        	}
+        	if(planInformation.nocNearMonument === 'YES'){
+                $('div._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('required','required');
+                $('span.mandatory._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
+        	}
+            if(planInformation.nocNearAirport === 'YES'){
                 $('div._NOC_from_Airport_Authority').attr('required','required');
-            if(planInformation.nocFireDept=== 'YES')
+                $('span.mandatory._NOC_from_Airport_Authority').show();
+            }
+            if(planInformation.nocFireDept === 'YES'){
                 $('div._NOC_from_Fire_Authority').attr('required','required');
-            if(planInformation.nocStateEnvImpact=== 'YES')
-            	$('div._MOEF_environment_clearance').attr('required','required'); 
+                $('span.mandatory._NOC_from_Fire_Authority').show();
+            }
+            if(planInformation.nocStateEnvImpact === 'YES'){
+            	$('div._MOEF_environment_clearance').attr('required','required');
+            	$('span.mandatory._MOEF_environment_clearance').show();
+            }
         }
         // Auto populate system generated plan scrutiny checklist documents
         function autoPopulatePlanScrutinyGeneratedPdfFiles(planScrutinyPdfs) {
