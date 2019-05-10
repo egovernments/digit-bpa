@@ -127,6 +127,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private static final String APPLICATION_HISTORY = "applicationHistory";
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String COMMON_ERROR = "common-error";
+    private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
+    private static final String TRUE = "TRUE";
 
     @Autowired
     LettertoPartyService lettertoPartyService;
@@ -405,9 +407,23 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         }
         if(workFlowAction.equals(WF_SEND_BUTTON) )
         	bpaApplication.setSentToCitizen(true);
+        Boolean isCitizen = request.getParameter(IS_CITIZEN) != null
+                && request.getParameter(IS_CITIZEN).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
+                && request.getParameter(CITIZEN_OR_BUSINESS_USER).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
 
         applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
-        bpaUtils.updatePortalUserinbox(bpaApplication, null);
+        
+        if (citizenOrBusinessUser){
+            if (isCitizen)
+            	bpaUtils.updatePortalUserinbox(bpaApplication, null);
+            else {
+            	if(workFlowAction.equals(WF_SAVE_BUTTON)){
+            		bpaUtils.updatePortalUserinbox(bpaApplication, null);
+            	}else 
+            		bpaUtils.updatePortalUserinbox(bpaApplication,bpaApplication.getOwner().getUser());
+            }
+        }
 
         // Will redirect to collection, then after collection success will forward to official
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)

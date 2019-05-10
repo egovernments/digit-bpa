@@ -167,10 +167,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-
-        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
-            return "redirect:/common/city/selection-form?url=" + request.getRequestURL().toString();
-        }
         setCityName(model, request);
         model.addAttribute("currentuser", securityUtils.getCurrentUser().getName());
         return loadNewForm(bpaApplication, model, ST_CODE_01);
@@ -271,7 +267,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                     new String[] { stkHldr.getName() }, null));
             return true;
         }
-        if (("Town Planner - A".equals(stkHldr.getStakeHolderType().getCode())
+        if (stkHldr != null && ("Town Planner - A".equals(stkHldr.getStakeHolderType().getCode())
                 || "Town Planner - B".equals(stkHldr.getStakeHolderType().getCode()))
                 && !ST_CODE_05.equals(serviceCode)) {
             model.addAttribute(MESSAGE,
@@ -498,15 +494,19 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         	bpaApplication.setSentToCitizen(false);
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
 
-        if (citizenOrBusinessUser)
+        if (citizenOrBusinessUser){
             if (isCitizen)
                 bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),
                         bpaApplicationRes.getStakeHolder().get(0).getStakeHolder()), workFlowAction);
-            else
-                bpaUtils.createPortalUserinbox(bpaApplicationRes,
-                        Arrays.asList(bpaApplicationRes.getOwner().getUser(), securityUtils.getCurrentUser()),
-                        workFlowAction);
-
+            else {
+            	if(workFlowAction.equals(WF_SEND_BUTTON) || workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))            
+            		bpaUtils.createPortalUserinbox(bpaApplicationRes,Arrays.asList(bpaApplicationRes.getOwner().getUser(), 
+            				securityUtils.getCurrentUser()), workFlowAction);
+            	else
+            		bpaUtils.createPortalUserinbox(bpaApplicationRes,Arrays.asList(securityUtils.getCurrentUser()),
+                            workFlowAction);
+            }
+        }
         // Will redirect to collection, then after collection success will
         // forward to official
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable

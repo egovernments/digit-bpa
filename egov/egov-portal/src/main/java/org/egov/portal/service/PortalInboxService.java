@@ -151,7 +151,8 @@ public class PortalInboxService {
                 if (additionalUser != null
                         && (UserType.BUSINESS.toString().equalsIgnoreCase(additionalUser.getType().toString()) || UserType.CITIZEN
                                 .toString().equalsIgnoreCase(additionalUser.getType().toString()))
-                        && !containsUser(portalInbox.getPortalInboxUsers(), additionalUser.getId()))
+                        && (!containsUser(portalInbox.getPortalInboxUsers(), additionalUser.getId())
+                        		&& !status.equalsIgnoreCase("Cancelled")))
                     createPortalUser(portalInbox, additionalUser);
                 portalInboxRepository.saveAndFlush(portalInbox);
                 portalInboxIndexService.createPortalInboxIndex(portalInbox);
