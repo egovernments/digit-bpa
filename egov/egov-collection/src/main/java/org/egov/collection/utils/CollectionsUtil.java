@@ -978,10 +978,10 @@ public class CollectionsUtil {
 
     public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
         String emailBody = collectionApplicationProperties.getEmailBody();
-        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(), receiptHeader.getTotalAmount()
+        emailBody = String.format(emailBody, ApplicationThreadLocals.getMunicipalityName(), receiptHeader.getTotalAmount()
                 .toString(), receiptHeader.getService().getName(), receiptHeader.getConsumerCode(), receiptHeader
                         .getReceiptdate().toString(),
-                ApplicationThreadLocals.getCityName());
+                ApplicationThreadLocals.getMunicipalityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
         notificationService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
