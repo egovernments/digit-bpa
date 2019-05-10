@@ -213,7 +213,7 @@
 				<spring:message code="lbl.admission.fees" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${admissionFee}" default="N/A"></c:out>
+				<c:out value="${bpaApplication.admissionfeeAmount}" default="N/A"></c:out>
 			</div>
 		</div>
 	</c:if>
