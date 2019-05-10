@@ -57,8 +57,8 @@ public class LicenceNumberGeneratorImpl implements LicenceNumberGenerator {
     private static final String SEQ_BPA_LICENCE_NUMBER = "state.SEQ_BPA_LICENCE_NUMBER";
     
     private static final Map<String, String> code = new ImmutableMap.Builder<String, String>()
-            .put("Architect", "ARCT").put("Structural Engineer", "STENG").put("Supervisor", "SUPV")
-            .put("Engineer","ENG").put("Town Planner","TPL").put("Builder","BLD").build();
+            .put("Architect", "ARCT").put("Structural Engineer", "STR").put("Supervisor", "SUP")
+            .put("Engineer","ENG").put("Town Planner","TP").put("Builder","BLD").build();
     
     @Autowired
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
