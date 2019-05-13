@@ -56,6 +56,8 @@ public class Stair extends Measurement {
 
     private String number;
 
+    private transient List<Measurement> stairMeasurements;
+
     private List<Flight> flights = new ArrayList<>();
 
     private List<StairLanding> landings = new ArrayList<>();
@@ -84,4 +86,11 @@ public class Stair extends Measurement {
         this.landings = landings;
     }
 
+    public List<Measurement> getStairMeasurements() {
+        return stairMeasurements;
+    }
+
+    public void setStairMeasurements(List<Measurement> stairMeasurements) {
+        this.stairMeasurements = stairMeasurements;
+    }
 }
