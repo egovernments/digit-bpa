@@ -47,18 +47,22 @@
 
 package org.egov.common.entity.edcr;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 
-public class Stair extends Measurement {
+public class StairLanding extends Measurement {
 
-    private static final long serialVersionUID = 34L;
+    private static final long serialVersionUID = 57L;
 
     private String number;
 
-    private List<Flight> flights = new ArrayList<>();
+    private transient List<Measurement> landingPolylines;
 
-    private List<StairLanding> landings = new ArrayList<>();
+    private Boolean landingPolyLineClosed = false;
+
+    private List<BigDecimal> lengths;
+
+    private List<BigDecimal> widths;
 
     public String getNumber() {
         return number;
@@ -68,20 +72,36 @@ public class Stair extends Measurement {
         this.number = number;
     }
 
-    public List<Flight> getFlights() {
-        return flights;
+    public List<Measurement> getFlightPolyLines() {
+        return landingPolylines;
     }
 
-    public void setFlights(List<Flight> flights) {
-        this.flights = flights;
+    public void setFlightPolyLines(List<Measurement> flightPolyLines) {
+        this.landingPolylines = flightPolyLines;
     }
 
-    public List<StairLanding> getLandings() {
-        return landings;
+    public Boolean getFlightPolyLineClosed() {
+        return landingPolyLineClosed;
     }
 
-    public void setLandings(List<StairLanding> landings) {
-        this.landings = landings;
+    public void setFlightPolyLineClosed(Boolean flightPolyLineClosed) {
+        this.landingPolyLineClosed = flightPolyLineClosed;
+    }
+
+    public List<BigDecimal> getLengthOfFlights() {
+        return lengths;
+    }
+
+    public void setLengthOfFlights(List<BigDecimal> lengthOfFlights) {
+        this.lengths = lengthOfFlights;
+    }
+
+    public List<BigDecimal> getWidthOfFlights() {
+        return widths;
+    }
+
+    public void setWidthOfFlights(List<BigDecimal> widthOfFlights) {
+        this.widths = widthOfFlights;
     }
 
 }

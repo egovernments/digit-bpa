@@ -47,18 +47,24 @@
 
 package org.egov.common.entity.edcr;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 
-public class Stair extends Measurement {
+public class Flight extends Measurement {
 
-    private static final long serialVersionUID = 34L;
+    private static final long serialVersionUID = 57L;
 
     private String number;
 
-    private List<Flight> flights = new ArrayList<>();
+    private BigDecimal noOfRises;
 
-    private List<StairLanding> landings = new ArrayList<>();
+    private transient List<Measurement> flightPolyLines;
+
+    private Boolean flightPolyLineClosed = false;
+
+    private List<BigDecimal> lengthOfFlights;
+
+    private List<BigDecimal> widthOfFlights;
 
     public String getNumber() {
         return number;
@@ -68,20 +74,44 @@ public class Stair extends Measurement {
         this.number = number;
     }
 
-    public List<Flight> getFlights() {
-        return flights;
+    public List<Measurement> getFlightPolyLines() {
+        return flightPolyLines;
     }
 
-    public void setFlights(List<Flight> flights) {
-        this.flights = flights;
+    public void setFlightPolyLines(List<Measurement> flightPolyLines) {
+        this.flightPolyLines = flightPolyLines;
     }
 
-    public List<StairLanding> getLandings() {
-        return landings;
+    public Boolean getFlightPolyLineClosed() {
+        return flightPolyLineClosed;
     }
 
-    public void setLandings(List<StairLanding> landings) {
-        this.landings = landings;
+    public void setFlightPolyLineClosed(Boolean flightPolyLineClosed) {
+        this.flightPolyLineClosed = flightPolyLineClosed;
+    }
+
+    public List<BigDecimal> getLengthOfFlights() {
+        return lengthOfFlights;
+    }
+
+    public void setLengthOfFlights(List<BigDecimal> lengthOfFlights) {
+        this.lengthOfFlights = lengthOfFlights;
+    }
+
+    public List<BigDecimal> getWidthOfFlights() {
+        return widthOfFlights;
+    }
+
+    public void setWidthOfFlights(List<BigDecimal> widthOfFlights) {
+        this.widthOfFlights = widthOfFlights;
+    }
+
+    public BigDecimal getNoOfRises() {
+        return noOfRises;
+    }
+
+    public void setNoOfRises(BigDecimal noOfRises) {
+        this.noOfRises = noOfRises;
     }
 
 }

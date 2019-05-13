@@ -60,9 +60,7 @@ import org.egov.edcr.feature.Chimney;
 import org.egov.edcr.feature.CommonFeature;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.Far;
-import org.egov.edcr.feature.FireStair;
 import org.egov.edcr.feature.FireTenderMovement;
-import org.egov.edcr.feature.GeneralStair;
 import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
 import org.egov.edcr.feature.HeightOfRoom;
@@ -127,8 +125,9 @@ public class PlanFeatureRepository {
 		features.add(pf);
 		pf = new PlanFeature(SpiralStair.class);
 		features.add(pf);
-		pf = new PlanFeature(FireStair.class);
-		features.add(pf);
+        /*
+         * pf = new PlanFeature(FireStair.class); features.add(pf);
+         */
 		pf = new PlanFeature(OverHangs.class);
 		features.add(pf);
 		pf = new PlanFeature(PlantationGreenStrip.class);
