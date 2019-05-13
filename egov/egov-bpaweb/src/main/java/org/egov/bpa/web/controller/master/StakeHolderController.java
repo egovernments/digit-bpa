@@ -229,7 +229,8 @@ public class StakeHolderController extends GenericWorkFlowController {
                     && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
                 return genericBillGeneratorService.generateBillAndRedirectToCollection(stakeHolder, model);
             } else if (stakeHolder.getStatus() != null
-                    && BpaConstants.APPLICATION_STATUS_SUBMITTED.equalsIgnoreCase(stakeHolder.getStatus().toString())) {
+                    && BpaConstants.APPLICATION_STATUS_SUBMITTED.equalsIgnoreCase(stakeHolder.getStatus().toString())
+                     || "RE_SUBMITTED".equalsIgnoreCase(stakeHolder.getStatus().toString())) {
                 model.addAttribute(MESSAGE, messageSource.getMessage("msg.stakeholder.not.approved", new String[] {
                 		acknum, stakeHolder.getStakeHolderType().getName()
                 }, null));
