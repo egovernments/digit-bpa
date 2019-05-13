@@ -257,7 +257,23 @@
 				default="N/A"></c:out>
 		</div>
 	</div>
-
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.charitable.trust" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${bpaApplication.siteDetail[0].charitableTrustBuilding ? 'YES' : 'NO'}"
+				default="N/A"></c:out>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.affordable.scheme" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out
+				value="${bpaApplication.siteDetail[0].affordableHousingScheme ? 'YES' : 'NO'}"
+				default="N/A"></c:out>
+		</div>
+	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.government.type" />
