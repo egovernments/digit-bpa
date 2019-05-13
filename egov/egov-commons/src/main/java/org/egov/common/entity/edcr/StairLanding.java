@@ -72,36 +72,36 @@ public class StairLanding extends Measurement {
         this.number = number;
     }
 
-    public List<Measurement> getFlightPolyLines() {
+    public List<Measurement> getLandingPolylines() {
         return landingPolylines;
     }
 
-    public void setFlightPolyLines(List<Measurement> flightPolyLines) {
-        this.landingPolylines = flightPolyLines;
+    public void setLandingPolylines(List<Measurement> landingPolylines) {
+        this.landingPolylines = landingPolylines;
     }
 
-    public Boolean getFlightPolyLineClosed() {
+    public Boolean getLandingPolyLineClosed() {
         return landingPolyLineClosed;
     }
 
-    public void setFlightPolyLineClosed(Boolean flightPolyLineClosed) {
-        this.landingPolyLineClosed = flightPolyLineClosed;
+    public void setLandingPolyLineClosed(Boolean landingPolyLineClosed) {
+        this.landingPolyLineClosed = landingPolyLineClosed;
     }
 
-    public List<BigDecimal> getLengthOfFlights() {
+    public List<BigDecimal> getLengths() {
         return lengths;
     }
 
-    public void setLengthOfFlights(List<BigDecimal> lengthOfFlights) {
-        this.lengths = lengthOfFlights;
+    public void setLengths(List<BigDecimal> lengths) {
+        this.lengths = lengths;
     }
 
-    public List<BigDecimal> getWidthOfFlights() {
+    public List<BigDecimal> getWidths() {
         return widths;
     }
 
-    public void setWidthOfFlights(List<BigDecimal> widthOfFlights) {
-        this.widths = widthOfFlights;
+    public void setWidths(List<BigDecimal> widths) {
+        this.widths = widths;
     }
 
 }
