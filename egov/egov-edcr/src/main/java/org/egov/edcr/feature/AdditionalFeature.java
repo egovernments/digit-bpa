@@ -196,7 +196,7 @@ public class AdditionalFeature extends FeatureProcess {
 
 		if (pl.getBlocks() != null && !pl.getBlocks().isEmpty()) {
 			for (Block b : pl.getBlocks()) {
-				if (b.getBuilding() != null && b.getBuilding().getBuildingHeight().compareTo(new BigDecimal("15")) >= 0)
+				if (b.getBuilding() != null && b.getBuilding().getIsHighRise())
 					if (pl.getPlanInformation() != null
 							&& !pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements().isEmpty()) {
 						Map<String, String> details = new HashMap<>();

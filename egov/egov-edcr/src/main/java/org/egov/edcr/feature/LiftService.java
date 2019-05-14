@@ -130,7 +130,7 @@ public class LiftService extends FeatureProcess {
 					/*List<OccupancyType> occupancyTypeList = block.getBuilding().getOccupancies().stream()
 							.map(occupancy -> occupancy.getType()).collect(Collectors.toList());*/
 					BigDecimal noOfLiftsRqrd;
-					if (block.getBuilding().getBuildingHeight().compareTo(new BigDecimal(15)) > 0) {
+					if (block.getBuilding().getIsHighRise()) {
 						noOfLiftsRqrd = BigDecimal.valueOf(1);
 						boolean valid = false;
 						if (BigDecimal.valueOf(Double.valueOf(block.getNumberOfLifts()))
