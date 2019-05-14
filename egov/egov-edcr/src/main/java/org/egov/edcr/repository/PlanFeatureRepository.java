@@ -128,8 +128,9 @@ public class PlanFeatureRepository {
         /*
          * pf = new PlanFeature(FireStair.class); features.add(pf);
          */
-		pf = new PlanFeature(OverHangs.class);
-		features.add(pf);
+        /*
+         * pf = new PlanFeature(OverHangs.class); features.add(pf);
+         */
 		pf = new PlanFeature(PlantationGreenStrip.class);
 		features.add(pf);
 		pf = new PlanFeature(RoofTank.class);
