@@ -88,7 +88,8 @@ public class Floor extends Measurement {
     private List<BigDecimal> heightFromTheFloorToCeiling;
     private List<BigDecimal> heightOfTheCeilingOfUpperBasement;
     private List<Balcony> balconies = new ArrayList<>();
-
+    private List<Measurement> overHangs;
+    
     public List<FireStair> getFireStairs() {
         return fireStairs;
     }
@@ -491,6 +492,14 @@ public class Floor extends Measurement {
 
     public void setBalconies(List<Balcony> balconies) {
         this.balconies = balconies;
+    }
+
+    public List<Measurement> getOverHangs() {
+        return overHangs;
+    }
+
+    public void setOverHangs(List<Measurement> overHangs) {
+        this.overHangs = overHangs;
     }
 
 }

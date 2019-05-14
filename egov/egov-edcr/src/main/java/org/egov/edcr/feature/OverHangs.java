@@ -51,11 +51,14 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
-import org.egov.common.entity.edcr.Measurement;
+import org.egov.common.entity.edcr.Building;
+import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -64,65 +67,71 @@ import org.springframework.stereotype.Service;
 @Service
 public class OverHangs extends FeatureProcess {
 
-	private static final Logger LOG = Logger.getLogger(OverHangs.class);
-	private static final String RULE_45 = "45";
-	public static final String OVERHANGS_DESCRIPTION = "Over hangs";
+    private static final Logger LOG = Logger.getLogger(OverHangs.class);
+    private static final String RULE_45 = "45";
+    public static final String OVERHANGS_DESCRIPTION = "Over hangs";
+    private static final String FLOOR = "Floor";
 
-	@Override
-	public Plan validate(Plan pl) {
+    @Override
+    public Plan validate(Plan pl) {
 
-		return pl;
-	}
+        return pl;
+    }
 
-	@Override
-	public Plan process(Plan pl) {
+    @Override
+    public Plan process(Plan pl) {
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Over hangs");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_45);
+        details.put(DESCRIPTION, OVERHANGS_DESCRIPTION);
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_45);
-		details.put(DESCRIPTION, OVERHANGS_DESCRIPTION);
+        BigDecimal minWidth = BigDecimal.ZERO;
 
-		BigDecimal minWidth = BigDecimal.ZERO;
+        for (Block b : pl.getBlocks()) {
 
-		for (Block b : pl.getBlocks()) {
+            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+            scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Over hangs");
+            scrutinyDetail.addColumnHeading(1, RULE_NO);
+            scrutinyDetail.addColumnHeading(2, FLOOR);
+            scrutinyDetail.addColumnHeading(3, DESCRIPTION);
+            scrutinyDetail.addColumnHeading(4, PERMISSIBLE);
+            scrutinyDetail.addColumnHeading(5, PROVIDED);
+            scrutinyDetail.addColumnHeading(6, STATUS);
+            Building building = b.getBuilding();
+            if (building != null) {
+                for (Floor floor : building.getFloors()) {
+                    if (floor.getOverHangs() != null && !floor.getOverHangs().isEmpty()) {
+                        List<BigDecimal> widths = floor.getOverHangs().stream().map(overhang -> overhang.getWidth())
+                                .collect(Collectors.toList());
 
-			if (b.getOverHangs() != null && !b.getOverHangs().isEmpty()) {
-				minWidth = b.getOverHangs().get(0).getWidth();
-				for (Measurement m : b.getOverHangs()) {
-					if (m.getWidth().compareTo(minWidth) < 0) {
-						minWidth = m.getWidth();
-					}
-				}
+                        minWidth = widths.stream().reduce(BigDecimal::min).get();
 
-				if (minWidth.compareTo(new BigDecimal("0.75")) > 0) {
-					details.put(REQUIRED, ">0.75");
-					details.put(PROVIDED, minWidth.toString());
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					details.put(REQUIRED, ">0.75");
-					details.put(PROVIDED, minWidth.toString());
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				}
-			}
+                        if (minWidth.compareTo(new BigDecimal("0.75")) > 0) {
+                            details.put(FLOOR, floor.getNumber().toString());
+                            details.put(REQUIRED, ">0.75");
+                            details.put(PROVIDED, minWidth.toString());
+                            details.put(STATUS, Result.Accepted.getResultVal());
+                            scrutinyDetail.getDetail().add(details);
+                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                        } else {
+                            details.put(FLOOR, floor.getNumber().toString());
+                            details.put(REQUIRED, ">0.75");
+                            details.put(PROVIDED, minWidth.toString());
+                            details.put(STATUS, Result.Not_Accepted.getResultVal());
+                            scrutinyDetail.getDetail().add(details);
+                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                        }
+                    }
+                }
+            }
 
-		}
-		return pl;
-	}
+        }
+        return pl;
+    }
 
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 
 }

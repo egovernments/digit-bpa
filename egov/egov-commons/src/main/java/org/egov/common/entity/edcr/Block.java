@@ -82,7 +82,6 @@ public class Block extends Measurement {
     private List<Measurement> openStairs = new ArrayList<>();
     private List<BigDecimal> plinthHeight;
     private List<BigDecimal> interiorCourtYard;
-    private List<Measurement> overHangs;
     private List<Measurement> protectedBalconies;
     private List<Measurement> plantationGreenStripes;
     private List<BigDecimal> roofTanks;
@@ -319,14 +318,6 @@ public class Block extends Measurement {
 
     public void setInteriorCourtYard(List<BigDecimal> interiorCourtYard) {
         this.interiorCourtYard = interiorCourtYard;
-    }
-
-    public List<Measurement> getOverHangs() {
-        return overHangs;
-    }
-
-    public void setOverHangs(List<Measurement> overHangs) {
-        this.overHangs = overHangs;
     }
 
     public List<Measurement> getProtectedBalconies() {
