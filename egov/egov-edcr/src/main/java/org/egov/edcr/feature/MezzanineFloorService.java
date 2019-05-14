@@ -135,53 +135,27 @@ public class MezzanineFloorService extends FeatureProcess {
                 }
             }
         }
-        processAssembly(pl);
+        // processAssembly(pl);
         return pl;
     }
 
-    public void processAssembly(Plan pl) {
-        for (Block b : pl.getBlocks()) {
-            if (!b.getHallAreas().isEmpty() && !b.getBalconyAreas().isEmpty()) {
-                scrutinyDetail = new ScrutinyDetail();
-                scrutinyDetail.addColumnHeading(1, RULE_NO);
-                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-                scrutinyDetail.addColumnHeading(3, HALL_NUMBER);
-                scrutinyDetail.addColumnHeading(4, REQUIRED);
-                scrutinyDetail.addColumnHeading(5, PROVIDED);
-                scrutinyDetail.addColumnHeading(6, STATUS);
-                scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Maximum area of balcony");
-
-                for (Hall hall : b.getHallAreas()) {
-                    BigDecimal balconyArea = BigDecimal.ZERO;
-                    BigDecimal hallArea = hall.getArea();
-                    String hallNo = hall.getNumber();
-                    for (Balcony balcony : b.getBalconyAreas()) {
-                        String balconyNo = balcony.getNumber();
-                        if (hallNo.equalsIgnoreCase(balconyNo))
-                            balconyArea = balconyArea.add(balcony.getArea());
-                    }
-                    double maxAllowedArea = (hallArea.doubleValue() * 25) / 100;
-                    if (balconyArea.doubleValue() > 0) {
-                        Map<String, String> details = new HashMap<>();
-                        details.put(RULE_NO, SUB_RULE_55_7);
-                        details.put(DESCRIPTION, SUB_RULE_55_7_DESC);
-                        details.put(HALL_NUMBER, hallNo);
-                        details.put(REQUIRED, "<= " + maxAllowedArea);
-                        details.put(PROVIDED, String.valueOf(balconyArea));
-                        details.put(STATUS, Result.Not_Accepted.getResultVal());
-
-                        if (balconyArea.doubleValue() > maxAllowedArea)
-                            details.put(STATUS, Result.Not_Accepted.getResultVal());
-                        else
-                            details.put(STATUS, Result.Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                    }
-                }
-            }
-        }
-    }
-
+    /*
+     * public void processAssembly(Plan pl) { for (Block b : pl.getBlocks()) { //if (!b.getHallAreas().isEmpty() &&
+     * !b.getBalconyAreas().isEmpty()) { if (!b.getHallAreas().isEmpty()) { scrutinyDetail = new ScrutinyDetail();
+     * scrutinyDetail.addColumnHeading(1, RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+     * scrutinyDetail.addColumnHeading(3, HALL_NUMBER); scrutinyDetail.addColumnHeading(4, REQUIRED);
+     * scrutinyDetail.addColumnHeading(5, PROVIDED); scrutinyDetail.addColumnHeading(6, STATUS); scrutinyDetail.setKey("Block_" +
+     * b.getNumber() + "_" + "Maximum area of balcony"); for (Hall hall : b.getHallAreas()) { BigDecimal balconyArea =
+     * BigDecimal.ZERO; BigDecimal hallArea = hall.getArea(); String hallNo = hall.getNumber(); for (Balcony balcony :
+     * b.getBalconyAreas()) { String balconyNo = balcony.getNumber(); if (hallNo.equalsIgnoreCase(balconyNo)) balconyArea =
+     * balconyArea.add(balcony.getArea()); } double maxAllowedArea = (hallArea.doubleValue() * 25) / 100; if
+     * (balconyArea.doubleValue() > 0) { Map<String, String> details = new HashMap<>(); details.put(RULE_NO, SUB_RULE_55_7);
+     * details.put(DESCRIPTION, SUB_RULE_55_7_DESC); details.put(HALL_NUMBER, hallNo); details.put(REQUIRED, "<= " +
+     * maxAllowedArea); details.put(PROVIDED, String.valueOf(balconyArea)); details.put(STATUS,
+     * Result.Not_Accepted.getResultVal()); if (balconyArea.doubleValue() > maxAllowedArea) details.put(STATUS,
+     * Result.Not_Accepted.getResultVal()); else details.put(STATUS, Result.Accepted.getResultVal());
+     * scrutinyDetail.getDetail().add(details); pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); } } } } }
+     */
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String floor, String expected, String actual,
             String status) {
         Map<String, String> details = new HashMap<>();
