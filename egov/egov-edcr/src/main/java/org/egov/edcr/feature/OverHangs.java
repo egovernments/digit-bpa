@@ -69,7 +69,7 @@ public class OverHangs extends FeatureProcess {
 
     private static final Logger LOG = Logger.getLogger(OverHangs.class);
     private static final String RULE_45 = "45";
-    public static final String OVERHANGS_DESCRIPTION = "Over hangs";
+    public static final String OVERHANGS_DESCRIPTION = "Minimum width of over hangs";
     private static final String FLOOR = "Floor";
 
     @Override
@@ -108,14 +108,14 @@ public class OverHangs extends FeatureProcess {
 
                         if (minWidth.compareTo(new BigDecimal("0.75")) > 0) {
                             details.put(FLOOR, floor.getNumber().toString());
-                            details.put(REQUIRED, ">0.75");
+                            details.put(PERMISSIBLE, ">0.75");
                             details.put(PROVIDED, minWidth.toString());
                             details.put(STATUS, Result.Accepted.getResultVal());
                             scrutinyDetail.getDetail().add(details);
                             pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                         } else {
                             details.put(FLOOR, floor.getNumber().toString());
-                            details.put(REQUIRED, ">0.75");
+                            details.put(PERMISSIBLE, ">0.75");
                             details.put(PROVIDED, minWidth.toString());
                             details.put(STATUS, Result.Not_Accepted.getResultVal());
                             scrutinyDetail.getDetail().add(details);

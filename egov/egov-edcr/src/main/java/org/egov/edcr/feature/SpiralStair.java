@@ -88,7 +88,7 @@ public class SpiralStair extends FeatureProcess {
 				scrutinyDetail.addColumnHeading(2, FLOOR);
 				scrutinyDetail.addColumnHeading(3, DESCRIPTION);
 				scrutinyDetail.addColumnHeading(4, REQUIRED);
-				scrutinyDetail.addColumnHeading(5, PROVIDED);
+				scrutinyDetail.addColumnHeading(5, PERMISSIBLE);
 				scrutinyDetail.addColumnHeading(6, STATUS);
 				scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Spiral Fire Stair");
 
@@ -167,7 +167,7 @@ public class SpiralStair extends FeatureProcess {
 		details.put(FLOOR, floor);
 		details.put(DESCRIPTION, description);
 		details.put(REQUIRED, expected);
-		details.put(PROVIDED, actual);
+		details.put(PERMISSIBLE, actual);
 		details.put(STATUS, status);
 		scrutinyDetail.getDetail().add(details);
 		pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

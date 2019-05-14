@@ -111,7 +111,7 @@ public class Building extends Measurement {
 
 	private Passage passage;
 
-	private Boolean isHighRise;
+	private Boolean isHighRise = false;
 
 	public List<Occupancy> getOccupancies() {
 		return occupancies;
