@@ -111,6 +111,8 @@ public class Building extends Measurement {
 
 	private Passage passage;
 
+	private Boolean isHighRise;
+
 	public List<Occupancy> getOccupancies() {
 		return occupancies;
 	}
@@ -337,13 +339,20 @@ public class Building extends Measurement {
 		this.heightIncreasedBy = heightIncreasedBy;
 	}
 
-    public OccupancyTypeHelper getMostRestrictiveFarHelper() {
-        return mostRestrictiveFarHelper;
-    }
+	public OccupancyTypeHelper getMostRestrictiveFarHelper() {
+		return mostRestrictiveFarHelper;
+	}
 
-    public void setMostRestrictiveFarHelper(OccupancyTypeHelper mostRestrictiveFarHelper) {
-        this.mostRestrictiveFarHelper = mostRestrictiveFarHelper;
-    }
+	public void setMostRestrictiveFarHelper(OccupancyTypeHelper mostRestrictiveFarHelper) {
+		this.mostRestrictiveFarHelper = mostRestrictiveFarHelper;
+	}
 
-	
+	public Boolean getIsHighRise() {
+		return isHighRise;
+	}
+
+	public void setIsHighRise(Boolean isHighRise) {
+		this.isHighRise = isHighRise;
+	}
+
 }
