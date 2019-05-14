@@ -63,61 +63,61 @@ import org.springframework.stereotype.Service;
 @Service
 public class StairCover extends FeatureProcess {
 
-	private static final Logger LOG = Logger.getLogger(StairCover.class);
-	private static final String RULE_44_C = "44-C";
-	public static final String STAIRCOVER_DESCRIPTION = "Stair Cover";
+    private static final Logger LOG = Logger.getLogger(StairCover.class);
+    private static final String RULE_44_C = "44-C";
+    public static final String STAIRCOVER_DESCRIPTION = "Mumty";
 
-	@Override
-	public Plan validate(Plan pl) {
+    @Override
+    public Plan validate(Plan pl) {
 
-		return pl;
-	}
+        return pl;
+    }
 
-	@Override
-	public Plan process(Plan pl) {
+    @Override
+    public Plan process(Plan pl) {
 
-		ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Stair Cover");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, VERIFIED);
-		scrutinyDetail.addColumnHeading(4, ACTION);
-		scrutinyDetail.addColumnHeading(5, STATUS);
+        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Common_Mumty");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, VERIFIED);
+        scrutinyDetail.addColumnHeading(4, ACTION);
+        scrutinyDetail.addColumnHeading(5, STATUS);
 
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_44_C);
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_44_C);
 
-		BigDecimal minHeight = BigDecimal.ZERO;
+        BigDecimal minHeight = BigDecimal.ZERO;
 
-		for (Block b : pl.getBlocks()) {
-			minHeight = BigDecimal.ZERO;
-			if (b.getStairCovers() != null && !b.getStairCovers().isEmpty()) {
-				minHeight = b.getStairCovers().stream().reduce(BigDecimal::min).get();
+        for (Block b : pl.getBlocks()) {
+            minHeight = BigDecimal.ZERO;
+            if (b.getStairCovers() != null && !b.getStairCovers().isEmpty()) {
+                minHeight = b.getStairCovers().stream().reduce(BigDecimal::min).get();
 
-				if (minHeight.compareTo(new BigDecimal(3)) <= 0) {
-					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-					details.put(VERIFIED, "Verified whether stair cover height is <= 3 meters");
-					details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-					details.put(VERIFIED, "Verified whether stair cover height is <= 3 meters");
-					details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
-					details.put(STATUS, Result.Verify.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				}
-			}
+                if (minHeight.compareTo(new BigDecimal(3)) <= 0) {
+                    details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
+                    details.put(VERIFIED, "Verified whether stair cover height is <= 3 meters");
+                    details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
+                    details.put(STATUS, Result.Accepted.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                } else {
+                    details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
+                    details.put(VERIFIED, "Verified whether stair cover height is <= 3 meters");
+                    details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
+                    details.put(STATUS, Result.Verify.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                }
+            }
 
-		}
-		return pl;
-	}
+        }
+        return pl;
+    }
 
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 
 }
