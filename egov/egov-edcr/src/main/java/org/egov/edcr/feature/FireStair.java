@@ -76,19 +76,10 @@ public class FireStair extends FeatureProcess {
     private static final Logger LOG = Logger.getLogger(FireStair.class);
     private static final String FLOOR = "Floor";
     private static final String RULE42_5_II = "42-5-ii-f";
-    // private static final String RULE42 = "42";
-    // private static final String EXPECTED_WIDTH = "0.75";
-    // private static final String EXPECTED_LINE = "0.75";
-    // private static final String EXPECTED_TREAD = "0.15";
     private static final String EXPECTED_NO_OF_RISE = "12";
-    // private static final String EXPECTED_TREAD_HIGHRISE = "0.2";
     private static final String NO_OF_RISE_DESCRIPTION = "Maximum no of rises required per flight for fire stair %s flight %s";
     private static final String WIDTH_DESCRIPTION = "Minimum width for fire stair %s flight %s";
     private static final String TREAD_DESCRIPTION = "Minimum tread for fire stair %s flight %s";
-    // private static final String LINE_DESCRIPTION = "Minimum length of line for
-    // fire stair %s flight layer";
-    // private static final String HEIGHT_FLOOR_DESCRIPTION = "Height of floor in
-    // layer ";
     private static final String NO_OF_RISES = "Number of rises ";
     private static final String FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION = "Flight polyline is not defined in layer ";
     private static final String FLIGHT_LENGTH_DEFINED_DESCRIPTION = "Flight polyline length is not defined in layer ";
@@ -147,6 +138,14 @@ public class FireStair extends FeatureProcess {
                 scrutinyDetailLanding.addColumnHeading(6, STATUS);
                 scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Landing");
 
+                ScrutinyDetail scrutinyDetailAbutBltUp = new ScrutinyDetail();
+                scrutinyDetailAbutBltUp.addColumnHeading(1, RULE_NO);
+                scrutinyDetailAbutBltUp.addColumnHeading(2, FLOOR);
+                scrutinyDetailAbutBltUp.addColumnHeading(3, DESCRIPTION);
+                scrutinyDetailAbutBltUp.addColumnHeading(4, PROVIDED);
+                scrutinyDetailAbutBltUp.addColumnHeading(5, STATUS);
+                scrutinyDetailAbutBltUp.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Abutting BuiltUp");
+
                 // int spiralStairCount = 0;
                 OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding()
                         .getMostRestrictiveFarHelper();
@@ -169,6 +168,13 @@ public class FireStair extends FeatureProcess {
                         // spiralStairCount = spiralStairCount + floor.getSpiralStairs().size();
                         if (!fireStairs.isEmpty()) {
                             for (org.egov.common.entity.edcr.FireStair fireStair : fireStairs) {
+                                setReportOutputDetailsBltUp(planDetail, RULE42_5_II, floor.getNumber().toString(),
+                                        "Fire stair should abut floor builtup",
+                                        fireStair.isAbuttingBltUp() ? "is abuting builtup" : "not abuting builtup",
+                                        fireStair.isAbuttingBltUp() ? Result.Accepted.getResultVal()
+                                                : Result.Not_Accepted.getResultVal(),
+                                        scrutinyDetailAbutBltUp);
+
                                 validateFlight(planDetail, errors, block, scrutinyDetail2, scrutinyDetail3, scrutinyDetailRise,
                                         mostRestrictiveOccupancyType, floor, typicalFloorValues, fireStair);
 
@@ -186,7 +192,6 @@ public class FireStair extends FeatureProcess {
                                                     + " fire stair " + fireStair.getNumber());
                                     planDetail.addErrors(errors);
                                 }
-
                             }
                         } else {
                             fireStairAbsent.add("Block " + block.getNumber() + " floor " + floor.getNumber());
@@ -531,6 +536,18 @@ public class FireStair extends FeatureProcess {
         details.put(FLOOR, floor);
         details.put(DESCRIPTION, description);
         details.put(PERMISSIBLE, expected);
+        details.put(PROVIDED, actual);
+        details.put(STATUS, status);
+        scrutinyDetail.getDetail().add(details);
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+    }
+
+    private void setReportOutputDetailsBltUp(Plan pl, String ruleNo, String floor, String description,
+            String actual, String status, ScrutinyDetail scrutinyDetail) {
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, ruleNo);
+        details.put(FLOOR, floor);
+        details.put(DESCRIPTION, description);
         details.put(PROVIDED, actual);
         details.put(STATUS, status);
         scrutinyDetail.getDetail().add(details);
