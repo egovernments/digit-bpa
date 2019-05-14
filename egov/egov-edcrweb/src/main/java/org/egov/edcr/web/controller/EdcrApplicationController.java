@@ -99,11 +99,6 @@ public class EdcrApplicationController {
 
     @GetMapping("/edcrapplication/new")
     public String newForm(final Model model, HttpServletRequest request) {
-
-        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
-            return "redirect:/../bpa/common/city/selection-form?url=" + request.getRequestURL().toString();
-        }
-
         prepareNewForm(model, request);
         StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
         if (validateStakeholder(model, stakeHolder, request))
