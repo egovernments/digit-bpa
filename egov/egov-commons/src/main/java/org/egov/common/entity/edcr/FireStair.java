@@ -51,7 +51,7 @@ public class FireStair extends Stair {
 
     private static final long serialVersionUID = 35L;
 
-    private boolean isAbuttingBldngFootPrint = false;
+    private boolean isAbuttingBltUp = false;
 
     private boolean generalStair = false;
 
@@ -63,12 +63,12 @@ public class FireStair extends Stair {
         this.generalStair = generalStair;
     }
 
-    public boolean isAbuttingBldngFootPrint() {
-        return isAbuttingBldngFootPrint;
+    public boolean isAbuttingBltUp() {
+        return isAbuttingBltUp;
     }
 
-    public void setAbuttingBldngFootPrint(boolean isAbuttingBldngFootPrint) {
-        this.isAbuttingBldngFootPrint = isAbuttingBldngFootPrint;
+    public void setAbuttingBltUp(boolean isAbuttingBltUp) {
+        this.isAbuttingBltUp = isAbuttingBltUp;
     }
 
 }
