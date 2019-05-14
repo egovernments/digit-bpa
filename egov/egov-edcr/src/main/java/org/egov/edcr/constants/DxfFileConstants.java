@@ -111,13 +111,13 @@ public class DxfFileConstants {
 	public static final String LAYER_FIRESTAIR_FLOOR = "BLK_%s_FLR_%s_FIRESTAIR_%s";
 	public static final String LAYER_FLOOR_BLT_UP = "BLK_%s_FLR_%s_BLT_UP_AREA";
 	public static final String LAYER_FLOOR_SPIRAL_STAIR = "BLK_%s_FLR_%s_SPIRAL_FIRE_STAIR_%s";
-	public static final String LAYER_FIRESTAIR_FLIGHT_FLOOR = "BLK_%s_FLR_%s_FIRESTAIR_%s_FLIGHT";
+	public static final String LAYER_FIRESTAIR_FLIGHT = "BLK_%s_FLR_%s_FIRESTAIR_%s_FLIGHT_%s";
 	public static final String FLOOR_HEIGHT = "FLR_HT_M";
 	public static final String LAYER_COVERAGE = "BLK_%s_COVERED_AREA";
 	public static final String LAYER_COVERAGE_DEDUCT = "BLK_%s_COVERED_AREA_DEDUCT";
 
 	public static final String LAYER_STAIR_FLOOR = "BLK_%s_FLR_%s_STAIR_%s";
-	public static final String LAYER_STAIR_FLIGHT_FLOOR = "BLK_%s_FLR_%s_STAIR_%s_FLIGHT";
+	public static final String LAYER_STAIR_FLIGHT = "BLK_%s_FLR_%s_STAIR_%s_FLIGHT_%s";
 
 	public static final String ACCESS_WIDTH = "ACCESS_WIDTH_M";
 	public static final String HEIGHT_OF_BUILDING = "HT_OF_BLDG";
