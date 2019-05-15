@@ -38,7 +38,8 @@ public class GeneralStair extends FeatureProcess {
     private static final String FLIGHT_LENGTH_DEFINED_DESCRIPTION = "Flight polyline length is not defined in layer ";
     private static final String FLIGHT_WIDTH_DEFINED_DESCRIPTION = "Flight polyline width is not defined in layer ";
     private static final String WIDTH_LANDING_DESCRIPTION = "Minimum width for general stair %s landing %s";
-
+    private static final String FLIGHT_NOT_DEFINED_DESCRIPTION = "General stair flight is not defined in block %s floor %s";
+    
     @Override
     public Plan validate(Plan planDetail) {
         return planDetail;
@@ -117,7 +118,7 @@ public class GeneralStair extends FeatureProcess {
                         if (!generalStairs.isEmpty()) {
                             for (org.egov.common.entity.edcr.GeneralStair generalStair : generalStairs) {
                                 {
-                                    validateFLight(planDetail, errors, block, scrutinyDetail2, scrutinyDetail3,
+                                    validateFlight(planDetail, errors, block, scrutinyDetail2, scrutinyDetail3,
                                             scrutinyDetailRise, mostRestrictiveOccupancyType, floor, typicalFloorValues,
                                             generalStair);
 
@@ -207,83 +208,89 @@ public class GeneralStair extends FeatureProcess {
         }
     }
 
-    private void validateFLight(Plan planDetail, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail2,
+    private void validateFlight(Plan planDetail, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail2,
             ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise, OccupancyTypeHelper mostRestrictiveOccupancyType,
             Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair) {
-        for (Flight flight : generalStair.getFlights()) {
-            List<Measurement> flightPolyLines = flight.getFlightPolyLines();
-            List<BigDecimal> flightLengths = flight.getLengthOfFlights();
-            List<BigDecimal> flightWidths = flight.getWidthOfFlights();
-            BigDecimal noOfRises = flight.getNoOfRises();
-            Boolean flightPolyLineClosed = flight.getFlightPolyLineClosed();
+        if (!generalStair.getFlights().isEmpty()) {
+            for (Flight flight : generalStair.getFlights()) {
+                List<Measurement> flightPolyLines = flight.getFlightPolyLines();
+                List<BigDecimal> flightLengths = flight.getLengthOfFlights();
+                List<BigDecimal> flightWidths = flight.getWidthOfFlights();
+                BigDecimal noOfRises = flight.getNoOfRises();
+                Boolean flightPolyLineClosed = flight.getFlightPolyLineClosed();
 
-            BigDecimal minTread = BigDecimal.ZERO;
-            BigDecimal minFlightWidth = BigDecimal.ZERO;
-            String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT,
-                    block.getNumber(), floor.getNumber(), generalStair.getNumber(),
-                    flight.getNumber());
+                BigDecimal minTread = BigDecimal.ZERO;
+                BigDecimal minFlightWidth = BigDecimal.ZERO;
+                String flightLayerName = String.format(DxfFileConstants.LAYER_STAIR_FLIGHT,
+                        block.getNumber(), floor.getNumber(), generalStair.getNumber(),
+                        flight.getNumber());
 
-            if (flightPolyLines != null && flightPolyLines.size() > 0) {
-                if (flightPolyLineClosed) {
-                    if (flightWidths != null && flightWidths.size() > 0) {
-                        minFlightWidth = validateWidth(planDetail, scrutinyDetail2, floor, block,
-                                typicalFloorValues, generalStair, flight, flightWidths,
-                                minFlightWidth,
-                                mostRestrictiveOccupancyType);
-
-                    } else {
-                        errors.put("Flight PolyLine width" + flightLayerName,
-                                FLIGHT_WIDTH_DEFINED_DESCRIPTION + flightLayerName);
-                        planDetail.addErrors(errors);
-                    }
-
-                    /*
-                     * (Total length of polygons in layer BLK_n_FLR_i_STAIR_k_FLIGHT) / (Number of rises - number of polygons in
-                     * layer BLK_n_FLR_i_STAIR_k_FLIGHT - number of lines in layer BLK_n_FLR_i_STAIR_k_FLIGHT)
-                     */
-
-                    if (flightLengths != null && flightLengths.size() > 0) {
-                        try {
-                            minTread = validateTread(planDetail, errors, block, scrutinyDetail3,
-                                    floor, typicalFloorValues, generalStair, flight, flightLengths,
-                                    minTread,
+                if (flightPolyLines != null && flightPolyLines.size() > 0) {
+                    if (flightPolyLineClosed) {
+                        if (flightWidths != null && flightWidths.size() > 0) {
+                            minFlightWidth = validateWidth(planDetail, scrutinyDetail2, floor, block,
+                                    typicalFloorValues, generalStair, flight, flightWidths,
+                                    minFlightWidth,
                                     mostRestrictiveOccupancyType);
-                        } catch (ArithmeticException e) {
-                            LOG.info("Denominator is zero");
-                        }
-                    } else {
-                        errors.put("Flight PolyLine length" + flightLayerName,
-                                FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
-                        planDetail.addErrors(errors);
 
-                    }
-
-                    if (noOfRises.compareTo(BigDecimal.ZERO) > 0) {
-                        try {
-                            validateNoOfRises(planDetail, errors, block, scrutinyDetailRise, floor,
-                                    typicalFloorValues, generalStair, flight, noOfRises);
-                        } catch (ArithmeticException e) {
-                            LOG.info("Denominator is zero");
+                        } else {
+                            errors.put("Flight PolyLine width" + flightLayerName,
+                                    FLIGHT_WIDTH_DEFINED_DESCRIPTION + flightLayerName);
+                            planDetail.addErrors(errors);
                         }
-                    } else {
+
                         /*
-                         * String layerName = String.format( DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
-                         * floor.getNumber(), generalStair.getNumber(), flight.getNumber());
+                         * (Total length of polygons in layer BLK_n_FLR_i_STAIR_k_FLIGHT) / (Number of rises - number of polygons
+                         * in layer BLK_n_FLR_i_STAIR_k_FLIGHT - number of lines in layer BLK_n_FLR_i_STAIR_k_FLIGHT)
                          */
-                        errors.put("noofRise" + flightLayerName,
-                                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                        new String[] { NO_OF_RISES + flightLayerName },
-                                        LocaleContextHolder.getLocale()));
-                        planDetail.addErrors(errors);
+
+                        if (flightLengths != null && flightLengths.size() > 0) {
+                            try {
+                                minTread = validateTread(planDetail, errors, block, scrutinyDetail3,
+                                        floor, typicalFloorValues, generalStair, flight, flightLengths,
+                                        minTread,
+                                        mostRestrictiveOccupancyType);
+                            } catch (ArithmeticException e) {
+                                LOG.info("Denominator is zero");
+                            }
+                        } else {
+                            errors.put("Flight PolyLine length" + flightLayerName,
+                                    FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
+                            planDetail.addErrors(errors);
+
+                        }
+
+                        if (noOfRises.compareTo(BigDecimal.ZERO) > 0) {
+                            try {
+                                validateNoOfRises(planDetail, errors, block, scrutinyDetailRise, floor,
+                                        typicalFloorValues, generalStair, flight, noOfRises);
+                            } catch (ArithmeticException e) {
+                                LOG.info("Denominator is zero");
+                            }
+                        } else {
+                            /*
+                             * String layerName = String.format( DxfFileConstants.LAYER_STAIR_FLIGHT, block.getNumber(),
+                             * floor.getNumber(), generalStair.getNumber(), flight.getNumber());
+                             */
+                            errors.put("noofRise" + flightLayerName,
+                                    edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                                            new String[] { NO_OF_RISES + flightLayerName },
+                                            LocaleContextHolder.getLocale()));
+                            planDetail.addErrors(errors);
+                        }
+
                     }
-
+                } else {
+                    errors.put("Flight PolyLine " + flightLayerName,
+                            FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION + flightLayerName);
+                    planDetail.addErrors(errors);
                 }
-            } else {
-                errors.put("Flight PolyLine " + flightLayerName,
-                        FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION + flightLayerName);
-                planDetail.addErrors(errors);
-            }
 
+            }
+        } else {
+            String error = String.format(FLIGHT_NOT_DEFINED_DESCRIPTION, block.getNumber(), floor.getNumber());
+            errors.put(error, error);
+            planDetail.addErrors(errors);
         }
     }
 
