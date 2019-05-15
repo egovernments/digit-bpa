@@ -141,6 +141,8 @@ public class Plan implements Serializable {
 	private transient SegregatedToilet segregatedToilet;
 	private transient NorthDirection northDirection;
 	private transient List<Measurement> locationPlans;
+	private transient List<Measurement> surrenderRoads;
+	
 
 	public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
 		return canopyDistanceFromPlotBoundary;
@@ -609,4 +611,13 @@ public class Plan implements Serializable {
 		this.locationPlans = locationPlans;
 	}
 
+        public List<Measurement> getSurrenderRoads() {
+            return surrenderRoads;
+        }
+    
+        public void setSurrenderRoads(List<Measurement> surrenderRoads) {
+            this.surrenderRoads = surrenderRoads;
+        }
+
+	
 }
