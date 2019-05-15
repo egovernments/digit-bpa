@@ -48,9 +48,6 @@
 package org.egov.edcr.feature;
 
 import static org.egov.edcr.utility.DcrConstants.IN_LITRE;
-import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
-import static org.egov.edcr.utility.DcrConstants.RAINWATER_HARVESTING;
-import static org.egov.edcr.utility.DcrConstants.RAINWATER_HARVES_TANKCAPACITY;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -62,7 +59,6 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.edcr.utility.DcrConstants;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
