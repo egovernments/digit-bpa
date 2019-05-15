@@ -562,6 +562,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         
         if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted() && workFlowAction.equals(WF_SEND_BUTTON))
             bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
+        if (!bpaUtils.isCitizenAcceptanceRequired() &&! bpaApplicationRes.isCitizenAccepted() && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
+            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
 
         return "redirect:/application/citizen/success/" + bpaApplicationRes.getApplicationNumber();
     }

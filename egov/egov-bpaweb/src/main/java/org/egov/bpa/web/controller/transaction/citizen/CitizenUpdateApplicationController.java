@@ -497,6 +497,9 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         else
             redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.appln.saved.succes",
                     new String[] { bpaApplication.getApplicationNumber() }, null));
+        
+        if (bpaUtils.isCitizenAcceptanceRequired() && bpaApplication.isCitizenAccepted() && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
+            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
 
         return "redirect:/application/citizen/success/" + bpaApplication.getApplicationNumber();
     }
