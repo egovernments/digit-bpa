@@ -89,6 +89,7 @@ import org.egov.edcr.feature.SpiralStair;
 import org.egov.edcr.feature.StairCover;
 import org.egov.edcr.feature.SurrenderRoad;
 import org.egov.edcr.feature.WaterClosets;
+import org.egov.edcr.feature.WaterTankCapacity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -216,6 +217,12 @@ public class PlanFeatureRepository {
                 features.add(pf);
                 pf = new PlanFeature(SurrenderRoad.class);
                 features.add(pf);
+                pf = new PlanFeature(WaterTankCapacity.class);
+                features.add(pf);
+        /*
+         * pf = new PlanFeature(NorthDirection.class); features.add(pf); pf = new PlanFeature(LocationPlan.class);
+         * features.add(pf);
+         */
 		/*
 		 * pf = new PlanFeature(OverHangs.class); features.add(pf); pf = new
 		 * PlanFeature(FireStairService.class); features.add(pf); pf = new
