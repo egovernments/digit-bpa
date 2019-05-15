@@ -139,6 +139,8 @@ public class Plan implements Serializable {
 	private transient Plantation plantation;
 	private transient GuardRoom guardRoom;
 	private transient SegregatedToilet segregatedToilet;
+	private transient NorthDirection northDirection;
+	private transient List<Measurement> locationPlans;
 
 	public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
 		return canopyDistanceFromPlotBoundary;
@@ -589,6 +591,22 @@ public class Plan implements Serializable {
 
 	public void setFarDetails(FarDetails farDetails) {
 		this.farDetails = farDetails;
+	}
+
+	public NorthDirection getNorthDirection() {
+		return northDirection;
+	}
+
+	public void setNorthDirection(NorthDirection northDirection) {
+		this.northDirection = northDirection;
+	}
+
+	public List<Measurement> getLocationPlans() {
+		return locationPlans;
+	}
+
+	public void setLocationPlans(List<Measurement> locationPlans) {
+		this.locationPlans = locationPlans;
 	}
 
 }
