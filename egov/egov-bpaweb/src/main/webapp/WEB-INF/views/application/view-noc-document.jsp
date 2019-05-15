@@ -61,6 +61,9 @@
 				<th><spring:message code="lbl.noc.status" /></th>
 				<th><spring:message code="lbl.remarks" /></th>
 				<th><spring:message code="lbl.files" /></th>
+				<c:if test="${not empty nocConfigMap}">
+				<th><spring:message code="lbl.action.noc" /></th>
+				</c:if>
 			</tr>
 		</thead>
 		<tbody>
@@ -86,6 +89,21 @@
 					</c:forEach> <c:if test="${!isDocFound}">
 						N/A
 					</c:if></td>
+					<c:if test="${not empty nocConfigMap}">
+					<td>
+						<div class="text-right add-padding">
+							<c:set var="noccode"
+								value="${nocdoc.nocDocument.serviceChecklist.checklist.code}" />
+							<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
+							<c:if test="${nocbtn eq 'initiate'}">
+								<button type="button" class="btn btn-secondary"
+									id="btninitiatenoc">
+									<spring:message code="lbl.initiate.noc" />
+								</button>
+							</c:if>
+						</div>
+					</td>
+					</c:if>
 				</tr>
 			</c:forEach>
 		</tbody>

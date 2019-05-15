@@ -63,6 +63,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_SEND_BUTTON;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,17 +72,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
 import org.egov.bpa.transaction.service.BpaDcrService;
@@ -146,6 +152,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private ChecklistServicetypeMappingService checklistServieTypeServcie;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -204,6 +212,15 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 application.getServiceType().getDescription(), CHECKLIST_TYPE_NOC));
         model.addAttribute("checkListDetailList", checklistServieTypeServcie
                 .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), CHECKLIST_TYPE));
+        Map nocConfigMap = new HashMap<String, String>();
+        for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+			NocConfiguration nocConfig = nocConfigurationService
+					.findByDepartment(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode());
+			if (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
+				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+		}
+        model.addAttribute("nocConfigMap",nocConfigMap);
         model.addAttribute("applicationDocumentList", application.getPermitDocuments());
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
         model.addAttribute("isReconciliationInProgress",

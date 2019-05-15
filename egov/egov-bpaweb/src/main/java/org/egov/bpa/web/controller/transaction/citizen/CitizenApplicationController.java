@@ -62,14 +62,13 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SEND_BUTTON;
-
-
 import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,9 +77,11 @@ import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.ApplicationSubTypeService;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -94,6 +95,8 @@ import org.egov.bpa.transaction.entity.common.DcrDocument;
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaDcrService;
@@ -110,7 +113,6 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.custom.CustomImplProvider;
-import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,6 +165,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private CustomImplProvider specificNoticeService;
     @Autowired
     private ApplicationBpaService applicationBpaService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -228,6 +232,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         }
 
         if (bpaApplication.getPermitNocDocuments().isEmpty()) {
+        	Map nocConfigMap = new HashMap<String,String>();
             List<ChecklistServiceTypeMapping> checklistServicetypeList = checklistServiceTypeService
                     .findByActiveChecklistAndServiceType(bpaApplication.getServiceType().getDescription(),
                             CHECKLIST_TYPE_NOC);
@@ -238,7 +243,12 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 permitNocDocument.setApplication(bpaApplication);
                 permitNocDocument.setNocDocument(nocDocument);
                 bpaApplication.getPermitNocDocuments().add(permitNocDocument);
+                NocConfiguration nocConfig=nocConfigurationService.findByDepartment(serviceChklist.getChecklist().getCode());
+                if(nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString()) 
+                		&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
+                	nocConfigMap.put(nocConfig.getDepartment(),"initiate");
             }
+            model.addAttribute("nocConfigMap",nocConfigMap);
         }
         model.addAttribute("applicationDocumentList", appDocList);
         getDcrDocumentsUploadMode(model);

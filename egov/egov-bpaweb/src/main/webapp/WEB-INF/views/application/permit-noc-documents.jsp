@@ -67,6 +67,9 @@
 				<th><spring:message code="lbl.remarks" /></th>
 				<th><spring:message code="lbl.attachdocument" /><br><small><spring:message
 						code="lbl.mesg.document" /></small></th>
+				<c:if test="${not empty nocConfigMap}">
+				<th><spring:message code="lbl.action.noc" /></th>
+				</c:if>
 			</tr>
 		</thead>
 		<tbody>
@@ -204,6 +207,20 @@
 							</div>
 						</div>
 					</td>
+					<c:if test="${not empty nocConfigMap}">
+						<td>
+							<div class="text-right add-padding">
+								<c:set var="noccode"
+									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
+								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
+								<c:if test="${nocbtn eq 'initiate'}">
+									<button type="button" class="btn btn-secondary" id="btninitiatenoc">
+										<spring:message code="lbl.initiate.noc" />
+									</button>
+								</c:if>
+							</div>
+						</td>
+					</c:if>
 				</tr>
 			</c:forEach>
 
