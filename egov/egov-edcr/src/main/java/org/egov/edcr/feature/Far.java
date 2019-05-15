@@ -99,6 +99,7 @@ import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.FarDetails;
 import org.egov.common.entity.edcr.Floor;
+import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
@@ -559,9 +560,19 @@ public class Far extends FeatureProcess {
 		}
 		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 		BigDecimal providedFar = BigDecimal.ZERO;
-		if (pl.getPlot().getArea().doubleValue() > 0)
-			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(pl.getPlot().getArea(),
-					DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+                BigDecimal surrenderRoadArea = BigDecimal.ZERO;
+        
+                if (!pl.getSurrenderRoads().isEmpty()) {
+                    for (Measurement measurement : pl.getSurrenderRoads()) {
+                        surrenderRoadArea = surrenderRoadArea.add(measurement.getArea());
+                    }
+                }
+        
+                pl.setSurrenderRoadArea(surrenderRoadArea.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
+                BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
+                if (plotArea.doubleValue() > 0)
+                    providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea,
+                            DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
 
 		pl.setFarDetails(new FarDetails());
 		pl.getFarDetails().setProvidedFar(providedFar.doubleValue());

@@ -141,7 +141,8 @@ public class Plan implements Serializable {
 	private transient SegregatedToilet segregatedToilet;
 	private transient NorthDirection northDirection;
 	private transient List<Measurement> locationPlans;
-	private transient List<Measurement> surrenderRoads;
+	private transient List<Measurement> surrenderRoads = new ArrayList<>();
+	private transient BigDecimal surrenderRoadArea = BigDecimal.ZERO;
 	
 
 	public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
@@ -617,6 +618,14 @@ public class Plan implements Serializable {
     
         public void setSurrenderRoads(List<Measurement> surrenderRoads) {
             this.surrenderRoads = surrenderRoads;
+        }
+
+        public BigDecimal getSurrenderRoadArea() {
+            return surrenderRoadArea;
+        }
+
+        public void setSurrenderRoadArea(BigDecimal surrenderRoadArea) {
+            this.surrenderRoadArea = surrenderRoadArea;
         }
 
 	

@@ -52,6 +52,7 @@ import java.util.List;
 
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.edcr.feature.AdditionalFeature;
+import org.egov.edcr.feature.Balcony;
 import org.egov.edcr.feature.Basement;
 import org.egov.edcr.feature.BathRoom;
 import org.egov.edcr.feature.BathRoomWaterClosets;
@@ -86,6 +87,7 @@ import org.egov.edcr.feature.Solar;
 import org.egov.edcr.feature.SolarWaterHeating;
 import org.egov.edcr.feature.SpiralStair;
 import org.egov.edcr.feature.StairCover;
+import org.egov.edcr.feature.SurrenderRoad;
 import org.egov.edcr.feature.WaterClosets;
 import org.springframework.stereotype.Service;
 
@@ -125,12 +127,16 @@ public class PlanFeatureRepository {
 		features.add(pf);
 		pf = new PlanFeature(SpiralStair.class);
 		features.add(pf);
-        /*
-         * pf = new PlanFeature(FireStair.class); features.add(pf);
-         */
-        /*
-         * pf = new PlanFeature(OverHangs.class); features.add(pf);
-         */
+        
+                /*
+                 * pf = new PlanFeature(FireStair.class); features.add(pf);
+                 */
+                pf = new PlanFeature(Balcony.class);
+                features.add(pf);
+                
+                pf = new PlanFeature(OverHangs.class);
+                features.add(pf);
+                 
 		pf = new PlanFeature(PlantationGreenStrip.class);
 		features.add(pf);
 		pf = new PlanFeature(RoofTank.class);
@@ -206,9 +212,10 @@ public class PlanFeatureRepository {
 		pf = new PlanFeature(AdditionalFeature.class);
 		features.add(pf);
         
-        pf = new PlanFeature(FireTenderMovement.class);
-        features.add(pf);
-         
+                pf = new PlanFeature(FireTenderMovement.class);
+                features.add(pf);
+                pf = new PlanFeature(SurrenderRoad.class);
+                features.add(pf);
 		/*
 		 * pf = new PlanFeature(OverHangs.class); features.add(pf); pf = new
 		 * PlanFeature(FireStairService.class); features.add(pf); pf = new
