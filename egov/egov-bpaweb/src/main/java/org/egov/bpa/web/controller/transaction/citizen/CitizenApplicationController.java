@@ -244,7 +244,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 permitNocDocument.setNocDocument(nocDocument);
                 bpaApplication.getPermitNocDocuments().add(permitNocDocument);
                 NocConfiguration nocConfig=nocConfigurationService.findByDepartment(serviceChklist.getChecklist().getCode());
-                if(nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString()) 
+                if(nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString()) 
                 		&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
                 	nocConfigMap.put(nocConfig.getDepartment(),"initiate");
             }
