@@ -235,7 +235,8 @@ public class BpaTaxCollection extends TaxCollection {
         bpaUtils.updatePortalUserinbox(application,null);
         LOGGER.info("******** Application : " +application.getApplicationNumber() + " after pushing to portal ********");
         LOGGER.info("******** Application : " +application.getApplicationNumber() + " before sending to sms or email ********");
-        bpaUtils.sendSmsEmailOnCitizenSubmit(application);
+        //The email is triggered on submission of application hence commenting below line.
+        //bpaUtils.sendSmsEmailOnCitizenSubmit(application);
         LOGGER.info("******** Application : " +application.getApplicationNumber() + " after sending to sms or email ********");
     }
 

@@ -446,6 +446,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && enableOrDisablePayOnline.equalsIgnoreCase("YES")
                 && bpaUtils.checkAnyTaxIsPendingToCollect(bpaApplication.getDemand())) {
+                bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
             return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplication, model);
         } // When if fee collection not require then will forward to official
         else if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
@@ -498,8 +499,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.appln.saved.succes",
                     new String[] { bpaApplication.getApplicationNumber() }, null));
         
-        if (bpaUtils.isCitizenAcceptanceRequired() && bpaApplication.isCitizenAccepted() && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
-            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
+        
 
         return "redirect:/application/citizen/success/" + bpaApplication.getApplicationNumber();
     }
