@@ -441,12 +441,13 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             		bpaUtils.updatePortalUserinbox(bpaApplication,bpaApplication.getOwner().getUser());
             }
         }
-
+        if (bpaUtils.isCitizenAcceptanceRequired() &&bpaApplication.isCitizenAccepted() && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
+            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
+        
         // Will redirect to collection, then after collection success will forward to official
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && enableOrDisablePayOnline.equalsIgnoreCase("YES")
                 && bpaUtils.checkAnyTaxIsPendingToCollect(bpaApplication.getDemand())) {
-                bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
             return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplication, model);
         } // When if fee collection not require then will forward to official
         else if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
