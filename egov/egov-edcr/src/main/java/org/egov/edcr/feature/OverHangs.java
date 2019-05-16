@@ -69,7 +69,7 @@ public class OverHangs extends FeatureProcess {
 
     private static final Logger LOG = Logger.getLogger(OverHangs.class);
     private static final String RULE_45 = "45";
-    public static final String OVERHANGS_DESCRIPTION = "Minimum width of over hangs";
+    public static final String OVERHANGS_DESCRIPTION = "Minimum width of chajja";
     private static final String FLOOR = "Floor";
 
     @Override
@@ -90,7 +90,7 @@ public class OverHangs extends FeatureProcess {
         for (Block b : pl.getBlocks()) {
 
             ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Over hangs");
+            scrutinyDetail.setKey("Block_" + b.getNumber() + "_" + "Chajja");
             scrutinyDetail.addColumnHeading(1, RULE_NO);
             scrutinyDetail.addColumnHeading(2, FLOOR);
             scrutinyDetail.addColumnHeading(3, DESCRIPTION);
