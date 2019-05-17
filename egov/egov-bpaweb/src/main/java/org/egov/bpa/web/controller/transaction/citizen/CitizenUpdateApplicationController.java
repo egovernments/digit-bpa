@@ -79,7 +79,6 @@ import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
-import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
@@ -105,7 +104,6 @@ import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.utils.DateUtils;
@@ -157,8 +155,6 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private CustomImplProvider specificNoticeService;
     @Autowired
     private NocConfigurationService nocConfigurationService;
-    @Autowired
-    private UserService userService;
     @Autowired
     private BpaNocApplicationService nocService;
     @ModelAttribute
