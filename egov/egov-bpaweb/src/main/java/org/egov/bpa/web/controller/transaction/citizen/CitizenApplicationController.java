@@ -517,9 +517,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                             workFlowAction);
             }
         }
-        if (!bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted()
-                && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
-            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
+        
         // Will redirect to collection, then after collection success will
         // forward to official
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable

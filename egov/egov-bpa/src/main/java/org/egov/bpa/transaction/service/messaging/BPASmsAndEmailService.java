@@ -95,7 +95,8 @@ public class BPASmsAndEmailService {
 	private static final String MSG_KEY_SMS_BPA_APPLN_NEW_PWD = "msg.bpa.newappln.sms.pwd";
 	private static final String SUBJECT_KEY_EMAIL_BPA_APPLN_NEW = "msg.bpa.newappln.email.subject";
 	private static final String BODY_KEY_EMAIL_BPA_APPLN_NEW = "msg.bpa.newappln.email.body";
-	private static final String BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD = "msg.bpa.newappln.email.body.pawd";
+	private static final String BODY_KEY_EMAIL_BPA_APPLN_NEW_PAWD = "msg.bpa.newappln.email.body.pawd";
+	private static final String BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD = "msg.bpa.newappln.email.body.pwd";
 	private static final String BODY_KEY_EMAIL_BPA_APPLN_STC_FALSE ="msg.bpa.newappln.email.body.stc.false";
 	private static final String BODY_KEY_EMAIL_BPA_APPLN_STC_SUBMIT ="msg.bpa.newappln.email.body.stc.submit";
 	private static final String MSG_KEY_SMS_BPA_APPLN_STC_TRUE ="msg.bpa.newappln.sms.stc.true";
@@ -341,10 +342,10 @@ public class BPASmsAndEmailService {
 		String mailCode;
 		if ((APPLICATION_STATUS_REGISTERED).equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
 			if (bpaApplication.isMailPwdRequired() && isNotBlank(password)) {
-				smsCode = MSG_KEY_SMS_BPA_APPLN_NEW_PWD;
-				mailCode = BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD;
+				smsCode = MSG_KEY_SMS_BPA_APPLN_STC_FALSE;
+				mailCode =BODY_KEY_EMAIL_BPA_APPLN_STC_FALSE;
 			} else {
-				smsCode = MSG_KEY_SMS_BPA_APPLN_NEW;
+				smsCode = MSG_KEY_SMS_BPA_APPLN_STC_SUBMIT;
 				mailCode = BODY_KEY_EMAIL_BPA_APPLN_NEW;
 			}
 			smsMsg = smsBodyByCodeAndArgsWithType(smsCode, applicantName, bpaApplication,
@@ -368,7 +369,7 @@ public class BPASmsAndEmailService {
                                      && bpaUtils.isCitizenAcceptanceRequired() && !bpaApplication.isCitizenAccepted()) {
                        smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_BPA_APPLN_STC_TRUE, applicantName, bpaApplication,
                     SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
-                       body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD, applicantName,
+                       body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_BPA_APPLN_NEW_PAWD, applicantName,
                                                bpaApplication, SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
                       subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_NEW,
                                                 bpaApplication.getApplicationNumber());
@@ -381,14 +382,14 @@ public class BPASmsAndEmailService {
                     bpaApplication, SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
             subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_NEW, bpaApplication.getApplicationNumber());
         }*/
-        else if ((BpaConstants.APPLICATION_STATUS_SUBMITTED).equalsIgnoreCase(bpaApplication.getStatus().getCode())
+        /*else if ((BpaConstants.APPLICATION_STATUS_SUBMITTED).equalsIgnoreCase(bpaApplication.getStatus().getCode())
                 && !bpaUtils.isCitizenAcceptanceRequired() && !bpaApplication.isCitizenAccepted()) {
             smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_BPA_APPLN_STC_FALSE, applicantName, bpaApplication,
                     SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
             body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_BPA_APPLN_STC_FALSE, applicantName,
                     bpaApplication, SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
             subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_NEW, bpaApplication.getApplicationNumber());
-        }
+        }*/
 		
 		if (mobileNo != null && smsMsg != null)
 			notificationService.sendSMS(mobileNo, smsMsg);
