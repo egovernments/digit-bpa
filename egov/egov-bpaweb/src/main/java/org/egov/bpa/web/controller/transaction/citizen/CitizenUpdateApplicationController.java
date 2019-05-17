@@ -79,6 +79,7 @@ import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
@@ -91,6 +92,7 @@ import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
 import org.egov.bpa.transaction.service.BpaDcrService;
+import org.egov.bpa.transaction.service.BpaNocApplicationService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
@@ -103,6 +105,7 @@ import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.utils.DateUtils;
@@ -154,7 +157,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private CustomImplProvider specificNoticeService;
     @Autowired
     private NocConfigurationService nocConfigurationService;
-
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private BpaNocApplicationService nocService;
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -388,19 +394,22 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         }
 
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
-
+        boolean isEdcrIntegrationRequire = bpaDcrService
+                .isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode());
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
-            final BpaStatus bpaStatus = applicationBpaService
+        	final BpaStatus bpaStatus = applicationBpaService
                     .getStatusByCodeAndModuleType(APPLICATION_STATUS_SUBMITTED);
-            bpaApplication.setStatus(bpaStatus);
+            bpaApplication.setStatus(bpaStatus);    
+            if(isEdcrIntegrationRequire)
+            	nocService.initiateNoc(bpaApplication);
+           
         } else if (workFlowAction != null && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction))
             bpaApplication.setStatus(applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
 
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
         // To allot slot for one day permit applications
-        boolean isEdcrIntegrationRequire = bpaDcrService
-                .isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode());
+       
         List<ApplicationSubType> riskBasedAppTypes = applicationTypeService.getRiskBasedApplicationTypes();
 
         String occupancyName;

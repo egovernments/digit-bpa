@@ -119,5 +119,22 @@ $(document)
                             }
                         });
                     });
+                    
+                    		
+                    $(document).on('click','#btninitiatenoc',function(){
+        			   var url = $(this).val();
+        			   if(url){
+        					openPopup(url);
+                         	$('#nocbutton').hide();
+        			   }
+        					    
+        			});
+
+        			function openPopup(url)
+        			{
+        				url = url+"~"+$('#applicationNo').val();
+        				window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+        			}
+
 
 				});

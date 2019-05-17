@@ -91,12 +91,12 @@
 					</c:if></td>
 					<c:if test="${not empty nocConfigMap}">
 					<td>
-						<div class="text-right add-padding">
+						<div class="text-right add-padding nocbutton">
 							<c:set var="noccode"
 								value="${nocdoc.nocDocument.serviceChecklist.checklist.code}" />
 							<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
 							<c:if test="${nocbtn eq 'initiate'}">
-								<button type="button" class="btn btn-secondary"
+								<button type="button" value="/bpa/nocapplication/create/${noccode}" class="btn btn-secondary"
 									id="btninitiatenoc">
 									<spring:message code="lbl.initiate.noc" />
 								</button>

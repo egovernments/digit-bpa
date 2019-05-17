@@ -55,6 +55,11 @@
 	<div class="col-md-12">
 	
 	<div class="panel-heading">
+	        <c:if test="${not empty errors}">
+			<div class="alert alert-danger" role="alert">
+				<strong>${errors}</strong>
+			</div>
+		    </c:if>
 			<div class="panel-title text-center no-float">
 				<c:if test="${not empty feeNotDefined}">
 					<strong class="error-msg">${feeNotDefined}</strong>

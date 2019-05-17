@@ -15,5 +15,5 @@ public class NocConfigurationService {
 	
 	public NocConfiguration findByDepartment(String department){
 		 return nocConfigurationRepository.findByDepartment(department);
-	 }
+	}
 }

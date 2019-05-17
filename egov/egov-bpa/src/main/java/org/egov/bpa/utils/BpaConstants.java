@@ -46,6 +46,8 @@
  */
 package org.egov.bpa.utils;
 
+
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,6 +98,7 @@ public class BpaConstants {
     public static final String BPA_APPLICATION = "bpaApplication";
     public static final String APPLICATION_HISTORY = "applicationHistory";
     public static final String EGMODULE_NAME = "BPA";
+    public static final String NOCMODULE = "NOC";
     public static final String BPASTATUSMODULETYPE = "BPAAPPLICATION";
     public static final String YEARLY = "Yearly";
     // sequence name constants
@@ -260,6 +263,21 @@ public class BpaConstants {
     public static final String LABOURCESS = "Labour cess";
     public static final String TP_DEPT = "TOWN PLANNING DEPARTMENT";
     public static final String DEV_PERMIT_FEE = "DPF";
+    
+    //NOC status
+    
+    public static final String FIRENOCTYPE = "FIRE_NOC";
+    public static final String AIRPORTNOCTYPE = "AAI_NOC";
+    public static final String NMANOCTYPE = "NMA_NOC";
+    public static final String ENVNOCTYPE = "MOEF_NOC";
+
+    public static final String NOC_INITIATED = "NOC_INITIATED";
+    public static final String NOC_APPROVED = "NOC_APPROVED";
+    public static final String NOC_REJECTED = "NOC_REJECTED";
+    public static final String FIRENOCROLE = "BPA_FIRE_NOC_ROLE";
+    public static final String ENVNOCROLE = "BPA_ENVIRONMENT_NOC_ROLE";
+    public static final String NMANOCROLE = "BPA_NMA_NOC_ROLE";
+    public static final String AIRPORTNOCROLE = "BPA_AIPORT_AUTH_NOC_ROLE";
 
     // designation constants
     public static final String DESIGNATION_AEE = "Assistant executive engineer";
@@ -567,6 +585,14 @@ public class BpaConstants {
         NOOFDAYS.put(21, "Last 21 Days");
         NOOFDAYS.put(28, "Last 28 Days");
     }
+    
+    private static final Map<String, String> NOCTYPE = new ConcurrentHashMap<>();
+    static {
+    	NOCTYPE.put(FIRENOCTYPE, FIRENOCROLE);
+    	NOCTYPE.put(AIRPORTNOCTYPE, AIRPORTNOCROLE);
+    	NOCTYPE.put(NMANOCTYPE, NMANOCROLE);
+    	NOCTYPE.put(ENVNOCTYPE, ENVNOCROLE);
+    }
 
     // Update and use this code if DCR integration require to particular service type and occupancy
     /*
@@ -646,6 +672,10 @@ public class BpaConstants {
 
     public static List<String> getServicesForValidation() {
         return Collections.unmodifiableList(VALIDATIONPUPOSE);
+    }
+    
+    public static Map<String, String> getNocRole() {
+        return Collections.unmodifiableMap(NOCTYPE);
     }
 
 }

@@ -85,7 +85,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_DOC_SCRUTINY_SCHEDLE_PEND;
 import static org.egov.bpa.utils.BpaConstants.WF_DOC_VERIFY_PEND;
 import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REVOCATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_INIT_AUTO_RESCHDLE;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
@@ -109,13 +108,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.autonumber.RejectionNumberGenerator;
-import org.egov.bpa.autonumber.RevocationNumberGenerator;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
-import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.SlotApplication;
@@ -129,6 +126,7 @@ import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRevocationFormat;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.BpaDcrService;
+import org.egov.bpa.transaction.service.BpaNocApplicationService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitFeeService;
@@ -199,6 +197,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private CustomImplProvider findImplementationBean;
     @Autowired
     private PermitRevocationService permitRevocationService;
+    @Autowired
+    private BpaNocApplicationService nocService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -332,6 +332,16 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             final Model model,
             final RedirectAttributes redirectAttributes,
             @RequestParam final BigDecimal amountRule) throws IOException {
+    	
+        String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
+        String approvalComent = request.getParameter(APPROVAL_COMENT);
+
+    	
+        final List<BpaNocApplication> nocApplication = nocService.findByApplicationNumber(bpaApplication.getApplicationNumber());
+        List<String> nocStatus = nocApplication.stream().map(noc -> noc.getStatus().getCode()).collect(Collectors.toList()); 
+        if(nocStatus.contains(BpaConstants.NOC_INITIATED) &&  WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction))
+        	resultBinder.rejectValue("errors","msg.nocinitiation.progress");        
+        
         if (resultBinder.hasErrors()) {
             loadFormData(model, bpaApplication);
             return BPAAPPLICATION_FORM;
@@ -346,9 +356,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             loadCommonApplicationDetails(model, bpaApplication);
             return BPAAPPLICATION_FORM;
         }
-
-        String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-        String approvalComent = request.getParameter(APPROVAL_COMENT);
 
         String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
 

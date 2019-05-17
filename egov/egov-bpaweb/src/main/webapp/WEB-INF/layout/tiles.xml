@@ -844,5 +844,19 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/common/city-selection.jsp" />
 	</definition>
+	
+	<definition name="noc-details" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.noc" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/noc/noc-details.jsp" />
+	</definition>
+	
+	<definition name="noc-success" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.noc.appln.success" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/noc/noc-success.jsp" />
+	</definition>
 
 </tiles-definitions>

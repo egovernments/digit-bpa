@@ -209,12 +209,12 @@
 					</td>
 					<c:if test="${not empty nocConfigMap}">
 						<td>
-							<div class="text-right add-padding">
+							<div class="text-right add-padding nocbutton">
 								<c:set var="noccode"
 									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
 								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
 								<c:if test="${nocbtn eq 'initiate'}">
-									<button type="button" class="btn btn-secondary" id="btninitiatenoc">
+								<button type="button" value="/bpa/nocapplication/create/${noccode}" class="btn btn-secondary"
 										<spring:message code="lbl.initiate.noc" />
 									</button>
 								</c:if>
@@ -258,6 +258,7 @@
 </div>
 <input type="hidden" id="letterSentDateReq"
 	value="<spring:message code='msg.validate.letter.sentdate.req' />" />
+<input type="hidden" id="applicationNo" value="${bpaApplication.applicationNumber}"/>
 <input type="hidden" id="replyReceivedDateValidate"
 	value="<spring:message code='msg.validate.replyreceived.date' />" />
 <input type="hidden" id="uploadMsg"

@@ -407,6 +407,7 @@
 				id="citizenDisclaimerAccepted" name="citizenDisclaimerAccepted"
 				value="${citizenDisclaimerAccepted}" /> <input type="hidden"
 				id="isCitizen" name="isCitizen" value="${isCitizen}" />
+				<input type="hidden" id="applicationNo" value="${bpaApplication.applicationNumber}"/>
 		</div>
 	</div>
 </div>
@@ -419,3 +420,5 @@
 	src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/citizen-view-helper.js?rnd=${app_release_no}'/>"></script>
+<script 		
+    src="<cdn:url value='/resources/js/app/noc-helper.js?rnd=${app_release_no}'/>"></script>
