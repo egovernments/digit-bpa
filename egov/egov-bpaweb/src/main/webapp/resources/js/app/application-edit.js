@@ -631,6 +631,10 @@ function validateOnApproveAndForward(validator, action) {
         }
         return validateForm(validator);
     }
+    if(action == 'Approve' && $("#nocInitiated").val()){
+        bootbox.alert($('#nocInProgress').val());
+        return false;
+    }
 }
 
 function makePermitConditionsNotMandatory() {

@@ -389,6 +389,8 @@
 				<button type="button" class="btn btn-danger" data-dismiss="modal"><spring:message code="lbl.btn.close"/></button>
 			</div>
 		</div>
+				<input type="hidden" id="nocInitiated" value="${nocInitiated}"/>
+		
 		<input type="hidden" id="feeAmount" value="<spring:message code='msg.validation.feeamount'/>"/>
 		<input type="hidden" id="incrFeeamtTopOfsysCalcFee" value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>"/>
 	    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
@@ -425,6 +427,7 @@
 		<input type="hidden" id="intiateRejectionAppln" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
 		<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
 	    <input type="hidden" id="revocationReasonMandatory" value="<spring:message code='msg.validate.onerevocation.reason.mandatory' />" />
+	    <input type="hidden" id="nocInProgress" value="<spring:message code='msg.nocinitiation.progress' />" />
 		
 		
 	</div>

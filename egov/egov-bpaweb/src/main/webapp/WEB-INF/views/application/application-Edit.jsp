@@ -165,6 +165,7 @@
 	<input type="hidden" id="occuptypemsg" value="<spring:message code='msg.validate.occuptypemsg' />" />
 	<input type="hidden" id="floorAlreadyExist" value="<spring:message code='msg.floordetails.already.exist' />" />
 	<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
+	<input type="hidden" id="nocInProgress" value="<spring:message code='msg.nocinitiation.progress' />" />
 
 </div>
 

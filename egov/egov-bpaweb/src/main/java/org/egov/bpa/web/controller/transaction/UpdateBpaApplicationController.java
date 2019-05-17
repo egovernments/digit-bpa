@@ -97,6 +97,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -334,13 +335,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             @RequestParam final BigDecimal amountRule) throws IOException {
     	
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-        String approvalComent = request.getParameter(APPROVAL_COMENT);
-
-    	
-        final List<BpaNocApplication> nocApplication = nocService.findByApplicationNumber(bpaApplication.getApplicationNumber());
-        List<String> nocStatus = nocApplication.stream().map(noc -> noc.getStatus().getCode()).collect(Collectors.toList()); 
-        if(nocStatus.contains(BpaConstants.NOC_INITIATED) &&  WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction))
-        	resultBinder.rejectValue("errors","msg.nocinitiation.progress");        
+        String approvalComent = request.getParameter(APPROVAL_COMENT);    
         
         if (resultBinder.hasErrors()) {
             loadFormData(model, bpaApplication);
@@ -695,7 +690,21 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 || (!actions.isEmpty() && actions.contains(WF_APPROVE_BUTTON))))
             buildApplicationPermitConditions(application, model);
 
+      
+               
         prepareActions(model, application);
+    	model.addAttribute("nocInitiated",false);
+
+        List<BpaNocApplication> nocApplication = nocService.findByApplicationNumber(application.getApplicationNumber());
+        List<String> nocStatus = nocApplication.stream().map(noc -> noc.getStatus().getCode()).collect(Collectors.toList()); 
+        if(!application.getApplicationType().getName().equals(BpaConstants.LOWRISK)  &&  actions.contains(WF_APPROVE_BUTTON)) {
+            if(nocStatus.contains(BpaConstants.NOC_REJECTED))
+            	model.addAttribute("validActionList", Arrays.asList("Reject"));
+            else if(nocStatus.contains(BpaConstants.NOC_INITIATED))
+            	model.addAttribute("nocInitiated",true);
+        }
+      
+        
         if (!application.getIsOneDayPermitApplication()
                 && (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())
                         || APPLICATION_STATUS_FIELD_INS.equals(application.getStatus().getCode())
@@ -836,5 +845,4 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                                 .concat(getDesinationNameByPosition(ownerPosition)),
                 bpaAppln.getApplicationNumber(), approvalComent }, LocaleContextHolder.getLocale());
     }
-
 }

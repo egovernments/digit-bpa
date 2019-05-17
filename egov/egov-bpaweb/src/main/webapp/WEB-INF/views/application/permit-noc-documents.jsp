@@ -214,7 +214,7 @@
 									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
 								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
 								<c:if test="${nocbtn eq 'initiate'}">
-								<button type="button" value="/bpa/nocapplication/create/${noccode}" class="btn btn-secondary"
+									<button type="button" value="/bpa/nocapplication/create/${noccode}" class="btn btn-secondary" id="btninitiatenoc">
 										<spring:message code="lbl.initiate.noc" />
 									</button>
 								</c:if>
