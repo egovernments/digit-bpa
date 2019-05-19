@@ -729,24 +729,99 @@ $(document).ready(
         //to update noc document is required
         function updateNocRequired(planInformation){
         	if(planInformation.nocIrrigationDept === 'YES'){
-                $('div._NOC_from_Irrigation_Department').attr('required','required');
                 $('span.mandatory._NOC_from_Irrigation_Department').show();
+                if($('button.btn_NOC_from_Irrigation_Department').length==1){
+                	$('div.divfv_NOC_from_Irrigation_Department').hide();
+                	if(($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES")){
+	                	$('th.thbtn').show();
+	                    $('td.tdbtn').show();
+                	}else{
+                		$('th.thbtn').hide();
+	                    $('td.tdbtn').hide();
+                	}
+                }else if($('input.hidden_NOC_from_Irrigation_Department').val() != 'initiated'){
+                	$('div._NOC_from_Irrigation_Department').attr('required','required');
+                	$('div.divfv_NOC_from_Irrigation_Department').show();
+                }else{
+                	$('div.divfv_NOC_from_Irrigation_Department').hide();
+                }
         	}
         	if(planInformation.nocNearMonument === 'YES'){
-                $('div._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('required','required');
                 $('span.mandatory._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
+                if($('button.btn_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').length==1){
+                	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').hide();
+                	if(($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES")){
+	                	$('th.thbtn').show();
+	                    $('td.tdbtn').show();
+                	}else{
+                		$('th.thbtn').hide();
+	                    $('td.tdbtn').hide();
+                	}
+                }else if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'initiated'){
+                	$('div._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('required','required');
+                	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
+                }else{
+                	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').hide();
+                }
         	}
             if(planInformation.nocNearAirport === 'YES'){
-                $('div._NOC_from_Airport_Authority').attr('required','required');
                 $('span.mandatory._NOC_from_Airport_Authority').show();
+                if($('button.btn_NOC_from_Airport_Authority').length==1){
+                	$('div.divfv_NOC_from_Airport_Authority').hide();
+                	if(($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES")){
+	                	$('th.thbtn').show();
+	                    $('td.tdbtn').show();
+                	}else{
+                		$('th.thbtn').hide();
+	                    $('td.tdbtn').hide();
+                	}
+                }else if($('input.hidden_NOC_from_Airport_Authority').val() != 'initiated'){
+                	$('div._NOC_from_Airport_Authority').attr('required','required');
+                	$('div.divfv_NOC_from_Airport_Authority').show();
+                }else{
+                	$('div.divfv_NOC_from_Airport_Authority').hide();
+                }
             }
             if(planInformation.nocFireDept === 'YES'){
-                $('div._NOC_from_Fire_Authority').attr('required','required');
                 $('span.mandatory._NOC_from_Fire_Authority').show();
+                if($('button.btn_NOC_from_Fire_Authority').length==1){
+                	$('div.divfv_NOC_from_Fire_Authority').hide();
+                	if(($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES")){
+	                	$('th.thbtn').show();
+	                    $('td.tdbtn').show();
+                	}else{
+                		$('th.thbtn').hide();
+	                    $('td.tdbtn').hide();
+                	}
+                }else if($('input.hidden_NOC_from_Fire_Authority').val() != 'initiated'){
+                	$('div._NOC_from_Fire_Authority').attr('required','required');
+                	$('div.divfv_NOC_from_Fire_Authority').show();
+                }else{
+                	$('div.divfv_NOC_from_Fire_Authority').hide();
+                }
             }
             if(planInformation.nocStateEnvImpact === 'YES'){
-            	$('div._MOEF_environment_clearance').attr('required','required');
             	$('span.mandatory._MOEF_environment_clearance').show();
+            	if($('button.btn_MOEF_environment_clearance').length==1){
+                	$('div.divfv_MOEF_environment_clearance').hide();
+                	if(($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES")){
+	                	$('th.thbtn').show();
+	                    $('td.tdbtn').show();
+                	}else{
+                		$('th.thbtn').hide();
+	                    $('td.tdbtn').hide();
+                	}
+                }else if($('input.hidden_MOEF_environment_clearance').val() != 'initiated'){
+                	$('div._MOEF_environment_clearance').attr('required','required');
+                	$('div.divfv_MOEF_environment_clearance').show();
+                }else{
+                	$('div.divfv_MOEF_environment_clearance').hide();
+                }
             }
         }
         // Auto populate system generated plan scrutiny checklist documents

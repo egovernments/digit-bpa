@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
@@ -103,6 +104,7 @@ import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.custom.CustomImplProvider;
@@ -157,6 +159,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private BpaNocApplicationService nocService;
+    @Autowired
+    private BpaNocApplicationService bpaNocApplicationService;
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -215,14 +219,29 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         model.addAttribute("checkListDetailList", checklistServieTypeServcie
                 .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), CHECKLIST_TYPE));
         Map nocConfigMap = new HashMap<String, String>();
+        Map nocTypeApplMap = new HashMap<String, String>();
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+        	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
 			NocConfiguration nocConfig = nocConfigurationService
-					.findByDepartment(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode());
+					.findByDepartment(code);
+			if(bpaNocApplicationService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
+				nocTypeApplMap.put(code, "initiated");
 			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
 		}
+        model.addAttribute("nocTypeApplMap",nocTypeApplMap);
         model.addAttribute("nocConfigMap",nocConfigMap);
+        model.addAttribute("isPermitApplFeeReq","NO");
+        model.addAttribute("permitApplFeeCollected","NO");
+        if(bpaUtils.isApplicationFeeCollectionRequired() ){
+        	model.addAttribute("isPermitApplFeeReq","YES");
+        }
+        if(application.getDemand() != null && application.getDemand().getAmtCollected().compareTo(application.getAdmissionfeeAmount())>=0){
+      		model.addAttribute("permitApplFeeCollected","YES");
+        }
+        
+        
         model.addAttribute("applicationDocumentList", application.getPermitDocuments());
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
         model.addAttribute("isReconciliationInProgress",

@@ -62,7 +62,7 @@
 				<th><spring:message code="lbl.remarks" /></th>
 				<th><spring:message code="lbl.files" /></th>
 				<c:if test="${not empty nocConfigMap}">
-				<th><spring:message code="lbl.action.noc" /></th>
+				<th class="thbtn" style="display: none"><spring:message code="lbl.action.noc" /></th>
 				</c:if>
 			</tr>
 		</thead>
@@ -89,7 +89,7 @@
 					</c:forEach> <c:if test="${!isDocFound}">
 						N/A
 					</c:if></td>
-					<c:if test="${not empty nocConfigMap}">
+					<%-- <c:if test="${not empty nocConfigMap}">
 					<td>
 						<div class="text-right add-padding nocbutton">
 							<c:set var="noccode"
@@ -103,9 +103,35 @@
 							</c:if>
 						</div>
 					</td>
+					</c:if> --%>
+					<c:forTokens var="splittedString"
+							items="${nocdoc.nocDocument.serviceChecklist.checklist.description}"
+							delims="\ ()" varStatus="stat">
+							<c:set var="checklistName"
+								value="${stat.first ? '' : checklistName}_${splittedString}" />
+						</c:forTokens>
+						<c:if test="${not empty nocConfigMap}">
+						<td class="tdbtn" style="display:none" >
+							<div class="text-right">
+								<c:set var="noccode"
+									value="${nocdoc.nocDocument.serviceChecklist.checklist.code}" />
+								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
+								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
+								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
+								<c:out value="${nocapp}"/>
+								<button type="button" id="btninitiatenoc" value="/bpa/nocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
+										<spring:message code="lbl.initiate.noc" />
+								</button>
+								</c:if>
+							</div>
+						</td>
 					</c:if>
+					
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
 </div>
+<input type="hidden" id="applicationNo" value="${bpaApplication.applicationNumber}"/>
+<input type="hidden" id="isPermitApplFeeReq" value="${isPermitApplFeeReq}"/>
+<input type="hidden" id="permitApplFeeCollected" value="${permitApplFeeCollected}"/>

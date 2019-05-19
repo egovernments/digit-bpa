@@ -68,7 +68,8 @@
 				<th><spring:message code="lbl.attachdocument" /><br><small><spring:message
 						code="lbl.mesg.document" /></small></th>
 				<c:if test="${not empty nocConfigMap}">
-				<th><spring:message code="lbl.action.noc" /></th>
+					<th class="thbtn" style="display: none"><spring:message
+							code="lbl.action.noc" /></th>
 				</c:if>
 			</tr>
 		</thead>
@@ -161,7 +162,7 @@
 							data-file-max-size="5"
 							<c:if test="${isEDCRIntegrationRequire eq true && docs.nocDocument.serviceChecklistMapping.isMandatory eq true && fn:length(docs.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
 							data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
-							<div class="files-viewer">
+							<div class="files-viewer divfv${checklistName}">
 								<c:forEach items="${doc.nocDocument.getNocSupportDocs()}"
 									var="file" varStatus="status1">
 									<div class="file-viewer" data-toggle="tooltip"
@@ -208,19 +209,22 @@
 						</div>
 					</td>
 					<c:if test="${not empty nocConfigMap}">
-						<td>
-							<div class="text-right add-padding nocbutton">
+						<td class="tdbtn" style="display:none">
+							<div class="text-right">
 								<c:set var="noccode"
 									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
 								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
-								<c:if test="${nocbtn eq 'initiate'}">
-									<button type="button" value="/bpa/nocapplication/create/${noccode}" class="btn btn-secondary" id="btninitiatenoc">
+								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
+								<input type="hidden" value="${nocapp}" class="hidden${checklistName}"/>
+								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
+								<button type="button" id="btninitiatenoc" value="/bpa/nocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
 										<spring:message code="lbl.initiate.noc" />
-									</button>
+								</button>
 								</c:if>
 							</div>
 						</td>
 					</c:if>
+
 				</tr>
 			</c:forEach>
 
@@ -259,6 +263,8 @@
 <input type="hidden" id="letterSentDateReq"
 	value="<spring:message code='msg.validate.letter.sentdate.req' />" />
 <input type="hidden" id="applicationNo" value="${bpaApplication.applicationNumber}"/>
+<input type="hidden" id="isPermitApplFeeReq" value="${isPermitApplFeeReq}"/>
+<input type="hidden" id="permitApplFeeCollected" value="${permitApplFeeCollected}"/>
 <input type="hidden" id="replyReceivedDateValidate"
 	value="<spring:message code='msg.validate.replyreceived.date' />" />
 <input type="hidden" id="uploadMsg"
@@ -273,7 +279,6 @@
 		id="previewImg">
 	<div id="caption"></div>
 </div>
-
 <c:if test="${showUpdateNoc}">
 	<link rel="stylesheet"
 		href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">

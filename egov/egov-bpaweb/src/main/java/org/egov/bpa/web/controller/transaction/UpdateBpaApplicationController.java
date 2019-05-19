@@ -100,6 +100,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -110,17 +111,22 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.master.entity.NocConfiguration;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.common.NoticeCondition;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.entity.enums.ConditionType;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.notice.PermitApplicationNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
@@ -200,6 +206,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private PermitRevocationService permitRevocationService;
     @Autowired
     private BpaNocApplicationService nocService;
+    @Autowired
+    private BpaNocApplicationService bpaNocApplicationService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -728,6 +738,28 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
                         application.getStateHistory()));
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
+        Map nocConfigMap = new HashMap<String, String>();
+        Map nocTypeApplMap = new HashMap<String, String>();
+        for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+        	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+			NocConfiguration nocConfig = nocConfigurationService
+					.findByDepartment(code);
+			if(bpaNocApplicationService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
+				nocTypeApplMap.put(code, "initiated");
+			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
+				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+		}
+        model.addAttribute("nocTypeApplMap",nocTypeApplMap);
+        model.addAttribute("nocConfigMap",nocConfigMap);
+        model.addAttribute("isPermitApplFeeReq","NO");
+        model.addAttribute("permitApplFeeCollected","NO");
+        if(bpaUtils.isApplicationFeeCollectionRequired() ){
+        	model.addAttribute("isPermitApplFeeReq","YES");
+        }
+        if(application.getDemand() != null && application.getDemand().getAmtCollected().compareTo(application.getAdmissionfeeAmount())>=0){
+      		model.addAttribute("permitApplFeeCollected","YES");
+        }
     }
 
     private void buildRejectionReasons(Model model, BpaApplication application) {

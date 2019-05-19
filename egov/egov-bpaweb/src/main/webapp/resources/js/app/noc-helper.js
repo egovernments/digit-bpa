@@ -125,7 +125,7 @@ $(document)
         			   var url = $(this).val();
         			   if(url){
         					openPopup(url);
-                         	$('#nocbutton').hide();
+                         	$('#btninitiatenoc').hide();
         			   }
         					    
         			});

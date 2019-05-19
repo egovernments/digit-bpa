@@ -100,6 +100,7 @@ import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaDcrService;
+import org.egov.bpa.transaction.service.BpaNocApplicationService;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
@@ -167,6 +168,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private ApplicationBpaService applicationBpaService;
     @Autowired
     private NocConfigurationService nocConfigurationService;
+    @Autowired
+    private BpaNocApplicationService bpaNocApplicationService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -230,7 +233,15 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 bpaApplication.getPermitDcrDocuments().add(permitDcrDocument);
             }
         }
-
+        model.addAttribute("isPermitApplFeeReq","NO");
+        model.addAttribute("permitApplFeeCollected","NO");
+        if(bpaUtils.isApplicationFeeCollectionRequired() ){
+        	model.addAttribute("isPermitApplFeeReq","YES");
+        }
+        if(bpaApplication.getDemand() != null && bpaApplication.getDemand().getAmtCollected().compareTo(bpaApplication.getAdmissionfeeAmount())>=0){
+        		model.addAttribute("permitApplFeeCollected","YES");
+        }
+        Map nocTypeApplMap = new HashMap<String, String>();
         if (bpaApplication.getPermitNocDocuments().isEmpty()) {
         	Map nocConfigMap = new HashMap<String,String>();
             List<ChecklistServiceTypeMapping> checklistServicetypeList = checklistServiceTypeService
@@ -243,13 +254,18 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 permitNocDocument.setApplication(bpaApplication);
                 permitNocDocument.setNocDocument(nocDocument);
                 bpaApplication.getPermitNocDocuments().add(permitNocDocument);
-                NocConfiguration nocConfig=nocConfigurationService.findByDepartment(serviceChklist.getChecklist().getCode());
+                String code=serviceChklist.getChecklist().getCode();
+                NocConfiguration nocConfig=nocConfigurationService.findByDepartment(code);
+                if(bpaApplication.getApplicationNumber()!=null 
+                		&& bpaNocApplicationService.findByApplicationNumberAndType(bpaApplication.getApplicationNumber(),code)!=null)
+    				nocTypeApplMap.put(code, "initiated");
                 if(nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString()) 
                 		&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
                 	nocConfigMap.put(nocConfig.getDepartment(),"initiate");
             }
             model.addAttribute("nocConfigMap",nocConfigMap);
         }
+        model.addAttribute("nocTypeApplMap",nocTypeApplMap);
         model.addAttribute("applicationDocumentList", appDocList);
         getDcrDocumentsUploadMode(model);
         if (!bpaDcrService.isEdcrIntegrationRequireByService(serviceCode)) {
