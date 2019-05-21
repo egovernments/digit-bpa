@@ -134,9 +134,9 @@
 					<!-- logo -->
 					<div class="navbar-brand">
 						<a href="javascript:void(0);">
-							<img src="/egi/downloadfile/logo" height="60" class="homepage_logo">
+							<img src="/egi/downloadfile/logo" height="67"  class="rounded">
 						</a>
-					</div>
+					</div>   
 					
 					<div class="navbar-brand">
 						<h3 class="horizontal-page-title homepage hidden-xs hidden-sm" id="hp-citizen-title">${sessionScope.citymunicipalityname}</h3>
