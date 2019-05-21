@@ -844,7 +844,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["LICENSEE"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["TECHNICAL PERSON LICENSEE NAME"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement x="12" y="192" width="16" height="21" uuid="d12adcfd-088c-420f-8ded-a567ef05e071"/>
@@ -1024,7 +1024,7 @@
 					<font size="10"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["NOC from State Environmental/MOEAF Impact Assessment Authority available?"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["NOC from State Environmental/MoEF Impact Assessment Authority available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="371" y="420" width="146" height="30" uuid="a0ebbafd-7003-4b9e-919e-f47ee55e7b8a"/>
