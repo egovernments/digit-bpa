@@ -192,6 +192,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         setCityName(model, request);
         prepareFormData(oc, model);
         loadData(oc, model);
+        bpaUtils.loadBoundary(oc.getParent());
         getActionsForOCApplication(model, oc);
         if (oc.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
             return OCCUPANCY_CERTIFICATE_VIEW;
