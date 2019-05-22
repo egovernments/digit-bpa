@@ -78,11 +78,11 @@ public class ExitWidth extends FeatureProcess {
 
     private static final String EXIT_WIDTH_DESC = "Exit Width";
     private static final String SUBRULE_42_4_B = "42-4-b";
-    //private static final String SUB_RULE_DESCRIPTION = "Minimum exit width";
+    // private static final String SUB_RULE_DESCRIPTION = "Minimum exit width";
     public static final BigDecimal VAL_0_75 = BigDecimal.valueOf(0.75);
     public static final BigDecimal VAL_1_2 = BigDecimal.valueOf(1.2);
     private static final String SUBRULE_42_3_B = "42-3-b";
-    //private static final String SUB_RULE_OCCUPANTS_DESCRIPTION = "Maximum number of occupants that can be allowed through";
+    // private static final String SUB_RULE_OCCUPANTS_DESCRIPTION = "Maximum number of occupants that can be allowed through";
     private static final String OCCUPANCY = "Occupancy";
     private static final String EXIT_WIDTH = "Exit Width";
     private static final String FLOOR = "Floor";
@@ -160,7 +160,8 @@ public class ExitWidth extends FeatureProcess {
                                         occupancyTypeHelper = occupancy.getTypeHelper().getSubtype().getCode();
                                     }
                                 }
-                                if (occupancyTypeHelper.equals(DxfFileConstants.A_R) ||
+                                if (occupancyTypeHelper.equals(DxfFileConstants.A)
+                                        || occupancyTypeHelper.equals(DxfFileConstants.A_R) ||
                                         occupancyTypeHelper.equals(DxfFileConstants.A_SR) ||
                                         occupancyTypeHelper.equals(DxfFileConstants.A_HE) ||
                                         occupancyTypeHelper.equals(DxfFileConstants.A_AF) ||
@@ -218,7 +219,8 @@ public class ExitWidth extends FeatureProcess {
                                     occupancyTypeHelper = occupancy.getTypeHelper().getSubtype().getCode();
                                 }
                             }
-                            if (occupancyTypeHelper.equals(DxfFileConstants.A_R) ||
+                            if (occupancyTypeHelper.equals(DxfFileConstants.A) ||
+                                    occupancyTypeHelper.equals(DxfFileConstants.A_R) ||
                                     occupancyTypeHelper.equals(DxfFileConstants.A_AF) ||
                                     occupancyTypeHelper.equals(DxfFileConstants.A_PO)) {
                                 occupantLoadDivisonFactor = BigDecimal.valueOf(12.5);

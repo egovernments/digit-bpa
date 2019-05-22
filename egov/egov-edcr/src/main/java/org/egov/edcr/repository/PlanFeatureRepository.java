@@ -86,6 +86,7 @@ import org.egov.edcr.feature.RainWaterHarvesting;
 import org.egov.edcr.feature.RampService;
 import org.egov.edcr.feature.RiverDistance;
 import org.egov.edcr.feature.RoofTank;
+import org.egov.edcr.feature.SegregatedToilet;
 import org.egov.edcr.feature.SegregationOfWaste;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
@@ -133,16 +134,12 @@ public class PlanFeatureRepository {
         features.add(pf);
         pf = new PlanFeature(SpiralStair.class);
         features.add(pf);
-
         pf = new PlanFeature(FireStair.class);
         features.add(pf);
-
         pf = new PlanFeature(Balcony.class);
         features.add(pf);
-
         pf = new PlanFeature(OverHangs.class);
         features.add(pf);
-
         pf = new PlanFeature(PlantationGreenStrip.class);
         features.add(pf);
         pf = new PlanFeature(RoofTank.class);
@@ -181,9 +178,9 @@ public class PlanFeatureRepository {
         features.add(pf);
         pf = new PlanFeature(ExitWidth.class);
         features.add(pf);
-        /*
-         * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
-         */
+        pf = new PlanFeature(SegregatedToilet.class);
+        features.add(pf);
+
         /*
          * pf = new PlanFeature(Sanitation.class); features.add(pf);
          */
