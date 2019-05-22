@@ -358,7 +358,7 @@ public class Far extends FeatureProcess {
 				}
 				blk.setResidentialBuilding(allResidentialOccTypes == 1);
 				for (Occupancy occupancy : listOfOccupanciesOfAParticularblock) {
-					if (occupancy.getType() != null) {
+					if (occupancy.getTypeHelper() != null) {
 						// setting residentialOrCommercial Occupancy Type
 						int residentialOrCommercialOccupancyType = 0;
 						if (A.equals(occupancy.getTypeHelper().getType().getCode())
@@ -608,21 +608,30 @@ public class Far extends FeatureProcess {
 	}
 
 	private void validate2(Plan pl, Block blk, Floor flr, Occupancy occupancy) {
-		if (occupancy.getBuiltUpArea() != null && occupancy.getBuiltUpArea().compareTo(BigDecimal.valueOf(0)) < 0) {
+		String occupancyTypeHelper = StringUtils.EMPTY;
+        if (occupancy.getTypeHelper() != null) {
+            if (occupancy.getTypeHelper().getType() != null) {
+                occupancyTypeHelper = occupancy.getTypeHelper().getType().getName();
+            } else if (occupancy.getTypeHelper().getSubtype() != null) {
+                occupancyTypeHelper = occupancy.getTypeHelper().getSubtype().getName();
+            }
+        }
+		
+        if (occupancy.getBuiltUpArea() != null && occupancy.getBuiltUpArea().compareTo(BigDecimal.valueOf(0)) < 0) {
 			pl.addError(VALIDATION_NEGATIVE_BUILTUP_AREA, getLocaleMessage(VALIDATION_NEGATIVE_BUILTUP_AREA,
-					blk.getNumber(), flr.getNumber().toString(), occupancy.getType().getOccupancyTypeVal()));
+					blk.getNumber(), flr.getNumber().toString(), occupancyTypeHelper));
 		}
 		if (occupancy.getExistingBuiltUpArea() != null
 				&& occupancy.getExistingBuiltUpArea().compareTo(BigDecimal.valueOf(0)) < 0) {
 			pl.addError(VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA,
 					getLocaleMessage(VALIDATION_NEGATIVE_EXISTING_BUILTUP_AREA, blk.getNumber(),
-							flr.getNumber().toString(), occupancy.getType().getOccupancyTypeVal()));
+							flr.getNumber().toString(), occupancyTypeHelper));
 		}
 		occupancy.setFloorArea((occupancy.getBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getBuiltUpArea())
 				.subtract(occupancy.getDeduction() == null ? BigDecimal.ZERO : occupancy.getDeduction()));
 		if (occupancy.getFloorArea() != null && occupancy.getFloorArea().compareTo(BigDecimal.valueOf(0)) < 0) {
 			pl.addError(VALIDATION_NEGATIVE_FLOOR_AREA, getLocaleMessage(VALIDATION_NEGATIVE_FLOOR_AREA,
-					blk.getNumber(), flr.getNumber().toString(), occupancy.getType().getOccupancyTypeVal()));
+					blk.getNumber(), flr.getNumber().toString(), occupancyTypeHelper));
 		}
 		occupancy.setExistingFloorArea(
 				(occupancy.getExistingBuiltUpArea() == null ? BigDecimal.ZERO : occupancy.getExistingBuiltUpArea())
@@ -632,7 +641,7 @@ public class Far extends FeatureProcess {
 				&& occupancy.getExistingFloorArea().compareTo(BigDecimal.valueOf(0)) < 0) {
 			pl.addError(VALIDATION_NEGATIVE_EXISTING_FLOOR_AREA,
 					getLocaleMessage(VALIDATION_NEGATIVE_EXISTING_FLOOR_AREA, blk.getNumber(),
-							flr.getNumber().toString(), occupancy.getType().getOccupancyTypeVal()));
+							flr.getNumber().toString(), occupancyTypeHelper));
 		}
 	}
 

@@ -355,8 +355,8 @@ public class RampService extends FeatureProcess {
                                                         RoundingMode.HALF_UP);
                                                 ramp.setSlope(rampSlope);
                                                 BigDecimal expectedSlope = ramp.getFloorHeight()
-                                                        .compareTo(BigDecimal.valueOf(2.4)) > 0 ? BigDecimal.valueOf(0.08)
-                                                                : BigDecimal.valueOf(0.1);
+                                                        .compareTo(BigDecimal.valueOf(2.4)) > 0 ? BigDecimal.valueOf(0.05)
+                                                                : BigDecimal.valueOf(0.08);
                                                 valid = false;
                                                 Map<String, Object> typicalFloorValues = Util.getTypicalFloorValues(block, floor,
                                                         isTypicalRepititiveFloor);

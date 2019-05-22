@@ -60,6 +60,7 @@ import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Chimney;
 import org.egov.edcr.feature.CommonFeature;
 import org.egov.edcr.feature.Coverage;
+import org.egov.edcr.feature.ExitWidth;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.FireStair;
 import org.egov.edcr.feature.FireTenderMovement;
@@ -68,6 +69,7 @@ import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
 import org.egov.edcr.feature.HeightOfRoom;
 import org.egov.edcr.feature.Kitchen;
+import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.LiftService;
 import org.egov.edcr.feature.LocationPlan;
 import org.egov.edcr.feature.MezzanineFloorService;
@@ -119,9 +121,8 @@ public class PlanFeatureRepository {
         features.add(pf);
         pf = new PlanFeature(GovtBuildingDistance.class);
         features.add(pf);
-        /*
-         * pf = new PlanFeature(LandUse.class); features.add(pf);
-         */
+        pf = new PlanFeature(LandUse.class);
+        features.add(pf);
         pf = new PlanFeature(RiverDistance.class);
         features.add(pf);
         pf = new PlanFeature(SepticTank.class);
@@ -177,6 +178,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(SegregationOfWaste.class);
         features.add(pf);
         pf = new PlanFeature(Solar.class);
+        features.add(pf);
+        pf = new PlanFeature(ExitWidth.class);
         features.add(pf);
         /*
          * pf = new PlanFeature(SegregatedToilet.class); features.add(pf);
