@@ -44,18 +44,54 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.repository;
+package org.egov.bpa.transaction.service;
 
+import java.util.Date;
 import java.util.List;
 
+import org.egov.bpa.master.entity.Holiday;
 import org.egov.bpa.master.entity.NocConfiguration;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.bpa.master.service.HolidayListService;
+import org.egov.bpa.master.service.NocConfigurationService;
+import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-public interface NocConfigurationRepository extends JpaRepository<NocConfiguration, Long> {
-    NocConfiguration findByDepartment(String department);
-    @Query("select nocconf from NocConfiguration nocconf where nocconf.isDeemedApproval=true")
-    List<NocConfiguration> findIsDeemedApproval();
+@Service
+@Transactional(readOnly = true)
+public class NocApprovalService {
+
+	@Autowired
+	public NocConfigurationService nocConfigurationService;
+	@Autowired
+	public BpaNocApplicationService bpaNocApplicationService;
+	@Autowired
+	public HolidayListService holidayListService;
+	@Autowired
+	private BpaStatusService statusService;
+	@Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
+	
+	@Transactional
+    public void approveNocAsDeemed() {
+		List<NocConfiguration> nocConfigIsDeemedList=nocConfigurationService.findIsDeemedApproval();
+		for(NocConfiguration nocConfig:nocConfigIsDeemedList){
+			Long sla=nocConfig.getSla();
+			 List<BpaNocApplication> bpaNocApplication = bpaNocApplicationService.findInitiatedAppByType(nocConfig.getDepartment());
+			 for (BpaNocApplication nocApp:bpaNocApplication){
+				 List<Holiday> holiday = holidayListService.findByFromAndToDate(nocApp.getCreatedDate(), new Date());
+				 Integer elapsedDays = DateUtils.daysBetween(nocApp.getCreatedDate(), new Date());
+				 Long elapsedWithoutHoliday=(long) (elapsedDays-holiday.size());
+				 if(sla.compareTo(elapsedWithoutHoliday)<=0){
+					 nocApp.setStatus(statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_DEEMED_APPROVED));
+					 bpaNocApplicationService.save(nocApp);
+					 bpaSmsAndEmailService.sendSMSAndEmailForDeemedApprovalNoc(nocApp);
+				 }
+			 }
+		}
+	}
 }

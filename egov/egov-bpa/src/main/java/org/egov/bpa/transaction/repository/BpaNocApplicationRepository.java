@@ -57,4 +57,8 @@ public interface BpaNocApplicationRepository extends JpaRepository<BpaNocApplica
 	  
 	  @Query("select noc from BpaNocApplication noc where noc.bpaApplication.applicationNumber =:appNo and noc.nocType = :type ")
 	  BpaNocApplication findByApplicationNumberAndType(@Param("appNo") String appNo, @Param("type") String nocType);
+	  
+	  @Query("select noc from BpaNocApplication noc where noc.nocType = :type and noc.status.code='NOC_INITIATED'")
+	  List<BpaNocApplication> findInitiatedAppByType(@Param("type") String nocType);
+
 }

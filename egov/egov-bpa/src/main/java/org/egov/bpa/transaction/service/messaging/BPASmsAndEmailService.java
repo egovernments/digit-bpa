@@ -65,6 +65,7 @@ import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.utils.BpaConstants;
@@ -151,7 +152,9 @@ public class BPASmsAndEmailService {
 	private static final String STAKEHOLDER_PAYMENT_CONFIM_SMS= "msg.newstakeholder.paymentconfirmation.sms";
 	private static final String STAKEHOLDER_PAYMENT_CONFIM_EMAIL_SUB= "msg.newstakeholder.paymentconfirmation.email.subject";
 	private static final String STAKEHOLDER_PAYMENT_CONFIM_EMAIL_BODY= "msg.newstakeholder.paymentconfirmation.email.body";
-
+	private static final String SMS_BPA_NOC_DEEMED_APPROVE= "msg.bpa.noc.deemed.approve.sms";
+	private static final String SUB_BPA_NOC_DEEMED_APPROVE= "msg.bpa.noc.deemed.approve.email.sub";
+	private static final String BODY_BPA_NOC_DEEMED_APPROVE= "msg.bpa.noc.deemed.approve.email.body";
 
 	@Autowired
 	private NotificationService notificationService;
@@ -806,6 +809,33 @@ public class BPASmsAndEmailService {
 		return msg;
 	}
 
+	public void sendSMSAndEmailForDeemedApprovalNoc(BpaNocApplication bpaNocAppl){
+		if (isSmsEnabled() || isEmailEnabled()) {
+			ApplicationStakeHolder applnStakeHolder = bpaNocAppl.getBpaApplication().getStakeHolder().get(0);
+			if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
+				Applicant owner = applnStakeHolder.getApplication().getOwner();
+				buildSmsAndEmailForDeemedApproveNoc(bpaNocAppl, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
+					
+			}
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
+				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
+				buildSmsAndEmailForDeemedApproveNoc(bpaNocAppl, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
+			}
+		}
+	}
 	
+	private void buildSmsAndEmailForDeemedApproveNoc(BpaNocApplication nocAppl,
+			 String name, String mobileNumber, String emailId) {
+		String smsMsg = EMPTY;
+		String body = EMPTY;
+		String subject = EMPTY;	 
+			smsMsg = bpaMessageSource.getMessage(SMS_BPA_NOC_DEEMED_APPROVE,new String[]{nocAppl.getNocType()},null);
+			body = bpaMessageSource.getMessage(BODY_BPA_NOC_DEEMED_APPROVE,new String[]{name,nocAppl.getNocType(),nocAppl.getNocType(),getMunicipalityName()},null);
+			subject = bpaMessageSource.getMessage(SUB_BPA_NOC_DEEMED_APPROVE,new String[]{getMunicipalityName()},null);
+		if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
+			notificationService.sendSMS(mobileNumber, smsMsg);
+		if (isNotBlank(emailId) && isNotBlank(body))
+			notificationService.sendEmail(emailId, subject, body);
+	}
 
 }

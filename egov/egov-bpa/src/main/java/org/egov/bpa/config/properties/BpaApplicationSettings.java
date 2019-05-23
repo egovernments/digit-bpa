@@ -90,4 +90,8 @@ public class BpaApplicationSettings {
 	public boolean cancelApplicationsSchedulerEnabledForOC() {
 		return environment.getProperty("bpa.oc.cancel.applications.job.enabled", Boolean.class);
 	}
+
+	public boolean approveNocAsDeemedSchedulerEnabled() {
+		return environment.getProperty("bpa.noc.approve.deemed.job.enabled", Boolean.class);
+	}
 }

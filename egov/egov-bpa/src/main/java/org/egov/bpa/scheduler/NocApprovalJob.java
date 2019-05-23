@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,23 +37,29 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.repository;
+package org.egov.bpa.scheduler;
 
-import java.util.Date;
-import java.util.List;
+import org.apache.log4j.Logger;
+import org.egov.bpa.transaction.service.NocApprovalService;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.quartz.DisallowConcurrentExecution;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import org.egov.bpa.master.entity.Holiday;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+@DisallowConcurrentExecution
+public class NocApprovalJob extends AbstractQuartzJob {
+	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(NocApprovalJob.class);
 
-@Repository
-public interface HolidayListRepository extends JpaRepository<Holiday, Long> {
-	Holiday findByHolidayDate(Date holidayDate);
-	Holiday findByHolidayType(String holidayType);
-	List<Holiday> findByYearOrderByHolidayDateAsc(String year);
-	Holiday findById(Long id);
-	@Query("select holi from Holiday holi where holi.holidayDate>=:fromDate and holi.holidayDate<=:toDate")
-	List<Holiday>findByFromAndToDate(@Param("fromDate") Date fromDate,@Param("toDate") Date toDate);
+	@Autowired
+	private transient NocApprovalService nocApprovalService;
+
+
+	@Override
+	public void executeJob() {
+        LOGGER.debug("Entered into NocApprovalJob.execute");
+
+        nocApprovalService.approveNocAsDeemed();
+
+        LOGGER.debug("Exting from NocApprovalJob.execute");
+	}
 }

@@ -93,6 +93,10 @@ public class BpaNocApplicationService {
 		return nocRepository.findByApplicationNumberAndType(appNo, nocType);		
 	}
 	
+	public List<BpaNocApplication> findInitiatedAppByType(final String nocType) {
+		return nocRepository.findInitiatedAppByType(nocType);		
+	}
+	
 	public BpaNocApplication createNocApplication(BpaApplication application, NocConfiguration nocConfig) {
 		BpaNocApplication nocApplication = new BpaNocApplication() ;	
 		BpaStatus status = statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_INITIATED);

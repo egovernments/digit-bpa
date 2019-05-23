@@ -39,9 +39,19 @@
  */
 package org.egov.bpa.config;
 
+import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.egov.bpa.config.conditions.BpaSchedulerConfigCondition;
 import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.scheduler.CancelAppointmentJob;
+import org.egov.bpa.scheduler.NocApprovalJob;
 import org.egov.bpa.scheduler.OpenSlotsJob;
 import org.egov.bpa.scheduler.ScheduleAppointmentJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
@@ -54,14 +64,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
@@ -84,6 +86,8 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 			triggers.add(scheduleAppointmentCronTrigger().getObject());
 		if (bpaApplicationSettings.cancelApplicationsSchedulerEnabled())
 			triggers.add(cancelAppointmentCronTrigger().getObject());
+		if (bpaApplicationSettings.approveNocAsDeemedSchedulerEnabled())
+			triggers.add(approveNocAsDeemedCronTrigger().getObject());
 		bpaScheduler.setTriggers(triggers.toArray(new Trigger[triggers.size()]));
 		return bpaScheduler;
 	}
@@ -120,7 +124,17 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		cancelAppointmentCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return cancelAppointmentCron;
 	}
-
+	
+	@Bean
+	public CronTriggerFactoryBean approveNocAsDeemedCronTrigger() {
+		CronTriggerFactoryBean approveNocAsDeemedCron = new CronTriggerFactoryBean();
+		approveNocAsDeemedCron.setJobDetail(approveNocAsDeemedJobDetail().getObject());
+		approveNocAsDeemedCron.setGroup("BPA_TRIGGER_GROUP");
+		approveNocAsDeemedCron.setName("BPA_APPROVE_NOC_AS DEEMED_TRIGGER");
+		approveNocAsDeemedCron.setCronExpression(bpaApplicationSettings.getValue("bpa.noc.approve.deemed.job.cron"));
+		approveNocAsDeemedCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+		return approveNocAsDeemedCron;
+	}
 	@Bean("openSlotsJob")
 	public OpenSlotsJob openSlotsJob() {
 		return new OpenSlotsJob();
@@ -136,6 +150,11 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		return new CancelAppointmentJob();
 	}
 
+	@Bean("nocApprovalJob")
+	public NocApprovalJob nocApprovalJob() {
+		return new NocApprovalJob();
+	}
+	
 	@Bean
 	public JobDetailFactoryBean openSlotsJobDetail() {
 		JobDetailFactoryBean openSlotsJobDetail = new JobDetailFactoryBean();
@@ -186,4 +205,22 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		cancelAppointmentJobDetail.setJobDataAsMap(jobDetailMap);
 		return cancelAppointmentJobDetail;
 	}
+	
+	@Bean
+	public JobDetailFactoryBean approveNocAsDeemedJobDetail() {
+		JobDetailFactoryBean approveNocAsDeemedJobDetail = new JobDetailFactoryBean();
+		approveNocAsDeemedJobDetail.setGroup("BPA_JOB_GROUP");
+		approveNocAsDeemedJobDetail.setName("BPA_APPROVE_NOC_AS_DEEMED_JOB");
+		approveNocAsDeemedJobDetail.setDurability(true);
+		approveNocAsDeemedJobDetail.setJobClass(NocApprovalJob.class);
+		approveNocAsDeemedJobDetail.setRequestsRecovery(true);
+		Map<String, String> jobDetailMap = new HashMap<>();
+		jobDetailMap.put("jobBeanName", "nocApprovalJob");
+		jobDetailMap.put("userName", "system");
+		jobDetailMap.put("cityDataRequired", "true");
+		jobDetailMap.put("moduleName", "bpa");
+		approveNocAsDeemedJobDetail.setJobDataAsMap(jobDetailMap);
+		return approveNocAsDeemedJobDetail;
+	}
+
 }

@@ -82,6 +82,10 @@ public class HolidayListService {
     public List<Holiday> findAll() {
         return holidayListRepository.findAll();
     }
+    
+    public List<Holiday> findByFromAndToDate(Date fromdate,Date toDate) {
+        return holidayListRepository.findByFromAndToDate(fromdate, toDate);
+    }
 
     @Transactional
     public List<Holiday> save(final List<Holiday> holidayList) {
