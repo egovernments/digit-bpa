@@ -229,9 +229,11 @@
 					</c:if>
 					<c:if test="${not empty nocApplication}">						
 						<td class="tdstatus" style="display:none">
-							  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">							
+							  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">	
+							  	<fmt:formatDate value="${nocapp.lastModifiedDate}"
+								  pattern="dd/MM/yyyy" var="applicationDate" />						
 								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">								  
-								<span style="font-weight:bold">${nocapp.status.code} on ${nocapp.lastModifiedDate}<br />
+								<span style="font-weight:bold">${nocapp.status.code} on ${applicationDate} <br />
 								   <c:forEach	var="bpanoc" items="${nocapp.nocSupportDocs}" varStatus="loop">								    
 								           <c:set value="true" var="isDocFound"></c:set>
 								          <a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
@@ -292,6 +294,8 @@
 	value="<spring:message code='msg.filesize.validate' />" />
 <input type="hidden" id="noPreviewAvailble"
 	value="<spring:message code='msg.nopreview.availble' />" />
+	<input type="hidden" id="nocAppl" value="${nocApplication}"/>
+	
 <!-- The Modal -->
 <div id="imgModel" class="image-modal">
 	<span class="closebtn">&times;</span> <img class="modal-content"

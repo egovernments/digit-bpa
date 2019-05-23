@@ -746,7 +746,7 @@ $(document).ready(
                 }else{
                 	$('div.divfv_NOC_from_Irrigation_Department').hide();
                 }
-                if($('input.hidden_NOC_from_Irrigation_Department').val() == 'initiated')
+                if($('#nocAppl').length > 0)
                 {
                 	$('th.thstatus').show();
                     $('td.tdstatus').show();            
@@ -770,7 +770,7 @@ $(document).ready(
                 }else{
                 	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').hide();
                 }
-                if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() == 'initiated')
+                if($('#nocAppl').length > 0)
                 {
                 	$('th.thstatus').show();
                     $('td.tdstatus').show();            
@@ -794,7 +794,7 @@ $(document).ready(
                 }else{
                 	$('div.divfv_NOC_from_Airport_Authority').hide();
                 }
-                if($('input.hidden_NOC_from_Airport_Authority').val() == 'initiated')
+                if($('#nocAppl').length > 0)
                 {
                 	$('th.thstatus').show();
                     $('td.tdstatus').show();            
@@ -819,7 +819,7 @@ $(document).ready(
                 	$('div.divfv_NOC_from_Fire_Authority').hide();
                 }
                 
-                if($('input.hidden_NOC_from_Fire_Authority').val() == 'initiated')
+                if($('#nocAppl').length > 0)
                 {
                 	$('th.thstatus').show();
                     $('td.tdstatus').show();            
@@ -842,6 +842,11 @@ $(document).ready(
                 	$('div.divfv_MOEF_environment_clearance').show();
                 }else{
                 	$('div.divfv_MOEF_environment_clearance').hide();
+                }
+            	if($('#nocAppl').length > 0)
+                {
+                	$('th.thstatus').show();
+                    $('td.tdstatus').show();            
                 }
             }
         }

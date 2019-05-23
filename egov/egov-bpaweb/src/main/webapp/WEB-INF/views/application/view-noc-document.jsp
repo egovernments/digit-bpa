@@ -64,6 +64,9 @@
 				<c:if test="${not empty nocConfigMap}">
 				<th class="thbtn" style="display: none"><spring:message code="lbl.action.noc" /></th>
 				</c:if>
+				<c:if test="${not empty nocApplication}">								
+					<th class="thstatus" style="display: none">Status</th>		
+				</c:if>
 			</tr>
 		</thead>
 		<tbody>
@@ -127,12 +130,12 @@
 						</td>
 					</c:if>	
 					<c:if test="${not empty nocApplication}">							
-						<td class="tdstatus" style="display:none">
-													<div class="text-right">
-						
-							  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">					
-								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">							  								  
-								<span style="font-weight:bold">${nocapp.status.code} on ${nocapp.lastModifiedDate}<br />
+						<td class="tdstatus" style="display:none">						
+							  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">			
+							  <fmt:formatDate value="${nocapp.lastModifiedDate}"
+								pattern="dd/MM/yyyy" var="applicationDate" />
+								  <c:if test="${nocdoc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">							  								  
+								<span style="font-weight:bold">${nocapp.status.code} on ${applicationDate}<br />
 								   <c:forEach	var="bpanoc" items="${nocapp.nocSupportDocs}" varStatus="loop">								    
 								           <c:set value="true" var="isDocFound"></c:set>
 								          <a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
@@ -153,3 +156,5 @@
 <input type="hidden" id="applicationNo" value="${bpaApplication.applicationNumber}"/>
 <input type="hidden" id="isPermitApplFeeReq" value="${isPermitApplFeeReq}"/>
 <input type="hidden" id="permitApplFeeCollected" value="${permitApplFeeCollected}"/>
+<input type="hidden" id="nocAppl" value="${nocApplication}"/>
+
