@@ -132,7 +132,7 @@ public class BpaNocApplicationController {
                 "Noc Application is approved with application number " + bpaNocApplication.getBpaApplication().getApplicationNumber() + ".");
 		else
 			redirectAttributes.addFlashAttribute("message",
-	            "Noc Application is rejected with " + bpaNocApplication.getBpaApplication().getApplicationNumber() + ".");
+	            "Noc Application is rejected with " + bpaNocApplication.getNocApplicationNumber() + ".");
 		
         return "redirect:/nocapplication/success/" + bpaNocApplication.getNocType()+"~"+bpaNocApplication.getBpaApplication().getApplicationNumber();
 	}

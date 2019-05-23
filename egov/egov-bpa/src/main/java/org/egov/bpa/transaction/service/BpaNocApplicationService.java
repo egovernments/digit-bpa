@@ -42,6 +42,7 @@ package org.egov.bpa.transaction.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.bpa.autonumber.NocNumberGenerator;
 import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -74,6 +75,8 @@ public class BpaNocApplicationService {
     private NocConfigurationService nocConfigurationService;
 	@Autowired
     private UserService userService;
+	@Autowired
+	private NocNumberGenerator nocNumberGenerator;
 	
 	@Transactional
 	public BpaNocApplication save(final BpaNocApplication nocApplication) {
@@ -100,6 +103,7 @@ public class BpaNocApplicationService {
 	public BpaNocApplication createNocApplication(BpaApplication application, NocConfiguration nocConfig) {
 		BpaNocApplication nocApplication = new BpaNocApplication() ;	
 		BpaStatus status = statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_INITIATED);
+		nocApplication.setNocApplicationNumber(nocNumberGenerator.generateNocNumber(nocConfig.getDepartment()));
 		nocApplication.setBpaApplication(application);
 		nocApplication.setNocType(nocConfig.getDepartment());
 		nocApplication.setStatus(status);	

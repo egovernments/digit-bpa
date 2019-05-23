@@ -82,6 +82,8 @@ public class BpaNocApplication extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_NOCAPPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
+    @Length(min = 1, max = 128)
+    private String nocApplicationNumber;
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "application", nullable = false)
@@ -151,5 +153,11 @@ public class BpaNocApplication extends AbstractAuditable {
 	}
 	public void setEncodedImages(Map<Long, String> encodedImages) {
 		this.encodedImages = encodedImages;
+	}
+	public String getNocApplicationNumber() {
+		return nocApplicationNumber;
+	}
+	public void setNocApplicationNumber(String nocApplicationNumber) {
+		this.nocApplicationNumber = nocApplicationNumber;
 	}
 }
