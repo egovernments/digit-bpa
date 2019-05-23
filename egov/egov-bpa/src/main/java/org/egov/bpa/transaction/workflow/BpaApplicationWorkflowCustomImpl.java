@@ -186,7 +186,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
             if(!bpaUtils.checkAnyTaxIsPendingToCollect(application.getDemand()))
             	if(application.getApplicationType().getName().equals(BpaConstants.LOWRISK))
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null,
-                            additionalRule, "Application Approval Pending", "Forwarded to Chief Executive Officer For Approval");
+                            additionalRule, "Application Approval Pending", "Forwarded to  Assistant Engineer For Approval");
             	else
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null,
                         additionalRule, "Final Approval Process initiated", "Permit Fee Collection Pending");
