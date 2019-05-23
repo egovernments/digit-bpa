@@ -184,8 +184,7 @@ $('#buttonApprove').click(function (e) {
                         label: 'Yes',
                         className: 'btn-primary',
                         callback: function (result) {
-                           // $('#editNocApplicationForm').trigger('submit');
-                        	document.getElementById("editNocApplicationForm").submit()
+                        	$("#editNocApplicationForm").submit();
                             return true;
                         }
                     },
@@ -201,6 +200,38 @@ $('#buttonApprove').click(function (e) {
             });
    
     return false;
+});
+
+$('#buttonReject').click(function (e) {
+	document.getElementById("workFlowAction").value = 'NOC_REJECT';
+	$('#remarks').attr('required', 'required');
+	if ($('#editNocApplicationForm').valid()){
+        bootbox
+            .dialog({
+                message: $('#rejectApplication').val(),
+                buttons: {
+                    'confirm': {
+                        label: 'Yes',
+                        className: 'btn-primary',
+                        callback: function (result) {
+                           // $('#editNocApplicationForm').trigger('submit');
+                        	document.getElementById("editNocApplicationForm").submit()
+                            return true;
+                        }
+                    },
+                    'cancel': {
+                        label: 'No',
+                        className: 'btn-danger',
+                        callback: function (result) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                    }
+                }
+            });
+	}
+    return false;
+    
 });
 
 $(document).on('change', '#myfile', function () {

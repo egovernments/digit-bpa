@@ -219,10 +219,12 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     @GetMapping("/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber) {
         final BpaApplication application = getBpaApplication(applicationNumber);
+        List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(applicationNumber);
         prepareActions(model, application);
         loadCommonApplicationDetails(model, application);
         buildRejectionReasons(model, application);
         model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
+        model.addAttribute("nocApplication",nocApplication);
 
         if (application != null) {
             loadFormData(model, application);

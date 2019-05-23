@@ -70,6 +70,9 @@
 				<c:if test="${not empty nocConfigMap}">
 					<th class="thbtn" style="display: none"><spring:message
 							code="lbl.action.noc" /></th>
+				</c:if>			
+				<c:if test="${not empty nocApplication}">								
+					<th class="thstatus" style="display: none">Status</th>		
 				</c:if>
 			</tr>
 		</thead>
@@ -223,6 +226,22 @@
 								</c:if>
 							</div>
 						</td>
+					</c:if>
+					<c:if test="${not empty nocApplication}">						
+						<td class="tdstatus" style="display:none">
+							  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">							
+								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">								  
+								<span style="font-weight:bold">${nocapp.status.code} on ${nocapp.lastModifiedDate}<br />
+								   <c:forEach	var="bpanoc" items="${nocapp.nocSupportDocs}" varStatus="loop">								    
+								           <c:set value="true" var="isDocFound"></c:set>
+								          <a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
+								          data-gallery>${loop.index +1} - ${bpanoc.fileName} </a><br />
+											
+									</c:forEach>
+								${nocapp.remarks}</span>								
+									</c:if>
+								</c:forEach>					
+						</td>						
 					</c:if>
 
 				</tr>

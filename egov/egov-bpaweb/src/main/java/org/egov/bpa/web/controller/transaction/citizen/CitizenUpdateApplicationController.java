@@ -80,6 +80,7 @@ import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
@@ -170,6 +171,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
+        List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(applicationNumber);
         bpaUtils.loadBoundary(application);
         User user = securityUtils.getCurrentUser();
         StakeHolder stkHldr = stakeHolderService.findById(user.getId());
@@ -183,6 +185,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         }
         model.addAttribute(APPLICATION_HISTORY, workflowHistoryService.getHistory(application.getAppointmentSchedule(),
                 application.getCurrentState(), application.getStateHistory()));
+        model.addAttribute("nocApplication",nocApplication);
         prepareCommonModelAttribute(model, application.isCitizenAccepted());
         return loadViewdata(model, application);
     }

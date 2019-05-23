@@ -746,6 +746,11 @@ $(document).ready(
                 }else{
                 	$('div.divfv_NOC_from_Irrigation_Department').hide();
                 }
+                if($('input.hidden_NOC_from_Irrigation_Department').val() == 'initiated')
+                {
+                	$('th.thstatus').show();
+                    $('td.tdstatus').show();            
+                }
         	}
         	if(planInformation.nocNearMonument === 'YES'){
                 $('span.mandatory._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
@@ -764,6 +769,11 @@ $(document).ready(
                 	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
                 }else{
                 	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').hide();
+                }
+                if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() == 'initiated')
+                {
+                	$('th.thstatus').show();
+                    $('td.tdstatus').show();            
                 }
         	}
             if(planInformation.nocNearAirport === 'YES'){
@@ -784,6 +794,11 @@ $(document).ready(
                 }else{
                 	$('div.divfv_NOC_from_Airport_Authority').hide();
                 }
+                if($('input.hidden_NOC_from_Airport_Authority').val() == 'initiated')
+                {
+                	$('th.thstatus').show();
+                    $('td.tdstatus').show();            
+                }
             }
             if(planInformation.nocFireDept === 'YES'){
                 $('span.mandatory._NOC_from_Fire_Authority').show();
@@ -802,6 +817,12 @@ $(document).ready(
                 	$('div.divfv_NOC_from_Fire_Authority').show();
                 }else{
                 	$('div.divfv_NOC_from_Fire_Authority').hide();
+                }
+                
+                if($('input.hidden_NOC_from_Fire_Authority').val() == 'initiated')
+                {
+                	$('th.thstatus').show();
+                    $('td.tdstatus').show();            
                 }
             }
             if(planInformation.nocStateEnvImpact === 'YES'){

@@ -50,18 +50,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<form:form role="form" action="/bpa/nocapplication/updateNoc/${noc.nocType}~${noc.bpaApplication.applicationNumber}" method="POST" modelAttribute="noc"
-			id="editNocApplicationForm"
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
+<form:form role="form" modelAttribute="bpaNocApplication" id="editNocApplicationForm"
+ action="/bpa/nocapplication/updateNoc/${bpaNocApplication.nocType}~${bpaNocApplication.bpaApplication.applicationNumber}"
+ method="post" 
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
+			<input type="hidden" name="bpaNocApplication" value="${bpaNocApplication.id}">
+			<input type="hidden" name="id" value="${bpaNocApplication.id}">
 <div class="row">
-	<div class="col-md-12">
-	
-		
-			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-
+	<div class="col-md-12">		
+		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<div id="appliccation-info" class="tab-pane fade in active">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="permit-application-details.jsp"></jsp:include>
@@ -75,73 +76,116 @@
 					</div>
 					<div class="panel panel-primary buildingdetails" data-collapsed="0">
 						<jsp:include page="noc-building-details.jsp"></jsp:include>
-					</div>
-					
-					
+					</div>					
+    	    </div>  	    
+			 
+		
+			 
+			 <div id="nocdoc-info" class="tab-pane fade in active">
+			 		<div class="panel panel-primary" data-collapsed="0">
+			 
+			 			<div class="panel-heading custom_form_panel_heading">				
+	                		<div class="panel-title">${bpaNocApplication.nocType} Document</div>
+						</div>		
+							<c:forEach
+								var="bpanoc" items="${nocDocs.nocDocument.nocSupportDocs}" varStatus="loop">
+								<c:if test="${bpanoc.fileStoreId ne null}">&nbsp;&nbsp;&nbsp;&nbsp;
+									<a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
+							  	 	data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
+								<c:if test="${!loop.last}">,</c:if>&nbsp;
+								</c:if>
+							</c:forEach>	
+					</div>			
     	    </div>
-    	    					<div class="panel panel-primary docdetails" data-collapsed="0">
-    	    
-    	    <div class="panel-heading custom_form_panel_heading">
-					
-	<div class="panel-title">
-		Document Upload
-	</div>
-</div>
-					
-					
-                      <label class="col-sm-3 control-label text-right">Upload file</span></label>
-		      <div class="form-group" id="documentupload">
-		      
-			<div class="fileSection col-md77-4">
-				<input type="file" required="required" name="files" id="myfile"
-					style="display: none;">
-				<p class="hide">
-					<i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span>
-				</p>
-				<button type="button" id="fileTrigger"
-					class="btn btn-primary fullWidth">
-					<span class="glyphicon glyphicon glyphicon-cloud-upload"></span>
-					&nbsp;
-					Choose a file:
-				</button>
-				<div class="row hide fileActions">
-					<div class="col-md-6">
-						<button type="button" id="fileDelete"
-							class="btn btn-danger btn-sm">
-							<i class="fa fa-trash-o"></i> &nbsp;
-                         Delete						</button>
-					</div>
-				</div>
-			</div>
-			<%-- <small class="text-info view-content"><spring:message
-					code="lbl.dcr.upload.help" /></small> --%>
-		</div>
-							
-	</div>		
-	<div align="center">
-		<c:if test="${noc.status.code eq 'NOC_INITIATED'}">
+			 
+			 
+    	    <div class="panel panel-primary docdetails" data-collapsed="0">    	    
+    	            <div class="panel-heading custom_form_panel_heading">				
+	                	<div class="panel-title">Document Upload</div>
+					</div>									
+                    <label class="col-sm-3 control-label text-right">Upload file</span></label>
+		            <div class="files-upload-container nocdoc"
+							data-file-max-size="5"
+							<c:if test="${isEDCRIntegrationRequire eq true  && fn:length(bpaNocApplication.getNocSupportDocs()) eq 0}">required</c:if>
+							data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
+							<div class="files-viewer divfv nocdoc">
+								<c:forEach items="${bpaNocApplication.getNocSupportDocs()}"
+									var="file" varStatus="status1">
+									<div class="file-viewer" data-toggle="tooltip"
+										data-placement="top" title="${file.fileName}">
+										<a class="download" target="_blank"
+											href="/bpa/application/downloadfile/${file.fileStoreId}"></a>
+										<c:choose>
+											<c:when test="${file.contentType eq 'application/pdf'}">
+												<i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+											</c:when>
+											<c:when test="${file.contentType eq 'application/txt'}">
+												<i class="fa fa-file-text-o" aria-hidden="true"></i>
+											</c:when>
+											<c:when
+												test="${file.contentType eq 'application/rtf' || file.contentType eq 'application/doc' || file.contentType eq 'application/docx' || file.contentType eq 'application/msword' || file.contentType eq 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
+												<i class="fa fa-file-word-o" aria-hidden="true"></i>
+											</c:when>
+											<c:when test="${file.contentType eq 'application/zip'}">
+												<i class="fa fa-file-archive-o" aria-hidden="true"></i>
+											</c:when>
+											<c:when
+												test="${file.contentType eq 'image/jpg' || file.contentType eq 'image/jpeg' || file.contentType eq 'image/png' || file.contentType eq 'image/gif' || file.contentType eq 'image/tiff'}">
+												<i class="fa fa-picture-o" aria-hidden="true"></i>
+											</c:when>
+											<c:when
+												test="${file.contentType eq 'application/xls' || file.contentType eq 'application/xlsx' || file.contentType eq 'application/vnd.ms-excel'}">
+												<i class="fa fa-file-excel-o" aria-hidden="true"></i>
+											</c:when>
+											<c:otherwise>
+												<i class="fa fa-file-o" aria-hidden="true"></i>
+											</c:otherwise>
+										</c:choose>
+										<span class="doc-numbering">${status1.index+1}</span>
+									</div>
+								</c:forEach>
+
+								<a href="javascript:void(0);" class="file-add"
+									data-unlimited-files="true"
+									data-file-input-name="files">
+									<i class="fa fa-plus"></i>
+								</a>
+
+							</div>
+						</div>
+			 </div>	
+    	     <div class="panel panel-primary docdetails" data-collapsed="0">  
+    	     <div class="panel-heading custom_form_panel_heading">				
+	                	<div class="panel-title">Comments</div>
+					</div>	  	    
+ 				   		 <div class="form-group" >		
+		                      <label class="col-sm-2 control-label text-right"><%-- <spring:message code="lbl.remarks" /> --%></label>
+							<div class="col-sm-5 add-margin">
+								<form:textarea path="remarks" id="remarks"	class="form-control patternvalidation"
+			                            data-pattern="alphanumericspecialcharacters" maxlength="256" cols="25" rows="4" />
+								<form:errors path="remarks" cssClass="add-margin error-msg" />
+							</div>		
+						</div>	
+			</div>		
+			<div align="center">
+				<c:if test="${bpaNocApplication.status.code eq 'NOC_INITIATED'}">
 	
-			<form:button type="submit" id="buttonApprove" class="btn btn-primary" value="submit">
-				<spring:message code='lbl.approve' />
-			</form:button>
-			<form:button type="submit" id="buttonReject" class="btn btn-primary" value="submit">
-				<spring:message code='lbl.reject' />
-			</form:button>
-		</c:if>
-		<input type="button" name="button2" id="button2" value="Close"
-			class="btn btn-default" onclick="window.close();" />
-	</div>		
-	<input
-			type="hidden" id="submitApplication"
-			value="<spring:message code='msg.confirm.submit.appln'/>" /> 
-    
- </div>
+					<form:button type="submit" id="buttonApprove" class="btn btn-primary" value="submit">
+						<spring:message code='lbl.approve' />
+					</form:button>
+					<form:button type="submit" id="buttonReject" class="btn btn-primary" value="reject">
+						<spring:message code='lbl.reject' />
+					</form:button>
+				</c:if>
+				<input type="button" name="button2" id="button2" value="Close"	class="btn btn-default" onclick="window.close();" />
+			</div>		
+				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>" /> 
+                <input	type="hidden" id="rejectApplication" value="<spring:message code='msg.confirm.intiate.rejection.forappln'/>" />  
+			</div>
 </div>
-    </form:form>
+</form:form>
 
 	
-<link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-tagsinput.css?rnd=${app_release_no}' context='/egi'/>">
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-tagsinput.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
@@ -157,5 +201,8 @@
 <script	
 	src="<cdn:url value='/resources/js/app/noc/noc-edcr-helper.js?rnd=${app_release_no}'/>"></script>
 	<Script	src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/>"></script>
-	
+	<script
+		src="<cdn:url value='/resources/js/app/document-upload-helper.js?rnd=${app_release_no}'/>"></script>
+	<link rel="stylesheet"
+		href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
 	
