@@ -90,11 +90,16 @@
 						
 			<div class="col-sm-4 add-margin">
 				<c:out value="${doc.checkListDetail.description}"></c:out>
-				<c:if test="${doc.checkListDetail.isMandatory}">
-					<span class="mandatory ${checklistName}"></span>
-				</c:if>
+				<c:choose>
+				<c:when test="${doc.checkListDetail.isMandatory}">
+					<span class="mandatory" ></span>
+				</c:when>
+				<c:otherwise>
+				   <span class="${checklistName}" ></span> 
+				</c:otherwise>
+				</c:choose>
 			</div>
-			
+		
 		<%-- <c:set var="splittedString" value="${fn:split(doc.checkListDetail.code, '-')}"/>
 			 <c:set var="checklistName" value="${fn:join(splittedString, '_')}"/>  --%>
 			 

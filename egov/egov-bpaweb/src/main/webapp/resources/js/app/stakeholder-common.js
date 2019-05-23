@@ -68,13 +68,11 @@ $(document).ready( function () {
 		if($("#stakeHolderType option:selected").text() == 'Architect'){
 			$('div.RGSTRTNCER').attr("required","true");
 			$('i.RGSTRTNCER').attr("required","true");
-			var span =$(this).siblings('span');
-            $(span).addClass('mandatory');
-			$('div.span.RGSTRTNCER').show();
+			$('span.RGSTRTNCER').append('<span class="required-indicator">*</span>').css("color", "red");
 		}else{
 			$('div.RGSTRTNCER').removeAttr( "required" );
 			$('i.RGSTRTNCER').removeAttr( "required" );
-			$('div.span.RGSTRTNCER').hide();
+			$('span.RGSTRTNCER').hide();
 		}
 		
 	});
