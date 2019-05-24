@@ -182,7 +182,7 @@
                                       var="heightFromGroundWithOutStairRoom"/>
                     <c:out value="${heightFromGroundWithOutStairRoom}" default="N/A"></c:out>
                 </div>
-                <div class="col-sm-3 add-margin">
+               <%--  <div class="col-sm-3 add-margin">
                     <spring:message code="lbl.grnd.with.stair"/>
                 </div>
                 <div class="col-sm-3 add-margin view-content">
@@ -210,7 +210,7 @@
                     <fmt:formatNumber type="number" maxFractionDigits="2"
                                       value="${bldg.fromStreetLevelWithStairRoom}" var="fromStreetLevelWithStairRoom"/>
                     <c:out value="${fromStreetLevelWithStairRoom}" default="N/A"></c:out>
-                </div>
+                </div> --%>
             </div>
             </div>
         </c:forEach>

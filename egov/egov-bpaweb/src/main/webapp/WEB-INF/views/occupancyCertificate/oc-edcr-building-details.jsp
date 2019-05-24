@@ -54,7 +54,7 @@
 
 <div class="panel-heading toggle-header custom_form_panel_heading">
     <div class="panel-title">
-        <spring:message code="lbl.build.details"/>
+        <spring:message code="lbl.cmplted.bldg.dtl"/>
     </div>
     <div class="history-icon toggle-icon">
         <i class="fa fa-angle-up fa-2x"></i>
@@ -247,7 +247,7 @@
                                 path="buildingDetailFromEdcr[${bldgCounter.index}].heightFromGroundWithOutStairRoom"
                                 cssClass="add-margin error-msg"/>
                     </div>
-                    <label
+                  <%--   <label
                             class="col-sm-2 control-label text-right heightFromGroundWithStairRoom"><spring:message
                             code="lbl.grnd.with.stair"/></label>
                     <div class="col-sm-3 add-margin">
@@ -297,7 +297,7 @@
                         <form:errors path="buildingDetailFromEdcr[${bldgCounter.index}].fromStreetLevelWithStairRoom"
                                      cssClass="add-margin error-msg"/>
                     </div>
-                </div>
+                </div> --%>
             </div>
         </c:forEach>
 

@@ -114,15 +114,15 @@
 		</div>
 	</div>	
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
+		<%-- <label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.re.survey.no" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="" id="resurveyNumber"
 				class="form-control resurveyNumber resetValues"
 				value="${occupancyCertificate.parent.siteDetail[0].reSurveyNumber}"
 				readonly="readonly">
-		</div>
-		<label class="col-sm-2 control-label text-right"><spring:message
+		</div> --%>
+		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.extentin.sqmts" /> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="extentInSqmts" id="extentInSqmts"
