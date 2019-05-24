@@ -82,16 +82,24 @@ public class NocApprovalService {
 		for(NocConfiguration nocConfig:nocConfigIsDeemedList){
 			Long sla=nocConfig.getSla();
 			 List<BpaNocApplication> bpaNocApplication = bpaNocApplicationService.findInitiatedAppByType(nocConfig.getDepartment());
-			 for (BpaNocApplication nocApp:bpaNocApplication){
-				 List<Holiday> holiday = holidayListService.findByFromAndToDate(nocApp.getCreatedDate(), new Date());
-				 Integer elapsedDays = DateUtils.daysBetween(nocApp.getCreatedDate(), new Date());
-				 Long elapsedWithoutHoliday=(long) (elapsedDays-holiday.size());
-				 if(sla.compareTo(elapsedWithoutHoliday)<=0){
-					 nocApp.setStatus(statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_DEEMED_APPROVED));
-					 bpaNocApplicationService.save(nocApp);
-					 bpaSmsAndEmailService.sendSMSAndEmailForDeemedApprovalNoc(nocApp);
-				 }
-			 }
+			for (BpaNocApplication nocApp : bpaNocApplication) {
+				String applStatus = null;
+				if (nocApp.getBpaApplication().getStatus() != null){
+					applStatus = nocApp.getBpaApplication().getStatus().getCode();
+				}
+				if ((applStatus != null && !(applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_CANCELLED)
+						|| applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REJECTED)))) {
+					List<Holiday> holiday = holidayListService.findByFromAndToDate(nocApp.getCreatedDate(), new Date());
+					Integer elapsedDays = DateUtils.daysBetween(nocApp.getCreatedDate(), new Date());
+					Long elapsedWithoutHoliday = (long) (elapsedDays - holiday.size());
+					if (sla.compareTo(elapsedWithoutHoliday) <= 0) {
+						nocApp.setStatus(statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC,
+								BpaConstants.NOC_DEEMED_APPROVED));
+						bpaNocApplicationService.save(nocApp);
+						bpaSmsAndEmailService.sendSMSAndEmailForDeemedApprovalNoc(nocApp);
+					}
+				}
+			}
 		}
 	}
 }
