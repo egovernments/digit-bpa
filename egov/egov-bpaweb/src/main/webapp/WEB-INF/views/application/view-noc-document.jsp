@@ -44,6 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="panel-heading">
 	<div class="panel-title"><spring:message code="lbl.tittle.noc.status" /> </div>
@@ -159,3 +160,6 @@
 <input type="hidden" id="permitApplFeeCollected" value="${permitApplFeeCollected}"/>
 <input type="hidden" id="nocAppl" value="${nocApplication}"/>
 <input type="hidden" id="nocUserExists" value="${nocUserExists}"/>
+<input type="hidden" id="citizenOrBusinessUser" value="${citizenOrBusinessUser}"/>
+<script
+	src="<cdn:url value='/resources/js/app/noc-helper.js?rnd=${app_release_no}'/>"></script>

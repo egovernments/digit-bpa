@@ -39,7 +39,6 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
@@ -106,12 +105,10 @@ import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.entity.Assignment;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -227,7 +224,6 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         Map nocConfigMap = new HashMap<String, String>();
         Map nocTypeApplMap = new HashMap<String, String>();
         int nocAutoCount = 0;
-        int nocManualCount = 0;
         List<User> nocAutoUsers = new ArrayList<>();
 	    List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
 

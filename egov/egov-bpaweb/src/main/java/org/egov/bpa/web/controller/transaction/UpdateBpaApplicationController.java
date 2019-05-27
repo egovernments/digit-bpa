@@ -186,6 +186,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String BPA_APPLICATION_RESULT = "bpa-application-result";
     private static final String PDFEXTN = ".pdf";
     private static final String BPA_PROCEED_FEE_MSG = "Set the minimal fee using modify fee button and proceed further";
+
     @Autowired
     private InspectionService inspectionService;
     @Autowired
@@ -225,6 +226,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         buildRejectionReasons(model, application);
         model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
         model.addAttribute("nocApplication",nocApplication);
+        model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
 
         if (application != null) {
             loadFormData(model, application);

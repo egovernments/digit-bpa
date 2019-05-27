@@ -170,7 +170,9 @@ public class BpaNocApplicationService {
 			    	        .collect(Collectors.toList());	
 			}	
 		     nocUser.add(userList.get(0));
+			 nocApplication = createNocApplication(application, nocConfig);			 
 		     nocApplication.setOwnerUser(nocUser.get(0));
+
 	        bpaUtils.createNocPortalUserinbox(nocApplication, nocUser, nocApplication.getStatus().getCode());
 		}
 		return nocApplication;

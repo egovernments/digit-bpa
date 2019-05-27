@@ -85,7 +85,7 @@
 				   value="${bpaApplication.id}">
 			<input type="hidden" id="isFeeCollectionPending" value="${isFeeCollected}">
 			<input type="hidden" id="status" value="${bpaApplication.status.code}">
-			<input type="hidden" name="citizenOrBusinessUser"
+			<input type="hidden" id="citizenOrBusinessUser" name="citizenOrBusinessUser"
 				   value="${citizenOrBusinessUser}"/>
 			<form:hidden path="" id="wfstate" value="${bpaApplication.state.id}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
