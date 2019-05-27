@@ -137,6 +137,8 @@ public class SMSService {
             setAdditionalParameters(urlParameters, priority);
             post.setEntity(new UrlEncodedFormEntity(urlParameters, encoding()));
             HttpResponse response = client.execute(post);
+            LOGGER.info("product sms urlParameters = ",urlParameters);
+            LOGGER.info("product sms response = ",response);
             String responseCode = IOUtils.toString(response.getEntity().getContent(), encoding());
             return smsErrorCodes.parallelStream().noneMatch(responseCode::startsWith);
         } catch (UnsupportedOperationException | IOException e) {
