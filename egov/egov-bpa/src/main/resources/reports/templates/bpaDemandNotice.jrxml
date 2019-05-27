@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bpaDemandNotice1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="020c52d2-8151-4206-9f0e-c68a0e78927a">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -129,9 +129,9 @@
 				<textFieldExpression><![CDATA["Application No."]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="32">
+		<band height="37">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="122" y="0" width="155" height="32" uuid="1a0f4198-82d1-461b-a89d-e816705d7fdf"/>
+				<reportElement stretchType="RelativeToBandHeight" x="122" y="0" width="155" height="36" uuid="1a0f4198-82d1-461b-a89d-e816705d7fdf"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -144,33 +144,7 @@
 				<textFieldExpression><![CDATA[$P{serviceTypeForDmd}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="386" y="0" width="169" height="32" uuid="b8f8c02b-ea09-4e3e-8c13-dacd3267c39b"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" isStrikeThrough="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{amenities}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="277" y="0" width="109" height="32" uuid="6b91a069-b16f-4598-a182-0990bf501b96"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Amenities"]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="122" height="32" uuid="ff9ab46a-b6af-4da7-8bc7-3234178c5577"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="122" height="36" uuid="ff9ab46a-b6af-4da7-8bc7-3234178c5577"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -181,47 +155,6 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Service Type"]]></textFieldExpression>
-			</textField>
-		</band>
-		<band height="36">
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="122" y="0" width="155" height="36" uuid="e516de29-c083-4dc7-a4c1-270da8346c02"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="386" y="0" width="169" height="36" uuid="e364e540-5d1f-4a02-9ed8-53dbc38893d0"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{occupancy}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="122" height="36" uuid="75ee36bd-b638-425c-9931-a7492bf9231f"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Applicant Name"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="277" y="0" width="109" height="36" uuid="464163fe-3b69-4a29-9d30-630f7f5f34ac"/>
@@ -237,9 +170,48 @@
 				<textFieldExpression><![CDATA["Occupancy"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="32">
+		<band height="31">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="386" y="0" width="169" height="32" uuid="ab952a53-1a5a-4cdd-9d4e-19bfdb969411"/>
+				<reportElement stretchType="RelativeToBandHeight" x="122" y="-1" width="155" height="32" uuid="e516de29-c083-4dc7-a4c1-270da8346c02"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="386" y="-37" width="169" height="36" uuid="e364e540-5d1f-4a02-9ed8-53dbc38893d0"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{occupancy}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="-1" width="122" height="32" uuid="75ee36bd-b638-425c-9931-a7492bf9231f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Applicant Name"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToBandHeight" x="386" y="-1" width="169" height="32" uuid="ab952a53-1a5a-4cdd-9d4e-19bfdb969411"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -252,20 +224,7 @@
 				<textFieldExpression><![CDATA[$P{revenueWard}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="122" y="0" width="155" height="32" uuid="f6b67b4d-25e2-4f9d-a6e8-c47b24dcb590"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{electionWard}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="277" y="0" width="109" height="32" uuid="930221e5-2211-4842-87c0-07005ffeefc8"/>
+				<reportElement stretchType="RelativeToBandHeight" x="277" y="-1" width="109" height="32" uuid="930221e5-2211-4842-87c0-07005ffeefc8"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -276,19 +235,6 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Revenue Ward"]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="122" height="32" uuid="5089a652-6dda-4312-82f0-d7d02cf052a5"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Election Ward"]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="36">
