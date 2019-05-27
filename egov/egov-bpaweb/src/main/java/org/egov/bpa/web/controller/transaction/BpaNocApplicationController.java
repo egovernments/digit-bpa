@@ -103,8 +103,7 @@ public class BpaNocApplicationController {
 
 	@RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
     public String getNocApplication(@PathVariable final String applicationNumber, final Model model) {
-		String[] appArr = applicationNumber.split("~");
-        BpaNocApplication bpaNocApplication = nocApplicationService.findByApplicationNumberAndType(appArr[1],appArr[0]);
+        BpaNocApplication bpaNocApplication = nocApplicationService.findByNocApplicationNumber(applicationNumber);
         for (PermitNocDocument nocDocument : bpaNocApplication.getBpaApplication().getPermitNocDocuments()) {
         	if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equals(bpaNocApplication.getNocType()))
         		model.addAttribute("nocDocs", nocDocument)	;
@@ -137,20 +136,32 @@ public class BpaNocApplicationController {
         return "redirect:/nocapplication/success/" + bpaNocApplication.getNocType()+"~"+bpaNocApplication.getBpaApplication().getApplicationNumber();
 	}
 	
+	@RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
+    public String viewNocApplication(@PathVariable final String applicationNumber, final Model model) {
+        BpaNocApplication bpaNocApplication = nocApplicationService.findByNocApplicationNumber(applicationNumber);
+        for (PermitNocDocument nocDocument : bpaNocApplication.getBpaApplication().getPermitNocDocuments()) {
+        	if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equals(bpaNocApplication.getNocType()))
+        		model.addAttribute("nocDocs", nocDocument)	;
+        }
+        bpaNocApplication.getBpaApplication().setPermitOccupanciesTemp(bpaNocApplication.getBpaApplication().getPermitOccupancies());
+        model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
+        model.addAttribute("bpaNocApplication",bpaNocApplication);
+        return "view-noc-details";
+    }
+	
 	@RequestMapping(value = "/create/{applicationNumber}", method = RequestMethod.GET)
     public String createNoc(@PathVariable final String applicationNumber, final Model model,final RedirectAttributes redirectAttributes) {
 		String[] appArr = applicationNumber.split("~");
 		BpaApplication bpaApplication = applicationBpaService.findByApplicationNumber(appArr[1]);
-		nocService.createNoc(bpaApplication, appArr[0]);
+		BpaNocApplication nocApplication = nocService.createNoc(bpaApplication, appArr[0]);
 		redirectAttributes.addFlashAttribute("message",
-                "Noc Application is forwarded  with application number " + appArr[1] + ".");		
-        return "redirect:/nocapplication/success/" + applicationNumber;
+                "Noc Application is forwarded to "+nocApplication.getOwnerUser().getUsername()+" with application number " + nocApplication.getNocApplicationNumber() + ".");		
+        return "redirect:/nocapplication/success/" + nocApplication.getNocApplicationNumber();
 	}
 	
 	@GetMapping("/success/{applicationNumber}")
 	public String success(@PathVariable final String applicationNumber, final Model model) {
-		String[] appArr = applicationNumber.split("~");
-        BpaNocApplication noc = nocApplicationService.findByApplicationNumberAndType(appArr[1],appArr[0]);
+        BpaNocApplication noc = nocApplicationService.findByNocApplicationNumber(applicationNumber);
         model.addAttribute("noc",noc);
 	    return "noc-success";
 	}

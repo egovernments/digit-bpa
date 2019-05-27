@@ -151,6 +151,16 @@ public class UserService {
                 "%" + username.toUpperCase() + "%", type, ApplicationThreadLocals.getTenantID(),
                 ApplicationConstant.STATE_TENANTID);
     }
+    
+    public List<User> getUsersByTypeAndTenants(UserType type) {
+        return userRepository.findUsersByTypeAndTenants(type, ApplicationThreadLocals.getTenantID(),
+                ApplicationConstant.STATE_TENANTID);
+    }
+    
+    public List<User> getUsersByTypeAndTenantId(UserType type, String tenantId) {
+        return userRepository.findUsersByTypeAndTenantId(type, tenantId);
+    }
+
 
     public Set<User> getUsersByRoleName(String roleName) {
         return userRepository.findUsersByRoleName(roleName);

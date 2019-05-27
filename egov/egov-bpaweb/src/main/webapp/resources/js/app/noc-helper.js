@@ -122,11 +122,28 @@ $(document)
                     
                     		
                     $(document).on('click','#btninitiatenoc',function(){
-        			   var url = $(this).val();
-        			   if(url){
-        					openPopup(url);
-                         	$('#btninitiatenoc').hide();
-        			   }
+         			   var nocurl = $(this).val();
+                        var noccode = nocurl.split("/")[4];
+                    	$.ajax({
+                            url: "/bpa/ajax/getNocUsersByCode",
+                            type: "GET",
+                            data: {
+                                code : noccode
+                            },
+                            dataType: "json",
+                            success: function (response) {
+                                if(response==false){
+                                    bootbox.alert('Noc User doesnot exist');
+                                    return false;
+                                } else{   					      
+                					openPopup(nocurl);
+                                 	$('#btninitiatenoc').hide();
+                			   }
+                            },
+                            error: function (response) {
+                            }
+                        });
+                    	
         					    
         			});
 

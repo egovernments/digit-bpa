@@ -68,6 +68,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -109,6 +110,8 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.custom.CustomImplProvider;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -223,16 +226,42 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), CHECKLIST_TYPE));
         Map nocConfigMap = new HashMap<String, String>();
         Map nocTypeApplMap = new HashMap<String, String>();
+        int nocAutoCount = 0;
+        int nocManualCount = 0;
+        List<User> nocAutoUsers = new ArrayList<>();
+	    List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
         	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
 			NocConfiguration nocConfig = nocConfigurationService
 					.findByDepartment(code);
+		    
 			if(bpaNocApplicationService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
 				nocTypeApplMap.put(code, "initiated");
 			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+			}
+			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
+				nocAutoCount++;
+				 List<User> userList = nocUsers.stream()
+			    	      .filter(usr -> usr.getRoles().stream()
+			    	        .anyMatch(usrrl -> 
+			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+			    	        .collect(Collectors.toList());	
+				 if(!userList.isEmpty())
+                	nocAutoUsers.add(userList.get(0));
+			}
 		}
+          
+        if(nocAutoUsers.size() == nocAutoCount) 
+				model.addAttribute("nocUserExists",true);
+			else
+				model.addAttribute("nocUserExists",false);
+        	
+        	
+        	
         model.addAttribute("nocTypeApplMap",nocTypeApplMap);
         model.addAttribute("nocConfigMap",nocConfigMap);
         model.addAttribute("isPermitApplFeeReq","NO");

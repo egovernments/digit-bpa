@@ -120,6 +120,7 @@
 									value="${nocdoc.nocDocument.serviceChecklist.checklist.code}" />
 								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
 								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
+								<input type="hidden" id="nocchkcode" value="${noccode}"/>
 								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
 								<c:out value="${nocapp}"/>
 								<button type="button" id="btninitiatenoc" value="/bpa/nocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
@@ -157,4 +158,4 @@
 <input type="hidden" id="isPermitApplFeeReq" value="${isPermitApplFeeReq}"/>
 <input type="hidden" id="permitApplFeeCollected" value="${permitApplFeeCollected}"/>
 <input type="hidden" id="nocAppl" value="${nocApplication}"/>
-
+<input type="hidden" id="nocUserExists" value="${nocUserExists}"/>

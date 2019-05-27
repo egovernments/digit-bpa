@@ -43,6 +43,8 @@ package org.egov.bpa.transaction.repository;
 import java.util.List;
 
 import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.common.entity.bpa.Checklist;
+import org.egov.common.entity.bpa.ChecklistType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -51,6 +53,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BpaNocApplicationRepository extends JpaRepository<BpaNocApplication, Long> {
+	
+	  BpaNocApplication findByNocApplicationNumber(String nocApplicationNumber);
 	
 	  @Query("select noc from BpaNocApplication noc where noc.bpaApplication.applicationNumber =:appNo ")
 	  List<BpaNocApplication> findByApplicationNumber(@Param("appNo") String appNo);

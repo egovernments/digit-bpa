@@ -41,6 +41,7 @@ package org.egov.bpa.transaction.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.egov.bpa.autonumber.NocNumberGenerator;
 import org.egov.bpa.master.entity.NocConfiguration;
@@ -56,6 +57,9 @@ import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.utils.ApplicationConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,6 +92,10 @@ public class BpaNocApplicationService {
 		return nocRepository.save(nocApplication);
 	}
 	
+	public BpaNocApplication findByNocApplicationNumber(String appNo) {
+		return nocRepository.findByNocApplicationNumber(appNo);		
+	}
+	
 	public List<BpaNocApplication> findByApplicationNumber(String appNo) {
 		return nocRepository.findByApplicationNumber(appNo);		
 	}
@@ -112,26 +120,60 @@ public class BpaNocApplicationService {
 	
 	public void initiateNoc(BpaApplication application) {
     for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+		List<User> nocUser = new ArrayList<>();
+		List<User> userList = new ArrayList<>();
 		NocConfiguration nocConfig = nocConfigurationService
 				.findByDepartment(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode());
 		if (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
-			ArrayList<User> nocUsers = new ArrayList<User>(userService.getUsersByRoleName(BpaConstants.getNocRole().get(nocConfig))); 
-		    BpaNocApplication nocApplication = createNocApplication(application, nocConfig);			 
-	        bpaUtils.createNocPortalUserinbox(nocApplication, nocUsers, nocApplication.getStatus().getCode());
+			List<User> nocUsers = new ArrayList<User>(userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
+			userList = nocUsers.stream()
+		    	      .filter(usr -> usr.getRoles().stream()
+		    	        .anyMatch(usrrl -> 
+		    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+		    	        .collect(Collectors.toList());	
+			if(userList.isEmpty()) {
+				nocUsers = userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationConstant.STATE_TENANTID);
+				userList = nocUsers.stream()
+			    	      .filter(usr -> usr.getRoles().stream()
+			    	        .anyMatch(usrrl -> 
+			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+			    	        .collect(Collectors.toList());	
+			}	
+		     nocUser.add(userList.get(0));
+			BpaNocApplication nocApplication = createNocApplication(application, nocConfig);			 
+	        bpaUtils.createNocPortalUserinbox(nocApplication, nocUser, nocApplication.getStatus().getCode());
 		}
       }
 	}
 	
-	public void createNoc(BpaApplication application, String nocType) {
+	public BpaNocApplication createNoc(BpaApplication application, String nocType) {
+		BpaNocApplication nocApplication = new BpaNocApplication();
+		List<User> nocUser = new ArrayList<>();
+		List<User> userList = new ArrayList<>();
 		NocConfiguration nocConfig = nocConfigurationService
 				.findByDepartment(nocType);
 		if (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
-			ArrayList<User> nocUsers = new ArrayList<User>(userService.getUsersByRoleName(BpaConstants.getNocRole().get(nocConfig.getDepartment()))); 
-		    BpaNocApplication nocApplication = createNocApplication(application, nocConfig);			 
-	        bpaUtils.createNocPortalUserinbox(nocApplication, nocUsers, nocApplication.getStatus().getCode());
+			List<User> nocUsers = new ArrayList<User>(userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
+			userList = nocUsers.stream()
+		    	      .filter(usr -> usr.getRoles().stream()
+		    	        .anyMatch(usrrl -> 
+		    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+		    	        .collect(Collectors.toList());	
+			if(userList.isEmpty()) {
+				nocUsers = userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationConstant.STATE_TENANTID);
+				userList = nocUsers.stream()
+			    	      .filter(usr -> usr.getRoles().stream()
+			    	        .anyMatch(usrrl -> 
+			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+			    	        .collect(Collectors.toList());	
+			}	
+		     nocUser.add(userList.get(0));
+		     nocApplication.setOwnerUser(nocUser.get(0));
+	        bpaUtils.createNocPortalUserinbox(nocApplication, nocUser, nocApplication.getStatus().getCode());
 		}
+		return nocApplication;
 	}
 	
     

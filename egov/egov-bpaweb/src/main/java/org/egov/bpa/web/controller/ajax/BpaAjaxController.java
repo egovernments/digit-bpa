@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -666,4 +667,17 @@ public class BpaAjaxController {
 	public List<ApplicationSubType> getApplicationSubType() {
 	  return applicationTypeService.getAllEnabledApplicationTypes();
 	}
+	
+    @GetMapping(value = "/ajax/getNocUsersByCode", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Boolean getNocUsersByCode(@RequestParam String code) {
+	  List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+      List<User> userList = nocUsers.stream()
+	        .filter(usr -> usr.getRoles().stream()
+	    	        .anyMatch(usrrl -> 
+	    	          usrrl.getName().equals(BpaConstants.getNocRole().get(code))))
+	    	        .collect(Collectors.toList());	
+        return !userList.isEmpty();
+
+	    }
 }

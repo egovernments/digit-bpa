@@ -181,9 +181,15 @@ $(document).ready(function ($) {
     });
 
     $('#buttonSubmit').click(function (e) {
+    	
+    	
         var msg = getValidationMessageOnUpdate();
         var button = $('#buttonSubmit').val();
         if (validateEditFormOnSubmit(button, validator)) {
+        	  if($('#nocUserExists').val()=='false'){
+              	bootbox.alert('Noc User doesnot exists');
+              	return false;
+              }
             bootbox
                 .dialog({
                     message: $('#submitApplication').val() + msg,

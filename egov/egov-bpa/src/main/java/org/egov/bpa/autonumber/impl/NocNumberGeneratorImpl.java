@@ -42,7 +42,7 @@ package org.egov.bpa.autonumber.impl;
 import java.time.LocalDateTime;
 
 import org.egov.bpa.autonumber.NocNumberGenerator;
-import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.BpaNocApplication;import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +59,12 @@ public class NocNumberGeneratorImpl implements NocNumberGenerator {
 	@Override
 	public String generateNocNumber(final String nocType) {
 		String[] nocCode = nocType.split("_");
+        String cityCode = ApplicationThreadLocals.getCityCode();
+
 		String nocNumber = String.format("%05d", genericSequenceNumberGenerator.getNextSequence(SEQ_NOCNNUMBER));
 		StringBuilder nocNo = new StringBuilder();
-		nocNo.append(nocCode[0])
-		 .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear()).append(nocNumber);
+		nocNo.append(nocCode[0]).append("-").append(cityCode).append("-")
+		 .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear()).append("-").append(nocNumber);
 		return nocNo.toString();
 	}
 }

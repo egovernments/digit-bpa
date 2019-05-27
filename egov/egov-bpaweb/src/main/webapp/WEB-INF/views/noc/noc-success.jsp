@@ -45,6 +45,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title text-center no-float">
+		<c:if test="${not empty error}">
+			<strong>${error}</strong>
+		</c:if>
+	</div>
+</div>
+
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title text-center no-float">
 		<c:if test="${not empty message}">
@@ -52,14 +61,6 @@
 		</c:if>
 	</div>
 </div>
-
-<c:if test="${not empty appmntDetailsMsg}">
-	<div class="panel-heading custom_form_panel_heading">
-		<div class="panel-title text-center no-float">
-			<strong>${appmntDetailsMsg}</strong>
-		</div>
-	</div>
-</c:if>
 
 <div class="buttonbottom" align="center">
 	<table>

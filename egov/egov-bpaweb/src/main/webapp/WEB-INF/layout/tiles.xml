@@ -858,5 +858,12 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/noc-success.jsp" />
 	</definition>
+	
+	<definition name="view-noc-details" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.noc" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/noc/view-noc-details.jsp" />
+	</definition>
 
 </tiles-definitions>

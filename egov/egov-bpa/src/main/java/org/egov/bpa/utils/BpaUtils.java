@@ -331,10 +331,11 @@ public class BpaUtils {
     public void createNocPortalUserinbox(final BpaNocApplication nocApplication, final List<User> portalInboxUser,
             final String workFlowAction) {
         String status = BpaConstants.NOC_INITIATED;
-        
+
         Module module = moduleService.getModuleByName(BpaConstants.NOCMODULE);
+        
         boolean isResolved = false;
-        String url = "/bpa/nocapplication/update/" + nocApplication.getNocType()+"~"+nocApplication.getBpaApplication().getApplicationNumber();
+        String url = "/bpa/nocapplication/update/" + nocApplication.getNocApplicationNumber();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, nocApplication.getBpaApplication().getOwner().getName(),
         		nocApplication.getBpaApplication().getServiceType().getDescription(), nocApplication.getNocApplicationNumber(),
         		nocApplication.getBpaApplication().getPlanPermissionNumber(), nocApplication.getId(), SUCCESS, SUCCESS, url, isResolved,
@@ -348,7 +349,7 @@ public class BpaUtils {
     public void updateNocPortalUserinbox(final BpaNocApplication nocApplication, final User additionalPortalInboxUser) {
         Module module = moduleService.getModuleByName(BpaConstants.NOCMODULE);
         String status = nocApplication.getStatus().getCode();        
-        String url = "/bpa/nocapplication/update/" + nocApplication.getNocType()+"~"+nocApplication.getBpaApplication().getApplicationNumber();
+        String url = "/bpa/nocapplication/update/" +nocApplication.getNocApplicationNumber();
         portalInboxService.updateInboxMessage(nocApplication.getNocApplicationNumber(), module.getId(),
                     status, true, new Date(), null,
                     additionalPortalInboxUser, nocApplication.getBpaApplication().getPlanPermissionNumber(), url);

@@ -117,4 +117,12 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     List<User> findByEmailIdAndTypeOrderById(String emailId, UserType type);
 
     User findByPan(String pan);
+    
+    @Query("select distinct usr from User usr where usr.type=:type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId) and usr.active=true")
+    List<User> findUsersByTypeAndTenants(@Param("type") UserType type, @Param("tenantId") String tenantId, @Param("stateTenantId") String stateTenantId);
+
+    
+    @Query("select distinct usr from User usr where usr.type=:type and usr.tenantId = :tenant and usr.active=true")
+    List<User> findUsersByTypeAndTenantId(@Param("type") UserType type, @Param("tenant") String tenant);
+
 }

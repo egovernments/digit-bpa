@@ -65,6 +65,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
@@ -102,6 +103,7 @@ public class BpaNocApplication extends AbstractAuditable {
     private Set<FileStoreMapper> nocSupportDocs = new HashSet<>();
     private transient MultipartFile[] files;
     private transient Map<Long, String> encodedImages = new HashMap<>();
+    private transient User ownerUser;
 
 	
 	
@@ -159,5 +161,11 @@ public class BpaNocApplication extends AbstractAuditable {
 	}
 	public void setNocApplicationNumber(String nocApplicationNumber) {
 		this.nocApplicationNumber = nocApplicationNumber;
+	}
+	public User getOwnerUser() {
+		return ownerUser;
+	}
+	public void setOwnerUser(User ownerUser) {
+		this.ownerUser = ownerUser;
 	}
 }

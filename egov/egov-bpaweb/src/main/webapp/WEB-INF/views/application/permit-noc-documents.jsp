@@ -220,6 +220,7 @@
 								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
 								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
 								<input type="hidden" value="${nocapp}" class="hidden${checklistName}"/>
+								<input type="hidden" id="nocchkcode" value="${noccode}"/>
 								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
 								<button type="button" id="btninitiatenoc" value="/bpa/nocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
 										<spring:message code="lbl.initiate.noc" />
@@ -235,6 +236,11 @@
 								  pattern="dd/MM/yyyy" var="applicationDate" />						
 								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">								  
 								<span style="font-weight:bold">${nocapp.status.code} on ${applicationDate} <br />
+								<a
+                                style="cursor: pointer; font-size: 14px;"
+                                onclick="window.open('/bpa/nocapplication/view/${nocapp.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
+                                ${nocapp.nocApplicationNumber}
+                        </a>
 								   <c:forEach	var="bpanoc" items="${nocapp.nocSupportDocs}" varStatus="loop">								    
 								           <c:set value="true" var="isDocFound"></c:set>
 								          <a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
@@ -295,7 +301,8 @@
 	value="<spring:message code='msg.filesize.validate' />" />
 <input type="hidden" id="noPreviewAvailble"
 	value="<spring:message code='msg.nopreview.availble' />" />
-	<input type="hidden" id="nocAppl" value="${nocApplication}"/>
+<input type="hidden" id="nocAppl" value="${nocApplication}"/>
+<input type="hidden" id="nocUserExists" value="${nocUserExists}"/>
 	
 <!-- The Modal -->
 <div id="imgModel" class="image-modal">
