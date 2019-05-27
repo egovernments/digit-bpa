@@ -72,7 +72,7 @@ public class OccupancyCertificateValidationService {
 	public Boolean validateOcApplnWithPermittedBpaAppln(final Model model, final OccupancyCertificate occupancyCertificate) {
 		
 		if(!validateOcApplnWithPermittedAppln(model, occupancyCertificate) ||
-				!validateBuildingHeight(occupancyCertificate.getParent().getBuildingDetail(), occupancyCertificate.getBuildings(), model))
+				!validateBuildingHeightAndFloorArea(occupancyCertificate.getParent().getBuildingDetail(), occupancyCertificate.getBuildings(), model))
 			return false;
 		
       return true;
@@ -144,14 +144,12 @@ public class OccupancyCertificateValidationService {
             }
         }
 
-        BigDecimal hundred = new BigDecimal(100);
-        BigDecimal percent = new BigDecimal(bpaUtils.getAppConfigForOcAllowDeviation());
         // check floor wise occupancy same are not
         for (OCBuilding oc : ocBuildings) {
             for (BuildingDetail bpa : permitBuildings) {
                 if (oc.getBuildingNumber().equals(bpa.getNumber())) {
                     for (OCFloor ocFloor : oc.getFloorDetailsForUpdate()) {
-                        int floorNumber = ocFloor.getFloorNumber();
+                        int floorNumber = ocFloor.getFloorNumber();	
                         for (ApplicationFloorDetail bpaFloor : bpa.getApplicationFloorDetails()) {
                             if (floorNumber == bpaFloor.getFloorNumber()
                                     && !ocFloor.getSubOccupancy().getCode().equals(bpaFloor.getSubOccupancy().getCode())) {
@@ -170,8 +168,14 @@ public class OccupancyCertificateValidationService {
                 }
             }
         }
-        // check block wise floor area same are not
-        BigDecimal limitSqurMtrs = new BigDecimal(40);
+      
+        return true;
+    }
+	
+	private Boolean validateBuildingHeightAndFloorArea(List<BuildingDetail> permitBuildings, List<OCBuilding> ocBuildings, final Model model) {
+        BigDecimal hundred = new BigDecimal(100);
+        BigDecimal percent = new BigDecimal(bpaUtils.getAppConfigForOcAllowDeviation());
+		BigDecimal limitSqurMtrs = new BigDecimal(40);
         for (OCBuilding oc : ocBuildings) {
             for (BuildingDetail bpa : permitBuildings) {
                 if (oc.getBuildingNumber().equals(bpa.getNumber())) {
@@ -185,7 +189,7 @@ public class OccupancyCertificateValidationService {
                                         new String[] { String.valueOf(oc.getBuildingNumber()), String.valueOf(totalOcFloor),
                                                 String.valueOf(bpa.getNumber()), String.valueOf(totalBpaFloor) },
                                         LocaleContextHolder.getLocale()));
-                        return isValid;
+                        return false;
                     }
                     if (totalOcFloor.subtract(totalBpaFloor).compareTo(limitSqurMtrs) > 0) {
                         model.addAttribute(OC_COMPARISON_VALIDATION,
@@ -193,15 +197,12 @@ public class OccupancyCertificateValidationService {
                                         new String[] { String.valueOf(oc.getBuildingNumber()), String.valueOf(totalOcFloor),
                                                 String.valueOf(bpa.getNumber()), String.valueOf(totalBpaFloor) },
                                         LocaleContextHolder.getLocale()));
-                        return isValid;
+                        return false;
                     }
                 }
             }
         }
-        return true;
-    }
-	
-	private Boolean validateBuildingHeight(List<BuildingDetail> permitBuildings, List<OCBuilding> ocBuildings, final Model model) {
+        
       for (OCBuilding oc : ocBuildings) {
         boolean isHeightSame = false;
         BigDecimal permitBldgHgt = BigDecimal.ZERO;
