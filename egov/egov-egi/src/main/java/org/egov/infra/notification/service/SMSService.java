@@ -149,11 +149,11 @@ public class SMSService {
             urlParameters.add(new BasicNameValuePair(messageReqParamName, message));
             urlParameters.add(new BasicNameValuePair("key", genratedhashKey));
             setAdditionalParameters(urlParameters, priority);
-            LOGGER.info("impl sms urlParameters = ", urlParameters.toArray());
+            LOGGER.info("impl sms urlParameters = " +  urlParameters.toArray());
             post.setEntity(new UrlEncodedFormEntity(urlParameters, encoding()));
             HttpResponse response = client.execute(post);
             String responseCode = IOUtils.toString(response.getEntity().getContent(), encoding());
-            LOGGER.info("impl sms response = ", responseCode);
+            LOGGER.info("impl sms response = " + responseCode);
 
             return smsErrorCodes.parallelStream().noneMatch(responseCode::startsWith);
 
