@@ -66,7 +66,9 @@
 				<th class="thbtn" style="display: none"><spring:message code="lbl.action.noc" /></th>
 				</c:if>
 				<c:if test="${not empty nocApplication}">								
-					<th class="thstatus" style="display: none">Status</th>		
+					<th class="thstatus" style="display: none"><spring:message code="lbl.noc.dept.status" /></th>		
+					<th class="thsla" style="display: none"><spring:message code="lbl.sla.enddate" /></th>		
+					<th class="thda" style="display: none"><spring:message code="lbl.deemed.approved.date" /></th>									
 				</c:if>
 			</tr>
 		</thead>
@@ -131,23 +133,47 @@
 							</div>
 						</td>
 					</c:if>	
-					<c:if test="${not empty nocApplication}">							
-						<td class="tdstatus" style="display:none">						
-							  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">			
+					<c:if test="${not empty nocApplication}">	
+																	 <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">			
+												<input type="hidden" id="servicecode" class="service${noccode}"/>
+																<input type="hidden" id="nocappcode" class="nocapp${nocapp.nocType}"/>
+									
+						<td class="tdstatus" style="display:none">	
+								<input type="hidden" id="nocstatus" value="${nocapp.status.code }"/>
+											
 							  <fmt:formatDate value="${nocapp.lastModifiedDate}"
 								pattern="dd/MM/yyyy" var="applicationDate" />
 								  <c:if test="${nocdoc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">							  								  
-								<span style="font-weight:bold">${nocapp.status.code} on ${applicationDate}<br />
+								<span style="font-weight:bold">${nocapp.status.code} / ${applicationDate}<br /></span>
+<a
+                                style="cursor: pointer; font-size: 14px;"
+                                onclick="window.open('/bpa/nocapplication/view/${nocapp.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
+                                ${nocapp.nocApplicationNumber}
+                        </a>								
 								   <c:forEach	var="bpanoc" items="${nocapp.nocSupportDocs}" varStatus="loop">								    
 								           <c:set value="true" var="isDocFound"></c:set>
 								          <a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
 								          data-gallery>${loop.index +1} - ${bpanoc.fileName} </a><br />
 											
 									</c:forEach>
-								${nocapp.remarks}</span>								
+								<span style="font-weight:bold">${nocapp.remarks}</span>								
 									</c:if>
-								</c:forEach>							
 						</td>
+						<td class="tdsla" style="display:none">	
+																	  <c:if test="${nocdoc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">							  								  
+											
+							  <fmt:formatDate value="${nocapp.slaEndDate}"
+								pattern="dd/MM/yyyy" var="slaDate" />
+								<span style="font-weight:bold">${slaDate}<br />	</span>		</c:if>					   						
+						</td>
+						<td class="tdda" style="display:none">		
+									 <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">								  
+										
+							  <fmt:formatDate value="${nocapp.deemedApprovedDate}"
+								pattern="dd/MM/yyyy" var="dadate" />
+								<span style="font-weight:bold">${dadate}<br />		</span>		</c:if>
+						</td>
+						</c:forEach>
 					</c:if>
 					
 				</tr>

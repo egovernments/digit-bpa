@@ -67,6 +67,7 @@ $(document)
                     }
                     $('.nocStatus').on('change', function () {
                         var rowObj = $(this).closest('tr');
+
                         if ($(rowObj).find('.nocStatus').val() == 'REJECTED') {
                             $(rowObj).find('.nocRemarks').attr('required', true);
                         } else {

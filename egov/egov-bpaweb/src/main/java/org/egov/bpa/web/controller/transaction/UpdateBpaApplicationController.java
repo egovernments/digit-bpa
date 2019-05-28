@@ -709,14 +709,14 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         prepareActions(model, application);
     	model.addAttribute("nocInitiated",false);
 
-        List<BpaNocApplication> nocApplication = nocService.findByApplicationNumber(application.getApplicationNumber());
+       /* List<BpaNocApplication> nocApplication = nocService.findByApplicationNumber(application.getApplicationNumber());
         List<String> nocStatus = nocApplication.stream().map(noc -> noc.getStatus().getCode()).collect(Collectors.toList()); 
         if(!application.getApplicationType().getName().equals(BpaConstants.LOWRISK)  &&  actions.contains(WF_APPROVE_BUTTON)) {
             if(nocStatus.contains(BpaConstants.NOC_REJECTED))
             	model.addAttribute("validActionList", Arrays.asList("Reject"));
             else if(nocStatus.contains(BpaConstants.NOC_INITIATED))
             	model.addAttribute("nocInitiated",true);
-        }
+        } */
       
         
         if (!application.getIsOneDayPermitApplication()

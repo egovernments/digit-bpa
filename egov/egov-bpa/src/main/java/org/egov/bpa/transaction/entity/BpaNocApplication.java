@@ -46,6 +46,7 @@
  */
 package org.egov.bpa.transaction.entity;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -97,6 +98,8 @@ public class BpaNocApplication extends AbstractAuditable {
     private BpaStatus status;
 	@Length(min = 1, max = 128)
     private String remarks;
+    private Date slaEndDate;
+    private Date deemedApprovedDate;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "egbpa_noc_certificate", joinColumns = @JoinColumn(name = "nocapplication"), inverseJoinColumns = @JoinColumn(name = "fileStore"))
@@ -138,6 +141,18 @@ public class BpaNocApplication extends AbstractAuditable {
 		this.remarks = remarks;
 	}
 
+	public Date getSlaEndDate() {
+		return slaEndDate;
+	}
+	public void setSlaEndDate(Date slaEndDate) {
+		this.slaEndDate = slaEndDate;
+	}
+	public Date getDeemedApprovedDate() {
+		return deemedApprovedDate;
+	}
+	public void setDeemedApprovedDate(Date deemedApprovedDate) {
+		this.deemedApprovedDate = deemedApprovedDate;
+	}
 	public MultipartFile[] getFiles() {
 		return files;
 	}

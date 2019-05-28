@@ -89,12 +89,11 @@ public class NocApprovalService {
 				}
 				if ((applStatus != null && !(applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_CANCELLED)
 						|| applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REJECTED)))) {
-					List<Holiday> holiday = holidayListService.findByFromAndToDate(nocApp.getCreatedDate(), new Date());
-					Integer elapsedDays = DateUtils.daysBetween(nocApp.getCreatedDate(), new Date());
-					Long elapsedWithoutHoliday = (long) (elapsedDays - holiday.size());
-					if (sla.compareTo(elapsedWithoutHoliday) <= 0) {
+					
+					if (nocApp.getSlaEndDate().compareTo(new Date())>=0) {
 						nocApp.setStatus(statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC,
 								BpaConstants.NOC_DEEMED_APPROVED));
+						nocApp.setDeemedApprovedDate(new Date());
 						bpaNocApplicationService.save(nocApp);
 						bpaSmsAndEmailService.sendSMSAndEmailForDeemedApprovalNoc(nocApp);
 					}

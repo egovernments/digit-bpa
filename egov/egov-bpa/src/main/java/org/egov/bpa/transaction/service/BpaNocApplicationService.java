@@ -39,12 +39,17 @@
  */
 package org.egov.bpa.transaction.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.egov.bpa.autonumber.NocNumberGenerator;
+import org.egov.bpa.master.entity.Holiday;
 import org.egov.bpa.master.entity.NocConfiguration;
+import org.egov.bpa.master.service.HolidayListService;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaNocApplication;
@@ -60,6 +65,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.ApplicationConstant;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,6 +87,8 @@ public class BpaNocApplicationService {
     private UserService userService;
 	@Autowired
 	private NocNumberGenerator nocNumberGenerator;
+	@Autowired
+	public HolidayListService holidayListService;
 	
 	@Transactional
 	public BpaNocApplication save(final BpaNocApplication nocApplication) {
@@ -115,6 +123,7 @@ public class BpaNocApplicationService {
 		nocApplication.setBpaApplication(application);
 		nocApplication.setNocType(nocConfig.getDepartment());
 		nocApplication.setStatus(status);	
+		addSlaEndDate(nocApplication, nocConfig);
 		return save(nocApplication);	
 	}
 	
@@ -176,6 +185,18 @@ public class BpaNocApplicationService {
 	        bpaUtils.createNocPortalUserinbox(nocApplication, nocUser, nocApplication.getStatus().getCode());
 		}
 		return nocApplication;
+	}
+	
+	public void addSlaEndDate(BpaNocApplication nocApplication,NocConfiguration nocConfig ) {
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date()); // todays date.
+		c.add(Calendar.DATE, Integer.parseInt(nocConfig.getSla().toString())); 
+		
+		List<Holiday> holiday = holidayListService.findByFromAndToDate(new Date(), c.getTime());
+		c.add(Calendar.DATE, holiday.size()); 
+
+		nocApplication.setSlaEndDate(c.getTime());
 	}
 	
     

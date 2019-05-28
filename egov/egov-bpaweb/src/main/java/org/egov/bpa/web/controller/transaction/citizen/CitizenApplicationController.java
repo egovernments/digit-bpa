@@ -577,9 +577,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         	redirectAttributes.addFlashAttribute(MESSAGE,
                     "Successfully forwarded application to the citizen with application number " + bpaApplicationRes.getApplicationNumber() + ".");
         
-        if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted()
-                && workFlowAction.equals(WF_SEND_BUTTON))
-            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
+		
+		  if (bpaUtils.isCitizenAcceptanceRequired() &&		  !bpaApplicationRes.isCitizenAccepted() &&		  workFlowAction.equals(WF_SEND_BUTTON))		 
+             bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
         
 
         return "redirect:/application/citizen/success/" + bpaApplicationRes.getApplicationNumber();
