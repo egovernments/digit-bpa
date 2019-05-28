@@ -117,6 +117,7 @@ import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
@@ -134,6 +135,7 @@ import org.egov.bpa.transaction.notice.impl.PermitRevocationFormat;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.BpaNocApplicationService;
+import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitFeeService;
@@ -206,11 +208,11 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     @Autowired
     private PermitRevocationService permitRevocationService;
     @Autowired
-    private BpaNocApplicationService nocService;
-    @Autowired
     private BpaNocApplicationService bpaNocApplicationService;
     @Autowired
     private NocConfigurationService nocConfigurationService;
+    @Autowired
+	private BpaStatusService statusService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -427,6 +429,15 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
         } // For one day permit, on reject from AE it's forwarded to SUP (workflow user)
         else if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+    		BpaStatus status = statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_APPL_REJECTED);
+        	List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(bpaApplication.getApplicationNumber());
+        	if(!nocApplication.isEmpty()) {
+	        	for(BpaNocApplication nocApp : nocApplication) {
+	        		nocApp.setStatus(status);
+	        	}
+	        	bpaNocApplicationService.save(nocApplication);
+        	}
+        	
             if (bpaApplication.getIsOneDayPermitApplication() && null != request.getParameter(APPRIVALPOSITION)
                     && !"".equals(request.getParameter(APPRIVALPOSITION))) {
                 approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));

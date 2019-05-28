@@ -275,6 +275,7 @@ public class BpaConstants {
     public static final String NOC_APPROVED = "NOC_APPROVED";
     public static final String NOC_REJECTED = "NOC_REJECTED";
     public static final String NOC_DEEMED_APPROVED = "NOC_DEEMED_APPROVED";
+    public static final String NOC_APPL_REJECTED= "Permit Application Rejected";
     public static final String FIRENOCROLE = "BPA_FIRE_NOC_ROLE";
     public static final String ENVNOCROLE = "BPA_ENVIRONMENT_NOC_ROLE";
     public static final String NMANOCROLE = "BPA_NMA_NOC_ROLE";

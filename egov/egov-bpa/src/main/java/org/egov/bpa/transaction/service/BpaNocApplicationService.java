@@ -96,6 +96,11 @@ public class BpaNocApplicationService {
 	}
 	
 	@Transactional
+	public List<BpaNocApplication> save(final List<BpaNocApplication> nocApplication) {
+		return nocRepository.save(nocApplication);
+	}
+	
+	@Transactional
 	public BpaNocApplication update(final BpaNocApplication nocApplication) {
 		return nocRepository.save(nocApplication);
 	}
