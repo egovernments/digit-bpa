@@ -78,7 +78,7 @@ import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
 
 @Service
 public class SMSService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SMSService_Bihar.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SMSService.class);
     private static final String SMS_PRIORITY_PARAM_VALUE = "sms.%s.priority.param.value";
 
     @Autowired
