@@ -236,23 +236,25 @@
 					  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">	
 						<input type="hidden" id="nocst" value="${nocapp.status.code }"/>
 									
-						<td class="tdstatus" style="display:none">
+						<td class="tdstatus" style="font-size: 100%;">
 							<fmt:formatDate value="${nocapp.lastModifiedDate}"
 								  pattern="dd/MM/yyyy" var="applicationDate" />						
-								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">								  
-									<span style="font-weight:bold">${nocapp.status.code} on ${applicationDate} <br /></span>
-									<a
-		                                style="cursor: pointer; font-size: 14px;"
+								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">		
+								  <a
+		                                style="cursor: pointer; font-size: 12px;"
 		                                onclick="window.open('/bpa/nocapplication/view/${nocapp.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
 		                                ${nocapp.nocApplicationNumber}
-	                                </a>
-									   <c:forEach	var="bpanoc" items="${nocapp.nocSupportDocs}" varStatus="loop">								    
+	                                </a><br/>						  
+									${nocapp.status.code} <br/>
+									 Date: ${applicationDate} <br />
+								
+									 Attachments: <br/> <c:forEach	var="bpanoc" items="${nocapp.nocSupportDocs}" varStatus="loop">								    
 									           <c:set value="true" var="isDocFound"></c:set>
 									          <a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
 									          data-gallery>${loop.index +1} - ${bpanoc.fileName} </a><br />
 												
 										</c:forEach>
-										<span style="font-weight:bold">	${nocapp.remarks}</span>								
+										Remarks :	${nocapp.remarks}							
 									</c:if>
 						</td>	
 						<td class="tdsla" style="display:none">		

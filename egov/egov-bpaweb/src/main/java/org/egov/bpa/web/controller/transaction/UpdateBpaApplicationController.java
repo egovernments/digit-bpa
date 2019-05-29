@@ -93,6 +93,13 @@ import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_APPROVAL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
+import static org.egov.bpa.utils.BpaConstants.FIRENOCTYPE;
+import static org.egov.bpa.utils.BpaConstants.AIRPORTNOCTYPE;
+import static org.egov.bpa.utils.BpaConstants.NMANOCTYPE;
+import static org.egov.bpa.utils.BpaConstants.ENVNOCTYPE;
+import static org.egov.bpa.utils.BpaConstants.IRRNOCTYPE;
+
+
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -135,11 +142,13 @@ import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.BpaNocApplicationService;
 import org.egov.bpa.transaction.service.BpaStatusService;
+import org.egov.bpa.transaction.service.DcrRestService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitFeeService;
 import org.egov.bpa.transaction.service.PermitRevocationService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -162,6 +171,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -210,6 +221,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private NocConfigurationService nocConfigurationService;
     @Autowired
 	private BpaStatusService statusService;
+	@Autowired
+	private DcrRestService drcRestService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -758,7 +771,15 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                         application.getStateHistory()));
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
 	  
-	        
+	    EdcrApplicationInfo dcrPlanInfo = drcRestService.getDcrPlanInfo(application.geteDcrNumber(), ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        Map<String, String> nocTypeMap = new HashMap<>();
+	        nocTypeMap.put(FIRENOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
+	        nocTypeMap.put(AIRPORTNOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport());
+	        nocTypeMap.put(NMANOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocNearMonument());
+	        nocTypeMap.put(ENVNOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact());
+	        nocTypeMap.put(IRRNOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept());
+		    
+		    
         Map nocConfigMap = new HashMap<String, String>();
         Map nocTypeApplMap = new HashMap<String, String>();
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
@@ -768,7 +789,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 			if(bpaNocApplicationService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
 				nocTypeApplMap.put(code, "initiated");
 			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
+					nocTypeMap.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
 		}
         model.addAttribute("nocTypeApplMap",nocTypeApplMap);

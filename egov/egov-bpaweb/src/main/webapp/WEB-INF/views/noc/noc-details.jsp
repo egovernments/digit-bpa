@@ -180,9 +180,7 @@
 				<input type="button" name="button2" id="button2" value="Close"	class="btn btn-default" onclick="window.close();" />
 			</div>		
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>" /> 
-                <input	type="hidden" id="rejectApplication" value="<spring:message code='msg.confirm.intiate.rejection.forappln'/>" />  
-                <input	type="hidden" id="bpaApplication" value="${bpaApplication}" /> 
-                
+                <input	type="hidden" id="rejectApplication" value="<spring:message code='msg.confirm.intiate.rejection.forappln'/>" />                  
 			</div>
 </div>
 </form:form>

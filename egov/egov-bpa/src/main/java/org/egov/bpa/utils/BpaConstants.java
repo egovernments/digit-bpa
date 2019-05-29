@@ -270,6 +270,8 @@ public class BpaConstants {
     public static final String AIRPORTNOCTYPE = "AAI_NOC";
     public static final String NMANOCTYPE = "NMA_NOC";
     public static final String ENVNOCTYPE = "MOEF_NOC";
+    public static final String IRRNOCTYPE = "IDA_NOC";
+
 
     public static final String NOC_INITIATED = "NOC_INITIATED";
     public static final String NOC_APPROVED = "NOC_APPROVED";

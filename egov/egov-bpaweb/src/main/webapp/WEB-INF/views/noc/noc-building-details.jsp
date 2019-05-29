@@ -172,21 +172,6 @@
 				<div class="col-sm-3 add-margin show-hide totalPlintArea">
 					<spring:message code="lbl.build.total.plinth" />
 				</div>
-				<div class="col-sm-3 add-margin show-hide demolition">
-					<spring:message code="lbl.demolition.area" />
-				</div>
-				<div class="col-sm-3 add-margin show-hide noofhutorshed">
-					<spring:message code="lbl.area.hut.shed" />
-				</div>
-				<div class="col-sm-3 add-margin show-hide alterationInArea">
-					<spring:message code="lbl.alteration.area" />
-				</div>
-				<div class="col-sm-3 add-margin show-hide additionInArea">
-					<spring:message code="lbl.extension.area" />
-				</div>
-				<div class="col-sm-3 add-margin show-hide changeInOccupancyArea">
-					<spring:message code="lbl.change.occupancy.area" />
-				</div>
 				<div class="col-sm-3 add-margin view-content">
 					<fmt:formatNumber type="number" maxFractionDigits="2"
 						value="${bldg.totalPlintArea}" />
