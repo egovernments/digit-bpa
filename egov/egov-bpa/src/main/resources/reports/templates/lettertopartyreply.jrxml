@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reply" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="19a6b87f-b0aa-4611-908a-14a81b44cdbb">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="33"/>
 	<import value="org.egov.infra.reporting.util.ReportUtil"/>
+	<import value="org.egov.infra.utils.StringUtils"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/collections/reports/templates/"]]></defaultValueExpression>
 	</parameter>
@@ -225,7 +226,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA[$F{letterToParty}.getLpReplyRemarks()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{letterToParty} == null || ($F{letterToParty} != null && ($F{letterToParty}.getLpReplyRemarks() == "" || $F{letterToParty}.getLpReplyRemarks() == null)) ? "N/A" : $F{letterToParty}.getLpReplyRemarks()]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="70">
