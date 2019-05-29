@@ -97,7 +97,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -177,9 +176,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String APPROVAL_COMENT = "approvalComent";
     private static final String MSG_REJECT_FORWARD_REGISTRATION = "msg.reject.forward.registration";
-    private static final String MSG_REVOCATE_FORWARD_REGISTRATION = "msg.revocate.forward.registration";
     private static final String MSG_INITIATE_REJECTION = "msg.initiate.reject";
-    private static final String MSG_INITIATE_REVOCATION = "msg.initiate.revocation";
     private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
     private static final String APPLICATION_VIEW = "application-view";
     private static final String CREATEDOCUMENTSCRUTINY_FORM = "createdocumentscrutiny-form";
@@ -714,9 +711,16 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode()))
                 || (!actions.isEmpty() && actions.contains(WF_APPROVE_BUTTON))))
             buildApplicationPermitConditions(application, model);
+       
 
-      
-               
+        List<PermitNocDocument> nocDocStatus = application.getPermitNocDocuments().stream().filter(pdc -> pdc.getNocDocument().getNocStatus() != null).collect(Collectors.toList());
+        
+        if(application.getPermitNocDocuments().size() == nocDocStatus.size())
+        	model.addAttribute("nocStatusUpdated",true);
+        else
+        	model.addAttribute("nocStatusUpdated",false);
+
+        	
         prepareActions(model, application);
     	model.addAttribute("nocInitiated",false);
 
@@ -753,6 +757,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
                         application.getStateHistory()));
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
+	  
+	        
         Map nocConfigMap = new HashMap<String, String>();
         Map nocTypeApplMap = new HashMap<String, String>();
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {

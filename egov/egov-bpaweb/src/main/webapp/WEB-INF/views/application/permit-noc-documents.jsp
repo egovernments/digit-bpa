@@ -324,6 +324,8 @@
 	value="<spring:message code='msg.nopreview.availble' />" />
 <input type="hidden" id="nocAppl" value="${nocApplication}"/>
 <input type="hidden" id="nocUserExists" value="${nocUserExists}"/>
+<input type="hidden" id="nocStatusUpdated" value="${nocStatusUpdated}"/>
+
 	
 <!-- The Modal -->
 <div id="imgModel" class="image-modal">

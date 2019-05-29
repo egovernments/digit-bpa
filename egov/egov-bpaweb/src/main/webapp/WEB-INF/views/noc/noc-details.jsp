@@ -181,6 +181,8 @@
 			</div>		
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>" /> 
                 <input	type="hidden" id="rejectApplication" value="<spring:message code='msg.confirm.intiate.rejection.forappln'/>" />  
+                <input	type="hidden" id="bpaApplication" value="${bpaApplication}" /> 
+                
 			</div>
 </div>
 </form:form>

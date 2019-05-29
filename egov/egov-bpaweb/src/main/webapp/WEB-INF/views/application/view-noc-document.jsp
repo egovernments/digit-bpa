@@ -187,5 +187,6 @@
 <input type="hidden" id="nocAppl" value="${nocApplication}"/>
 <input type="hidden" id="nocUserExists" value="${nocUserExists}"/>
 <input type="hidden" id="citizenOrBusinessUser" value="${citizenOrBusinessUser}"/>
+<input type="hidden" id="nocStatusUpdated" value="${nocStatusUpdated}"/>
 <script
 	src="<cdn:url value='/resources/js/app/noc-helper.js?rnd=${app_release_no}'/>"></script>

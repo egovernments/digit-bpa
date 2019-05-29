@@ -203,7 +203,7 @@ $('#buttonApprove').click(function (e) {
 });
 
 $('#buttonReject').click(function (e) {
-	document.getElementById("workFlowAction").value = 'NOC_REJECT';
+	document.getElementById("workFlowAction").value = 'NOC_REJECTED';
 	$('#remarks').attr('required', 'required');
 	if ($('#editNocApplicationForm').valid()){
         bootbox
