@@ -742,8 +742,6 @@ $(document).ready(
                 }else if($('input.hidden_NOC_from_Irrigation_Department').val() != 'initiated'){
                 	$('div._NOC_from_Irrigation_Department').attr('required','required');
                 	$('div.divfv_NOC_from_Irrigation_Department').show();
-                }else{
-                	$('div.divfv_NOC_from_Irrigation_Department').hide();
                 }
                 if($('#nocAppl').length > 0)
                 {
@@ -769,8 +767,6 @@ $(document).ready(
                 }else if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'initiated'){
                 	$('div._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('required','required');
                 	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
-                }else{
-                	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').hide();
                 }
                 if($('#nocAppl').length > 0)
                 {
@@ -796,8 +792,6 @@ $(document).ready(
                 }else if($('input.hidden_NOC_from_Airport_Authority').val() != 'initiated'){
                 	$('div._NOC_from_Airport_Authority').attr('required','required');
                 	$('div.divfv_NOC_from_Airport_Authority').show();
-                }else{
-                	$('div.divfv_NOC_from_Airport_Authority').hide();
                 }
                 if($('#nocAppl').length > 0)
                 {
@@ -823,8 +817,6 @@ $(document).ready(
                 }else if($('input.hidden_NOC_from_Fire_Authority').val() != 'initiated'){
                 	$('div._NOC_from_Fire_Authority').attr('required','required');
                 	$('div.divfv_NOC_from_Fire_Authority').show();
-                }else{
-                	$('div.divfv_NOC_from_Fire_Authority').hide();
                 }
                 
                 if($('#nocAppl').length > 0)
@@ -851,8 +843,6 @@ $(document).ready(
                 }else if($('input.hidden_MOEF_environment_clearance').val() != 'initiated'){
                 	$('div._MOEF_environment_clearance').attr('required','required');
                 	$('div.divfv_MOEF_environment_clearance').show();
-                }else{
-                	$('div.divfv_MOEF_environment_clearance').hide();
                 }
             	if($('#nocAppl').length > 0)
                 {
