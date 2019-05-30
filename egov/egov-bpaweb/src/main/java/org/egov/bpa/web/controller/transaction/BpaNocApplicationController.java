@@ -127,12 +127,12 @@ public class BpaNocApplicationController {
 		bpaUtils.updateNocPortalUserinbox(bpaNocApplication, null);
 		if(workFlowAction.equalsIgnoreCase(BpaConstants.NOC_APPROVED))
 			redirectAttributes.addFlashAttribute("message",
-                "Noc Application is approved with application number " + bpaNocApplication.getBpaApplication().getApplicationNumber() + ".");
+                "Noc Application is approved with application number " + bpaNocApplication.getNocApplicationNumber() + ".");
 		else
 			redirectAttributes.addFlashAttribute("message",
 	            "Noc Application is rejected with " + bpaNocApplication.getNocApplicationNumber() + ".");
 		
-        return "redirect:/nocapplication/success/" + bpaNocApplication.getNocType()+"~"+bpaNocApplication.getBpaApplication().getApplicationNumber();
+        return "redirect:/nocapplication/success/" + bpaNocApplication.getNocApplicationNumber();
 	}
 	
 	@RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
