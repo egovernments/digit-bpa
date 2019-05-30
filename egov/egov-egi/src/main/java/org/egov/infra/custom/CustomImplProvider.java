@@ -33,7 +33,7 @@ public class CustomImplProvider {
 		LOG.info("Getting city Details");
 		Map<String, String> cityDetails = new HashMap<>();
 		try {
-			
+
 			cityDetails.put(ULB_CODE, ApplicationThreadLocals.getCityCode());
 			City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
 			cityDetails.put(ULB_NAME, city.getName());
@@ -41,11 +41,11 @@ public class CustomImplProvider {
 			cityDetails.put(DISTRICT_NAME, city.getDistrictName());
 			cityDetails.put(STATE_NAME, city.getDistrictName());
 			cityDetails.put(GRADE, city.getGrade());
-		    
+
 			LOG.info(cityDetails);
-			
+
 		} catch (Exception e) {
-			
+
 			LOG.error("Error while getting city Details", e);
 		}
 
@@ -91,30 +91,29 @@ public class CustomImplProvider {
 				String serviceName = c.getClass().getSimpleName().toLowerCase();
 				if (!serviceName.contains(parentClazz.getSimpleName().toLowerCase())) {
 					continue;
-
 				}
 
-				if (serviceName.contains(ApplicationThreadLocals.getCityName().toLowerCase())) {
+				if (!ApplicationThreadLocals.getCityName().isEmpty()
+						&& serviceName.contains(ApplicationThreadLocals.getCityName().toLowerCase())) {
 					ulbBean = c;
 					break;
 				}
-				if (serviceName.contains(ApplicationThreadLocals.getDistrictName().toLowerCase())) {
+				if (!ApplicationThreadLocals.getDistrictName().isEmpty()
+						&& serviceName.contains(ApplicationThreadLocals.getDistrictName().toLowerCase())) {
 					if (serviceName.contains("District".toLowerCase())) {
-					districtBean = c;
+						districtBean = c;
 					}
-
 				}
 
-				if (serviceName.contains(ApplicationThreadLocals.getStateName().toLowerCase())) {
+				if (!ApplicationThreadLocals.getStateName().isEmpty()
+						&& serviceName.contains(ApplicationThreadLocals.getStateName().toLowerCase())) {
 					stateBean = c;
-
 				}
 
-				if (serviceName.contains(ApplicationThreadLocals.getGrade().toLowerCase())) {
+				if (!ApplicationThreadLocals.getGrade().isEmpty()
+						&& serviceName.contains(ApplicationThreadLocals.getGrade().toLowerCase())) {
 					gradeBean = c;
-
 				}
-
 			}
 
 			if (ulbBean != null) {
@@ -147,8 +146,7 @@ public class CustomImplProvider {
 
 		} catch (BeansException e) {
 			LOG.error("No Bean Defined for the Rule " + parentClazz, e);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			LOG.error("Exception in finding bean" + parentClazz, e);
 		}
 		return bean;

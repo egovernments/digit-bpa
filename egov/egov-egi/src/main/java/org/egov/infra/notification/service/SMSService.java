@@ -51,7 +51,6 @@ package org.egov.infra.notification.service;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -66,9 +65,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,6 +75,7 @@ import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
 @Service
 public class SMSService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SMSService.class);
+
     private static final String SMS_PRIORITY_PARAM_VALUE = "sms.%s.priority.param.value";
 
     @Autowired
@@ -117,12 +114,6 @@ public class SMSService {
     @Value("${sms.message.req.param.name}")
     private String messageReqParamName;
 
-    @Value("${sms.type.req.param.name}")
-    private String messageTypeParamName;
-
-    @Value("${sms.message.secure.key}")
-    private String messageSecureKey;
-
     @Value("#{'${sms.extra.req.params}'.split('&')}")
     private List<String> extraRequestParams;
 
@@ -134,36 +125,21 @@ public class SMSService {
     }
 
     public boolean sendSMS(String mobileNumber, String message, NotificationPriority priority) {
-        String encryptedPassword;
         try {
             HttpClient client = HttpClientBuilder.create().build();
             HttpPost post = new HttpPost(smsProviderURL);
             List<NameValuePair> urlParameters = new ArrayList<>();
-            encryptedPassword = MD5(senderPassword);
-            String genratedhashKey = hashGenerator(senderUserName, sender, message, messageSecureKey);
             urlParameters.add(new BasicNameValuePair(senderUserNameReqParamName, senderUserName));
-            urlParameters.add(new BasicNameValuePair(senderPasswordReqParamName, encryptedPassword));
+            urlParameters.add(new BasicNameValuePair(senderPasswordReqParamName, senderPassword));
             urlParameters.add(new BasicNameValuePair(senderReqParamName, sender));
             urlParameters.add(new BasicNameValuePair(mobileNumberReqParamName, countryCode() + mobileNumber));
-            urlParameters.add(new BasicNameValuePair(messageTypeParamName, "singlemsg"));
             urlParameters.add(new BasicNameValuePair(messageReqParamName, message));
-            urlParameters.add(new BasicNameValuePair("key", genratedhashKey));
             setAdditionalParameters(urlParameters, priority);
-            LOGGER.info("impl sms urlParameters = " +  urlParameters.toArray());
             post.setEntity(new UrlEncodedFormEntity(urlParameters, encoding()));
             HttpResponse response = client.execute(post);
             String responseCode = IOUtils.toString(response.getEntity().getContent(), encoding());
-            LOGGER.info("impl sms response = " + responseCode);
-
             return smsErrorCodes.parallelStream().noneMatch(responseCode::startsWith);
-
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("Error occurred while sending SMS [%s]", e);
-        } catch (UnsupportedEncodingException e) {
-            LOGGER.error("Error occurred while sending SMS [%s]", e);
-        } catch (ClientProtocolException e) {
-            LOGGER.error("Error occurred while sending SMS [%s]", e);
-        } catch (IOException e) {
+        } catch (UnsupportedOperationException | IOException e) {
             LOGGER.error("Error occurred while sending SMS [%s]", e);
         }
         return false;
@@ -179,54 +155,8 @@ public class SMSService {
 
         if (smsPriorityEnabled) {
             urlParameters.add(new BasicNameValuePair(smsPriorityParamName,
-                    environment.getProperty(String.format(SMS_PRIORITY_PARAM_VALUE, priority.toString()))));
+                    environment.getProperty(String.format(SMS_PRIORITY_PARAM_VALUE, priority.toString()))
+            ));
         }
-    }
-
-    private static String MD5(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        MessageDigest md;
-        md = MessageDigest.getInstance("SHA-1");
-        byte[] md5 = new byte[64];
-        md.update(text.getBytes("iso-8859-1"), 0, text.length());
-        md5 = md.digest();
-        return convertedToHex(md5);
-    }
-
-    protected String hashGenerator(String userName, String senderId, String content, String secureKey) {
-        StringBuilder finalString = new StringBuilder();
-        finalString.append(userName.trim()).append(senderId.trim()).append(content.trim()).append(secureKey.trim());
-        String hashGen = finalString.toString();
-        StringBuilder sb = new StringBuilder();
-        MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("SHA-512");
-            md.update(hashGen.getBytes());
-            byte byteData[] = md.digest();
-            for (int i = 0; i < byteData.length; i++) {
-                sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-            }
-
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("Error occurred while Hash Generator [%s]", e);
-        }
-        return sb.toString();
-    }
-
-    private static String convertedToHex(byte[] data) {
-        StringBuilder buf = new StringBuilder();
-
-        for (int i = 0; i < data.length; i++) {
-            int halfOfByte = (data[i] >>> 4) & 0x0F;
-            int twoHalfBytes = 0;
-            do {
-                if ((0 <= halfOfByte) && (halfOfByte <= 9)) {
-                    buf.append((char) ('0' + halfOfByte));
-                } else {
-                    buf.append((char) ('a' + (halfOfByte - 10)));
-                }
-                halfOfByte = data[i] & 0x0F;
-            } while (twoHalfBytes++ < 1);
-        }
-        return buf.toString();
     }
 }

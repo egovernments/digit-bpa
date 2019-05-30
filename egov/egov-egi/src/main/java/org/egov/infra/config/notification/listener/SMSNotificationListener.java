@@ -48,36 +48,55 @@
 
 package org.egov.infra.config.notification.listener;
 
-import org.egov.infra.notification.entity.NotificationPriority;
-import org.egov.infra.notification.service.SMSService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.support.JmsUtils;
-import org.springframework.stereotype.Component;
+import static org.egov.infra.notification.NotificationConstants.MESSAGE;
+import static org.egov.infra.notification.NotificationConstants.MOBILE;
+import static org.egov.infra.notification.NotificationConstants.PRIORITY;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 
-import static org.egov.infra.notification.NotificationConstants.MESSAGE;
-import static org.egov.infra.notification.NotificationConstants.MOBILE;
-import static org.egov.infra.notification.NotificationConstants.PRIORITY;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.custom.CustomImplProvider;
+import org.egov.infra.notification.entity.NotificationPriority;
+import org.egov.infra.notification.service.SMSService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.JmsUtils;
+import org.springframework.stereotype.Component;
 
 @Component
 public class SMSNotificationListener {
 
-    @Autowired
-    private SMSService smsService;
+	@Autowired
+	private SMSService smsService;
 
-    @JmsListener(destination = "java:/jms/queue/sms")
-    public void processMessage(Message message) {
-        try {
-            final MapMessage emailMessage = (MapMessage) message;
-            smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
-                    NotificationPriority.valueOf(emailMessage.getString(PRIORITY)));
-        } catch (final JMSException e) {
-            throw JmsUtils.convertJmsAccessException(e);
-        }
-    }
+	@Autowired
+	private CustomImplProvider customImplProvider;
+
+	@Value("${client.id}")
+	private String clientId;
+
+	@JmsListener(destination = "java:/jms/queue/sms")
+	public void processMessage(Message message) {
+		try {
+			final MapMessage emailMessage = (MapMessage) message;
+			prepareThreadLocal();
+			smsService = (SMSService) customImplProvider.find(SMSService.class, customImplProvider.getCityDetails());
+			smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
+					NotificationPriority.valueOf(emailMessage.getString(PRIORITY)));
+		} catch (final JMSException e) {
+			throw JmsUtils.convertJmsAccessException(e);
+		}
+	}
+
+	private void prepareThreadLocal() {
+		ApplicationThreadLocals.setCityCode("");
+		ApplicationThreadLocals.setCityName("");
+		ApplicationThreadLocals.setDistrictName("");
+		ApplicationThreadLocals.setGrade("");
+		ApplicationThreadLocals.setStateName(clientId);
+	}
 
 }
