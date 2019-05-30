@@ -72,7 +72,7 @@ import static org.egov.infra.config.core.LocalizationSettings.countryCode;
 import static org.egov.infra.config.core.LocalizationSettings.encoding;
 import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
 
-@Service
+@Service (value="smsService")
 public class SMSService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SMSService.class);
 
