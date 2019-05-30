@@ -52,6 +52,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <form:form role="form" modelAttribute="bpaNocApplication" id="editNocApplicationForm"
  action="/bpa/nocapplication/updateNoc/${bpaNocApplication.nocType}~${bpaNocApplication.bpaApplication.applicationNumber}"
@@ -63,29 +65,65 @@
 <div class="row">
 	<div class="col-md-12">		
 		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-			<div id="appliccation-info" class="tab-pane fade in active">
+			<ul class="nav nav-tabs" id="settingstab">
+				<li class="active"><a data-toggle="tab" href="#application-info"
+									  data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
+				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
+						code='title.documentdetail' /></a></li>
+			</ul>
+			
+			<div class="tab-content">
+			
+			<div id="document-info" class="tab-pane fade">
+					<div class="panel panel-primary dcrDocuments" data-collapsed="0">
+							<jsp:include page="noc-dcr-documentdetails.jsp"></jsp:include>
+					</div>
 					<div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="permit-application-details.jsp"></jsp:include>
+						<jsp:include page="noc-bpaDocumentdetails.jsp"></jsp:include>
 					</div>
-					<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
-						<jsp:include page="../application/edcr-application-details-form.jsp"></jsp:include>
+			</div>
+			<div id="application-info" class="tab-pane fade in active">
+					<div class="panel panel-primary docdetails" data-collapsed="0">  
+		    	       <div class="panel-heading custom_form_panel_heading">				
+			                <div class="panel-title"><spring:message code="lbl.noc.details"/></div>
+							</div>	  	
+						<div class="form-group">
+							    
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.application.number" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out value="${bpaNocApplication.nocApplicationNumber}"
+									default="N/A"></c:out>
+							</div>
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.noc.app.date" />
+							</div>
+							<fmt:formatDate value="${bpaNocApplication.createdDate}"
+								  pattern="dd/MM/yyyy" var="applicationDate" />	
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out value="${applicationDate}"
+									default="N/A"></c:out>
+							</div>
+						</div>
+						<div class="form-group">
+						
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.noc.status" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out value="${bpaNocApplication.status.code}"
+									default="N/A"></c:out>
+							</div>							
+						</div>	
 					</div>
-				
-				    <div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="noc-sitedetails.jsp"></jsp:include>
-					</div>
-					<div class="panel panel-primary buildingdetails" data-collapsed="0">
-						<jsp:include page="noc-building-details.jsp"></jsp:include>
-					</div>					
-    	    </div>  	    
-			 
-		
-			 
-			 <div id="nocdoc-info" class="tab-pane fade in active">
+					
+					
+					<div id="nocdoc-info" class="tab-pane fade in active">
 			 		<div class="panel panel-primary" data-collapsed="0">
 			 
 			 			<div class="panel-heading custom_form_panel_heading">				
-	                		<div class="panel-title">${bpaNocApplication.nocType} Document</div>
+	                		<div class="panel-title"><spring:message code="lbl.noc.existing.doc" /></div>
 						</div>		
 							<c:forEach
 								var="bpanoc" items="${nocDocs.nocDocument.nocSupportDocs}" varStatus="loop">
@@ -96,12 +134,11 @@
 								</c:if>
 							</c:forEach>	
 					</div>			
-    	    </div>
-			 
-			 
-    	    <div class="panel panel-primary docdetails" data-collapsed="0">    	    
+    	         </div>
+    	         
+    	         <div class="panel panel-primary docdetails" data-collapsed="0">    	    
     	            <div class="panel-heading custom_form_panel_heading">				
-	                	<div class="panel-title">Document Upload</div>
+	                	<div class="panel-title">${bpaNocApplication.nocType} <spring:message code="lbl.noc.dept.doc" /></div>
 					</div>									
                     <label class="col-sm-3 control-label text-right">Upload file</span></label>
 		            <div class="files-upload-container nocdoc"
@@ -154,6 +191,26 @@
 							</div>
 						</div>
 			 </div>	
+			 
+			 
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="permit-application-details.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
+						<jsp:include page="../application/edcr-application-details-form.jsp"></jsp:include>
+					</div>
+				
+				    <div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="noc-sitedetails.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary buildingdetails" data-collapsed="0">
+						<jsp:include page="noc-building-details.jsp"></jsp:include>
+					</div>					
+    	    </div>  	    
+			 
+		
+			 
+			
     	     <div class="panel panel-primary docdetails" data-collapsed="0">  
     	     <div class="panel-heading custom_form_panel_heading">				
 	                	<div class="panel-title">Comments</div>
@@ -182,7 +239,7 @@
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>" /> 
                 <input	type="hidden" id="rejectApplication" value="<spring:message code='msg.confirm.intiate.rejection.forappln'/>" />                  
 			</div>
-</div>
+</div></div>
 </form:form>
 
 	

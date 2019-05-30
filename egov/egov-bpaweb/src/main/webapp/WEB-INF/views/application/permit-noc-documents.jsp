@@ -101,7 +101,7 @@
 							<c:set var="checklistName"
 								value="${stat.first ? '' : checklistName}_${splittedString}" />
 						</c:forTokens>
-					<td style="font-size: 100%;"><c:out
+					<td width ="15%" style="font-size: 100%;"><c:out
 							value="${doc.nocDocument.serviceChecklist.checklist.description}"></c:out> 
 							<span class="mandatory ${checklistName}" style="display:none"></span>
 					</td>
@@ -233,10 +233,8 @@
 						</td>
 					</c:if>
 					<c:if test="${not empty nocApplication}">		
-					  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">	
-						<input type="hidden" id="nocst" value="${nocapp.status.code }"/>
-									
-						<td class="tdstatus" style="font-size: 100%;">
+					  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">										
+						<td class="view-content tdstatus" style="font-size: 97%;">												
 							<fmt:formatDate value="${nocapp.lastModifiedDate}"
 								  pattern="dd/MM/yyyy" var="applicationDate" />						
 								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">		
@@ -246,18 +244,13 @@
 		                                ${nocapp.nocApplicationNumber}
 	                                </a><br/>						  
 									${nocapp.status.code} <br/>
-									 Date: ${applicationDate} <br />
-								
-									 Attachments: <br/> <c:forEach	var="bpanoc" items="${nocapp.nocSupportDocs}" varStatus="loop">								    
-									           <c:set value="true" var="isDocFound"></c:set>
-									          <a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
-									          data-gallery>${loop.index +1} - ${bpanoc.fileName} </a><br />
-												
-										</c:forEach>
-										Remarks :	${nocapp.remarks}							
-									</c:if>
+									${applicationDate} <br />							
+                                    <c:if test="${not empty nocapp.remarks}">																	
+									  Remarks : ${nocapp.remarks}
+								    </c:if>										
+								  </c:if>
 						</td>	
-						<td class="tdsla" style="display:none">		
+						<td class="view-content tdsla" style="font-size: 97%;">												
 							 <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">					  
 							    <fmt:formatDate value="${nocapp.slaEndDate}"
 								pattern="dd/MM/yyyy" var="slaDate" />
@@ -265,9 +258,8 @@
 							</c:if>				   						
 						</td>	
 						
-						<td class="tdda" style="display:none">		
-						    <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">								  
-										
+						<td class="view-content tdda" style="font-size: 97%;">												
+						    <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">								  							
 							  <fmt:formatDate value="${nocapp.deemedApprovedDate}"
 								pattern="dd/MM/yyyy" var="dadate" />
 								<span style="font-weight:bold">${dadate}<br />		</span>		
