@@ -804,6 +804,9 @@ $(document).ready(
                 }
             }
             if(planInformation.nocFireDept === 'YES'){
+            	$('#APPROVED').attr('disabled',true);
+            	$('#REJECTED').attr('disabled',true);
+
                 $('span.mandatory._NOC_from_Fire_Authority').show();
                 if($('button.btn_NOC_from_Fire_Authority').length==1){
                 	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||

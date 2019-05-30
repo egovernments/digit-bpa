@@ -47,7 +47,7 @@
 package org.egov.bpa.transaction.entity.enums;
 
 public enum NocStatus {
-    ALREADY_AVAILABLE("Already Available"), ACKNOWLEDGED("Acknowledged"), PENDING_WITH_DEPARTMENT("Pending With Department"), REJECTED("Rejected"), NOT_REQUIRED("Not Required");
+    ALREADY_AVAILABLE("Already Available"), ACKNOWLEDGED("Acknowledged"), PENDING_WITH_DEPARTMENT("Pending With Department"), REJECTED("Rejected"), NOT_REQUIRED("Not Required"), APPROVED("Approved");
 
     private String nocStatusVal;
 

@@ -47,6 +47,7 @@
 package org.egov.bpa.web.controller.transaction;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.bpa.utils.BpaConstants.AIRPORTNOCTYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DIGI_SIGNED;
@@ -65,7 +66,9 @@ import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BPA_APPLICATION;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_AE;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_OVERSEER;
+import static org.egov.bpa.utils.BpaConstants.ENVNOCTYPE;
 import static org.egov.bpa.utils.BpaConstants.FIELD_INSPECTION_COMPLETED;
+import static org.egov.bpa.utils.BpaConstants.FIRENOCTYPE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_NOC_UPDATE;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
@@ -77,8 +80,10 @@ import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.GENERATEPERMITORDER;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREVOCATIONNOTICE;
+import static org.egov.bpa.utils.BpaConstants.IRRNOCTYPE;
 import static org.egov.bpa.utils.BpaConstants.LOWRISK;
 import static org.egov.bpa.utils.BpaConstants.MESSAGE;
+import static org.egov.bpa.utils.BpaConstants.NMANOCTYPE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_CREATED_STATE;
@@ -93,13 +98,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_APPROVAL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
-import static org.egov.bpa.utils.BpaConstants.FIRENOCTYPE;
-import static org.egov.bpa.utils.BpaConstants.AIRPORTNOCTYPE;
-import static org.egov.bpa.utils.BpaConstants.NMANOCTYPE;
-import static org.egov.bpa.utils.BpaConstants.ENVNOCTYPE;
-import static org.egov.bpa.utils.BpaConstants.IRRNOCTYPE;
-
-
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -145,6 +143,7 @@ import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.DcrRestService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
+import org.egov.bpa.transaction.service.NocStatusService;
 import org.egov.bpa.transaction.service.PermitFeeService;
 import org.egov.bpa.transaction.service.PermitRevocationService;
 import org.egov.bpa.utils.BpaConstants;
@@ -223,6 +222,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 	private BpaStatusService statusService;
 	@Autowired
 	private DcrRestService drcRestService;
+	@Autowired
+	private NocStatusService nocStatusService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -592,6 +593,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         } else if (FORWARDED_TO_NOC_UPDATE.equalsIgnoreCase(pendingAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus)) {
             model.addAttribute("showUpdateNoc", true);
+            nocStatusService.updateNocStatus(application);
         } else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(pendingAction)
                 && !application.getPermitInspections().isEmpty() && !application.getApplicationType().getName().equals(LOWRISK))
             mode = "initiatedForApproval";

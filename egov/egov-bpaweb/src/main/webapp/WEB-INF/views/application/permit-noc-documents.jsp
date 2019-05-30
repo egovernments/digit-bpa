@@ -100,6 +100,8 @@
 							delims="\ ()" varStatus="stat">
 							<c:set var="checklistName"
 								value="${stat.first ? '' : checklistName}_${splittedString}" />
+							<c:set var="statusName"
+								value="${doc.nocDocument.nocStatus}" />
 						</c:forTokens>
 					<td width ="15%" style="font-size: 100%;"><c:out
 							value="${doc.nocDocument.serviceChecklist.checklist.description}"></c:out> 
@@ -135,7 +137,9 @@
 						<form:errors
 							path="permitNocDocuments[${status.index}].nocDocument.replyReceivedOn"
 							cssClass="add-margin error-msg" /></td>
-					<td class="hide"><form:select
+					<td class="hide">
+					<div class="input-group}">
+					<form:select id="${statusName}"
 							path="permitNocDocuments[${status.index}].nocDocument.nocStatus"
 							cssClass="form-control nocStatus"
 							cssErrorClass="form-control error">
@@ -145,7 +149,9 @@
 							<form:options items="${nocStatusList}" itemLabel="nocStatusVal" />
 						</form:select> <form:errors
 							path="permitNocDocuments[${status.index}].nocDocument.nocStatus"
-							cssClass="error-msg" /></td>
+							cssClass="error-msg" />
+					</div>
+					</td>
 					<td>
 						<div class="input-group">
 							<form:textarea
