@@ -105,9 +105,12 @@ public class BpaNocApplicationReportService {
 			criteria.add(Restrictions.eq("nocApplication.nocApplicationNumber", nocDetailsHelper.getNocApplicationNumber()));
 		}
 		if (nocDetailsHelper.getNocApplicationDate() != null) {
-			criteria.add(Restrictions.eq("nocApplication.createdDate",
-					resetToDateTimeStamp(nocDetailsHelper.getNocApplicationDate())));
+			criteria.add(Restrictions.ge("nocApplication.createdDate",nocDetailsHelper.getNocApplicationDate()));
 		}
+		if (nocDetailsHelper.getNocApplicationDate() != null) {
+			criteria.add(Restrictions.le("nocApplication.createdDate",resetToDateTimeStamp(nocDetailsHelper.getNocApplicationDate())));
+		}
+		
 		if (nocDetailsHelper.getPermitApplicationNo() != null) {
 			criteria.createAlias("nocApplication.bpaApplication", "application")
 					.add(Restrictions.eq("application.applicationNumber", nocDetailsHelper.getPermitApplicationNo()));
