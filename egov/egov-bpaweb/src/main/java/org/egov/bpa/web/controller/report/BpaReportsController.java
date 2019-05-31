@@ -41,6 +41,7 @@ package org.egov.bpa.web.controller.report;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
+import static org.egov.bpa.utils.BpaConstants.NOCMODULE;
 import static org.egov.bpa.utils.BpaConstants.OCCUPANCY_CERTIFICATE_NOTICE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.WARD;
@@ -57,17 +58,21 @@ import java.util.stream.Collectors;
 
 import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.service.ApplicationSubTypeService;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.master.service.ServiceTypeService;
+import org.egov.bpa.transaction.entity.dto.NocDetailsHelper;
 import org.egov.bpa.transaction.entity.dto.PersonalRegisterHelper;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationReport;
 import org.egov.bpa.transaction.entity.dto.SlotDetailsHelper;
 import org.egov.bpa.transaction.service.FailureInSchedulerService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
+import org.egov.bpa.transaction.service.report.BpaNocApplicationReportService;
 import org.egov.bpa.transaction.service.report.BpaReportsService;
 import org.egov.bpa.transaction.service.report.PersonalRegisterReportService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.adaptor.BpaRegisterReportAdaptor;
+import org.egov.bpa.web.controller.adaptor.NocDetailsAdaptor;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationFormAdaptor;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationReportAdaptor;
 import org.egov.bpa.web.controller.adaptor.SearchPersonalRegisterAdaptor;
@@ -127,6 +132,10 @@ public class BpaReportsController extends BpaGenericApplicationController {
 	private ApplicationSubTypeService applicationTypeService;
 	@Autowired
 	private PersonalRegisterReportService personalRegisterReportService;
+	@Autowired
+	private NocConfigurationService nocConfigService;
+	@Autowired
+	private BpaNocApplicationReportService nocReportService;
 
 	@RequestMapping(value = "/servicewise-statusreport", method = RequestMethod.GET)
 	public String searchStatusCountByServicetypeForm(final Model model) {
@@ -359,7 +368,25 @@ public class BpaReportsController extends BpaGenericApplicationController {
 				searchBpaApplicationForm.draw())
 				.toJson(BpaRegisterReportAdaptor.class);
 	}
-
-
+	
+	
+	@RequestMapping(value = "/nocclearance", method = RequestMethod.GET)
+	public String searchNocClearanceForm(final Model model) {
+		model.addAttribute("nocDetailsHelper", new NocDetailsHelper());
+		model.addAttribute("nocTypes",nocConfigService.findAll());
+		model.addAttribute("nocStatus",bpaStatusService.findAllByModuleType(NOCMODULE));
+		return "noc-clearance-report";
+	}
+	
+	@RequestMapping(value = "/nocclearance", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String getNocClearanceResult(@ModelAttribute final NocDetailsHelper nocDetailsHelper) {
+		final List<NocDetailsHelper> searchResultList = nocReportService.searchNocDetails(nocDetailsHelper);
+		return new StringBuilder(DATA)
+				.append(toJSON(searchResultList, NocDetailsHelper.class, NocDetailsAdaptor.class))
+				.append("}")
+				.toString();
+		
+	}
 }
 

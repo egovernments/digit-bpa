@@ -2,7 +2,7 @@
  * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *  Copyright (C) <2018>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -45,36 +45,69 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.bpa.transaction.service;
+package org.egov.bpa.transaction.entity.dto;
 
-import java.util.List;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.repository.BpaStatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Date;
 
-@Service
-@Transactional(readOnly = true)
-public class BpaStatusService {
+public class NocDetailsHelper extends DataTableSearchRequest {
+	private Long nocStatusId;
+	private Date nocApplicationDate;
+	private String nocApplicationNumber;
+	private String permitApplicationNo;
+	private String thirdPartyApplicationNo;
+	private String nocDepartmentName;
+	private String nocStatusName;
+	private Date statusUpdatedDate;
+	
 
-    private final BpaStatusRepository bpaStatusRepository;
-
-    @Autowired
-    public BpaStatusService(final BpaStatusRepository bpaStatusRepository) {
-        this.bpaStatusRepository = bpaStatusRepository;
-    }
-
-    public BpaStatus findByModuleTypeAndCode(final String moduleType, final String code) {
-        return bpaStatusRepository.findByModuleTypeContainingIgnoreCaseAndCode(moduleType, code);
-    }
-
-    public List<BpaStatus> findAll() {
-        return bpaStatusRepository.findAll();
-    }
-    
-    public List<BpaStatus> findAllByModuleType(String moduleType) {
-        return bpaStatusRepository.findByModuleTypeAndIsActiveTrueOrderByCodeAsc(moduleType);
-    }
+	public Long getNocStatusId() {
+		return nocStatusId;
+	}
+	public void setNocStatusId(Long nocStatusId) {
+		this.nocStatusId = nocStatusId;
+	}
+	public Date getNocApplicationDate() {
+		return nocApplicationDate;
+	}
+	public void setNocApplicationDate(Date nocApplicationDate) {
+		this.nocApplicationDate = nocApplicationDate;
+	}
+	public String getNocApplicationNumber() {
+		return nocApplicationNumber;
+	}
+	public void setNocApplicationNumber(String nocApplicationNumber) {
+		this.nocApplicationNumber = nocApplicationNumber;
+	}
+	public String getPermitApplicationNo() {
+		return permitApplicationNo;
+	}
+	public void setPermitApplicationNo(String permitApplicationNo) {
+		this.permitApplicationNo = permitApplicationNo;
+	}
+	public String getThirdPartyApplicationNo() {
+		return thirdPartyApplicationNo;
+	}
+	public void setThirdPartyApplicationNo(String thirdPartyApplicationNo) {
+		this.thirdPartyApplicationNo = thirdPartyApplicationNo;
+	}
+	public String getNocDepartmentName() {
+		return nocDepartmentName;
+	}
+	public void setNocDepartmentName(String nocDepartmentName) {
+		this.nocDepartmentName = nocDepartmentName;
+	}
+	public String getNocStatusName() {
+		return nocStatusName;
+	}
+	public void setNocStatusName(String nocStatusName) {
+		this.nocStatusName = nocStatusName;
+	}
+	public Date getStatusUpdatedDate() {
+		return statusUpdatedDate;
+	}
+	public void setStatusUpdatedDate(Date statusUpdatedDate) {
+		this.statusUpdatedDate = statusUpdatedDate;
+	} 
 }

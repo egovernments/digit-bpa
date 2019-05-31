@@ -865,5 +865,12 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/view-noc-details.jsp" />
 	</definition>
+	
+	<definition name="noc-clearance-report" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.report.noc.clearance" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/noc-clearance-report.jsp" />
+	</definition>
 
 </tiles-definitions>

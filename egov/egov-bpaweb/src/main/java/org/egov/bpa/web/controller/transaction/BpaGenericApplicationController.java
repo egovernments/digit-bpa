@@ -50,6 +50,7 @@ import static org.egov.bpa.utils.BpaConstants.ADMINISTRATION_HIERARCHY_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
 import static org.egov.bpa.utils.BpaConstants.DCR_DOC_AUTO_POPULATE_AND_MANUAL_UPLOAD;
 import static org.egov.bpa.utils.BpaConstants.DCR_DOC_AUTO_POPULATE_UPLOAD;
@@ -222,7 +223,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
                 slotMappingApplTypes.add(applType);
 
         model.addAttribute("slotMappingApplTypes", slotMappingApplTypes);
-        model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType());
+        model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType(BPASTATUS_MODULETYPE));
         model.addAttribute("schemesList", bpaSchemeService.findAll());
         model.addAttribute("oneDayPermitLandTypeList", Arrays.asList(OneDayPermitLandType.values()));
         List<ApplicationSubType> appTyps = applicationTypeService.getAllEnabledApplicationTypes();

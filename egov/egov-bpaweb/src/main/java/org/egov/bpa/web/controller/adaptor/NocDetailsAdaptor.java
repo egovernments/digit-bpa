@@ -45,36 +45,32 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.bpa.transaction.service;
+package org.egov.bpa.web.controller.adaptor;
 
-import java.util.List;
 
-import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.repository.BpaStatusRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.lang.reflect.Type;
 
-@Service
-@Transactional(readOnly = true)
-public class BpaStatusService {
+import org.egov.bpa.transaction.entity.dto.NocDetailsHelper;
+import org.egov.infra.utils.DateUtils;
 
-    private final BpaStatusRepository bpaStatusRepository;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
-    @Autowired
-    public BpaStatusService(final BpaStatusRepository bpaStatusRepository) {
-        this.bpaStatusRepository = bpaStatusRepository;
-    }
 
-    public BpaStatus findByModuleTypeAndCode(final String moduleType, final String code) {
-        return bpaStatusRepository.findByModuleTypeContainingIgnoreCaseAndCode(moduleType, code);
-    }
-
-    public List<BpaStatus> findAll() {
-        return bpaStatusRepository.findAll();
-    }
-    
-    public List<BpaStatus> findAllByModuleType(String moduleType) {
-        return bpaStatusRepository.findByModuleTypeAndIsActiveTrueOrderByCodeAsc(moduleType);
-    }
+public class NocDetailsAdaptor implements JsonSerializer<NocDetailsHelper> {
+	@Override
+	public JsonElement serialize(final NocDetailsHelper noc, final Type type,
+								 final JsonSerializationContext jsc) {
+			final JsonObject jsonObject = new JsonObject();
+			jsonObject.addProperty("nocStatusId", noc.getNocStatusId());
+			jsonObject.addProperty("nocApplicationDate", DateUtils.toDefaultDateFormat(noc.getNocApplicationDate()));
+			jsonObject.addProperty("nocApplicationNumber", noc.getNocApplicationNumber());
+			jsonObject.addProperty("permitApplicationNo", noc.getPermitApplicationNo());
+			jsonObject.addProperty("nocDepartmentName", noc.getNocDepartmentName());
+			jsonObject.addProperty("nocStatusName", noc.getNocStatusName());
+			jsonObject.addProperty("statusUpdatedDate", DateUtils.toDefaultDateFormat(noc.getStatusUpdatedDate()));
+		return jsonObject;
+	}
 }
