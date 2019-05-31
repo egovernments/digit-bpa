@@ -98,10 +98,12 @@ public class ViewInspectionController {
         PermitInspection inspectionObj = permitInspn.get(0);
         model.addAttribute(PERMIT_INSPECTION, inspectionObj);
         model.addAttribute("message", "Inspection Saved Successfully");
+        final InspectionService inspectionService = (InspectionService) specificNoticeService
+                .find(InspectionService.class, specificNoticeService.getCityDetails());
         inspectionService.buildDocketDetailForModifyAndViewList(inspectionObj, model);
         inspectionService.prepareImagesForView(inspectionObj);
         model.addAttribute(PERMIT_INSPECTION, inspectionObj);
-        buildPlanScrutinyChecklistDetails(inspectionObj);
+        inspectionService.buildPlanScrutinyChecklistDetails(inspectionObj);
         return INSPECTION_RESULT;
     }
 
@@ -113,10 +115,12 @@ public class ViewInspectionController {
             dockeDetList = permitInspn.get(0).getInspection().getDocket().get(0).getDocketDetail();
         model.addAttribute("docketDetail", dockeDetList);
         PermitInspection inspectionObj = permitInspn.get(0);
+        final InspectionService inspectionService = (InspectionService) specificNoticeService
+                .find(InspectionService.class, specificNoticeService.getCityDetails());
         inspectionService.buildDocketDetailForModifyAndViewList(inspectionObj, model);
         inspectionService.prepareImagesForView(inspectionObj);
         model.addAttribute(PERMIT_INSPECTION, inspectionObj);
-        buildPlanScrutinyChecklistDetails(inspectionObj);
+        inspectionService.buildPlanScrutinyChecklistDetails(inspectionObj);
         return SHOW_INSPECTION_DETAILS;
     }
 
@@ -142,15 +146,6 @@ public class ViewInspectionController {
                 .header(CONTENT_DISPOSITION, String.format(INLINE_FILENAME,
                         append(prefixFileName, inspectionNumber) + PDFEXTN))
                 .body(new InputStreamResource(reportOutput.asInputStream()));
-    }
-
-    private void buildPlanScrutinyChecklistDetails(PermitInspection permitInspn) {
-        permitInspn.getInspection().getPlanScrutinyChecklistForRule().clear();
-        permitInspn.getInspection().setPlanScrutinyChecklistForRule(planScrutinyChecklistService
-                .findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
-        permitInspn.getInspection().getPlanScrutinyChecklistForDrawing().clear();
-        permitInspn.getInspection().setPlanScrutinyChecklistForDrawing(planScrutinyChecklistService
-                .findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS));
     }
 
 }

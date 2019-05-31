@@ -52,11 +52,11 @@
 <c:choose>
 	<c:when test="${!docketDetailLocList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.loc.of.plot"/></div>
+			<div class="panel-title"><c:out value="${docketDetailLocList[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -117,13 +117,13 @@
 </c:choose>
 
 <c:choose>
-	<c:when test="${!docketDetailMeasurementList.isEmpty()}">
+	<c:when test="${!docketDetailMeasurementList.isEmpty() }">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.meas.plot"/></div>
+			<div class="panel-title"><c:out value="${docketDetailMeasurementList[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -186,11 +186,11 @@
 <c:choose>
 	<c:when test="${!docketDetailAccessList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.access.to.plot"/></div>
+			<div class="panel-title"><c:out value="${docketDetailAccessList[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -254,11 +254,11 @@
 <c:choose>
 	<c:when test="${!docketDetailSurroundingPlotList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.surrnd.plot"/></div>
+			<div class="panel-title"><c:out value="${docketDetailSurroundingPlotList[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -321,11 +321,11 @@
 <c:choose>
 	<c:when test="${!docketDetailLandTypeList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.type.land"/></div>
+			<div class="panel-title"><c:out value="${docketDetailLandTypeList[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -387,11 +387,11 @@
 <c:choose>
 	<c:when test="${!docketDetailProposedWorkList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.stage.propsd.work"/></div>
+			<div class="panel-title"><c:out value="${docketDetailProposedWorkList[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -454,11 +454,11 @@
 <c:choose>
 	<c:when test="${!docketDetailWorkAsPerPlanList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.work.started"/></div>
+			<div class="panel-title"><c:out value="${docketDetailWorkAsPerPlanList[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -520,11 +520,11 @@
 <c:choose>
 	<c:when test="${!docketDetailHgtAbuttRoadList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.gen.prov.regrd.site"/></div>
+			<div class="panel-title"><c:out value="${docketDetailHgtAbuttRoadList[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -586,11 +586,11 @@
 <c:choose>
 	<c:when test="${!docketDetailAreaLoc.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.extnt.plot"/></div>
+			<div class="panel-title"><c:out value="${docketDetailAreaLoc[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.provided" /></div>
+			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -653,7 +653,7 @@
 <c:choose>
 	<c:when test="${!docketDetailLengthOfCompWall.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.len.wall"/></div>
+			<div class="panel-title"><c:out value="${docketDetailLengthOfCompWall[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
@@ -719,7 +719,7 @@
 <c:choose>
 	<c:when test="${!docketDetailNumberOfWell.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.no.wells"/></div>
+			<div class="panel-title"><c:out value="${docketDetailNumberOfWell[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
@@ -785,7 +785,7 @@
 <c:choose>
 	<c:when test="${!docketDetailShutter.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.shuter"/></div>
+			<div class="panel-title"><c:out value="${docketDetailShutter[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
@@ -851,7 +851,7 @@
 <c:choose>
 	<c:when test="${!docketDetailRoofConversion.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title"><spring:message code="lbl.roof.conversn"/></div>
+			<div class="panel-title"><c:out value="${docketDetailRoofConversion[0].serviceChecklist.checklist.checklistType.description}" /></div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>

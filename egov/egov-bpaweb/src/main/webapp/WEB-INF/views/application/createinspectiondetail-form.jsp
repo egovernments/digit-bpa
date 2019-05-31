@@ -60,7 +60,7 @@
 				<li class="active"><a data-toggle="tab" href="#inspn-details"
 					data-tabidx=0><spring:message code='lbl.inspn.details' /></a></li>
 				<c:if
-					test="${(not empty planScrutinyCheckList && not empty planScrutinyChecklistForDrawing) || (not empty permitInspection.inspection.planScrutinyChecklistForRuleTemp && not empty permitInspection.inspection.planScrutinyChecklistForDrawingTemp)}">
+					test="${(not empty planScrutinyCheckList || not empty planScrutinyChecklistForDrawing) || (not empty permitInspection.inspection.planScrutinyChecklistForRuleTemp || not empty permitInspection.inspection.planScrutinyChecklistForDrawingTemp)}">
 					<li><a data-toggle="tab" href="#plan-scrutiny-chklist"
 						data-tabidx=1><spring:message code='lbl.plan.scrutiny' /></a></li>
 				</c:if>
@@ -91,6 +91,16 @@
 								<jsp:include page="plan-scrutiny-checklist-rule.jsp"></jsp:include>
 							</div>
 						</div>
+						<div class="panel panel-primary" data-collapsed="0">
+							<div class="panel-body custom-form ">
+								<jsp:include page="plan-scrutiny-checklist-drawing.jsp"></jsp:include>
+							</div>
+						</div>
+					</div>
+				</c:if>
+					<c:if
+					test="${not empty planScrutinyChecklistForDrawing || not empty permitInspection.inspection.planScrutinyChecklistForDrawingTemp}">
+					<div id="plan-scrutiny-chklist" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
 							<div class="panel-body custom-form ">
 								<jsp:include page="plan-scrutiny-checklist-drawing.jsp"></jsp:include>

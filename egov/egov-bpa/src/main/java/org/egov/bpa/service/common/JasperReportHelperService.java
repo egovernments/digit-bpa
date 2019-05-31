@@ -169,7 +169,7 @@ public class JasperReportHelperService {
         columnheaderStyle.setBorderTop(Border.THIN());
         columnheaderStyle.setBorderBottom(Border.THIN());
         columnheaderStyle.setTextColor(Color.black);
-        columnheaderStyle.setHorizontalAlign(HorizontalAlign.CENTER);
+        columnheaderStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         columnheaderStyle.setVerticalAlign(VerticalAlign.MIDDLE);
         columnheaderStyle.setFont(new Font(9, Font._FONT_ARIAL, true));
         return columnheaderStyle;

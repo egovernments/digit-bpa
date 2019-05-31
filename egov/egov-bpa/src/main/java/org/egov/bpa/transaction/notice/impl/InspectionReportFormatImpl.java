@@ -333,6 +333,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         dd.setProvided(docketDet.getValue().getCheckListVal());
         dd.setRemarks(
                 docketDet.getRemarks() == null || docketDet.getRemarks().isEmpty() ? "NA" : docketDet.getRemarks());
+        dd.setCheckListType(docketDet.getServiceChecklist().getChecklist().getChecklistType().getDescription());
         return dd;
     }
 

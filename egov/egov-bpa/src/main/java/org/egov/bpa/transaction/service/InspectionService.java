@@ -64,6 +64,8 @@ import org.egov.bpa.transaction.entity.common.DocketCommon;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
+import org.egov.bpa.transaction.entity.common.PlanScrutinyChecklistCommon;
+import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.repository.InspectionRepository;
 import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
 import org.egov.bpa.utils.BpaConstants;
@@ -142,15 +144,16 @@ public class InspectionService {
 
     private void buildPlanScrutinyChecklistItems(final PermitInspection permitInspn) {
         InspectionCommon inspection = permitInspn.getInspection();
-        if (!inspection.getPlanScrutinyChecklistForRuleTemp().isEmpty()
-                && !inspection.getPlanScrutinyChecklistForDrawingTemp().isEmpty()) {
+        if (!inspection.getPlanScrutinyChecklistForRuleTemp().isEmpty()) {
             planScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklistForRule());
-            planScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklistForDrawing());
             inspection.getPlanScrutinyChecklistForRule().clear();
-            inspection.getPlanScrutinyChecklistForDrawing().clear();
             inspection.setPlanScrutinyChecklistForRule(inspection.getPlanScrutinyChecklistForRuleTemp());
-            inspection.setPlanScrutinyChecklistForDrawing(inspection.getPlanScrutinyChecklistForDrawingTemp());
             inspection.getPlanScrutinyChecklistForRule().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
+        }
+        if (!inspection.getPlanScrutinyChecklistForDrawingTemp().isEmpty()) {
+            planScrutinyChecklistService.delete(inspection.getPlanScrutinyChecklistForDrawing());
+            inspection.getPlanScrutinyChecklistForDrawing().clear();
+            inspection.setPlanScrutinyChecklistForDrawing(inspection.getPlanScrutinyChecklistForDrawingTemp());
             inspection.getPlanScrutinyChecklistForDrawing().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
         }
     }
@@ -437,5 +440,31 @@ public class InspectionService {
                         }
                     });
     }
+
+    public List<ChecklistServiceTypeMapping> buildPlanScrutiny(Long serviceTypeId){
+        return checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceTypeId, "PLANSCRUTINY");
+    }
+    
+    public List<ChecklistServiceTypeMapping> buildPlanScrutinyDrawing(Long serviceTypeId){
+        return checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceTypeId, "PLANSCRUTINYDRAWING");
+    }
+    
+   public List<PlanScrutinyChecklistCommon> getPlanScrutinyForRuleValidation(PermitInspection permitInspection){
+	   return planScrutinyChecklistService.findByInspectionAndScrutinyChecklistType(permitInspection.getInspection(), ScrutinyChecklistType.RULE_VALIDATION);
+   }
+   
+   public List<PlanScrutinyChecklistCommon> getPlanScrutinyForDrawingDetails(PermitInspection permitInspection){
+	   return planScrutinyChecklistService.findByInspectionAndScrutinyChecklistType(permitInspection.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS);
+   }
+   
+   public void buildPlanScrutinyChecklistDetails(PermitInspection permitInspn) {
+       permitInspn.getInspection().getPlanScrutinyChecklistForRule().clear();
+       permitInspn.getInspection().setPlanScrutinyChecklistForRule(planScrutinyChecklistService
+               .findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
+       permitInspn.getInspection().getPlanScrutinyChecklistForDrawing().clear();
+       permitInspn.getInspection().setPlanScrutinyChecklistForDrawing(planScrutinyChecklistService
+               .findByInspectionAndScrutinyChecklistType(permitInspn.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS));
+   }
+
 
 }

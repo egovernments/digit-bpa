@@ -51,7 +51,7 @@
 				href="#inspection-details" data-tabidx=0><spring:message
 						code='lbl.inspn.details' /></a></li>
 			<c:if
-				test="${not empty permitInspection.inspection.planScrutinyChecklistForRule && not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
+				test="${not empty permitInspection.inspection.planScrutinyChecklistForRule || not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
 				<li><a data-toggle="tab" href="#plan-scrutiny" data-tabidx=1><spring:message
 							code='lbl.plan.scrutiny' /></a></li>
 			</c:if>
@@ -174,7 +174,7 @@
 							</div>
 							<div class="col-sm-2 add-margin view-content bg-info">
 								<div class="panel-title text-info">
-									<spring:message code="lbl.doc.provided" />
+									<spring:message code="lbl.is.applicable" />
 								</div>
 							</div>
 							<div class="col-sm-5 add-margin view-content bg-info">
@@ -186,7 +186,7 @@
 						<c:if test="${not empty docketDetailLocList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.loc.of.plot" />
+									<c:out value="${docketDetailLocList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -210,7 +210,7 @@
 						<c:if test="${not empty docketDetailMeasurementList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.meas.plot" />
+									<c:out value="${docketDetailMeasurementList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -258,7 +258,7 @@
 						<c:if test="${not empty docketDetailSurroundingPlotList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.surrnd.plot" />
+									<c:out value="${docketDetailSurroundingPlotList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -282,7 +282,7 @@
 						<c:if test="${not empty docketDetailLandTypeList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.type.land" />
+									<c:out value="${docketDetailLandTypeList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -306,7 +306,7 @@
 						<c:if test="${not empty docketDetailProposedWorkList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.stage.propsd.work" />
+									<c:out value="${docketDetailProposedWorkList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -330,7 +330,7 @@
 						<c:if test="${not empty docketDetailWorkAsPerPlanList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.work.started" />
+									<c:out value="${docketDetailWorkAsPerPlanList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -354,7 +354,7 @@
 						<c:if test="${not empty docketDetailHgtAbuttRoadList}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.gen.prov.regrd.site" />
+									<c:out value="${docketDetailHgtAbuttRoadList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -378,7 +378,7 @@
 						<c:if test="${not empty docketDetailAreaLoc}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.extnt.plot" />
+									<c:out value="${docketDetailAreaLoc[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -402,7 +402,7 @@
 						<c:if test="${not empty docketDetailLengthOfCompWall}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.len.wall" />
+									<c:out value="${docketDetailLengthOfCompWall[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -426,7 +426,7 @@
 						<c:if test="${not empty docketDetailNumberOfWell}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.no.wells" />
+									<c:out value="${docketDetailNumberOfWell[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -450,7 +450,7 @@
 						<c:if test="${not empty docketDetailErectionTower}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.erctn.tower" />
+									<c:out value="${docketDetailErectionTower[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -474,7 +474,7 @@
 						<c:if test="${not empty docketDetailShutter}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.shuter" />
+									<c:out value="${docketDetailShutter[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -498,7 +498,7 @@
 						<c:if test="${not empty docketDetailRoofConversion}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<spring:message code="lbl.roof.conversn" />
+									<c:out value="${docketDetailRoofConversion[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -524,17 +524,20 @@
 					</div>
 				</div>
 			</div>
-			<c:if
-				test="${not empty permitInspection.inspection.planScrutinyChecklistForRule && not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
-				<div id="plan-scrutiny" class="tab-pane fade">
+			<div id="plan-scrutiny" class="tab-pane fade">
+				<c:if
+				test="${not empty permitInspection.inspection.planScrutinyChecklistForRule}">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-plan-scrutiny-checklist-rule.jsp"></jsp:include>
 					</div>
+				</c:if>
+				<c:if
+				test="${not empty permitInspection.inspection.planScrutinyChecklistForDrawing}">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-plan-scrutiny-checklist-drawing.jsp"></jsp:include>
 					</div>
-				</div>
-			</c:if>
+				</c:if>
+			</div>
 			<c:if
 				test="${not empty permitInspection.inspection.getInspectionSupportDocs()}">
 				<div id="site-images" class="tab-pane fade">

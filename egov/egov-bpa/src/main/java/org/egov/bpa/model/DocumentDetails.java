@@ -54,6 +54,8 @@ public class DocumentDetails {
     private String provided;
 
     private String remarks;
+    
+    private String checkListType;
 
     public String getDocumentType() {
         return documentType;
@@ -78,5 +80,13 @@ public class DocumentDetails {
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
+
+	public String getCheckListType() {
+		return checkListType;
+	}
+
+	public void setCheckListType(String checkListType) {
+		this.checkListType = checkListType;
+	}
 
 }

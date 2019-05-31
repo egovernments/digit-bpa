@@ -53,6 +53,7 @@ import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -73,6 +74,8 @@ public class InspectionController extends BpaGenericApplicationController {
     private InspectionService inspectionService;
     @Autowired
     private ChecklistServicetypeMappingService checklistServicetypeMappingService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @GetMapping("/createinspectiondetails/{applicationNumber}")
     public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
@@ -117,6 +120,8 @@ public class InspectionController extends BpaGenericApplicationController {
         permitInspn.setApplication(application);
         permitInspn.setInspection(inspection);
         Long servicetypeId = application.getServiceType().getId();
+        final InspectionService inspectionService = (InspectionService) specificNoticeService
+                .find(InspectionService.class, specificNoticeService.getCityDetails());
         inspectionService.buildDocketDetailList(permitInspn, servicetypeId);
         model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
         model.addAttribute("docketDetailMeasurementList", inspection.getDocketDetailMeasurementList());
@@ -133,9 +138,9 @@ public class InspectionController extends BpaGenericApplicationController {
         model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
         model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
         model.addAttribute("planScrutinyCheckList",
-                checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(servicetypeId, "PLANSCRUTINY"));
+        		inspectionService.buildPlanScrutiny(servicetypeId));
         model.addAttribute("planScrutinyChecklistForDrawing",
-                checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(servicetypeId, "PLANSCRUTINYDRAWING"));
+        		inspectionService.buildPlanScrutinyDrawing(servicetypeId));
         model.addAttribute("planScrutinyValues", ChecklistValues.values());
         List<ChecklistServiceTypeMapping> imagesChecklist = checklistServicetypeMappingService
                 .findByActiveByServiceTypeAndChecklist(servicetypeId, "PERMITINSPNIMAGES");
