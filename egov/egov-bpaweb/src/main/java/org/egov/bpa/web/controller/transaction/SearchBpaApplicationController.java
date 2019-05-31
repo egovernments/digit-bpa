@@ -47,9 +47,16 @@
 package org.egov.bpa.web.controller.transaction;
 
 import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.entity.NocConfiguration;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.BpaDcrService;
+import org.egov.bpa.transaction.service.BpaNocApplicationService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
@@ -78,8 +85,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
@@ -112,6 +121,10 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     private PdfQrCodeAppendService pdfQrCodeAppendService;
     @Autowired
     private BpaDcrService bpaDcrService;
+    @Autowired
+    private BpaNocApplicationService bpaNocApplicationService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
 
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -139,6 +152,9 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                 pdfQrCodeAppendService.addStamp(file.getFileStoreMapper(),application);
             }
         }*/
+        List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(applicationNumber);
+        model.addAttribute("nocApplication",nocApplication);
+
         bpaUtils.loadBoundary(application);
         model.addAttribute("bpaApplication", application);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());

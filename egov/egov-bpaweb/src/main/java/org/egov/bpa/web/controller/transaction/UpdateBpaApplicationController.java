@@ -535,6 +535,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         BpaApplication application = getBpaApplication(applicationNumber);
         loadCommonApplicationDetails(model, application);
         bpaUtils.loadBoundary(application);
+        List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(applicationNumber);
+
+        model.addAttribute("nocApplication",nocApplication);
+
         model.addAttribute(BPA_APPLICATION, application);
         return BPA_APPLICATION_RESULT;
     }
