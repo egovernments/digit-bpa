@@ -142,6 +142,7 @@ public class BpaNocApplicationController {
         	if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equals(bpaNocApplication.getNocType()))
         		model.addAttribute("nocDocs", nocDocument)	;
         }
+        model.addAttribute("bpaApp",applicationBpaService.findByApplicationNumber(bpaNocApplication.getBpaApplication().getApplicationNumber()));
         bpaNocApplication.getBpaApplication().setPermitOccupanciesTemp(bpaNocApplication.getBpaApplication().getPermitOccupancies());
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
         model.addAttribute("bpaNocApplication",bpaNocApplication);

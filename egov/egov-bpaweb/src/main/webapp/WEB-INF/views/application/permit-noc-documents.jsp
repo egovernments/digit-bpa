@@ -238,12 +238,14 @@
 							</div>
 						</td>
 					</c:if>
-					<c:if test="${not empty nocApplication}">		
-					  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">										
+					<c:if test="${not empty nocApplication}">	
+						
+					  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">		
+					  								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">		
+					  								
 						<td class="view-content tdstatus" style="font-size: 97%;">												
 							<fmt:formatDate value="${nocapp.lastModifiedDate}"
 								  pattern="dd/MM/yyyy" var="applicationDate" />						
-								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">		
 								  <a
 		                                style="cursor: pointer; font-size: 12px;"
 		                                onclick="window.open('/bpa/nocapplication/view/${nocapp.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
@@ -254,23 +256,18 @@
                                     <c:if test="${not empty nocapp.remarks}">																	
 									  Remarks : ${nocapp.remarks}
 								    </c:if>										
-								  </c:if>
 						</td>	
 						<td class="view-content tdsla" style="font-size: 97%;">												
-							 <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">					  
 							    <fmt:formatDate value="${nocapp.slaEndDate}"
 								pattern="dd/MM/yyyy" var="slaDate" />
 								<span style="font-weight:bold">${slaDate}<br />		</span>		
-							</c:if>				   						
 						</td>	
 						
 						<td class="view-content tdda" style="font-size: 97%;">												
-						    <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">								  							
 							  <fmt:formatDate value="${nocapp.deemedApprovedDate}"
 								pattern="dd/MM/yyyy" var="dadate" />
 								<span style="font-weight:bold">${dadate}<br />		</span>		
-							</c:if>
-						</td>
+						</td></c:if>
 						</c:forEach>				
 					</c:if>
 

@@ -728,6 +728,8 @@ $(document).ready(
             }
         //to update noc document is required
         function updateNocRequired(planInformation){
+        	$('#APPROVED').attr('disabled',true);
+        	$('#REJECTED').attr('disabled',true);
         	if(planInformation.nocIrrigationDept === 'YES'){
                 $('span.mandatory._NOC_from_Irrigation_Department').show();
                 if($('button.btn_NOC_from_Irrigation_Department').length==1){
@@ -754,6 +756,8 @@ $(document).ready(
                 }
         	}
         	if(planInformation.nocNearMonument === 'YES'){
+        		$('#APPROVED').attr('disabled',true);
+            	$('#REJECTED').attr('disabled',true);
                 $('span.mandatory._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
                 if($('button.btn_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').length==1){
                 	if($('#nocStatusUpdated').val() == "false" &&  $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
@@ -779,6 +783,8 @@ $(document).ready(
                 }
         	}
             if(planInformation.nocNearAirport === 'YES'){
+            	$('#APPROVED').attr('disabled',true);
+            	$('#REJECTED').attr('disabled',true);
                 $('span.mandatory._NOC_from_Airport_Authority').show();
                 if($('button.btn_NOC_from_Airport_Authority').length==1){
                 	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
@@ -833,6 +839,8 @@ $(document).ready(
                 }
             }
             if(planInformation.nocStateEnvImpact === 'YES'){
+            	$('#APPROVED').attr('disabled',true);
+            	$('#REJECTED').attr('disabled',true);
             	$('span.mandatory._MOEF_environment_clearance').show();
             	if($('button.btn_MOEF_environment_clearance').length==1){
                 	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
