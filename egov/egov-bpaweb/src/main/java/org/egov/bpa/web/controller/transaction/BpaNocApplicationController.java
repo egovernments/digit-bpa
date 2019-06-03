@@ -100,7 +100,7 @@ public class BpaNocApplicationController {
     private BpaUtils bpaUtils;
 
 	@RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
-    public String getNocApplication(@PathVariable final String applicationNumber, final Model model) {
+    public String getNocApplication(@PathVariable final String applicationNumber, final Model model, final RedirectAttributes redirectAttributes) {
         BpaNocApplication bpaNocApplication = nocApplicationService.findByNocApplicationNumber(applicationNumber);
         for (PermitNocDocument nocDocument : bpaNocApplication.getBpaApplication().getPermitNocDocuments()) {
         	if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equals(bpaNocApplication.getNocType()))
@@ -110,7 +110,10 @@ public class BpaNocApplicationController {
         bpaNocApplication.getBpaApplication().setPermitOccupanciesTemp(bpaNocApplication.getBpaApplication().getPermitOccupancies());
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
         model.addAttribute("bpaNocApplication",bpaNocApplication);
-        return "noc-details";
+        if(!bpaNocApplication.getStatus().getCode().equals(BpaConstants.NOC_INITIATED))
+            return "redirect:/nocapplication/view/" + bpaNocApplication.getNocApplicationNumber();
+        else
+           return "noc-details";
     }  
 	
 	@RequestMapping(value = "/updateNoc/{applicationNumber}", method = RequestMethod.POST)

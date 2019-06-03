@@ -142,7 +142,7 @@
 					</div>									
                	
 							<c:forEach
-								var="bpanoc" items="${nocDocs.nocDocument.nocSupportDocs}" varStatus="loop">
+								var="bpanoc" items="${bpaNocApplication.nocSupportDocs}" varStatus="loop">
 								<c:if test="${bpanoc.fileStoreId ne null}">&nbsp;&nbsp;&nbsp;&nbsp;
 									<a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
 							  	 	data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
@@ -177,19 +177,9 @@
 									default="N/A"></c:out>		
 			</div>		
 			<div align="center">
-				<c:if test="${bpaNocApplication.status.code eq 'NOC_INITIATED'}">
-	
-					<form:button type="submit" id="buttonApprove" class="btn btn-primary" value="submit">
-						<spring:message code='lbl.approve' />
-					</form:button>
-					<form:button type="submit" id="buttonReject" class="btn btn-primary" value="reject">
-						<spring:message code='lbl.reject' />
-					</form:button>
-				</c:if>
+				
 				<input type="button" name="button2" id="button2" value="Close"	class="btn btn-default" onclick="window.close();" />
-			</div>		
-				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.submit.appln'/>" /> 
-                <input	type="hidden" id="rejectApplication" value="<spring:message code='msg.confirm.intiate.rejection.forappln'/>" />                  
+			               
 			</div>
 </div></div>
 </form:form>
