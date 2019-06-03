@@ -794,7 +794,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 					.findByDepartment(code);
 			if(bpaNocApplicationService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
 				nocTypeApplMap.put(code, "initiated");
-			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+			if (nocConfig != null && nocConfig.getApplicationType().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
 					nocTypeMap.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");

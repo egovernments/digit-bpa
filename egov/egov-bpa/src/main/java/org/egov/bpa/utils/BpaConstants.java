@@ -282,6 +282,11 @@ public class BpaConstants {
     public static final String ENVNOCROLE = "BPA_ENVIRONMENT_NOC_ROLE";
     public static final String NMANOCROLE = "BPA_NMA_NOC_ROLE";
     public static final String AIRPORTNOCROLE = "BPA_AIPORT_AUTH_NOC_ROLE";
+    
+    public static final String PERMIT = "Permit";
+    public static final String OC = "OC";
+
+    
 
     // designation constants
     public static final String DESIGNATION_AEE = "Assistant executive engineer";
