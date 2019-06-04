@@ -118,17 +118,6 @@
                         <form:errors path="toDate" cssClass="add-margin error-msg"/>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label class="col-sm-3 control-label text-right"><spring:message
-                            code="lbl.applicant.name"/></label>
-                    <div class="col-sm-3 add-margin">
-                        <form:input class="form-control patternvalidation"
-                                    data-pattern="alphabetspecialcharacters" maxlength="128"
-                                    id="applicantName" path="applicantName"/>
-                        <form:errors path="applicantName" cssClass="add-margin error-msg"/>
-                    </div>
-                </div>
                 <div class="form-group plotAreaHideShow">
                     <label class="col-sm-3 control-label text-right"><spring:message
                             code="lbl.fromplotarea"/></label>
@@ -147,6 +136,17 @@
                                      cssClass="add-margin error-msg"/>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"><spring:message
+                            code="lbl.applicant.name"/></label>
+                    <div class="col-sm-3 add-margin">
+                        <form:input class="form-control patternvalidation"
+                                    data-pattern="alphabetspecialcharacters" maxlength="128"
+                                    id="applicantName" path="applicantName"/>
+                        <form:errors path="applicantName" cssClass="add-margin error-msg"/>
+                    </div>
+                </div>
+                
                 <div class="form-group builtUpAreaHideShow">
                     <label class="col-sm-3 control-label text-right"><spring:message
                             code="lbl.from.builtup.area"/></label>
