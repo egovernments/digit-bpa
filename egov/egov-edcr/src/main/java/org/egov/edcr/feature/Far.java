@@ -171,6 +171,7 @@ public class Far extends FeatureProcess {
 
 	@Override
 	public Plan process(Plan pl) {
+		decideNocIsRequired(pl);
 		HashMap<String, String> errorMsgs = new HashMap<>();
 		int errors = pl.getErrors().size();
 		validate(pl);
@@ -560,19 +561,20 @@ public class Far extends FeatureProcess {
 		}
 		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 		BigDecimal providedFar = BigDecimal.ZERO;
-                BigDecimal surrenderRoadArea = BigDecimal.ZERO;
-        
-                if (!pl.getSurrenderRoads().isEmpty()) {
-                    for (Measurement measurement : pl.getSurrenderRoads()) {
-                        surrenderRoadArea = surrenderRoadArea.add(measurement.getArea());
-                    }
-                }
-        
-                pl.setSurrenderRoadArea(surrenderRoadArea.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS));
-                BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
-                if (plotArea.doubleValue() > 0)
-                    providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea,
-                            DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+		BigDecimal surrenderRoadArea = BigDecimal.ZERO;
+
+		if (!pl.getSurrenderRoads().isEmpty()) {
+			for (Measurement measurement : pl.getSurrenderRoads()) {
+				surrenderRoadArea = surrenderRoadArea.add(measurement.getArea());
+			}
+		}
+
+		pl.setSurrenderRoadArea(surrenderRoadArea.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+				DcrConstants.ROUNDMODE_MEASUREMENTS));
+		BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea().add(surrenderRoadArea) : BigDecimal.ZERO;
+		if (plotArea.doubleValue() > 0)
+			providedFar = pl.getVirtualBuilding().getTotalFloorArea().divide(plotArea, DECIMALDIGITS_MEASUREMENTS,
+					ROUNDMODE_MEASUREMENTS);
 
 		pl.setFarDetails(new FarDetails());
 		pl.getFarDetails().setProvidedFar(providedFar.doubleValue());
@@ -607,17 +609,48 @@ public class Far extends FeatureProcess {
 		return pl;
 	}
 
+	private void decideNocIsRequired(Plan pl) {
+		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+		Boolean isHighRise = false;
+		for (Block b : pl.getBlocks()) {
+			if (b.getBuilding() != null && b.getBuilding().getIsHighRise() != null && b.getBuilding().getIsHighRise()) {
+				isHighRise = true;
+
+			}
+		}
+		if (isHighRise && mostRestrictiveOccupancyType.getType() != null
+				&& !DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+			pl.getPlanInformation().setNocFireDept("YES");
+		}
+
+		if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearMonument())
+				&& "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearMonument())) {
+			BigDecimal minDistanceFromMonument = BigDecimal.ZERO;
+			List<BigDecimal> distancesFromMonument = pl.getDistancesFromMonument();
+			if (!distancesFromMonument.isEmpty()) {
+
+				minDistanceFromMonument = distancesFromMonument.stream().reduce(BigDecimal::min).get();
+
+				if (minDistanceFromMonument.compareTo(BigDecimal.valueOf(300)) > 0) {
+					pl.getPlanInformation().setNocNearMonument("YES");
+				}
+			}
+
+		}
+
+	}
+
 	private void validate2(Plan pl, Block blk, Floor flr, Occupancy occupancy) {
 		String occupancyTypeHelper = StringUtils.EMPTY;
-        if (occupancy.getTypeHelper() != null) {
-            if (occupancy.getTypeHelper().getType() != null) {
-                occupancyTypeHelper = occupancy.getTypeHelper().getType().getName();
-            } else if (occupancy.getTypeHelper().getSubtype() != null) {
-                occupancyTypeHelper = occupancy.getTypeHelper().getSubtype().getName();
-            }
-        }
-		
-        if (occupancy.getBuiltUpArea() != null && occupancy.getBuiltUpArea().compareTo(BigDecimal.valueOf(0)) < 0) {
+		if (occupancy.getTypeHelper() != null) {
+			if (occupancy.getTypeHelper().getType() != null) {
+				occupancyTypeHelper = occupancy.getTypeHelper().getType().getName();
+			} else if (occupancy.getTypeHelper().getSubtype() != null) {
+				occupancyTypeHelper = occupancy.getTypeHelper().getSubtype().getName();
+			}
+		}
+
+		if (occupancy.getBuiltUpArea() != null && occupancy.getBuiltUpArea().compareTo(BigDecimal.valueOf(0)) < 0) {
 			pl.addError(VALIDATION_NEGATIVE_BUILTUP_AREA, getLocaleMessage(VALIDATION_NEGATIVE_BUILTUP_AREA,
 					blk.getNumber(), flr.getNumber().toString(), occupancyTypeHelper));
 		}
