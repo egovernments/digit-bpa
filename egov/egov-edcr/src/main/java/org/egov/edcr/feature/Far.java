@@ -610,16 +610,20 @@ public class Far extends FeatureProcess {
 	}
 
 	private void decideNocIsRequired(Plan pl) {
-		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 		Boolean isHighRise = false;
 		for (Block b : pl.getBlocks()) {
-			if (b.getBuilding() != null && b.getBuilding().getIsHighRise() != null && b.getBuilding().getIsHighRise()) {
+			if ((b.getBuilding() != null
+					/*
+					 * && b.getBuilding().getIsHighRise() != null &&
+					 * b.getBuilding().getIsHighRise()
+					 */ && b.getBuilding().getBuildingHeight().compareTo(new BigDecimal(5)) > 0)
+					|| (b.getBuilding() != null && b.getBuilding().getCoverageArea() != null
+							&& b.getBuilding().getCoverageArea().compareTo(new BigDecimal(500)) > 0)) {
 				isHighRise = true;
 
 			}
 		}
-		if (isHighRise && mostRestrictiveOccupancyType.getType() != null
-				&& !DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+		if (isHighRise) {
 			pl.getPlanInformation().setNocFireDept("YES");
 		}
 
