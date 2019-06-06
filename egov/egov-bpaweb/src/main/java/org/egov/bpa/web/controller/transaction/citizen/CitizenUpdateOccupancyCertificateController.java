@@ -91,6 +91,7 @@ import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -133,11 +134,11 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     @Autowired
     private OCLetterToPartyService ocLetterToPartyService;
     @Autowired
-    private OCInspectionService ocInspectionService;
-    @Autowired
     protected SubOccupancyService subOccupancyService;
     @Autowired
     private BpaUtils bpaUtils;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @GetMapping("/occupancy-certificate/update/{applicationNumber}")
     public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
@@ -203,6 +204,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
                         && !oc.getRescheduledByCitizen()) {
             model.addAttribute("mode", "showRescheduleToCitizen");
         }
+        final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
         model.addAttribute("inspectionList", ocInspectionService.findByOcOrderByIdAsc(oc));
         model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
         if (APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode())

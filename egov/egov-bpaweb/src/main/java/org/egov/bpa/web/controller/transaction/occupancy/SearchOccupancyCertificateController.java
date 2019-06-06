@@ -65,6 +65,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -92,11 +93,11 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
     @Autowired
     private SearchOCService searchOCService;
     @Autowired
-    private OCInspectionService inspectionService;
-    @Autowired
     private OCLetterToPartyService lettertoPartyService;
     @Autowired
     private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @GetMapping("/occupancy-certificate/search")
     public String showSearchApprovedforFee(final Model model) {
@@ -122,6 +123,8 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
+        final OCInspectionService inspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
         model.addAttribute("inspectionList", inspectionService.findByOcOrderByIdAsc(oc));
         model.addAttribute("letterToPartyList", lettertoPartyService.findAllByOC(oc));
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());

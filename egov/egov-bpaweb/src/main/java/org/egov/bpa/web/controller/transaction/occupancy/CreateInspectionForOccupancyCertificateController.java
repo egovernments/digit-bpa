@@ -55,6 +55,7 @@ import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OcConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
+import org.egov.infra.custom.CustomImplProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,9 +72,9 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 	private static final String CREATE_INSPECTION = "oc-create-inspection";
 
 	@Autowired
-	private OCInspectionService ocInspectionService;
-	@Autowired
 	private OccupancyCertificateService occupancyCertificateService;
+	@Autowired
+    private CustomImplProvider specificNoticeService;
 
 	@GetMapping("/create-inspection/{applicationNumber}")
 	public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
@@ -84,6 +85,8 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 	@PostMapping("/create-inspection/{applicationNumber}")
 	public String createInspection(@Valid @ModelAttribute final OCInspection ocInspection,
 								   @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
 		ocInspection.getInspection().setDocket(ocInspectionService.buildDocDetFromUI(ocInspection));
 		if (resultBinder.hasErrors()) {
 			loadApplication(model, applicationNumber);
@@ -106,14 +109,17 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 		final OCInspection ocInspection = new OCInspection();
 		InspectionCommon inspectionCommon = new InspectionCommon();
 		inspectionCommon.setInspectionDate(new Date());
+		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
 		ocInspectionService.buildDocketDetailList(inspectionCommon, oc.getParent().getServiceType().getId());
 		ocInspection.setInspection(inspectionCommon);
 		ocInspection.setOc(oc);
 		model.addAttribute("ocInspection", ocInspection);
 		model.addAttribute("docketDetailLocList", inspectionCommon.getDocketDetailLocList());
-		model.addAttribute("planScrutinyCheckList", checklistServiceTypeService.findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCPLANSCRUTINYRULE"));
+		model.addAttribute("docketDetailMeasurementList", inspectionCommon.getDocketDetailMeasurementList());
+		model.addAttribute("planScrutinyCheckList",ocInspectionService.buildPlanScrutiny(oc.getParent().getServiceType().getId()));
 		model.addAttribute("planScrutinyValues", ChecklistValues.values());
-		model.addAttribute("planScrutinyChecklistForDrawing", checklistServiceTypeService.findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCPLANSCRUTINYDRAWING"));
+		model.addAttribute("planScrutinyChecklistForDrawing",ocInspectionService.buildPlanScrutinyDrawing(oc.getParent().getServiceType().getId()));
 		List<ChecklistServiceTypeMapping> imagesChecklist = checklistServiceTypeService
                         .findByActiveByServiceTypeAndChecklist(oc.getParent().getServiceType().getId(), "OCINSPNIMAGES");
                 for (ChecklistServiceTypeMapping serviceChklst : imagesChecklist) {

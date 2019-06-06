@@ -52,7 +52,7 @@
 	</div>
 	<div class="col-sm-2 add-margin view-content bg-info">
 		<div class="text-info">
-			<spring:message code="lbl.doc.provided" />
+			<spring:message code="lbl.is.applicable" />
 		</div>
 	</div>
 	<div class="col-sm-5 add-margin view-content bg-info">

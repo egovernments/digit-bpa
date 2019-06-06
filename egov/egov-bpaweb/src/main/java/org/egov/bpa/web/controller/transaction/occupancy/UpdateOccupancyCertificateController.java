@@ -169,13 +169,9 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     @Autowired
     private OccupancyCertificateService occupancyCertificateService;
     @Autowired
-    private OCInspectionService ocInspectionService;
-    @Autowired
     private OCLetterToPartyService ocLetterToPartyService;
     @Autowired
     private OccupancyCertificateUtils occupancyCertificateUtils;
-    @Autowired
-    private PermitConditionsService permitConditionsService;
     @Autowired
     private OCNoticeConditionsService ocNoticeConditionsService;
     @Autowired
@@ -308,6 +304,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     }
 
     private void loadData(OccupancyCertificate oc, Model model) {
+    	final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
         List<OCInspection> inspectionList = ocInspectionService.findByOcOrderByIdAsc(oc);
         int i = 0;
         for (OCInspection ocInspection : inspectionList) {

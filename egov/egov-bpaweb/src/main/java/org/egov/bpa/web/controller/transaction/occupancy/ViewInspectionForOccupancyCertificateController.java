@@ -40,10 +40,9 @@
 package org.egov.bpa.web.controller.transaction.occupancy;
 
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
-import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.service.oc.OCInspectionService;
-import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
+import org.egov.infra.custom.CustomImplProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -58,26 +57,23 @@ public class ViewInspectionForOccupancyCertificateController {
     private static final String SHOW_INSPECTION_DETAILS = "oc-show-inspection";
 
     private static final String INSPECTION_RESULT = "oc-inspection-success";
-
     @Autowired
-    private OCInspectionService ocInspectionService;
-
+    private CustomImplProvider specificNoticeService;
     @Autowired
     protected ResourceBundleMessageSource messageSource;
-
-    @Autowired
-    private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
 
     @GetMapping("/success/view-inspection-details/{applicationNumber}/{inspectionNumber}")
     public String viewInspection(@PathVariable final String applicationNumber,
             @PathVariable final String inspectionNumber, final Model model) {
+		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
         OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber,
                 inspectionNumber);
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
         model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
         ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
         ocInspectionService.prepareImagesForView(ocInspection);
-        buildPlanScrutinyChecklistDetails(ocInspection);
+        ocInspectionService.buildPlanScrutinyChecklistDetails(ocInspection);
         model.addAttribute("ocInspection", ocInspection);
         return INSPECTION_RESULT;
     }
@@ -85,6 +81,8 @@ public class ViewInspectionForOccupancyCertificateController {
     @GetMapping("/show-inspection-details/{applicationNumber}/{inspectionNumber}")
     public String showInspectionDetails(@PathVariable final String applicationNumber,
             @PathVariable final String inspectionNumber, final Model model) {
+		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
         OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber,
                 inspectionNumber);
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
@@ -92,18 +90,9 @@ public class ViewInspectionForOccupancyCertificateController {
         ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
         ocInspectionService.prepareImagesForView(ocInspection);
         model.addAttribute("ocInspection", ocInspection);
-        buildPlanScrutinyChecklistDetails(ocInspection);
+        ocInspectionService.buildPlanScrutinyChecklistDetails(ocInspection);
         model.addAttribute("planScrutinyValues", ChecklistValues.values());
         return SHOW_INSPECTION_DETAILS;
     }
-
-    private void buildPlanScrutinyChecklistDetails(OCInspection inspectionObj) {
-        inspectionObj.getInspection().getPlanScrutinyChecklistForRule().clear();
-        inspectionObj.getInspection().setPlanScrutinyChecklistForRule(planScrutinyChecklistService
-                .findByInspectionAndScrutinyChecklistType(inspectionObj.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
-        inspectionObj.getInspection().getPlanScrutinyChecklistForDrawing().clear();
-        inspectionObj.getInspection().setPlanScrutinyChecklistForDrawing(planScrutinyChecklistService
-                .findByInspectionAndScrutinyChecklistType(inspectionObj.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS));
-    }
-
+    
 }

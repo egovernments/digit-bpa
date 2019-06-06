@@ -64,6 +64,8 @@ import org.egov.bpa.transaction.entity.common.DocketCommon;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
+import org.egov.bpa.transaction.entity.common.PlanScrutinyChecklistCommon;
+import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.repository.oc.OCInspectionRepository;
@@ -124,21 +126,22 @@ public class OCInspectionService {
     }
 
     private void buildPlanScrutinyChecklistItems(final OCInspection inspection) {
-        if (!inspection.getInspection().getPlanScrutinyChecklistForRuleTemp().isEmpty()
-                && !inspection.getInspection().getPlanScrutinyChecklistForDrawingTemp().isEmpty()) {
-            planScrutinyChecklistService.delete(inspection.getInspection().getPlanScrutinyChecklistForRule());
-            planScrutinyChecklistService.delete(inspection.getInspection().getPlanScrutinyChecklistForDrawing());
-            inspection.getInspection().getPlanScrutinyChecklistForRule().clear();
-            inspection.getInspection().getPlanScrutinyChecklistForDrawing().clear();
-            inspection.getInspection()
-                    .setPlanScrutinyChecklistForRule(inspection.getInspection().getPlanScrutinyChecklistForRuleTemp());
-            inspection.getInspection()
-                    .setPlanScrutinyChecklistForDrawing(inspection.getInspection().getPlanScrutinyChecklistForDrawingTemp());
-            inspection.getInspection().getPlanScrutinyChecklistForRule()
-                    .forEach(planScrutiny -> planScrutiny.setInspection(inspection.getInspection()));
-            inspection.getInspection().getPlanScrutinyChecklistForDrawing()
-                    .forEach(planScrutiny -> planScrutiny.setInspection(inspection.getInspection()));
-        }
+		if (!inspection.getInspection().getPlanScrutinyChecklistForRuleTemp().isEmpty()) {
+			planScrutinyChecklistService.delete(inspection.getInspection().getPlanScrutinyChecklistForRule());
+			inspection.getInspection().getPlanScrutinyChecklistForRule().clear();
+			inspection.getInspection()
+					.setPlanScrutinyChecklistForRule(inspection.getInspection().getPlanScrutinyChecklistForRuleTemp());
+			inspection.getInspection().getPlanScrutinyChecklistForRule()
+					.forEach(planScrutiny -> planScrutiny.setInspection(inspection.getInspection()));
+		}
+		if (!inspection.getInspection().getPlanScrutinyChecklistForDrawingTemp().isEmpty()) {
+			planScrutinyChecklistService.delete(inspection.getInspection().getPlanScrutinyChecklistForDrawing());
+			inspection.getInspection().getPlanScrutinyChecklistForDrawing().clear();
+			inspection.getInspection().setPlanScrutinyChecklistForDrawing(
+					inspection.getInspection().getPlanScrutinyChecklistForDrawingTemp());
+			inspection.getInspection().getPlanScrutinyChecklistForDrawing()
+            .forEach(planScrutiny -> planScrutiny.setInspection(inspection.getInspection()));
+		}
     }
 
     public OCInspection findById(Long id) {
@@ -222,6 +225,8 @@ public class OCInspectionService {
                     inspection.getDocketDetailLocList().add(docketDet);
             }
         model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
+        model.addAttribute("docketDetailMeasurementList", inspection.getDocketDetailMeasurementList());
+
     }
 
     public void prepareImagesForView(final OCInspection ocInspection) {
@@ -247,5 +252,30 @@ public class OCInspectionService {
                         }
                     });
     }
+    
+    public List<ChecklistServiceTypeMapping> buildPlanScrutiny(Long serviceTypeId){
+        return checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceTypeId, "OCPLANSCRUTINYRULE");
+    }
+    
+    public List<ChecklistServiceTypeMapping> buildPlanScrutinyDrawing(Long serviceTypeId){
+        return checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceTypeId, "OCPLANSCRUTINYDRAWING");
+    }
 
+    public List<PlanScrutinyChecklistCommon> getPlanScrutinyForRuleValidation(OCInspection ocInspection){
+  	   	return planScrutinyChecklistService
+				.findByInspectionAndScrutinyChecklistType(ocInspection.getInspection(), ScrutinyChecklistType.RULE_VALIDATION);
+    }
+
+    public List<PlanScrutinyChecklistCommon> getPlanScrutinyForDrawingDetails(OCInspection ocInspection){
+ 	   return planScrutinyChecklistService.findByInspectionAndScrutinyChecklistType(ocInspection.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS);
+    }
+    
+
+    public void buildPlanScrutinyChecklistDetails(OCInspection inspectionObj) {
+        inspectionObj.getInspection().getPlanScrutinyChecklistForRule().clear();
+        inspectionObj.getInspection().setPlanScrutinyChecklistForRuleTemp(getPlanScrutinyForRuleValidation(inspectionObj));
+        inspectionObj.getInspection().getPlanScrutinyChecklistForDrawing().clear();
+        inspectionObj.getInspection().setPlanScrutinyChecklistForDrawingTemp(getPlanScrutinyForDrawingDetails(inspectionObj));
+
+    }
 }

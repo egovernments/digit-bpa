@@ -103,7 +103,7 @@
 							</div>
 							<div class="col-sm-3 add-margin view-content">
 								<div class="panel-title">
-									<spring:message code="lbl.doc.provided" />
+									<spring:message code="lbl.is.applicable" />
 								</div>
 							</div>
 							<div class="col-sm-4 add-margin view-content">
@@ -117,7 +117,8 @@
 						<c:when test="${!docketDetailLocList.isEmpty()}">
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">
-									<%-- <spring:message code="lbl.loc.of.plot"/> --%>
+									<c:out
+						value="${docketDetailLocList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
 							</div>
 							<div class="panel-body">
@@ -139,15 +140,46 @@
 							</div>
 						</c:when>
 					</c:choose>
+					<c:choose>
+						<c:when test="${!docketDetailMeasurementList.isEmpty()}">
+							<div class="panel-heading custom_form_panel_heading">
+								<div class="panel-title">
+									<c:out
+						value="${docketDetailMeasurementList[0].serviceChecklist.checklist.checklistType.description}" />
+								</div>
+							</div>
+							<div class="panel-body">
+								<c:forEach items="${docketDetailMeasurementList}" var="doc"
+									varStatus="counter">
+									<div class="row add-border">
+										<div class="col-sm-5 add-margin view-content">
+											<c:out value="${doc.serviceChecklist.checklist.description}"
+												default="N/A"></c:out>
+										</div>
+										<div class="col-sm-3 add-margin view-content">
+											<c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
+										</div>
+										<div class="col-sm-4 add-margin view-content">
+											<c:out value="${doc.remarks}" default="N/A"></c:out>
+										</div>
+									</div>
+								</c:forEach>
+							</div>
+						</c:when>
+					</c:choose>
 				</div>
 			</div>
 			<div id="oc-plan-scrutiny" class="tab-pane fade">
+			<c:if test="${not empty ocInspection.inspection.planScrutinyChecklistForRule}">
 				<div class="panel panel-primary" data-collapsed="0">
 					<jsp:include page="oc-view-plan-scrutiny-checklist-rule.jsp"></jsp:include>
 				</div>
+			</c:if>
+			<c:if test="${not empty ocInspection.inspection.planScrutinyChecklistForDrawing}">
 				<div class="panel panel-primary" data-collapsed="0">
 					<jsp:include page="oc-view-plan-scrutiny-checklist-drawing.jsp"></jsp:include>
 				</div>
+			</c:if>
 			</div>
 			<c:if
 				test="${not empty ocInspection.inspection.getInspectionSupportDocs()}">

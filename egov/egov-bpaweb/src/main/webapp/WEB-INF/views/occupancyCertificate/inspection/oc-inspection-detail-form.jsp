@@ -53,7 +53,8 @@
 		<c:when test="${!docketDetailLocList.isEmpty()}">
 			<div class="panel-heading custom_form_panel_heading">
 				<div class="panel-title">
-					<%-- <spring:message code="lbl.loc.plt"/> --%>
+					<c:out
+						value="${docketDetailLocList[0].serviceChecklist.checklist.checklistType.description}" />
 				</div>
 			</div>
 			<div class="form-group view-content header-color hidden-xs">
@@ -118,6 +119,82 @@
 
 						<form:errors
 							path="inspection.docketDetailLocList[${status.index}].remarks"
+							cssClass="add-margin error-msg" />
+					</div>
+				</div>
+			</c:forEach>
+		</c:when>
+	</c:choose>
+<c:choose>
+		<c:when test="${!docketDetailMeasurementList.isEmpty()}">
+			<div class="panel-heading custom_form_panel_heading">
+				<div class="panel-title">
+					<c:out
+						value="${docketDetailMeasurementList[0].serviceChecklist.checklist.checklistType.description}" />
+				</div>
+			</div>
+			<div class="form-group view-content header-color hidden-xs">
+				<div class="col-sm-5 text-left">
+					<spring:message code="lbl.files" />
+				</div>
+				<div class="col-sm-3 text-left">
+					<spring:message code="lbl.provided" />
+				</div>
+				<div class="col-sm-4 text-left">
+					<spring:message code="lbl.remarks" />
+				</div>
+			</div>
+			<c:forEach var="docs" items="${docketDetailMeasurementList}"
+				varStatus="status">
+				<div class="form-group">
+					<div class="col-sm-5 add-margin check-text text-left">
+						<c:out value="${docs.serviceChecklist.checklist.description}" />
+						<form:hidden
+							id="inspection.docketDetailMeasurementList${status.index}serviceChecklist"
+							path="inspection.docketDetailMeasurementList[${status.index}].serviceChecklist"
+							value="${docs.serviceChecklist.id}" />
+						<form:hidden
+							id="inspection.docketDetailMeasurementList${status.index}serviceChecklist.checklist.description"
+							path="inspection.docketDetailMeasurementList[${status.index}].serviceChecklist.checklist.description"
+							value="${docs.serviceChecklist.checklist.description}" />
+					</div>
+
+					<div class="col-sm-3 add-margin text-left">
+						<c:choose>
+							<c:when test="${mode =='editinsp'}">
+								<c:forEach items="${planScrutinyValues}" var="inspnVal">
+									<div class="radio">
+										<label><input type="radio" value="${inspnVal}"
+											name="inspection.docketDetailMeasurementList[${status.index}].value"
+											<c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+										</label>
+									</div>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<c:forEach items="${planScrutinyValues}" var="inspnVal">
+									<div class="radio">
+										<label><input type="radio" value="${inspnVal}"
+											name="inspection.docketDetailMeasurementList[${status.index}].value"
+											<c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+										</label>
+									</div>
+								</c:forEach>
+							</c:otherwise>
+						</c:choose>
+						<form:errors
+							path="inspection.docketDetailMeasurementList[${status.index}].value"
+							cssClass="add-margin error-msg" />
+					</div>
+					<div class="col-sm-4 add-margin text-left">
+						<form:textarea class="form-control patternvalidation"
+							data-pattern="alphanumericspecialcharacters" maxlength="256"
+							id="inspection.docketDetailMeasurementList${status.index}remarks"
+							rows="3"
+							path="inspection.docketDetailMeasurementList[${status.index}].remarks" />
+
+						<form:errors
+							path="inspection.docketDetailMeasurementList[${status.index}].remarks"
 							cssClass="add-margin error-msg" />
 					</div>
 				</div>

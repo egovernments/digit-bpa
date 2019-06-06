@@ -53,6 +53,7 @@ import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OcConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
+import org.egov.infra.custom.CustomImplProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,14 +69,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class UpdateInspectionForOccupancyCertificateController extends BpaGenericApplicationController {
 
 	@Autowired
-	private OCInspectionService ocInspectionService;
-	
-	@Autowired
-	private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
+    private CustomImplProvider specificNoticeService;
 
 	@GetMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
 	public String editInspectionAppointment(
 			@PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model) {
+		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
 		OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
 		loadApplication(model, ocInspection);
 		model.addAttribute("mode", "editinsp");
@@ -91,6 +91,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		}
 		final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(ocInspection);
 		ocInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);
+		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
 		OCInspection ocInspectionRes = ocInspectionService.save(ocInspection);
 		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
 		return "redirect:/application/occupancy-certificate/success/view-inspection-details/" + applicationNumber + "/" + ocInspectionRes.getInspection().getInspectionNumber();
@@ -98,6 +100,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 
 	private List<DocketDetailCommon> buildDocketDetails(@ModelAttribute("ocInspection") OCInspection ocInspection) {
 		final List<DocketDetailCommon> docketDetailTempList = new ArrayList<>();
+		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
 		final List<DocketDetailCommon> docketDetailList = ocInspectionService.buildDocketDetail(ocInspection.getInspection());
 		for (final DocketDetailCommon docketDet : ocInspection.getInspection().getDocket().get(0).getDocketDetail())
 			for (final DocketDetailCommon tempLoc : docketDetailList)
@@ -120,6 +124,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		}
 		if (ocInspection != null)
 			ocInspection.getInspection().setInspectionDate(new Date());
+		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
+                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
 		ocInspectionService.prepareImagesForView(ocInspection);
 		ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
 		model.addAttribute("ocInspection", ocInspection);
@@ -127,10 +133,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
 		model.addAttribute("planScrutinyValues", ChecklistValues.values());
 
-		ocInspection.getInspection().setPlanScrutinyChecklistForRuleTemp(planScrutinyChecklistService
-				.findByInspectionAndScrutinyChecklistType(ocInspection.getInspection(), ScrutinyChecklistType.RULE_VALIDATION));
-		ocInspection.getInspection().setPlanScrutinyChecklistForDrawingTemp(planScrutinyChecklistService
-				.findByInspectionAndScrutinyChecklistType(ocInspection.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS));
+		ocInspection.getInspection().setPlanScrutinyChecklistForRuleTemp(ocInspectionService.getPlanScrutinyForRuleValidation(ocInspection));
+		ocInspection.getInspection().setPlanScrutinyChecklistForDrawingTemp(ocInspectionService.getPlanScrutinyForDrawingDetails(ocInspection));
 
 	}
 
