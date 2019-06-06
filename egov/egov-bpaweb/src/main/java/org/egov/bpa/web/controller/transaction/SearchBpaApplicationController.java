@@ -57,26 +57,33 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.BpaDcrService;
-import org.egov.bpa.transaction.service.BpaNocApplicationService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
+import org.egov.bpa.transaction.service.PermitNocApplicationService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationAdaptor;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.web.support.ui.DataTable;
@@ -116,7 +123,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     @Autowired
     private BpaDcrService bpaDcrService;
     @Autowired
-    private BpaNocApplicationService bpaNocApplicationService;
+    private PermitNocApplicationService permitNocService;
     @Autowired
     private NocConfigurationService nocConfigurationService;
 
@@ -146,8 +153,16 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                 pdfQrCodeAppendService.addStamp(file.getFileStoreMapper(),application);
             }
         }*/
-        List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(applicationNumber);
+        List<PermitNocApplication> nocApplication = permitNocService.findByPermitApplicationNumber(applicationNumber);
         model.addAttribute("nocApplication",nocApplication);
+
+        for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+			for (PermitNocApplication pna : nocApplication) {
+				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
+					nocDocument.setPermitNoc(pna);
+				}
+			}
+		}
 
         bpaUtils.loadBoundary(application);
         model.addAttribute("bpaApplication", application);

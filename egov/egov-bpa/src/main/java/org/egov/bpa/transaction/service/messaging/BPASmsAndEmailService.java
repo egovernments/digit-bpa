@@ -66,6 +66,7 @@ import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.utils.BpaConstants;
@@ -809,28 +810,28 @@ public class BPASmsAndEmailService {
 		return msg;
 	}
 
-	public void sendSMSAndEmailForDeemedApprovalNoc(BpaNocApplication bpaNocAppl){
+	public void sendSMSAndEmailForDeemedApprovalNoc(PermitNocApplication permitNoc){
 		if (isSmsEnabled() || isEmailEnabled()) {
-			ApplicationStakeHolder applnStakeHolder = bpaNocAppl.getBpaApplication().getStakeHolder().get(0);
+			ApplicationStakeHolder applnStakeHolder = permitNoc.getBpaApplication().getStakeHolder().get(0);
 			if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
 				Applicant owner = applnStakeHolder.getApplication().getOwner();
-				buildSmsAndEmailForDeemedApproveNoc(bpaNocAppl, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
+				buildSmsAndEmailForDeemedApproveNoc(permitNoc, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
 					
 			}
 			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
-				buildSmsAndEmailForDeemedApproveNoc(bpaNocAppl, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
+				buildSmsAndEmailForDeemedApproveNoc(permitNoc, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
 			}
 		}
 	}
 	
-	private void buildSmsAndEmailForDeemedApproveNoc(BpaNocApplication nocAppl,
+	private void buildSmsAndEmailForDeemedApproveNoc(PermitNocApplication permitNoc,
 			 String name, String mobileNumber, String emailId) {
 		String smsMsg = EMPTY;
 		String body = EMPTY;
 		String subject = EMPTY;	 
-			smsMsg = bpaMessageSource.getMessage(SMS_BPA_NOC_DEEMED_APPROVE,new String[]{nocAppl.getNocType()},null);
-			body = bpaMessageSource.getMessage(BODY_BPA_NOC_DEEMED_APPROVE,new String[]{name,nocAppl.getNocType(),nocAppl.getNocType(),getMunicipalityName()},null);
+			smsMsg = bpaMessageSource.getMessage(SMS_BPA_NOC_DEEMED_APPROVE,new String[]{permitNoc.getBpaNocApplication().getNocType()},null);
+			body = bpaMessageSource.getMessage(BODY_BPA_NOC_DEEMED_APPROVE,new String[]{name,permitNoc.getBpaNocApplication().getNocType(),permitNoc.getBpaNocApplication().getNocType(),getMunicipalityName()},null);
 			subject = bpaMessageSource.getMessage(SUB_BPA_NOC_DEEMED_APPROVE,new String[]{getMunicipalityName()},null);
 		if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
 			notificationService.sendSMS(mobileNumber, smsMsg);

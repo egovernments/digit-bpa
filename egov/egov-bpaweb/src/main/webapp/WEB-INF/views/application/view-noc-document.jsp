@@ -133,34 +133,31 @@
 							</div>
 						</td>
 					</c:if>	
-					  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">	
-					  	<c:if test="${nocdoc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">							  								  
-					  			
+					<c:if test="${not empty nocApplication}">								  			
 						<td class="view-content tdstatus" style="font-size: 97%;">												
-							  <fmt:formatDate value="${nocapp.lastModifiedDate}"
+							  <fmt:formatDate value="${nocdoc.permitNoc.bpaNocApplication.lastModifiedDate}"
 								pattern="dd/MM/yyyy" var="applicationDate" />
 								<a
 		                            style="cursor: pointer; font-size: 12px;"
-		                             onclick="window.open('/bpa/nocapplication/view/${nocapp.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
-		                             ${nocapp.nocApplicationNumber}
+		                             onclick="window.open('/bpa/nocapplication/view/${nocdoc.permitNoc.bpaNocApplication.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
+		                             ${nocdoc.permitNoc.bpaNocApplication.nocApplicationNumber}
 	                            </a><br/>						  
-									${nocapp.status.code} <br/>
+									${nocdoc.permitNoc.bpaNocApplication.status.code} <br/>
 									${applicationDate} <br />
-									<c:if test="${not empty nocapp.remarks}">																	
-									  Remarks : ${nocapp.remarks}
+									<c:if test="${not empty nocdoc.permitNoc.bpaNocApplication.remarks}">																	
+									  Remarks : ${nocdoc.permitNoc.bpaNocApplication.remarks}
 								    </c:if>									
 						</td>
 						<td class="view-content tdsla" style="font-size: 97%;">	
-							  <fmt:formatDate value="${nocapp.slaEndDate}"
+							  <fmt:formatDate value="${nocdoc.permitNoc.bpaNocApplication.slaEndDate}"
 								pattern="dd/MM/yyyy" var="slaDate" />
 								<span style="font-weight:bold">${slaDate}<br />	</span>		
 						</td>
                         <td class="view-content tdda" style="font-size: 97%;">					
-							  <fmt:formatDate value="${nocapp.deemedApprovedDate}"
+							  <fmt:formatDate value="${nocdoc.permitNoc.bpaNocApplication.deemedApprovedDate}"
 								pattern="dd/MM/yyyy" var="dadate" />
 								<span style="font-weight:bold">${dadate}<br /> </span>		
-						</td></c:if>
-						</c:forEach>					
+						</td></c:if>				
 				</tr>
 			</c:forEach>
 		</tbody>

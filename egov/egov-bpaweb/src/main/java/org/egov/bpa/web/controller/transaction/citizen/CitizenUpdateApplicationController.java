@@ -80,11 +80,11 @@ import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
-import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
@@ -93,10 +93,10 @@ import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
 import org.egov.bpa.transaction.service.BpaDcrService;
-import org.egov.bpa.transaction.service.BpaNocApplicationService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
+import org.egov.bpa.transaction.service.PermitNocApplicationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
@@ -159,9 +159,9 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     @Autowired
     private NocConfigurationService nocConfigurationService;
     @Autowired
-    private BpaNocApplicationService nocService;
-    @Autowired
-    private BpaNocApplicationService bpaNocApplicationService;
+    private PermitNocApplicationService permitNocService;
+
+    
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -171,7 +171,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
-        List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(applicationNumber);
+        List<PermitNocApplication> nocApplication = permitNocService.findByPermitApplicationNumber(applicationNumber);
         bpaUtils.loadBoundary(application);
         User user = securityUtils.getCurrentUser();
         StakeHolder stkHldr = stakeHolderService.findById(user.getId());
@@ -226,13 +226,14 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         int nocAutoCount = 0;
         List<User> nocAutoUsers = new ArrayList<>();
 	    List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+        List<PermitNocApplication> permitNoc = permitNocService.findByPermitApplicationNumber(application.getApplicationNumber());
 
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
         	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
 			NocConfiguration nocConfig = nocConfigurationService
 					.findByDepartment(code);
 		    
-			if(bpaNocApplicationService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
+			if(permitNocService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
 				nocTypeApplMap.put(code, "initiated");
 			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
@@ -248,6 +249,11 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 			    	        .collect(Collectors.toList());	
 				 if(!userList.isEmpty())
                 	nocAutoUsers.add(userList.get(0));
+			}
+			for (PermitNocApplication pna : permitNoc) {
+				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
+					nocDocument.setPermitNoc(pna);
+				}
 			}
 		}
           
@@ -444,7 +450,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                     .getStatusByCodeAndModuleType(APPLICATION_STATUS_SUBMITTED);
             bpaApplication.setStatus(bpaStatus);    
             if(isEdcrIntegrationRequire)
-            	nocService.initiateNoc(bpaApplication);
+            	permitNocService.initiateNoc(bpaApplication);
            
         } else if (workFlowAction != null && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction))
             bpaApplication.setStatus(applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));

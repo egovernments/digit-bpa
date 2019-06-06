@@ -86,10 +86,6 @@ public class BpaNocApplication extends AbstractAuditable {
     private Long id;
     @Length(min = 1, max = 128)
     private String nocApplicationNumber;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "application", nullable = false)
-    private BpaApplication bpaApplication;
     @Length(min = 1, max = 256)
     private String nocType;
     @NotNull
@@ -115,12 +111,6 @@ public class BpaNocApplication extends AbstractAuditable {
 	}
 	public void setId(Long id) {
 		this.id = id;
-	}	
-	public BpaApplication getBpaApplication() {
-		return bpaApplication;
-	}
-	public void setBpaApplication(BpaApplication bpaApplication) {
-		this.bpaApplication = bpaApplication;
 	}
 	public String getNocType() {
 		return nocType;

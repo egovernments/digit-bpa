@@ -1,0 +1,1 @@
+alter table egbpa_nocapplication drop column application;

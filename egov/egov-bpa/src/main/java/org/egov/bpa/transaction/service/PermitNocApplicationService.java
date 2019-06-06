@@ -53,10 +53,11 @@ import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
-import org.egov.bpa.transaction.repository.BpaNocApplicationRepository;
+import org.egov.bpa.transaction.repository.PermitNocApplicationRepository;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.User;
@@ -71,10 +72,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class BpaNocApplicationService {
+public class PermitNocApplicationService {
 	
 	@Autowired
-	private BpaNocApplicationRepository nocRepository;
+	private PermitNocApplicationRepository permitNocRepository;
 	@Autowired
 	private BpaStatusService statusService;
 	@Autowired
@@ -87,51 +88,48 @@ public class BpaNocApplicationService {
 	private NocNumberGenerator nocNumberGenerator;
 	@Autowired
 	public HolidayListService holidayListService;
+
 	
 	@Transactional
-	public BpaNocApplication save(final BpaNocApplication nocApplication) {
-		return nocRepository.save(nocApplication);
-	}
-	
-	@Transactional
-	public List<BpaNocApplication> save(final List<BpaNocApplication> nocApplication) {
-		return nocRepository.save(nocApplication);
+	public PermitNocApplication save(final PermitNocApplication permitNoc) {
+		return permitNocRepository.save(permitNoc);
 	}
 	
 	@Transactional
-	public BpaNocApplication update(final BpaNocApplication nocApplication) {
-		return nocRepository.save(nocApplication);
+	public List<PermitNocApplication> save(final List<PermitNocApplication> permitNoc) {
+		return permitNocRepository.save(permitNoc);
 	}
 	
-	public BpaNocApplication findByNocApplicationNumber(String appNo) {
-		return nocRepository.findByNocApplicationNumber(appNo);		
+	public PermitNocApplication findByNocApplicationNumber(String appNo) {
+		return permitNocRepository.findByNocApplicationNumber(appNo);		
 	}
 	
-	public List<BpaNocApplication> findByApplicationNumber(String appNo) {
-		return nocRepository.findByApplicationNumber(appNo);		
+	public List<PermitNocApplication> findByPermitApplicationNumber(String appNo) {
+		return permitNocRepository.findByPermitApplicationNumber(appNo);		
 	}
 	
-	public BpaNocApplication findByApplicationNumberAndType(String appNo, final String nocType) {
-		return nocRepository.findByApplicationNumberAndType(appNo, nocType);		
+	public List<PermitNocApplication> findInitiatedAppByType(final String nocType) {
+		return permitNocRepository.findInitiatedAppByType(nocType);		
 	}
 	
-	public List<BpaNocApplication> findInitiatedAppByType(final String nocType) {
-		return nocRepository.findInitiatedAppByType(nocType);		
+	public PermitNocApplication findByApplicationNumberAndType(String appNo, final String nocType) {
+		return permitNocRepository.findByApplicationNumberAndType(appNo, nocType);		
 	}
 	
-	public BpaNocApplication createNocApplication(BpaApplication application, NocConfiguration nocConfig) {
-		BpaNocApplication nocApplication = new BpaNocApplication() ;	
+	public PermitNocApplication createNocApplication(PermitNocApplication permitNoc, NocConfiguration nocConfig) {
 		BpaStatus status = statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_INITIATED);
-		nocApplication.setNocApplicationNumber(nocNumberGenerator.generateNocNumber(nocConfig.getDepartment()));
-		nocApplication.setBpaApplication(application);
-		nocApplication.setNocType(nocConfig.getDepartment());
-		nocApplication.setStatus(status);	
-		addSlaEndDate(nocApplication, nocConfig);
-		return save(nocApplication);	
+		permitNoc.getBpaNocApplication().setNocApplicationNumber(nocNumberGenerator.generateNocNumber(nocConfig.getDepartment()));
+		permitNoc.getBpaNocApplication().setNocType(nocConfig.getDepartment());
+		permitNoc.getBpaNocApplication().setStatus(status);	
+		addSlaEndDate(permitNoc.getBpaNocApplication(), nocConfig);
+		return permitNocRepository.save(permitNoc);	
 	}
 	
 	public void initiateNoc(BpaApplication application) {
     for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+		PermitNocApplication permitNoc = new PermitNocApplication();
+		BpaNocApplication nocApplication = new BpaNocApplication();
+
 		List<User> nocUser = new ArrayList<>();
 		List<User> userList = new ArrayList<>();
 		NocConfiguration nocConfig = nocConfigurationService
@@ -153,13 +151,16 @@ public class BpaNocApplicationService {
 			    	        .collect(Collectors.toList());	
 			}	
 		     nocUser.add(userList.get(0));
-			BpaNocApplication nocApplication = createNocApplication(application, nocConfig);			 
-	        bpaUtils.createNocPortalUserinbox(nocApplication, nocUser, nocApplication.getStatus().getCode());
+		     permitNoc.setBpaApplication(application);
+		     permitNoc.setBpaNocApplication(nocApplication);
+		     permitNoc = createNocApplication(permitNoc, nocConfig);	
+	        bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
 		}
       }
 	}
 	
-	public BpaNocApplication createNoc(BpaApplication application, String nocType) {
+	public PermitNocApplication createNoc(BpaApplication application, String nocType) {
+		PermitNocApplication permitNoc = new PermitNocApplication();
 		BpaNocApplication nocApplication = new BpaNocApplication();
 		List<User> nocUser = new ArrayList<>();
 		List<User> userList = new ArrayList<>();
@@ -182,12 +183,15 @@ public class BpaNocApplicationService {
 			    	        .collect(Collectors.toList());	
 			}	
 		     nocUser.add(userList.get(0));
-			 nocApplication = createNocApplication(application, nocConfig);			 
-		     nocApplication.setOwnerUser(nocUser.get(0));
+		     permitNoc.setBpaApplication(application);
+		     permitNoc.setBpaNocApplication(nocApplication);
+		     permitNoc = createNocApplication(permitNoc, nocConfig);	
+			 
+		     permitNoc.getBpaNocApplication().setOwnerUser(nocUser.get(0));
 
-	        bpaUtils.createNocPortalUserinbox(nocApplication, nocUser, nocApplication.getStatus().getCode());
+	        bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
 		}
-		return nocApplication;
+		return permitNoc;
 	}
 	
 	public void addSlaEndDate(BpaNocApplication nocApplication,NocConfiguration nocConfig ) {
@@ -201,6 +205,4 @@ public class BpaNocApplicationService {
 
 		nocApplication.setSlaEndDate(c.getTime());
 	}
-	
-    
 }

@@ -235,40 +235,35 @@
 										<spring:message code="lbl.initiate.noc" />
 								</button>
 								</c:if>
-							</div>
+							</div>paNocApplication
 						</td>
 					</c:if>
-					<c:if test="${not empty nocApplication}">	
-						
-					  <c:forEach var="nocapp" items="${nocApplication}" varStatus="lp">		
-					  								  <c:if test="${doc.nocDocument.serviceChecklist.checklist.code eq nocapp.nocType }">		
-					  								
+					<c:if test="${not empty nocApplication}">					  								
 						<td class="view-content tdstatus" style="font-size: 97%;">												
-							<fmt:formatDate value="${nocapp.lastModifiedDate}"
+							<fmt:formatDate value="${doc.permitNoc.lastModifiedDate}"
 								  pattern="dd/MM/yyyy" var="applicationDate" />						
 								  <a
 		                                style="cursor: pointer; font-size: 12px;"
-		                                onclick="window.open('/bpa/nocapplication/view/${nocapp.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
-		                                ${nocapp.nocApplicationNumber}
+		                                onclick="window.open('/bpa/nocapplication/view/${doc.permitNoc.bpaNocApplication.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
+		                                ${doc.permitNoc.bpaNocApplication.nocApplicationNumber}
 	                                </a><br/>						  
-									${nocapp.status.code} <br/>
+									${doc.permitNoc.bpaNocApplication.status.code} <br/>
 									${applicationDate} <br />							
-                                    <c:if test="${not empty nocapp.remarks}">																	
-									  Remarks : ${nocapp.remarks}
+                                    <c:if test="${not empty doc.permitNoc.bpaNocApplication.remarks}">																	
+									  Remarks : ${doc.permitNoc.bpaNocApplication.remarks}
 								    </c:if>										
 						</td>	
 						<td class="view-content tdsla" style="font-size: 97%;">												
-							    <fmt:formatDate value="${nocapp.slaEndDate}"
+							    <fmt:formatDate value="${doc.permitNoc.bpaNocApplication.slaEndDate}"
 								pattern="dd/MM/yyyy" var="slaDate" />
 								<span style="font-weight:bold">${slaDate}<br />		</span>		
 						</td>	
 						
 						<td class="view-content tdda" style="font-size: 97%;">												
-							  <fmt:formatDate value="${nocapp.deemedApprovedDate}"
+							  <fmt:formatDate value="${doc.permitNoc.bpaNocApplication.deemedApprovedDate}"
 								pattern="dd/MM/yyyy" var="dadate" />
 								<span style="font-weight:bold">${dadate}<br />		</span>		
-						</td></c:if>
-						</c:forEach>				
+						</td>
 					</c:if>
 
 				</tr>

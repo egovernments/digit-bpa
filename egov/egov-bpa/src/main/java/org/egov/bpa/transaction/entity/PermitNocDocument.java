@@ -52,6 +52,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.CorrespondenceAddress;
 
 @Entity
 @Table(name = "egbpa_permit_noc_document")
@@ -72,6 +73,9 @@ public class PermitNocDocument extends AbstractAuditable {
     @NotNull
     @JoinColumn(name = "nocDocument", nullable = false)
     private NocDocument nocDocument;
+    
+    private transient PermitNocApplication permitNoc = new PermitNocApplication();
+
 
     @Override
     public Long getId() {
@@ -98,5 +102,13 @@ public class PermitNocDocument extends AbstractAuditable {
     public void setNocDocument(NocDocument nocDocument) {
         this.nocDocument = nocDocument;
     }
+
+	public PermitNocApplication getPermitNoc() {
+		return permitNoc;
+	}
+
+	public void setPermitNoc(PermitNocApplication permitNoc) {
+		this.permitNoc = permitNoc;
+	}
 
 }

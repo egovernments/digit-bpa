@@ -38,11 +38,6 @@
  */
 package org.egov.bpa.transaction.service.report;
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,6 +47,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.dto.NocDetailsHelper;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -74,46 +70,46 @@ public class BpaNocApplicationReportService {
 	@SuppressWarnings("unchecked")
 	public List<NocDetailsHelper> searchNocDetails(final NocDetailsHelper nocDetailsHelper) {
 		final Criteria criteria = buildSearchCriteria(nocDetailsHelper);
-		return buildNocDetailsResponse((List<BpaNocApplication>) criteria.list());
+		return buildNocDetailsResponse((List<PermitNocApplication>) criteria.list());
 	}
 
-	private List<NocDetailsHelper> buildNocDetailsResponse(List<BpaNocApplication> nocApplication) {
+	private List<NocDetailsHelper> buildNocDetailsResponse(List<PermitNocApplication> permitNoc) {
 		List<NocDetailsHelper> nocDetails = new ArrayList<>();
-		for(BpaNocApplication nocApp : nocApplication) {
+		for(PermitNocApplication permitNocApp : permitNoc) {
 			NocDetailsHelper nocDetail = new NocDetailsHelper();
-		    nocDetail.setNocDepartmentName(nocApp.getNocType());
-		    nocDetail.setNocStatusName(nocApp.getStatus().getCode());
-		    nocDetail.setNocApplicationNumber(nocApp.getNocApplicationNumber());
-		    nocDetail.setPermitApplicationNo(nocApp.getBpaApplication().getApplicationNumber());
-		    nocDetail.setNocApplicationDate(nocApp.getCreatedDate());
-		    nocDetail.setStatusUpdatedDate(nocApp.getLastModifiedDate());
+		    nocDetail.setNocDepartmentName(permitNocApp.getBpaNocApplication().getNocType());
+		    nocDetail.setNocStatusName(permitNocApp.getBpaNocApplication().getStatus().getCode());
+		    nocDetail.setNocApplicationNumber(permitNocApp.getBpaNocApplication().getNocApplicationNumber());
+		    nocDetail.setPermitApplicationNo(permitNocApp.getBpaApplication().getApplicationNumber());
+		    nocDetail.setNocApplicationDate(permitNocApp.getBpaNocApplication().getCreatedDate());
+		    nocDetail.setStatusUpdatedDate(permitNocApp.getBpaNocApplication().getLastModifiedDate());
 		    nocDetails.add(nocDetail);
 		}
 		return nocDetails;
 	}
 	
 	public Criteria buildSearchCriteria(final NocDetailsHelper nocDetailsHelper) {
-		final Criteria criteria = getCurrentSession().createCriteria(BpaNocApplication.class, "nocApplication");
+		final Criteria criteria = getCurrentSession().createCriteria(PermitNocApplication.class, "permitNoc")
+                .createAlias("permitNoc.bpaApplication", "permitApplication")
+				                  .createAlias("permitNoc.bpaNocApplication", "nocApplication");
 
+		if (nocDetailsHelper.getNocApplicationNumber() != null) {
+			criteria.add(Restrictions.eq("nocApplication.nocApplicationNumber", nocDetailsHelper.getNocApplicationNumber()));
+		}		
 		if (nocDetailsHelper.getNocDepartmentName() != null) {
 			criteria.add(Restrictions.eq("nocApplication.nocType",nocDetailsHelper.getNocDepartmentName()));
 		}
 		if (nocDetailsHelper.getNocStatusId() != null) {
 			criteria.add(Restrictions.eq("nocApplication.status.id",nocDetailsHelper.getNocStatusId()));
-		}
-		if (nocDetailsHelper.getNocApplicationNumber() != null) {
-			criteria.add(Restrictions.eq("nocApplication.nocApplicationNumber", nocDetailsHelper.getNocApplicationNumber()));
-		}
+		}		
 		if (nocDetailsHelper.getNocApplicationDate() != null) {
 			criteria.add(Restrictions.ge("nocApplication.createdDate",nocDetailsHelper.getNocApplicationDate()));
 		}
 		if (nocDetailsHelper.getNocApplicationDate() != null) {
 			criteria.add(Restrictions.le("nocApplication.createdDate",resetToDateTimeStamp(nocDetailsHelper.getNocApplicationDate())));
-		}
-		
+		}		
 		if (nocDetailsHelper.getPermitApplicationNo() != null) {
-			criteria.createAlias("nocApplication.bpaApplication", "application")
-					.add(Restrictions.eq("application.applicationNumber", nocDetailsHelper.getPermitApplicationNo()));
+			criteria.add(Restrictions.eq("permitApplication.applicationNumber", nocDetailsHelper.getPermitApplicationNo()));
 		}
 		
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);

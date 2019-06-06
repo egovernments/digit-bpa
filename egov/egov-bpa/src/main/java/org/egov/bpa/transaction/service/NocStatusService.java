@@ -52,6 +52,7 @@ import java.util.List;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.enums.NocStatus;
 import org.egov.bpa.utils.BpaConstants;
@@ -66,7 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NocStatusService {
 	
 	@Autowired
-	private BpaNocApplicationService bpaNocApplicationService;
+	private PermitNocApplicationService permitNocService;
 	
 	
 	@Transactional
@@ -74,16 +75,16 @@ public class NocStatusService {
 		State<Position> currentState = application.getCurrentState();
         String currentStatus = application.getStatus().getCode();
         String pendingAction = currentState.getNextAction();
-        List<BpaNocApplication> nocApplications = bpaNocApplicationService.findByApplicationNumber(application.getApplicationNumber());
+        List<PermitNocApplication> permitNoc = permitNocService.findByPermitApplicationNumber(application.getApplicationNumber());
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
         	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
         	if (FORWARDED_TO_NOC_UPDATE.equalsIgnoreCase(pendingAction)
 	                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus)) {
-				for (BpaNocApplication nocApp : nocApplications) {
-		        	if(nocApp.getNocType().equals(code)) {
-		        		if(nocApp.getStatus().getCode().equals(BpaConstants.NOC_APPROVED) || nocApp.getStatus().getCode().equals(BpaConstants.NOC_DEEMED_APPROVED))
+				for (PermitNocApplication permitNocApp : permitNoc) {
+		        	if(permitNocApp.getBpaNocApplication().getNocType().equals(code)) {
+		        		if(permitNocApp.getBpaNocApplication().getStatus().getCode().equals(BpaConstants.NOC_APPROVED) || permitNocApp.getBpaNocApplication().getStatus().getCode().equals(BpaConstants.NOC_DEEMED_APPROVED))
 		        			nocDocument.getNocDocument().setNocStatus(NocStatus.APPROVED);
-		        		else if(nocApp.getStatus().getCode().equals(BpaConstants.NOC_REJECTED))
+		        		else if(permitNocApp.getBpaNocApplication().getStatus().getCode().equals(BpaConstants.NOC_REJECTED))
 			        		nocDocument.getNocDocument().setNocStatus(NocStatus.REJECTED);			        			
         	        }
                }

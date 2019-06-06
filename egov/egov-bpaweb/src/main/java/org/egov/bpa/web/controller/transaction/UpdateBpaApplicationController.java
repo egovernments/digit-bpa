@@ -124,6 +124,7 @@ import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.common.NoticeCondition;
@@ -138,13 +139,13 @@ import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRevocationFormat;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.BpaDcrService;
-import org.egov.bpa.transaction.service.BpaNocApplicationService;
 import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.DcrRestService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.NocStatusService;
 import org.egov.bpa.transaction.service.PermitFeeService;
+import org.egov.bpa.transaction.service.PermitNocApplicationService;
 import org.egov.bpa.transaction.service.PermitRevocationService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
@@ -215,7 +216,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     @Autowired
     private PermitRevocationService permitRevocationService;
     @Autowired
-    private BpaNocApplicationService bpaNocApplicationService;
+    private PermitNocApplicationService permitNocService;
     @Autowired
     private NocConfigurationService nocConfigurationService;
     @Autowired
@@ -233,7 +234,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     @GetMapping("/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber) {
         final BpaApplication application = getBpaApplication(applicationNumber);
-        List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(applicationNumber);
+        List<PermitNocApplication> nocApplication = permitNocService.findByPermitApplicationNumber(applicationNumber);
         prepareActions(model, application);
         loadCommonApplicationDetails(model, application);
         buildRejectionReasons(model, application);
@@ -441,12 +442,12 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         } // For one day permit, on reject from AE it's forwarded to SUP (workflow user)
         else if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
     		BpaStatus status = statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_APPL_REJECTED);
-        	List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(bpaApplication.getApplicationNumber());
-        	if(!nocApplication.isEmpty()) {
-	        	for(BpaNocApplication nocApp : nocApplication) {
-	        		nocApp.setStatus(status);
+        	List<PermitNocApplication> permitNoc = permitNocService.findByPermitApplicationNumber(bpaApplication.getApplicationNumber());
+        	if(!permitNoc.isEmpty()) {
+	        	for(PermitNocApplication nocApp : permitNoc) {
+	        		nocApp.getBpaNocApplication().setStatus(status);
 	        	}
-	        	bpaNocApplicationService.save(nocApplication);
+	        	permitNocService.save(permitNoc);
         	}
         	
             if (bpaApplication.getIsOneDayPermitApplication() && null != request.getParameter(APPRIVALPOSITION)
@@ -535,7 +536,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         BpaApplication application = getBpaApplication(applicationNumber);
         loadCommonApplicationDetails(model, application);
         bpaUtils.loadBoundary(application);
-        List<BpaNocApplication> nocApplication = bpaNocApplicationService.findByApplicationNumber(applicationNumber);
+        List<PermitNocApplication> nocApplication = permitNocService.findByPermitApplicationNumber(applicationNumber);
 
         model.addAttribute("nocApplication",nocApplication);
 
@@ -776,7 +777,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
                         application.getStateHistory()));
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
-	  
+        List<PermitNocApplication> permitNoc = permitNocService.findByPermitApplicationNumber(application.getApplicationNumber());
+
 	    EdcrApplicationInfo dcrPlanInfo = drcRestService.getDcrPlanInfo(application.geteDcrNumber(), ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
         Map<String, String> nocTypeMap = new HashMap<>();
 	        nocTypeMap.put(FIRENOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
@@ -792,12 +794,18 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
 			NocConfiguration nocConfig = nocConfigurationService
 					.findByDepartment(code);
-			if(bpaNocApplicationService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
+			if(permitNocService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
 				nocTypeApplMap.put(code, "initiated");
 			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
 					nocTypeMap.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+			for (PermitNocApplication pna : permitNoc) {
+				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
+					nocDocument.setPermitNoc(pna);
+				}
+			}
+			
 		}
         model.addAttribute("nocTypeApplMap",nocTypeApplMap);
         model.addAttribute("nocConfigMap",nocConfigMap);

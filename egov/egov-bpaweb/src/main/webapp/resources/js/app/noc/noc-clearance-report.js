@@ -83,7 +83,6 @@ $(document)
                             },
                             "searching": false,
                             "bDestroy" : true,
-                            "scrollX": true,
                             "responsive": true,
                             "autoWidth": true,
                             fixedColumns: {

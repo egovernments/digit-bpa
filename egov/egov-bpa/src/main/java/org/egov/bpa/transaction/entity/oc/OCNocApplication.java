@@ -2,7 +2,7 @@
  * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *  Copyright (C) <2018>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -44,58 +44,67 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.service;
 
-import java.util.Date;
-import java.util.List;
+package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.master.entity.NocConfiguration;
-import org.egov.bpa.master.service.HolidayListService;
-import org.egov.bpa.master.service.NocConfigurationService;
-import org.egov.bpa.transaction.entity.PermitNocApplication;
-import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
-import org.egov.bpa.utils.BpaConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-@Service
-@Transactional(readOnly = true)
-public class NocApprovalService {
+import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
-	@Autowired
-	public NocConfigurationService nocConfigurationService;
-	@Autowired
-	public HolidayListService holidayListService;
-	@Autowired
-	private BpaStatusService statusService;
-	@Autowired
-    private BPASmsAndEmailService bpaSmsAndEmailService;
-	@Autowired
-	private PermitNocApplicationService permitNocService;
-	
-	@Transactional
-    public void approveNocAsDeemed() {
-		List<NocConfiguration> nocConfigIsDeemedList=nocConfigurationService.findIsDeemedApproval();
-		for(NocConfiguration nocConfig:nocConfigIsDeemedList){
-			 List<PermitNocApplication> permitNoc = permitNocService.findInitiatedAppByType(nocConfig.getDepartment());
-			for (PermitNocApplication permitNocApp : permitNoc) {
-				String applStatus = null;
-				if (permitNocApp.getBpaApplication().getStatus() != null){
-					applStatus = permitNocApp.getBpaApplication().getStatus().getCode();
-				}
-				if ((applStatus != null && !(applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_CANCELLED)
-						|| applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REJECTED)))) {
-					
-					if (permitNocApp.getBpaNocApplication().getSlaEndDate().compareTo(new Date())>=0) {
-						permitNocApp.getBpaNocApplication().setStatus(statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC,
-								BpaConstants.NOC_DEEMED_APPROVED));
-						permitNocApp.getBpaNocApplication().setDeemedApprovedDate(new Date());
-						permitNocService.save(permitNocApp);
-						bpaSmsAndEmailService.sendSMSAndEmailForDeemedApprovalNoc(permitNocApp);
-					}
-				}
-			}
-		}
+@Entity
+@Table(name = "EGBPA_OC_NOCAPPLICATION")
+@SequenceGenerator(name = OCNocApplication.SEQ_OCNOCAPPLICATION, sequenceName = OCNocApplication.SEQ_OCNOCAPPLICATION, allocationSize = 1)
+public class OCNocApplication extends AbstractAuditable {
+
+    protected static final String SEQ_OCNOCAPPLICATION = "SEQ_EGBPA_OC_NOCAPPLICATION";
+    private static final long serialVersionUID = -3889308488871083896L;
+
+    @Id
+    @GeneratedValue(generator = SEQ_OCNOCAPPLICATION, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "nocapplication", nullable = false)
+    private BpaNocApplication bpaNocApplication;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "oc", nullable = false)
+    private OccupancyCertificate oc;
+
+	public Long getId() {
+		return id;
 	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public BpaNocApplication getBpaNocApplication() {
+		return bpaNocApplication;
+	}
+
+	public void setBpaNocApplication(BpaNocApplication bpaNocApplication) {
+		this.bpaNocApplication = bpaNocApplication;
+	}
+
+	public OccupancyCertificate getOc() {
+		return oc;
+	}
+
+	public void setOc(OccupancyCertificate oc) {
+		this.oc = oc;
+	}  
+
 }

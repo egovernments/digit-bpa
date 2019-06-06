@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2018>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,30 +37,29 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.bpa.transaction.repository;
 
 import java.util.List;
 
-import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface BpaNocApplicationRepository extends JpaRepository<BpaNocApplication, Long> {
+public interface PermitNocApplicationRepository extends JpaRepository<PermitNocApplication, Long> {
 	
-	  BpaNocApplication findByNocApplicationNumber(String nocApplicationNumber);
+	@Query("select noc from PermitNocApplication noc where noc.bpaApplication.applicationNumber =:appNo")
+	List<PermitNocApplication> findByPermitApplicationNumber(@Param("appNo") String appNo);
 	
-	  @Query("select noc from BpaNocApplication noc where noc.bpaApplication.applicationNumber =:appNo ")
-	  List<BpaNocApplication> findByApplicationNumber(@Param("appNo") String appNo);
+	@Query("select noc from PermitNocApplication noc where noc.bpaNocApplication.nocApplicationNumber =:appNo")
+	PermitNocApplication findByNocApplicationNumber(@Param("appNo") String appNo);
+	
+	@Query("select noc from PermitNocApplication noc where noc.bpaNocApplication.nocType = :type and noc.bpaNocApplication.status.code='NOC_INITIATED'")
+    List<PermitNocApplication> findInitiatedAppByType(@Param("type") String nocType);
+	
+	@Query("select noc from PermitNocApplication noc where noc.bpaApplication.applicationNumber =:appNo and noc.bpaNocApplication.nocType = :type ") 
+	PermitNocApplication findByApplicationNumberAndType(@Param("appNo") String appNo, @Param("type") String nocType);
 	  
-	  @Query("select noc from BpaNocApplication noc where noc.bpaApplication.applicationNumber =:appNo and noc.nocType = :type ")
-	  BpaNocApplication findByApplicationNumberAndType(@Param("appNo") String appNo, @Param("type") String nocType);
-	  
-	  @Query("select noc from BpaNocApplication noc where noc.nocType = :type and noc.status.code='NOC_INITIATED'")
-	  List<BpaNocApplication> findInitiatedAppByType(@Param("type") String nocType);
-
 }
