@@ -61,9 +61,9 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<input type="hidden" name="permitNocApplication" value="${permitNocApplication.id}">
-			<input type="hidden" name="id" value="${permitNoc.id}">
-			<input type="hidden" name="bpaNocApplication" value="${permitNocApplication.bpaNocApplication.id}">
-			<input type="hidden" name="bpaNocApplication.id" value="${permitNocApplication.bpaNocApplication.id}">
+			<input type="hidden" name="id" value="${permitNocApplication.id}">
+<%-- 			<input type="hidden" name="bpaNocApplication" value="${permitNocApplication.bpaNocApplication.id}">
+ --%>			<input type="hidden" name="bpaNocApplication.id" value="${permitNocApplication.bpaNocApplication.id}">
 			<input type="hidden" name="bpaApplication" value="${permitNocApplication.bpaApplication.id}">
 			<input type="hidden" name="bpaApplication.id" value="${permitNocApplication.bpaApplication.id}">
 			

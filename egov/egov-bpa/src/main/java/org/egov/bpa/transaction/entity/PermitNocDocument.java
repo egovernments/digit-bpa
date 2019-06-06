@@ -52,7 +52,6 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.CorrespondenceAddress;
 
 @Entity
 @Table(name = "egbpa_permit_noc_document")

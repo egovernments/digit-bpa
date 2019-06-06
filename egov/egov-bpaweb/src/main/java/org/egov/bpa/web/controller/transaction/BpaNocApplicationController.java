@@ -159,7 +159,7 @@ public class BpaNocApplicationController {
         model.addAttribute("bpaApp",applicationBpaService.findByApplicationNumber(permitNoc.getBpaApplication().getApplicationNumber()));
         permitNoc.getBpaApplication().setPermitOccupanciesTemp(permitNoc.getBpaApplication().getPermitOccupancies());
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
-        model.addAttribute("permitNoc",permitNoc);
+        model.addAttribute("permitNocApplication",permitNoc);
         return "view-noc-details";
     }
 	

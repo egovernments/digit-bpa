@@ -69,14 +69,14 @@
 			<spring:message code="lbl.re.survey" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].reSurveyNumber}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].reSurveyNumber}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.nature.of.ownership" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].natureofOwnership}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].natureofOwnership}"
 				default="N/A"></c:out>
 		</div>
 	</div>
@@ -86,14 +86,14 @@
 			<spring:message code="lbl.khata.no" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].khataNumber}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].khataNumber}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.holding.no" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].holdingNumber}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].holdingNumber}"
 				default="N/A"></c:out>
 		</div>
 	</div>
@@ -105,7 +105,7 @@
 			<spring:message code="lbl.nearest.build.no" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].nearestbuildingnumber}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].nearestbuildingnumber}"
 				default="N/A"></c:out>
 		</div>
 		<div class="doorNo">
@@ -113,7 +113,7 @@
 				<spring:message code="lbl.addr.dno" />
 			</div>
 			<div class="col-sm-3 add-margin view-content text-justify">
-				<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].plotdoornumber}"
+				<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].plotdoornumber}"
 					default="N/A"></c:out>
 			</div>
 		</div>
@@ -124,14 +124,14 @@
 			<spring:message code="lbl.street.address1" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].streetaddress1}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].streetaddress1}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.street.address2" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].streetaddress2}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].streetaddress2}"
 				default="N/A"></c:out>
 		</div>
 	</div>
@@ -141,13 +141,13 @@
 			<spring:message code="lbl.city" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].citytown}" default="N/A"></c:out>
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].citytown}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.plot.no" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].mspPlotNumber}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].mspPlotNumber}"
 				default="N/A"></c:out>
 		</div>
 				
@@ -160,14 +160,14 @@
 			<spring:message code="lbl.town.plan.zone" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].scheme.description}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].scheme.description}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.proposed.land.use" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].landUsage.description}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].landUsage.description}"
 				default="N/A"></c:out>
 		</div>
 	</div>
@@ -176,14 +176,14 @@
 			<spring:message code="lbl.previousowner.details" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].previousownerdetails}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].previousownerdetails}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.landregistration.details" />
 		</div>
 		<div class="col-sm-3 add-margin view-content text-justify">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].landregistrationdetails}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].landregistrationdetails}"
 				default="N/A"></c:out>
 		</div>
 	</div>
@@ -192,7 +192,7 @@
 			<spring:message code="lbl.charitable.trust" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaNocApplication.bpaApplication.siteDetail[0].charitableTrustBuilding ? 'YES' : 'NO'}"
+			<c:out value="${permitNocApplication.bpaApplication.siteDetail[0].charitableTrustBuilding ? 'YES' : 'NO'}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
@@ -200,7 +200,7 @@
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out
-				value="${bpaNocApplication.bpaApplication.siteDetail[0].affordableHousingScheme ? 'YES' : 'NO'}"
+				value="${permitNocApplication.bpaApplication.siteDetail[0].affordableHousingScheme ? 'YES' : 'NO'}"
 				default="N/A"></c:out>
 		</div>
 	</div>
@@ -210,8 +210,8 @@
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<input type="hidden" id="governmentType"
-				value="${bpaNocApplication.bpaApplication.governmentType}">
-			<c:out value="${bpaNocApplication.bpaApplication.governmentType.governmentTypeVal}"
+				value="${permitNocApplication.bpaApplication.governmentType}">
+			<c:out value="${permitNocApplication.bpaApplication.governmentType.governmentTypeVal}"
 				default="N/A"></c:out>
 		</div>
 		<div id="isEconomicallyWeakerSec">
@@ -220,7 +220,7 @@
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out
-					value="${bpaNocApplication.bpaApplication.isEconomicallyWeakerSection ? 'YES' : 'NO'}"
+					value="${permitNocApplication.bpaApplication.isEconomicallyWeakerSection ? 'YES' : 'NO'}"
 					default="N/A"></c:out>
 			</div>
 		</div>
@@ -232,8 +232,8 @@
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<input type="hidden" id="governmentType"
-				value="${bpaNocApplication.bpaApplication.constructionCost}">
-			<c:out value="${bpaNocApplication.bpaApplication.constructionCost}"
+				value="${permitNocApplication.bpaApplication.constructionCost}">
+			<c:out value="${permitNocApplication.bpaApplication.constructionCost}"
 				default="N/A"></c:out>
 		</div>
 		<div id="isEconomicallyWeakerSec">
@@ -242,7 +242,7 @@
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out
-					value="${bpaNocApplication.bpaApplication.infrastructureCost}"
+					value="${permitNocApplication.bpaApplication.infrastructureCost}"
 					default="N/A"></c:out>
 			</div>
 		</div>

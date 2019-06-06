@@ -55,13 +55,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<form:form role="form" modelAttribute="permitNoc" id="editNocApplicationForm"
- action="/bpa/nocapplication/updateNoc/${permitNoc.bpaNocApplication.nocType}~${permitNoc.bpaApplication.applicationNumber}"
+<form:form role="form" modelAttribute="permitNocApplication" id="editNocApplicationForm"
+ action="/bpa/nocapplication/updateNoc/${permitNocApplication.bpaNocApplication.nocType}~${permitNocApplication.bpaApplication.applicationNumber}"
  method="post" 
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" name="permitNoc" value="${permitNoc.id}">
-			<input type="hidden" name="id" value="${permitNoc.id}">
+			<input type="hidden" name="permitNoc" value="${permitNocApplication.id}">
+			<input type="hidden" name="id" value="${permitNocApplication.id}">
 <div class="row">
 	<div class="col-md-12">		
 		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
@@ -93,13 +93,13 @@
 								<spring:message code="lbl.application.number" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
-								<c:out value="${permitNoc.bpaNocApplication.nocApplicationNumber}"
+								<c:out value="${permitNocApplication.bpaNocApplication.nocApplicationNumber}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.noc.app.date" />
 							</div>
-							<fmt:formatDate value="${permitNoc.bpaNocApplication.createdDate}"
+							<fmt:formatDate value="${permitNocApplication.bpaNocApplication.createdDate}"
 								  pattern="dd/MM/yyyy" var="applicationDate" />	
 							<div class="col-sm-3 add-margin view-content text-justify">
 								<c:out value="${applicationDate}"
@@ -112,7 +112,7 @@
 								<spring:message code="lbl.noc.status" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
-								<c:out value="${permitNoc.bpaNocApplication.status.code}"
+								<c:out value="${permitNocApplication.bpaNocApplication.status.code}"
 									default="N/A"></c:out>
 							</div>							
 						</div>	
@@ -138,11 +138,11 @@
     	         
     	         <div class="panel panel-primary docdetails" data-collapsed="0">    	    
     	            <div class="panel-heading custom_form_panel_heading">				
-	                	<div class="panel-title">${permitNoc.bpaNocApplication.nocType} <spring:message code="lbl.noc.dept.doc" /></div>
+	                	<div class="panel-title">${permitNocApplication.bpaNocApplication.nocType} <spring:message code="lbl.noc.dept.doc" /></div>
 					</div>									
                	
 							<c:forEach
-								var="bpanoc" items="${permitNoc.bpaNocApplication.nocSupportDocs}" varStatus="loop">
+								var="bpanoc" items="${permitNocApplication.bpaNocApplication.nocSupportDocs}" varStatus="loop">
 								<c:if test="${bpanoc.fileStoreId ne null}">&nbsp;&nbsp;&nbsp;&nbsp;
 									<a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
 							  	 	data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
@@ -173,7 +173,7 @@
     	           <div class="panel-heading custom_form_panel_heading">				
 	                	<div class="panel-title">Comments</div>
 					</div>&nbsp;&nbsp;&nbsp;&nbsp;	  	    
-		                      <c:out value="${permitNoc.bpaNocApplication.remarks}"
+		                      <c:out value="${permitNocApplication.bpaNocApplication.remarks}"
 									default="N/A"></c:out>		
 			</div>		
 			<div align="center">

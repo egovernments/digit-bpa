@@ -55,18 +55,18 @@
 </div>
 
 <div class="panel-body display-hide">
-	<c:if test="${not empty bpaNocApplication.bpaApplication.buildingDetail}">
-		<c:forEach items="${bpaNocApplication.bpaApplication.buildingDetail}" var="bldg"
+	<c:if test="${not empty permitNocApplication.bpaApplication.buildingDetail}">
+		<c:forEach items="${permitNocApplication.bpaApplication.buildingDetail}" var="bldg"
 			varStatus="bldgCounter">
 			<c:if test="${not empty bldg.applicationFloorDetails}">
 				<div
 					class="panel-heading custom_form_panel_heading toggle-bldg-header toggle-head${bldgCounter.index}"
 					data-bldg-idx="${bldgCounter.index}">
 					<div class="panel-title">
-						<c:if test="${fn:length(bpaNocApplication.bpaApplication.buildingDetail) gt 1}">Block - ${bldg.name}</c:if>
+						<c:if test="${fn:length(permitNocApplication.bpaApplication.buildingDetail) gt 1}">Block - ${bldg.name}</c:if>
 						<spring:message code="lbl.plint.carpet.details" />
 					</div>
-					<c:if test="${fn:length(bpaNocApplication.bpaApplication.buildingDetail) gt 1}">
+					<c:if test="${fn:length(permitNocApplication.bpaApplication.buildingDetail) gt 1}">
 						<div class="history-icon toggle-icon${bldgCounter.index}">
 							<i class="fa fa-angle-up fa-2x"></i>
 						</div>
@@ -74,7 +74,7 @@
 				</div>
 				<div
 					<c:if
-                    test="${fn:length(bpaNocApplication.bpaApplication.buildingDetail) gt 1}">class="buildingDetailsToggle${bldgCounter.index} display-hide" </c:if>>
+                    test="${fn:length(permitNocApplication.bpaApplication.buildingDetail) gt 1}">class="buildingDetailsToggle${bldgCounter.index} display-hide" </c:if>>
 					<table class="table table-striped table-bordered"
 						id="buildingAreaDetails${bldgCounter.index}">
 						<thead>
