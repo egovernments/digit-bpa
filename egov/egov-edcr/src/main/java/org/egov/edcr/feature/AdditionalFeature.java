@@ -501,7 +501,7 @@ public class AdditionalFeature extends FeatureProcess {
             OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 
             if (!basementSetbacks.isEmpty()) {
-                if (mostRestrictiveFarHelper.getType() != null
+                if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null
                         && (DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
                                 || DxfFileConstants.A_R
                                         .equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
@@ -510,7 +510,7 @@ public class AdditionalFeature extends FeatureProcess {
                         && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_300)) <= 0) {
                     isAccepted = basementSetbacks.size() <= 1 ? true : false;
                     allowedBsmnt = "1";
-                } else if (mostRestrictiveFarHelper.getType() != null && mostRestrictiveFarHelper.getSubtype() != null
+                } else if (mostRestrictiveFarHelper!= null && mostRestrictiveFarHelper.getType() != null && mostRestrictiveFarHelper.getSubtype() != null
                         && (DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
                                 || DxfFileConstants.A_R
                                         .equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
@@ -545,7 +545,7 @@ public class AdditionalFeature extends FeatureProcess {
             if (StringUtils.isNotBlank(pl.getPlanInformation().getProvisionsForGreenBuildingsAndSustainability())
                     && pl.getPlanInformation().getProvisionsForGreenBuildingsAndSustainability().equals("YES")) {
 
-                if (mostRestrictiveFarHelper.getType() != null
+                if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null
                         && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
 
                     if (pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_100)) >= 0

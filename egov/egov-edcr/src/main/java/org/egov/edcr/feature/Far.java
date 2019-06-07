@@ -428,7 +428,7 @@ public class Far extends FeatureProcess {
 							? occupancy.getExistingBuiltUpArea() : BigDecimal.ZERO);
 				}
 
-				if (mostRestrictiveFar.getConvertedSubtype() != null
+				if (mostRestrictiveFar != null && mostRestrictiveFar.getConvertedSubtype() != null
 						&& !A_R.equals(mostRestrictiveFar.getSubtype().getCode())) {
 					if (carpetArea.compareTo(BigDecimal.ZERO) == 0) {
 						pl.addError("Carpet area in block " + blk.getNumber() + "floor " + flr.getNumber(),

@@ -365,7 +365,7 @@ public class RampService extends FeatureProcess {
                                                     RoundingMode.HALF_UP);
                                             ramp.setSlope(rampSlope);
                                             BigDecimal expectedSlope = BigDecimal.ZERO;
-                                            if ((mostRestrictiveFarHelper.getType() != null && mostRestrictiveFarHelper.getType()
+                                            if (mostRestrictiveFarHelper != null && ((mostRestrictiveFarHelper.getType() != null && mostRestrictiveFarHelper.getType()
                                                     .getCode().equalsIgnoreCase(DxfFileConstants.C))
                                                     || (mostRestrictiveFarHelper.getSubtype() != null &&
                                                             (mostRestrictiveFarHelper.getSubtype().getCode()
@@ -373,7 +373,7 @@ public class RampService extends FeatureProcess {
                                                                     || mostRestrictiveFarHelper.getSubtype().getCode()
                                                                             .equalsIgnoreCase(DxfFileConstants.C_MIP)
                                                                     || mostRestrictiveFarHelper.getSubtype().getCode()
-                                                                            .equalsIgnoreCase(DxfFileConstants.C_MOP)))) {
+                                                                            .equalsIgnoreCase(DxfFileConstants.C_MOP))))) {
                                                 expectedSlope = BigDecimal.valueOf(0.05);
                                             } else {
                                                 expectedSlope = ramp.getFloorHeight()
