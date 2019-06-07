@@ -107,7 +107,7 @@ public class PlanService {
             LOG.info("got bean :" + rule.getClass().getSimpleName() + " : " + new Date());
             rule.process(plan);
             LOG.info("Completed Process " + rule.getClass().getSimpleName() + "  " + new Date());
-            if (plan.getErrors().containsKey("onlyresidential_allowed"))
+            if (plan.getErrors().containsKey("onlyresidential_allowed") || plan.getErrors().containsKey("units not in meters"))
                 return plan;
         }
         return plan;
