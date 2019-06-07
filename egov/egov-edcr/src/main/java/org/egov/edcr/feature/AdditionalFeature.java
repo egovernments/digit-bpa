@@ -498,7 +498,7 @@ public class AdditionalFeature extends FeatureProcess {
             List<SetBack> setBacks = block.getSetBacks();
             List<SetBack> basementSetbacks = setBacks.stream().filter(setback -> setback.getLevel() < 0)
                     .collect(Collectors.toList());
-            OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+            OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
 
             if (!basementSetbacks.isEmpty()) {
                 if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null
@@ -532,7 +532,7 @@ public class AdditionalFeature extends FeatureProcess {
     }
 
     private void validateGreenBuildingsAndSustainability(Plan pl, HashMap<String, String> errors) {
-        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey("Common_Green buildings and sustainability provisions");
         scrutinyDetail.addColumnHeading(1, RULE_NO);

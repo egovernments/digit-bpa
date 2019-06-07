@@ -162,12 +162,13 @@ public class Far extends FeatureProcess {
 	private static final String ONLYRESIDENTIAL_ALLOWED_KEY = "onlyresidential_allowed";
 
 	@Override
-	public Plan validate(Plan pl) {
-		if (pl.getPlot().getArea() == null || pl.getPlot().getArea().doubleValue() == 0) {
-			pl.addError(PLOT_AREA, getLocaleMessage(OBJECTNOTDEFINED, PLOT_AREA));
-		}
-		return pl;
-	}
+    public Plan validate(Plan pl) {
+        if (pl.getPlot() == null
+                || (pl.getPlot() != null && (pl.getPlot().getArea() == null || pl.getPlot().getArea().doubleValue() == 0))) {
+            pl.addError(PLOT_AREA, getLocaleMessage(OBJECTNOTDEFINED, PLOT_AREA));
+        }
+        return pl;
+    }
 
 	@Override
 	public Plan process(Plan pl) {
@@ -759,7 +760,7 @@ public class Far extends FeatureProcess {
 	private Boolean processFarForSpecialOccupancy(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far,
 			String typeOfArea, BigDecimal roadWidth, HashMap<String, String> errors) {
 
-		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
 		String expectedResult = StringUtils.EMPTY;
 		boolean isAccepted = false;
 		if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null) {

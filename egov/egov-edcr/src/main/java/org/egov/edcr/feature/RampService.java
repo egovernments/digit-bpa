@@ -299,7 +299,7 @@ public class RampService extends FeatureProcess {
                     }
 
                     if (block.getBuilding().getBuildingHeight().compareTo(new BigDecimal(15)) > 0) {
-                        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+                        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
                         if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                             for (Floor floor : block.getBuilding().getFloors()) {
                                 /*

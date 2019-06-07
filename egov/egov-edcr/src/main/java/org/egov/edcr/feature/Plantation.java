@@ -105,7 +105,7 @@ public class Plantation extends FeatureProcess {
 			if (pl.getPlot() != null)
 				plotArea = pl.getPlot().getArea();
 
-			if (pl.getVirtualBuilding().getMostRestrictiveFarHelper()!=null && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null)
+			if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper()!=null && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null)
 				subType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
 			if(totalArea.intValue()>0 && plotArea!=null && plotArea.intValue()>0)
 			  plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);

@@ -194,7 +194,8 @@ public class Parking extends FeatureProcess {
 	public void processParking(Plan pl) {
 		ParkingHelper helper = new ParkingHelper();
 		// checkDimensionForCarParking(pl, helper);
-		OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+		
+		OccupancyTypeHelper mostRestrictiveOccupancy =  pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper() : null;
 		BigDecimal totalBuiltupArea = pl.getOccupancies().stream().map(Occupancy::getBuiltUpArea)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		BigDecimal coverParkingArea = BigDecimal.ZERO;
@@ -221,7 +222,7 @@ public class Parking extends FeatureProcess {
 
 		validateSpecialParking(pl, helper, totalBuiltupArea);
 
-		if (pl.getPlot().getArea() != null && pl.getPlot().getArea().doubleValue() <= 300) {
+		if (pl.getPlot() != null && pl.getPlot().getArea() != null && pl.getPlot().getArea().doubleValue() <= 300) {
 
 			if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
 				if (openParkingArea.doubleValue() > 0 && coverParkingArea.doubleValue() > 0)
@@ -252,12 +253,12 @@ public class Parking extends FeatureProcess {
 		} else {
 			providedVisitorParkArea = pl.getParkingDetails().getVisitors().stream().map(Measurement::getArea)
 					.reduce(BigDecimal.ZERO, BigDecimal::add);
-			if (A.equals(mostRestrictiveOccupancy.getType().getCode())) {
+			if (mostRestrictiveOccupancy != null && A.equals(mostRestrictiveOccupancy.getType().getCode())) {
 				requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_A;
-				if (mostRestrictiveOccupancy.getSubtype() != null
+				if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getSubtype() != null
 						&& A_AF.equals(mostRestrictiveOccupancy.getSubtype().getCode()))
 					requiredVisitorParkArea = requiredCarParkArea * PARK_VISITOR;
-			} else if (F.equals(mostRestrictiveOccupancy.getType().getCode())) {
+			} else if (mostRestrictiveOccupancy != null && F.equals(mostRestrictiveOccupancy.getType().getCode())) {
 				requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_F;
 			}
 		}

@@ -93,8 +93,7 @@ public class GeneralStair extends FeatureProcess {
                 scrutinyDetailLanding.addColumnHeading(6, STATUS);
                 scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "General Stair - Landing");
 
-                OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding()
-                        .getMostRestrictiveFarHelper();
+                OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding() != null ? planDetail.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
 
                 /*
                  * String occupancyType = mostRestrictiveOccupancy != null ? mostRestrictiveOccupancy.getOccupancyType() : null;

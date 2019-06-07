@@ -148,9 +148,7 @@ public class FireStair extends FeatureProcess {
                 scrutinyDetailAbutBltUp.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Abutting BuiltUp");
 
                 // int spiralStairCount = 0;
-                OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding()
-                        .getMostRestrictiveFarHelper();
-
+                OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding() != null ? planDetail.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
                 /*
                  * String occupancyType = mostRestrictiveOccupancy != null ? mostRestrictiveOccupancy.getOccupancyType() : null;
                  */

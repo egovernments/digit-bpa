@@ -112,7 +112,7 @@ public class MeanOfAccess extends FeatureProcess {
         Boolean valid = false;
         boolean extemption = ProcessHelper.isSmallPlot(pl);
         if (!extemption) {
-            BigDecimal totalFloorAreaOfAllBlocks = pl.getVirtualBuilding().getTotalFloorArea() == null ? BigDecimal.ZERO
+            BigDecimal totalFloorAreaOfAllBlocks = pl.getVirtualBuilding()!= null && pl.getVirtualBuilding().getTotalFloorArea() == null ? BigDecimal.ZERO
                     : pl.getVirtualBuilding().getTotalFloorArea();
             List<Map<String, Object>> listOfOccupancyMinimumAccessWidthMap = new ArrayList<>();
             if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {

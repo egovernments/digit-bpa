@@ -109,7 +109,7 @@ public class SegregatedToilet extends FeatureProcess {
             }
         }
 
-        if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
+        if (pl.getVirtualBuilding() != null && (pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
                 && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null
                 && StringUtils
                         .isNotBlank(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
@@ -128,7 +128,7 @@ public class SegregatedToilet extends FeatureProcess {
                 || (DxfFileConstants.C
                         .equals(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())
                         && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(new BigDecimal(500)) >= 0)) {
+                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(new BigDecimal(500)) >= 0))) {
 
             if (pl.getSegregatedToilet() != null && pl.getSegregatedToilet().getSegregatedToilets() != null
                     && !pl.getSegregatedToilet().getSegregatedToilets().isEmpty()) {

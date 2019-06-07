@@ -77,7 +77,7 @@ public class Solar extends FeatureProcess {
         HashMap<String, String> errors = new HashMap<>();
         if (pl != null && pl.getUtility() != null) {
             // solar water heating defined or not
-            if (!pl.getVirtualBuilding().getOccupancies().isEmpty()) {
+            if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
                 for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
                     if (occupancyType.equals(OccupancyType.OCCUPANCY_A1)
                             && pl.getVirtualBuilding().getTotalBuitUpArea() != null
@@ -124,7 +124,7 @@ public class Solar extends FeatureProcess {
         String rule = RULE109;
         String subRule = SUB_RULE_109_C;
         String subRuleDesc = SUB_RULE_109_C_DESCRIPTION;
-        if (!pl.getVirtualBuilding().getOccupancies().isEmpty()) {
+        if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
             for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
                 if (occupancyType.equals(OccupancyType.OCCUPANCY_A1)
                         && pl.getVirtualBuilding().getTotalBuitUpArea() != null

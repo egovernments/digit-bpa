@@ -75,7 +75,7 @@ public class WaterTreatmentPlant extends FeatureProcess {
         HashMap<String, String> errors = new HashMap<>();
         if (pl != null && pl.getUtility() != null) {
             // liquid waste treatment plant defined or not
-            if (!pl.getVirtualBuilding().getOccupancies().isEmpty()) {
+            if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
                 for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
                     if (checkOccupancyTypeEqualsToNonConditionalOccupancyTypes(occupancyType)
                             && pl.getUtility().getLiquidWasteTreatementPlant().isEmpty()) {
@@ -111,7 +111,7 @@ public class WaterTreatmentPlant extends FeatureProcess {
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
         scrutinyDetail.setKey("Common_Water Treatment Plant");
-        if (!pl.getVirtualBuilding().getOccupancies().isEmpty()) {
+        if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
             for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
                 if (checkOccupancyTypeEqualsToNonConditionalOccupancyTypes(occupancyType)) {
                     processLiquidWasteTreatment(pl);
