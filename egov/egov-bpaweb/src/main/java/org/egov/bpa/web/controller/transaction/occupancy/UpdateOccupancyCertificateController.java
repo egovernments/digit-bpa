@@ -111,7 +111,7 @@ import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
 import org.egov.bpa.transaction.service.BpaDcrService;
-import org.egov.bpa.transaction.service.oc.OCInspectionService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
@@ -304,8 +304,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     }
 
     private void loadData(OccupancyCertificate oc, Model model) {
-    	final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+    	final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
         List<OCInspection> inspectionList = ocInspectionService.findByOcOrderByIdAsc(oc);
         int i = 0;
         for (OCInspection ocInspection : inspectionList) {

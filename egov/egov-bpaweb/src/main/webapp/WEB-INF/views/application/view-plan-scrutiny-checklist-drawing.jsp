@@ -53,7 +53,7 @@
 
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title">
-        <spring:message code="lbl.pln.scrty.drawing"/>
+		<c:out value="${permitInspection.inspection.planScrutinyChecklistForDrawing[0].serviceChecklist.checklist.checklistType.description}" />
     </div>
 </div>
 <div class="panel-body">

@@ -84,9 +84,9 @@ import org.springframework.util.FileCopyUtils;
 
 @Service
 @Transactional(readOnly = true)
-public class OCInspectionService {
+public class OcInspectionService {
 
-    private static final Logger LOGGER = Logger.getLogger(OCInspectionService.class);
+    private static final Logger LOGGER = Logger.getLogger(OcInspectionService.class);
 
     @Autowired
     private ChecklistServicetypeMappingService checklistServicetypeMappingService;
@@ -270,12 +270,11 @@ public class OCInspectionService {
  	   return planScrutinyChecklistService.findByInspectionAndScrutinyChecklistType(ocInspection.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS);
     }
     
-
     public void buildPlanScrutinyChecklistDetails(OCInspection inspectionObj) {
         inspectionObj.getInspection().getPlanScrutinyChecklistForRule().clear();
-        inspectionObj.getInspection().setPlanScrutinyChecklistForRuleTemp(getPlanScrutinyForRuleValidation(inspectionObj));
+        inspectionObj.getInspection().setPlanScrutinyChecklistForRule(getPlanScrutinyForRuleValidation(inspectionObj));
         inspectionObj.getInspection().getPlanScrutinyChecklistForDrawing().clear();
-        inspectionObj.getInspection().setPlanScrutinyChecklistForDrawingTemp(getPlanScrutinyForDrawingDetails(inspectionObj));
+        inspectionObj.getInspection().setPlanScrutinyChecklistForDrawing(getPlanScrutinyForDrawingDetails(inspectionObj));
 
     }
 }

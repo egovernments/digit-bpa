@@ -50,7 +50,7 @@ import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.bpa.transaction.service.oc.OCInspectionService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OcConstants;
@@ -85,8 +85,8 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 	@PostMapping("/create-inspection/{applicationNumber}")
 	public String createInspection(@Valid @ModelAttribute final OCInspection ocInspection,
 								   @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
-		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
 		ocInspection.getInspection().setDocket(ocInspectionService.buildDocDetFromUI(ocInspection));
 		if (resultBinder.hasErrors()) {
 			loadApplication(model, applicationNumber);
@@ -109,8 +109,8 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 		final OCInspection ocInspection = new OCInspection();
 		InspectionCommon inspectionCommon = new InspectionCommon();
 		inspectionCommon.setInspectionDate(new Date());
-		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
 		ocInspectionService.buildDocketDetailList(inspectionCommon, oc.getParent().getServiceType().getId());
 		ocInspection.setInspection(inspectionCommon);
 		ocInspection.setOc(oc);

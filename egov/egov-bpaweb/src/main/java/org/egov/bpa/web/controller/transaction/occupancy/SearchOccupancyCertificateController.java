@@ -52,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.bpa.transaction.service.oc.OCInspectionService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.service.oc.SearchOCService;
@@ -123,8 +123,8 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
-        final OCInspectionService inspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+        final OcInspectionService inspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
         model.addAttribute("inspectionList", inspectionService.findByOcOrderByIdAsc(oc));
         model.addAttribute("letterToPartyList", lettertoPartyService.findAllByOC(oc));
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());

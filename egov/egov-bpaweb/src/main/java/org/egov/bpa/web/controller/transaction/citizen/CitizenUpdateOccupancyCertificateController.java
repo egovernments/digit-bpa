@@ -83,7 +83,7 @@ import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OCAppointmentScheduleService;
-import org.egov.bpa.transaction.service.oc.OCInspectionService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaUtils;
@@ -204,8 +204,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
                         && !oc.getRescheduledByCitizen()) {
             model.addAttribute("mode", "showRescheduleToCitizen");
         }
-        final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+        final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
         model.addAttribute("inspectionList", ocInspectionService.findByOcOrderByIdAsc(oc));
         model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
         if (APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode())

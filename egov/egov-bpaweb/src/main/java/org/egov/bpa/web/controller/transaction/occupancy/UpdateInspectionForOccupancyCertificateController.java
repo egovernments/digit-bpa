@@ -45,11 +45,9 @@ import java.util.List;
 
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
-import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.bpa.transaction.service.oc.OCInspectionService;
-import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OcConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
@@ -74,8 +72,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 	@GetMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
 	public String editInspectionAppointment(
 			@PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model) {
-		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
 		OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
 		loadApplication(model, ocInspection);
 		model.addAttribute("mode", "editinsp");
@@ -91,8 +89,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		}
 		final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(ocInspection);
 		ocInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);
-		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
 		OCInspection ocInspectionRes = ocInspectionService.save(ocInspection);
 		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
 		return "redirect:/application/occupancy-certificate/success/view-inspection-details/" + applicationNumber + "/" + ocInspectionRes.getInspection().getInspectionNumber();
@@ -100,8 +98,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 
 	private List<DocketDetailCommon> buildDocketDetails(@ModelAttribute("ocInspection") OCInspection ocInspection) {
 		final List<DocketDetailCommon> docketDetailTempList = new ArrayList<>();
-		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
 		final List<DocketDetailCommon> docketDetailList = ocInspectionService.buildDocketDetail(ocInspection.getInspection());
 		for (final DocketDetailCommon docketDet : ocInspection.getInspection().getDocket().get(0).getDocketDetail())
 			for (final DocketDetailCommon tempLoc : docketDetailList)
@@ -124,8 +122,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		}
 		if (ocInspection != null)
 			ocInspection.getInspection().setInspectionDate(new Date());
-		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
 		ocInspectionService.prepareImagesForView(ocInspection);
 		ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
 		model.addAttribute("ocInspection", ocInspection);

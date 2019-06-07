@@ -91,16 +91,20 @@
 					</div> --%>
 				</div>
 				<div id="oc-plan-scrutiny-chklist" class="tab-pane fade">
+				<c:if test="${not empty planScrutinyCheckList || not empty ocInspection.inspection.planScrutinyChecklistForRuleTemp}">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
 							<jsp:include page="oc-plan-scrutiny-checklist-rule.jsp"></jsp:include>
 						</div>
 					</div>
+				</c:if>
+				<c:if test="${not empty planScrutinyChecklistForDrawing || not empty ocInspection.inspection.planScrutinyChecklistForDrawingTemp}">
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
 							<jsp:include page="oc-plan-scrutiny-checklist-drawing.jsp"></jsp:include>
 						</div>
 					</div>
+				</c:if>
 				</div>
 				<c:if
 					test="${not empty ocInspection.inspection.getInspectionSupportDocs()}">

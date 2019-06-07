@@ -41,7 +41,7 @@ package org.egov.bpa.web.controller.transaction.occupancy;
 
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
-import org.egov.bpa.transaction.service.oc.OCInspectionService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.infra.custom.CustomImplProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -65,8 +65,8 @@ public class ViewInspectionForOccupancyCertificateController {
     @GetMapping("/success/view-inspection-details/{applicationNumber}/{inspectionNumber}")
     public String viewInspection(@PathVariable final String applicationNumber,
             @PathVariable final String inspectionNumber, final Model model) {
-		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
         OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber,
                 inspectionNumber);
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
@@ -81,8 +81,8 @@ public class ViewInspectionForOccupancyCertificateController {
     @GetMapping("/show-inspection-details/{applicationNumber}/{inspectionNumber}")
     public String showInspectionDetails(@PathVariable final String applicationNumber,
             @PathVariable final String inspectionNumber, final Model model) {
-		final OCInspectionService ocInspectionService = (OCInspectionService) specificNoticeService
-                .find(OCInspectionService.class, specificNoticeService.getCityDetails());
+		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
         OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber,
                 inspectionNumber);
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());

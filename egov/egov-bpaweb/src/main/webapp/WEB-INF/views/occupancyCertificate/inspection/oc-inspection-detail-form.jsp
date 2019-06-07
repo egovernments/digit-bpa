@@ -62,7 +62,7 @@
 					<spring:message code="lbl.files" />
 				</div>
 				<div class="col-sm-3 text-left">
-					<spring:message code="lbl.provided" />
+					<spring:message code="lbl.is.applicable" />
 				</div>
 				<div class="col-sm-4 text-left">
 					<spring:message code="lbl.remarks" />
@@ -138,7 +138,7 @@
 					<spring:message code="lbl.files" />
 				</div>
 				<div class="col-sm-3 text-left">
-					<spring:message code="lbl.provided" />
+					<spring:message code="lbl.is.applicable" />
 				</div>
 				<div class="col-sm-4 text-left">
 					<spring:message code="lbl.remarks" />
