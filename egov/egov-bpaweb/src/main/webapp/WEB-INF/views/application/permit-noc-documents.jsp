@@ -235,7 +235,7 @@
 										<spring:message code="lbl.initiate.noc" />
 								</button>
 								</c:if>
-							</div>paNocApplication
+							</div>
 						</td>
 					</c:if>
 					<c:if test="${not empty nocApplication}">					  								
