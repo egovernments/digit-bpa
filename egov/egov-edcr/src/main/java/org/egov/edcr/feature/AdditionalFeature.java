@@ -498,7 +498,9 @@ public class AdditionalFeature extends FeatureProcess {
             List<SetBack> setBacks = block.getSetBacks();
             List<SetBack> basementSetbacks = setBacks.stream().filter(setback -> setback.getLevel() < 0)
                     .collect(Collectors.toList());
-            OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
+            OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
+                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                    : null;
 
             if (!basementSetbacks.isEmpty()) {
                 if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null
@@ -510,7 +512,8 @@ public class AdditionalFeature extends FeatureProcess {
                         && pl.getPlot().getArea().compareTo(BigDecimal.valueOf(PLOTAREA_300)) <= 0) {
                     isAccepted = basementSetbacks.size() <= 1 ? true : false;
                     allowedBsmnt = "1";
-                } else if (mostRestrictiveFarHelper!= null && mostRestrictiveFarHelper.getType() != null && mostRestrictiveFarHelper.getSubtype() != null
+                } else if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null
+                        && mostRestrictiveFarHelper.getSubtype() != null
                         && (DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
                                 || DxfFileConstants.A_R
                                         .equalsIgnoreCase(mostRestrictiveFarHelper.getSubtype().getCode())
@@ -532,7 +535,9 @@ public class AdditionalFeature extends FeatureProcess {
     }
 
     private void validateGreenBuildingsAndSustainability(Plan pl, HashMap<String, String> errors) {
-        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
+        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
+                ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                : null;
         ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.setKey("Common_Green buildings and sustainability provisions");
         scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -627,8 +632,7 @@ public class AdditionalFeature extends FeatureProcess {
     }
 
     private void validate4a(Plan pl, ScrutinyDetail scrutinyDetail) {
-        if (pl.getUtility().getSegregationOfWaste() != null && !pl.getUtility().getSegregationOfWaste().isEmpty()
-                && pl.getUtility().getSegregationOfWaste().size() > 1) {
+        if (pl.getUtility().getSegregationOfWaste() != null && !pl.getUtility().getSegregationOfWaste().isEmpty()) {
             addDetails(scrutinyDetail, "55-4-a", "Segregation of Waste", "Segregation of waste details",
                     "Provided segregation of waste details", Result.Accepted.getResultVal());
         } else {
