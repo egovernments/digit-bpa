@@ -51,9 +51,12 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.bpa.transaction.service.oc.OcInspectionService;
+import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.service.oc.SearchOCService;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationAdaptor;
@@ -98,6 +101,8 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
     private OccupancyCertificateService occupancyCertificateService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private OccupancyCertificateNocService ocNocService;
 
     @GetMapping("/occupancy-certificate/search")
     public String showSearchApprovedforFee(final Model model) {
@@ -119,6 +124,15 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
     public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model,
             final HttpServletRequest request) {
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
+        List<OccupancyNocApplication> nocApplication = ocNocService.findByOCApplicationNumber(applicationNumber);
+        model.addAttribute("nocApplication",nocApplication);
+        for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
+			for (OccupancyNocApplication ona : nocApplication) {
+				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
+					nocDocument.setOcNoc(ona);
+				}
+			}
+		}
         model.addAttribute("occupancyCertificate", oc);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         model.addAttribute(APPLICATION_HISTORY,

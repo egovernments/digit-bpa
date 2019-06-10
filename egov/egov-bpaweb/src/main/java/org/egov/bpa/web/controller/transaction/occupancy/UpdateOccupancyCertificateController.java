@@ -119,6 +119,7 @@ import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.DcrRestService;
+import org.egov.bpa.transaction.service.NocStatusService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
 import org.egov.bpa.transaction.service.oc.OcInspectionService;
@@ -198,6 +199,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
 	private DcrRestService drcRestService;
     @Autowired
     private NocConfigurationService nocConfigurationService;
+    @Autowired
+	private NocStatusService nocStatusService;
 
     @GetMapping("/update/{applicationNumber}")
     public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model,
@@ -296,8 +299,10 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 || isAfterTSInspection && !oc.getInspections().isEmpty())
             mode = "captureAdditionalInspection";
         else if (FORWARDED_TO_NOC_UPDATE.equalsIgnoreCase(pendingAction)
-                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus))
+                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus)) {
             model.addAttribute("showUpdateNoc", true);
+            nocStatusService.updateOCNocStatus(oc);
+        }
         else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(pendingAction)
                 && !oc.getInspections().isEmpty())
             mode = "initiatedForApproval";
@@ -646,6 +651,17 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     public String success(@PathVariable final String applicationNumber, final Model model, final HttpServletRequest request) {
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
+        List<OccupancyNocApplication> nocApplication = ocNocService.findByOCApplicationNumber(applicationNumber);
+
+        model.addAttribute("nocApplication",nocApplication);
+        
+        for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
+    			for (OccupancyNocApplication ona : nocApplication) {
+    				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
+    					nocDocument.setOcNoc(ona);
+    				}
+    			}
+    	}
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
         model.addAttribute(BPA_APPLICATION, oc.getParent());

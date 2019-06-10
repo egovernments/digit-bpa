@@ -120,7 +120,6 @@ import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
-import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
@@ -539,6 +538,13 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         List<PermitNocApplication> nocApplication = permitNocService.findByPermitApplicationNumber(applicationNumber);
 
         model.addAttribute("nocApplication",nocApplication);
+        for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+			for (PermitNocApplication pna : nocApplication) {
+				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
+					nocDocument.setPermitNoc(pna);
+				}
+			}
+		}
 
         model.addAttribute(BPA_APPLICATION, application);
         return BPA_APPLICATION_RESULT;

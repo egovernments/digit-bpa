@@ -53,7 +53,9 @@ import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.service.HolidayListService;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
+import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.utils.BpaConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,6 +75,8 @@ public class NocApprovalService {
     private BPASmsAndEmailService bpaSmsAndEmailService;
 	@Autowired
 	private PermitNocApplicationService permitNocService;
+	@Autowired
+	private OccupancyCertificateNocService ocNocService;
 	
 	@Transactional
     public void approveNocAsDeemed() {
@@ -96,6 +100,27 @@ public class NocApprovalService {
 					}
 				}
 			}
+		
+		//Oc Noc Application deemed approved
+		
+		List<OccupancyNocApplication> ocNoc = ocNocService.findInitiatedAppByType(nocConfig.getDepartment());
+		for (OccupancyNocApplication ocNocApp : ocNoc) {
+			String applStatus = null;
+			if (ocNocApp.getOc().getStatus() != null){
+				applStatus = ocNocApp.getOc().getStatus().getCode();
+			}
+			if ((applStatus != null && !(applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_CANCELLED)
+					|| applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REJECTED)))) {
+				
+				if (ocNocApp.getBpaNocApplication().getSlaEndDate().compareTo(new Date())<=0) {
+					ocNocApp.getBpaNocApplication().setStatus(statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC,
+							BpaConstants.NOC_DEEMED_APPROVED));
+					ocNocApp.getBpaNocApplication().setDeemedApprovedDate(new Date());
+					ocNocService.save(ocNocApp);
+					bpaSmsAndEmailService.sendSMSAndEmailForDeemedApprovalOCNoc(ocNocApp);
+				}
+			}
 		}
+	}
 	}
 }

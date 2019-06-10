@@ -51,10 +51,13 @@ import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_NOC_UPDATE;
 import java.util.List;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.enums.NocStatus;
+import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
@@ -68,6 +71,9 @@ public class NocStatusService {
 	
 	@Autowired
 	private PermitNocApplicationService permitNocService;
+	
+	@Autowired
+	private OccupancyCertificateNocService ocNocService;
 	
 	
 	@Transactional
@@ -90,6 +96,29 @@ public class NocStatusService {
                }
         	}
 	   }
-	}	
+	}
+	
+	
+	@Transactional
+    public void updateOCNocStatus(OccupancyCertificate oc) {
+		State<Position> currentState = oc.getCurrentState();
+        String currentStatus = oc.getStatus().getCode();
+        String pendingAction = currentState.getNextAction();
+        List<OccupancyNocApplication> ocNoc = ocNocService.findByOCApplicationNumber(oc.getApplicationNumber());
+        for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
+        	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+        	if (FORWARDED_TO_NOC_UPDATE.equalsIgnoreCase(pendingAction)
+	                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(currentStatus)) {
+				for (OccupancyNocApplication ocNocApp : ocNoc) {
+		        	if(ocNocApp.getBpaNocApplication().getNocType().equals(code)) {
+		        		if(ocNocApp.getBpaNocApplication().getStatus().getCode().equals(BpaConstants.NOC_APPROVED) || ocNocApp.getBpaNocApplication().getStatus().getCode().equals(BpaConstants.NOC_DEEMED_APPROVED))
+		        			nocDocument.getNocDocument().setNocStatus(NocStatus.APPROVED);
+		        		else if(ocNocApp.getBpaNocApplication().getStatus().getCode().equals(BpaConstants.NOC_REJECTED))
+			        		nocDocument.getNocDocument().setNocStatus(NocStatus.REJECTED);			        			
+        	        }
+               }
+        	}
+	   }
+	}
 
 }

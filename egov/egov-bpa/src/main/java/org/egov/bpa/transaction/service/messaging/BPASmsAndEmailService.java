@@ -69,6 +69,7 @@ import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
+import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -815,23 +816,38 @@ public class BPASmsAndEmailService {
 			ApplicationStakeHolder applnStakeHolder = permitNoc.getBpaApplication().getStakeHolder().get(0);
 			if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
 				Applicant owner = applnStakeHolder.getApplication().getOwner();
-				buildSmsAndEmailForDeemedApproveNoc(permitNoc, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
+				buildSmsAndEmailForDeemedApproveNoc(permitNoc.getBpaNocApplication(), owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
 					
 			}
 			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
 				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
-				buildSmsAndEmailForDeemedApproveNoc(permitNoc, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
+				buildSmsAndEmailForDeemedApproveNoc(permitNoc.getBpaNocApplication(), stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
 			}
 		}
 	}
 	
-	private void buildSmsAndEmailForDeemedApproveNoc(PermitNocApplication permitNoc,
+	public void sendSMSAndEmailForDeemedApprovalOCNoc(OccupancyNocApplication ocNoc){
+		if (isSmsEnabled() || isEmailEnabled()) {
+			ApplicationStakeHolder applnStakeHolder = ocNoc.getOc().getParent().getStakeHolder().get(0);
+			if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
+				Applicant owner = applnStakeHolder.getApplication().getOwner();
+				buildSmsAndEmailForDeemedApproveNoc(ocNoc.getBpaNocApplication(), owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
+					
+			}
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
+				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
+				buildSmsAndEmailForDeemedApproveNoc(ocNoc.getBpaNocApplication(), stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
+			}
+		}
+	}
+	
+	private void buildSmsAndEmailForDeemedApproveNoc(BpaNocApplication noc,
 			 String name, String mobileNumber, String emailId) {
 		String smsMsg = EMPTY;
 		String body = EMPTY;
 		String subject = EMPTY;	 
-			smsMsg = bpaMessageSource.getMessage(SMS_BPA_NOC_DEEMED_APPROVE,new String[]{permitNoc.getBpaNocApplication().getNocType()},null);
-			body = bpaMessageSource.getMessage(BODY_BPA_NOC_DEEMED_APPROVE,new String[]{name,permitNoc.getBpaNocApplication().getNocType(),permitNoc.getBpaNocApplication().getNocType(),getMunicipalityName()},null);
+			smsMsg = bpaMessageSource.getMessage(SMS_BPA_NOC_DEEMED_APPROVE,new String[]{noc.getNocType()},null);
+			body = bpaMessageSource.getMessage(BODY_BPA_NOC_DEEMED_APPROVE,new String[]{name,noc.getNocType(),noc.getNocType(),getMunicipalityName()},null);
 			subject = bpaMessageSource.getMessage(SUB_BPA_NOC_DEEMED_APPROVE,new String[]{getMunicipalityName()},null);
 		if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
 			notificationService.sendSMS(mobileNumber, smsMsg);
