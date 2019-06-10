@@ -57,6 +57,7 @@ import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +78,8 @@ public class NocApprovalService {
 	private PermitNocApplicationService permitNocService;
 	@Autowired
 	private OccupancyCertificateNocService ocNocService;
+	@Autowired
+	private BpaUtils bpaUtils;
 	
 	@Transactional
     public void approveNocAsDeemed() {
@@ -96,6 +99,7 @@ public class NocApprovalService {
 								BpaConstants.NOC_DEEMED_APPROVED));
 						permitNocApp.getBpaNocApplication().setDeemedApprovedDate(new Date());
 						permitNocService.save(permitNocApp);
+						bpaUtils.updateNocPortalUserinbox(permitNocApp,null);
 						bpaSmsAndEmailService.sendSMSAndEmailForDeemedApprovalNoc(permitNocApp);
 					}
 				}
@@ -117,6 +121,7 @@ public class NocApprovalService {
 							BpaConstants.NOC_DEEMED_APPROVED));
 					ocNocApp.getBpaNocApplication().setDeemedApprovedDate(new Date());
 					ocNocService.save(ocNocApp);
+					bpaUtils.updateOCNocPortalUserinbox(ocNocApp,null);
 					bpaSmsAndEmailService.sendSMSAndEmailForDeemedApprovalOCNoc(ocNocApp);
 				}
 			}
