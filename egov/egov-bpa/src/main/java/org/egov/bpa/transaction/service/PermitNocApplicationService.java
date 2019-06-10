@@ -42,7 +42,9 @@ package org.egov.bpa.transaction.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.bpa.autonumber.NocNumberGenerator;
@@ -60,6 +62,7 @@ import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.repository.PermitNocApplicationRepository;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -68,6 +71,8 @@ import org.egov.infra.utils.ApplicationConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 
 @Service
@@ -88,6 +93,8 @@ public class PermitNocApplicationService {
 	private NocNumberGenerator nocNumberGenerator;
 	@Autowired
 	public HolidayListService holidayListService;
+	@Autowired
+	private DcrRestService drcRestService;
 
 	
 	@Transactional
@@ -126,6 +133,7 @@ public class PermitNocApplicationService {
 	}
 	
 	public void initiateNoc(BpaApplication application) {
+	Map<String, String> edcrNocMandatory = getEdcrNocMandatory(application.geteDcrNumber());
     for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
 		PermitNocApplication permitNoc = new PermitNocApplication();
 		BpaNocApplication nocApplication = new BpaNocApplication();
@@ -135,7 +143,8 @@ public class PermitNocApplicationService {
 		NocConfiguration nocConfig = nocConfigurationService
 				.findByDepartmentAndType(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode(), BpaConstants.PERMIT);
 		if (nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
+				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+				&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
 			List<User> nocUsers = new ArrayList<User>(userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
 			userList = nocUsers.stream()
 		    	      .filter(usr -> usr.getRoles().stream()
@@ -204,5 +213,17 @@ public class PermitNocApplicationService {
 		c.add(Calendar.DATE, holiday.size()); 
 
 		nocApplication.setSlaEndDate(c.getTime());
+	}
+	
+	public Map<String, String> getEdcrNocMandatory(final String edcrNumber){	
+	
+		EdcrApplicationInfo edcrPlanInfo = drcRestService.getDcrPlanInfo(edcrNumber, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+	    Map<String, String> nocTypeMap = new HashMap<>();
+	        nocTypeMap.put(BpaConstants.FIRENOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
+	        nocTypeMap.put(BpaConstants.AIRPORTNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport());
+	        nocTypeMap.put(BpaConstants.NMANOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocNearMonument());
+	        nocTypeMap.put(BpaConstants.ENVNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact());
+	        nocTypeMap.put(BpaConstants.IRRNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept());
+	   return nocTypeMap;
 	}
 }

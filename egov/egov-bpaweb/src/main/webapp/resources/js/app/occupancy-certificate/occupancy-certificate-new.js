@@ -177,6 +177,10 @@ jQuery(document).ready(function ($) {
     $('#ocSubmit').click(function (e) {
         var button = $('#ocSubmit').val();
         if (validateFormOnSubmit(button, validator)) {
+        	if($('#nocUserExists').val()=='false'){
+              	bootbox.alert('Noc User doesnot exists');
+              	return false;
+              }
             bootbox
                 .dialog({
                     message: $('#submitAppln').val(),

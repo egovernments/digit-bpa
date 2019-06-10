@@ -221,6 +221,10 @@ jQuery(document).ready(function ($) {
         var msg = getValidationMessageOnCreate();
         var button = $('#ocCreate').val();
         if (validateFormOnSubmit(button, validator)) {
+        	if($('#nocUserExists').val()=='false'){
+              	bootbox.alert('Noc User doesnot exists');
+              	return false;
+            }
             bootbox
                 .dialog({
                     message: $('#submitApplication').val() + msg,

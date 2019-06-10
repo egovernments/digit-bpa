@@ -222,6 +222,13 @@
 						</div>
 					</td>
 					<c:if test="${not empty nocConfigMap}">
+					<c:set var="noccode"
+									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
+								<c:set var="nocbtn" value="${nocAutoMap[noccode]}" />
+								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
+								<input type="hidden" value="${nocbtn}" class="autohidden${checklistName}"/>
+					</c:if>
+					<c:if test="${not empty nocConfigMap}">
 						<td class="tdbtn" style="display:none">
 							<div class="text-right">
 								<c:set var="noccode"

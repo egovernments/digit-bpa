@@ -224,6 +224,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 	private DcrRestService drcRestService;
 	@Autowired
 	private NocStatusService nocStatusService;
+	
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -785,15 +786,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
         List<PermitNocApplication> permitNoc = permitNocService.findByPermitApplicationNumber(application.getApplicationNumber());
 
-	    EdcrApplicationInfo dcrPlanInfo = drcRestService.getDcrPlanInfo(application.geteDcrNumber(), ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
-        Map<String, String> nocTypeMap = new HashMap<>();
-	        nocTypeMap.put(FIRENOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
-	        nocTypeMap.put(AIRPORTNOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport());
-	        nocTypeMap.put(NMANOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocNearMonument());
-	        nocTypeMap.put(ENVNOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact());
-	        nocTypeMap.put(IRRNOCTYPE, dcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept());
-		    
-		    
+		Map<String, String> edcrNocMandatory = permitNocService.getEdcrNocMandatory(application.geteDcrNumber());
+    	Map nocAutoMap = new HashMap<String,String>();
         Map nocConfigMap = new HashMap<String, String>();
         Map nocTypeApplMap = new HashMap<String, String>();
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
@@ -804,8 +798,13 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 				nocTypeApplMap.put(code, "initiated");
 			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
-					nocTypeMap.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
+					edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
+					edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
+				nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
+
 			for (PermitNocApplication pna : permitNoc) {
 				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
 					nocDocument.setPermitNoc(pna);
@@ -815,6 +814,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 		}
         model.addAttribute("nocTypeApplMap",nocTypeApplMap);
         model.addAttribute("nocConfigMap",nocConfigMap);
+        model.addAttribute("nocAutoMap",nocAutoMap);
         model.addAttribute("isPermitApplFeeReq","NO");
         model.addAttribute("permitApplFeeCollected","NO");
         if(bpaUtils.isApplicationFeeCollectionRequired() ){

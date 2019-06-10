@@ -154,6 +154,8 @@
 <input type="hidden" id="applicationNo" value="${occupancyCertificate.applicationNumber}"/>
 <input type="hidden" id="citizenOrBusinessUser" value="${citizenOrBusinessUser}"/>
 <input type="hidden" id="nocAppl" value="${nocApplication}"/>
+<input type="hidden" id="nocUserExists" value="${nocUserExists}"/>
+
 <script
 	src="<cdn:url value='/resources/js/app/noc-helper.js?rnd=${app_release_no}'/>"></script>
 

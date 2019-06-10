@@ -244,6 +244,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         Map nocTypeApplMap = new HashMap<String, String>();
         if (bpaApplication.getPermitNocDocuments().isEmpty()) {
         	Map nocConfigMap = new HashMap<String,String>();
+        	Map nocAutoMap = new HashMap<String,String>();
+
             List<ChecklistServiceTypeMapping> checklistServicetypeList = checklistServiceTypeService
                     .findByActiveChecklistAndServiceType(bpaApplication.getServiceType().getDescription(),
                             CHECKLIST_TYPE_NOC);
@@ -260,10 +262,16 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 		&& permitNocService.findByApplicationNumberAndType(bpaApplication.getApplicationNumber(),code)!=null)
     				nocTypeApplMap.put(code, "initiated");
                 if(nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString()) 
-                		&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
+                		&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) 
                 	nocConfigMap.put(nocConfig.getDepartment(),"initiate");
+                if(nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString()) 
+                		&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) 
+                	nocAutoMap.put(nocConfig.getDepartment(),"autoinitiate");
+                
             }
             model.addAttribute("nocConfigMap",nocConfigMap);
+            model.addAttribute("nocAutoMap",nocAutoMap);
+
         }
         model.addAttribute("nocTypeApplMap",nocTypeApplMap);
         model.addAttribute("applicationDocumentList", appDocList);

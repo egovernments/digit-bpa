@@ -406,15 +406,9 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         buildRejectionReasons(model, oc);
         List<OccupancyNocApplication> ocNoc = ocNocService.findByOCApplicationNumber(oc.getApplicationNumber());
         model.addAttribute("nocApplication",ocNoc);
-	    EdcrApplicationInfo odcrPlanInfo = drcRestService.getDcrPlanInfo(oc.geteDcrNumber(), ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
-        Map<String, String> nocTypeMap = new HashMap<>();
-	        nocTypeMap.put(BpaConstants.FIREOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
-	        nocTypeMap.put(BpaConstants.AIRPORTOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport());
-	        nocTypeMap.put(BpaConstants.NMAOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocNearMonument());
-	        nocTypeMap.put(BpaConstants.ENVOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact());
-	        nocTypeMap.put(BpaConstants.IRROCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept());
 		    
-		    
+		Map<String, String> edcrNocMandatory = ocNocService.getEdcrNocMandatory(oc.geteDcrNumber());
+    	Map nocAutoMap = new HashMap<String,String>();
         Map<String, String> nocConfigMap = new HashMap<String, String>();
         Map<String, String> nocTypeApplMap = new HashMap<String, String>();
         for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
@@ -425,8 +419,12 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
 				nocTypeApplMap.put(code, "initiated");
 			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
-					nocTypeMap.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
+					edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString()) &&
+					edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
+				nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
 			for (OccupancyNocApplication ona : ocNoc) {
 				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
 					nocDocument.setOcNoc(ona);
@@ -436,6 +434,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
 		}
         model.addAttribute("nocTypeApplMap",nocTypeApplMap);
         model.addAttribute("nocConfigMap",nocConfigMap);
+        model.addAttribute("nocAutoMap",nocAutoMap);
         model.addAttribute("isOcApplFeeReq","NO");
         model.addAttribute("ocApplFeeCollected","NO");
         if(occupancyCertificateUtils.isApplicationFeeCollectionRequired() ){

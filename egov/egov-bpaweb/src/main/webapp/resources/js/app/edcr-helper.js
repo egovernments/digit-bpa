@@ -741,7 +741,7 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_NOC_from_Irrigation_Department').val() != 'initiated'){
+                }else if($('input.hidden_NOC_from_Irrigation_Department').val() != 'initiated' && $('input.autohidden_NOC_from_Irrigation_Department').val() != 'autoinitiate'){
                 	$('div._NOC_from_Irrigation_Department').attr('required','required');
                 	$('div.divfv_NOC_from_Irrigation_Department').show();
                 }
@@ -768,7 +768,7 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'initiated'){
+                }else if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'initiated' && $('input.autohidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'autoinitiate'){
                 	$('div._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('required','required');
                 	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
                 }
@@ -795,7 +795,7 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_NOC_from_Airport_Authority').val() != 'initiated'){
+                }else if($('input.hidden_NOC_from_Airport_Authority').val() != 'initiated' && $('input.autohidden_NOC_from_Airport_Authority').val() != 'autoinitiate'){
                 	$('div._NOC_from_Airport_Authority').attr('required','required');
                 	$('div.divfv_NOC_from_Airport_Authority').show();
                 }
@@ -823,7 +823,7 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_NOC_from_Fire_Authority').val() != 'initiated'){
+                }else if($('input.hidden_NOC_from_Fire_Authority').val() != 'initiated' && $('input.autohidden_NOC_from_Fire_Authority').val() != 'autoinitiate'){
                 	$('div._NOC_from_Fire_Authority').attr('required','required');
                 	$('div.divfv_NOC_from_Fire_Authority').show();
                 }
@@ -851,7 +851,7 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_MOEF_environment_clearance').val() != 'initiated'){
+                }else if($('input.hidden_MOEF_environment_clearance').val() != 'initiated' && $('input.autohidden_MOEF_environment_clearance').val() != 'autoinitiate'){
                 	$('div._MOEF_environment_clearance').attr('required','required');
                 	$('div.divfv_MOEF_environment_clearance').show();
                 }

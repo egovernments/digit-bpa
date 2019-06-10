@@ -223,10 +223,12 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), CHECKLIST_TYPE));
         Map nocConfigMap = new HashMap<String, String>();
         Map nocTypeApplMap = new HashMap<String, String>();
+        Map nocAutoMap = new HashMap<String, String>();
         int nocAutoCount = 0;
         List<User> nocAutoUsers = new ArrayList<>();
 	    List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
         List<PermitNocApplication> permitNoc = permitNocService.findByPermitApplicationNumber(application.getApplicationNumber());
+        Map<String, String> edcrNocMandatory = permitNocService.getEdcrNocMandatory(application.geteDcrNumber());
 
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
         	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
@@ -236,11 +238,14 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 			if(permitNocService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
 				nocTypeApplMap.put(code, "initiated");
 			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
+					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")){
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
 			}
-			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
+			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")){
+				nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
 				nocAutoCount++;
 				 List<User> userList = nocUsers.stream()
 			    	      .filter(usr -> usr.getRoles().stream()
@@ -266,6 +271,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         	
         model.addAttribute("nocTypeApplMap",nocTypeApplMap);
         model.addAttribute("nocConfigMap",nocConfigMap);
+        model.addAttribute("nocAutoMap",nocAutoMap);
         model.addAttribute("isPermitApplFeeReq","NO");
         model.addAttribute("permitApplFeeCollected","NO");
         if(bpaUtils.isApplicationFeeCollectionRequired() ){

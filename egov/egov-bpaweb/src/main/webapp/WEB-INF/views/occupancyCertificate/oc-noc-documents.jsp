@@ -310,6 +310,7 @@
 <input type="hidden" id="citizenOrBusinessUser" value="${citizenOrBusinessUser}"/>
 <input type="hidden" id="isOcApplFeeReq" value="${isOcApplFeeReq}"/>
 <input type="hidden" id="ocApplFeeCollected" value="${ocApplFeeCollected}"/>
+<input type="hidden" id="nocUserExists" value="${nocUserExists}"/>
 
 	
 
