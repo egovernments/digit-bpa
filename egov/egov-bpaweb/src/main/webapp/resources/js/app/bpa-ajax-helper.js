@@ -508,12 +508,13 @@ $(document).ready(
 	function loadDocumentsByServiceTypeAndChecklistType(serviceType, checklistType) {
 	    $
 	        .ajax({
-	            url : "/bpa/application/getdocumentlistbyservicetype",
+	            url : "/bpa/application/getocdocumentlistbyservicetype",
 	            type : "GET",
 	            async: false,
 	            data : {
 	                serviceType : serviceType,
-	                checklistType : checklistType
+	                checklistType : checklistType,
+	                ocEdcrNumber : $('#ocEDcrNumber').val()
 	            },
 	            dataType : "json",
 	            success : function(response) {
@@ -532,10 +533,10 @@ $(document).ready(
 	
 	function appendOCGeneralDocuments(response) {
 	    $('#ocDocumentsBody').empty();
-	    $
-	        .each(
+	    $.each(
 	            response,
 	            function(index, serviceChecklist) {
+	            	
 	                $('#ocDocumentsBody')
 	                    .append(
 	                        '<div class="form-group">'
@@ -649,6 +650,7 @@ $(document).ready(
 	        .each(
 	            response,
 	            function(index, serviceChecklist) {
+	            	
 	                $('#ocNOCDocumentsBody')
 	                    .append(
 	                        '<tr>'
@@ -711,7 +713,7 @@ $(document).ready(
 	                        + 'remarks" data-header="Remarks"><span'
 	                        + ' class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span></div></td>'
 	                        + '<td><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
-	                        + (serviceChecklist.mandatory ? "required"
+	                        + (serviceChecklist.documentMandatory ? "required"
 	                        : '')
 	                        + '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="nocDocuments['
 	                        + index

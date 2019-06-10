@@ -231,7 +231,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
         	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
 			NocConfiguration nocConfig = nocConfigurationService
-					.findByDepartment(code);
+					.findByDepartmentAndType(code,BpaConstants.PERMIT);
 		    
 			if(permitNocService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
 				nocTypeApplMap.put(code, "initiated");

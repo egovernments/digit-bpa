@@ -44,6 +44,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="panel-heading">
 	<div class="panel-title"><spring:message code='lbl.tittle.noc.status'/></div>
@@ -61,6 +62,14 @@
 				<th><spring:message code="lbl.noc.status" /></th>
 				<th><spring:message code="lbl.remarks" /></th>
 				<th><spring:message code="lbl.files" /></th>
+				<c:if test="${not empty nocConfigMap}">
+				<th class="thbtn" style="display: none"><spring:message code="lbl.action.noc" /></th>
+				</c:if>
+				<c:if test="${not empty nocApplication}">								
+					<th class="thstatus" style="display: none"><spring:message code="lbl.noc.dept.status" /></th>		
+					<th class="thsla" style="display: none"><spring:message code="lbl.sla.enddate" /></th>		
+					<th class="thda" style="display: none"><spring:message code="lbl.deemed.approved.date" /></th>									
+				</c:if>
 			</tr>
 		</thead>
 		<tbody>
@@ -86,8 +95,66 @@
 					</c:forEach> <c:if test="${!isDocFound}">
 						N/A
 					</c:if></td>
+					<c:forTokens var="splittedString"
+							items="${nocDoc.nocDocument.serviceChecklist.checklist.description}"
+							delims="\ ()" varStatus="stat">
+							<c:set var="checklistName"
+								value="${stat.first ? '' : checklistName}_${splittedString}" />
+						</c:forTokens>
+						<c:if test="${not empty nocConfigMap}">
+						<td class="tdbtn" style="display:none" >
+							<div class="text-right">
+								<c:set var="noccode"
+									value="${nocDoc.nocDocument.serviceChecklist.checklist.code}" />
+								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
+								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
+								<input type="hidden" id="nocchkcode" value="${noccode}"/>
+								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
+								<c:out value="${nocapp}"/>
+								<button type="button" id="btninitiatenoc" value="/bpa/ocnocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
+										<spring:message code="lbl.initiate.noc" />
+								</button>
+								</c:if>
+							</div>
+						</td>
+					</c:if>	
+					<c:if test="${not empty nocApplication}">								  			
+						<td class="view-content tdstatus" style="font-size: 97%;">												
+							  <fmt:formatDate value="${nocDoc.ocNoc.bpaNocApplication.lastModifiedDate}"
+								pattern="dd/MM/yyyy" var="applicationDate" />
+								<a
+		                            style="cursor: pointer; font-size: 12px;"
+		                             onclick="window.open('/bpa/ocnocapplication/view/${nocDoc.ocNoc.bpaNocApplication.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
+		                             ${nocDoc.ocNoc.bpaNocApplication.nocApplicationNumber}
+	                            </a><br/>						  
+									${nocDoc.ocNoc.bpaNocApplication.status.code} <br/>
+									${applicationDate} <br />
+									<c:if test="${not empty nocDoc.ocNoc.bpaNocApplication.remarks}">																	
+									  Remarks : ${nocDoc.ocNoc.bpaNocApplication.remarks}
+								    </c:if>									
+						</td>
+						<td class="view-content tdsla" style="font-size: 97%;">	
+							  <fmt:formatDate value="${nocDoc.ocNoc.bpaNocApplication.slaEndDate}"
+								pattern="dd/MM/yyyy" var="slaDate" />
+								<span style="font-weight:bold">${slaDate}<br />	</span>		
+						</td>
+                        <td class="view-content tdda" style="font-size: 97%;">					
+							  <fmt:formatDate value="${nocDoc.ocNoc.bpaNocApplication.deemedApprovedDate}"
+								pattern="dd/MM/yyyy" var="dadate" />
+								<span style="font-weight:bold">${dadate}<br /> </span>		
+						</td></c:if>
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
 </div>
+<input type="hidden" id="isOcApplFeeReq" value="${isOcApplFeeReq}"/>
+<input type="hidden" id="ocApplFeeCollected" value="${ocApplFeeCollected}"/>
+<input type="hidden" id="nocStatusUpdated" value="${nocStatusUpdated}"/>
+<input type="hidden" id="applicationNo" value="${occupancyCertificate.applicationNumber}"/>
+<input type="hidden" id="citizenOrBusinessUser" value="${citizenOrBusinessUser}"/>
+<input type="hidden" id="nocAppl" value="${nocApplication}"/>
+<script
+	src="<cdn:url value='/resources/js/app/noc-helper.js?rnd=${app_release_no}'/>"></script>
+
+

@@ -1,5 +1,4 @@
-/*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/* eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2017>  eGovernments Foundation
@@ -37,7 +36,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.service;
+package org.egov.bpa.transaction.service.oc;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,14 +49,15 @@ import org.egov.bpa.master.entity.Holiday;
 import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.service.HolidayListService;
 import org.egov.bpa.master.service.NocConfigurationService;
-import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.entity.PermitNocApplication;
-import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
-import org.egov.bpa.transaction.repository.PermitNocApplicationRepository;
+import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
+import org.egov.bpa.transaction.repository.oc.OccupancyCertificateNocRepository;
+import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.User;
@@ -72,10 +72,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class PermitNocApplicationService {
-	
+public class OccupancyCertificateNocService {
 	@Autowired
-	private PermitNocApplicationRepository permitNocRepository;
+	private OccupancyCertificateNocRepository ocNocRepository;
 	@Autowired
 	private BpaStatusService statusService;
 	@Autowired
@@ -91,50 +90,52 @@ public class PermitNocApplicationService {
 
 	
 	@Transactional
-	public PermitNocApplication save(final PermitNocApplication permitNoc) {
-		return permitNocRepository.save(permitNoc);
+	public OccupancyNocApplication save(final OccupancyNocApplication ocNoc) {
+		return ocNocRepository.save(ocNoc);
 	}
 	
 	@Transactional
-	public List<PermitNocApplication> save(final List<PermitNocApplication> permitNoc) {
-		return permitNocRepository.save(permitNoc);
+	public List<OccupancyNocApplication> save(final List<OccupancyNocApplication> ocNoc) {
+		return ocNocRepository.save(ocNoc);
 	}
 	
-	public PermitNocApplication findByNocApplicationNumber(String appNo) {
-		return permitNocRepository.findByNocApplicationNumber(appNo);		
+	public OccupancyNocApplication findByNocApplicationNumber(String appNo) {
+		return ocNocRepository.findByNocApplicationNumber(appNo);		
 	}
 	
-	public List<PermitNocApplication> findByPermitApplicationNumber(String appNo) {
-		return permitNocRepository.findByPermitApplicationNumber(appNo);		
+	public List<OccupancyNocApplication> findByOCApplicationNumber(String appNo) {
+		return ocNocRepository.findByOCApplicationNumber(appNo);		
 	}
 	
-	public List<PermitNocApplication> findInitiatedAppByType(final String nocType) {
-		return permitNocRepository.findInitiatedAppByType(nocType);		
+	public List<OccupancyNocApplication> findInitiatedAppByType(final String nocType) {
+		return ocNocRepository.findInitiatedAppByType(nocType);		
 	}
 	
-	public PermitNocApplication findByApplicationNumberAndType(String appNo, final String nocType) {
-		return permitNocRepository.findByApplicationNumberAndType(appNo, nocType);		
+	public OccupancyNocApplication findByApplicationNumberAndType(String appNo, final String nocType) {
+		return ocNocRepository.findByApplicationNumberAndType(appNo, nocType);		
 	}
 	
-	public PermitNocApplication createNocApplication(PermitNocApplication permitNoc, NocConfiguration nocConfig) {
+	public OccupancyNocApplication createNocApplication(OccupancyNocApplication ocNoc, NocConfiguration nocConfig) {
 		BpaStatus status = statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_INITIATED);
-		permitNoc.getBpaNocApplication().setNocApplicationNumber(nocNumberGenerator.generateNocNumber(nocConfig.getDepartment()));
-		permitNoc.getBpaNocApplication().setNocType(nocConfig.getDepartment());
-		permitNoc.getBpaNocApplication().setStatus(status);	
-		addSlaEndDate(permitNoc.getBpaNocApplication(), nocConfig);
-		return permitNocRepository.save(permitNoc);	
+		StringBuffer nocCode = new StringBuffer() ;
+		nocCode.append("OC").append(nocConfig.getDepartment());
+		ocNoc.getBpaNocApplication().setNocApplicationNumber(nocNumberGenerator.generateNocNumber(nocCode.toString()));
+		ocNoc.getBpaNocApplication().setNocType(nocConfig.getDepartment());
+		ocNoc.getBpaNocApplication().setStatus(status);	
+		addSlaEndDate(ocNoc.getBpaNocApplication(), nocConfig);
+		return ocNocRepository.save(ocNoc);	
 	}
 	
-	public void initiateNoc(BpaApplication application) {
-    for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
-		PermitNocApplication permitNoc = new PermitNocApplication();
+	public void initiateNoc(OccupancyCertificate oc) {
+    for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
+    	OccupancyNocApplication ocNoc = new OccupancyNocApplication();
 		BpaNocApplication nocApplication = new BpaNocApplication();
 
 		List<User> nocUser = new ArrayList<>();
 		List<User> userList = new ArrayList<>();
 		NocConfiguration nocConfig = nocConfigurationService
-				.findByDepartmentAndType(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode(), BpaConstants.PERMIT);
-		if (nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+				.findByDepartmentAndType(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode(), BpaConstants.OC);
+		if (nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
 			List<User> nocUsers = new ArrayList<User>(userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
 			userList = nocUsers.stream()
@@ -151,22 +152,22 @@ public class PermitNocApplicationService {
 			    	        .collect(Collectors.toList());	
 			}	
 		     nocUser.add(userList.get(0));
-		     permitNoc.setBpaApplication(application);
-		     permitNoc.setBpaNocApplication(nocApplication);
-		     permitNoc = createNocApplication(permitNoc, nocConfig);	
-	        bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+		     ocNoc.setOc(oc);
+		     ocNoc.setBpaNocApplication(nocApplication);
+		     ocNoc = createNocApplication(ocNoc, nocConfig);	
+	        bpaUtils.createOCNocPortalUserinbox(ocNoc, nocUser, ocNoc.getBpaNocApplication().getStatus().getCode());
 		}
       }
 	}
 	
-	public PermitNocApplication createNoc(BpaApplication application, String nocType) {
-		PermitNocApplication permitNoc = new PermitNocApplication();
+	public OccupancyNocApplication createNoc(OccupancyCertificate oc, String nocType) {
+		OccupancyNocApplication ocNoc = new OccupancyNocApplication();
 		BpaNocApplication nocApplication = new BpaNocApplication();
 		List<User> nocUser = new ArrayList<>();
 		List<User> userList = new ArrayList<>();
 		NocConfiguration nocConfig = nocConfigurationService
-				.findByDepartmentAndType(nocType, BpaConstants.PERMIT);
-		if (nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+				.findByDepartmentAndType(nocType, BpaConstants.OC);
+		if (nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
 			List<User> nocUsers = new ArrayList<User>(userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
 			userList = nocUsers.stream()
@@ -181,17 +182,17 @@ public class PermitNocApplicationService {
 			    	        .anyMatch(usrrl -> 
 			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
 			    	        .collect(Collectors.toList());	
-			}	
+			}
 		     nocUser.add(userList.get(0));
-		     permitNoc.setBpaApplication(application);
-		     permitNoc.setBpaNocApplication(nocApplication);
-		     permitNoc = createNocApplication(permitNoc, nocConfig);	
+		     ocNoc.setOc(oc);
+		     ocNoc.setBpaNocApplication(nocApplication);
+		     ocNoc = createNocApplication(ocNoc, nocConfig);	
 			 
-		     permitNoc.getBpaNocApplication().setOwnerUser(nocUser.get(0));
+		     ocNoc.getBpaNocApplication().setOwnerUser(nocUser.get(0));
 
-	        bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+	        bpaUtils.createOCNocPortalUserinbox(ocNoc, nocUser, ocNoc.getBpaNocApplication().getStatus().getCode());
 		}
-		return permitNoc;
+		return ocNoc;
 	}
 	
 	public void addSlaEndDate(BpaNocApplication nocApplication,NocConfiguration nocConfig ) {

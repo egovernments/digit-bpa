@@ -63,35 +63,47 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.master.entity.NocConfiguration;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.entity.oc.OCAppointmentSchedule;
 import org.egov.bpa.transaction.entity.oc.OCBuilding;
 import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
+import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OCAppointmentScheduleService;
 import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.custom.CustomImplProvider;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
@@ -139,6 +151,12 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private BpaUtils bpaUtils;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private OccupancyCertificateNocService ocNocService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
+    @Autowired
+    private OccupancyCertificateUtils occupancyCertificateUtils;
 
     @GetMapping("/occupancy-certificate/update/{applicationNumber}")
     public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
@@ -223,6 +241,49 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
+        
+        Map<String, String> nocConfigMap = new HashMap<String, String>();
+        Map<String, String> nocTypeApplMap = new HashMap<String, String>();
+        int nocAutoCount = 0;
+        List<User> nocAutoUsers = new ArrayList<>();
+	    List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+        List<OccupancyNocApplication> ocNoc = ocNocService.findByOCApplicationNumber(oc.getApplicationNumber());
+        model.addAttribute("isOcApplFeeReq","NO");
+        model.addAttribute("ocApplFeeCollected","NO");
+        if(occupancyCertificateUtils.isApplicationFeeCollectionRequired() ){
+        	model.addAttribute("isOcApplFeeReq","YES");
+        }
+        if(oc.getDemand() != null && oc.getDemand().getAmtCollected().compareTo(oc.getAdmissionfeeAmount())>=0){
+        		model.addAttribute("ocApplFeeCollected","YES");
+        }
+        for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
+        	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+			NocConfiguration nocConfig = nocConfigurationService
+					.findByDepartmentAndType(code, BpaConstants.OC);
+		    
+			if(ocNocService.findByApplicationNumberAndType(oc.getApplicationNumber(),code)!=null)
+				nocTypeApplMap.put(code, "initiated");
+			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
+				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+			}
+			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
+				nocAutoCount++;
+				 List<User> userList = nocUsers.stream()
+			    	      .filter(usr -> usr.getRoles().stream()
+			    	        .anyMatch(usrrl -> 
+			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+			    	        .collect(Collectors.toList());	
+				 if(!userList.isEmpty())
+                	nocAutoUsers.add(userList.get(0));
+			}
+			for (OccupancyNocApplication ona : ocNoc) {
+				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
+					nocDocument.setOcNoc(ona);
+				}
+			}
+		}
     }
 
     private void prepareFormData(final OccupancyCertificate oc, final Model model) {

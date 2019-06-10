@@ -47,6 +47,7 @@
 
 package org.egov.bpa.transaction.entity.oc;
 
+import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -83,6 +84,8 @@ public class OCNocDocuments extends AbstractAuditable {
 	@JoinColumn(name = "occupancyCertificate", nullable = false)
 	private OccupancyCertificate oc;
 
+    private transient OccupancyNocApplication ocNoc = new OccupancyNocApplication();
+
 
 	@Override
 	public Long getId() {
@@ -108,5 +111,13 @@ public class OCNocDocuments extends AbstractAuditable {
 
 	public void setOc(OccupancyCertificate oc) {
 		this.oc = oc;
+	}
+
+	public OccupancyNocApplication getOcNoc() {
+		return ocNoc;
+	}
+
+	public void setOcNoc(OccupancyNocApplication ocNoc) {
+		this.ocNoc = ocNoc;
 	}
 }

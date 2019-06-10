@@ -872,5 +872,26 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/noc-clearance-report.jsp" />
 	</definition>
+	
+	<definition name="ocnoc-details" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.noc" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/noc/ocnoc-details.jsp" />
+	</definition>
+	
+	<definition name="ocnoc-success" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.noc.appln.success" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/noc/ocnoc-success.jsp" />
+	</definition>
+	
+	<definition name="view-ocnoc-details" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.noc" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/noc/view-ocnoc-details.jsp" />
+	</definition>
 
 </tiles-definitions>

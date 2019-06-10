@@ -46,7 +46,6 @@ import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
@@ -58,6 +57,7 @@ import org.egov.bpa.transaction.entity.oc.OCExistingBuilding;
 import org.egov.bpa.transaction.entity.oc.OCExistingBuildingFloor;
 import org.egov.bpa.transaction.entity.oc.OCFloor;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl;
@@ -354,6 +354,34 @@ public class BpaUtils {
         portalInboxService.updateInboxMessage(permitNoc.getBpaNocApplication().getNocApplicationNumber(), module.getId(),
                     status, true, new Date(), null,
                     additionalPortalInboxUser, permitNoc.getBpaApplication().getPlanPermissionNumber(), url);
+    }
+    
+    @Transactional
+    public void createOCNocPortalUserinbox(final OccupancyNocApplication ocNoc, final List<User> portalInboxUser,
+            final String workFlowAction) {
+        String status = BpaConstants.NOC_INITIATED;
+
+        Module module = moduleService.getModuleByName(BpaConstants.NOCMODULE);
+        
+        boolean isResolved = false;
+        String url = "/bpa/ocnocapplication/update/" + ocNoc.getBpaNocApplication().getNocApplicationNumber();
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, ocNoc.getOc().getParent().getOwner().getName(),
+        		ocNoc.getOc().getParent().getServiceType().getDescription(), ocNoc.getBpaNocApplication().getNocApplicationNumber(),
+        		ocNoc.getOc().getOccupancyCertificateNumber(), ocNoc.getId(), SUCCESS, SUCCESS, url, isResolved,
+                status, new Date(), null, portalInboxUser);
+
+        final PortalInbox portalInbox = portalInboxBuilder.build();
+        portalInboxService.pushInboxMessage(portalInbox);
+    }
+    
+    @Transactional
+    public void updateOCNocPortalUserinbox(final OccupancyNocApplication ocNoc, final User additionalPortalInboxUser) {
+        Module module = moduleService.getModuleByName(BpaConstants.NOCMODULE);
+        String status = ocNoc.getBpaNocApplication().getStatus().getCode();        
+        String url = "/bpa/ocnocapplication/update/" +ocNoc.getBpaNocApplication().getNocApplicationNumber();
+        portalInboxService.updateInboxMessage(ocNoc.getBpaNocApplication().getNocApplicationNumber(), module.getId(),
+                    status, true, new Date(), null,
+                    additionalPortalInboxUser, ocNoc.getOc().getOccupancyCertificateNumber(), url);
     }
 
     @Transactional(readOnly = true)

@@ -472,6 +472,7 @@ $(document).ready(
 
             if ($('#ocEDcrNumber').val()) {
                 getEdcrApprovedPlanDetails();
+
             }
 
             $('#ocEDcrNumber').blur(function () {
@@ -525,6 +526,7 @@ $(document).ready(
                             $('#edcrUploadedDate').html(response.applicationDate);
                             $('#edcrDxfFile').html('<a href="/egi/downloadfile?fileStoreId=' + response.dxfFile.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.dxfFile.fileName + '</a>');
                             $('#edcrPlanReportOutput').html('<a href="/egi/downloadfile?fileStoreId=' + response.reportOutput.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.reportOutput.fileName + '</a>');
+                            updateNocRequired(response.plan.planInformation);
                             if ($('#loadingFloorDetailsFromEdcrRequire').val() === 'true' && $('#mode').val() && $('#mode').val() === 'new' && response.plan) {
                                 var existingBldgPresent = [];
                                 if (response.plan.blocks.length > 0)
@@ -603,6 +605,147 @@ $(document).ready(
                         console.log("Error occurred, when getting approved building plan scrutiny details!!!!!!!");
                     }
                 });
+            }
+            
+          //to update noc document is required
+            function updateNocRequired(planInformation){
+            	$('#APPROVED').attr('disabled',true);
+            	$('#REJECTED').attr('disabled',true);
+            	if(planInformation.nocIrrigationDept === 'YES'){
+                    $('span.mandatory._NOC_from_Irrigation_Department').show();
+                    if($('button.btn_NOC_from_Irrigation_Department').length==1){
+                    	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                    			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){ 
+                    		$('th.thbtn').show();
+    	                    $('td.tdbtn').show();
+                    	}else{
+                    		$('th.thbtn').hide();
+    	                    $('td.tdbtn').hide();
+                    	}
+                    }else if($('input.hidden_NOC_from_Irrigation_Department').val() != 'initiated'){
+                    	$('div._NOC_from_Irrigation_Department').attr('required','required');
+                    	$('div.divfv_NOC_from_Irrigation_Department').show();
+                    }
+                    if($('#nocAppl').length > 0)
+                    {
+                    	$('th.thstatus').show();
+                        $('td.tdstatus').show();    
+                        $('th.thsla').show();
+                        $('td.tdsla').show(); 
+                        $('th.thda').show();
+                        $('td.tdda').show(); 
+                    }
+            	}
+            	if(planInformation.nocNearMonument === 'YES'){
+            		$('#APPROVED').attr('disabled',true);
+                	$('#REJECTED').attr('disabled',true);
+                    $('span.mandatory._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
+                    if($('button.btn_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').length==1){
+                    	if($('#nocStatusUpdated').val() == "false" &&  $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                    			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){
+                    		$('th.thbtn').show();
+    	                    $('td.tdbtn').show();
+                    	}else{
+                    		$('th.thbtn').hide();
+    	                    $('td.tdbtn').hide();
+                    	}
+                    }else if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'initiated'){
+                    	$('div._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('required','required');
+                    	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
+                    }
+                    if($('#nocAppl').length > 0)
+                    {
+                    	$('th.thstatus').show();
+                        $('td.tdstatus').show(); 
+                        $('th.thsla').show();
+                        $('td.tdsla').show(); 
+                        $('th.thda').show();
+                        $('td.tdda').show(); 
+                    }
+            	}
+                if(planInformation.nocNearAirport === 'YES'){
+                	$('#APPROVED').attr('disabled',true);
+                	$('#REJECTED').attr('disabled',true);
+                    $('span.mandatory._NOC_from_Airport_Authority').show();
+                    if($('button.btn_NOC_from_Airport_Authority').length==1){
+                    	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                    			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){
+                    		$('th.thbtn').show();
+    	                    $('td.tdbtn').show();
+                    	}else{
+                    		$('th.thbtn').hide();
+    	                    $('td.tdbtn').hide();
+                    	}
+                    }else if($('input.hidden_NOC_from_Airport_Authority').val() != 'initiated'){
+                    	$('div._NOC_from_Airport_Authority').attr('required','required');
+                    	$('div.divfv_NOC_from_Airport_Authority').show();
+                    }
+                    if($('#nocAppl').length > 0)
+                    {
+                    	$('th.thstatus').show();
+                        $('td.tdstatus').show();
+                        $('th.thsla').show();
+                        $('td.tdsla').show(); 
+                        $('th.thda').show();
+                        $('td.tdda').show(); 
+                    }
+                }
+                if(planInformation.nocFireDept === 'YES'){
+                	$('#APPROVED').attr('disabled',true);
+                	$('#REJECTED').attr('disabled',true);
+
+                    $('span.mandatory._NOC_from_Fire_Authority').show();
+                    if($('button.btn_NOC_from_Fire_Authority').length==1){
+                    	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                    			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){
+                    		$('th.thbtn').show();
+    	                    $('td.tdbtn').show();
+                    	}else{
+                    		$('th.thbtn').hide();
+    	                    $('td.tdbtn').hide();
+                    	}
+                    }else if($('input.hidden_NOC_from_Fire_Authority').val() != 'initiated'){
+                    	$('div._NOC_from_Fire_Authority').attr('required','required');
+                    	$('div.divfv_NOC_from_Fire_Authority').show();
+                    }
+                    
+                    if($('#nocAppl').length > 0)
+                    {
+                    	$('th.thstatus').show();
+                        $('td.tdstatus').show();  
+                        $('th.thsla').show();
+                        $('td.tdsla').show(); 
+                        $('th.thda').show();
+                        $('td.tdda').show(); 
+                    }
+                }
+                if(planInformation.nocStateEnvImpact === 'YES'){
+                	$('#APPROVED').attr('disabled',true);
+                	$('#REJECTED').attr('disabled',true);
+                	$('span.mandatory._MOEF_environment_clearance').show();
+                	if($('button.btn_MOEF_environment_clearance').length==1){
+                    	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                    			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){
+                    		$('th.thbtn').show();
+    	                    $('td.tdbtn').show();
+                    	}else{
+                    		$('th.thbtn').hide();
+    	                    $('td.tdbtn').hide();
+                    	}
+                    }else if($('input.hidden_MOEF_environment_clearance').val() != 'initiated'){
+                    	$('div._MOEF_environment_clearance').attr('required','required');
+                    	$('div.divfv_MOEF_environment_clearance').show();
+                    }
+                	if($('#nocAppl').length > 0)
+                    {
+                    	$('th.thstatus').show();
+                        $('td.tdstatus').show(); 
+                        $('th.thsla').show();
+                        $('td.tdsla').show();
+                        $('th.thda').show();
+                        $('td.tdda').show(); 
+                    }
+                }
             }
 
         // Auto populate system generated plan scrutiny checklist documents

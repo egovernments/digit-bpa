@@ -285,6 +285,12 @@ public class BpaConstants {
     
     public static final String PERMIT = "Permit";
     public static final String OC = "OC";
+    
+    public static final String FIREOCNOCTYPE = "FIRE_OCNOC";
+    public static final String AIRPORTOCNOCTYPE = "AAI_OCNOC";
+    public static final String NMAOCNOCTYPE = "NMA_OCNOC";
+    public static final String ENVOCNOCTYPE = "MOEF_OCNOC";
+    public static final String IRROCNOCTYPE = "IDA_OCNOC";
 
     
 
@@ -602,6 +608,14 @@ public class BpaConstants {
     	NOCTYPE.put(NMANOCTYPE, NMANOCROLE);
     	NOCTYPE.put(ENVNOCTYPE, ENVNOCROLE);
     }
+    
+    private static final Map<String, String> OCNOCTYPE = new ConcurrentHashMap<>();
+    static {
+    	NOCTYPE.put(FIREOCNOCTYPE, FIRENOCROLE);
+    	NOCTYPE.put(AIRPORTOCNOCTYPE, AIRPORTNOCROLE);
+    	NOCTYPE.put(NMAOCNOCTYPE, NMANOCROLE);
+    	NOCTYPE.put(ENVOCNOCTYPE, ENVNOCROLE);
+    }
 
     // Update and use this code if DCR integration require to particular service type and occupancy
     /*
@@ -685,6 +699,10 @@ public class BpaConstants {
     
     public static Map<String, String> getNocRole() {
         return Collections.unmodifiableMap(NOCTYPE);
+    }
+    
+    public static Map<String, String> getOCNocRole() {
+        return Collections.unmodifiableMap(OCNOCTYPE);
     }
 
 }

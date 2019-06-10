@@ -88,7 +88,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -96,29 +98,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.master.service.PermitConditionsService;
+import org.egov.bpa.master.entity.NocConfiguration;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.entity.enums.ConditionType;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.entity.oc.OCAppointmentSchedule;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
 import org.egov.bpa.transaction.entity.oc.OCLetterToParty;
+import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.entity.oc.OccupancyFee;
+import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.notice.OccupancyCertificateNoticesFormat;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
 import org.egov.bpa.transaction.service.BpaDcrService;
-import org.egov.bpa.transaction.service.oc.OcInspectionService;
+import org.egov.bpa.transaction.service.DcrRestService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.service.oc.OccupancyFeeService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
+import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -141,6 +151,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -180,6 +192,12 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     private BpaDcrService bpaDcrService;
     @Autowired
     protected OccupancyFeeService occupancyFeeService;
+    @Autowired
+    private OccupancyCertificateNocService ocNocService;
+    @Autowired
+	private DcrRestService drcRestService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
 
     @GetMapping("/update/{applicationNumber}")
     public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model,
@@ -323,6 +341,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(oc.getStatus().getCode()))) {
             model.addAttribute("createlettertoparty", true);
         }
+        model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
 
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         if (APPLICATION_STATUS_NOCUPDATED.equals(oc.getStatus().getCode())
@@ -356,7 +375,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
             }
             model.addAttribute("captureTSRemarks", false);
         }
-
+        
         prepareWorkflow(model, oc, workflowContainer);
         model.addAttribute("pendingActions", workflowContainer.getPendingActions());
         model.addAttribute("currentState", oc.getCurrentState().getValue());
@@ -380,6 +399,54 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute(BPA_APPLICATION, oc.getParent());
         model.addAttribute(OCCUPANCY_CERTIFICATE, oc);
         buildRejectionReasons(model, oc);
+        List<OccupancyNocApplication> ocNoc = ocNocService.findByOCApplicationNumber(oc.getApplicationNumber());
+        model.addAttribute("nocApplication",ocNoc);
+	    EdcrApplicationInfo odcrPlanInfo = drcRestService.getDcrPlanInfo(oc.geteDcrNumber(), ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        Map<String, String> nocTypeMap = new HashMap<>();
+	        nocTypeMap.put(BpaConstants.FIREOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
+	        nocTypeMap.put(BpaConstants.AIRPORTOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport());
+	        nocTypeMap.put(BpaConstants.NMAOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocNearMonument());
+	        nocTypeMap.put(BpaConstants.ENVOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact());
+	        nocTypeMap.put(BpaConstants.IRROCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept());
+		    
+		    
+        Map<String, String> nocConfigMap = new HashMap<String, String>();
+        Map<String, String> nocTypeApplMap = new HashMap<String, String>();
+        for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
+        	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+			NocConfiguration nocConfig = nocConfigurationService
+					.findByDepartmentAndType(code, BpaConstants.OC);
+			if(ocNocService.findByApplicationNumberAndType(oc.getApplicationNumber(),code)!=null)
+				nocTypeApplMap.put(code, "initiated");
+			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
+					nocTypeMap.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
+				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+			for (OccupancyNocApplication ona : ocNoc) {
+				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
+					nocDocument.setOcNoc(ona);
+				}
+			}
+			
+		}
+        model.addAttribute("nocTypeApplMap",nocTypeApplMap);
+        model.addAttribute("nocConfigMap",nocConfigMap);
+        model.addAttribute("isOcApplFeeReq","NO");
+        model.addAttribute("ocApplFeeCollected","NO");
+        if(occupancyCertificateUtils.isApplicationFeeCollectionRequired() ){
+        	model.addAttribute("isOcApplFeeReq","YES");
+        }
+        if(oc.getDemand() != null && oc.getDemand().getAmtCollected().compareTo(oc.getAdmissionfeeAmount())>=0){
+      		//model.addAttribute("ocApplFeeCollected","YES");
+        }
+        List<OCNocDocuments> nocDocStatus = oc.getNocDocuments().stream().filter(pdc -> pdc.getNocDocument().getNocStatus() != null).collect(Collectors.toList());
+        
+        if(oc.getNocDocuments().size() == nocDocStatus.size())
+        	model.addAttribute("nocStatusUpdated",true);
+        else
+        	model.addAttribute("nocStatusUpdated",false);
+
+       
     }
 
     private void prepareFormData(final OccupancyCertificate oc, final Model model) {

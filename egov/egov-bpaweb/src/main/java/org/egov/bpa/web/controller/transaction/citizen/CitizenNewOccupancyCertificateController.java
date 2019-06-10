@@ -48,24 +48,34 @@
 package org.egov.bpa.web.controller.transaction.citizen;
 
 import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.master.entity.NocConfiguration;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.WorkflowBean;
+import org.egov.bpa.transaction.entity.common.NocDocument;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
+import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
+import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
-import org.egov.bpa.transaction.service.BpaApplicationValidationService;
-import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateValidationService;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.commons.service.SubOccupancyService;
@@ -112,11 +122,15 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
     @Autowired
     private OccupancyCertificateService occupancyCertificateService;
     @Autowired
-    private BpaApplicationValidationService validationService;
-    @Autowired
     protected SubOccupancyService subOccupancyService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
+    @Autowired
+    private OccupancyCertificateNocService ocNocService;
+    @Autowired
+    private OccupancyCertificateUtils occupancyCertificateUtils;
     
     @GetMapping("/occupancy-certificate/apply")
     public String newOCForm(final Model model, final HttpServletRequest request) {
@@ -137,6 +151,44 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
         getDcrDocumentsUploadMode(model);
         prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
         model.addAttribute("occupancyCertificate", occupancyCertificate);
+       // occupancyCertificate.getParent().setServiceType(serviceTypeService.getServiceTypeByCode(serviceCode));
+
+		/*
+		 * model.addAttribute("isOcApplFeeReq","NO");
+		 * model.addAttribute("ocApplFeeCollected","NO");
+		 * if(occupancyCertificateUtils.isApplicationFeeCollectionRequired() ){
+		 * model.addAttribute("isOcApplFeeReq","YES"); }
+		 * if(occupancyCertificate.getDemand() != null &&
+		 * occupancyCertificate.getDemand().getAmtCollected().compareTo(
+		 * occupancyCertificate.getAdmissionfeeAmount())>=0){
+		 * model.addAttribute("ocApplFeeCollected","YES"); } Map nocTypeApplMap = new
+		 * HashMap<String, String>(); if
+		 * (occupancyCertificate.getNocDocuments().isEmpty()) { Map nocConfigMap = new
+		 * HashMap<String,String>(); List<ChecklistServiceTypeMapping>
+		 * checklistServicetypeList = checklistServiceTypeService
+		 * .findByActiveChecklistAndServiceType(occupancyCertificate.getParent().
+		 * getServiceType().getDescription(), CHECKLIST_TYPE_NOC); for
+		 * (ChecklistServiceTypeMapping serviceChklist : checklistServicetypeList) {
+		 * OCNocDocuments ocNocDocument = new OCNocDocuments(); NocDocument nocDocument
+		 * = new NocDocument(); nocDocument.setServiceChecklist(serviceChklist);
+		 * ocNocDocument.setOc(occupancyCertificate);
+		 * ocNocDocument.setNocDocument(nocDocument);
+		 * occupancyCertificate.getNocDocuments().add(ocNocDocument); String
+		 * code=serviceChklist.getChecklist().getCode(); NocConfiguration
+		 * nocConfig=nocConfigurationService.findByDepartmentAndType(code,
+		 * BpaConstants.OC); if(occupancyCertificate.getApplicationNumber()!=null &&
+		 * ocNocService.findByApplicationNumberAndType(occupancyCertificate.
+		 * getApplicationNumber(),code)!=null) nocTypeApplMap.put(code, "initiated");
+		 * if(nocConfig != null &&
+		 * nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) &&
+		 * nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.
+		 * SEMI_AUTO.toString()) &&
+		 * nocConfig.getIntegrationInitiation().equalsIgnoreCase(
+		 * NocIntegrationInitiationEnum.MANUAL.toString()))
+		 * nocConfigMap.put(nocConfig.getDepartment(),"initiate"); }
+		 * model.addAttribute("nocConfigMap",nocConfigMap); }
+		 * model.addAttribute("nocTypeApplMap",nocTypeApplMap);
+		 */
     }
 
     private void setCityName(final Model model, final HttpServletRequest request) {

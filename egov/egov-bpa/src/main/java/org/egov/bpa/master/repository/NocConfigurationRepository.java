@@ -51,11 +51,14 @@ import java.util.List;
 import org.egov.bpa.master.entity.NocConfiguration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NocConfigurationRepository extends JpaRepository<NocConfiguration, Long> {
-    NocConfiguration findByDepartment(String department);
+	@Query("select nocconf from NocConfiguration nocconf where nocconf.department=:department and nocconf.applicationType=:type")
+    NocConfiguration findByDepartmentAndApplicationType(@Param("department") String department, @Param("type") String type);
+    
     @Query("select nocconf from NocConfiguration nocconf where nocconf.isDeemedApproval=true")
     List<NocConfiguration> findIsDeemedApproval();
 }

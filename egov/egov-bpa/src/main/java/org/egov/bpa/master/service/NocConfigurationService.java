@@ -16,8 +16,8 @@ public class NocConfigurationService {
 	@Autowired
     private NocConfigurationRepository nocConfigurationRepository;
 	
-	public NocConfiguration findByDepartment(String department){
-		 return nocConfigurationRepository.findByDepartment(department);
+	public NocConfiguration findByDepartmentAndType(String department, String type){
+		 return nocConfigurationRepository.findByDepartmentAndApplicationType(department, type);
 	}
 	public List<NocConfiguration> findIsDeemedApproval(){
 		return nocConfigurationRepository.findIsDeemedApproval();

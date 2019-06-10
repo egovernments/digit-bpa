@@ -45,6 +45,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <div class="panel-heading">
 	<div class="panel-title">
@@ -67,6 +69,16 @@
 				<th><spring:message code="lbl.remarks" /></th>
 				<th><spring:message code="lbl.attachdocument" /><br>(<spring:message
 						code="lbl.mesg.document" />)</th>
+				<c:if test="${not empty nocConfigMap}">
+				<th class="thbtn" style="display: none"><spring:message
+							code="lbl.action.noc" /></th>
+				</c:if>			
+				<c:if test="${not empty nocApplication}">								
+				<th class="thstatus" style="display: none"><spring:message code="lbl.noc.dept.status" /></th>		
+				<th class="thsla" style="display: none"><spring:message code="lbl.sla.enddate" /></th>		
+				<th class="thda" style="display: none"><spring:message code="lbl.deemed.approved.date" /></th>		
+					
+				</c:if>
 			</tr>
 		</thead>
 		<tbody id="ocNOCDocumentsBody">
@@ -77,6 +89,14 @@
 						varStatus="status">
 						<tr>
 							<td><c:out value="${status.index+1}"></c:out></td>
+							<c:forTokens var="splittedString"
+							items="${doc.nocDocument.serviceChecklist.checklist.description}"
+							delims="\ ()" varStatus="stat">
+							<c:set var="checklistName"
+								value="${stat.first ? '' : checklistName}_${splittedString}" />
+							<c:set var="statusName"
+								value="${doc.nocDocument.nocStatus}" />
+						</c:forTokens>
 							<td style="font-size: 100%;"><c:out value="${doc.nocDocument.serviceChecklist.checklist.description}"></c:out>
 								<c:if test="${doc.nocDocument.serviceChecklist.mandatory}">
 									<span class="mandatory"></span>
@@ -112,7 +132,7 @@
 								<form:errors
 									path="nocDocuments[${status.index}].nocDocument.replyReceivedOn"
 									cssClass="add-margin error-msg" /></td>
-							<td class="hide"><form:select
+							<td class="hide"><form:select id="${statusName}"
 									path="nocDocuments[${status.index}].nocDocument.nocStatus"
 									cssClass="form-control nocStatus"
 									cssErrorClass="form-control error">
@@ -141,7 +161,7 @@
 								</div>
 							</td>
 							<td>
-								<div class="files-upload-container" data-file-max-size="5"
+								<div class="files-upload-container ${checklistName}" data-file-max-size="5"
 									<c:if test="${doc.nocDocument.serviceChecklist.mandatory eq true && fn:length(doc.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
 									data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 									<div class="files-viewer">
@@ -190,6 +210,50 @@
 
 									</div>
 								</div>
+								<c:if test="${not empty nocConfigMap}">
+						<td class="tdbtn" style="display:none">
+							<div class="text-right">
+								<c:set var="noccode"
+									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
+								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
+								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
+								<input type="hidden" value="${nocapp}" class="hidden${checklistName}"/>
+								<input type="hidden" id="nocchkcode" value="${noccode}"/>
+								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
+								<button type="button" id="btninitiatenoc" value="/bpa/ocnocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
+										<spring:message code="lbl.initiate.noc" />
+								</button>
+								</c:if>
+							</div>
+						</td>
+					</c:if>
+					<c:if test="${not empty nocApplication}">					  								
+						<td class="view-content tdstatus" style="font-size: 97%;">												
+							<fmt:formatDate value="${doc.ocNoc.lastModifiedDate}"
+								  pattern="dd/MM/yyyy" var="applicationDate" />						
+								  <a
+		                                style="cursor: pointer; font-size: 12px;"
+		                                onclick="window.open('/bpa/nocapplication/view/${doc.ocNoc.bpaNocApplication.nocApplicationNumber}','view','width=600, height=400,scrollbars=yes')">
+		                                ${doc.ocNoc.bpaNocApplication.nocApplicationNumber}
+	                                </a><br/>						  
+									${doc.ocNoc.bpaNocApplication.status.code} <br/>
+									${applicationDate} <br />							
+                                    <c:if test="${not empty doc.ocNoc.bpaNocApplication.remarks}">																	
+									  Remarks : ${doc.ocNoc.bpaNocApplication.remarks}
+								    </c:if>										
+						</td>	
+						<td class="view-content tdsla" style="font-size: 97%;">												
+							    <fmt:formatDate value="${doc.ocNoc.bpaNocApplication.slaEndDate}"
+								pattern="dd/MM/yyyy" var="slaDate" />
+								<span style="font-weight:bold">${slaDate}<br />		</span>		
+						</td>	
+						
+						<td class="view-content tdda" style="font-size: 97%;">												
+							  <fmt:formatDate value="${doc.ocNoc.bpaNocApplication.deemedApprovedDate}"
+								pattern="dd/MM/yyyy" var="dadate" />
+								<span style="font-weight:bold">${dadate}<br />		</span>		
+						</td>
+					</c:if>
 						</tr>
 					</c:forEach>
 				</c:when>
@@ -240,6 +304,14 @@
 	value="<spring:message code='msg.filesize.validate' />" />
 <input type="hidden" id="noPreviewAvailble"
 	value="<spring:message code='msg.nopreview.availble' />" />
+<input type="hidden" id="nocStatusUpdated" value="${nocStatusUpdated}"/>
+<input type="hidden" id="applicationNo" value="${occupancyCertificate.applicationNumber}"/>
+<input type="hidden" id="nocAppl" value="${nocApplication}"/>
+<input type="hidden" id="citizenOrBusinessUser" value="${citizenOrBusinessUser}"/>
+<input type="hidden" id="isOcApplFeeReq" value="${isOcApplFeeReq}"/>
+<input type="hidden" id="ocApplFeeCollected" value="${ocApplFeeCollected}"/>
+
+	
 
 <!-- The Modal -->
 <div id="imgModel" class="image-modal">

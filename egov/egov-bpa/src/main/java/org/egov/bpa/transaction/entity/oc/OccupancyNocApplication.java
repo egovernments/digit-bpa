@@ -63,8 +63,8 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "EGBPA_OC_NOCAPPLICATION")
-@SequenceGenerator(name = OCNocApplication.SEQ_OCNOCAPPLICATION, sequenceName = OCNocApplication.SEQ_OCNOCAPPLICATION, allocationSize = 1)
-public class OCNocApplication extends AbstractAuditable {
+@SequenceGenerator(name = OccupancyNocApplication.SEQ_OCNOCAPPLICATION, sequenceName = OccupancyNocApplication.SEQ_OCNOCAPPLICATION, allocationSize = 1)
+public class OccupancyNocApplication extends AbstractAuditable {
 
     protected static final String SEQ_OCNOCAPPLICATION = "SEQ_EGBPA_OC_NOCAPPLICATION";
     private static final long serialVersionUID = -3889308488871083896L;

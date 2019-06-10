@@ -61,6 +61,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.BpaScheme;
 import org.egov.bpa.master.entity.BpaSchemeLandUsage;
+import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.PostalAddress;
 import org.egov.bpa.master.entity.RegistrarOfficeVillage;
 import org.egov.bpa.master.entity.ServiceType;
@@ -70,6 +71,7 @@ import org.egov.bpa.master.entity.StakeHolderType;
 import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.master.service.PostalAddressService;
 import org.egov.bpa.master.service.RegistrarOfficeVillageService;
 import org.egov.bpa.master.service.ServiceTypeService;
@@ -79,6 +81,7 @@ import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.DcrRestService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
@@ -86,6 +89,7 @@ import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.common.entity.bpa.Occupancy;
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
+import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.commons.service.OccupancyService;
 import org.egov.commons.service.SubOccupancyService;
 import org.egov.commons.service.UsageService;
@@ -116,6 +120,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -179,6 +185,10 @@ public class BpaAjaxController {
     private CustomImplProvider specificNoticeService;
     @Autowired
     private StakeholderTypeService stakeholderTypeService;
+    @Autowired
+    private NocConfigurationService nocConfigService;
+    @Autowired
+	private DcrRestService drcRestService;
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -546,6 +556,7 @@ public class BpaAjaxController {
                     jsonObj.addProperty("checklistType", servicecklst.getChecklist().getChecklistType().getCode());
                     jsonObj.addProperty("serviceId", servicecklst.getServiceType().getId());
                     jsonObj.addProperty("mandatory", servicecklst.isMandatory());
+                    jsonObj.addProperty("code", servicecklst.getChecklist().getCode());
                     jsonObjects.add(jsonObj);
                 });
         IOUtils.write(jsonObjects.toString(), response.getWriter());
@@ -679,5 +690,56 @@ public class BpaAjaxController {
 	    	        .collect(Collectors.toList());	
         return !userList.isEmpty();
 
-	    }
+    }
+    
+    @GetMapping(value = "/application/getocdocumentlistbyservicetype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void getOCDocumentsByServiceType(@RequestParam final Long serviceType,
+            @RequestParam final String checklistType, @RequestParam final String ocEdcrNumber, final HttpServletResponse response) throws IOException {
+        final List<JsonObject> jsonObjects = new ArrayList<>();
+        EdcrApplicationInfo odcrPlanInfo = drcRestService.getDcrPlanInfo(ocEdcrNumber, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        Map<String, Boolean> nocTypeMap = new HashMap<>();
+	        nocTypeMap.put(BpaConstants.FIREOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocFireDept().equals("YES") ? true : false);
+	        nocTypeMap.put(BpaConstants.AIRPORTOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport().equals("YES") ? true : false);
+	        nocTypeMap.put(BpaConstants.NMAOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact().equals("YES") ? true : false);
+	        nocTypeMap.put(BpaConstants.ENVOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact().equals("YES") ? true : false);
+	        nocTypeMap.put(BpaConstants.IRROCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept().equals("YES") ? true : false);
+	        
+        checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceType, checklistType).stream()
+                .forEach(servicecklst -> {
+                    final JsonObject jsonObj = new JsonObject();
+                    jsonObj.addProperty("id", servicecklst.getId());
+                    jsonObj.addProperty("checklistId", servicecklst.getChecklist().getId());
+                    jsonObj.addProperty("checklistDesc", servicecklst.getChecklist().getDescription());
+                    jsonObj.addProperty("checklistType", servicecklst.getChecklist().getChecklistType().getCode());
+                    jsonObj.addProperty("serviceId", servicecklst.getServiceType().getId());
+
+                    if(servicecklst.getChecklist().getChecklistType().getCode().equalsIgnoreCase("OCNOC")){
+                     NocConfiguration nocConfig = nocConfigService.findByDepartmentAndType(servicecklst.getChecklist().getCode(), BpaConstants.OC);
+                     jsonObj.addProperty("documentMandatory", nocConfig.getIntegrationType().equals("MANUAL") ? true : false);
+                     jsonObj.addProperty("mandatory", nocTypeMap.get(servicecklst.getChecklist().getCode()));
+
+                    }else {
+                        jsonObj.addProperty("mandatory", servicecklst.isMandatory());
+
+                    }
+                    jsonObjects.add(jsonObj);
+                });
+        IOUtils.write(jsonObjects.toString(), response.getWriter());
+    }
+    
+    
+    @GetMapping(value = "/ajax/getOCNocUsersByCode", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Boolean getOCNocUsersByCode(@RequestParam String code) {
+	  List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+      List<User> userList = nocUsers.stream()
+	        .filter(usr -> usr.getRoles().stream()
+	    	        .anyMatch(usrrl -> 
+	    	          usrrl.getName().equals(BpaConstants.getOCNocRole().get(code))))
+	    	        .collect(Collectors.toList());	
+        return !userList.isEmpty();
+
+    }
+    
 }
