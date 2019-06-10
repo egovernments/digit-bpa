@@ -87,7 +87,7 @@ public class NocApprovalService {
 				if ((applStatus != null && !(applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_CANCELLED)
 						|| applStatus.equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REJECTED)))) {
 					
-					if (permitNocApp.getBpaNocApplication().getSlaEndDate().compareTo(new Date())>=0) {
+					if (permitNocApp.getBpaNocApplication().getSlaEndDate().compareTo(new Date())<=0) {
 						permitNocApp.getBpaNocApplication().setStatus(statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC,
 								BpaConstants.NOC_DEEMED_APPROVED));
 						permitNocApp.getBpaNocApplication().setDeemedApprovedDate(new Date());
