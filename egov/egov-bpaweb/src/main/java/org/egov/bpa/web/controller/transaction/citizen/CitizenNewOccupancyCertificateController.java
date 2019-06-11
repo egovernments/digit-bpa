@@ -231,7 +231,7 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
             bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, wfBean);
             ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
             
-            ocNocService.initiateNoc(occupancyCertificate);
+            ocNocService.initiateNoc(ocResponse);
             
             int nocAutoCount = 0;
             List<User> nocAutoUsers = new ArrayList<>();

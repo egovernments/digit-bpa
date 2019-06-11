@@ -101,7 +101,7 @@
 							<c:set var="checklistName"
 								value="${stat.first ? '' : checklistName}_${splittedString}" />
 							<c:set var="statusName"
-								value="${doc.nocDocument.nocStatus}" />
+								value="${doc.nocDocument.nocStatus}${checklistName}" />
 						</c:forTokens>
 					<td width ="15%" style="font-size: 100%;"><c:out
 							value="${doc.nocDocument.serviceChecklist.checklist.description}"></c:out> 

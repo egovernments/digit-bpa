@@ -355,7 +355,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
             wfBean.setCurrentState(WF_NEW_STATE);
             bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, wfBean);
             ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
-            ocNocService.initiateNoc(occupancyCertificate);
+            ocNocService.initiateNoc(ocResponse);
             Position pos = positionMasterService.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
             User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
             String message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION, new String[] {
