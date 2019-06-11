@@ -1,53 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) 2017  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
-  -->
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-12-18T15:27:16 -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_voucher_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="b76bdff0-f9b9-4afd-886d-d310a7b060b2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.lang.*"/>
@@ -116,7 +68,7 @@ from voucherheader vh inner join  egcl_remittance rem on vh.id=rem.voucherheader
 inner join egcl_collectionremittance cr on cr.remittance =rem.id
 inner join egcl_collectionheader ch on cr.collectionheader = ch.id
 inner join egcl_remittancedetails rd on rem.id=rd.remittance
-inner join eg_user usr on rem.createdby =  usr.id
+inner join state.eg_user usr on rem.createdby =  usr.id
 inner join egcl_servicedetails sd on ch.servicedetails=sd.id
 inner join bankaccount bc on rem.bankaccount=bc.id
 inner join bankbranch br on bc.branchid=br.id
@@ -612,7 +564,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[($P{EGOV_BRANCH_ID} == null || $P{EGOV_BRANCH_ID} == -1) ? "All Banks" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT BANK.NAME FROM BANK,BANKBRANCH WHERE BANKBRANCH.BANKID = BANK.ID and BANKBRANCH.ID=" + $P{EGOV_BRANCH_ID})]]></textFieldExpression>
 			</textField>
 			<image onErrorType="Blank">
-				<reportElement stretchType="RelativeToBandHeight" x="33" y="10" width="91" height="92" isRemoveLineWhenBlank="true" uuid="bd413854-a8d2-4a66-8117-3b8e843ce498"/>
+				<reportElement stretchType="RelativeToBandHeight" x="35" y="3" width="91" height="92" isRemoveLineWhenBlank="true" uuid="c12bb37b-5517-4b53-96f4-9cdfafa1280b"/>
 				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 		</band>
@@ -877,10 +829,6 @@ ORDER BY
 				</textElement>
 				<text><![CDATA[Remittance Voucher Report]]></text>
 			</staticText>
-			<image>
-				<reportElement x="163" y="0" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
-				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
-			</image>
 			<staticText>
 				<reportElement x="51" y="89" width="144" height="20" uuid="2e28db94-90e7-414f-bc0b-9d5b165ce2b5">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -1091,7 +1039,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[($P{EGOV_REMITTANCE_NUMBER} == null || $P{EGOV_REMITTANCE_NUMBER} == "") ? "NA" : $P{EGOV_REMITTANCE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="163" y="0" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
+				<reportElement x="177" y="-17" width="60" height="60" uuid="090cc739-9efd-40b3-a8b1-da76b790afc1"/>
 				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 		</band>
