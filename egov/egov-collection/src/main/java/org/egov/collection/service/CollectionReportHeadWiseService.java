@@ -93,7 +93,6 @@ public class CollectionReportHeadWiseService {
                         +
                         " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN count(distinct(EGCL_COLLECTIONHEADER.id)) END) AS cardCount, "
                         +
-                        " count(*) as totalReceiptCount, " +
                         " EGCL_COLLECTIONHEADER.SOURCE AS source,CAO.NAME || '-' || CAO.GLCODE AS GLCODE,");
         final StringBuilder revSelectQueryStr = new StringBuilder(selectQueryStr).append(
                 " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS cashAmount, " +
@@ -125,7 +124,7 @@ public class CollectionReportHeadWiseService {
         final StringBuilder queryStrGroup = new StringBuilder(" GROUP BY source,CAO.NAME,CAO.GLCODE,EGF_INSTRUMENTTYPE.TYPE ");
         final StringBuilder finalSelectQueryStr = new StringBuilder(
                 "SELECT sum(cashCount) AS cashCount,sum(chequeddCount) AS chequeddCount,sum(onlineCount) AS onlineCount,SOURCE,glCode,sum(cashAmount) AS cashAmount, sum(chequeddAmount) AS chequeddAmount,  "
-                        + "  sum(cardCount) AS cardCount, sum(cardAmount) AS cardAmount, cast(sum(totalReceiptCount) AS NUMERIC) as totalReceiptCount,sum(onlineAmount) AS onlineAmount  FROM (");
+                        + "  sum(cardCount) AS cardCount, sum(cardAmount) AS cardAmount, sum(COALESCE(cashCount,0))+sum(COALESCE(chequeddCount,0))+sum(COALESCE(onlineCount,0))+sum(COALESCE(cardCount,0)) as totalReceiptCount,sum(onlineAmount) AS onlineAmount  FROM (");
         final StringBuilder finalGroupQuery = new StringBuilder(
                 " ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.glCode order by source, glCode");
 
