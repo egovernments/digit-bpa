@@ -52,139 +52,164 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 
-<form:form role="form" modelAttribute="permitNocApplication" id="editNocApplicationForm"
- action="/bpa/nocapplication/updateNoc/${permitNocApplication.bpaNocApplication.nocType}~${permitNocApplication.bpaApplication.applicationNumber}"
- method="post" 
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-			<input type="hidden" name="permitNoc" value="${permitNocApplication.id}">
-			<input type="hidden" name="id" value="${permitNocApplication.id}">
-<div class="row">
-	<div class="col-md-12">		
-		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+<form:form role="form" modelAttribute="permitNocApplication"
+	id="editNocApplicationForm"
+	action="/bpa/nocapplication/updateNoc/${permitNocApplication.bpaNocApplication.nocType}~${permitNocApplication.bpaApplication.applicationNumber}"
+	method="post" cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+	<input type="hidden" name="permitNoc"
+		value="${permitNocApplication.id}">
+	<input type="hidden" name="id" value="${permitNocApplication.id}">
+	<div class="row">
+		<div class="col-md-12">
+			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<ul class="nav nav-tabs" id="settingstab">
-				<li class="active"><a data-toggle="tab" href="#application-info"
-									  data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
+				<li class="active"><a data-toggle="tab"
+					href="#application-info" data-tabidx=0><spring:message
+							code='lbl.appln.details' /></a></li>
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
-						code='title.documentdetail' /></a></li>
+							code='title.documentdetail' /></a></li>
 			</ul>
-			
+
 			<div class="tab-content">
-			
-			<div id="document-info" class="tab-pane fade">
+
+				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary dcrDocuments" data-collapsed="0">
-							<jsp:include page="noc-dcr-documentdetails.jsp"></jsp:include>
+						<jsp:include page="noc-dcr-documentdetails.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="noc-bpaDocumentdetails.jsp"></jsp:include>
 					</div>
-			</div>
-			<div id="application-info" class="tab-pane fade in active">
-					<div class="panel panel-primary docdetails" data-collapsed="0">  
-		    	       <div class="panel-heading custom_form_panel_heading">				
-			                <div class="panel-title"><spring:message code="lbl.noc.details"/></div>
-							</div>	  	
+				</div>
+				<div id="application-info" class="tab-pane fade in active">
+					<div class="panel panel-primary docdetails" data-collapsed="0">
+						<div class="panel-heading custom_form_panel_heading">
+							<div class="panel-title">
+								<spring:message code="lbl.noc.details" />
+							</div>
+						</div>
 						<div class="form-group">
-							    
+
 							<div class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.application.number" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
-								<c:out value="${permitNocApplication.bpaNocApplication.nocApplicationNumber}"
+								<c:out
+									value="${permitNocApplication.bpaNocApplication.nocApplicationNumber}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.noc.app.date" />
 							</div>
-							<fmt:formatDate value="${permitNocApplication.bpaNocApplication.createdDate}"
-								  pattern="dd/MM/yyyy" var="applicationDate" />	
+							<fmt:formatDate
+								value="${permitNocApplication.bpaNocApplication.createdDate}"
+								pattern="dd/MM/yyyy" var="applicationDate" />
 							<div class="col-sm-3 add-margin view-content text-justify">
-								<c:out value="${applicationDate}"
-									default="N/A"></c:out>
+								<c:out value="${applicationDate}" default="N/A"></c:out>
 							</div>
 						</div>
 						<div class="form-group">
-						
+
 							<div class="col-sm-3 control-label text-right">
 								<spring:message code="lbl.noc.status" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
-								<c:out value="${permitNocApplication.bpaNocApplication.status.code}"
+								<c:out
+									value="${permitNocApplication.bpaNocApplication.status.code}"
 									default="N/A"></c:out>
-							</div>							
-						</div>	
+							</div>
+						</div>
 					</div>
-					
-					
+
+
 					<div id="nocdoc-info" class="tab-pane fade in active">
-			 		<div class="panel panel-primary" data-collapsed="0">
-			 
-			 			<div class="panel-heading custom_form_panel_heading">				
-	                		<div class="panel-title"><spring:message code="lbl.noc.existing.doc" /></div>
-						</div>		
-							<c:forEach
-								var="bpanoc" items="${nocDocs.nocDocument.nocSupportDocs}" varStatus="loop">
-								<c:if test="${bpanoc.fileStoreId ne null}">&nbsp;&nbsp;&nbsp;&nbsp;
-									<a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
-							  	 	data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
-								<c:if test="${!loop.last}">,</c:if>&nbsp;
+						<div class="panel panel-primary" data-collapsed="0">
+
+							<div class="panel-heading custom_form_panel_heading">
+								<div class="panel-title">
+									<spring:message code="lbl.noc.existing.doc" />
+								</div>
+							</div>
+							<c:set value="false" var="isDocFound"></c:set>
+							<c:forEach var="bpanoc"
+								items="${nocDocs.nocDocument.nocSupportDocs}" varStatus="loop">
+								<c:if test="${bpanoc.fileStoreId ne null}">
+								  <c:set value="true" var="isDocFound"></c:set>
+									<a target="_blank"
+										href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
+										data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
+									<c:if test="${!loop.last}">,</c:if>&nbsp;
 								</c:if>
-							</c:forEach>	
-					</div>			
-    	         </div>
-    	         
-    	         <div class="panel panel-primary docdetails" data-collapsed="0">    	    
-    	            <div class="panel-heading custom_form_panel_heading">				
-	                	<div class="panel-title">${permitNocApplication.bpaNocApplication.nocType} <spring:message code="lbl.noc.dept.doc" /></div>
-					</div>									
-               	
-							<c:forEach
-								var="bpanoc" items="${permitNocApplication.bpaNocApplication.nocSupportDocs}" varStatus="loop">
-								<c:if test="${bpanoc.fileStoreId ne null}">&nbsp;&nbsp;&nbsp;&nbsp;
-									<a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
-							  	 	data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
-								<c:if test="${!loop.last}">,</c:if>&nbsp;
-								</c:if>
-							</c:forEach>	
+							</c:forEach>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<c:if test="${!isDocFound}"> N/A  </c:if>
+						</div>
 					</div>
-			 
+
+					<div class="panel panel-primary docdetails" data-collapsed="0">
+						<div class="panel-heading custom_form_panel_heading">
+							<div class="panel-title">${permitNocApplication.bpaNocApplication.nocType}
+								<spring:message code="lbl.noc.dept.doc" />
+							</div>
+						</div>
+						<c:set value="false" var="isDocFound"></c:set>
+						<c:forEach var="bpanoc"
+							items="${permitNocApplication.bpaNocApplication.nocSupportDocs}"
+							varStatus="loop">
+							<c:if test="${bpanoc.fileStoreId ne null}">
+								 <c:set value="true" var="isDocFound"></c:set>
+								<a target="_blank"
+									href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
+									data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
+								<c:if test="${!loop.last}">,</c:if>&nbsp;
+								</c:if>
+						</c:forEach>
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<c:if test="${!isDocFound}"> N/A  </c:if>
+					</div>
+
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="permit-application-details.jsp"></jsp:include>
 					</div>
-					<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
-						<jsp:include page="../application/edcr-application-details-form.jsp"></jsp:include>
+					<div class="panel panel-primary edcrApplnDetails"
+						data-collapsed="0">
+						<jsp:include
+							page="../application/edcr-application-details-form.jsp"></jsp:include>
 					</div>
-				
-				    <div class="panel panel-primary" data-collapsed="0">
+
+					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="noc-sitedetails.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary buildingdetails" data-collapsed="0">
 						<jsp:include page="noc-building-details.jsp"></jsp:include>
-					</div>					
-    	    </div>  	    
-			 
-		
-			 
-			
-    	     <div class="panel panel-primary docdetails" data-collapsed="0">  
-    	           <div class="panel-heading custom_form_panel_heading">				
-	                	<div class="panel-title">Comments</div>
-					</div>&nbsp;&nbsp;&nbsp;&nbsp;	  	    
-		                      <c:out value="${permitNocApplication.bpaNocApplication.remarks}"
-									default="N/A"></c:out>		
-			</div>		
-			<div align="center">
-				
-				<input type="button" name="button2" id="button2" value="Close"	class="btn btn-default" onclick="window.close();" />
-			               
+					</div>
+				</div>
+
+
+
+
+				<div class="panel panel-primary docdetails" data-collapsed="0">
+					<div class="panel-heading custom_form_panel_heading">
+						<div class="panel-title">Comments</div>
+					</div>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					<c:out value="${permitNocApplication.bpaNocApplication.remarks}"
+						default="N/A"></c:out>
+				</div>
 			</div>
-</div></div>
+			<div align="center">
+
+				<input type="button" name="button2" id="button2" value="Close"
+					class="btn btn-default" onclick="window.close();" />
+
+			</div>
+		</div>
 </form:form>
 
-	
+
 <script
 	src="<c:url value='/resources/global/js/bootstrap/bootstrap-tagsinput.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
@@ -197,11 +222,11 @@
 	src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/buildingarea-details.js?rnd=${app_release_no}'/>"></script>
-<script	
+<script
 	src="<cdn:url value='/resources/js/app/noc/noc-edcr-helper.js?rnd=${app_release_no}'/>"></script>
-	<Script	src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/>"></script>
-	<script
-		src="<cdn:url value='/resources/js/app/document-upload-helper.js?rnd=${app_release_no}'/>"></script>
-	<link rel="stylesheet"
-		href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
-	
+<Script
+	src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/document-upload-helper.js?rnd=${app_release_no}'/>"></script>
+<link rel="stylesheet"
+	href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">

@@ -75,7 +75,7 @@
 					<div class="col-sm-3 add-margin">
 						<select name="permitOccupanciesTemp" multiple
 							id="occupancyapplnlevel"
-							class="form-control occupancies tick-indicator" disabled="disabled" readonly="true">
+							class="form-control occupancies tick-indicator" readonly="true">
 							<c:forEach items="${occupancyList}" var="ocpncy">
 								<option value="${ocpncy.id}" title="${ocpncy.name}"
 									<c:if test="${fn:contains(noc.bpaApplication.permitOccupancies, ocpncy)}"> Selected </c:if>>${ocpncy.name}</option>

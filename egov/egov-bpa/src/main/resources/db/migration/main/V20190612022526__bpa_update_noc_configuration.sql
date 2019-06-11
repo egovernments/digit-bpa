@@ -1,0 +1,10 @@
+ update egbpa_master_nocconfiguration set department ='AAI NOC' where department='AAI_NOC';
+ update egbpa_master_nocconfiguration set department ='NMA NOC' where department='NMA_NOC';
+ update egbpa_master_nocconfiguration set department ='IDA NOC' where department='IDA_NOC';
+ update egbpa_master_nocconfiguration set department ='MOEF NOC' where department='MOEF_NOC';
+ update egbpa_master_nocconfiguration set department ='FIRE NOC' where department='FIRE_NOC';
+ update egbpa_master_nocconfiguration set department ='AAI OCNOC' where department='AAI_OCNOC';
+ update egbpa_master_nocconfiguration set department ='NMA OCNOC' where department='NMA_OCNOC';
+ update egbpa_master_nocconfiguration set department ='IDA OCNOC' where department='IDA_OCNOC';
+ update egbpa_master_nocconfiguration set department ='FIRE OCNOC' where department='FIRE_OCNOC';
+ update egbpa_master_nocconfiguration set department ='MOEF OCNOC' where department='MOEF_OCNOC';

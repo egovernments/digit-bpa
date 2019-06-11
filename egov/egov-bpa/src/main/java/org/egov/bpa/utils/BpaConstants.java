@@ -266,11 +266,11 @@ public class BpaConstants {
     
     //NOC status
     
-    public static final String FIRENOCTYPE = "FIRE_NOC";
-    public static final String AIRPORTNOCTYPE = "AAI_NOC";
-    public static final String NMANOCTYPE = "NMA_NOC";
-    public static final String ENVNOCTYPE = "MOEF_NOC";
-    public static final String IRRNOCTYPE = "IDA_NOC";
+    public static final String FIRENOCTYPE = "FIRE NOC"; 
+    public static final String AIRPORTNOCTYPE = "AAI NOC"; 
+    public static final String NMANOCTYPE = "NMA NOC"; 
+    public static final String ENVNOCTYPE = "MOEF NOC"; 
+    public static final String IRRNOCTYPE = "IDA NOC"; 
 
 
     public static final String NOC_INITIATED = "NOC_INITIATED";
@@ -286,11 +286,11 @@ public class BpaConstants {
     public static final String PERMIT = "Permit";
     public static final String OC = "OC";
     
-    public static final String FIREOCNOCTYPE = "FIRE_OCNOC";
-    public static final String AIRPORTOCNOCTYPE = "AAI_OCNOC";
-    public static final String NMAOCNOCTYPE = "NMA_OCNOC";
-    public static final String ENVOCNOCTYPE = "MOEF_OCNOC";
-    public static final String IRROCNOCTYPE = "IDA_OCNOC";
+    public static final String FIREOCNOCTYPE = "FIRE OCNOC";
+    public static final String AIRPORTOCNOCTYPE = "AAI OCNOC";
+    public static final String NMAOCNOCTYPE = "NMA OCNOC";
+    public static final String ENVOCNOCTYPE = "MOEF OCNOC";
+    public static final String IRROCNOCTYPE = "IDA OCNOC";
 
     
 
