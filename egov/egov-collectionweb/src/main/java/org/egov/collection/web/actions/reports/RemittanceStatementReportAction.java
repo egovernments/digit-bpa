@@ -158,8 +158,10 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final List<Boundary> boundaryList = new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
         if (employee != null)
-            for (final Jurisdiction element : employee.getJurisdictions())
-                boundaryList.add(element.getBoundary());
+            for (final Jurisdiction element : employee.getJurisdictions()){
+             if(element.getBoundary()!=null)
+            	boundaryList.add(element.getBoundary());
+            }
         addDropdownData("boundaryList", boundaryList);
         return INDEX;
     }
@@ -175,8 +177,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final Integer bounaryId = getDeptId();
 
         final StringBuilder jurValuesId = new StringBuilder();
-
-        jurValuesId.append(bounaryId);
+        if(bounaryId!=null)
+         jurValuesId.append(bounaryId);
         new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
 
@@ -184,11 +186,12 @@ public class RemittanceStatementReportAction extends ReportFormAction {
             for (final Jurisdiction element : employee.getJurisdictions()) {
                 if (jurValuesId.length() > 0)
                     jurValuesId.append(',');
-                jurValuesId.append(element.getBoundary().getId());
-
-                for (final Boundary boundary : element.getBoundary().getChildren()) {
-                    jurValuesId.append(',');
-                    jurValuesId.append(boundary.getId());
+				if (element.getBoundary() != null) {
+					jurValuesId.append(element.getBoundary().getId());
+					for (final Boundary boundary : element.getBoundary().getChildren()) {
+						jurValuesId.append(',');
+						jurValuesId.append(boundary.getId());
+					}
                 }
             }
         if (null == jurValuesId.toString() || StringUtils.isEmpty(jurValuesId.toString())
