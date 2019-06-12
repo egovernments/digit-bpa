@@ -74,7 +74,7 @@ $(document).ready(
             '<th class="text-center dcr-floor-toggle-mandatory">Occupancy</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Builtup Area (m²)</th>'+
             '<th class="text-center dcr-floor-toggle-mandatory">Floor Area (m²)</th>'+
-            '<th class="text-center dcr-floor-toggle-mandatory">Carpet Area (m²)</th>'
+            '<th class="text-center dcr-floor-toggle-mandatory">Carpet Area (m²)</th>'+
         '</tr></thead>';
 
         var tbody = '<tbody></tbody>';
@@ -85,8 +85,8 @@ $(document).ready(
             '<td class="text-right"><input type="text" class="form-control table-input text-center patternvalidation floorNumber{{bldgIdx}} dcr-floor-details-mandatory clear-details" name="buildingDetailFromEdcr[{{bldgIdx}}].floorDetailsByEdcr[{{idx}}].floorNumber" data-pattern="number" id="floorDetailsByEdcr[{{idx}}]floorNumber" value="{{floorNo}}" maxlength="3" disabled="true" /></td>'+
             '<td ><select name="buildingDetailFromEdcr[{{bldgIdx}}].floorDetailsByEdcr[{{idx}}].subOccupancy" data-first-option="false" id="floorDetailsByEdcr[{{idx}}]occupancy" class="form-control dcr-floor-details-mandatory{{bldgIdx}} occupancy{{bldgIdx}}" maxlength="128" disabled="true"> <option value="{{occupancyId}}">{{occupancyDesc}}</option></select></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrPlinthArea{{bldgIdx}} dcr-floor-details-mandatory editable nonzero decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].floorDetailsByEdcr[{{idx}}].plinthArea" id="floorDetailsByEdcr[{{idx}}]plinthArea" value="{{plinthArea}}" maxlength="10" onblur="validateDCRFloorDetails(this)" required="required" disabled="true" /></td>'+
-            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory editable nonzero decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].floorDetailsByEdcr[{{idx}}].floorArea" id="floorDetailsByEdcr[{{idx}}]floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
-            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory editable decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].floorDetailsByEdcr[{{idx}}].carpetArea" id="floorDetailsByEdcr[{{idx}}]carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'
+            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory editable decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].floorDetailsByEdcr[{{idx}}].floorArea" id="floorDetailsByEdcr[{{idx}}]floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
+            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory editable decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].floorDetailsByEdcr[{{idx}}].carpetArea" id="floorDetailsByEdcr[{{idx}}]carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'+
         '</tr>';
 
         var tfoot = '<tfoot><tr>'+
@@ -96,7 +96,7 @@ $(document).ready(
             '<td class="text-right">Total</td>'+
             '<td class="text-right dcr-reset-values"></td>'+
             '<td class="text-right dcr-reset-values"></td>'+
-            '<td class="text-right dcr-reset-values"></td>'
+            '<td class="text-right dcr-reset-values"></td>'+
         '</tr></tfoot>';
 
         var otherBldgDetails = '<div class="edcrBuildingAreaDetails{{bldgIdx}}"><div class="form-group">' +
@@ -357,7 +357,7 @@ $(document).ready(
                 for(var j = 0; j < floorObj.occupancies.length; j++) {
                     var occupancy = floorObj.occupancies[j];
                     // Will auto populate floor details in proposed building
-                    if(occupancy.builtUpArea && occupancy.floorArea) {
+                    if(occupancy.builtUpArea && occupancy.builtUpArea > 0) {
                         addFloorDetailsIntoTable(blkIdx, floorIdx, $(tableId+" tbody tr").length, floorObj.name, floorObj.number, subOccupancyResponseByName[occupancy.type],occupancyResponseByName[occupancy.type], occupancy.builtUpArea, occupancy.floorArea, occupancy.carpetArea);
                         floorIdx++;
                     }
@@ -373,7 +373,7 @@ $(document).ready(
                 for(var j = 0; j < floorObj.occupancies.length; j++) {
                     var occupancy = floorObj.occupancies[j];
                     // Will auto populate floor details in existing building
-                    if(occupancy.existingBuiltUpArea && occupancy.existingFloorArea) {
+                    if(occupancy.existingBuiltUpArea && occupancy.existingBuiltUpArea > 0) {
                         addExistBldgFloorDetailsIntoTable(blkIdx, floorIdx, $('.existingBuildingAreaDetails'+blkIdx+' tbody tr').length, floorObj.name, floorObj.number, subOccupancyResponseByName[occupancy.type], occupancyResponseByName[occupancy.type],occupancy.existingBuiltUpArea, occupancy.existingFloorArea, occupancy.existingCarpetArea);
                         floorIdx++;
                     }
@@ -400,8 +400,8 @@ $(document).ready(
             '<td class="text-right"><input type="text" class="form-control table-input text-center patternvalidation floorNumber{{bldgIdx}} dcr-floor-details-mandatory clear-details" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].floorNumber" data-pattern="number" value="{{floorNo}}" maxlength="3" disabled="true" /></td>'+
             '<td ><select name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].subOccupancy" data-first-option="false" class="form-control dcr-floor-details-mandatory{{bldgIdx}} occupancy{{bldgIdx}}" maxlength="128" disabled="true"> <option value="{{occupancyId}}">{{occupancyDesc}}</option></select></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrPlinthArea{{bldgIdx}} dcr-floor-details-mandatory nonzero decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].plinthArea" value="{{plinthArea}}" maxlength="10" required="required" disabled="true" /></td>'+
-            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory nonzero decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
-            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'
+            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
+            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'+
         '</tr>';
 
         function addExistBldgBlock(bldgIdx, name, noOfBlocks) {
@@ -542,8 +542,7 @@ $(document).ready(
                                     return false;
                                 } else if (response.plan.blocks.length > 0 && existingBldgPresent.length > 0
                                     && ($("#serviceType option:selected").text() === 'Alteration'
-                                        || $("#serviceType option:selected").text() === 'Addition or Extension'
-                                        || $("#serviceType option:selected").text() === 'Change in occupancy')
+                                        || $("#serviceType option:selected").text() === 'Addition or Extension')
                                     && jQuery.inArray(true, existingBldgPresent) === -1) {
                                     // Validate existing building details if not present for required service
                                     bootbox.alert("For entered building plan scrutiny number : " + $('#ocEDcrNumber').val() + " existing building details are not present from submitted building plan scrutiny, so you are not allowed to submit application using that. Please use approved plan which have existing and proposed building details.");
