@@ -601,7 +601,9 @@ public class Far extends FeatureProcess {
 			if (mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.I.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
 				processFarHaazardous(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
-			} else {
+			} 
+			if (mostRestrictiveOccupancyType.getType() != null
+                                && DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) { 
 				processFarNonResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth,
 						errorMsgs);
 			}
