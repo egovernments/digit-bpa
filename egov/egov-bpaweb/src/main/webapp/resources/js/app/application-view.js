@@ -40,6 +40,12 @@
 jQuery(document)
 		.ready(
 				function() {
+					
+					//Don't allow double quotes in approval comments, replace double quotes(") with single quote(')
+					$('#approvalComent').keyup(function () {
+			            $(this).val($(this).val().replace(/["]/g, "'"));
+			        });
+					
                     $('.demolitionDetails').hide();
 					if($('#eDcrNumber').val()) {
                         $('#eDcrNumber').show();
