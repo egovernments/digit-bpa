@@ -528,7 +528,7 @@ table.dataTable {
 #menu.homepage > nav > div{
 	-webkit-box-shadow: none;
     box-shadow: none;
-    left: -1px;
+    left: 0px;
 }
 .multilevelpushmenu_wrapper h2 {
   color: #000;
