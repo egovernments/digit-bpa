@@ -169,7 +169,7 @@
 												value="${proposedBuildFloorDetail.plinthArea}"
 												onblur="validateFloorDetails(this)" /></td>
 										<td><form:input type="text"
-												class="form-control table-input text-right patternvalidation decimalfixed nonzero floorArea"
+												class="form-control table-input text-right patternvalidation decimalfixed floorArea"
 												data-pattern="decimalvalue"
 												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].floorArea"
 												id="applicationFloorDetails${counter.index}floorArea"
@@ -246,7 +246,7 @@
 											onblur="validateFloorDetails(this)" maxlength="10"
 											value="${proposedBuildFloorDetail.plinthArea}" /></td>
 									<td><form:input type="text"
-											class="form-control table-input text-right patternvalidation decimalfixed nonzero floorArea floor-details-mandatory"
+											class="form-control table-input text-right patternvalidation decimalfixed floorArea floor-details-mandatory"
 											data-pattern="decimalvalue"
 											path="buildingDetail[0].applicationFloorDetails[0].floorArea"
 											maxlength="10" value="${proposedBuildFloorDetail.floorArea}" /></td>

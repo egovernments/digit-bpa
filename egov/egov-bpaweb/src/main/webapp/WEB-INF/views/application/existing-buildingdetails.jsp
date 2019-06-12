@@ -144,7 +144,7 @@
 												maxlength="15" required="required"
 												value="${existingBuildFloorDetail.plinthArea}" /></td>
 										<td><form:input type="text"
-												class="form-control table-input text-right patternvalidation exist-floor-details-mandatory decimalfixed nonzero existFloorArea"
+												class="form-control table-input text-right patternvalidation exist-floor-details-mandatory decimalfixed existFloorArea"
 												data-pattern="decimalvalue"
 												path="existingBuildingDetails[${exstBldgCounter.index}].existingBuildingFloorDetails[${counter.index}].floorArea"
 												id="existingBuildingFloorDetails${counter.index}floorArea"

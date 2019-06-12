@@ -85,7 +85,7 @@ $(document).ready(
             '<td class="text-right"><input type="text" class="form-control table-input text-center patternvalidation floorNumber{{bldgIdx}} dcr-floor-details-mandatory clear-details" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].floorNumber" data-pattern="number" id="buildingFloorDetailsByEdcr[{{idx}}]floorNumber" value="{{floorNo}}" maxlength="3" disabled="true" /></td>'+
             '<td ><select name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].subOccupancy" data-first-option="false" id="buildingFloorDetailsByEdcr[{{idx}}]occupancy" class="form-control dcr-floor-details-mandatory{{bldgIdx}} occupancy{{bldgIdx}}" maxlength="128" disabled="true"> <option value="{{occupancyId}}">{{occupancyDesc}}</option></select></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrPlinthArea{{bldgIdx}} dcr-floor-details-mandatory editable nonzero decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].plinthArea" id="buildingFloorDetailsByEdcr[{{idx}}]plinthArea" value="{{plinthArea}}" maxlength="10" onblur="validateDCRFloorDetails(this)" required="required" disabled="true" /></td>'+
-            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory editable nonzero decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].floorArea" id="buildingFloorDetailsByEdcr[{{idx}}]floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
+            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory editable decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].floorArea" id="buildingFloorDetailsByEdcr[{{idx}}]floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory editable decimalfixed" data-pattern="decimalvalue" name="buildingDetailFromEdcr[{{bldgIdx}}].buildingFloorDetailsByEdcr[{{idx}}].carpetArea" id="buildingFloorDetailsByEdcr[{{idx}}]carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'+
         '</tr>';
 
@@ -387,7 +387,7 @@ $(document).ready(
                 for(var j = 0; j < floorObj.occupancies.length; j++) {
                     var occupancy = floorObj.occupancies[j];
                     // Will auto populate floor details in proposed building
-                    if(occupancy.builtUpArea && occupancy.floorArea) {
+                    if(occupancy.builtUpArea && occupancy.builtUpArea > 0) {
                         addFloorDetailsIntoTable(blkIdx, floorIdx, $(tableId+" tbody tr").length, floorObj.name, floorObj.number, subOccupancyResponseByName[occupancy.typeHelper.subtype.name],occupancyResponseByName[occupancy.typeHelper.type.name],occupancy.builtUpArea, occupancy.floorArea, occupancy.carpetArea);
                         floorIdx++;
                     }
@@ -403,7 +403,7 @@ $(document).ready(
                 for(var j = 0; j < floorObj.occupancies.length; j++) {
                     var occupancy = floorObj.occupancies[j];
                     // Will auto populate floor details in existing building
-                    if(occupancy.existingBuiltUpArea && occupancy.existingFloorArea) {
+                    if(occupancy.existingBuiltUpArea && occupancy.existingBuiltUpArea > 0) {
                         addExistBldgFloorDetailsIntoTable(blkIdx, floorIdx, $('.existingBuildingAreaDetails'+blkIdx+' tbody tr').length, floorObj.name, floorObj.number, subOccupancyResponseByName[occupancy.typeHelper.subtype.name],occupancyResponseByName[occupancy.typeHelper.type.name],occupancy.existingBuiltUpArea, occupancy.existingFloorArea, occupancy.existingCarpetArea);
                         floorIdx++;
                     }
@@ -430,7 +430,7 @@ $(document).ready(
             '<td class="text-right"><input type="text" class="form-control table-input text-center patternvalidation floorNumber{{bldgIdx}} dcr-floor-details-mandatory clear-details" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].floorNumber" data-pattern="number" value="{{floorNo}}" maxlength="3" disabled="true" /></td>'+
             '<td ><select name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].subOccupancy" data-first-option="false" class="form-control dcr-floor-details-mandatory{{bldgIdx}} occupancy{{bldgIdx}}" maxlength="128" disabled="true"> <option value="{{occupancyId}}">{{occupancyDesc}}</option></select></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrPlinthArea{{bldgIdx}} dcr-floor-details-mandatory nonzero decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].plinthArea" value="{{plinthArea}}" maxlength="10" required="required" disabled="true" /></td>'+
-            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory nonzero decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
+            '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrFloorArea{{bldgIdx}} dcr-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].floorArea" value="{{floorArea}}" maxlength="10" required="required" disabled="true" /></td>'+
             '<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation dcrCarpetArea{{bldgIdx}} dcr-floor-details-mandatory decimalfixed" data-pattern="decimalvalue" name="existingBldgDetailFromEdcr[{{bldgIdx}}].existingBldgFloorDetailsFromEdcr[{{idx}}].carpetArea" value="{{carpetArea}}" maxlength="10" required="required" disabled="true" /></td>'+
         '</tr>';
 
@@ -640,17 +640,16 @@ $(document).ready(
                                     }
                                 if (response.plan.blocks.length <= 0) {
                                     // Validate proposed building details if not present
-                                    bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + $('#floorDetailsNotExtracted').val());
+                                    bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + " " + $('#floorDetailsNotExtracted').val());
                                     $('#eDcrNumber').val('');
                                     resetDCRPopulatedValues();
                                     return false;
                                 } else if (response.plan.blocks.length > 0 && existingBldgPresent.length > 0
                                     && ($("#serviceType option:selected").text() === 'Alteration'
-                                        || $("#serviceType option:selected").text() === 'Addition or Extension'
-                                        || $("#serviceType option:selected").text() === 'Change in occupancy')
+                                        || $("#serviceType option:selected").text() === 'Addition or Extension')
                                     && jQuery.inArray(true, existingBldgPresent) === -1) {
                                     // Validate existing building details if not present for required service
-                                    bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + $('#existingBuildDetailsNotPresent').val());
+                                    bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + " "  + $('#existingBuildDetailsNotPresent').val());
                                     $('#eDcrNumber').val('');
                                     resetDCRPopulatedValues();
                                     return false;

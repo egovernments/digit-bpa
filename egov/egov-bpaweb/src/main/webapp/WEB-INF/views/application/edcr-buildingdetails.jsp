@@ -155,7 +155,7 @@
                                                     value="${proposedBuildFloorDetail.plinthArea}"
                                                     onblur="validateDCRFloorDetails(this)"/></td>
                                     <td><form:input type="text"
-                                                    class="form-control table-input dcr-floor-details-mandatory text-right patternvalidation decimalfixed nonzero dcrFloorArea${bldgCounter.index}"
+                                                    class="form-control table-input dcr-floor-details-mandatory text-right patternvalidation decimalfixed dcrFloorArea${bldgCounter.index}"
                                                     data-pattern="decimalvalue"
                                                     path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].floorArea"
                                                     id="buildingFloorDetailsByEdcr${counter.index}floorArea"
