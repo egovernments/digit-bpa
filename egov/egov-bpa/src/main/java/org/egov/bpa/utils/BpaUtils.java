@@ -396,7 +396,7 @@ public class BpaUtils {
         return assignment.isEmpty() ? null : assignment.get(0).getPosition();
     }
 
-    private List<Assignment> getAssignmentsByDesigAndBndryId(String designation, Long boundary) {
+    public List<Assignment> getAssignmentsByDesigAndBndryId(String designation, Long boundary) {
         final Boundary boundaryObj = getBoundaryById(boundary);
         final String[] designationarr = designation.split(",");
         List<Assignment> assignment = new ArrayList<>();

@@ -115,7 +115,9 @@ import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -186,6 +188,8 @@ public class BpaNoticeUtil {
     private CityService cityService;
     @Autowired
     private BpaApplicationReportProperties bpaApplicationReportProperties;
+    @Autowired
+    private BoundaryService boundaryService;
 
     public BpaNotice findByApplicationAndNoticeType(final BpaApplication application, final String noticeType) {
         return bpaNoticeRepository.findByApplicationAndNoticeType(application, noticeType);
@@ -739,12 +743,18 @@ public class BpaNoticeUtil {
     }
 
     public String getApproverName(final BpaApplication application) {
+        String desigName = getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue());
         StateHistory<Position> stateHistory = application.getStateHistory().stream()
-                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(
-                        getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())))
+                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(desigName))
                 .findAny().orElse(null);
         Assignment assignment = getAssignment(stateHistory);
-        return assignment == null ? N_A : assignment.getEmployee().getName();
+        if(assignment == null){ 
+            Long positionId = bpaUtils.getUserPositionIdByZone(desigName,
+                    bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+        List<Assignment>  assign = bpaWorkFlowService.getAssignmentsByPositionAndDate(positionId,application.getCreatedDate());
+       return assign.isEmpty() ? N_A : assign.get(0).getEmployee().getName();
+        }else
+           return  assignment.getEmployee().getName();
     }
 
     public String getOcApproverName(final OccupancyCertificate oc) {
