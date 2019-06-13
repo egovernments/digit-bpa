@@ -71,8 +71,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.entity.StakeHolder;
+import org.egov.bpa.transaction.entity.BuildingSubUsage;
+import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
 import org.egov.bpa.transaction.entity.Response;
 import org.egov.bpa.transaction.entity.common.NoticeCommon;
+import org.egov.bpa.transaction.entity.dto.PermitFeeHelper;
 import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.entity.oc.OCNotice;
 import org.egov.bpa.transaction.entity.oc.OCNoticeConditions;
@@ -83,6 +87,7 @@ import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.common.entity.bpa.Usage;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.service.CityService;
@@ -113,6 +118,12 @@ public class OCNoticeUtil {
     public static final String TWO_NEW_LINE = "\n\n";
     private static final String APPLICATION_REJECTION_REASON = "applctn.reject.reason";
     private static final String APPLICATION_AUTO_REJECTION_REASON = "applctn.auto.reject.reason";
+    private static final String TOTAL_CARPET_AREA = "totalCarpetArea";
+    private static final String TOTAL_FLOOR_AREA = "totalFloorArea";
+    private static final String TOTAL_BLT_UP_AREA = "totalBltUpArea";
+    private static final String EXST_TOTAL_CARPET_AREA = "exstTotalCarpetArea";
+    private static final String EXST_TOTAL_FLOOR_AREA = "exstTotalFloorArea";
+    private static final String EXST_TOTAL_BLT_UP_AREA = "exstTotalBltUpArea";
 
     @Autowired
     private BpaNoticeUtil bpaNoticeUtil;
@@ -139,7 +150,7 @@ public class OCNoticeUtil {
     public OCNotice findByOcAndNoticeType(OccupancyCertificate oc, String noticeType) {
         return ocNoticeRepository.findByOcAndNoticeType(oc, noticeType);
     }
-    
+
     public ReportOutput getReportOutput(OccupancyCertificate occupancyCertificate, OCNotice ocNotice,
             String ocrejectionfilename, String fileName, String ocRejectionNoticeType) throws IOException {
         ReportOutput reportOutput = new ReportOutput();
@@ -180,16 +191,23 @@ public class OCNoticeUtil {
         reportParams.put("logoPath", cityService.getCityLogoAsStream());
         reportParams.put("stateLogo", ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH));
         reportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
-        reportParams.put("permitNumber", oc.getParent().getPlanPermissionNumber() == null ? EMPTY : oc.getParent().getPlanPermissionNumber());
+        reportParams.put("permitNumber",
+                oc.getParent().getPlanPermissionNumber() == null ? EMPTY : oc.getParent().getPlanPermissionNumber());
+        reportParams.put("ocNumber", oc.getOccupancyCertificateNumber() == null ? EMPTY : oc.getOccupancyCertificateNumber());
         reportParams.put("approvalDate", DateUtils.getDefaultFormattedDate(oc.getApprovalDate()));
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         reportParams.put("applicantName", oc.getParent().getOwner().getName());
         reportParams.put("approverName", getApproverName(oc));
-        reportParams.put("approverDesignation", bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()));
+        StakeHolder stakeholder = oc.getParent().getStakeHolder().get(0).getStakeHolder();
+        reportParams.put("supervisedBy",
+                stakeholder.getName().concat(", ").concat(stakeholder.getStakeHolderType().getName()));
+        reportParams.put("approverDesignation",
+                bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()));
         reportParams.put("serviceType", oc.getParent().getServiceType().getDescription());
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(oc.getApplicationDate()));
         reportParams.put("applicationNumber", oc.getApplicationNumber());
         reportParams.put("noticeGenerationDate", currentDateToDefaultDateFormat());
+        reportParams.put("completionDate", DateUtils.getDefaultFormattedDate(oc.getCompletionDate()));
         reportParams.put("lawAct", ocMessageSource.getMessage(MSG_OC_LAWACT, new String[] {}, LocaleContextHolder.getLocale()));
         reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(oc)));
         String amenities = oc.getParent().getApplicationAmenity().stream().map(ServiceType::getDescription)
@@ -202,17 +220,19 @@ public class OCNoticeUtil {
             reportParams.put("rejectionReasons", buildRejectionReasons(oc));
         }
         if (!oc.getParent().getSiteDetail().isEmpty()) {
-			reportParams.put("electionWard", oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-					? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getName() : "");
-			reportParams.put("revenueWard", oc.getParent().getSiteDetail().get(0).getAdminBoundary() != null
-					? oc.getParent().getSiteDetail().get(0).getAdminBoundary().getName() : "");
+            reportParams.put("electionWard", oc.getParent().getSiteDetail().get(0).getElectionBoundary() != null
+                    ? oc.getParent().getSiteDetail().get(0).getElectionBoundary().getName()
+                    : "");
+            reportParams.put("revenueWard", oc.getParent().getSiteDetail().get(0).getAdminBoundary() != null
+                    ? oc.getParent().getSiteDetail().get(0).getAdminBoundary().getName()
+                    : "");
             reportParams.put("landExtent", oc.getParent().getSiteDetail().get(0).getExtentinsqmts().setScale(2,
                     BigDecimal.ROUND_HALF_UP));
             reportParams.put("buildingNo", oc.getParent().getSiteDetail().get(0).getPlotnumber() == null
                     ? EMPTY
                     : oc.getParent().getSiteDetail().get(0).getPlotnumber());
             reportParams.put("nearestBuildingNo",
-            		oc.getParent().getSiteDetail().get(0).getNearestbuildingnumber() == null
+                    oc.getParent().getSiteDetail().get(0).getNearestbuildingnumber() == null
                             ? EMPTY
                             : oc.getParent().getSiteDetail().get(0).getNearestbuildingnumber());
             reportParams.put("surveyNo", oc.getParent().getSiteDetail().get(0).getReSurveyNumber() == null
@@ -221,16 +241,77 @@ public class OCNoticeUtil {
             reportParams.put("village", oc.getParent().getSiteDetail().get(0).getLocationBoundary() == null
                     ? EMPTY
                     : oc.getParent().getSiteDetail().get(0).getLocationBoundary().getName());
-            reportParams.put("taluk",(oc.getParent().getSiteDetail().get(0).getPostalAddress() == null || oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk() == null)
-                    ? EMPTY
-                    : oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk());
+            reportParams.put("taluk",
+                    (oc.getParent().getSiteDetail().get(0).getPostalAddress() == null
+                            || oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk() == null)
+                                    ? EMPTY
+                                    : oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk());
             reportParams.put("district", oc.getParent().getSiteDetail().get(0).getPostalAddress() == null
                     ? EMPTY
                     : oc.getParent().getSiteDetail().get(0).getPostalAddress().getDistrict());
         }
+
+        if (!oc.getExistingBuildings().isEmpty()) {
+            Map<String, BigDecimal> exstArea = BpaUtils.getExistingBuildingAreasOfOC(oc.getExistingBuildings());
+            reportParams.put(EXST_TOTAL_BLT_UP_AREA,
+                    exstArea.get(EXST_TOTAL_BLT_UP_AREA) != null ? exstArea.get(EXST_TOTAL_BLT_UP_AREA) : BigDecimal.ZERO);
+            reportParams.put(EXST_TOTAL_FLOOR_AREA,
+                    exstArea.get(EXST_TOTAL_FLOOR_AREA) != null ? exstArea.get(EXST_TOTAL_FLOOR_AREA) : BigDecimal.ZERO);
+            reportParams.put(EXST_TOTAL_CARPET_AREA,
+                    exstArea.get(EXST_TOTAL_CARPET_AREA) != null ? exstArea.get(EXST_TOTAL_CARPET_AREA) : BigDecimal.ZERO);
+
+        }
+
+        Map<String, BigDecimal> proposedArea = BpaUtils.getProposedBuildingAreasOfOC(oc.getBuildings());
+        reportParams.put(TOTAL_BLT_UP_AREA,
+                proposedArea.get(TOTAL_BLT_UP_AREA) != null ? proposedArea.get(TOTAL_BLT_UP_AREA) : BigDecimal.ZERO);
+        reportParams.put(TOTAL_FLOOR_AREA,
+                proposedArea.get(TOTAL_FLOOR_AREA) != null ? proposedArea.get(TOTAL_FLOOR_AREA) : BigDecimal.ZERO);
+        reportParams.put(TOTAL_CARPET_AREA,
+                proposedArea.get(TOTAL_CARPET_AREA) != null ? proposedArea.get(TOTAL_CARPET_AREA) : BigDecimal.ZERO);
+
+        List<BuildingSubUsage> buildingSubUsages = oc.getParent().getBuildingSubUsages();
+
+        if (!buildingSubUsages.isEmpty()) {
+            StringBuilder subheader = new StringBuilder();
+            String mainUsage = null;
+            String lastString = " and ";
+            for (BuildingSubUsage buildingSubUsage : buildingSubUsages) {
+                for (BuildingSubUsageDetails buildingSubUsageDetail : buildingSubUsage.getSubUsageDetails()) {
+                    mainUsage = buildingSubUsageDetail.getMainUsage().getDescription();
+                    StringBuilder subUsage = new StringBuilder();
+                    for (Usage subOccupancy : buildingSubUsageDetail.getSubUsages()) {
+                        subUsage = subUsage.append(subOccupancy.getDescription()).append(", ");
+                    }
+                    subheader = subheader.append("Block ").append(buildingSubUsage.getBlockNumber())
+                            .append(" - ").append(subUsage.toString(), 0, subUsage.length() - 2)
+                            .append(" under ").append(mainUsage).append(" occupancy ").append(lastString);
+                }
+            }
+            String subHeaderString = subheader.toString();
+            subHeaderString = subHeaderString.substring(0, subHeaderString.length() - lastString.length());
+            reportParams.put("subHeaderTitle", "Occupancy certificate issued to,");
+            reportParams.put("subheader", subHeaderString + "confirming to the details.");
+        }
+        if (!oc.getOccupancyFee().isEmpty())
+            reportParams.put("ocFeeDetails", getPermitFeeDetails(oc));
+
         return reportParams;
     }
-    
+
+    private List<PermitFeeHelper> getPermitFeeDetails(final OccupancyCertificate oc) {
+        List<PermitFeeHelper> permitFeeDetails = new ArrayList<>();
+        for (EgDemandDetails demandDetails : oc.getDemand().getEgDemandDetails()) {
+            if (demandDetails.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                PermitFeeHelper feeHelper = new PermitFeeHelper();
+                feeHelper.setFeeDescription(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster());
+                feeHelper.setAmount(demandDetails.getAmount());
+                permitFeeDetails.add(feeHelper);
+            }
+        }
+        return permitFeeDetails;
+    }
+
     public String buildRejectionReasons(final OccupancyCertificate oc) {
         StringBuilder rejectReasons = new StringBuilder();
         if (!oc.getRejectionReasons().isEmpty()) {
@@ -263,7 +344,9 @@ public class OCNoticeUtil {
             if (rejectReason.getNoticeCondition().isRequired()
                     && ConditionType.OCREJECTIONREASONS.equals(rejectReason.getNoticeCondition().getType())) {
                 permitConditions
-                        .append(String.valueOf(order) + ") " + rejectReason.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription() + TWO_NEW_LINE);
+                        .append(String.valueOf(order) + ") "
+                                + rejectReason.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription()
+                                + TWO_NEW_LINE);
                 order++;
             }
         }
@@ -278,7 +361,8 @@ public class OCNoticeUtil {
             for (OCNoticeConditions addnlNoticeCondition : additionalConditions) {
                 if (isNotBlank(addnlNoticeCondition.getNoticeCondition().getAdditionalCondition())) {
                     permitConditions.append(
-                            String.valueOf(additionalOrder) + ") " + addnlNoticeCondition.getNoticeCondition().getAdditionalCondition()
+                            String.valueOf(additionalOrder) + ") "
+                                    + addnlNoticeCondition.getNoticeCondition().getAdditionalCondition()
                                     + TWO_NEW_LINE);
                     additionalOrder++;
                 }
@@ -289,26 +373,47 @@ public class OCNoticeUtil {
 
     public String getApproverName(final OccupancyCertificate occupancyCertificate) {
         StateHistory<Position> stateHistory = occupancyCertificate.getStateHistory().stream()
-                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(occupancyCertificate).intValue())))
+                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName()
+                        .equalsIgnoreCase(bpaNoticeUtil.getApproverDesignation(
+                                bpaWorkFlowService.getAmountRuleByServiceTypeForOc(occupancyCertificate).intValue())))
                 .findAny().orElse(null);
-        return stateHistory == null ? N_A : bpaWorkFlowService.getApproverAssignmentByDate(stateHistory.getOwnerPosition(), stateHistory.getLastModifiedDate()).getEmployee().getName();
+        return stateHistory == null ? N_A
+                : bpaWorkFlowService
+                        .getApproverAssignmentByDate(stateHistory.getOwnerPosition(), stateHistory.getLastModifiedDate())
+                        .getEmployee().getName();
     }
 
     public String buildQRCodeDetails(final OccupancyCertificate oc) {
         StringBuilder qrCodeValue = new StringBuilder();
-        qrCodeValue = isBlank(ApplicationThreadLocals.getMunicipalityName()) ? qrCodeValue.append("") : qrCodeValue.append(ApplicationThreadLocals.getMunicipalityName()).append(ONE_NEW_LINE);
-        qrCodeValue = oc.getParent().getOwner() == null || isBlank(oc.getParent().getOwner().getName()) ? qrCodeValue.append("Applicant Name : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Applicant Name : ").append(oc.getParent().getOwner().getName()).append(ONE_NEW_LINE);
-        qrCodeValue = isBlank(oc.getApplicationNumber()) ? qrCodeValue.append("Application number : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Application number : ").append(oc.getApplicationNumber()).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(ApplicationThreadLocals.getMunicipalityName()) ? qrCodeValue.append("")
+                : qrCodeValue.append(ApplicationThreadLocals.getMunicipalityName()).append(ONE_NEW_LINE);
+        qrCodeValue = oc.getParent().getOwner() == null || isBlank(oc.getParent().getOwner().getName())
+                ? qrCodeValue.append("Applicant Name : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Applicant Name : ").append(oc.getParent().getOwner().getName()).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(oc.getApplicationNumber())
+                ? qrCodeValue.append("Application number : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Application number : ").append(oc.getApplicationNumber()).append(ONE_NEW_LINE);
         if (!isBlank(oc.getParent().geteDcrNumber())) {
             qrCodeValue = qrCodeValue.append("Edcr number : ").append(oc.getParent().geteDcrNumber()).append(ONE_NEW_LINE);
         }
-        qrCodeValue = isBlank(oc.getParent().getPlanPermissionNumber()) ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Permit number : ").append(oc.getParent().getPlanPermissionNumber()).append(ONE_NEW_LINE);
-        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc) == null ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Approved by : ").append(bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue())).append(ONE_NEW_LINE);
-        qrCodeValue = oc.getApprovalDate() == null ? qrCodeValue.append("Date of approval of oc : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Date of approval of oc : ").append(DateUtils.getDefaultFormattedDate(oc.getApprovalDate())).append(ONE_NEW_LINE);
-        qrCodeValue = isBlank(getApproverName(oc)) ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE) : qrCodeValue.append("Name of approver : ").append(getApproverName(oc)).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(oc.getParent().getPlanPermissionNumber())
+                ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Permit number : ").append(oc.getParent().getPlanPermissionNumber()).append(ONE_NEW_LINE);
+        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc) == null
+                ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Approved by : ")
+                        .append(bpaNoticeUtil
+                                .getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()))
+                        .append(ONE_NEW_LINE);
+        qrCodeValue = oc.getApprovalDate() == null
+                ? qrCodeValue.append("Date of approval of oc : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Date of approval of oc : ").append(DateUtils.getDefaultFormattedDate(oc.getApprovalDate()))
+                        .append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(getApproverName(oc)) ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Name of approver : ").append(getApproverName(oc)).append(ONE_NEW_LINE);
         return qrCodeValue.toString();
     }
-    
+
     public Map<String, Object> getUlbDetails() {
         final Map<String, Object> ulbDetailsReportParams = new HashMap<>();
         ulbDetailsReportParams.put("cityName", ApplicationThreadLocals.getCityName());
@@ -316,7 +421,7 @@ public class OCNoticeUtil {
         ulbDetailsReportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         return ulbDetailsReportParams;
     }
-    
+
     private Map<String, Object> buildParametersForDemandDetails(final OccupancyCertificate occupancyCertificate) {
         List<Response> demandResponseList = new ArrayList<>();
         BigDecimal totalPendingAmt = BigDecimal.ZERO;
