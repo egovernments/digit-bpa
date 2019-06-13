@@ -242,8 +242,8 @@ public class OCNoticeUtil {
                     ? EMPTY
                     : oc.getParent().getSiteDetail().get(0).getLocationBoundary().getName());
             reportParams.put("taluk",
-                    (oc.getParent().getSiteDetail().get(0).getPostalAddress() == null
-                            || oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk() == null)
+                    oc.getParent().getSiteDetail().get(0).getPostalAddress() == null
+                            || oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk() == null
                                     ? EMPTY
                                     : oc.getParent().getSiteDetail().get(0).getPostalAddress().getTaluk());
             reportParams.put("district", oc.getParent().getSiteDetail().get(0).getPostalAddress() == null
@@ -254,21 +254,21 @@ public class OCNoticeUtil {
         if (!oc.getExistingBuildings().isEmpty()) {
             Map<String, BigDecimal> exstArea = BpaUtils.getExistingBuildingAreasOfOC(oc.getExistingBuildings());
             reportParams.put(EXST_TOTAL_BLT_UP_AREA,
-                    exstArea.get(EXST_TOTAL_BLT_UP_AREA) != null ? exstArea.get(EXST_TOTAL_BLT_UP_AREA) : BigDecimal.ZERO);
+                    exstArea.get(EXST_TOTAL_BLT_UP_AREA) == null ? BigDecimal.ZERO : exstArea.get(EXST_TOTAL_BLT_UP_AREA));
             reportParams.put(EXST_TOTAL_FLOOR_AREA,
-                    exstArea.get(EXST_TOTAL_FLOOR_AREA) != null ? exstArea.get(EXST_TOTAL_FLOOR_AREA) : BigDecimal.ZERO);
+                    exstArea.get(EXST_TOTAL_FLOOR_AREA) == null ? BigDecimal.ZERO : exstArea.get(EXST_TOTAL_FLOOR_AREA));
             reportParams.put(EXST_TOTAL_CARPET_AREA,
-                    exstArea.get(EXST_TOTAL_CARPET_AREA) != null ? exstArea.get(EXST_TOTAL_CARPET_AREA) : BigDecimal.ZERO);
+                    exstArea.get(EXST_TOTAL_CARPET_AREA) == null ? BigDecimal.ZERO : exstArea.get(EXST_TOTAL_CARPET_AREA));
 
         }
 
         Map<String, BigDecimal> proposedArea = BpaUtils.getProposedBuildingAreasOfOC(oc.getBuildings());
         reportParams.put(TOTAL_BLT_UP_AREA,
-                proposedArea.get(TOTAL_BLT_UP_AREA) != null ? proposedArea.get(TOTAL_BLT_UP_AREA) : BigDecimal.ZERO);
+                proposedArea.get(TOTAL_BLT_UP_AREA) == null ? BigDecimal.ZERO : proposedArea.get(TOTAL_BLT_UP_AREA));
         reportParams.put(TOTAL_FLOOR_AREA,
-                proposedArea.get(TOTAL_FLOOR_AREA) != null ? proposedArea.get(TOTAL_FLOOR_AREA) : BigDecimal.ZERO);
+                proposedArea.get(TOTAL_FLOOR_AREA) == null ? BigDecimal.ZERO : proposedArea.get(TOTAL_FLOOR_AREA));
         reportParams.put(TOTAL_CARPET_AREA,
-                proposedArea.get(TOTAL_CARPET_AREA) != null ? proposedArea.get(TOTAL_CARPET_AREA) : BigDecimal.ZERO);
+                proposedArea.get(TOTAL_CARPET_AREA) == null ? BigDecimal.ZERO : proposedArea.get(TOTAL_CARPET_AREA));
 
         List<BuildingSubUsage> buildingSubUsages = oc.getParent().getBuildingSubUsages();
 
@@ -321,7 +321,7 @@ public class OCNoticeUtil {
             int additionalOrder = buildAdditionalNoticeConditions(rejectReasons, additionalPermitConditions,
                     order);
             StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(oc.getStateHistory());
-            rejectReasons.append(String.valueOf(additionalOrder) + ") "
+            rejectReasons.append(additionalOrder + ") "
                     + (stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY)
                     + TWO_NEW_LINE);
         } else {
@@ -344,7 +344,7 @@ public class OCNoticeUtil {
             if (rejectReason.getNoticeCondition().isRequired()
                     && ConditionType.OCREJECTIONREASONS.equals(rejectReason.getNoticeCondition().getType())) {
                 permitConditions
-                        .append(String.valueOf(order) + ") "
+                        .append(order + ") "
                                 + rejectReason.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription()
                                 + TWO_NEW_LINE);
                 order++;
