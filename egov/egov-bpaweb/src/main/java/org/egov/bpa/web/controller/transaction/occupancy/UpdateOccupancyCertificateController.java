@@ -176,6 +176,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String APPRIVALPOSITION = "approvalPosition";
     private static final String PDFEXTN = ".pdf";
+    private static final String MSG_APPROVE_FORWARD_REGISTRATION = "msg.approve.success";
 
     @Autowired
     private PositionMasterService positionMasterService;
@@ -613,7 +614,13 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                     MSG_REJECT_FORWARD_REGISTRATION, pos);
         } else if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             message = messageSource.getMessage("msg.noc.update.success", new String[] {}, LocaleContextHolder.getLocale());
-        } else {
+        }  else if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
+            message = messageSource.getMessage(MSG_APPROVE_FORWARD_REGISTRATION, new String[] {
+                    user == null ? ""
+                            : user.getUsername().concat("~")
+                                    .concat(getDesinationNameByPosition(pos)),
+                    ocResponse.getApplicationNumber() }, LocaleContextHolder.getLocale());
+        else {
             message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
                     user == null ? ""
                             : user.getUsername().concat("~")

@@ -56,7 +56,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -76,7 +76,7 @@
 						value="${docs.serviceChecklist.checklist.description}" />
 				</div>
 
-				<div class="col-sm-3 add-margin text-left">
+				<div class="col-sm-3 add-margin text-left"> 
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
@@ -90,12 +90,13 @@
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}"
+                              <!--   <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}"
                                                   name="inspection.docketDetailLocList[${status.index}].value"
                                             <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
