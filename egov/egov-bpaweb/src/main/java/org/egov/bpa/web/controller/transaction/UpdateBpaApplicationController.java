@@ -188,6 +188,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String MSG_REJECT_FORWARD_REGISTRATION = "msg.reject.forward.registration";
     private static final String MSG_INITIATE_REJECTION = "msg.initiate.reject";
     private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
+    private static final String MSG_APPROVE_FORWARD_REGISTRATION = "msg.approve.success";
     private static final String APPLICATION_VIEW = "application-view";
     private static final String CREATEDOCUMENTSCRUTINY_FORM = "createdocumentscrutiny-form";
     private static final String DOCUMENTSCRUTINY_FORM = "documentscrutiny-form";
@@ -487,6 +488,12 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             message = getMessageOnRejectionInitiation(approvalComent, bpaAppln, user, MSG_REJECT_FORWARD_REGISTRATION, pos);
         else if (WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction))
             message = messageSource.getMessage("msg.noc.update.success", new String[] {}, LocaleContextHolder.getLocale());
+        else if (WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction))
+            message = messageSource.getMessage(MSG_APPROVE_FORWARD_REGISTRATION, new String[] {
+                    user == null ? ""
+                            : user.getUsername().concat("~")
+                                    .concat(getDesinationNameByPosition(pos)),
+                    bpaAppln.getApplicationNumber() }, LocaleContextHolder.getLocale());
         else
             message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
                     user == null ? ""
