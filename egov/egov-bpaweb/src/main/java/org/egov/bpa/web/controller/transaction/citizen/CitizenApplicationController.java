@@ -68,9 +68,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -235,10 +235,10 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 && bpaApplication.getDemand().getAmtCollected().compareTo(bpaApplication.getAdmissionfeeAmount()) >= 0) {
             model.addAttribute("permitApplFeeCollected", "YES");
         }
-        Map<String, String> nocTypeApplMap = new HashMap<>();
+        Map<String, String> nocTypeApplMap = new ConcurrentHashMap<>();
         if (bpaApplication.getPermitNocDocuments().isEmpty()) {
-            Map<String, String> nocConfigMap = new HashMap<>();
-            Map<String, String> nocAutoMap = new HashMap<>();
+            Map<String, String> nocConfigMap = new ConcurrentHashMap<>();
+            Map<String, String> nocAutoMap = new ConcurrentHashMap<>();
 
             List<ChecklistServiceTypeMapping> checklistServicetypeList = checklistServiceTypeService
                     .findByActiveChecklistAndServiceType(bpaApplication.getServiceType().getDescription(),

@@ -63,10 +63,10 @@ import static org.egov.bpa.utils.BpaConstants.WF_SEND_BUTTON;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -221,9 +221,9 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 application.getServiceType().getDescription(), CHECKLIST_TYPE_NOC));
         model.addAttribute("checkListDetailList", checklistServieTypeServcie
                 .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), CHECKLIST_TYPE));
-        Map<String, String> nocConfigMap = new HashMap<>();
-        Map<String, String> nocTypeApplMap = new HashMap<>();
-        Map<String, String> nocAutoMap = new HashMap<>();
+        Map<String, String> nocConfigMap = new ConcurrentHashMap<>();
+        Map<String, String> nocTypeApplMap = new ConcurrentHashMap<>();
+        Map<String, String> nocAutoMap = new ConcurrentHashMap<>();
         int nocAutoCount = 0;
         List<User> nocAutoUsers = new ArrayList<>();
         List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
