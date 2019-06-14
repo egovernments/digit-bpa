@@ -37,101 +37,86 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" action=""
-           modelAttribute="nocDetailsHelper" id="nocClearanceReport"
-           cssClass="form-horizontal form-groups-bordered"
-           enctype="multipart/form-data">
-    <jsp:include page="search-noc-clearance-form.jsp"></jsp:include>
-    <div class="text-center">
-        <button type='button' class='btn btn-primary' id="btnSearch">
-            <spring:message code='lbl.search'/>
-        </button>
-        <button type="reset" class="btn btn-danger">
-            <spring:message code="lbl.reset"/>
-        </button>
-        <a href='javascript:void(0)' class='btn btn-default'
-           onclick='self.close()'><spring:message code='lbl.close'/></a>
-    </div>
+<form:form role="form" action="" modelAttribute="nocDetailsHelper"
+	id="nocClearanceReport" cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+	<jsp:include page="search-noc-clearance-form.jsp"></jsp:include>
+	<div class="text-center">
+		<button type='button' class='btn btn-primary' id="btnSearch">
+			<spring:message code='lbl.search' />
+		</button>
+		<button type="reset" class="btn btn-danger">
+			<spring:message code="lbl.reset" />
+		</button>
+		<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a>
+	</div>
 </form:form>
-<br>
 <div class="row display-hide report-section" id="table_container">
-    <div class="col-md-12">
-        <div class="panel panel-primary">
-            <div class="panel-body">
-                <table class="table table-bordered table-hover multiheadertbl nowrap display"
-                       id="nocClearanceTable" style="overflow-x: auto;max-width: 100%;min-width: 100%;">
-                    <thead>
-                    <tr>
-                        <th colspan="1"></th>
-                        <th colspan="1"></th>
-                        <th colspan="1"></th>
-                        <th colspan="1"></th>
-                        <th colspan="1"></th>
-                        <th colspan="1"></th>
-                        <th colspan="1"></th>
-                    </tr>
-                    <tr>
-                        <th><spring:message code="lbl.slno"/></th>
-                        <th><spring:message code="lbl.noc.dept.type"/></th>
-                        <th><spring:message code="lbl.noc.status"/></th>                        
-                        <th><spring:message code="lbl.noc.app.no"/></th>
-                        <th><spring:message code="lbl.permit.app.no"/></th>
-                        <th><spring:message code="lbl.noc.app.date"/></th>                        
-                        <th><spring:message code="lbl.noc.status.date"/></th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-    </div>
-    <input type="hidden" id="atleastOneInputReq" value="<spring:message code='msg.validate.atleast.oneinput.required'/>" />
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="nocClearanceTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.noc.dept.type" /></th>
+					<th><spring:message code="lbl.noc.status" /></th>
+					<th><spring:message code="lbl.noc.app.no" /></th>
+					<th><spring:message code="lbl.permit.app.no" /></th>
+					<th><spring:message code="lbl.noc.app.date" /></th>
+					<th><spring:message code="lbl.noc.status.date" /></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
 </div>
-
+<input type="hidden" id="atleastOneInputReq"
+		value="<spring:message code='msg.validate.atleast.oneinput.required'/>" />
 <link rel="stylesheet"
-      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
 <link rel="stylesheet"
-      href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/extensions/fixed columns/dataTables.fixedColumns.min.js' context='/egi'/>"></script>
+	src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/extensions/fixed columns/dataTables.fixedColumns.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+	src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script
-        src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-        type="text/javascript"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	type="text/javascript"></script>
 <script
-        src="<c:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<c:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
 
 <script
-        src="<cdn:url value='/resources/js/app/noc/noc-clearance-report.js?rnd=${app_release_no}'/> "></script>
-        
+	src="<cdn:url value='/resources/js/app/noc/noc-clearance-report.js?rnd=${app_release_no}'/> "></script>
+
 

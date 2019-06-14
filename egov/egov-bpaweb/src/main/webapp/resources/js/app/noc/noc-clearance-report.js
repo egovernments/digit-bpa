@@ -83,11 +83,6 @@ $(document)
                             },
                             "searching": false,
                             "bDestroy" : true,
-                            "responsive": true,
-                            "autoWidth": true,
-                            fixedColumns: {
-                                leftColumns: 7
-                            },
                             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                             dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l>" +
                             "<'col-md-2 col-xs-6 text-left'B><'col-md-5 col-xs-6 text-right'p>>",
@@ -96,7 +91,7 @@ $(document)
                                 title: 'Noc Clearance Report',
                                 filename: 'noc_clearance_report',
                                 orientation: 'landscape',
-                                pageSize: 'A1',
+                                pageSize: 'A4',
                                 exportOptions: {
                                     columns: ':visible'
                                 }
@@ -112,7 +107,7 @@ $(document)
                                 title: 'Noc Clearance Report',
                                 filename: 'noc_clearance_report',
                                 orientation: 'landscape',
-                                pageSize: 'A1',
+                                pageSize: 'A4',
                                 exportOptions: {
                                     columns: ':visible'
                                 }
