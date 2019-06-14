@@ -117,10 +117,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -161,13 +162,12 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     @Autowired
     private PermitNocApplicationService permitNocService;
 
-    
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
     }
 
-    @RequestMapping(value = "/citizen/update/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/citizen/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
@@ -185,7 +185,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         }
         model.addAttribute(APPLICATION_HISTORY, workflowHistoryService.getHistory(application.getAppointmentSchedule(),
                 application.getCurrentState(), application.getStateHistory()));
-        model.addAttribute("nocApplication",nocApplication);
+        model.addAttribute("nocApplication", nocApplication);
         prepareCommonModelAttribute(model, application.isCitizenAccepted());
         return loadViewdata(model, application);
     }
@@ -221,67 +221,65 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 application.getServiceType().getDescription(), CHECKLIST_TYPE_NOC));
         model.addAttribute("checkListDetailList", checklistServieTypeServcie
                 .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), CHECKLIST_TYPE));
-        Map nocConfigMap = new HashMap<String, String>();
-        Map nocTypeApplMap = new HashMap<String, String>();
-        Map nocAutoMap = new HashMap<String, String>();
+        Map<String, String> nocConfigMap = new HashMap<>();
+        Map<String, String> nocTypeApplMap = new HashMap<>();
+        Map<String, String> nocAutoMap = new HashMap<>();
         int nocAutoCount = 0;
         List<User> nocAutoUsers = new ArrayList<>();
-	    List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+        List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
         List<PermitNocApplication> permitNoc = permitNocService.findByPermitApplicationNumber(application.getApplicationNumber());
         Map<String, String> edcrNocMandatory = permitNocService.getEdcrNocMandatory(application.geteDcrNumber());
 
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
-        	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
-			NocConfiguration nocConfig = nocConfigurationService
-					.findByDepartmentAndType(code,BpaConstants.PERMIT);
-		    
-			if(permitNocService.findByApplicationNumberAndType(application.getApplicationNumber(),code)!=null)
-				nocTypeApplMap.put(code, "initiated");
-			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
-					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")){
-				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
-			}
-			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
-					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")){
-				nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
-				nocAutoCount++;
-				 List<User> userList = nocUsers.stream()
-			    	      .filter(usr -> usr.getRoles().stream()
-			    	        .anyMatch(usrrl -> 
-			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-			    	        .collect(Collectors.toList());	
-				 if(!userList.isEmpty())
-                	nocAutoUsers.add(userList.get(0));
-			}
-			for (PermitNocApplication pna : permitNoc) {
-				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
-					nocDocument.setPermitNoc(pna);
-				}
-			}
-		}
-          
-        if(nocAutoUsers.size() == nocAutoCount) 
-				model.addAttribute("nocUserExists",true);
-			else
-				model.addAttribute("nocUserExists",false);
-        	
-        	
-        	
-        model.addAttribute("nocTypeApplMap",nocTypeApplMap);
-        model.addAttribute("nocConfigMap",nocConfigMap);
-        model.addAttribute("nocAutoMap",nocAutoMap);
-        model.addAttribute("isPermitApplFeeReq","NO");
-        model.addAttribute("permitApplFeeCollected","NO");
-        if(bpaUtils.isApplicationFeeCollectionRequired() ){
-        	model.addAttribute("isPermitApplFeeReq","YES");
+            String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+            NocConfiguration nocConfig = nocConfigurationService
+                    .findByDepartmentAndType(code, BpaConstants.PERMIT);
+
+            if (permitNocService.findByApplicationNumberAndType(application.getApplicationNumber(), code) != null)
+                nocTypeApplMap.put(code, "initiated");
+            if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
+                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+                nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+            }
+            if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+                nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
+                nocAutoCount++;
+                List<User> userList = nocUsers.stream()
+                        .filter(usr -> usr.getRoles().stream()
+                                .anyMatch(usrrl -> usrrl.getName()
+                                        .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                        .collect(Collectors.toList());
+                if (!userList.isEmpty())
+                    nocAutoUsers.add(userList.get(0));
+            }
+            for (PermitNocApplication pna : permitNoc) {
+                if (nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode()
+                        .equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
+                    nocDocument.setPermitNoc(pna);
+                }
+            }
         }
-        if(application.getDemand() != null && application.getDemand().getAmtCollected().compareTo(application.getAdmissionfeeAmount())>=0){
-      		model.addAttribute("permitApplFeeCollected","YES");
+
+        model.addAttribute("nocUserExists", nocAutoUsers.size() == nocAutoCount);
+
+        model.addAttribute("nocTypeApplMap", nocTypeApplMap);
+        model.addAttribute("nocConfigMap", nocConfigMap);
+        model.addAttribute("nocAutoMap", nocAutoMap);
+        model.addAttribute("isPermitApplFeeReq", "NO");
+        model.addAttribute("permitApplFeeCollected", "NO");
+        if (bpaUtils.isApplicationFeeCollectionRequired()) {
+            model.addAttribute("isPermitApplFeeReq", "YES");
         }
-        
-        
+        if (application.getDemand() != null
+                && application.getDemand().getAmtCollected().compareTo(application.getAdmissionfeeAmount()) >= 0) {
+            model.addAttribute("permitApplFeeCollected", "YES");
+        }
+
         model.addAttribute("applicationDocumentList", application.getPermitDocuments());
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
         model.addAttribute("isReconciliationInProgress",
@@ -294,8 +292,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
         if (bpaUtils.isApplicationFeeCollectionRequired())
-          model.addAttribute("admissionFee",
-                feeCalculation.setAdmissionFeeAmount(application, application.getApplicationAmenity()));
+            model.addAttribute("admissionFee",
+                    feeCalculation.setAdmissionFeeAmount(application, application.getApplicationAmenity()));
 
         if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getLetterToParty().getSentDate() != null)
             model.addAttribute("mode", "showLPDetails");
@@ -378,19 +376,18 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         }
     }
 
-    @RequestMapping(value = "/citizen/update-submit/{applicationNumber}", method = RequestMethod.POST)
+    @PostMapping("/citizen/update-submit/{applicationNumber}")
     public String updateApplication(@Valid @ModelAttribute("") BpaApplication bpaApplication,
             @PathVariable final String applicationNumber, final BindingResult resultBinder,
             final HttpServletRequest request, final Model model, final RedirectAttributes redirectAttributes,
             @RequestParam("files") final MultipartFile... files) {
-        String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
-
         if (resultBinder.hasErrors()) {
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadViewdata(model, bpaApplication);
         }
         if (bpaApplication.getIsOneDayPermitApplication())
-            bpaApplication.setApplicationType(applicationTypeService.findByName(onedaypermit));
+            bpaApplication.setApplicationType(
+                    applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase()));
 
         bpaUtils.saveOrUpdateBoundary(bpaApplication);
         String workFlowAction = request.getParameter("workFlowAction");
@@ -441,73 +438,71 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 
         if (bpaUtils.isApplicationFeeCollectionRequired()) {
             bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
-        	bpaApplication.setDemand(feeCalculation.createDemand(bpaApplication));
-        }
-        else {
+            bpaApplication.setDemand(feeCalculation.createDemand(bpaApplication));
+        } else {
             bpaApplication.setAdmissionfeeAmount(BigDecimal.valueOf(0));
-        	bpaApplication.setDemand(feeCalculation.createDemandWhenFeeCollectionNotRequire(bpaApplication));
+            bpaApplication.setDemand(feeCalculation.createDemandWhenFeeCollectionNotRequire(bpaApplication));
         }
 
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
         boolean isEdcrIntegrationRequire = bpaDcrService
                 .isEdcrIntegrationRequireByService(bpaApplication.getServiceType().getCode());
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
-        	final BpaStatus bpaStatus = applicationBpaService
+            final BpaStatus bpaStatus = applicationBpaService
                     .getStatusByCodeAndModuleType(APPLICATION_STATUS_SUBMITTED);
-            bpaApplication.setStatus(bpaStatus);    
-            if(isEdcrIntegrationRequire)
-            	permitNocService.initiateNoc(bpaApplication);
-           
+            bpaApplication.setStatus(bpaStatus);
+            if (isEdcrIntegrationRequire)
+                permitNocService.initiateNoc(bpaApplication);
+
         } else if (workFlowAction != null && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction))
             bpaApplication.setStatus(applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
 
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
         // To allot slot for one day permit applications
-       
+
         List<ApplicationSubType> riskBasedAppTypes = applicationTypeService.getRiskBasedApplicationTypes();
 
         String occupancyName;
-        
+
         if (bpaApplication.getPermitOccupanciesTemp().size() == 1)
             occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
-        else if(applicationBpaService.isOccupancyContains(bpaApplication.getPermitOccupanciesTemp(), BpaConstants.INDUSTRIAL))
-        	occupancyName = BpaConstants.INDUSTRIAL;
+        else if (applicationBpaService.isOccupancyContains(bpaApplication.getPermitOccupanciesTemp(), BpaConstants.INDUSTRIAL))
+            occupancyName = BpaConstants.INDUSTRIAL;
         else
-        	occupancyName = BpaConstants.MIXED_OCCUPANCY;
-        	
-        	
-        
-        
-        if(!isEdcrIntegrationRequire && riskBasedAppTypes.contains(bpaApplication.getApplicationType())) {
-        	ApplicationSubType applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
+            occupancyName = BpaConstants.MIXED_OCCUPANCY;
+
+        if (!isEdcrIntegrationRequire && riskBasedAppTypes.contains(bpaApplication.getApplicationType())) {
+            ApplicationSubType applicationType = bpaUtils.getBuildingType(
+                    bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
                     bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetail())
                             .getHeightFromGroundWithOutStairRoom(),
                     occupancyName);
             bpaApplication.setApplicationType(applicationType);
         }
-        if(workFlowAction.equals(WF_SEND_BUTTON) )
-        	bpaApplication.setSentToCitizen(true);
+        if (workFlowAction.equals(WF_SEND_BUTTON))
+            bpaApplication.setSentToCitizen(true);
         Boolean isCitizen = request.getParameter(IS_CITIZEN) != null
                 && request.getParameter(IS_CITIZEN).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
         Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
                 && request.getParameter(CITIZEN_OR_BUSINESS_USER).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
 
         applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
-        
-        if (citizenOrBusinessUser){
+
+        if (citizenOrBusinessUser) {
             if (isCitizen)
-            	bpaUtils.updatePortalUserinbox(bpaApplication, null);
+                bpaUtils.updatePortalUserinbox(bpaApplication, null);
             else {
-            	if(workFlowAction.equals(WF_SAVE_BUTTON)){
-            		bpaUtils.updatePortalUserinbox(bpaApplication, null);
-            	}else 
-            		bpaUtils.updatePortalUserinbox(bpaApplication,bpaApplication.getOwner().getUser());
+                if (workFlowAction.equals(WF_SAVE_BUTTON)) {
+                    bpaUtils.updatePortalUserinbox(bpaApplication, null);
+                } else
+                    bpaUtils.updatePortalUserinbox(bpaApplication, bpaApplication.getOwner().getUser());
             }
         }
-        if (bpaUtils.isCitizenAcceptanceRequired() &&bpaApplication.isCitizenAccepted() && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
+        if (bpaUtils.isCitizenAcceptanceRequired() && bpaApplication.isCitizenAccepted()
+                && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
             bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
-        
+
         // Will redirect to collection, then after collection success will forward to official
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && enableOrDisablePayOnline.equalsIgnoreCase("YES")
@@ -555,17 +550,15 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             String successMessage = messageSource.getMessage("msg.appln.accepted.succes",
                     new String[] { bpaApplication.getApplicationNumber() }, null);
             redirectAttributes.addFlashAttribute(MESSAGE, successMessage);
-           /* redirectAttributes.addFlashAttribute(MESSAGE, successMessage.concat(DISCLIMER_MESSAGE_ONSAVE));*/
-        } else if(bpaUtils.isCitizenAcceptanceRequired() && !bpaApplication.isCitizenAccepted() && workFlowAction.equals(WF_SEND_BUTTON)) {
+            /* redirectAttributes.addFlashAttribute(MESSAGE, successMessage.concat(DISCLIMER_MESSAGE_ONSAVE)); */
+        } else if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplication.isCitizenAccepted()
+                && workFlowAction.equals(WF_SEND_BUTTON)) {
             bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
-        	redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.appln.send.succes",
+            redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.appln.send.succes",
                     new String[] { bpaApplication.getApplicationNumber() }, null));
-        }
-        else
+        } else
             redirectAttributes.addFlashAttribute(MESSAGE, messageSource.getMessage("msg.appln.saved.succes",
                     new String[] { bpaApplication.getApplicationNumber() }, null));
-        
-        
 
         return "redirect:/application/citizen/success/" + bpaApplication.getApplicationNumber();
     }

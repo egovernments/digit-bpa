@@ -654,6 +654,8 @@ $(document).ready(
                                     resetDCRPopulatedValues();
                                     return false;
                                 } else {
+                                	//Reset selected occupancies 
+                                	$('#occupancyapplnlevel').val('');
                                 	if (response.plan.occupancies.length > 0) {
                                 		var occupancies = [];
 	                                    $.each(response.plan.occupancies, function(index, occupancy) {

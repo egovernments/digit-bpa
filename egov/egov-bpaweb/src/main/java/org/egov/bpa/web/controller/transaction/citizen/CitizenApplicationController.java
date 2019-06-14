@@ -80,7 +80,6 @@ import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
-import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
@@ -98,7 +97,6 @@ import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
-import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
@@ -161,11 +159,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @Autowired
     protected SubOccupancyService subOccupancyService;
     @Autowired
-    private ApplicationSubTypeService applicationTypeService;
-    @Autowired
     private CustomImplProvider specificNoticeService;
-    @Autowired
-    private ApplicationBpaService applicationBpaService;
     @Autowired
     private NocConfigurationService nocConfigurationService;
     @Autowired
@@ -192,11 +186,10 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         if (user.getType().equals(BUSINESS) && stkHldr.getDemand() != null) {
             List<AppConfigValues> appConfigValueList = appConfigValueService
                     .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
-            if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
-                if (stkHldr.getStatus() != null
-                        && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().toString())) {
-                    return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr, model);
-                }
+            if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")
+                    && stkHldr.getStatus() != null
+                    && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().name())) {
+                return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr, model);
             }
         }
         model.addAttribute("stakeHolderType", stkHldr.getStakeHolderType().getName());
@@ -233,18 +226,19 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 bpaApplication.getPermitDcrDocuments().add(permitDcrDocument);
             }
         }
-        model.addAttribute("isPermitApplFeeReq","NO");
-        model.addAttribute("permitApplFeeCollected","NO");
-        if(bpaUtils.isApplicationFeeCollectionRequired() ){
-        	model.addAttribute("isPermitApplFeeReq","YES");
+        model.addAttribute("isPermitApplFeeReq", "NO");
+        model.addAttribute("permitApplFeeCollected", "NO");
+        if (bpaUtils.isApplicationFeeCollectionRequired()) {
+            model.addAttribute("isPermitApplFeeReq", "YES");
         }
-        if(bpaApplication.getDemand() != null && bpaApplication.getDemand().getAmtCollected().compareTo(bpaApplication.getAdmissionfeeAmount())>=0){
-        		model.addAttribute("permitApplFeeCollected","YES");
+        if (bpaApplication.getDemand() != null
+                && bpaApplication.getDemand().getAmtCollected().compareTo(bpaApplication.getAdmissionfeeAmount()) >= 0) {
+            model.addAttribute("permitApplFeeCollected", "YES");
         }
-        Map nocTypeApplMap = new HashMap<String, String>();
+        Map<String, String> nocTypeApplMap = new HashMap<>();
         if (bpaApplication.getPermitNocDocuments().isEmpty()) {
-        	Map nocConfigMap = new HashMap<String,String>();
-        	Map nocAutoMap = new HashMap<String,String>();
+            Map<String, String> nocConfigMap = new HashMap<>();
+            Map<String, String> nocAutoMap = new HashMap<>();
 
             List<ChecklistServiceTypeMapping> checklistServicetypeList = checklistServiceTypeService
                     .findByActiveChecklistAndServiceType(bpaApplication.getServiceType().getDescription(),
@@ -256,24 +250,26 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 permitNocDocument.setApplication(bpaApplication);
                 permitNocDocument.setNocDocument(nocDocument);
                 bpaApplication.getPermitNocDocuments().add(permitNocDocument);
-                String code=serviceChklist.getChecklist().getCode();
-                NocConfiguration nocConfig=nocConfigurationService.findByDepartmentAndType(code, BpaConstants.PERMIT);
-                if(bpaApplication.getApplicationNumber()!=null 
-                		&& permitNocService.findByApplicationNumberAndType(bpaApplication.getApplicationNumber(),code)!=null)
-    				nocTypeApplMap.put(code, "initiated");
-                if(nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString()) 
-                		&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) 
-                	nocConfigMap.put(nocConfig.getDepartment(),"initiate");
-                if(nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString()) 
-                		&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) 
-                	nocAutoMap.put(nocConfig.getDepartment(),"autoinitiate");
-                
+                String code = serviceChklist.getChecklist().getCode();
+                NocConfiguration nocConfig = nocConfigurationService.findByDepartmentAndType(code, BpaConstants.PERMIT);
+                if (bpaApplication.getApplicationNumber() != null
+                        && permitNocService.findByApplicationNumberAndType(bpaApplication.getApplicationNumber(), code) != null)
+                    nocTypeApplMap.put(code, "initiated");
+                if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
+                    nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+                if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString()))
+                    nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
+
             }
-            model.addAttribute("nocConfigMap",nocConfigMap);
-            model.addAttribute("nocAutoMap",nocAutoMap);
+            model.addAttribute("nocConfigMap", nocConfigMap);
+            model.addAttribute("nocAutoMap", nocAutoMap);
 
         }
-        model.addAttribute("nocTypeApplMap",nocTypeApplMap);
+        model.addAttribute("nocTypeApplMap", nocTypeApplMap);
         model.addAttribute("applicationDocumentList", appDocList);
         getDcrDocumentsUploadMode(model);
         if (!bpaDcrService.isEdcrIntegrationRequireByService(serviceCode)) {
@@ -398,7 +394,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 
         Map<String, String> eDcrApplDetails = bpaDcrService
                 .checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
-        if (eDcrApplDetails.get("isExists") == "true") {
+        if (eDcrApplDetails.get("isExists").equals("true")) {
             model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
@@ -445,18 +441,19 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
          * bpaApplication.isCitizenAccepted()); return loadNewForm(bpaApplication, model,
          * bpaApplication.getServiceType().getCode()); }
          */
-        
+
         String occupancyName;
-        
+
         if (bpaApplication.getPermitOccupanciesTemp().size() == 1)
             occupancyName = bpaApplication.getPermitOccupanciesTemp().get(0).getName();
-        else if(applicationBpaService.isOccupancyContains(bpaApplication.getPermitOccupanciesTemp(), BpaConstants.INDUSTRIAL))
-        	occupancyName = BpaConstants.INDUSTRIAL;
+        else if (applicationBpaService.isOccupancyContains(bpaApplication.getPermitOccupanciesTemp(), BpaConstants.INDUSTRIAL))
+            occupancyName = BpaConstants.INDUSTRIAL;
         else
-        	occupancyName = BpaConstants.MIXED_OCCUPANCY  ;   
-        
-        if(!isEdcrIntegrationRequire && riskBasedAppTypes.contains(bpaApplication.getApplicationType())) {
-        	ApplicationSubType applicationType = bpaUtils.getBuildingType(bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
+            occupancyName = BpaConstants.MIXED_OCCUPANCY;
+
+        if (!isEdcrIntegrationRequire && riskBasedAppTypes.contains(bpaApplication.getApplicationType())) {
+            ApplicationSubType applicationType = bpaUtils.getBuildingType(
+                    bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
                     bpaUtils.getBuildingHasHighestHeight(bpaApplication.getBuildingDetail())
                             .getHeightFromGroundWithOutStairRoom(),
                     occupancyName);
@@ -514,34 +511,31 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
         if (bpaUtils.isApplicationFeeCollectionRequired())
-           bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
+            bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
         else
-           bpaApplication.setAdmissionfeeAmount(BigDecimal.valueOf(0));
-        
+            bpaApplication.setAdmissionfeeAmount(BigDecimal.valueOf(0));
+
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
-        
-        if(workFlowAction.equals(WF_SEND_BUTTON))
-        	bpaApplication.setSentToCitizen(true);
-        else
-        	bpaApplication.setSentToCitizen(false);
+
+        bpaApplication.setSentToCitizen(workFlowAction != null && workFlowAction.equals(WF_SEND_BUTTON));
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
 
-        if (citizenOrBusinessUser){
+        if (citizenOrBusinessUser) {
             if (isCitizen)
                 bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),
                         bpaApplicationRes.getStakeHolder().get(0).getStakeHolder()), workFlowAction);
             else {
-            	if(workFlowAction.equals(WF_SEND_BUTTON) || workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))            
-            		bpaUtils.createPortalUserinbox(bpaApplicationRes,Arrays.asList(bpaApplicationRes.getOwner().getUser(), 
-            				securityUtils.getCurrentUser()), workFlowAction);
-            	else
-            		bpaUtils.createPortalUserinbox(bpaApplicationRes,Arrays.asList(securityUtils.getCurrentUser()),
+                if (workFlowAction.equals(WF_SEND_BUTTON) || workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
+                    bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),
+                            securityUtils.getCurrentUser()), workFlowAction);
+                else
+                    bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(securityUtils.getCurrentUser()),
                             workFlowAction);
             }
         }
-        
+
         // Will redirect to collection, then after collection success will
         // forward to official
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable
@@ -578,17 +572,17 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
 
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-        } else if(workFlowAction.equals(WF_SAVE_BUTTON))
+        } else if (workFlowAction != null && workFlowAction.equals(WF_SAVE_BUTTON))
             redirectAttributes.addFlashAttribute(MESSAGE,
                     "Successfully saved with application number " + bpaApplicationRes.getApplicationNumber() + ".");
-        else 
-        	redirectAttributes.addFlashAttribute(MESSAGE,
-                    "Successfully forwarded application to the citizen with application number " + bpaApplicationRes.getApplicationNumber() + ".");
-        
-		
-		  if (bpaUtils.isCitizenAcceptanceRequired() &&		  !bpaApplicationRes.isCitizenAccepted() &&		  workFlowAction.equals(WF_SEND_BUTTON))		 
-             bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
-        
+        else
+            redirectAttributes.addFlashAttribute(MESSAGE,
+                    "Successfully forwarded application to the citizen with application number "
+                            + bpaApplicationRes.getApplicationNumber() + ".");
+
+        if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted()
+                && workFlowAction != null && workFlowAction.equals(WF_SEND_BUTTON))
+            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
 
         return "redirect:/application/citizen/success/" + bpaApplicationRes.getApplicationNumber();
     }

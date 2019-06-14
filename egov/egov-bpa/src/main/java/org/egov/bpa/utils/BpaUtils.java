@@ -99,6 +99,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class BpaUtils {
+    private static final String TOTAL_CARPET_AREA = "totalCarpetArea";
+
+    private static final String TOTAL_FLOOR_AREA = "totalFloorArea";
+
+    private static final String TOTAL_BLT_UP_AREA = "totalBltUpArea";
+
     private static final String APPLICATION_FEE_PAYMENT_PENDING = "Application fee payment pending";
 
     private static final String SUCCESS = "Success";
@@ -181,9 +187,7 @@ public class BpaUtils {
     public Boolean checkIsReconciliationInProgress(final String applicationNumber) {
         List<BillReceiptInfo> receipts = collectionIntegrationService.getOnlinePendingReceipts(APPLICATION_MODULE_TYPE,
                 applicationNumber);
-        if (!receipts.isEmpty())
-            return true;
-        return false;
+        return !receipts.isEmpty();
     }
 
     public Boolean applicationInitiatedByNonEmployee(User createdBy) {
@@ -327,61 +331,65 @@ public class BpaUtils {
                     status, isResolved, new Date(), oc.getState(),
                     additionalPortalInboxUser, oc.getOccupancyCertificateNumber(), url);
     }
-    
+
     @Transactional
     public void createNocPortalUserinbox(final PermitNocApplication permitNoc, final List<User> portalInboxUser,
             final String workFlowAction) {
         String status = BpaConstants.NOC_INITIATED;
 
         Module module = moduleService.getModuleByName(BpaConstants.NOCMODULE);
-        
+
         boolean isResolved = false;
         String url = "/bpa/nocapplication/update/" + permitNoc.getBpaNocApplication().getNocApplicationNumber();
-        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, permitNoc.getBpaApplication().getOwner().getName(),
-        		permitNoc.getBpaApplication().getServiceType().getDescription(), permitNoc.getBpaNocApplication().getNocApplicationNumber(),
-        		permitNoc.getBpaApplication().getPlanPermissionNumber(), permitNoc.getId(), SUCCESS, SUCCESS, url, isResolved,
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+                permitNoc.getBpaApplication().getOwner().getName(),
+                permitNoc.getBpaApplication().getServiceType().getDescription(),
+                permitNoc.getBpaNocApplication().getNocApplicationNumber(),
+                permitNoc.getBpaApplication().getPlanPermissionNumber(), permitNoc.getId(), SUCCESS, SUCCESS, url, isResolved,
                 status, new Date(), null, portalInboxUser);
 
         final PortalInbox portalInbox = portalInboxBuilder.build();
         portalInboxService.pushInboxMessage(portalInbox);
     }
-    
+
     @Transactional
     public void updateNocPortalUserinbox(final PermitNocApplication permitNoc, final User additionalPortalInboxUser) {
         Module module = moduleService.getModuleByName(BpaConstants.NOCMODULE);
-        String status = permitNoc.getBpaNocApplication().getStatus().getCode();        
-        String url = "/bpa/nocapplication/update/" +permitNoc.getBpaNocApplication().getNocApplicationNumber();
+        String status = permitNoc.getBpaNocApplication().getStatus().getCode();
+        String url = "/bpa/nocapplication/update/" + permitNoc.getBpaNocApplication().getNocApplicationNumber();
         portalInboxService.updateInboxMessage(permitNoc.getBpaNocApplication().getNocApplicationNumber(), module.getId(),
-                    status, true, new Date(), null,
-                    additionalPortalInboxUser, permitNoc.getBpaApplication().getPlanPermissionNumber(), url);
+                status, true, new Date(), null,
+                additionalPortalInboxUser, permitNoc.getBpaApplication().getPlanPermissionNumber(), url);
     }
-    
+
     @Transactional
     public void createOCNocPortalUserinbox(final OccupancyNocApplication ocNoc, final List<User> portalInboxUser,
             final String workFlowAction) {
         String status = BpaConstants.NOC_INITIATED;
 
         Module module = moduleService.getModuleByName(BpaConstants.NOCMODULE);
-        
+
         boolean isResolved = false;
         String url = "/bpa/ocnocapplication/update/" + ocNoc.getBpaNocApplication().getNocApplicationNumber();
-        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, ocNoc.getOc().getParent().getOwner().getName(),
-        		ocNoc.getOc().getParent().getServiceType().getDescription(), ocNoc.getBpaNocApplication().getNocApplicationNumber(),
-        		ocNoc.getOc().getOccupancyCertificateNumber(), ocNoc.getId(), SUCCESS, SUCCESS, url, isResolved,
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+                ocNoc.getOc().getParent().getOwner().getName(),
+                ocNoc.getOc().getParent().getServiceType().getDescription(),
+                ocNoc.getBpaNocApplication().getNocApplicationNumber(),
+                ocNoc.getOc().getOccupancyCertificateNumber(), ocNoc.getId(), SUCCESS, SUCCESS, url, isResolved,
                 status, new Date(), null, portalInboxUser);
 
         final PortalInbox portalInbox = portalInboxBuilder.build();
         portalInboxService.pushInboxMessage(portalInbox);
     }
-    
+
     @Transactional
     public void updateOCNocPortalUserinbox(final OccupancyNocApplication ocNoc, final User additionalPortalInboxUser) {
         Module module = moduleService.getModuleByName(BpaConstants.NOCMODULE);
-        String status = ocNoc.getBpaNocApplication().getStatus().getCode();        
-        String url = "/bpa/ocnocapplication/update/" +ocNoc.getBpaNocApplication().getNocApplicationNumber();
+        String status = ocNoc.getBpaNocApplication().getStatus().getCode();
+        String url = "/bpa/ocnocapplication/update/" + ocNoc.getBpaNocApplication().getNocApplicationNumber();
         portalInboxService.updateInboxMessage(ocNoc.getBpaNocApplication().getNocApplicationNumber(), module.getId(),
-                    status, true, new Date(), null,
-                    additionalPortalInboxUser, ocNoc.getOc().getOccupancyCertificateNumber(), url);
+                status, true, new Date(), null,
+                additionalPortalInboxUser, ocNoc.getOc().getOccupancyCertificateNumber(), url);
     }
 
     @Transactional(readOnly = true)
@@ -663,9 +671,9 @@ public class BpaUtils {
                 totalCarpetArea = totalCarpetArea.add(floor.getCarpetArea());
             }
         }
-        proposedArea.put("totalBltUpArea", totalBltUpArea);
-        proposedArea.put("totalFloorArea", totalFloorArea);
-        proposedArea.put("totalCarpetArea", totalCarpetArea);
+        proposedArea.put(TOTAL_BLT_UP_AREA, totalBltUpArea);
+        proposedArea.put(TOTAL_FLOOR_AREA, totalFloorArea);
+        proposedArea.put(TOTAL_CARPET_AREA, totalCarpetArea);
         return proposedArea;
     }
 
@@ -699,9 +707,9 @@ public class BpaUtils {
                 totalCarpetArea = totalCarpetArea.add(floor.getCarpetArea());
             }
         }
-        proposedArea.put("totalBltUpArea", totalBltUpArea);
-        proposedArea.put("totalFloorArea", totalFloorArea);
-        proposedArea.put("totalCarpetArea", totalCarpetArea);
+        proposedArea.put(TOTAL_BLT_UP_AREA, totalBltUpArea);
+        proposedArea.put(TOTAL_FLOOR_AREA, totalFloorArea);
+        proposedArea.put(TOTAL_CARPET_AREA, totalCarpetArea);
         return proposedArea;
     }
 
@@ -717,9 +725,9 @@ public class BpaUtils {
                 totalCarpetArea = totalCarpetArea.add(floor.getCarpetArea());
             }
         }
-        proposedArea.put("totalBltUpArea", totalBltUpArea);
-        proposedArea.put("totalFloorArea", totalFloorArea);
-        proposedArea.put("totalCarpetArea", totalCarpetArea);
+        proposedArea.put(TOTAL_BLT_UP_AREA, totalBltUpArea);
+        proposedArea.put(TOTAL_FLOOR_AREA, totalFloorArea);
+        proposedArea.put(TOTAL_CARPET_AREA, totalCarpetArea);
         return proposedArea;
     }
 
@@ -838,43 +846,42 @@ public class BpaUtils {
     }
 
     public ApplicationSubType getBuildingType(BigDecimal heightOfTheBuilding, BigDecimal plotArea, String occupancy) {
-		if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
-			return getResidentialApplicationType(plotArea, heightOfTheBuilding);
-		} else if (BpaConstants.BPA_INDUSTRIAL.equalsIgnoreCase(occupancy)) {
-			return getIndustrialApplicationType(plotArea, heightOfTheBuilding);
-		} else {
-			return getMostRestrOccAppType(plotArea, heightOfTheBuilding);
-		}
-	}
-	
-	public ApplicationSubType getResidentialApplicationType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
-		if(plotArea.compareTo(BigDecimal.valueOf(500)) > 0 || 
-				heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) > 0)
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
-		else if (plotArea.compareTo(BigDecimal.valueOf(300)) >= 0
-				&& plotArea.compareTo(BigDecimal.valueOf(500)) <= 0
-				|| heightOfTheBuilding.compareTo(BigDecimal.TEN) >= 0
-						&& heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) <= 0) {
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
-		} else
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
-	}
-	
+        if (BpaConstants.BPA_RESIDENTIAL.equalsIgnoreCase(occupancy)) {
+            return getResidentialApplicationType(plotArea, heightOfTheBuilding);
+        } else if (BpaConstants.BPA_INDUSTRIAL.equalsIgnoreCase(occupancy)) {
+            return getIndustrialApplicationType(plotArea, heightOfTheBuilding);
+        } else {
+            return getMostRestrOccAppType(plotArea, heightOfTheBuilding);
+        }
+    }
 
-	public ApplicationSubType getIndustrialApplicationType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
-		if(plotArea.compareTo(BigDecimal.valueOf(1000)) > 0 
-				|| heightOfTheBuilding.compareTo(BigDecimal.valueOf(11)) > 0)
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
-		else
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
-	}
-	
-	public ApplicationSubType getMostRestrOccAppType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
-		if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0 || 
-				heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) > 0)
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
-	    else
-			return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
-	}
+    public ApplicationSubType getResidentialApplicationType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
+        if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0 ||
+                heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) > 0)
+            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+        else if (plotArea.compareTo(BigDecimal.valueOf(300)) >= 0
+                && plotArea.compareTo(BigDecimal.valueOf(500)) <= 0
+                || heightOfTheBuilding.compareTo(BigDecimal.TEN) >= 0
+                        && heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) <= 0) {
+            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+        } else
+            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
+    }
+
+    public ApplicationSubType getIndustrialApplicationType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
+        if (plotArea.compareTo(BigDecimal.valueOf(1000)) > 0
+                || heightOfTheBuilding.compareTo(BigDecimal.valueOf(11)) > 0)
+            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+        else
+            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+    }
+
+    public ApplicationSubType getMostRestrOccAppType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {
+        if (plotArea.compareTo(BigDecimal.valueOf(500)) > 0 ||
+                heightOfTheBuilding.compareTo(BigDecimal.valueOf(15)) > 0)
+            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
+        else
+            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+    }
 
 }
