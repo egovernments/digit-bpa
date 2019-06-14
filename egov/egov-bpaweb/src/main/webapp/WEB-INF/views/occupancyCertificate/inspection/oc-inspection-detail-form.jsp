@@ -61,7 +61,7 @@
 				<div class="col-sm-5 text-left">
 					<spring:message code="lbl.files" />
 				</div>
-				<div class="col-sm-3 text-left">
+				<div class="col-sm-3 text-left">&nbsp;&nbsp;
 					<spring:message code="lbl.is.applicable" />
 				</div>
 				<div class="col-sm-4 text-left">
@@ -87,22 +87,24 @@
 						<c:choose>
 							<c:when test="${mode =='editinsp'}">
 								<c:forEach items="${planScrutinyValues}" var="inspnVal">
-									<div class="radio">
-										<label><input type="radio" value="${inspnVal}"
+									<!-- <div class="radio"> -->
+										<label>&nbsp;&nbsp;
+										<input type="radio" value="${inspnVal}"
 											name="inspection.docketDetailLocList[${status.index}].value"
-											<c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+											<c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
 										</label>
-									</div>
+									<!-- </div> -->
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
 								<c:forEach items="${planScrutinyValues}" var="inspnVal">
-									<div class="radio">
-										<label><input type="radio" value="${inspnVal}"
+								<!-- 	<div class="radio"> -->
+										<label>&nbsp;&nbsp;
+										<input type="radio" value="${inspnVal}"
 											name="inspection.docketDetailLocList[${status.index}].value"
-											<c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+											<c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
 										</label>
-									</div>
+									<!-- </div> -->
 								</c:forEach>
 							</c:otherwise>
 						</c:choose>
@@ -114,7 +116,7 @@
 						<form:textarea class="form-control patternvalidation"
 							data-pattern="alphanumericspecialcharacters" maxlength="256"
 							id="inspection.docketDetailLocList${status.index}remarks"
-							rows="3"
+							rows="2"
 							path="inspection.docketDetailLocList[${status.index}].remarks" />
 
 						<form:errors
@@ -137,7 +139,7 @@
 				<div class="col-sm-5 text-left">
 					<spring:message code="lbl.files" />
 				</div>
-				<div class="col-sm-3 text-left">
+				<div class="col-sm-3 text-left">&nbsp;&nbsp;
 					<spring:message code="lbl.is.applicable" />
 				</div>
 				<div class="col-sm-4 text-left">
@@ -163,22 +165,24 @@
 						<c:choose>
 							<c:when test="${mode =='editinsp'}">
 								<c:forEach items="${planScrutinyValues}" var="inspnVal">
-									<div class="radio">
-										<label><input type="radio" value="${inspnVal}"
+									<!-- <div class="radio"> -->
+										<label>&nbsp;&nbsp;
+										<input type="radio" value="${inspnVal}"
 											name="inspection.docketDetailMeasurementList[${status.index}].value"
-											<c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+											<c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
 										</label>
-									</div>
+									<!-- </div> -->
 								</c:forEach>
 							</c:when>
 							<c:otherwise>
 								<c:forEach items="${planScrutinyValues}" var="inspnVal">
-									<div class="radio">
-										<label><input type="radio" value="${inspnVal}"
+									<!-- <div class="radio"> -->
+										<label>&nbsp;&nbsp;
+										<input type="radio" value="${inspnVal}"
 											name="inspection.docketDetailMeasurementList[${status.index}].value"
-											<c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+											<c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
 										</label>
-									</div>
+									<!-- </div> -->
 								</c:forEach>
 							</c:otherwise>
 						</c:choose>
@@ -190,7 +194,7 @@
 						<form:textarea class="form-control patternvalidation"
 							data-pattern="alphanumericspecialcharacters" maxlength="256"
 							id="inspection.docketDetailMeasurementList${status.index}remarks"
-							rows="3"
+							rows="2"
 							path="inspection.docketDetailMeasurementList[${status.index}].remarks" />
 
 						<form:errors

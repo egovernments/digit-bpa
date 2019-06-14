@@ -56,7 +56,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -80,12 +80,13 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}"
                                                   name="inspection.docketDetailLocList[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
@@ -94,7 +95,7 @@
                                     <label>&nbsp;&nbsp;
                                     <input type="radio" value="${inspnVal}"
                                                   name="inspection.docketDetailLocList[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
                                <!--  </div> -->
                             </c:forEach>
@@ -106,7 +107,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailLocList${status.index}remarks" rows="3"
+						id="inspection.docketDetailLocList${status.index}remarks" rows="2"
 						path="inspection.docketDetailLocList[${status.index}].remarks" />
 
 					<form:errors path="inspection.docketDetailLocList[${status.index}].remarks"
@@ -124,7 +125,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -147,22 +148,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailMeasurementList[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailMeasurementList[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -173,7 +176,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailMeasurementList${status.index}remarks" rows="3"
+						id="inspection.docketDetailMeasurementList${status.index}remarks" rows="2"
 						path="inspection.docketDetailMeasurementList[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailMeasurementList[${status.index}].remarks"
@@ -191,7 +194,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -214,22 +217,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                             <!--    <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailAccessList[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                              <!--   </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailAccessList[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                              <!--   </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -240,7 +245,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailAccessList${status.index}remarks" rows="3"
+						id="inspection.docketDetailAccessList${status.index}remarks" rows="2"
 						path="inspection.docketDetailAccessList[${status.index}].remarks" />
 
 					<form:errors path="inspection.docketDetailAccessList[${status.index}].remarks"
@@ -259,7 +264,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -282,22 +287,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailSurroundingPlotList[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                            <div class="radio">
-                                <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                           <!--  <div class="radio"> -->
+                                <label>&nbsp;&nbsp;
+                                <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                               name="inspection.docketDetailSurroundingPlotList[${status.index}].value"
-                                        <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                        <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                 </label>
-                            </div>
+                           <!--  </div> -->
                         </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -307,7 +314,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailSurroundingPlotList${status.index}remarks" rows="3"
+						id="inspection.docketDetailSurroundingPlotList${status.index}remarks" rows="2"
 						path="inspection.docketDetailSurroundingPlotList[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailSurroundingPlotList[${status.index}].remarks"
@@ -326,7 +333,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -349,22 +356,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailLandTypeList[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailLandTypeList[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -374,7 +383,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailLandTypeList${status.index}remarks" rows="3"
+						id="inspection.docketDetailLandTypeList${status.index}remarks" rows="2"
 						path="inspection.docketDetailLandTypeList[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailLandTypeList[${status.index}].remarks"
@@ -392,7 +401,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -415,22 +424,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailProposedWorkList[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailProposedWorkList[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                              <!--   </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -440,7 +451,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailProposedWorkList${status.index}remarks" rows="3"
+						id="inspection.docketDetailProposedWorkList${status.index}remarks" rows="2"
 						path="inspection.docketDetailProposedWorkList[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailProposedWorkList[${status.index}].remarks"
@@ -459,7 +470,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -482,22 +493,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailWorkAsPerPlanList[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailWorkAsPerPlanList[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -507,7 +520,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailWorkAsPerPlanList${status.index}remarks" rows="3"
+						id="inspection.docketDetailWorkAsPerPlanList${status.index}remarks" rows="2"
 						path="inspection.docketDetailWorkAsPerPlanList[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailWorkAsPerPlanList[${status.index}].remarks"
@@ -525,7 +538,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -548,22 +561,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailHgtAbuttRoadList[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                                <!-- </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailHgtAbuttRoadList[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -573,7 +588,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailHgtAbuttRoadList${status.index}remarks" rows="3"
+						id="inspection.docketDetailHgtAbuttRoadList${status.index}remarks" rows="2"
 						path="inspection.docketDetailHgtAbuttRoadList[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailHgtAbuttRoadList[${status.index}].remarks"
@@ -591,7 +606,7 @@
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
 			<div class="col-sm-5 text-left"><spring:message code="lbl.files" /></div>
-			<div class="col-sm-3 text-left"><spring:message code="lbl.is.applicable" /></div>
+			<div class="col-sm-3 text-left">&nbsp;&nbsp;<spring:message code="lbl.is.applicable" /></div>
 			<div class="col-sm-4 text-left">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -614,22 +629,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailAreaLoc[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                              <!--   <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailAreaLoc[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                              <!--   </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -639,7 +656,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailAreaLoc${status.index}remarks" rows="3"
+						id="inspection.docketDetailAreaLoc${status.index}remarks" rows="2"
 						path="inspection.docketDetailAreaLoc[${status.index}].remarks" />
 
 					<form:errors
@@ -681,22 +698,24 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                              <!--   <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailLengthOfCompWall[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;
+                                    <input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailLengthOfCompWall[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                              <!--   </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -706,7 +725,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailLengthOfCompWall${status.index}remarks" rows="3"
+						id="inspection.docketDetailLengthOfCompWall${status.index}remarks" rows="2"
 						path="inspection.docketDetailLengthOfCompWall[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailLengthOfCompWall[${status.index}].remarks"
@@ -747,22 +766,22 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;<input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailNumberOfWell[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;<input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailNumberOfWell[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -772,7 +791,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailNumberOfWell${status.index}remarks" rows="3"
+						id="inspection.docketDetailNumberOfWell${status.index}remarks" rows="2"
 						path="inspection.docketDetailNumberOfWell[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailNumberOfWell[${status.index}].remarks"
@@ -813,22 +832,22 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;<input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailShutter[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                                <!-- </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                               <!--  <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;<input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailShutter[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -838,7 +857,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="255"
-						id="inspection.docketDetailShutter${status.index}remarks" rows="3"
+						id="inspection.docketDetailShutter${status.index}remarks" rows="2"
 						path="inspection.docketDetailShutter[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailShutter[${status.index}].remarks"
@@ -879,22 +898,22 @@
                     <c:choose>
                         <c:when test="${mode =='editinsp'}">
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                             <!--    <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;<input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailRoofConversion[${status.index}].value"
-                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq docs.value}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                              <!--   </div> -->
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
                             <c:forEach items="${planScrutinyValues}" var="inspnVal">
-                                <div class="radio">
-                                    <label><input type="radio" value="${inspnVal}" class="radioBtnClass"
+                                <!-- <div class="radio"> -->
+                                    <label>&nbsp;&nbsp;<input type="radio" value="${inspnVal}" class="radioBtnClass"
                                                   name="inspection.docketDetailRoofConversion[${status.index}].value"
-                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />${inspnVal.checkListVal}
+                                            <c:if test="${inspnVal eq 'NOT_APPLICABLE'}"> checked="checked" </c:if> />&nbsp;${inspnVal.checkListVal}
                                     </label>
-                                </div>
+                               <!--  </div> -->
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
@@ -904,7 +923,7 @@
 				<div class="col-sm-4 add-margin text-left">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphabetspecialcharacters" maxlength="255"
-						id="inspection.docketDetailRoofConversion${status.index}remarks" rows="3"
+						id="inspection.docketDetailRoofConversion${status.index}remarks" rows="2"
 						path="inspection.docketDetailRoofConversion[${status.index}].remarks" />
 					<form:errors
 						path="inspection.docketDetailRoofConversion[${status.index}].remarks"
