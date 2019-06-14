@@ -51,6 +51,7 @@ import static ar.com.fdvs.dj.domain.constants.Stretching.RELATIVE_TO_BAND_HEIGHT
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -186,7 +187,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         final Map<String, Object> reportParams = new HashMap<>();
         FastReportBuilder drb = new FastReportBuilder();
         List<DocumentDetails> ddList = new ArrayList<>();
-        List<InspectionImg> imageList = new ArrayList<>();
+        Map<String, List<InspectionImg>> imageMap = new HashMap<>();
         reportParams.put("stateLogo", ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH));
         reportParams.put("logoPath", cityService.getCityLogoAsStream());
         reportParams.put("cityName", ApplicationThreadLocals.getCityName());
@@ -222,7 +223,8 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         reportParams.put("applicationNo", inspection.getApplication().getApplicationNumber());
         reportParams.put("applicationDate",
                 DateUtils.getDefaultFormattedDate(inspection.getApplication().getApplicationDate()));
-
+        reportParams.put("inspectionNumber", inspection.getInspection().getInspectionNumber());
+        reportParams.put("rptHeader", "Inspection Report");
         drb.setPageSizeAndOrientation(new Page(842, 595, true));
 
         ddList = getDocumentDetails(inspection, BpaConstants.INSPECTIONLOCATION);
@@ -285,10 +287,11 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         drb.addConcatenatedReport(getSubreport("Building Plan Scrutiny Details For Drawing Details"));
         reportParams.put("Building Plan Scrutiny Details For Drawing Details", ddList);
 
-        imageList = getImages(inspection);
-        drb.addConcatenatedReport(getSubreportForImgs("Inspection Site Images"));
-        reportParams.put("Inspection Site Images", imageList);
-
+        imageMap = getImages(inspection);
+        for(String m:imageMap.keySet()){  
+           drb.addConcatenatedReport(getSubreportForImgs(m,imageMap.get(m).size()));
+           reportParams.put(m, imageMap.get(m));
+        } 
         reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(inspection)));
 
         drb.setTemplateFile("/reports/templates/inspectionreport.jrxml");
@@ -345,14 +348,35 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         return dd;
     }
 
-    private List<InspectionImg> getImages(PermitInspection permitInspn) {
-        List<InspectionImg> imgsList = new ArrayList<>();
-        for (InspectionFilesCommon ifc : permitInspn.getInspection().getInspectionSupportDocs()) {
-            if (!ifc.getImages().isEmpty())
-                imgsList.add(getInspectionImg(ifc.getImages(), ifc.getServiceChecklist().getChecklist().getDescription()));
-        }
-        return imgsList;
-    }
+    private Map<String, List<InspectionImg>> getImages(PermitInspection permitInspn) {
+		List<InspectionImg> imgsList = new ArrayList<>();
+		Map<String, List<InspectionImg>> imageMap = new HashMap<>();
+		if (!permitInspn.getInspection().getInspectionSupportDocs().isEmpty())
+			permitInspn.getInspection().getInspectionSupportDocs().forEach(docketFile -> {
+				if (docketFile != null) {
+					docketFile.getImages().forEach(imageFilestore -> {
+						final File file = fileStoreService.fetch(imageFilestore.getFileStoreId(),
+								BpaConstants.FILESTORE_MODULECODE);
+						if (file != null) {
+							imgsList.add(getInspectionImg(docketFile.getImages(),
+									docketFile.getServiceChecklist().getChecklist().getDescription()));
+						}
+					});
+				}
+
+			});
+		for (InspectionImg inspImage : imgsList) {
+			String desc = inspImage.getDescription();
+			if (imageMap.containsKey(desc)) {
+				imageMap.get(desc).add(inspImage);
+			} else {
+				List<InspectionImg> inspImageList = new ArrayList();
+				inspImageList.add(inspImage);
+				imageMap.put(desc, inspImageList);
+			}
+		}
+		return imageMap;
+	}
 
     private InspectionImg getInspectionImg(Set<FileStoreMapper> images, String checklistDesc) {
         InspectionImg img = new InspectionImg();
@@ -417,20 +441,21 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         return null;
     }
 
-    private Subreport getSubreportForImgs(String title) {
-        try {
-
-            FastReportBuilder frb = new FastReportBuilder();
-
-            try {
-                frb.addImageColumn("Site Image", "img", 550, true, ImageScaleMode.FILL);
-            } catch (ClassNotFoundException cnfe) {
+    private Subreport getSubreportForImgs(String title,int i) {
+    	 try {
+    	        FastReportBuilder frb = new FastReportBuilder();
+    	           try {
+    	            	
+    	                frb.addColumn("Description ", "description", String.class.getName(),60,true);
+    	                frb.addImageColumn("Photograph", "img", 200, false, ImageScaleMode.FILL_PROPORTIONALLY);
+    	                
+    	            } catch (ClassNotFoundException cnfe) {
                 LOGGER.error("Error occurred while getting subreport image", cnfe);
             }
             frb.setDetailHeight(250);
             frb.setMargins(0, 0, 0, 0);
             frb.setUseFullPageWidth(true);
-            frb.setTitle(title);
+            frb.setTitle("Inspection Site Images");
             frb.setTitleStyle(jasperReportHelperService.getTitleStyle());
             frb.setHeaderHeight(5);
             frb.setTopMargin(5);
