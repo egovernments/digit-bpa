@@ -73,7 +73,6 @@ import org.egov.bpa.transaction.entity.InspectionNotice;
 import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
-import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
 import org.egov.bpa.transaction.entity.common.PlanScrutinyChecklistCommon;
 import org.egov.bpa.transaction.notice.InspectionReportFormat;
 import org.egov.bpa.transaction.service.InspectionNoticeService;
@@ -198,10 +197,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
                 inspection.getApplication().getSiteDetail().get(0).getExtentinsqmts().setScale(2, BigDecimal.ROUND_HALF_EVEN));
         reportParams.put("inspectedBy", inspection.getInspection().getInspectedBy().getName());
         reportParams.put("inspectedDate", DateUtils.getDefaultFormattedDate(inspection.getInspection().getInspectionDate()));
-        reportParams.put("inspectedRemarks",
-                inspection.getInspection().getInspectionRemarks() == null
-                        || inspection.getInspection().getInspectionRemarks().isEmpty() ? "NA"
-                                : inspection.getInspection().getInspectionRemarks());
+        drb.addConcatenatedReport(getSubreport("inspectedRemarks"));
         reportParams.put("occupancyType", inspection.getApplication().getOccupanciesName());
         reportParams.put("scrutinyNumber",
                 inspection.getApplication().geteDcrNumber() != null
@@ -226,6 +222,15 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         reportParams.put("inspectionNumber", inspection.getInspection().getInspectionNumber());
         reportParams.put("rptHeader", "Inspection Report");
         drb.setPageSizeAndOrientation(new Page(842, 595, true));
+        
+        String remarks=inspection.getInspection().getInspectionRemarks() == null
+                || inspection.getInspection().getInspectionRemarks().isEmpty() ? "NA"
+                        : inspection.getInspection().getInspectionRemarks();
+        inspection.getInspection().setInspectionRemarks(remarks);
+        List <InspectionCommon> listRemarks=new ArrayList<>();
+        listRemarks.add(inspection.getInspection());
+        drb.addConcatenatedReport(getSubreportForRemarks("inspectionRemarks"));
+        reportParams.put("inspectionRemarks",listRemarks);
 
         ddList = getDocumentDetails(inspection, BpaConstants.INSPECTIONLOCATION);
         drb.addConcatenatedReport(getSubreport("Location of the Plot"));
@@ -307,6 +312,37 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         }
         return exportPdf;
     }
+    
+    private Subreport getSubreportForRemarks(String title) {
+		try {
+
+			FastReportBuilder frb = new FastReportBuilder();
+
+			AbstractColumn inspectionRm = ColumnBuilder.getNew()
+					.setColumnProperty("inspectionRemarks", String.class.getName())
+					.setWidth(250).setStyle(jasperReportHelperService.getBldgDetlsHeaderStyle()).build();
+
+			frb.addColumn(inspectionRm);
+			frb.setMargins(0, 0, 0, 0);
+			frb.setUseFullPageWidth(true);
+			frb.setTopMargin(5);
+			frb.setAllowDetailSplit(false);
+			frb.setPageSizeAndOrientation(Page.Page_A4_Portrait());
+			DynamicReport build = frb.build();
+			Subreport sub = new Subreport();
+			sub.setDynamicReport(build);
+			Style style = new Style();
+			style.setStretchWithOverflow(true);
+			style.setStreching(RELATIVE_TO_BAND_HEIGHT);
+			sub.setStyle(style);
+			sub.setDatasource(new DJDataSource(title, DJConstants.DATA_SOURCE_ORIGIN_PARAMETER, 0));
+			sub.setLayoutManager(new ClassicLayoutManager());
+			return sub;
+		} catch (ColumnBuilderException cbe) {
+			LOGGER.error("Error occurred while getting subreport", cbe);
+		}
+		return null;
+	}
 
     private List<DocumentDetails> getDocumentDetails(PermitInspection permitInspn, String type) {
 
