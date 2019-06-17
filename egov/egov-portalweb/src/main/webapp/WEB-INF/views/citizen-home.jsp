@@ -203,6 +203,7 @@
 							<thead>
 								<tr>
 									<th><spring:message code="lbl.slno" /></th>
+									<th><spring:message code="lbl.ulb.name" /></th>
 									<th><spring:message code="lbl.applicant.name" /></th>
 									<th><spring:message code="lbl.applicartionno" /></th>
 									<th><spring:message code="lbl.applicationdate" /></th>

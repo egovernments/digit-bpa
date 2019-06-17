@@ -71,6 +71,7 @@ $(document).ready(function(){
                 data: tableInitData,
                 "columns": [
                     { "data": "srNo", "orderable": false },
+                    { "data": "ulbName", "orderable": false },
                     { "data": "applicantName", "orderable": false },
                     { "data": "serviceRequestNo", "orderable": false},
                     { "data": "serviceRequestDate" },
