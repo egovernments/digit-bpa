@@ -67,7 +67,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private String currentOwner;
     private String pendingAction;
     private String ward;
-    private Long wardId; 
+    private Long wardId;
     private String electionWard;
     private Long electionWardId;
     private String zone;
@@ -92,12 +92,18 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private BigDecimal fromBuiltUpArea;
     private BigDecimal toBuiltUpArea;
     private Long applicationTypeId;
-	private Long adminBoundary;
-	private Long revenueBoundary;
-	private Long locationBoundary;
-    
-    
+    private Long adminBoundary;
+    private Long revenueBoundary;
+    private Long locationBoundary;
+    private String revocationNumber;
 
+    public String getRevocationNumber() {
+        return revocationNumber;
+    }
+
+    public void setRevocationNumber(String revocationNumber) {
+        this.revocationNumber = revocationNumber;
+    }
 
     public SearchBpaApplicationForm() {
         // for form binding
@@ -117,7 +123,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         }
         setAddress(application.getOwner().getAddress());
         setRescheduledByEmployee(application.getIsRescheduledByEmployee());
-        setApplicationType(application.getApplicationType()!=null ? application.getApplicationType().getName() : "");
+        setApplicationType(application.getApplicationType() != null ? application.getApplicationType().getName() : "");
         setOccupancy(application.getOccupanciesName());
         setServiceType(application.getServiceType().getDescription());
         setServiceCode(application.getServiceType().getCode());
@@ -135,6 +141,8 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setCurrentOwner(currentOwner);
         setPendingAction(pendingAction);
         setFeeCollected(isFeeCollected);
+        if (!application.getPermitRevocation().isEmpty())
+            setRevocationNumber(application.getPermitRevocation().get(0).getRevocationNumber());
     }
 
     public SearchBpaApplicationForm(OccupancyCertificate occupancyCertificate, String currentOwner, String pendingAction,
@@ -522,35 +530,35 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         this.toBuiltUpArea = toBuiltUpArea;
     }
 
-	public Long getApplicationTypeId() {
-		return applicationTypeId;
-	}
+    public Long getApplicationTypeId() {
+        return applicationTypeId;
+    }
 
-	public void setApplicationTypeId(Long applicationTypeId) {
-		this.applicationTypeId = applicationTypeId;
-	}
+    public void setApplicationTypeId(Long applicationTypeId) {
+        this.applicationTypeId = applicationTypeId;
+    }
 
-	public Long getAdminBoundary() {
-		return adminBoundary;
-	}
+    public Long getAdminBoundary() {
+        return adminBoundary;
+    }
 
-	public void setAdminBoundary(Long adminBoundary) {
-		this.adminBoundary = adminBoundary;
-	}
+    public void setAdminBoundary(Long adminBoundary) {
+        this.adminBoundary = adminBoundary;
+    }
 
-	public Long getRevenueBoundary() {
-		return revenueBoundary;
-	}
+    public Long getRevenueBoundary() {
+        return revenueBoundary;
+    }
 
-	public void setRevenueBoundary(Long revenueBoundary) {
-		this.revenueBoundary = revenueBoundary;
-	}
+    public void setRevenueBoundary(Long revenueBoundary) {
+        this.revenueBoundary = revenueBoundary;
+    }
 
-	public Long getLocationBoundary() {
-		return locationBoundary;
-	}
+    public Long getLocationBoundary() {
+        return locationBoundary;
+    }
 
-	public void setLocationBoundary(Long locationBoundary) {
-		this.locationBoundary = locationBoundary;
-	}
+    public void setLocationBoundary(Long locationBoundary) {
+        this.locationBoundary = locationBoundary;
+    }
 }

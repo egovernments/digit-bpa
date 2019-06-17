@@ -94,6 +94,7 @@ public class SearchBpaApplicationAdaptor implements DataTableJsonAdapter<SearchB
 			baseRegisterJson.addProperty("appointmentDate", defaultString(DateUtils.toDefaultDateFormat(baseForm.getAppointmentDate()), "N/A"));
 			baseRegisterJson.addProperty("appointmentTime", defaultString(baseForm.getAppointmentTime(), "N/A"));
 			baseRegisterJson.addProperty("id", baseForm.getId());
+			baseRegisterJson.addProperty("revocationNumber", baseForm.getRevocationNumber());
 
 			baseRegisterResultData.add(baseRegisterJson);
 		});

@@ -66,6 +66,7 @@ $(document)
 					var demandNoticeurl = '/bpa/application/demandnotice/';
 					var permitorderurl = '/bpa/application/generatepermitorder/';
 					var rejectionnoticeurl = '/bpa/application/rejectionnotice/';
+					var revocationNoticeurl = '/bpa/application/revocation/generateorder/';
 					$('#btnSearch').click(function() {
 						var isValid = false;
                         $('#searchBpaApplicationForm').find(':input',':select',':textarea').each(function() {
@@ -123,7 +124,7 @@ $(document)
                                                         "toBuiltUpArea": $("#toBuiltUpArea").val(),
                                                         "revenueBoundary" : $('select[name="revenueBoundary"]').val(),
                                                        	"adminBoundary" : $('select[name="adminBoundary"]').val(),
-                                                       	"locationBoundary" : $('select[name="locationBoundary"]').val()
+                                                       	"locationBoundary" : $('select[name="locationBoundary"]').val(),
                                                     };
                                                 },
 												complete : function() {
@@ -180,19 +181,19 @@ $(document)
 														"data" : "pendingAction",
 														"sClass" : "text-left"
 													},
-													{
+					          						{
 														"data" : null,
 														"sClass" : "text-left",
 														"render" : function(
 																data, type,
-																row, meta) {
+																row, meta) {    
 															var commonOptions = '<option value="">---Select an Action----</option><option  value=' + viewurl + row.applicationNumber + '>View</option>';
 															if (row.status == 'Approved' && row.isFeeCollected) {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ demandNoticeurl
 																		+ row.applicationNumber + '>Generate Demand Notice</option></select>');
 															} 
-															else if (row.status == 'Order Issued to Applicant' || (row.applicationType == 'Low Risk' && !row.isFeeCollected )) {
+															else if (row.status == 'Order Issued to Applicant' || (row.applicationType == 'Low Risk' && !row.isFeeCollected ) && !row.status == 'Revocated') {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ permitorderurl
 																		+ row.applicationNumber + '>Generate Permit Order</option></select>');
@@ -200,7 +201,11 @@ $(document)
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ rejectionnoticeurl
 																		+ row.applicationNumber + '>Print Rejection Notice</option></select>');
-															} else {
+															}else if (row.status == 'Revocated' && row.pendingAction == 'END') {
+																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
+																		+ revocationNoticeurl
+																		+ row.revocationNumber + '>Print Revocation Notice</option></select>'); 
+															}else {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'></select>');
 															}
 														}

@@ -220,6 +220,9 @@ public final class SearchBpaApplnFormSpec {
         if (requestForm.getToBuiltUpArea() != null)
             predicate.getExpressions()
                     .add(builder.lessThanOrEqualTo(root.get("totalBuiltUpArea"), requestForm.getToBuiltUpArea()));
+        if (requestForm.getRevocationNumber() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("revocationNumber"), requestForm.getRevocationNumber()));
     }
 
     private static void siteDetailSpec(SearchBpaApplicationForm requestForm, Root<BpaApplication> root, CriteriaBuilder builder,
