@@ -58,8 +58,8 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
-@Table(name = "eg_tenant")
-@SequenceGenerator(name = Tenant.SEQ_EG_TENANT, sequenceName = Tenant.SEQ_EG_TENANT, allocationSize = 1)
+@Table(name = "eg_tenant", schema = "state")
+@SequenceGenerator(name = Tenant.SEQ_EG_TENANT, sequenceName = Tenant.SEQ_EG_TENANT, allocationSize = 1, schema = "state")
 public class Tenant extends AbstractAuditable {
 
 	private static final long serialVersionUID = 3078684328383202799L;
