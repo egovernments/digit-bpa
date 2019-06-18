@@ -50,9 +50,11 @@ package org.egov.portal.web.controller.citizen;
 import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
 import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -78,6 +80,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/home")
 public class HomeController {
+
+	public static final String NOC_DEPARTMENT_ROLE = "BPA_FIRE_NOC_ROLE";
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -143,7 +147,10 @@ public class HomeController {
 
 		if (null != user) {
 
-			if (user.getType().equals(BUSINESS)) {
+			if (isNOCDepartmentUser(user)) {
+				modelData.addAttribute(moduleName, new ArrayList<String>());
+				modelData.addAttribute(services, portalServiceTypeService.getAllPortalService());
+			} else if (user.getType().equals(BUSINESS)) {
 
 				List<String> businessUserModules = portalServiceTypeService.getDistinctModuleNamesForBusinessUser()
 						.stream().map(md -> md.getDisplayName()).collect(Collectors.toList());
@@ -179,6 +186,16 @@ public class HomeController {
 		modelData.addAttribute("totalServicesCompletedSize", totalServicesCompleted.size());
 		modelData.addAttribute("clientId", clientId);
 		return "citizen-home";
+	}
+
+	private boolean isNOCDepartmentUser(User user) {
+		Boolean check = false;
+		for (Role r : user.getRoles()) {
+			if (NOC_DEPARTMENT_ROLE.equals(r.getName())) {
+				check = true;
+			}
+		}
+		return check;
 	}
 
 	private List<CitizenInbox> getMyAccountMessages() {
