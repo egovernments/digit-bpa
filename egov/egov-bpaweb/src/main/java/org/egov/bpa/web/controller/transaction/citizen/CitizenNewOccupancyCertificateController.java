@@ -48,37 +48,31 @@
 package org.egov.bpa.web.controller.transaction.citizen;
 
 import static org.egov.bpa.utils.BpaConstants.AUTH_TO_SUBMIT_PLAN;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.WorkflowBean;
-import org.egov.bpa.transaction.entity.common.NocDocument;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
-import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateValidationService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.commons.service.SubOccupancyService;
@@ -133,8 +127,6 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private OccupancyCertificateNocService ocNocService;
-    @Autowired
-    private OccupancyCertificateUtils occupancyCertificateUtils;
     
     @GetMapping("/occupancy-certificate/apply")
     public String newOCForm(final Model model, final HttpServletRequest request) {
@@ -192,7 +184,7 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
         Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
                 && request.getParameter(ONLINE_PAYMENT_ENABLE)
                         .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
         if (wfMatrix != null)
             userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
                     bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());

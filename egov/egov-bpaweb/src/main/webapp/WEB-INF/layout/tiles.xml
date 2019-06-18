@@ -893,5 +893,33 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/view-ocnoc-details.jsp" />
 	</definition>
+	<definition name="citizen-inspection-form"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.appln" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/citizen-inspection-form.jsp" />
+	</definition>
+	<definition name="citizen-inspection-success" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.bpa.appln.success" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/citizen-inspection-success.jsp" />
+	</definition>
+	
+		<definition name="inspection-update-form" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.appln" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inspection-update-form.jsp" />
+	</definition>
+	
+	<definition name="inspection-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.appln" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inspection-result.jsp" />
+	</definition>
 
 </tiles-definitions>

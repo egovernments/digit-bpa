@@ -53,6 +53,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.InspectionAppointmentSchedule;
 import org.egov.bpa.transaction.entity.common.AppointmentScheduleCommon;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.oc.OCAppointmentSchedule;
@@ -300,5 +301,47 @@ public class WorkflowHistoryService {
             throw new ApplicationRuntimeException(e.getMessage());
         }
     }
+    
+    public List<HashMap<String, Object>> getHistoryForInspection(List<InspectionAppointmentSchedule> appointmentSchedules, State<Position> state,
+            List<StateHistory<Position>> stateHistories) {
+        final List<HashMap<String, Object>> historyTable = new ArrayList<>();
+        final State<Position> workflowState = state;
+        final HashMap<String, Object> workFlowHistory = new HashMap<>(0);
+        if (null != workflowState) {
+            if (!stateHistories.isEmpty())
+                Collections.reverse(stateHistories);
+
+            buildStateHistory(stateHistories, historyTable, state);
+            buildInspectionApplnHistoryForSchedulingAppointments(appointmentSchedules, historyTable);
+            workFlowHistory.put(DATE, workflowState.getDateInfo());
+            workFlowHistory.put(COMMENTS, workflowState.getComments() == null ? "" : workflowState.getComments());
+            workFlowHistory.put(UPDATED_BY,
+                    workflowState.getLastModifiedBy().getUsername() + "::" + workflowState.getLastModifiedBy().getName());
+
+            String revertedBy = bpaWorkFlowService.getRevertedBy(workflowState.getExtraInfo());
+            workFlowHistory.put(STATUS, !isBlank(revertedBy) ? revertedBy : workflowState.getValue());
+
+            buildEmployeeInformation(state, stateHistories, workFlowHistory, state != null, state.getValue(),
+                    workflowState.getOwnerPosition(), workflowState.getLastModifiedDate(), workflowState.getOwnerUser());
+
+            historyTable.add(workFlowHistory);
+        }
+        historyTable.sort(Comparator.comparing(history -> String.valueOf(history.get(DATE))));
+        return historyTable;
+    }
+    
+    private void buildInspectionApplnHistoryForSchedulingAppointments(final List<InspectionAppointmentSchedule> appointmentSchedules,
+            final List<HashMap<String, Object>> historyTable) {
+        if (!appointmentSchedules.isEmpty()) {
+            for (InspectionAppointmentSchedule inspectionchedule : appointmentSchedules) {
+                AppointmentScheduleCommon appmntScheduleCommon = inspectionchedule.getAppointmentScheduleCommon();
+                buildSchedulingDetails(historyTable, appmntScheduleCommon.getPurpose(), inspectionchedule.getCreatedDate(),
+                        appmntScheduleCommon.isPostponed(), appmntScheduleCommon.getPostponementReason(),
+                        inspectionchedule.getLastModifiedBy(), inspectionchedule.getCreatedBy(),
+                        inspectionchedule.getLastModifiedDate());
+            }
+        }
+    }
+
 
 }

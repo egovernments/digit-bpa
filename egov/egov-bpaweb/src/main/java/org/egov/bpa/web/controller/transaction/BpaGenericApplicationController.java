@@ -91,6 +91,7 @@ import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.BpaUom;
 import org.egov.bpa.transaction.entity.enums.GovernmentType;
@@ -338,6 +339,16 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         prepareWorkflow(model, occupancyCertificate, workflowContainer);
         model.addAttribute("currentState", occupancyCertificate.getCurrentState().getValue());
         model.addAttribute(OCCUPANCY_CERTIFICATE, occupancyCertificate);
+    }
+    
+    protected void prepareWorkflowDataForInspection(final Model model, final InspectionApplication application) {
+        model.addAttribute("stateType", application.getClass().getSimpleName());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        model.addAttribute(BpaConstants.ADDITIONALRULE, BpaConstants.INSPECTIONAPPLICATION);
+        workflowContainer.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
+        prepareWorkflow(model, application, workflowContainer);
+        model.addAttribute("currentState", application.getCurrentState().getValue());
+        model.addAttribute(BpaConstants.WFINSPECTIONAPPLICATION , application);
     }
 
     protected void buildReceiptDetails(Set<EgDemandDetails> egDemandDetails, Set<Receipt> receipts) {

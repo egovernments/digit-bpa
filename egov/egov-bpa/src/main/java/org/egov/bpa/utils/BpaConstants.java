@@ -129,6 +129,7 @@ public class BpaConstants {
     public static final String COLON_CONCATE = "::";
     public static final String NATURE_OF_WORK = "Building Plan Approval";
     public static final String NATURE_OF_WORK_OC = "Building Plan Approval::Occupancy Certificate";
+    public static final String NATURE_OF_WORK_INSPECTION = "Building Plan Approval::Inspection";
     public static final String WF_NEW_STATE = "NEW";
     public static final String WF_CREATED_STATE = "Created";
     public static final String WF_REJECT_STATE = "Rejected";
@@ -154,6 +155,8 @@ public class BpaConstants {
     public static final String WF_DOC_SCRUTINY_SCHEDLE_PEND = "Document Scrutiny Scheduling Pending";
     public static final String WF_DOC_VERIFY_PEND = "Document verification pending";
     public static final String WF_INIT_AUTO_RESCHDLE = "Initiated For Auto Rescheduling Appointment";
+    public static final String INSPECTION_MODULE_TYPE = "INSPECTION";
+
     // application status constants
     public static final String APPROVED = "Approved";
     public static final String APPLICATION_STATUS_APPROVED = APPROVED;
@@ -208,6 +211,7 @@ public class BpaConstants {
     public static final String LETTERTOPARTYDETAILS = "lettertoparty";
     public static final String LETTERTOPARTY_REPLY_RECEIVED = "Letter To Party Reply Received";
     // inspection related constants
+    public static final String WFINSPECTIONAPPLICATION = "InspectionApplication";
     public static final String INSPECTION_NUMBER_SEQ = "SEQ_BPA_INSPECTIONNUMBER";
     public static final String INSPECTIONLOCATION = "INSPECTIONLOCATION";
     public static final String INSPECTIONMEASUREMENT = "INSPECTIONMEASUREMENT";
@@ -223,6 +227,10 @@ public class BpaConstants {
     public static final String INSPECTIONSHUTTER = "INSPECTIONSHUTTER";
     public static final String INSPECTIONROOFCONVERSION = "INSPECTIONROOFCONVERSION";
     public static final String INSPECTIONHGTBUILDABUTROAD = "INSPECTIONHGTBUILDABUTROAD";
+    public static final String INITIATEINSPECTION = "Initiated Inspection";
+    public static final String INSPECTIONAPPLICATION = "INSPECTIONAPPLICATION";
+
+
     // fee and receipt related constants
     public static final String BPAFEECOLLECT = "BPA Application fees collected";
     public static final String APPLICATIONFEEREASON = "APPLICATIONFEES";

@@ -49,6 +49,7 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
+import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
@@ -61,6 +62,7 @@ import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl;
+import org.egov.bpa.transaction.workflow.inspection.InspectionWorkflowCustomDefaultImpl;
 import org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
@@ -223,6 +225,14 @@ public class BpaUtils {
                     .getBean("occupancyCertificateWorkflowCustomDefaultImpl");
         return applicationWorkflowCustomDefaultImpl;
     }
+    
+    private InspectionWorkflowCustomDefaultImpl getInitialisedWorkFlowBeanForInspection() {
+        InspectionWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = null;
+        if (null != context)
+        	applicationWorkflowCustomDefaultImpl = (InspectionWorkflowCustomDefaultImpl) context
+                    .getBean("inspectionWorkflowCustomDefaultImpl");
+        return applicationWorkflowCustomDefaultImpl;
+    }
 
     public WorkFlowMatrix getWfMatrixByCurrentState(final Boolean isOneDayPermit, final String stateType,
             final String currentState, String applicationType) {
@@ -234,9 +244,9 @@ public class BpaUtils {
                     applicationType, currentState, null);
     }
 
-    public WorkFlowMatrix getWfMatrixByCurrentState(final String stateType, final String currentState) {
+    public WorkFlowMatrix getWfMatrixByCurrentState(final String stateType, final String currentState, final String additionalRule) {
         return bpaApplicationWorkflowService.getWfMatrix(stateType, null, null,
-                CREATE_ADDITIONAL_RULE_CREATE_OC, currentState, null);
+        		additionalRule, currentState, null);
     }
 
     @Transactional
@@ -332,6 +342,38 @@ public class BpaUtils {
                     additionalPortalInboxUser, oc.getOccupancyCertificateNumber(), url);
     }
 
+
+    @Transactional
+    public void createPortalUserinbox(final PermitInspectionApplication permitInspection, final List<User> portalInboxUser,
+            final String workFlowAction) {
+        
+        Module module = moduleService.getModuleByName(EGMODULE_NAME);
+        boolean isResolved = false;
+        String url = "/bpa/inspection/citizen/update/" + permitInspection.getInspectionApplication().getApplicationNumber();
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, permitInspection.getApplication().getOwner().getName(),
+        		permitInspection.getApplication().getServiceType().getDescription(), permitInspection.getInspectionApplication().getApplicationNumber(),
+        		permitInspection.getApplication().getPlanPermissionNumber(), permitInspection.getId(), SUCCESS, SUCCESS, url, isResolved,
+        		permitInspection.getInspectionApplication().getStatus().getDescription(), new Date(), permitInspection.getApplication().getState(), portalInboxUser);
+
+        final PortalInbox portalInbox = portalInboxBuilder.build();
+        portalInboxService.pushInboxMessage(portalInbox);
+    }
+    
+    @Transactional
+    public void updatePortalUserinbox(final PermitInspectionApplication permitInspection, final User additionalPortalInboxUser) {
+        Module module = moduleService.getModuleByName(EGMODULE_NAME);
+        boolean isResolved = false;
+        
+        if ((permitInspection.getInspectionApplication().getState() != null && (CLOSED.equals(permitInspection.getInspectionApplication().getState().getValue())
+                || WF_END_ACTION.equals(permitInspection.getInspectionApplication().getState().getValue()))))
+            isResolved = true;
+        String url = "/bpa/inspection/citizen/update/" + permitInspection.getInspectionApplication().getApplicationNumber();
+        if (permitInspection.getInspectionApplication().getStatus() != null)
+            portalInboxService.updateInboxMessage(permitInspection.getInspectionApplication().getApplicationNumber(), module.getId(),
+            		permitInspection.getInspectionApplication().getStatus().getDescription(), isResolved, new Date(), permitInspection.getInspectionApplication().getState(),
+                    additionalPortalInboxUser, permitInspection.getApplication().getPlanPermissionNumber(), url);
+    }
+    
     @Transactional
     public void createNocPortalUserinbox(final PermitNocApplication permitNoc, final List<User> portalInboxUser,
             final String workFlowAction) {
@@ -515,7 +557,7 @@ public class BpaUtils {
     }
 
     private void buildWorkFlowForOccupancyCertificate(final OccupancyCertificate oc, final WorkflowBean wfBean) {
-        final WorkFlowMatrix wfMatrix = getWfMatrixByCurrentState(oc.getStateType(), wfBean.getCurrentState());
+        final WorkFlowMatrix wfMatrix = getWfMatrixByCurrentState(oc.getStateType(), wfBean.getCurrentState(), CREATE_ADDITIONAL_RULE_CREATE_OC);
         final OccupancyCertificateWorkflowCustomDefaultImpl ocWorkflowCustomDefaultImpl = getInitialisedWorkFlowBeanForOC();
         Long approvalPositionId = wfBean.getApproverPositionId();
         if (wfBean.getApproverPositionId() == null)
@@ -536,6 +578,23 @@ public class BpaUtils {
             } else {
                 ocWorkflowCustomDefaultImpl.createCommonWorkflowTransition(oc, wfBean);
             }
+    }
+    
+    public void redirectInspectionWorkFlow(final PermitInspectionApplication permitInspection, final WorkflowBean wfBean) {
+        buildWorkFlowForInspection(permitInspection, wfBean);
+    }
+
+    private void buildWorkFlowForInspection(final PermitInspectionApplication permitInspection, final WorkflowBean wfBean) {
+        final WorkFlowMatrix wfMatrix = getWfMatrixByCurrentState(permitInspection.getInspectionApplication().getStateType(), wfBean.getCurrentState(), BpaConstants.INSPECTIONAPPLICATION);
+        final InspectionWorkflowCustomDefaultImpl inspectionWorkflowCustomDefaultImpl = getInitialisedWorkFlowBeanForInspection();
+        Long approvalPositionId = wfBean.getApproverPositionId();
+        if (wfBean.getApproverPositionId() == null)
+            approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    getBoundaryForWorkflow(permitInspection.getApplication().getSiteDetail().get(0)).getId());
+        wfBean.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
+        wfBean.setApproverPositionId(approvalPositionId);
+        if (inspectionWorkflowCustomDefaultImpl != null) 
+        		inspectionWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitInspection, wfBean);
     }
 
     public void sendSmsEmailOnCitizenSubmit(BpaApplication bpaApplication) {

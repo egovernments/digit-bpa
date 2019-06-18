@@ -91,8 +91,8 @@ import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OCAppointmentScheduleService;
-import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
+import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaConstants;
@@ -328,7 +328,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
                 && request.getParameter(ONLINE_PAYMENT_ENABLE)
                         .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE);
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
         if (wfMatrix != null)
 			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
 					bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());

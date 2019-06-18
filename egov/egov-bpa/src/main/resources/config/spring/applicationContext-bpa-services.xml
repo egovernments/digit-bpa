@@ -114,5 +114,19 @@
 
     <bean id="occupancyCertificateWorkflowCustomDefaultImpl"
           class="org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl"/>
+    
+    <bean id="inspectionWorkflowCustomDefaultImpl"
+          class="org.egov.bpa.transaction.workflow.inspection.InspectionWorkflowCustomDefaultImpl"/>   
+          
+          
+    <bean id="InspectionApplicationInboxRenderService"
+          class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+        <constructor-arg index="0"
+                         ref="InspectionApplicationPersistenceService"/>
+    </bean>
+    
+    <bean id="InspectionApplicationPersistenceService" parent="abstractPersistenceService">
+    <constructor-arg name="type" value="org.egov.bpa.transaction.entity.InspectionApplication"/>
+    </bean>         
 
 </beans>

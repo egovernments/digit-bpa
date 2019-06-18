@@ -45,6 +45,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_02;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_08;
@@ -68,7 +69,6 @@ import org.egov.bpa.utils.BpaUtils;
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -103,8 +103,6 @@ public class BpaWorkFlowService {
     private BpaUtils bpaUtils;
     @Autowired
     private SecurityUtils securityUtils;
-    @Autowired
-    private PositionMasterService positionMasterService;
 
     public Assignment getWorkFlowInitiator(final State<Position> state, final User createdBy) {
         Assignment wfInitiator;
@@ -385,7 +383,7 @@ public class BpaWorkFlowService {
 
 	public Position getApproverPositionOfElectionWardByCurrentStateForOC(final OccupancyCertificate oc,
 			final String currentState) {
-		WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(oc.getStateType(), currentState);
+		WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(oc.getStateType(), currentState, CREATE_ADDITIONAL_RULE_CREATE_OC);
 		return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
 				bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId());
 	}

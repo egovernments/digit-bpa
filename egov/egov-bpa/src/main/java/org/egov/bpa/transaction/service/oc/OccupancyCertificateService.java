@@ -48,6 +48,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
 import static org.egov.bpa.utils.BpaConstants.COMPOUND_WALL;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_OC;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
@@ -243,7 +244,7 @@ public class OccupancyCertificateService {
             if (oc.getAdmissionfeeAmount() != null
                     && oc.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0) {
                 wfMatrix = bpaUtils.getWfMatrixByCurrentState(
-                        oc.getStateType(), WF_NEW_STATE);
+                        oc.getStateType(), WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
                 currentState = WF_NEW_STATE;
             }
             if (wfMatrix != null)
