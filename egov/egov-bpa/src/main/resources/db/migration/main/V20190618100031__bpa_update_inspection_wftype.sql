@@ -1,0 +1,1 @@
+update eg_wf_types set type='InspectionApplication' where type='Inspection';
