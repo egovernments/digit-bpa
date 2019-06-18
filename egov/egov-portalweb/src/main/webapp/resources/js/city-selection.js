@@ -48,9 +48,14 @@
 $(document).ready( function () {
 	//form submit
 	$('#buttonSubmit').click(function(e) {
-		var url = $("#url").val();
-		var clientId = $("#clientId").val();
-		window.open(url.replace(clientId, $("#tenantId").val()),"_self");
+		var tenantId = $("#tenantId").val();
+		if(tenantId){
+			var url = $("#url").val();
+			var clientId = $("#clientId").val();
+			window.open(url.replace(clientId, tenantId),"_self");
+		}else{
+			bootbox.alert("Please select city");
+		}
 		e.preventDefault();
 	});
 
