@@ -67,6 +67,7 @@ import org.egov.edcr.feature.FireTenderMovement;
 import org.egov.edcr.feature.GeneralStair;
 import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
+import org.egov.edcr.feature.HeadRoom;
 import org.egov.edcr.feature.HeightOfRoom;
 import org.egov.edcr.feature.Kitchen;
 import org.egov.edcr.feature.LandUse;
@@ -221,6 +222,8 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(NorthDirection.class);
         features.add(pf);
         pf = new PlanFeature(LocationPlan.class);
+        features.add(pf);
+        pf = new PlanFeature(HeadRoom.class);
         features.add(pf);
 
         /*

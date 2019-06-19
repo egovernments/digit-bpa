@@ -51,68 +51,79 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
+import org.egov.edcr.utility.Util;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StairCover extends FeatureProcess {
-
-    private static final Logger LOG = Logger.getLogger(StairCover.class);
-    private static final String RULE_44_C = "44-c";
-    public static final String STAIRCOVER_DESCRIPTION = "Mumty";
+public class HeadRoom extends FeatureProcess {
+    private static final String RULE42_5_ii = "42-5-ii";
+    private static final String RULE_42_5_ii_DESCRIPTION = "Minimum clear head-room";
+    private static final BigDecimal TWO_POINTTWO = BigDecimal.valueOf(2.2);
 
     @Override
-    public Plan validate(Plan pl) {
-
-        return pl;
+    public Plan validate(Plan planDetail) {
+        return planDetail;
     }
 
     @Override
-    public Plan process(Plan pl) {
+    public Plan process(Plan planDetail) {
+        for (Block block : planDetail.getBlocks()) {
+            if (block.getBuilding() != null) {
 
-        ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Mumty");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, VERIFIED);
-        scrutinyDetail.addColumnHeading(4, ACTION);
-        scrutinyDetail.addColumnHeading(5, STATUS);
+                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+                scrutinyDetail.addColumnHeading(1, RULE_NO);
+                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+                scrutinyDetail.addColumnHeading(3, REQUIRED);
+                scrutinyDetail.addColumnHeading(4, PROVIDED);
+                scrutinyDetail.addColumnHeading(5, STATUS);
+                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Headroom");
 
-        Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_44_C);
+                org.egov.common.entity.edcr.HeadRoom headRoom = block.getBuilding().getHeadRoom();
 
-        BigDecimal minHeight = BigDecimal.ZERO;
+                if (headRoom != null) {
 
-        for (Block b : pl.getBlocks()) {
-            minHeight = BigDecimal.ZERO;
-            if (b.getStairCovers() != null && !b.getStairCovers().isEmpty()) {
-                minHeight = b.getStairCovers().stream().reduce(BigDecimal::min).get();
+                    List<BigDecimal> headRoomDimensions = headRoom.getHeadRoomDimensions();
 
-                if (minHeight.compareTo(new BigDecimal(3)) <= 0) {
-                    details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-                    details.put(VERIFIED, "Verified whether stair cover height is <= 3 meters");
-                    details.put(ACTION, "Not included stair cover height(" + minHeight + ") to building height");
-                    details.put(STATUS, Result.Accepted.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                } else {
-                    details.put(DESCRIPTION, STAIRCOVER_DESCRIPTION);
-                    details.put(VERIFIED, "Verified whether stair cover height is <= 3 meters");
-                    details.put(ACTION, "Included stair cover height(" + minHeight + ") to building height");
-                    details.put(STATUS, Result.Verify.getResultVal());
-                    scrutinyDetail.getDetail().add(details);
-                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                    if (headRoomDimensions != null && headRoomDimensions.size() > 0) {
+
+                        BigDecimal minHeadRoomDimension = headRoomDimensions.stream().reduce(BigDecimal::min).get();
+
+                        BigDecimal minWidth = Util.roundOffTwoDecimal(minHeadRoomDimension);
+
+                        if (minWidth.compareTo(TWO_POINTTWO) >= 0) {
+                            setReportOutputDetails(planDetail, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION,
+                                    String.valueOf(TWO_POINTTWO), String.valueOf(minWidth), Result.Accepted.getResultVal(),
+                                    scrutinyDetail);
+                        } else {
+                            setReportOutputDetails(planDetail, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION,
+                                    String.valueOf(TWO_POINTTWO), String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
+                                    scrutinyDetail);
+                        }
+                    }
+
                 }
             }
-
         }
-        return pl;
+        return planDetail;
+    }
+
+    private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
+            String status, ScrutinyDetail scrutinyDetail) {
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, ruleNo);
+        details.put(DESCRIPTION, ruleDesc);
+        details.put(REQUIRED, expected);
+        details.put(PROVIDED, actual);
+        details.put(STATUS, status);
+        scrutinyDetail.getDetail().add(details);
+        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
     @Override

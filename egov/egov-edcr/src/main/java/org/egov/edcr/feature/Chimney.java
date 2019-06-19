@@ -64,7 +64,7 @@ import org.springframework.stereotype.Service;
 public class Chimney extends FeatureProcess {
 
 	private static final Logger LOG = Logger.getLogger(Chimney.class);
-	private static final String RULE_44_D = "44-D";
+	private static final String RULE_44_D = "44-d";
 	public static final String CHIMNEY_DESCRIPTION = "Chimney";
 
 	@Override
