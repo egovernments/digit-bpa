@@ -199,9 +199,9 @@ public class InConstructionInspectionService {
     	if (inspection != null && !inspection.getDocket().isEmpty())
 			for (final DocketDetailCommon docketDet : inspection.getDocket().get(0).getDocketDetail()) {
 				String checkListType = docketDet.getServiceChecklist().getChecklist().getChecklistType().getCode();
-				if ("OCINSPECTIONPLOT".equals(checkListType))
+				if ("INCNSTRNINSPPLOT".equals(checkListType))
 					inspection.getDocketDetailLocList().add(docketDet);
-				if ("OCINSPECTIONCONSTRUCTION".equals(checkListType))
+				if ("INCNSTRNINSPECTION".equals(checkListType))
 					inspection.getDocketDetailMeasurementList().add(docketDet);
 			}
 		model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());

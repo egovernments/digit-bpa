@@ -970,7 +970,7 @@
 		<put-attribute name="page-title"
 			value="title.inspection.modify" cascade="true" />
 		<put-attribute name="body"
-			value="/WEB-INF/views/occupancyCertificate/inspection/oc-inspection-detail-update.jsp" />
+			value="/WEB-INF/views/application/inconst-inspection-edit.jsp" />
 	</definition>
 	
 </tiles-definitions>

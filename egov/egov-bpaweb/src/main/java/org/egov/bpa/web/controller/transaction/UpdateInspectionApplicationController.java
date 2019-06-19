@@ -222,6 +222,8 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     @GetMapping("/success/{applicationNumber}")
     public String success(@PathVariable final String applicationNumber, final Model model) {
         final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+        model.addAttribute("eDcrNumber",permitInspection.getApplication().geteDcrNumber());
+        model.addAttribute("planPermissionNumber",permitInspection.getApplication().getPlanPermissionNumber());
         loadCommonApplicationDetails(model, permitInspection.getInspectionApplication());
         return "inspection-view";
     }
@@ -265,7 +267,7 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
             scheduleType = AppointmentSchedulePurpose.INSPECTION;
         } else if ((hasInspectionPendingAction && hasInspectionStatus)
                 || isAfterTSInspection && !inspectionApplication.getInspections().isEmpty())
-            mode = "captureAdditionalInspection";
+            mode = "modifyInspection";
         else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(pendingAction)
                 && !inspectionApplication.getInspections().isEmpty())
             mode = "initiatedForApproval";

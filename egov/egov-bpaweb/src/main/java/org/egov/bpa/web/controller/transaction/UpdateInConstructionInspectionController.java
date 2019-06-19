@@ -45,9 +45,12 @@ import java.util.List;
 
 import org.egov.bpa.transaction.entity.InConstructionInspection;
 import org.egov.bpa.transaction.entity.InspectionApplication;
+import org.egov.bpa.transaction.entity.PermitInspection;
+import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.service.InConstructionInspectionService;
+import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.custom.CustomImplProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,21 +75,35 @@ public class UpdateInConstructionInspectionController extends BpaGenericApplicat
 	 private CustomImplProvider specificNoticeService;
 	 @Autowired
 	 protected ResourceBundleMessageSource messageSource;
+	 @Autowired
+	 private InspectionApplicationService inspectionAppService;
+	 @Autowired
+	 private InConstructionInspectionService inspectionService;
+	 
+	 public InConstructionInspection getInspection(@PathVariable final String applicationNumber) {
+	        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
 
-	@GetMapping("/updateinspection/{applicationNumber}/{inspectionNumber}")
+	        InConstructionInspection inspection = null;
+	        final List<InConstructionInspection> inspections = inspectionService
+	                .findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
+	        if (!inspections.isEmpty())
+	            inspection = inspections.get(0);
+	        return inspection;
+	 }
+
+	@GetMapping("/updateinspection/{applicationNumber}")
 	public String editInspectionAppointment(
-			@PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model) {
-		final InConstructionInspectionService inConstInspectionService = (InConstructionInspectionService) specificNoticeService
-                .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
-		InConstructionInspection inConstructionInspection = inConstInspectionService.findByInspectionApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
-		loadApplication(model, inConstructionInspection);
+			@PathVariable final String applicationNumber, final Model model) {
+		loadApplication(model, getInspection(applicationNumber));
 		model.addAttribute("mode", "editinsp");
 		return "inconst-inspection-edit";
 	}
 
-	@PostMapping("/updateinspection/{applicationNumber}/{inspectionNumber}")
-	public String updateInspection(@ModelAttribute("ocInspection") final InConstructionInspection inConstructionInspection,
-								   @PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model, final BindingResult resultBinder) {
+	@PostMapping("/updateinspection/{applicationNumber}")
+	public String updateInspection(@ModelAttribute("inConstructionInspection") final InConstructionInspection inConstructionInspection,
+								   @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+        inConstructionInspection.setInspectionApplication(permitInspection.getInspectionApplication());
 		if (resultBinder.hasErrors()) {
 			loadApplication(model, inConstructionInspection);
 			return "inconst-inspection-edit";
