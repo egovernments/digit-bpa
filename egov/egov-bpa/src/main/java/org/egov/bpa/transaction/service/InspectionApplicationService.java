@@ -49,7 +49,7 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.bpa.autonumber.InspectionNumberGenerator;
+import org.egov.bpa.autonumber.InspectionApplicationNumberGenerator;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.WorkflowBean;
@@ -96,8 +96,8 @@ public class InspectionApplicationService {
 	}
     
     public String generateInspectionNumber() {
-        final InspectionNumberGenerator inspectionNUmber = beanResolver
-                .getAutoNumberServiceFor(InspectionNumberGenerator.class);
+        final InspectionApplicationNumberGenerator inspectionNUmber = beanResolver
+                .getAutoNumberServiceFor(InspectionApplicationNumberGenerator.class);
         return inspectionNUmber.generateInspectionNumber("INSP");
     }
     
