@@ -58,6 +58,11 @@ $(document).ready(
                  getEdcrApprovedPlanDetails();
              }
         	 
+        	 if ($('#planPermissionNumber').val()) {
+        		 getApplicationByPermitNo($('#planPermissionNumber').val());
+             }
+        	 
+        	 
         	 function getEdcrApprovedPlanDetails() {
                  $.ajax({
                      async: false,
@@ -193,6 +198,14 @@ $(document).ready(
 	        success: function (response) {
 	            if(response) {
                     $('#applicationNumber').val(response.applicationNumber);
+                    $('#permissionNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + $('#planPermissionNumber').val() + '\')" href="javascript:void(0);">' + $('#planPermissionNumber').val()  + '</a>');
+                    $('#applicationDate').html(response.applicationDate);
+                    $('#resurveyNo').html(response.reSurveyNumber);
+                    $('#ownerName').html(response.applicantName);
+                    $('#ownerAddress').html(response.applicantAddress);
+                    $('#occupancyName').html(response.occupancy);
+                    $('#serviceType').html(response.serviceTypeDesc);
+                    $('#dcrNumber').html(response.dcrNumber);
 
 	            	$.ajax({
 	                    async: false,
@@ -217,7 +230,7 @@ $(document).ready(
 	                                resetDCRPopulatedValues();
 	                            
 	                          
-	                            $('#edcrApplicationNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + $('#planPermissionNumber').val() + '\')" href="javascript:void(0);">' + response.applicationNumber  + '</a>');
+	                            $('#edcrApplicationNumber').html(response.applicationNumber);
 
                                 
                                 

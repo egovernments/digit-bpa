@@ -126,6 +126,10 @@
 						<jsp:include page="edcr-application-details-form.jsp"></jsp:include>
 				 </div>
 				 
+			 	  <div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-application-details.jsp"></jsp:include>
+						</div> 
+			
 				 <div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 					</div>
@@ -134,6 +138,9 @@
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.portal.submit.appln'/>" /> 
 			    <input	type="hidden" id="applicationNumber" value="" /> 
 			    <input type="hidden" id="eDcrNumber" value="${eDcrNumber}"/>
+			    <input type="hidden" id="planPermissionNumber" value="${planPermissionNumber}"/>
+			    
+			    
 			    
 					<div class="buttonbottom" align="center">
 						<input type="button" name="button2" value="Close"

@@ -37,28 +37,42 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.autonumber.impl;
+package org.egov.bpa.web.controller.transaction.citizen;
 
-import org.egov.bpa.autonumber.InspectionApplicationNumberGenerator;
-import org.egov.bpa.utils.BpaConstants;
-import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
-import org.egov.infra.utils.DateUtils;
+import org.egov.bpa.transaction.entity.InspectionApplication;
+import org.egov.bpa.transaction.entity.PermitInspectionApplication;
+import org.egov.bpa.transaction.service.InspectionApplicationService;
+import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@Service
-public class InspectionApplicationNumberGeneratorImpl implements InspectionApplicationNumberGenerator {
-
+@Controller
+@RequestMapping(value = "/inspection")
+public class CitizenUpdateInspectionApplicationController {
+	
+	@Autowired
+	protected WorkflowHistoryService workflowHistoryService;
     @Autowired
-    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
-
-    @Override
-    public String generateInspectionNumber(final String code) {
-        final String sequenceName = BpaConstants.INSPECTION_NUMBER_SEQ;
-		StringBuilder insNo = new StringBuilder();
-		String insNumber = String.format("%06d", genericSequenceNumberGenerator.getNextSequence(sequenceName));
-
-		insNo.append(code).append("-").append(DateUtils.currentYear()).append("-").append(insNumber);
-		return insNo.toString();
+    private InspectionApplicationService inspectionAppService;
+	
+    
+    @GetMapping("/citizen/update/{applicationNumber}")
+    public String createInspection(@PathVariable final String applicationNumber,final Model model) {
+    	final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+        model.addAttribute("eDcrNumber",permitInspection.getApplication().geteDcrNumber());
+        model.addAttribute("planPermissionNumber",permitInspection.getApplication().getPlanPermissionNumber());
+        model.addAttribute("inspectionApplication",permitInspection.getInspectionApplication());
+        loadCommonApplicationDetails(model, permitInspection.getInspectionApplication());
+        return "inspection-view";
     }
+    
+    private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
+        model.addAttribute("applicationHistory",
+                workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(), inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
+   }
 }

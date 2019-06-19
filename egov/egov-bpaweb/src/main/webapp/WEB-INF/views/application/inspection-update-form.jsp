@@ -124,7 +124,9 @@
 		         <div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
 						<jsp:include page="edcr-application-details-form.jsp"></jsp:include>
 				 </div>
-				 
+				 <div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-application-details.jsp"></jsp:include>
+						</div> 
 				 <div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 					</div>
