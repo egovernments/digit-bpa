@@ -119,7 +119,7 @@ public class InspectionApplication extends StateAware<Position> {
     
     @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("id DESC ")
-    private List<InspectionSchedule> inspections = new ArrayList<>();
+    private List<InConstructionInspection> inspections = new ArrayList<>();
     
     @Length(min = 1, max = 5000)
     private String townSurveyorRemarks;
@@ -209,11 +209,11 @@ public class InspectionApplication extends StateAware<Position> {
 		this.appointmentSchedules = appointmentSchedules;
 	}
 
-	public List<InspectionSchedule> getInspections() {
+	public List<InConstructionInspection> getInspections() {
 		return inspections;
 	}
 
-	public void setInspections(List<InspectionSchedule> inspections) {
+	public void setInspections(List<InConstructionInspection> inspections) {
 		this.inspections = inspections;
 	}
 

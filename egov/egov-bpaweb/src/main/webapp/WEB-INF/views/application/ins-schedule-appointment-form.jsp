@@ -79,50 +79,6 @@
 	</div>
 
 </div>
-<c:if test="${inspectionAppointmentSchedule.appointmentScheduleCommon.purpose eq 'DOCUMENTSCRUTINY'}">
-<div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.appmnt.location" /><span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="appointmentScheduleCommon.appointmentLocation" data-first-option="false"
-							id="appointmentLocation" required="required" cssClass="form-control appointmentLocation">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${appointmentLocationsList}" itemValue="id"
-								itemLabel="description" />
-						</form:select>
-		<form:errors path="appointmentScheduleCommon.appointmentLocation"
-			cssClass="add-margin error-msg" />
-	</div>
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code="lbl.remarks" /> </label>
-	<div class="col-sm-3 add-margin">
-		<form:textarea path="appointmentScheduleCommon.remarks" id="remarks"
-			class="form-control patternvalidation"
-			data-pattern="alphanumericspecialcharacters"
-			maxlength="256" cols="5" rows="4" />
-		<form:errors path="appointmentScheduleCommon.remarks" cssClass="add-margin error-msg" />
-	</div>
-</div>
-
-<div class="form-group">
-	<c:if test="${ mode eq 'postponeappointment' }">
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right"><spring:message
-					code="lbl.postpone.reason" /> <span class="mandatory"></span> </label>
-			<div class="col-sm-3 add-margin">
-				<form:textarea path="appointmentScheduleCommon.postponementReason" id="postponementReason"
-					class="form-control patternvalidation"
-					data-pattern="alphanumericspecialcharacters" required="required"
-					maxlength="256" cols="5" rows="4" />
-				<form:errors path="appointmentScheduleCommon.postponementReason"
-					cssClass="add-margin error-msg" />
-			</div>
-		</div>
-	</c:if>
-</div>
-</c:if>
 
 <c:if test="${inspectionAppointmentSchedule.appointmentScheduleCommon.purpose eq 'INSPECTION'}">
 <div class="form-group">

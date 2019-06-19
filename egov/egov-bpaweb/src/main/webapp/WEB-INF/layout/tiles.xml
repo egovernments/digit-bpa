@@ -921,5 +921,56 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-result.jsp" />
 	</definition>
-
+	<definition name="inspection-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.bpa.appln.success" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inspection-view.jsp" />
+	</definition>
+		<definition name="inspection-schedule-appointment-new"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.schedule.appmnt" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inspection-schedule-appointment-new.jsp" />
+	</definition>
+	
+	<definition name="inspection-reschedule-appointment"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.reschedule.appmnt" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inspection-reschedule-appointment.jsp" />
+	</definition>
+    <definition name="inspection-scheduled-appointment-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.reschedule.appmnt" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inspection-scheduled-appointment-result.jsp" />
+	</definition>
+	
+	<definition name="inconst-create-inspection"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.appln" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inconst-create-inspection.jsp" />
+	</definition>
+	
+	<definition name="inconst-inspection-success"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.result" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inconst-inspection-success.jsp" />
+	</definition>
+		<definition name="inconst-inspection-edit" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.modify" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/occupancyCertificate/inspection/oc-inspection-detail-update.jsp" />
+	</definition>
+	
 </tiles-definitions>

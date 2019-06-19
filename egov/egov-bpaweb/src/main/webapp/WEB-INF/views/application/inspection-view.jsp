@@ -55,22 +55,23 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<form:form role="form"  modelAttribute="inspectionApplication" id="updateInspectionForm" 
- action="/bpa/inspection/update-submit/${inspectionApplication.applicationNumber}"
- method="post" 
+<form:form role="form"  id="updateInspectionForm"
+ action="/bpa/inspection/update/${inspectionApplication.applicationNumber}"
+ method="post" modelAttribute="inspectionApplication"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
+<div class="panel-heading custom_form_panel_heading">
+<div class="panel-title text-center no-float">
+		<c:if test="${not empty message}">
+			<strong>${message}</strong>
+		</c:if>
+</div>
+</div>
 			
 <div class="row">
 	<div class="col-md-12">	
 		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-		<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage" value="${noJAORSAMessage}" />	
-		<form:hidden path="id"  id="inspectionApplicationid"
-				   value="${inspectionApplication.id}"/>	
-		<form:hidden path="" id="mode" name="mode" value="${mode}" />
-		<form:hidden path="" id="wfstateDesc"
-						 value="${inspectionApplication.state.value}" />
-	
+			
       </br>
 		   <div class="panel panel-primary docdetails" data-collapsed="0">
 						<div class="panel-heading custom_form_panel_heading">
@@ -129,71 +130,16 @@
 						<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 					</div>
 		</div>
-		
-		<div class="text-center">
-
-				<c:if test="${mode eq 'captureInspection'}">
-					<a
-							target="popup" class="btn btn-primary" onclick="window.open('/bpa/inspection/createinspection/${inspectionApplication.applicationNumber}','popup','width=1100,height=700'); return false;"
-							class="btn btn-primary"><spring:message code="lbl.btn.inspection.details"/> </a>
-					<c:if test="${isInspnRescheduleEnabled eq true}">
-						<a
-								href="/bpa/inspection/rescheduleappointment/${scheduleType}/${inspectionApplication.applicationNumber}"
-								class="btn btn-primary"><spring:message code="lbl.btn.reschedule.appointment"/> </a>
-					</c:if>
-				</c:if>
-				<c:if test="${mode eq 'modifyInspection'}">
-					<a
-							onclick="window.open('/bpa/inspection/updateinspection/${inspectionApplication.applicationNumber}','popup','width=1100,height=700'); return false;"
-							target="popup" class="btn btn-primary"> <spring:message code="lbl.btn.add.edit.inspection.details"/> </a>
-				</c:if>
-				<c:if test="${mode eq 'newappointment'}">
-					<a
-							href="/bpa/inspection/scheduleappointment/${inspectionApplication.applicationNumber}"
-							class="btn btn-primary"> <spring:message code="lbl.btn.new.appointment"/> </a>
-				</c:if>
-				
-				<c:if test="${inspectionApplication.state.value ne 'Field Inspection completed' && inspectionApplication.status.code eq 'Field Inspected'}">
-					<input type="button" name="save" id="btnSave" value="Save" class="btn btn-primary"/>
-				</c:if>
-				
-			</div>
 				
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.portal.submit.appln'/>" /> 
 			    <input	type="hidden" id="applicationNumber" value="" /> 
 			    <input type="hidden" id="eDcrNumber" value="${eDcrNumber}"/>
-			    <input type="hidden" id="planPermissionNumber" value="${planPermissionNumber}"/>			    
-
-<c:choose>
-				<c:when
-					test="${inspectionApplication.status.code eq 'Approved'}">
+			    
 					<div class="buttonbottom" align="center">
 						<input type="button" name="button2" value="Close"
 							class="btn btn-default" onclick="window.close();" />
 					</div>
-				</c:when>
-				<c:otherwise>
-					<c:choose>
-						<c:when
-							test="${ (citizenOrBusinessUser && inspectionApplication.id !=null) }">
-							<div class="buttonbottom" align="center">
-								<form:button type="submit" id="buttonSubmit"
-									class="btn btn-primary" value="Forward">
-									<spring:message code='lbl.btn.forward' />
-								</form:button>
-								<input type="button" name="button2" value="Close"
-									class="btn btn-default" onclick="window.close();" />
-							</div>
-						</c:when>
-						<c:otherwise>
-								<jsp:include page="../common/commonWorkflowMatrix.jsp" />
-							<div class="buttonbottom" align="center">
-								<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-							</div>
-						</c:otherwise>
-					</c:choose>
-				</c:otherwise>
-			</c:choose></div>
+				</div>
 </form:form>
 
 	

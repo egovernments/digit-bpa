@@ -96,7 +96,7 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
     @Autowired
     private AppointmentScheduleCommonService appointmentScheduleCommonService;
 
-    @GetMapping("/schedule-appointment/{applicationNumber}")
+    @GetMapping("/scheduleappointment/{applicationNumber}")
     public String showScheduleAppointmentForInspection(@PathVariable final String applicationNumber, final Model model) {
         final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
         InspectionAppointmentSchedule inspectionAppointmentSchedule = new InspectionAppointmentSchedule();
@@ -113,8 +113,8 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
         return INS_SCHEDULE_APPOINTMENT_NEW;
     }
 
-    @PostMapping("/schedule-appointment/{applicationNumber}")
-    public String scheduleAppointmentForInspection(@Valid @ModelAttribute final InspectionAppointmentSchedule inspectionAppointmentSchedule,
+    @PostMapping("/scheduleappointment/{applicationNumber}")
+    public String scheduleAppointmentForInspection(@ModelAttribute final InspectionAppointmentSchedule inspectionAppointmentSchedule,
             @PathVariable final String applicationNumber, final Model model, final RedirectAttributes redirectAttributes) {
     	InspectionAppointmentSchedule schedule = buildAndSaveNewAppointment(inspectionAppointmentSchedule, applicationNumber);
         if (AppointmentSchedulePurpose.INSPECTION.equals(inspectionAppointmentSchedule.getAppointmentScheduleCommon().getPurpose())) {
@@ -125,11 +125,13 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
     }
 
     private InspectionAppointmentSchedule buildAndSaveNewAppointment(final InspectionAppointmentSchedule insAppointmentSchedule, final String applicationNumber) {
+        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+        insAppointmentSchedule.setInspectionApplication(permitInspection.getInspectionApplication());
     	InspectionAppointmentSchedule schedule = insAppointmentScheduleService.save(insAppointmentSchedule);
         return schedule;
     }
 
-    @GetMapping("/reschedule-appointment/{scheduleType}/{applicationNumber}")
+    @GetMapping("/rescheduleappointment/{scheduleType}/{applicationNumber}")
     public String showReScheduleAppointmentForInspection(@PathVariable final AppointmentSchedulePurpose scheduleType,
             @PathVariable final String applicationNumber, final Model model) {
         final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
@@ -146,7 +148,7 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
         return INS_RESCHEDULE_APPOINTMENT;
     }
 
-    @PostMapping("/reschedule-appointment/{scheduleType}/{applicationNumber}")
+    @PostMapping("/rescheduleappointment/{scheduleType}/{applicationNumber}")
     public String reScheduleAppointmentForOC(@Valid @ModelAttribute final InspectionAppointmentSchedule insAppointmentSchedule,
             @PathVariable final AppointmentSchedulePurpose scheduleType, @PathVariable final String applicationNumber,
             @RequestParam Long parentAppointmentScheduleId, final RedirectAttributes redirectAttributes) {

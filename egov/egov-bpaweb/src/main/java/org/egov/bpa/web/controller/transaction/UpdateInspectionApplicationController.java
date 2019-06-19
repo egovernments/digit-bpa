@@ -50,20 +50,26 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS;
+import static org.egov.bpa.utils.BpaConstants.DESIGNATION_AE;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_OVERSEER;
 import static org.egov.bpa.utils.BpaConstants.FIELD_INSPECTION_COMPLETED;
+import static org.egov.bpa.utils.BpaConstants.FWD_TO_AE_AFTER_TS_INSP;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_AE_FOR_APPROVAL;
+import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVERSEER_AFTER_TS_INSPN;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.MESSAGE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_TS_APPROVAL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -75,10 +81,12 @@ import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
-import org.egov.bpa.transaction.service.InspectionScheduleService;
+import org.egov.bpa.transaction.service.InConstructionInspectionService;
 import org.egov.bpa.transaction.service.PermitFeeService;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
@@ -103,31 +111,42 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     private static final String WORK_FLOW_ACTION = "workFlowAction";
     private static final String APPRIVALPOSITION = "approvalPosition";
     private static final String APPLICATION_HISTORY = "applicationHistory";
+    private static final String ADDITIONALRULE = "additionalRule";
+    private static final String AMOUNT_RULE = "amountRule";
+
+
 
     @Autowired
-    private InspectionScheduleService inspectionService;
+    private InConstructionInspectionService inspectionService;
     @Autowired
     private PositionMasterService positionMasterService;
     @Autowired
     protected PermitFeeService permitFeeService;
     @Autowired
     private InspectionApplicationService inspectionAppService;
+    
+    @ModelAttribute("inspectionApplication")
+    public InspectionApplication getInspectionApplication(@PathVariable final String applicationNumber) {
+    	return inspectionAppService.findByInspectionApplicationNumber(applicationNumber).getInspectionApplication();
+    }
 	
 
     @GetMapping("/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber) {
         final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
-        model.addAttribute("inspectionApplication",permitInspection.getInspectionApplication());
+       // model.addAttribute("inspectionApplication",permitInspection.getInspectionApplication());
         model.addAttribute("eDcrNumber",permitInspection.getApplication().geteDcrNumber());
+        model.addAttribute("planPermissionNumber",permitInspection.getApplication().getPlanPermissionNumber());
         prepareActions(model, permitInspection.getInspectionApplication());
-        loadCommonApplicationDetails(model, permitInspection);
+        loadFormData(model, permitInspection);
+        loadCommonApplicationDetails(model, permitInspection.getInspectionApplication());
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());       
         return "inspection-update-form";
     }
 
     
     @PostMapping("/update-submit/{applicationNumber}")
-    public String updateApplication(@Valid @ModelAttribute InspectionApplication inspectionApplication,
+    public String updateApplication(@ModelAttribute InspectionApplication inspectionApplication,
             @PathVariable final String applicationNumber,
             final BindingResult resultBinder,
             final HttpServletRequest request,
@@ -203,9 +222,8 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     @GetMapping("/success/{applicationNumber}")
     public String success(@PathVariable final String applicationNumber, final Model model) {
         final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
-        loadCommonApplicationDetails(model, permitInspection);
-        model.addAttribute("inspectionApplication", permitInspection.getInspectionApplication());
-        return "inspection-result";
+        loadCommonApplicationDetails(model, permitInspection.getInspectionApplication());
+        return "inspection-view";
     }
 
     private void prepareActions(final Model model, final InspectionApplication inspectionApplication) {
@@ -268,15 +286,79 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
 
     private boolean hasInspectionStatus(final String status) {
         return APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(status)
-                || APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(status);
+                || BpaConstants.INITIATEINSPECTION.equalsIgnoreCase(status);
     }
     
-    private void loadCommonApplicationDetails(Model model, PermitInspectionApplication permitInspectionApplication) {
-    	InspectionApplication inspectionApplication = permitInspectionApplication.getInspectionApplication();
-        model.addAttribute("workFlowBoundary", bpaUtils.getBoundaryForWorkflow(permitInspectionApplication.getApplication().getSiteDetail().get(0)).getId());
-        model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
+    
+    
+    private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
     	model.addAttribute("inspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(), inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
    }
+    
+    private void loadFormData(final Model model, final PermitInspectionApplication permitInspectionApplication) {
+        InspectionApplication inspectionApplication = permitInspectionApplication.getInspectionApplication();
+        model.addAttribute("stateType", inspectionApplication.getClass().getSimpleName());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+       
+            model.addAttribute(ADDITIONALRULE, BpaConstants.INSPECTIONAPPLICATION);
+            workflowContainer.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
+
+            if (inspectionApplication.getState() != null
+                    && inspectionApplication.getState().getValue().equalsIgnoreCase(BpaConstants.INITIATEINSPECTION)) {
+                workflowContainer.setPendingActions(inspectionApplication.getState().getNextAction());
+            }
+
+            // Town surveyor workflow
+            if (WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
+                workflowContainer.setPendingActions(WF_TS_APPROVAL_PENDING);
+                model.addAttribute("captureTSRemarks", true);
+            } else if (APPLICATION_STATUS_TS_INS.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
+                Assignment approverAssignment = bpaWorkFlowService
+                        .getApproverAssignment(inspectionApplication.getCurrentState().getOwnerPosition());
+                if (inspectionApplication.getCurrentState().getOwnerUser() != null) {
+                    List<Assignment> assignments = bpaWorkFlowService.getAssignmentByPositionAndUserAsOnDate(
+                    		inspectionApplication.getCurrentState().getOwnerPosition().getId(),
+                    		inspectionApplication.getCurrentState().getOwnerUser().getId(),
+                    		inspectionApplication.getCurrentState().getLastModifiedDate());
+                    if (!assignments.isEmpty())
+                        approverAssignment = assignments.get(0);
+                }
+                if (approverAssignment == null)
+                    approverAssignment = bpaWorkFlowService
+                            .getAssignmentsByPositionAndDate(inspectionApplication.getCurrentState().getOwnerPosition().getId(), new Date())
+                            .get(0);
+                if (DESIGNATION_AE.equals(approverAssignment.getDesignation().getName())) {
+                    workflowContainer.setPendingActions(FWD_TO_AE_AFTER_TS_INSP);
+                } else if (DESIGNATION_OVERSEER.equals(approverAssignment.getDesignation().getName())) {
+                    workflowContainer.setPendingActions(FWD_TO_OVERSEER_AFTER_TS_INSPN);
+                }
+                model.addAttribute("captureTSRemarks", false);
+            }
+        
+        prepareWorkflow(model, inspectionApplication, workflowContainer);
+        model.addAttribute("pendingActions", workflowContainer.getPendingActions());
+        model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
+        model.addAttribute("currentState", inspectionApplication.getCurrentState().getValue());
+        model.addAttribute("inspectionApplication", inspectionApplication);
+        model.addAttribute("workFlowBoundary", bpaUtils.getBoundaryForWorkflow(permitInspectionApplication.getApplication().getSiteDetail().get(0)).getId());
+        model.addAttribute("electionBoundary", permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary() != null
+                ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary().getId()
+                : null);
+        model.addAttribute("electionBoundaryName", permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary() != null
+                ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary().getName()
+                : "");
+        model.addAttribute("revenueBoundaryName", permitInspectionApplication.getApplication().getSiteDetail().get(0).getAdminBoundary() != null
+                ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getAdminBoundary().getName()
+                : "");
+        model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
+        Map<String, Object> attributes = model.asMap();
+        List<String> actions = Collections.emptyList();
+        if (!attributes.isEmpty())
+            actions = attributes.get("validActionList") == null ? Collections.emptyList()
+                    : (List<String>) attributes.get("validActionList");       
+        	
+        prepareActions(model, inspectionApplication);
+    }
 }

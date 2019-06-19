@@ -80,11 +80,10 @@ $(document).ready(
                          } else {
                              if ($('#loadingFloorDetailsFromEdcrRequire').val() === 'true' && $('#mode').val() && $('#mode').val() === 'new')
                                  resetDCRPopulatedValues();
-                             $('#edcrApplicationNumber').html(response.applicationNumber);
+	                         $('#edcrApplicationNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + $('#planPermissionNumber').val() + '\')" href="javascript:void(0);">' + response.applicationNumber  + '</a>');
                              $('#edcrUploadedDate').html(response.applicationDate);
                              $('#edcrDxfFile').html('<a href="/egi/downloadfile?fileStoreId=' + response.dxfFile.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.dxfFile.fileName + '</a>');
                              $('#edcrPlanReportOutput').html('<a href="/egi/downloadfile?fileStoreId=' + response.reportOutput.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.reportOutput.fileName + '</a>');
-                             updateNocRequired(response.plan.planInformation);
                              if ($('#loadingFloorDetailsFromEdcrRequire').val() === 'true' && $('#mode').val() && $('#mode').val() === 'new' && response.plan) {
                                  var existingBldgPresent = [];
                                  if (response.plan.blocks.length > 0)
@@ -171,7 +170,6 @@ $(document).ready(
                              }
                              if(response.plotArea) {
                                  $('#extentOfLand').val(response.plotArea.toFixed(2));
-                                 setExtentOfLand();
                              }
                              
                          }

@@ -62,21 +62,21 @@ import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
-@Table(name = "EGBPA_INSPECTION_SCHEDULE")
-@SequenceGenerator(name = InspectionSchedule.SEQ_INSPECTIONSCHEDULE, sequenceName = InspectionSchedule.SEQ_INSPECTIONSCHEDULE, allocationSize = 1)
-public class InspectionSchedule extends AbstractAuditable {
+@Table(name = "EGBPA_INCONSTRUCTION_INSPECTION")
+@SequenceGenerator(name = InConstructionInspection.SEQ_INCONSTINSPECTION, sequenceName = InConstructionInspection.SEQ_INCONSTINSPECTION, allocationSize = 1)
+public class InConstructionInspection extends AbstractAuditable {
 
-    protected static final String SEQ_INSPECTIONSCHEDULE = "SEQ_EGBPA_INSPECTION_SCHEDULE";
+    protected static final String SEQ_INCONSTINSPECTION = "SEQ_EGBPA_INCONSTRUCTION_INSPECTION";
     private static final long serialVersionUID = -3889308488871083896L;
 
     @Id
-    @GeneratedValue(generator = SEQ_INSPECTIONSCHEDULE, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_INCONSTINSPECTION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @NotNull
-    @JoinColumn(name = "inspectioncommon", nullable = false)
-    private InspectionCommon inspectionCommon;
+    @JoinColumn(name = "inspection", nullable = false)
+    private InspectionCommon inspection;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @NotNull
@@ -93,19 +93,19 @@ public class InspectionSchedule extends AbstractAuditable {
         this.id = id;
     }
 
-	public InspectionCommon getInspectionCommon() {
-		return inspectionCommon;
-	}
-
-	public void setInspectionCommon(InspectionCommon inspectionCommon) {
-		this.inspectionCommon = inspectionCommon;
-	}
-
 	public InspectionApplication getInspectionApplication() {
 		return inspectionApplication;
 	}
 
 	public void setInspectionApplication(InspectionApplication inspectionApplication) {
 		this.inspectionApplication = inspectionApplication;
+	}
+
+	public InspectionCommon getInspection() {
+		return inspection;
+	}
+
+	public void setInspection(InspectionCommon inspection) {
+		this.inspection = inspection;
 	}
 }

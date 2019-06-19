@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,47 +37,23 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.service;
+package org.egov.bpa.transaction.repository;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.apache.log4j.Logger;
 import org.egov.bpa.transaction.entity.InspectionApplication;
-import org.egov.bpa.transaction.entity.InspectionSchedule;
-import org.egov.bpa.transaction.repository.InspectionScheduleRepository;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.bpa.transaction.entity.oc.OCInspection;
+import org.egov.bpa.transaction.entity.InConstructionInspection;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Service
-@Transactional(readOnly = true)
-public class InspectionScheduleService {
+@Repository
+public interface InConstructionRepository extends JpaRepository<InConstructionInspection, Long> {
+    
+    List<InConstructionInspection> findByInspectionApplicationOrderByIdDesc(InspectionApplication inspectionAPplication);
+    
+    List<InConstructionInspection> findByIdOrderByIdAsc(Long id);
+    
+    InConstructionInspection findByInspectionApplication_ApplicationNumberAndInspection_InspectionNumber(String applicationNo, String inspectionNo);
 
-    private static final Logger LOGGER = Logger.getLogger(InspectionScheduleService.class);
-    
-    @PersistenceContext
-    private EntityManager entityManager;
-    
-    @Autowired
-    private InspectionScheduleRepository inspectionRepository;
-    
-    public InspectionSchedule findById(Long id) {
-        return inspectionRepository.getOne(id);
-    }
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-    
-    public List<InspectionSchedule> findByIdOrderByIdAsc(final Long id) {
-        return inspectionRepository.findByIdOrderByIdAsc(id);
-    }
-
-    public List<InspectionSchedule> findByInspectionApplicationOrderByIdAsc(final InspectionApplication application) {
-        return inspectionRepository.findByInspectionApplicationOrderByIdDesc(application);
-    }
 }

@@ -46,51 +46,15 @@
   ~
   --%>
 
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<form:form role="form" action="" modelAttribute="inspectionAppointmentSchedule"
-	id="insAppointmentReScheduleForm"
-	cssClass="form-horizontal form-groups-bordered"
-	enctype="multipart/form-data">
-	<input type="hidden" id="parentAppointmentScheduleId" name="parentAppointmentScheduleId" value="${appointmentScheduledList[0].id}" />
-	<input type="hidden" id="previoueappointmentDate"
-		name="insAppointmentappointmentDate"
-		value="${appointmentScheduledList[0].appointmentScheduleCommon.appointmentDate}" />
-	<input type="hidden" id="prevAppointmentTime"
-		name="prevAppointmentTime"
-		value="${appointmentScheduledList[0].appointmentScheduleCommon.appointmentTime}" />
-	<div class="row">
-		<div class="col-md-12">
-			<div class="panel panel-primary" data-collapsed="0">
-			<c:if test="${inspectionAppointmentSchedule.appointmentScheduleCommon.purpose eq 'INSPECTION'}">
-				<div class="panel-heading custom_form_panel_heading">
-					<div class="panel-title">
-					<spring:message code="lbl.existing.schedule.inspection" />
-					</div>
-				</div>
-			</c:if>
-				<jsp:include page="view-ins-scheduled-appointments.jsp"></jsp:include>
-			</div>
-			<div class="panel panel-primary" data-collapsed="0">
-			<c:if test="${inspectionAppointmentSchedule.appointmentScheduleCommon.purpose eq 'INSPECTION'}">
-			<div class="panel-heading custom_form_panel_heading">
-				<div class="panel-title">
-					<spring:message code="lbl.schedule.field.ins" />
-				</div>
-			</div>
-			</c:if>
-				<jsp:include page="ins-schedule-appointment-form.jsp"></jsp:include>
-			</div>
-			<div class="text-center">
-				<button type="submit" class='btn btn-primary' id="rescheduleSubmit">
-					<spring:message code='lbl.reschedule' />
-				</button>
-				<a href='javascript:void(0)' class='btn btn-default'
-					onclick='self.close()'><spring:message code='lbl.close' /></a>
-			</div>
-		</div>
-	</div>
-</form:form>
+<div class="alert alert-success" role="alert">
+    <c:if test="${not empty message}">
+        <strong>${message}</strong>
+    </c:if>
+</div>
+
+<jsp:include page="inconst-inspection-view-form.jsp"></jsp:include>

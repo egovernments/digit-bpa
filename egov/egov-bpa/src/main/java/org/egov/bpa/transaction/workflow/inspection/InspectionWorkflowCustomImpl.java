@@ -168,8 +168,9 @@ public abstract class InspectionWorkflowCustomImpl implements InspectionWorkflow
                 		wfBean.getAmountRule(), wfBean.getAdditionalRule(),
                         permitInspection.getInspectionApplication().getCurrentState().getValue(), null);
             } else if (permitInspection.getInspectionApplication().getStatus().getCode().equals(BpaConstants.INITIATEINSPECTION)) {
+            	
                 wfmatrix = inspectionWorkflowService.getWfMatrix(permitInspection.getInspectionApplication().getStateType(), null,
-                        null, wfBean.getAdditionalRule(), BpaConstants.WF_NEW_STATE, null);
+                        null, wfBean.getAdditionalRule(), permitInspection.getInspectionApplication().getCurrentState().getValue(), permitInspection.getInspectionApplication().getState().getNextAction());
             }   else {
                 wfmatrix = inspectionWorkflowService.getWfMatrix(permitInspection.getInspectionApplication().getStateType(), null,
                         null, wfBean.getAdditionalRule(), permitInspection.getInspectionApplication().getCurrentState().getValue(), permitInspection.getInspectionApplication().getState().getNextAction());
@@ -184,6 +185,7 @@ public abstract class InspectionWorkflowCustomImpl implements InspectionWorkflow
                 if (status != null)
                 	permitInspection.getInspectionApplication().setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 
+                  
 				if (wfBean.getWorkFlowAction().equalsIgnoreCase(BpaConstants.WF_REVOCATE_BUTTON)) {
 					permitInspection.getInspectionApplication().setStatus(getStatusByPassingCode("Revocated"));
 					permitInspection.getInspectionApplication().transition().end()
@@ -193,6 +195,18 @@ public abstract class InspectionWorkflowCustomImpl implements InspectionWorkflow
 	                .withOwner(pos).withOwner(ownerUser)
 	                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
 				}
+				
+				if (wfmatrix.getNextAction().contains("END"))
+					permitInspection.getInspectionApplication().transition().end()
+                               .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+                               .withComments(wfBean.getApproverComments()).withDateInfo(currentDate.toDate())
+                               .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
+                else
+                	permitInspection.getInspectionApplication().transition().progressWithStateCopy()
+                               .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+                               .withComments(wfBean.getApproverComments())
+                               .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos).withOwner(ownerUser)
+                               .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);             
                 
                 
             }
