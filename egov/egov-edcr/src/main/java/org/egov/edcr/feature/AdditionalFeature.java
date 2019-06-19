@@ -121,7 +121,7 @@ public class AdditionalFeature extends FeatureProcess {
     public static final String NEW_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 6.1m for new area.";
     public static final String NO_OF_FLOORS = "Maximum number of floors allowed";
     public static final String HEIGHT_BUILDING = "Maximum height of building allowed";
-    public static final String MIN_PLINTH_HEIGHT = " > 0.45";
+    public static final String MIN_PLINTH_HEIGHT = " >= 0.45";
     public static final String MIN_PLINTH_HEIGHT_DESC = "Minimum plinth height";
     public static final String MAX_BSMNT_CELLAR = "Number of basement/cellar allowed";
     public static final String MIN_INT_COURT_YARD = "0.15";

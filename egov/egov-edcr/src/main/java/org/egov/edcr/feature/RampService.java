@@ -75,8 +75,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RampService extends FeatureProcess {
 
-    private static final String SUBRULE_42_5_V = "42-5-v";
-    private static final String SUBRULE_40_A7 = "40A-7";
+    private static final String SUBRULE_50_C_4_B = " 50-c-4-b";
     private static final String SUBRULE_40 = "40";
     /*
      * private static final String SUBRULE_40_A1 = "40A(1)"; private static final String SUBRULE_40_A_7_DESC =
@@ -84,16 +83,16 @@ public class RampService extends FeatureProcess {
      * "Minimum Width of Ramp %s for block %s "; private static final String SUBRULE_40_DESC =
      * "Maximum slope of ramp %s for block %s ";
      */
-    private static final String SUBRULE_42_5_V_DESCRIPTION = "Maximum slope of ramp %s";
+    private static final String SUBRULE_50_C_4_B_DESCRIPTION = "Maximum slope of ramp %s";
 
     /*
      * private static final String SUBRULE_40_A_1_DESC = "DA Ramp"; private static final String SUBRULE_40_A_3_SLOPE_DESC =
      * "Maximum Slope of DA Ramp %s for block %s";
      */
-    private static final String SUBRULE_42_5_V_SLOPE_DESCRIPTION = "Maximum Slope of DA Ramp %s";
+    private static final String SUBRULE_50_C_4_B_SLOPE_DESCRIPTION = "Maximum Slope of DA Ramp %s";
     private static final String FLOOR = "Floor";
     // private static final String SUBRULE_40_A_3_WIDTH_DESCRIPTION = "Minimum Width of Ramp %s";
-    private static final String SUBRULE_42_5_V_SLOPE_MAN_DESC = "Slope of DA Ramp";
+    private static final String SUBRULE_50_C_4_B_SLOPE_MAN_DESC = "Slope of DA Ramp";
 
     @Override
     public Plan validate(Plan pl) {
@@ -256,10 +255,10 @@ public class RampService extends FeatureProcess {
                                 }
                             }
                             if (isSlopeDefined) {
-                                setReportOutputDetails(pl, SUBRULE_42_5_V, SUBRULE_42_5_V_SLOPE_MAN_DESC, "",
+                                setReportOutputDetails(pl, SUBRULE_50_C_4_B, SUBRULE_50_C_4_B_SLOPE_MAN_DESC, "",
                                         DcrConstants.OBJECTDEFINED_DESC, Result.Accepted.getResultVal(), scrutinyDetail1);
                             } else {
-                                setReportOutputDetails(pl, SUBRULE_42_5_V, SUBRULE_42_5_V_SLOPE_MAN_DESC, "",
+                                setReportOutputDetails(pl, SUBRULE_50_C_4_B, SUBRULE_50_C_4_B_SLOPE_MAN_DESC, "",
                                         DcrConstants.OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal(),
                                         scrutinyDetail1);
                             }
@@ -281,15 +280,15 @@ public class RampService extends FeatureProcess {
                                     }
                                 }
                                 if (valid) {
-                                    setReportOutputDetails(pl, SUBRULE_42_5_V,
-                                            String.format(SUBRULE_42_5_V_SLOPE_DESCRIPTION,
+                                    setReportOutputDetails(pl, SUBRULE_50_C_4_B,
+                                            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION,
                                                     mapOfRampNumberAndSlopeValues.get("daRampNumber")),
                                             expectedSlope.toString(),
                                             mapOfRampNumberAndSlopeValues.get("slope"), Result.Accepted.getResultVal(),
                                             scrutinyDetail2);
                                 } else {
-                                    setReportOutputDetails(pl, SUBRULE_42_5_V,
-                                            String.format(SUBRULE_42_5_V_SLOPE_DESCRIPTION, ""), expectedSlope.toString(),
+                                    setReportOutputDetails(pl, SUBRULE_50_C_4_B,
+                                            String.format(SUBRULE_50_C_4_B_SLOPE_DESCRIPTION, ""), expectedSlope.toString(),
                                             "Less than 0.08 for all da ramps", Result.Not_Accepted.getResultVal(),
                                             scrutinyDetail2);
                                 }
@@ -392,13 +391,13 @@ public class RampService extends FeatureProcess {
                                                         : " floor " + floor.getNumber();
                                                 if (valid) {
                                                     setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40,
-                                                            String.format(SUBRULE_42_5_V_DESCRIPTION,
+                                                            String.format(SUBRULE_50_C_4_B_DESCRIPTION,
                                                                     ramp.getNumber()),
                                                             value, expectedSlope.toString(), rampSlope.toString(),
                                                             Result.Accepted.getResultVal(), scrutinyDetail5);
                                                 } else {
                                                     setReportOutputDetailsFloorWiseWithDescription(pl, SUBRULE_40,
-                                                            String.format(SUBRULE_42_5_V_DESCRIPTION,
+                                                            String.format(SUBRULE_50_C_4_B_DESCRIPTION,
                                                                     ramp.getNumber()),
                                                             value, expectedSlope.toString(), rampSlope.toString(),
                                                             Result.Not_Accepted.getResultVal(), scrutinyDetail5);

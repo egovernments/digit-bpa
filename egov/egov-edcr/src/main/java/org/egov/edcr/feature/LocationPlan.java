@@ -62,7 +62,7 @@ import org.springframework.stereotype.Service;
 public class LocationPlan extends FeatureProcess {
 
 	private static final Logger LOG = Logger.getLogger(LocationPlan.class);
-	private static final String RULE_4_IA = "4-ia";
+	private static final String RULE_5_4_I_A = "5-4-i-a ";
 	public static final String LOCATION_PLAN_DESCRIPTION = "Location Plan";
 
 	@Override
@@ -83,7 +83,7 @@ public class LocationPlan extends FeatureProcess {
 
 		HashMap<String, String> errors = new HashMap<>();
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_4_IA);
+		details.put(RULE_NO, RULE_5_4_I_A);
 		details.put(DESCRIPTION, LOCATION_PLAN_DESCRIPTION);
 		if (pl.getLocationPlans() == null) {
 			errors.put("LOCATION_PLAN", "LOCATION_PLAN layer is not provided");

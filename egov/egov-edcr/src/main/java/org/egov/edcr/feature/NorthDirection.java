@@ -63,7 +63,7 @@ import org.springframework.stereotype.Service;
 public class NorthDirection extends FeatureProcess {
 
 	private static final Logger LOG = Logger.getLogger(NorthDirection.class);
-	private static final String RULE_4_I_I = "4-i-i";
+	private static final String RULE_5_4_I_I = "5-4-i-i";
 	public static final String NORTH_DIRECTION_DESCRIPTION = "North Direction";
 
 	@Override
@@ -84,7 +84,7 @@ public class NorthDirection extends FeatureProcess {
 
 		HashMap<String, String> errors = new HashMap<>();
 		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_4_I_I);
+		details.put(RULE_NO, RULE_5_4_I_I);
 		details.put(DESCRIPTION, NORTH_DIRECTION_DESCRIPTION);
 		if (pl.getNorthDirection() == null) {
 			errors.put("NORTH_DIRECTION", "NORTH_DIRECTION layer is not provided");

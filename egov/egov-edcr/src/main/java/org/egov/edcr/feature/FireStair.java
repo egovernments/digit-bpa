@@ -77,14 +77,14 @@ public class FireStair extends FeatureProcess {
     private static final String FLOOR = "Floor";
     private static final String RULE42_5_II = "42-5-ii-f";
     private static final String EXPECTED_NO_OF_RISE = "12";
-    private static final String NO_OF_RISE_DESCRIPTION = "Maximum no of rises required per flight for fire stair %s flight %s";
+    private static final String NO_OF_RISER_DESCRIPTION = "Maximum no of risers required per flight for fire stair %s flight %s";
     private static final String WIDTH_DESCRIPTION = "Minimum width for fire stair %s flight %s";
     private static final String TREAD_DESCRIPTION = "Minimum tread for fire stair %s flight %s";
-    private static final String NO_OF_RISES = "Number of rises ";
+    private static final String NO_OF_RISERS = "Number of risers ";
     private static final String FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION = "Flight polyline is not defined in layer ";
     private static final String FLIGHT_LENGTH_DEFINED_DESCRIPTION = "Flight polyline length is not defined in layer ";
     private static final String FLIGHT_WIDTH_DEFINED_DESCRIPTION = "Flight polyline width is not defined in layer ";
-    private static final String WIDTH_LANDING_DESCRIPTION = "Minimum width for fire stair %s landing %s";
+    private static final String WIDTH_LANDING_DESCRIPTION = "Minimum width for fire stair %s mid landing %s";
     private static final String FLIGHT_NOT_DEFINED_DESCRIPTION = "Fire stair flight is not defined in block %s floor %s";
 
     @Override
@@ -119,7 +119,7 @@ public class FireStair extends FeatureProcess {
                 scrutinyDetail3.addColumnHeading(4, PERMISSIBLE);
                 scrutinyDetail3.addColumnHeading(5, PROVIDED);
                 scrutinyDetail3.addColumnHeading(6, STATUS);
-                scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Tread");
+                scrutinyDetail3.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Tread width");
 
                 ScrutinyDetail scrutinyDetailRise = new ScrutinyDetail();
                 scrutinyDetailRise.addColumnHeading(1, RULE_NO);
@@ -128,7 +128,7 @@ public class FireStair extends FeatureProcess {
                 scrutinyDetailRise.addColumnHeading(4, PERMISSIBLE);
                 scrutinyDetailRise.addColumnHeading(5, PROVIDED);
                 scrutinyDetailRise.addColumnHeading(6, STATUS);
-                scrutinyDetailRise.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Number of rises");
+                scrutinyDetailRise.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Number of risers");
 
                 ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
                 scrutinyDetailLanding.addColumnHeading(1, RULE_NO);
@@ -137,7 +137,7 @@ public class FireStair extends FeatureProcess {
                 scrutinyDetailLanding.addColumnHeading(4, PERMISSIBLE);
                 scrutinyDetailLanding.addColumnHeading(5, PROVIDED);
                 scrutinyDetailLanding.addColumnHeading(6, STATUS);
-                scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Landing");
+                scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Mid landing");
 
                 ScrutinyDetail scrutinyDetailAbutBltUp = new ScrutinyDetail();
                 scrutinyDetailAbutBltUp.addColumnHeading(1, RULE_NO);
@@ -345,7 +345,7 @@ public class FireStair extends FeatureProcess {
                                         floor.getNumber(), fireStair.getNumber());
                                 errors.put("noofRise" + layerName,
                                         edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                                new String[] { NO_OF_RISES + layerName }, LocaleContextHolder.getLocale()));
+                                                new String[] { NO_OF_RISERS + layerName }, LocaleContextHolder.getLocale()));
                                 planDetail.addErrors(errors);
                             }
 
@@ -486,7 +486,7 @@ public class FireStair extends FeatureProcess {
                     String flightLayerName = String.format(DxfFileConstants.LAYER_FIRESTAIR_FLIGHT, block.getNumber(),
                             floor.getNumber(), fireStair.getNumber(), flight.getNumber());
                     errors.put("NoOfRisesCount" + flightLayerName,
-                            "Number of rises count should be greater than the count of length of flight dimensions defined in layer "
+                            "Number of risers count should be greater than the count of length of flight dimensions defined in layer "
                                     + flightLayerName);
                     planDetail.addErrors(errors);
                 }
@@ -516,12 +516,12 @@ public class FireStair extends FeatureProcess {
                     : " floor " + floor.getNumber();
             if (valid) {
                 setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
-                        String.format(NO_OF_RISE_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
+                        String.format(NO_OF_RISER_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
                         EXPECTED_NO_OF_RISE, String.valueOf(noOfRises), Result.Accepted.getResultVal(),
                         scrutinyDetail3);
             } else {
                 setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
-                        String.format(NO_OF_RISE_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
+                        String.format(NO_OF_RISER_DESCRIPTION, fireStair.getNumber(), flight.getNumber()),
                         EXPECTED_NO_OF_RISE, String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(),
                         scrutinyDetail3);
             }
