@@ -81,7 +81,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/home")
 public class HomeController {
 
-	public static final String NOC_DEPARTMENT_ROLE = "BPA_FIRE_NOC_ROLE";
+	public static final String BPA_FIRE_NOC_ROLE = "BPA_FIRE_NOC_ROLE";
+	public static final String BPA_AIPORT_AUTH_NOC_ROLE = "BPA_AIPORT_AUTH_NOC_ROLE";
+	public static final String BPA_NMA_NOC_ROLE = "BPA_NMA_NOC_ROLE";
+	public static final String BPA_ENVIRONMENT_NOC_ROLE = "BPA_ENVIRONMENT_NOC_ROLE";
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -191,7 +194,8 @@ public class HomeController {
 	private boolean isNOCDepartmentUser(User user) {
 		Boolean check = false;
 		for (Role r : user.getRoles()) {
-			if (NOC_DEPARTMENT_ROLE.equals(r.getName())) {
+			if (BPA_FIRE_NOC_ROLE.equals(r.getName()) || BPA_AIPORT_AUTH_NOC_ROLE.equals(r.getName())
+					|| BPA_NMA_NOC_ROLE.equals(r.getName()) || BPA_ENVIRONMENT_NOC_ROLE.equals(r.getName())) {
 				check = true;
 			}
 		}
