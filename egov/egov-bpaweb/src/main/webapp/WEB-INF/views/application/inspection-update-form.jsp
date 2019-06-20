@@ -70,9 +70,19 @@
 		<form:hidden path="" id="mode" name="mode" value="${mode}" />
 		<form:hidden path="" id="wfstateDesc"
 						 value="${inspectionApplication.state.value}" />
-	
+				<ul class="nav nav-tabs" id="settingstab">
+				<li class="active"><a data-toggle="tab" href="#applicant-info"
+									  data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
+				
+				<c:if test="${not empty inspectionApplication.inspections}">
+					<li><a data-toggle="tab" href="#view-inspection" data-tabidx=3><spring:message
+							code='lbl.inspection.appln' /></a></li>
+				</c:if></ul>
       </br>
-		   <div class="panel panel-primary docdetails" data-collapsed="0">
+		  <div class="tab-content">
+				<div id="applicant-info" class="tab-pane fade in active">
+				   <div class="panel panel-primary" data-collapsed="0">
+				  
 						<div class="panel-heading custom_form_panel_heading">
 							<div class="panel-title">
 								<spring:message code="lbl.inspection.application" />
@@ -117,10 +127,11 @@
 									value="${inspectionApplication.remarks}"
 									default="N/A"></c:out>
 							</div>
-						</div></div> 
+						</div>
+						
+			 </div>
 		
 		
-		<div id="application-info" class="tab-pane fade in active">
 		         <div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
 						<jsp:include page="edcr-application-details-form.jsp"></jsp:include>
 				 </div>
@@ -131,6 +142,23 @@
 						<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 					</div>
 		</div>
+		<c:if test="${not empty inspectionApplication.inspections}">
+					<div id="view-inspection" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-inconst-inspection-details.jsp"></jsp:include>
+						</div>
+						<c:if test="${null ne inspectionApplication.townSurveyorRemarks}">
+							<c:if test="${'Town Surveyor Inspected' eq inspectionApplication.status.code}">
+								<input type="hidden" id="viewTsRemarks" value="true">
+							</c:if>
+							<div class="panel panel-primary" data-collapsed="0">
+								<jsp:include page="view-town-surveyor-remarks.jsp"></jsp:include>
+							</div>
+						</c:if>
+					</div>
+				</c:if>
+				</div>
+		
 		
 		<div class="text-center">
 

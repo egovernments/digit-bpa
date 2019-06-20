@@ -50,11 +50,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-
+<c:if test="${not empty message}">
 <div class="alert alert-success" role="alert">
-    <c:if test="${not empty message}">
         <strong>${message}</strong>
-    </c:if>
 </div>
-
+</c:if>
 <jsp:include page="inconst-inspection-view-form.jsp"></jsp:include>

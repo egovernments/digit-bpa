@@ -972,5 +972,11 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inconst-inspection-edit.jsp" />
 	</definition>
+	<definition name="inconst-show-inspection" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.result" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inconst-show-inspection" />
+	</definition>
 	
 </tiles-definitions>

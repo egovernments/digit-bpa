@@ -170,11 +170,6 @@
 				</div>
 			</div>
 			<div id="oc-plan-scrutiny" class="tab-pane fade">
-			<c:if test="${not empty inConstructionInspection.inspection.planScrutinyChecklistForRule}">
-				<div class="panel panel-primary" data-collapsed="0">
-					<jsp:include page="inconst-view-plan-scrutiny-checklist-rule.jsp"></jsp:include>
-				</div>
-			</c:if>
 			<c:if test="${not empty inConstructionInspection.inspection.planScrutinyChecklistForDrawing}">
 				<div class="panel panel-primary" data-collapsed="0">
 					<jsp:include page="inconst-view-plan-scrutiny-checklist-drawing.jsp"></jsp:include>

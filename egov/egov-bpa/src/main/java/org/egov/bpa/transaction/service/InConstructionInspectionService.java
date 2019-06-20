@@ -278,7 +278,7 @@ public class InConstructionInspectionService {
         return inspectionNUmber.generateInspectionNumber("INSP");
     }
     
-    public List<InConstructionInspection> findByIdOrderByIdAsc(final Long id) {
+    public InConstructionInspection findByIdOrderByIdAsc(final Long id) {
         return inspectionRepository.findByIdOrderByIdAsc(id);
     }
 

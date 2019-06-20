@@ -41,6 +41,7 @@ package org.egov.bpa.web.controller.transaction.citizen;
 
 import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
+import org.egov.bpa.transaction.service.InConstructionInspectionService;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,8 @@ public class CitizenUpdateInspectionApplicationController {
 	protected WorkflowHistoryService workflowHistoryService;
     @Autowired
     private InspectionApplicationService inspectionAppService;
-	
+    @Autowired
+    private InConstructionInspectionService inspectionService;
     
     @GetMapping("/citizen/update/{applicationNumber}")
     public String createInspection(@PathVariable final String applicationNumber,final Model model) {
@@ -72,6 +74,7 @@ public class CitizenUpdateInspectionApplicationController {
     }
     
     private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
+    	model.addAttribute("inspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
         model.addAttribute("applicationHistory",
                 workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(), inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
    }

@@ -45,7 +45,6 @@ import java.util.List;
 
 import org.egov.bpa.transaction.entity.InConstructionInspection;
 import org.egov.bpa.transaction.entity.InspectionApplication;
-import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
@@ -175,18 +174,15 @@ public class UpdateInConstructionInspectionController extends BpaGenericApplicat
 	    @GetMapping("/show-inspection-details/{applicationNumber}/{inspectionNumber}")
 	    public String showInspectionDetails(@PathVariable final String applicationNumber,
 	            @PathVariable final String inspectionNumber, final Model model) {
-			final InConstructionInspectionService inConstInspectionService = (InConstructionInspectionService) specificNoticeService
+	    	final InConstructionInspectionService inConstInspectionService  = (InConstructionInspectionService) specificNoticeService
 	                .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
 			InConstructionInspection inConstructionInspection = inConstInspectionService.findByInspectionApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
 	        model.addAttribute("docketDetail", inConstructionInspection.getInspection().getDocket().get(0).getDocketDetail());
-	        model.addAttribute("inspection", inConstructionInspection);
 	        inConstInspectionService.buildDocketDetailForModifyAndViewList(inConstructionInspection.getInspection(), model);
 	        inConstInspectionService.prepareImagesForView(inConstructionInspection);
-	        model.addAttribute("inConstructionInspection", inConstructionInspection);
 	        inConstInspectionService.buildPlanScrutinyChecklistDetails(inConstructionInspection);
-	        model.addAttribute("planScrutinyValues", ChecklistValues.values());
-	        return SHOW_INSPECTION_DETAILS;
-	    }
-	    
+	        model.addAttribute("inConstructionInspection", inConstructionInspection);
+	        return INSPECTION_RESULT;
+	    }    
 
 }

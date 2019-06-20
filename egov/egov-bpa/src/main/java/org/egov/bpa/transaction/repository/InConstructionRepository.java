@@ -52,7 +52,7 @@ public interface InConstructionRepository extends JpaRepository<InConstructionIn
     
     List<InConstructionInspection> findByInspectionApplicationOrderByIdDesc(InspectionApplication inspectionAPplication);
     
-    List<InConstructionInspection> findByIdOrderByIdAsc(Long id);
+    InConstructionInspection findByIdOrderByIdAsc(Long id);
     
     InConstructionInspection findByInspectionApplication_ApplicationNumberAndInspection_InspectionNumber(String applicationNo, String inspectionNo);
 
