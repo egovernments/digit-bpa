@@ -64,7 +64,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class HeadRoom extends FeatureProcess {
     private static final String RULE42_5_ii = "42-5-ii";
-    private static final String RULE_42_5_ii_DESCRIPTION = "Minimum clear head-room";
+    private static final String RULE_42_5_ii_DESCRIPTION = "Minimum clear of stair head-room";
     private static final BigDecimal TWO_POINTTWO = BigDecimal.valueOf(2.2);
 
     @Override
@@ -83,7 +83,7 @@ public class HeadRoom extends FeatureProcess {
                 scrutinyDetail.addColumnHeading(3, REQUIRED);
                 scrutinyDetail.addColumnHeading(4, PROVIDED);
                 scrutinyDetail.addColumnHeading(5, STATUS);
-                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Headroom");
+                scrutinyDetail.setKey("Block_" + block.getNumber() + "_" + "Stair Headroom");
 
                 org.egov.common.entity.edcr.HeadRoom headRoom = block.getBuilding().getHeadRoom();
 
