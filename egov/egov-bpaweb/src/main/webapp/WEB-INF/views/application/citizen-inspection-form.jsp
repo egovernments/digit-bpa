@@ -89,7 +89,7 @@
 			
     	     <div class="panel panel-primary docdetails" data-collapsed="0">  
     	     <div class="panel-heading custom_form_panel_heading">				
-	                	<div class="panel-title">Comments</div>
+	                	<div class="panel-title"><spring:message code="lbl.applicant.remarks" /></div>
 					</div>	  	    
  				   		 <div class="form-group" >		
 		                      <label class="col-sm-2 control-label text-right"><%-- <spring:message code="lbl.remarks" /> --%></label>

@@ -49,7 +49,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -110,9 +109,7 @@ public class CitizenInspectionApplicationController {
         WorkflowBean wfBean = new WorkflowBean();
 
         BpaApplication application = applicationService.findByApplicationNumber(applicationNumber);
-        InspectionApplication inspection = new InspectionApplication();
         permitInspectionApplication.setApplication(application);
-        permitInspectionApplication.setInspectionApplication(inspection);
         
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
 

@@ -111,7 +111,7 @@
 							</div>
 							
 							<div class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.remarks" />
+								<spring:message code="lbl.applicant.remarks" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
 								<c:out
