@@ -755,7 +755,8 @@ $(document).ready(function() {
         $(document).on('change',"#occupancyapplnlevel",function () {
             //$('.amenityHideShow').show();
             //resetValuesForAmenitiesOfOneDayPermit();
-            if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
+            if($("#occupancyapplnlevel option:selected" ).text() == 'Residential' &&
+                              $("#applicationType option:selected").text() != 'Low Risk') {
                 $('#oneDayPermitSec').show();
                 $('#isOneDayPermitApplication').prop('checked', false);
                 $('#isOneDayPermitApplication').val(false);
@@ -893,7 +894,16 @@ $(document).ready(function() {
         }
         
     }
-
+  
+    $('#occupancyapplnlevel').on('change', function() {
+    	   if($("#occupancyapplnlevel option:selected" ).text() == 'Residential' && 
+    			               $("#applicationType option:selected").text() == 'Low Risk' ) 
+    		   $('#oneDayPermitSec').hide();
+    	   else
+    		   $('#oneDayPermitSec').show();   
+    });
+    
+    
     if ($('#isOneDayPermitApplication').is(':checked')){
         $('#oneDayPermitSec').show();
         $('#applicationType').attr('required',false);

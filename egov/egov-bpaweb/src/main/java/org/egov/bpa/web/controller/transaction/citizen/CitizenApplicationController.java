@@ -392,8 +392,10 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         if (bpaApplication.getIsOneDayPermitApplication())
             bpaApplication.setApplicationType(applicationTypeService.findByName(onedaypermit));
 
+       
         Map<String, String> eDcrApplDetails = bpaDcrService
                 .checkIsEdcrUsedInBpaApplication(bpaApplication.geteDcrNumber());
+        if(!eDcrApplDetails.isEmpty())
         if (eDcrApplDetails.get("isExists").equals("true")) {
             model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
@@ -432,7 +434,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 }
             }
         }
-
+    
         applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
         bpaUtils.saveOrUpdateBoundary(bpaApplication);
         /*
@@ -507,7 +509,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                         }
                     }
             }
-        }
+        } 
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
         if (bpaUtils.isApplicationFeeCollectionRequired())
@@ -579,14 +581,14 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             redirectAttributes.addFlashAttribute(MESSAGE,
                     "Successfully forwarded application to the citizen with application number "
                             + bpaApplicationRes.getApplicationNumber() + ".");
-
+        
         if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted()
                 && workFlowAction != null && workFlowAction.equals(WF_SEND_BUTTON))
             bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
-
+        
         return "redirect:/application/citizen/success/" + bpaApplicationRes.getApplicationNumber();
     }
-
+    
     @GetMapping("/success/{applicationNumber}")
     public String success(@PathVariable final String applicationNumber, final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);

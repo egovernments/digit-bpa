@@ -214,7 +214,7 @@
 										</form:select></td>
 									<td><form:input type="text"
 											class="form-control table-input patternvalidation floorNumber floor-details-mandatory text-center"
-											data-pattern="number"
+											data-pattern="number"  
 											path="buildingDetail[0].applicationFloorDetails[0].floorNumber"
 											maxlength="3" value="${proposedBuildFloorDetail.floorNumber}" /></td>
 									<td><form:select
@@ -335,7 +335,7 @@
 							data-pattern="number" maxlength="3"
 							id="floorCount${bldgCounter.index}" readonly="true"
 							path="buildingDetail[${bldgCounter.index}].floorCount"
-							required="required" />
+							required="required"/>
 						<form:errors
 							path="buildingDetail[${bldgCounter.index}].floorCount"
 							cssClass="add-margin error-msg" />
@@ -493,7 +493,7 @@
 			</div>
 		</div>
 	</div>--%>
-			</div>
+			</div> </div>
 		</c:forEach>
 	</div>
 	<%-- <div class="text-right add-padding">
