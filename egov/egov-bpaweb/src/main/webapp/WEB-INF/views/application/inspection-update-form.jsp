@@ -190,7 +190,6 @@
 			</div>
 				
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.portal.submit.appln'/>" /> 
-			    <input	type="hidden" id="applicationNumber" value="" /> 
 			    <input type="hidden" id="eDcrNumber" value="${eDcrNumber}"/>
 			    <input type="hidden" id="planPermissionNumber" value="${planPermissionNumber}"/>			    
 

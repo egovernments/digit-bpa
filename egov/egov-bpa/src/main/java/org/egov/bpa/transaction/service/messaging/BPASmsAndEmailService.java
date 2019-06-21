@@ -66,6 +66,8 @@ import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.BpaNocApplication;
+import org.egov.bpa.transaction.entity.InspectionApplication;
+import org.egov.bpa.transaction.entity.InspectionAppointmentSchedule;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
@@ -305,6 +307,8 @@ public class BPASmsAndEmailService {
 			}
 		}
 	}
+	
+	
 
 	public void sendSMSAndEmailToscheduleAppointment(final BpaAppointmentSchedule scheduleDetails,
 													 final BpaApplication bpaApplication) {
@@ -321,7 +325,8 @@ public class BPASmsAndEmailService {
 
 		}
 	}
-
+	
+	
 	public void sendSMSAndEmailToApplicantForLettertoparty(final BpaApplication bpaApplication) {
 		if (isSmsEnabled() || isEmailEnabled()) {
 			ApplicationStakeHolder applnStakeHolder = bpaApplication.getStakeHolder().get(0);
@@ -378,24 +383,7 @@ public class BPASmsAndEmailService {
                                                bpaApplication, SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
                       subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_NEW,
                                                 bpaApplication.getApplicationNumber());
-        }
-                /*   else if ((BpaConstants.APPLICATION_STATUS_SUBMITTED).equalsIgnoreCase(bpaApplication.getStatus().getCode())
-                && bpaUtils.isCitizenAcceptanceRequired() && bpaApplication.isCitizenAccepted()) {
-            smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_BPA_APPLN_STC_SUBMIT, applicantName, bpaApplication,
-                    SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
-            body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_BPA_APPLN_STC_SUBMIT, applicantName,
-                    bpaApplication, SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
-            subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_NEW, bpaApplication.getApplicationNumber());
-        }*/
-        /*else if ((BpaConstants.APPLICATION_STATUS_SUBMITTED).equalsIgnoreCase(bpaApplication.getStatus().getCode())
-                && !bpaUtils.isCitizenAcceptanceRequired() && !bpaApplication.isCitizenAccepted()) {
-            smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_BPA_APPLN_STC_FALSE, applicantName, bpaApplication,
-                    SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
-            body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_BPA_APPLN_STC_FALSE, applicantName,
-                    bpaApplication, SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
-            subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_NEW, bpaApplication.getApplicationNumber());
-        }*/
-		
+        }               		
 		if (mobileNo != null && smsMsg != null)
 			notificationService.sendSMS(mobileNo, smsMsg);
 		if (email != null && body != null && reportOutput != null && fileName != null) {
@@ -404,67 +392,18 @@ public class BPASmsAndEmailService {
 			notificationService.sendEmail(email, subject, body);
 		}
 	}
-
-	private void buildSmsAndEmailForScheduleAppointment(final BpaAppointmentSchedule scheduleDetails,
-														final BpaApplication bpaApplication, final String applicantName, final String mobileNo, final String email) {
-		String smsMsg = EMPTY;
-		String body = EMPTY;
-		String subject = EMPTY;
-		if (AppointmentSchedulePurpose.INSPECTION.equals(scheduleDetails.getPurpose())) {
-			if (!scheduleDetails.isPostponed()) {
-				smsMsg = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
-						MSG_KEY_SMS_BPA_FIELD_INS);
-				body = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
-						BODY_KEY_EMAIL_BPA_FIELD_INS);
-				subject = emailSubjectforEmailForScheduleAppointmentForInspection(scheduleDetails, bpaApplication,
-						SUBJECT_KEY_EMAIL_BPA_FIELD_INS);
-			} else {
-				smsMsg = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
-						MSG_KEY_SMS_BPA_FIELD_INS_RESCHE);
-				body = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
-						BODY_KEY_EMAIL_BPA_FIELD_INS_RESCHE);
-				subject = emailSubjectforEmailForScheduleAppointmentForInspection(scheduleDetails, bpaApplication,
-						SUBJECT_KEY_EMAIL_BPA_FIELD_INS_RESCHE);
-			}
-		}
-		if (isNotBlank(mobileNo) && isNotBlank(smsMsg))
-			notificationService.sendSMS(mobileNo, smsMsg);
-		if (isNotBlank(email) && isNotBlank(body))
-			notificationService.sendEmail(email, subject, body);
-	}
-
-	private String buildMessageDetailsForScheduleAppointment(final BpaAppointmentSchedule scheduleDetails,
-															 final BpaApplication bpaApplication, String applicantName, String msgKey) {
-		String mesg = EMPTY;
-		if (AppointmentSchedulePurpose.INSPECTION.equals(scheduleDetails.getPurpose())) {
-
-			if (!scheduleDetails.isPostponed()) {
-				mesg = bpaMessageSource.getMessage(msgKey,
-						new String[]{applicantName, DateUtils.toDefaultDateFormat(scheduleDetails.getAppointmentDate()),
-								scheduleDetails.getAppointmentTime(),
-								bpaApplication.getApplicationNumber(), getMunicipalityName()},
-						null);
-			} else {
-				mesg = bpaMessageSource.getMessage(msgKey,
-						new String[]{applicantName,
-								DateUtils.toDefaultDateFormat(scheduleDetails.getAppointmentDate()),
-								scheduleDetails.getAppointmentTime(),
-								bpaApplication.getApplicationNumber(),
-								scheduleDetails.getPostponementReason(), getMunicipalityName()},
-						null);
-			}
-		}
-		return mesg;
-	}
+	
+	
 
 	private String emailSubjectforEmailForScheduleAppointmentForInspection(final BpaAppointmentSchedule scheduleDetails,
-																		   final BpaApplication bpaApplication, String msgKey) {
-		final Locale locale = LocaleContextHolder.getLocale();
+																		   final BpaApplication bpaApplication, String msgKey) {		final Locale locale = LocaleContextHolder.getLocale();
 		return bpaMessageSource.getMessage(msgKey,
 				new String[]{DateUtils.toDefaultDateFormat(scheduleDetails.getAppointmentDate()),
 						scheduleDetails.getAppointmentTime(), bpaApplication.getApplicationNumber()},
 				locale);
 	}
+	
+	
 
 	private String emailSubjectforEmailByCodeAndArgs(String code, String applicationNumber) {
 		final Locale locale = LocaleContextHolder.getLocale();
@@ -493,6 +432,8 @@ public class BPASmsAndEmailService {
 		}
 		return body;
 	}
+	
+	
 
 	private String getCancelApplnMessage(String code, String applicantName, BpaApplication bpaApplication) {
 		StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication.getStateHistory());
@@ -853,6 +794,295 @@ public class BPASmsAndEmailService {
 			notificationService.sendSMS(mobileNumber, smsMsg);
 		if (isNotBlank(emailId) && isNotBlank(body))
 			notificationService.sendEmail(emailId, subject, body);
+	}
+	
+	private void buildSmsAndEmailForScheduleAppointment(final BpaAppointmentSchedule scheduleDetails,
+			final BpaApplication bpaApplication, final String applicantName, final String mobileNo, final String email) {
+		String smsMsg = EMPTY;
+		String body = EMPTY;
+		String subject = EMPTY;
+		if (AppointmentSchedulePurpose.INSPECTION.equals(scheduleDetails.getPurpose())) {
+		if (!scheduleDetails.isPostponed()) {
+		smsMsg = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
+		MSG_KEY_SMS_BPA_FIELD_INS);
+		body = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
+		BODY_KEY_EMAIL_BPA_FIELD_INS);
+		subject = emailSubjectforEmailForScheduleAppointmentForInspection(scheduleDetails, bpaApplication,
+		SUBJECT_KEY_EMAIL_BPA_FIELD_INS);
+		} else {
+		smsMsg = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
+		MSG_KEY_SMS_BPA_FIELD_INS_RESCHE);
+		body = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
+		BODY_KEY_EMAIL_BPA_FIELD_INS_RESCHE);
+		subject = emailSubjectforEmailForScheduleAppointmentForInspection(scheduleDetails, bpaApplication,
+		SUBJECT_KEY_EMAIL_BPA_FIELD_INS_RESCHE);
+		}
+		}
+		if (isNotBlank(mobileNo) && isNotBlank(smsMsg))
+		notificationService.sendSMS(mobileNo, smsMsg);
+		if (isNotBlank(email) && isNotBlank(body))
+		notificationService.sendEmail(email, subject, body);
+	}
+	
+
+
+	public void sendInsSMSAndEmail(final InspectionApplication inspectionApplication,final BpaApplication bpaApplication, ReportOutput reportOutput, String fileName) {
+		String mobileNo;
+		String email;
+		String applicantName;
+		String loginUserName;
+		String password;
+		if (isSmsEnabled() || isEmailEnabled()) {
+			ApplicationStakeHolder applnStakeHolder = bpaApplication.getStakeHolder().get(0);
+		if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
+		        Applicant applicant = applnStakeHolder.getApplication().getOwner();
+			applicantName = applicant.getName();
+			email = applicant.getEmailId();
+			mobileNo = applicant.getUser().getMobileNumber();
+			loginUserName = applicant.getUser().getUsername();
+			password = mobileNo;
+			buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email, loginUserName, password, reportOutput, fileName);
+		}
+		if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive() && (bpaUtils.isCitizenAcceptanceRequired() && bpaApplication.isCitizenAccepted())) {
+			applicantName = applnStakeHolder.getStakeHolder().getName();
+			email = applnStakeHolder.getStakeHolder().getEmailId();
+			mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();
+			loginUserName = applnStakeHolder.getStakeHolder().getUsername();
+			password = EMPTY;
+			buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email, loginUserName, password, reportOutput, fileName);
+		}
+	  }
+	}
+
+
+	public void sendSMSAndEmailToInsscheduleAppointment(final InspectionAppointmentSchedule scheduleDetails, final InspectionApplication insApplication,
+		 final BpaApplication bpaApplication) {
+		if (isSmsEnabled() || isEmailEnabled()) {
+			ApplicationStakeHolder applnStakeHolder = bpaApplication.getStakeHolder().get(0);
+			if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
+				Applicant owner = applnStakeHolder.getApplication().getOwner();
+				buildSmsAndEmailForInsScheduleAppointment(scheduleDetails, insApplication, owner.getName(), owner.getUser().getMobileNumber(), owner.getEmailId());
+			}
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
+				StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
+				buildSmsAndEmailForInsScheduleAppointment(scheduleDetails, insApplication, stakeHolder.getName(), stakeHolder.getMobileNumber(), stakeHolder.getEmailId());
+			}		
+		}
+	}
+
+
+	private void buildSmsAndEmailForInsScheduleAppointment(final InspectionAppointmentSchedule scheduleDetails, final InspectionApplication inspectionApplication, 
+		final String applicantName, final String mobileNo, final String email) {
+		String smsMsg = EMPTY;
+		String body = EMPTY;
+		String subject = EMPTY;
+		if (AppointmentSchedulePurpose.INSPECTION.equals(scheduleDetails.getAppointmentScheduleCommon().getPurpose())) {
+			if (!scheduleDetails.getAppointmentScheduleCommon().isPostponed()) {
+				smsMsg = buildMessageDetailsForInsScheduleAppointment(scheduleDetails, inspectionApplication, applicantName,
+				MSG_KEY_SMS_BPA_FIELD_INS);
+				body = buildMessageDetailsForInsScheduleAppointment(scheduleDetails, inspectionApplication, applicantName,
+				BODY_KEY_EMAIL_BPA_FIELD_INS);
+				subject = emailSubjectforEmailForInsScheduleAppointmentForInspection(scheduleDetails, inspectionApplication,
+				SUBJECT_KEY_EMAIL_BPA_FIELD_INS);
+			} else {
+				smsMsg = buildMessageDetailsForInsScheduleAppointment(scheduleDetails, inspectionApplication, applicantName,
+				MSG_KEY_SMS_BPA_FIELD_INS_RESCHE);
+				body = buildMessageDetailsForInsScheduleAppointment(scheduleDetails, inspectionApplication, applicantName,
+				BODY_KEY_EMAIL_BPA_FIELD_INS_RESCHE);
+				subject = emailSubjectforEmailForInsScheduleAppointmentForInspection(scheduleDetails, inspectionApplication,
+				SUBJECT_KEY_EMAIL_BPA_FIELD_INS_RESCHE);
+		}
+		}
+		if (isNotBlank(mobileNo) && isNotBlank(smsMsg))
+		notificationService.sendSMS(mobileNo, smsMsg);
+		if (isNotBlank(email) && isNotBlank(body))
+		notificationService.sendEmail(email, subject, body);
+	}
+
+	private String buildMessageDetailsForInsScheduleAppointment(final InspectionAppointmentSchedule scheduleDetails,
+														 final InspectionApplication insApplication, String applicantName, String msgKey) {
+	String mesg = EMPTY;
+	if (AppointmentSchedulePurpose.INSPECTION.equals(scheduleDetails.getAppointmentScheduleCommon().getPurpose())) {
+	
+		if (!scheduleDetails.getAppointmentScheduleCommon().isPostponed()) {
+			mesg = bpaMessageSource.getMessage(msgKey,
+					new String[]{applicantName, DateUtils.toDefaultDateFormat(scheduleDetails.getAppointmentScheduleCommon().getAppointmentDate()),
+							scheduleDetails.getAppointmentScheduleCommon().getAppointmentTime(),
+							insApplication.getApplicationNumber(), getMunicipalityName()},
+					null);
+		} else {
+			mesg = bpaMessageSource.getMessage(msgKey,
+					new String[]{applicantName,
+							DateUtils.toDefaultDateFormat(scheduleDetails.getAppointmentScheduleCommon().getAppointmentDate()),
+							scheduleDetails.getAppointmentScheduleCommon().getAppointmentTime(),
+							insApplication.getApplicationNumber(),
+							scheduleDetails.getAppointmentScheduleCommon().getPostponementReason(), getMunicipalityName()},
+					null);
+		}
+	}
+	return mesg;
+	}
+
+	private String buildMessageDetailsForScheduleAppointment(final BpaAppointmentSchedule scheduleDetails,
+		 final BpaApplication bpaApplication, String applicantName, String msgKey) {
+		String mesg = EMPTY;
+		if (AppointmentSchedulePurpose.INSPECTION.equals(scheduleDetails.getPurpose())) {
+		
+		if (!scheduleDetails.isPostponed()) {
+			mesg = bpaMessageSource.getMessage(msgKey,
+			new String[]{applicantName, DateUtils.toDefaultDateFormat(scheduleDetails.getAppointmentDate()),
+			scheduleDetails.getAppointmentTime(),
+			bpaApplication.getApplicationNumber(), getMunicipalityName()}, null);
+		} else {
+			mesg = bpaMessageSource.getMessage(msgKey,
+			new String[]{applicantName,
+			DateUtils.toDefaultDateFormat(scheduleDetails.getAppointmentDate()),
+			scheduleDetails.getAppointmentTime(),
+			bpaApplication.getApplicationNumber(),
+			scheduleDetails.getPostponementReason(), getMunicipalityName()},
+			null);
+		}
+		}
+		return mesg;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void sendSMSAndEmailForInspection(final InspectionApplication inspectionApplication, final BpaApplication bpaApplication, ReportOutput reportOutput, String fileName) {
+		String mobileNo;
+		String email;
+		String applicantName;
+		String loginUserName;
+		String password;
+		if (isSmsEnabled() || isEmailEnabled()) {
+			ApplicationStakeHolder applnStakeHolder = bpaApplication.getStakeHolder().get(0);
+			if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
+			        Applicant applicant = applnStakeHolder.getApplication().getOwner();
+				applicantName = applicant.getName();
+				email = applicant.getEmailId();
+				mobileNo = applicant.getUser().getMobileNumber();
+				loginUserName = applicant.getUser().getUsername();
+				password = mobileNo;
+				buildSmsAndEmailForInsAppln(inspectionApplication, bpaApplication, applicantName, mobileNo, email, loginUserName, password, reportOutput, fileName);
+			}
+			if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive() && (bpaUtils.isCitizenAcceptanceRequired() && bpaApplication.isCitizenAccepted())) {
+				applicantName = applnStakeHolder.getStakeHolder().getName();
+				email = applnStakeHolder.getStakeHolder().getEmailId();
+				mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();
+				loginUserName = applnStakeHolder.getStakeHolder().getUsername();
+				password = EMPTY;
+				buildSmsAndEmailForInsAppln(inspectionApplication, bpaApplication, applicantName, mobileNo, email, loginUserName, password, reportOutput, fileName);
+			}
+		}
+	}
+	
+	
+	private void buildSmsAndEmailForInsAppln(final InspectionApplication inspectionApplication, final BpaApplication bpaApplication, final String applicantName,
+			final String mobileNo, final String email, final String loginUserName, final String password, ReportOutput reportOutput, String fileName) {
+		String smsMsg = EMPTY;
+		String body = EMPTY;
+		String subject = EMPTY;
+		String smsCode;
+		String mailCode;
+		if ((BpaConstants.INITIATEINSPECTION).equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
+			if(!bpaUtils.logedInuserIsBusinessUser()) {
+				smsCode = "msg.stkhldr.ins.initiation.sms.body";
+				mailCode ="msg.stkhldr.ins.initiation.email.body";			
+				smsMsg = insStakeholderSmsBody(smsCode, applicantName, inspectionApplication.getApplicationNumber(),
+					bpaApplication.getPlanPermissionNumber(), loginUserName, password);
+				body = insStakeholderEmailBody(mailCode, applicantName, inspectionApplication.getApplicationNumber(),
+					bpaApplication.getPlanPermissionNumber(), loginUserName, password);
+			}
+			else {
+				smsCode = "msg.citizen.ins.initiation.sms.body";
+				mailCode ="msg.citizen.ins.initiation.email.body";
+				smsMsg = insSmsBodyByCodeAndArgsWithType(smsCode, applicantName, inspectionApplication.getApplicationNumber(),
+						bpaApplication.getPlanPermissionNumber(), loginUserName, password);
+				body = insEmailBodyByCodeAndArgsWithType(mailCode, applicantName, inspectionApplication.getApplicationNumber(),
+						bpaApplication.getPlanPermissionNumber(), loginUserName, password);
+			}
+			subject = emailSubjectforEmailByCodeAndArgs("msg.inspection.app.email.sub", inspectionApplication.getApplicationNumber());
+		} else if (BpaConstants.APPROVED.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
+			smsCode = "msg.inspection.approved.sms.body";
+			mailCode ="msg.inspection.approved.email.body";
+			smsMsg = insSmsBodyByCodeAndArgsWithType(smsCode, applicantName,
+					inspectionApplication.getApplicationNumber(),bpaApplication.getPlanPermissionNumber(), EMPTY, EMPTY);
+			body = insEmailBodyByCodeAndArgsWithType(mailCode, applicantName,
+					inspectionApplication.getApplicationNumber(), bpaApplication.getPlanPermissionNumber(), EMPTY, EMPTY);
+			subject = emailSubjectforEmailByCodeAndArgs("msg.inspection.app.email.sub", bpaApplication.getApplicationNumber());
+		} else if (BpaConstants.APPLICATION_STATUS_REVOKED.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
+			smsCode = "msg.inspection.revoked.sms.body";
+			mailCode ="msg.inspection.revoked.email.body";
+			smsMsg = insSmsBodyByCodeAndArgsWithType(smsCode, applicantName,
+					inspectionApplication.getApplicationNumber(),bpaApplication.getPlanPermissionNumber(), EMPTY, EMPTY);
+			body = insEmailBodyByCodeAndArgsWithType(mailCode, applicantName,
+					inspectionApplication.getApplicationNumber(), bpaApplication.getPlanPermissionNumber(), EMPTY, EMPTY);
+			subject = emailSubjectforEmailByCodeAndArgs("msg.inspection.app.email.sub", bpaApplication.getApplicationNumber());
+		} 		
+		if (mobileNo != null && smsMsg != null)
+			notificationService.sendSMS(mobileNo, smsMsg);
+		if (email != null && body != null && reportOutput != null && fileName != null) {
+			notificationService.sendEmailWithAttachment(email, subject, body, APP_PDF, fileName, reportOutput.getReportOutputData());
+		} else if (email != null && body != null) {
+			notificationService.sendEmail(email, subject, body);
+		}
+	}
+
+
+	private String insSmsBodyByCodeAndArgsWithType(String code, String applicantName, String applicationNumber,
+			String planPermissionNumber, String loginUserName, String password) {
+		return bpaMessageSource.getMessage(code,
+			new String[]{planPermissionNumber, applicationNumber, getMunicipalityName(),ApplicationThreadLocals.getDomainURL()},
+			null);
+	}
+	
+	private String insEmailBodyByCodeAndArgsWithType(String code, String applicantName, String applicationNumber, String planPermissionNumber,
+			  String loginUserName, String password) {
+		return bpaMessageSource.getMessage(code, new String[]{applicantName, planPermissionNumber,	applicationNumber, getMunicipalityName(),ApplicationThreadLocals.getDomainURL()}, null);
+		
+	}
+	
+	private String insStakeholderSmsBody(String code, String applicantName, String applicationNumber,
+			String planPermissionNumber, String loginUserName, String password) {
+		
+			return  bpaMessageSource.getMessage(code,
+			new String[]{applicantName, bpaUtils.getCurrentUser().getName(), planPermissionNumber, applicationNumber, getMunicipalityName(),ApplicationThreadLocals.getDomainURL()},
+			null);
+		
+	}
+	
+	private String insStakeholderEmailBody(String code, String applicantName, String applicationNumber, String planPermissionNumber,
+			  String loginUserName, String password) {
+		return bpaMessageSource.getMessage(code,
+			new String[]{bpaUtils.getCurrentUser().getName(), planPermissionNumber, applicationNumber, 	getMunicipalityName(),ApplicationThreadLocals.getDomainURL()}, null);
+	}
+
+
+	private String emailSubjectforEmailForInsScheduleAppointmentForInspection(final InspectionAppointmentSchedule inspectionAppointmentSchedule,
+				   final InspectionApplication inspectionApplication, String msgKey) {
+		final Locale locale = LocaleContextHolder.getLocale();
+		return bpaMessageSource.getMessage(msgKey,
+		new String[]{DateUtils.toDefaultDateFormat(inspectionAppointmentSchedule.getAppointmentScheduleCommon().getAppointmentDate()),
+				inspectionAppointmentSchedule.getAppointmentScheduleCommon().getAppointmentTime(), inspectionApplication.getApplicationNumber()},
+				locale);
 	}
 
 }

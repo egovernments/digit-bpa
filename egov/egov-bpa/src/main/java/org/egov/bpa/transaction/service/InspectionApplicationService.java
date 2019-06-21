@@ -92,7 +92,7 @@ public class InspectionApplicationService {
     
     @Transactional
 	public PermitInspectionApplication findByInspectionApplicationNumber(final String appNo) {
-		return inspectionReposiory.findByInspectionApplicationApplicationNumber(appNo);
+		return inspectionReposiory.findByInspectionApplication_ApplicationNumber(appNo);
 	}
     
     public String generateInspectionNumber() {
@@ -108,7 +108,7 @@ public class InspectionApplicationService {
         if (permitInspection.getInspectionApplication().getApplicationNumber() == null)
         	permitInspection.getInspectionApplication().setApplicationNumber(inspectionService.generateInspectionNumber());
         if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)) {
-            final BpaStatus bpaStatus = statusRepository.findByCodeAndModuleType(APPLICATION_STATUS_SUBMITTED, BpaConstants.INSPECTION_MODULE_TYPE);
+            final BpaStatus bpaStatus = statusRepository.findByCodeAndModuleType(BpaConstants.INITIATEINSPECTION, BpaConstants.INSPECTION_MODULE_TYPE);
             permitInspection.getInspectionApplication().setStatus(bpaStatus);
         }        
         return inspectionReposiory.save(permitInspection);  

@@ -206,7 +206,15 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
                             : user.getUsername().concat("~")
                                     .concat(getDesinationNameByPosition(pos)),
                                     inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
-        else {
+      
+       else if(BpaConstants.APPLICATION_STATUS_REVOKED.equalsIgnoreCase(wfBean.getWorkFlowAction())){
+        		message = messageSource.getMessage("msg.revoke.inspection", new String[] {
+                        user == null ? ""
+                                : user.getUsername().concat("~")
+                                        .concat(getDesinationNameByPosition(pos)),
+                                        inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
+     
+        } else {
             message = messageSource.getMessage("msg.update.forward.inspection", new String[] {
                     user == null ? ""
                             : user.getUsername().concat("~")
@@ -215,6 +223,7 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
         }
 
         redirectAttributes.addFlashAttribute(MESSAGE, message);
+        bpaUtils.sendSmsEmailForInspection(inspectionResponse.getInspectionApplication(), inspectionResponse.getApplication());
 
         return "redirect:/inspection/success/" + inspectionResponse.getInspectionApplication().getApplicationNumber();
     }

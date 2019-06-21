@@ -128,7 +128,8 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
         final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
         insAppointmentSchedule.setInspectionApplication(permitInspection.getInspectionApplication());
     	InspectionAppointmentSchedule schedule = insAppointmentScheduleService.save(insAppointmentSchedule);
-        return schedule;
+        bpaSmsAndEmailService.sendSMSAndEmailToInsscheduleAppointment(schedule, permitInspection.getInspectionApplication(), permitInspection.getApplication());
+    	return schedule;
     }
 
     @GetMapping("/rescheduleappointment/{scheduleType}/{applicationNumber}")
@@ -158,6 +159,7 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
         insAppointmentSchedule.getAppointmentScheduleCommon().setParent(parent);
         insAppointmentSchedule.setInspectionApplication(permitInspection.getInspectionApplication());
         InspectionAppointmentSchedule schedule = insAppointmentScheduleService.save(insAppointmentSchedule);
+        bpaSmsAndEmailService.sendSMSAndEmailToInsscheduleAppointment(schedule, permitInspection.getInspectionApplication(), permitInspection.getApplication());
         if (AppointmentSchedulePurpose.INSPECTION.equals(schedule.getAppointmentScheduleCommon().getPurpose())) {
             redirectAttributes.addFlashAttribute(MESSAGE,
                     messageSource.getMessage("msg.update.appoimt.fieldins", null, null));

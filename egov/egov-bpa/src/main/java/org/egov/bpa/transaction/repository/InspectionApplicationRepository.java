@@ -48,5 +48,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface InspectionApplicationRepository extends JpaRepository<PermitInspectionApplication, Long> {
 	
-	PermitInspectionApplication findByInspectionApplicationApplicationNumber(String applicationNumber);
+	PermitInspectionApplication findByInspectionApplication_ApplicationNumber(String applicationNumber);
 }

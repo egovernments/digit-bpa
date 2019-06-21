@@ -159,6 +159,7 @@ public class CitizenInspectionApplicationController {
             
             redirectAttributes.addFlashAttribute("message", message);
         }
+        bpaUtils.sendSmsEmailForInspection(permitInspectionResponse.getInspectionApplication(), permitInspectionResponse.getApplication());
         
         return "redirect:/inspection/citizen/success/" + permitInspectionResponse.getInspectionApplication().getApplicationNumber();
     }

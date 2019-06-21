@@ -49,6 +49,7 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingDetail;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
+import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.SiteDetail;
@@ -495,6 +496,10 @@ public class BpaUtils {
     public Boolean logedInuserIsCitizen() {
         return getCurrentUser() != null && getCurrentUser().getType().equals(UserType.CITIZEN) ? Boolean.TRUE : Boolean.FALSE;
     }
+    
+    public Boolean logedInuserIsBusinessUser() {
+        return getCurrentUser() != null && getCurrentUser().getType().equals(UserType.BUSINESS) ? Boolean.TRUE : Boolean.FALSE;
+    }
 
     @Transactional
     public void redirectToBpaWorkFlow(Long approvalPosition, final BpaApplication application,
@@ -599,6 +604,10 @@ public class BpaUtils {
 
     public void sendSmsEmailOnCitizenSubmit(BpaApplication bpaApplication) {
         bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);
+    }
+    
+    public void sendSmsEmailForInspection(InspectionApplication inspectionApplication, BpaApplication bpaApplication) {
+        bpaSmsAndEmailService.sendSMSAndEmailForInspection(inspectionApplication, bpaApplication, null, null);
     }
 
     public String generateUserName(final String name) {
