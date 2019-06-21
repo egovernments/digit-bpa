@@ -1,0 +1,86 @@
+title OBPS NOC Flow
+
+Stakeholder->OBPS: Submit the application
+
+OBPS->OBPS: Validate and Process the Application
+    note over OBPS, OBPS
+        Once validation and process happens the below steps
+        will be followed for NOC related process.
+        1. Based on NOC configurations for different NOCs 
+        the OBPS will process the NOC applications.
+        2. There are three type of NOC configurations
+          i) Fully Automated : Application process happens on 
+          APIs base provided by the respective NOC Department
+          ii) Semi Automated : OBPS allow respective NOC Dept
+          users to login and validate and issue NOC
+          iii) Manual : Citizens has to take the NOC offline
+          from respective NOC Department and provide the same 
+          along with OBPS application.
+    end note
+
+alt isFullyAutomated
+    OBPS->TP NOC Dept: Send application to TP NOC Dept
+    note over OBPS, TP NOC Dept
+        OBPS will push the application using provided 
+        APIs from respective NOC Department
+    end note
+    TP NOC Dept->TP NOC Dept: Process NOC application internally
+    note over TP NOC Dept, TP NOC Dept
+        TP NOC Dept can process the application
+        internally within the defined SLA.
+    end note
+    OBPS->TP NOC Dept: Request for the application status
+    note over OBPS, TP NOC Dept
+        OBPS will keep polling respective TP NOC Dept
+        for the required status/state of the application.
+    end note
+    
+    alt ifNoResponseWithinSLA
+    OBPS->OBPS: Deemed Approve NOC Application
+    note over  OBPS, OBPS
+        In case TP NOC Dept does not Approve/Reject 
+        Application within SLA, OBPS will consider the 
+        application as deemed approved.
+    end note        
+    end
+    
+    OBPS->OBPS: Update the application
+    note over  OBPS, OBPS
+        Process the application further.
+    end note
+end
+alt isSemiAutomated
+    OBPS->OBPS NOC Svc: Push application to OBPS NOC Svc
+    note over OBPS, OBPS NOC Svc
+        OBPS will provide a login to respective NOC department.
+        Department can login into OBPS system and verify the 
+        application for further processing.
+    end note
+    OBPS NOC Svc->OBPS: Approve/Reject Application
+    note over  OBPS NOC Svc, OBPS
+        Respective NOC Department users can approve or reject 
+        by providing comments and uploading required documents
+        if any within defined SLA.
+    end note
+    
+    alt ifNoResponseWithinSLA
+    OBPS->OBPS: Deemed Approve NOC Application
+    note over  OBPS, OBPS
+        In case NOC Department users does not Approve/Reject 
+        Application within SLA, OBPS will consider the 
+        application as deemed approved.
+    end note        
+    end
+    
+    OBPS->OBPS: Update the application
+    note over  OBPS, OBPS
+        Process the application further.
+    end note
+end
+alt isManual
+    OBPS->OBPS: Upload the NOC Documents
+    note over OBPS, OBPS
+        Citizen/Stakeholder will upload the NOC documents
+        got offline from the NOC department.
+    end note
+end

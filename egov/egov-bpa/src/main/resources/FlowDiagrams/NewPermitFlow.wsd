@@ -1,0 +1,145 @@
+title Apply For Permit Order
+
+Stakeholder->DIGIT DCR: Request for scrutinize the plan
+note over Stakeholder, DIGIT DCR
+    A registered stakeholder can upload the plan
+    on the system on behalf of citizen/owner
+end note
+
+DIGIT DCR->DIGIT DCR: Validate the plan
+note over DIGIT DCR, DIGIT DCR
+    DIGIT DCR scrutinize the plan and validate the 
+    plan as per the rules defined for the ULB and
+    generates a scrutiny number for valid plan.
+end note
+
+DIGIT DCR->Stakeholder: Generate scrutiny number
+note over DIGIT DCR, Stakeholder
+    DIGIT DCR gives a scrutiny report for both 
+    approved and rejected plans.
+end note
+
+Stakeholder->OBPS: Apply for Permission
+note over Stakeholder, OBPS
+    Apply with the scrutiny number. OBPS pull
+    all the required information from DIGIT DCR
+end note
+
+OBPS->OBPS: Validate the application
+note over OBPS, OBPS
+    1. Validates the application
+    2. Creates citizen account for applicant
+    3. Generates application number
+end note
+
+opt ifCitizenAcceptanceRequired
+    OBPS->OBPS: Send application for citizen acceptance
+    Citizen->OBPS: Accept the application
+note over Citizen, OBPS
+    Citizen can verify and accept the application
+end note
+    OBPS->Stakeholder: Send back for further action
+note over OBPS, Stakeholder
+    OBPS send back the application after the verification to stakeholder
+    for further action
+end note
+    Stakeholder->OBPS: Submit the application
+note over Stakeholder, OBPS
+    Stakeholder has option to do changes if any and submit the application
+end note
+end
+
+alt ifLowRaiseBuildingOROneDayPermit
+    OBPS->OBPS: Generates both application and permit fee
+    OBPS->OBPS: Pay both application and permit fee
+note over OBPS, OBPS
+    Fee can be paid online by stakeholder or citizen
+end note
+    OBPS->Citizen: Generates Permit Order
+note over OBPS, Citizen
+    On successful permit fee payment, the permit order
+    will be generated and available for download by
+    citizen/officials/stakeholder
+end note
+else ifMediumORHighRaiseBuilding
+    OBPS->OBPS: Generates Application fee
+
+    OBPS->OBPS: Pay Application fee
+note over OBPS, OBPS
+    The application fee can be paid online
+    by stakeholder or citizen
+end note
+end
+
+OBPS->NOCSvc: Initiate NOC
+note over OBPS, NOCSvc
+    There are multiple options to process NOC, those are
+    1. If its AUTO, OBPS will directly apply to respective
+    system using provided APIs
+    2. If its MANUAL, OBPS allow to enter NOC details
+    3. If its SEMI_AUTO, OBPS allow third party to login 
+    into OBPS and verify and provide NOC
+end note
+
+OBPS->InspectionSvc: Inspection
+note over OBPS, InspectionSvc
+    This inspection happens after getting citizens scheduled time
+    1. Officials will visit the site and verify things on ground
+    2. There can be joint inspection in case any NOC or other
+    department people present is required
+    3. All the findings will be rocorded into system against application
+end note
+
+opt ifLetterToPartyRequired
+    OBPS->Citizen: Send Letter to Party
+note over OBPS, Citizen
+    A letter will be sent to citizen in case
+    any further documents or clarifications are
+    required for the findings during inspection
+end note
+    Citizen->OBPS: Reply for Letter to Party
+note over Citizen, OBPS
+    Citizen will respond to the Letter to Party
+    for the queries asked by Officials
+end note
+end
+
+OBPS->NOCSvc: Get the NOC details
+note over OBPS, NOCSvc
+    OBPS has to get the all the rquired NOCs
+    1. If its AUTO, OBPS has to get the details via APIs
+    2. If its MANUAL, OBPS allow to enter NOC details
+    3. If its SEMI_AUTO, third party has to upload into 
+    system by logging into OBPS
+end note
+
+alt ifLowRaiseBuildingOROneDayPermit
+	OBPS->OBPS: Approve the application
+note over OBPS, OBPS
+	On Getting all the required verifications done
+	and getting NOCs the final approval authority will
+	approve the application
+end note
+else ifMediumORHighRaiseBuilding
+	OBPS->OBPS: Approve the application
+note over OBPS, OBPS
+	On Getting all the required verifications done
+	and getting NOCs the final approval authority will
+	approve the application
+end note
+
+	OBPS->OBPS: Generate Permit fee
+
+	OBPS->OBPS: Pay Permit fee
+note over OBPS, OBPS
+	The application fee can be paid online/offline
+	stakeholder or citizen
+end note
+
+	OBPS->Citizen: Generate Permit order
+note over OBPS, Citizen
+	On successful permit fee payment, the permit order
+	will be generated and available for download by
+	citizen/officials/stakeholder
+end note
+end

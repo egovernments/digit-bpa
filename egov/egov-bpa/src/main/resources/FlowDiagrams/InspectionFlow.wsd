@@ -1,0 +1,46 @@
+title OBPS Inspection Flow
+
+Citizen->OBPS: Request for Inpsection
+    note over Citizen, OBPS
+        Citizen can request for Inspection at various levels
+        of construction
+    end note
+    
+OBPS->OBPS: Allocate the officials for Inspection
+    note over OBPS, OBPS
+        System allocates the officials for inspection
+        based on risk assessment and other attributes
+    end note
+    
+alt isJointInspection
+    OBPS->TP Dept: Initimate about inspection
+        note over OBPS, TP Dept
+            Officials inform about the inspection with required
+            details for all the respective Departments like Fire,
+            AAI, etc.
+        end note
+    OBPS->OBPS: Do Inspection along with TP Departments
+        note over OBPS, OBPS
+            Inspection will be carried out based defined
+            check list with all the departments
+        end note
+else isNOTJointInspection
+    OBPS->OBPS: Do Inspection
+        note over OBPS, OBPS
+            Inspection will be carried out based defined check list
+        end note
+end
+
+alt IfNOTFoundVoilationsRespToPermitOrder
+    OBPS->OBPS: Inpsection Report
+        note over OBPS, OBPS
+            Inspection report will be prepared and will be 
+            available for Citizen/Applicant
+        end note
+else IfFoundVoilationsRespToPermitOrder
+    OBPS->OBPS: Initiate Revocation
+        note over OBPS, OBPS
+            When voilations found respective to Permit order
+            the revocation will be initiated against the permit order
+        end note
+end
