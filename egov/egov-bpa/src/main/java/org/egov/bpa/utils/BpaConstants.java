@@ -162,7 +162,6 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_APPROVED = APPROVED;
     public static final String PAYMENT_PENDING = "PAYMENT_PENDING";
     public static final String APPLICATION_STATUS_PENDNING = PAYMENT_PENDING;
-
     public static final String APPLICATION_STATUS_FIELD_INS = "Field Inspected";
     public static final String APPLICATION_STATUS_ORDER_ISSUED = "Order Issued to Applicant";
     public static final String APPLICATION_STATUS_DIGI_SIGNED = "Digitally signed";
@@ -272,35 +271,29 @@ public class BpaConstants {
     public static final String TP_DEPT = "TOWN PLANNING DEPARTMENT";
     public static final String DEV_PERMIT_FEE = "DPF";
     
-    //NOC status
-    
+    //NOC integration related
     public static final String FIRENOCTYPE = "FIRE NOC"; 
     public static final String AIRPORTNOCTYPE = "AAI NOC"; 
     public static final String NMANOCTYPE = "NMA NOC"; 
     public static final String ENVNOCTYPE = "MOEF NOC"; 
     public static final String IRRNOCTYPE = "IDA NOC"; 
-
-
     public static final String NOC_INITIATED = "NOC_INITIATED";
     public static final String NOC_APPROVED = "NOC_APPROVED";
     public static final String NOC_REJECTED = "NOC_REJECTED";
     public static final String NOC_DEEMED_APPROVED = "NOC_DEEMED_APPROVED";
     public static final String NOC_APPL_REJECTED= "Permit Application Rejected";
-    public static final String FIRENOCROLE = "BPA_FIRE_NOC_ROLE";
-    public static final String ENVNOCROLE = "BPA_ENVIRONMENT_NOC_ROLE";
-    public static final String NMANOCROLE = "BPA_NMA_NOC_ROLE";
-    public static final String AIRPORTNOCROLE = "BPA_AIPORT_AUTH_NOC_ROLE";
-    
     public static final String PERMIT = "Permit";
     public static final String OC = "OC";
-    
     public static final String FIREOCNOCTYPE = "FIRE OCNOC";
     public static final String AIRPORTOCNOCTYPE = "AAI OCNOC";
     public static final String NMAOCNOCTYPE = "NMA OCNOC";
     public static final String ENVOCNOCTYPE = "MOEF OCNOC";
     public static final String IRROCNOCTYPE = "IDA OCNOC";
-
-    
+    //NOC approver roles
+    public static final String FIRENOCROLE = "BPA_FIRE_NOC_ROLE";
+    public static final String ENVNOCROLE = "BPA_ENVIRONMENT_NOC_ROLE";
+    public static final String NMANOCROLE = "BPA_NMA_NOC_ROLE";
+    public static final String AIRPORTNOCROLE = "BPA_AIPORT_AUTH_NOC_ROLE";
 
     // designation constants
     public static final String DESIGNATION_AEE = "Assistant executive engineer";
@@ -318,14 +311,11 @@ public class BpaConstants {
     public static final String BPA_MIXED_OCCUPANCY = "Mixed";
 
     // Occupancy Constants
-
     public static final String MIXED_OCCUPANCY = "15";
     public static final String INDUSTRIAL = "G1";
     public static final String MERCANTILE_COMMERCIAL = "F";
-
     public static final String THATCHED_TILED_HOUSE = "14";
     public static final String RESIDENTIAL = "A";
-
     public static final String RESIDENTIAL_A1 = "A1";
     public static final String SPECIAL_RESIDENTIAL = "A2";
     public static final String HOSTEL_EDUCATIONAL = "A3";

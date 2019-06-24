@@ -89,7 +89,7 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							<c:out
-								value="${permitRevocation.application.occupancy.description}"
+								value="${permitRevocation.application.getOccupanciesName()}"
 								default="N/A"></c:out>
 						</div>
 						<c:if
@@ -221,7 +221,7 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							<c:out
-								value="${permitRevocation.application.stakeHolder[0].stakeHolder.stakeHolderType}"
+								value="${permitRevocation.application.stakeHolder[0].stakeHolder.stakeHolderType.name}"
 								default="N/A"></c:out>
 						</div>
 						<div class="col-sm-3 add-margin">

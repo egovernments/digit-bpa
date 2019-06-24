@@ -148,7 +148,7 @@ $(document).ready(function($) {
 		       });
 		   }
 	}());
-	function validateOnAdd(){
+	function validateOnAdd() {
 		
 		var isValid=true;
 	    $('#permitRevocationDetails tbody tr').each(function(index){
@@ -158,7 +158,7 @@ $(document).ready(function($) {
 		    var issuedBy = $(this).find('*[name$="issuedBy"]').val();*/
 		    var remarks = $(this).find('*[name$="remarks"]').val();
 		    if(!remarks) { 
-		    	bootbox.alert("Please enter remarks is mandatory before adding new row");
+		    	bootbox.alert("Please enter remarks is mandatory before adding a new row");
 		    	isValid=false;
 		    	return false;
 		    } 
@@ -170,24 +170,23 @@ $(document).ready(function($) {
 	$("#initiateRevokeSubmit").click(function(e){ 
 		if ($('#permitRevocationInitiateForm').valid()) {
             bootbox
-                .confirm({
-                    message: 'Do you want to initiate for revocation for this application, are you sure ?',
+                .dialog({
+                    message: 'Do you want to initiate the revocation for this permit order, are you sure ?',
                     buttons: {
+                    	'confirm': {
+                            label: 'Yes',
+                            className: 'btn-primary',
+                            callback: function (result) {
+                            	$('#permitRevocationInitiateForm').trigger('submit');
+                            }
+                        },
                         'cancel': {
                             label: 'No',
-                            className: 'btn-danger'
-                        },
-                        'confirm': {
-                            label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            $('#permitRevocationInitiateForm').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });
@@ -199,27 +198,27 @@ $(document).ready(function($) {
 	
 	$("#saveRevocation").click(function(e){ 
 		var action = $(this).val();
+		$('#approveCancelRemarks').removeAttr('required');
 		if ($('#permitRevocationApproveForm').valid()) {
             bootbox
-                .confirm({
-                    message: 'Do you want to the save application details, are you sure ?',
+                .dialog({
+                    message: 'Do you want to save the application details, are you sure ?',
                     buttons: {
+                    	'confirm': {
+                            label: 'Yes',
+                            className: 'btn-primary',
+                            callback: function (result) {
+                            	$('#workflowAction').val(action);
+                                $('#permitRevocationApproveForm').trigger('submit');
+                            }
+                        },
                         'cancel': {
                             label: 'No',
-                            className: 'btn-danger'
-                        },
-                        'confirm': {
-                            label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                        	$('#workflowAction').val(action);
-                            $('#permitRevocationApproveForm').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
+                            className: 'btn-danger',
+                            callback: function (result) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                            }
                         }
                     }
                 });
@@ -231,28 +230,28 @@ $(document).ready(function($) {
 	
 	$("#approveRevocation").click(function(e){ 
 		var action = $(this).val();
+		$('#approveCancelRemarks').attr('required', 'required');
 		if ($('#permitRevocationApproveForm').valid()) {
             bootbox
-                .confirm({
-                    message: 'Do you want to revoke the permit, are you sure ?',
+                .dialog({
+                    message: 'Do you want to revoke the permit order, are you sure ?',
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
-                        'confirm': {
-                            label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                        	$('#workflowAction').val(action);
-                            $('#permitRevocationApproveForm').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
-                        }
+                    	'confirm': {
+	                        label: 'Yes',
+	                        className: 'btn-primary',
+	                        callback: function (result) {
+	                        	$('#workflowAction').val(action);
+	                            $('#permitRevocationApproveForm').trigger('submit');
+                        	}
+	                    },
+	                    'cancel': {
+	                        label: 'No',
+	                        className: 'btn-danger',
+	                        callback: function (result) {
+	                            e.stopPropagation();
+	                            e.preventDefault();
+	                        }
+	                    }
                     }
                 });
         } else {
@@ -263,28 +262,28 @@ $(document).ready(function($) {
 	
 	$("#cancelRevocation").click(function(e){ 
 		var action = $(this).val();
+		$('#approveCancelRemarks').attr('required', 'required');
 		if ($('#permitRevocationApproveForm').valid()) {
             bootbox
-                .confirm({
-                    message: 'Do you want to cancel the revocation, are you sure ?',
+                .dialog({
+                    message: 'Do you want to cancel the revocation process, are you sure ?',
                     buttons: {
-                        'cancel': {
-                            label: 'No',
-                            className: 'btn-danger'
-                        },
-                        'confirm': {
-                            label: 'Yes',
-                            className: 'btn-primary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                        	$('#workflowAction').val(action);
-                            $('#permitRevocationApproveForm').trigger('submit');
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
-                        }
+                    	'confirm': {
+	                        label: 'Yes',
+	                        className: 'btn-primary',
+	                        callback: function (result) {
+	                        	$('#workflowAction').val(action);
+	                            $('#permitRevocationApproveForm').trigger('submit');
+                        	}
+	                    },
+	                    'cancel': {
+	                        label: 'No',
+	                        className: 'btn-danger',
+	                        callback: function (result) {
+	                            e.stopPropagation();
+	                            e.preventDefault();
+	                        }
+	                    }
                     }
                 });
         } else {

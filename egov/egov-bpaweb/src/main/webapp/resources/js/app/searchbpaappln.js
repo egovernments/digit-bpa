@@ -95,6 +95,7 @@ $(document)
                                             filter: true,
                                             "searching": false,
                                             responsive: true,
+                                            rowReorder: true,
                                             "order": [[1, 'asc']],
 											ajax : {
 												url : "/bpa/application/search",
