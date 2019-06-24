@@ -198,6 +198,7 @@ $(document).ready(
 	        success: function (response) {
 	            if(response) {
                     $('#bpaApplicationNumber').val(response.applicationNumber);
+
                     $('#permissionNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + $('#planPermissionNumber').val() + '\')" href="javascript:void(0);">' + $('#planPermissionNumber').val()  + '</a>');
                     $('#applicationDate').html(response.applicationDate);
                     $('#resurveyNo').html(response.reSurveyNumber);
@@ -353,4 +354,3 @@ function openPopup(url) {
 			'scrollbars=1,resizable=yes,height=800,width=1100,status=yes');
 
 }
-

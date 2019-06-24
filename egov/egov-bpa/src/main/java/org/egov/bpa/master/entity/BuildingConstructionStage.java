@@ -37,41 +37,73 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.bpa.master.entity;
 
-$(document).ready(
-		function($) {
-			
-			 if ($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
-			        bootbox.alert($('#noJAORSAMessage').val());
-			 
-			$('#buttonSubmit').click(function (e) {
-				document.getElementById("workFlowAction").value = 'Submit';
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-			        bootbox
-			            .dialog({
-			                message: $('#submitApplication').val(),
-			                buttons: {
-			                    'confirm': {
-			                        label: 'Yes',
-			                        className: 'btn-primary',
-			                        callback: function (result) {
-			                            $("#createInspectionForm").attr('action', 'create/' + $("#bpaApplicationNumber").val());
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
-			                        	$("#createInspectionForm").submit();
-			                            return true;
-			                        }
-			                    },
-			                    'cancel': {
-			                        label: 'No',
-			                        className: 'btn-danger',
-			                        callback: function (result) {
-			                            e.stopPropagation();
-			                            e.preventDefault();
-			                        }
-			                    }
-			                }
-			            });
-			   
-			    return false;
-			});
-		});
+@Entity
+@Table(name = "EGBPA_BUILDING_CONSTRUCTIONSTAGE")
+@SequenceGenerator(name = BuildingConstructionStage.SEQ_CONSTRUCTION, sequenceName = BuildingConstructionStage.SEQ_CONSTRUCTION, allocationSize = 1)
+public class BuildingConstructionStage extends AbstractAuditable {
+
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_CONSTRUCTION = "SEQ_EGBPA_BUILDING_CONSTRUCTIONSTAGE";
+    @Id
+    @GeneratedValue(generator = SEQ_CONSTRUCTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "name", unique = true)
+    private String name;
+
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String description;
+
+    private Boolean active;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+}

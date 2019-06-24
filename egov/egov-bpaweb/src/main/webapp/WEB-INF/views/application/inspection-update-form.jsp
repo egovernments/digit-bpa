@@ -120,13 +120,25 @@
 							</div>
 							
 							<div class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.applicant.remarks" />
+								<spring:message code="lbl.insp.bldngconststage" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
 								<c:out
-									value="${inspectionApplication.remarks}"
+									value="${inspectionApplication.buildingConstructionStage.name}"
 									default="N/A"></c:out>
 							</div>
+						</div>
+						<div class="form-group">
+
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.status" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out
+									value="${inspectionApplication.status.code}"
+									default="N/A"></c:out>
+							</div>
+							
 						</div>
 						
 			 </div>

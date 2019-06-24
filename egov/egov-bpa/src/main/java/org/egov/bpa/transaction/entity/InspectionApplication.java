@@ -69,6 +69,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.egov.bpa.master.entity.BuildingConstructionStage;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -101,6 +102,10 @@ public class InspectionApplication extends StateAware<Position> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "status")
     private BpaStatus status;
+    
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "buildingConstructionStage")
+    private BuildingConstructionStage buildingConstructionStage;
 
     @Length(min = 1, max = 1000)
     private String remarks;
@@ -271,5 +276,13 @@ public class InspectionApplication extends StateAware<Position> {
 
 	public void setApprovalDesignation(Long approvalDesignation) {
 		this.approvalDesignation = approvalDesignation;
+	}
+
+	public BuildingConstructionStage getBuildingConstructionStage() {
+		return buildingConstructionStage;
+	}
+
+	public void setBuildingConstructionStage(BuildingConstructionStage buildingConstructionStage) {
+		this.buildingConstructionStage = buildingConstructionStage;
 	}
 }

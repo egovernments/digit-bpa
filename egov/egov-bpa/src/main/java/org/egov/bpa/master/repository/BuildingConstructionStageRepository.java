@@ -37,41 +37,18 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.bpa.master.repository;
 
-$(document).ready(
-		function($) {
-			
-			 if ($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
-			        bootbox.alert($('#noJAORSAMessage').val());
-			 
-			$('#buttonSubmit').click(function (e) {
-				document.getElementById("workFlowAction").value = 'Submit';
+import java.util.List;
 
-			        bootbox
-			            .dialog({
-			                message: $('#submitApplication').val(),
-			                buttons: {
-			                    'confirm': {
-			                        label: 'Yes',
-			                        className: 'btn-primary',
-			                        callback: function (result) {
-			                            $("#createInspectionForm").attr('action', 'create/' + $("#bpaApplicationNumber").val());
+import org.egov.bpa.master.entity.BuildingConstructionStage;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-			                        	$("#createInspectionForm").submit();
-			                            return true;
-			                        }
-			                    },
-			                    'cancel': {
-			                        label: 'No',
-			                        className: 'btn-danger',
-			                        callback: function (result) {
-			                            e.stopPropagation();
-			                            e.preventDefault();
-			                        }
-			                    }
-			                }
-			            });
-			   
-			    return false;
-			});
-		});
+@Repository
+public interface BuildingConstructionStageRepository  extends JpaRepository<BuildingConstructionStage, Long> {
+	
+	List<BuildingConstructionStage> findByActiveTrueOrderByNameAsc();
+
+
+}

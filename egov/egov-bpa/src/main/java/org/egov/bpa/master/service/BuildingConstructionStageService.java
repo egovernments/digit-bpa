@@ -37,41 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.bpa.master.service;
 
-$(document).ready(
-		function($) {
-			
-			 if ($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
-			        bootbox.alert($('#noJAORSAMessage').val());
-			 
-			$('#buttonSubmit').click(function (e) {
-				document.getElementById("workFlowAction").value = 'Submit';
+import java.util.List;
 
-			        bootbox
-			            .dialog({
-			                message: $('#submitApplication').val(),
-			                buttons: {
-			                    'confirm': {
-			                        label: 'Yes',
-			                        className: 'btn-primary',
-			                        callback: function (result) {
-			                            $("#createInspectionForm").attr('action', 'create/' + $("#bpaApplicationNumber").val());
+import org.egov.bpa.master.entity.BuildingConstructionStage;
+import org.egov.bpa.master.repository.BuildingConstructionStageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-			                        	$("#createInspectionForm").submit();
-			                            return true;
-			                        }
-			                    },
-			                    'cancel': {
-			                        label: 'No',
-			                        className: 'btn-danger',
-			                        callback: function (result) {
-			                            e.stopPropagation();
-			                            e.preventDefault();
-			                        }
-			                    }
-			                }
-			            });
-			   
-			    return false;
-			});
-		});
+@Service
+@Transactional(readOnly = true)
+public class BuildingConstructionStageService {
+
+    @Autowired
+    private BuildingConstructionStageRepository constructionRepository;
+    
+
+    public List<BuildingConstructionStage> findAll() {
+        return constructionRepository.findAll();
+    }
+    
+    public List<BuildingConstructionStage> getAllActiveConstructionTypes() {
+        return constructionRepository.findByActiveTrueOrderByNameAsc();
+    }
+
+}

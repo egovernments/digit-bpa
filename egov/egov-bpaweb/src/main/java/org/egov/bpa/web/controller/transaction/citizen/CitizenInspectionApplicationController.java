@@ -48,6 +48,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.bpa.master.service.BuildingConstructionStageService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.WorkflowBean;
@@ -92,23 +93,26 @@ public class CitizenInspectionApplicationController {
 	private BpaUtils bpaUtils;
 	@Autowired
 	protected BpaWorkFlowService bpaWorkFlowService;
+	@Autowired
+	protected BuildingConstructionStageService constructionService;
 	
 	
     @GetMapping("/citizen/create")
     public String inspectionForm(final Model model) {
     	model.addAttribute("permitInspectionApplication",new PermitInspectionApplication());
+    	model.addAttribute("constructions",constructionService.getAllActiveConstructionTypes());
         return "citizen-inspection-form";
     }
     
-    @PostMapping("/citizen/create/{applicationNumber}")
+    @PostMapping("/citizen/create/{bpaApplicationNumber}")
     public String createInspection(@ModelAttribute final PermitInspectionApplication permitInspectionApplication,
-    		@PathVariable final String applicationNumber, final HttpServletRequest request, final Model model, final BindingResult errors,
+    		@PathVariable final String bpaApplicationNumber, final HttpServletRequest request, final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
         Boolean citizenOrBusinessUser = bpaUtils.logedInuseCitizenOrBusinessUser();
         WorkflowBean wfBean = new WorkflowBean();
 
-        BpaApplication application = applicationService.findByApplicationNumber(applicationNumber);
+        BpaApplication application = applicationService.findByApplicationNumber(bpaApplicationNumber);
         permitInspectionApplication.setApplication(application);
         
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));

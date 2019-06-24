@@ -75,7 +75,22 @@
 				maxlength="20" id="planPermissionNumber"
 				placeholder="Enter plan permission number" path="application.planPermissionNumber"
 				value="${permitInspectionApplication.application.planPermissionNumber}" required="required" />
-		</div></div>	</div> 
+		</div>
+				    	        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.insp.bldngconststage" /></label>
+				<div class="col-sm-2 add-margin">
+		
+		<form:select path="inspectionApplication.buildingConstructionStage"
+														id="category"
+														cssClass="form-control category" required="required">
+														<form:option value="">
+															<spring:message code="lbl.select" />
+														</form:option>
+														<form:options items="${constructions}" itemValue="id"
+															itemLabel="name" />
+													</form:select> <form:errors path="inspectionApplication.buildingConstructionStage"
+														cssClass="add-margin error-msg" />	</div>	
+		 
+		</div>	</div> 
 		
 		
 		<div id="application-info" class="tab-pane fade in active">
@@ -107,7 +122,7 @@
 				<input type="button" name="button2" id="button2" value="Close"	class="btn btn-default" onclick="window.close();" />
 			</div>		
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.portal.submit.appln'/>" /> 
-			    <input	type="hidden" id="applicationNumber" value="" /> 
+			    <input	type="hidden" id="bpaApplicationNumber" value="" /> 
 			    
 			</div>
 </div>
