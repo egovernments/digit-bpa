@@ -73,6 +73,8 @@ public class Tenant extends AbstractAuditable {
 	private String name;
 	@NotNull
 	private String code;
+	@NotNull
+	private String url;
 
 	public String getCode() {
 		return code;
@@ -98,6 +100,14 @@ public class Tenant extends AbstractAuditable {
 	@Override
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 }

@@ -48,13 +48,13 @@
 $(document).ready( function () {
 	//form submit
 	$('#buttonSubmit').click(function(e) {
-		var tenantId = $("#tenantId").val();
+		var selectedUrl = $("#tenantId").val();
 		if(tenantId){
 			var url = $("#url").val();
-			var clientId = $("#clientId").val();
-			window.open(url.replace(clientId, tenantId),"_self");
+			var stateUrl=url.substring(0, url.indexOf("/",9)+1);
+			window.open(url.replace(stateUrl, selectedUrl),"_self");
 		}else{
-			bootbox.alert("Please select city");
+			bootbox.alert("Please select city!!");
 		}
 		e.preventDefault();
 	});

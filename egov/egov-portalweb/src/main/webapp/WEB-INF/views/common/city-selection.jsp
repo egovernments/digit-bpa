@@ -56,7 +56,7 @@
 		<div class="col-sm-3 add-margin">
 			<form:select path="tenantId" id="tenantId" required="required" cssClass="form-control" cssErrorClass="form-control error"> 
 				<form:option value=""> <spring:message code="lbl.select" /> </form:option>
-				<form:options items="${tenants}" itemValue="code" itemLabel="name"/>
+				<form:options items="${tenants}" itemValue="url" itemLabel="name"/>
 			</form:select>
 			<form:errors path="tenantId" cssClass="error-msg" />
 		</div>
@@ -68,5 +68,4 @@
 </form:form>
 
 <input id="url" type="hidden" value="${url}"/>
-<input id="clientId" type="hidden" value="${clientId}"/>
 <script src="<cdn:url value='/resources/js/city-selection.js?rnd=${app_release_no}'/> "></script>
