@@ -65,41 +65,44 @@ import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
 public class SearchBpaApplicationAdaptor implements DataTableJsonAdapter<SearchBpaApplicationForm> {
 
-	@Override
-	public JsonElement serialize(final DataTable<SearchBpaApplicationForm> baseRegisterResponse, final Type type,
-								 final JsonSerializationContext jsc) {
-		final List<SearchBpaApplicationForm> baseRegisterResult = baseRegisterResponse.getData();
-		final JsonArray baseRegisterResultData = new JsonArray();
-		baseRegisterResult.forEach(baseForm -> {
-			final JsonObject baseRegisterJson = new JsonObject();
-			baseRegisterJson.addProperty("applicantName", defaultIfBlank(baseForm.getApplicantName()));
-			baseRegisterJson.addProperty("applicationNumber", baseForm.getApplicationNumber());
-			baseRegisterJson.addProperty("applicationDate", String.valueOf(baseForm.getApplicationDate()));
-			baseRegisterJson.addProperty("planPermissionNumber", defaultString(baseForm.getPlanPermissionNumber(), "N/A"));
-			baseRegisterJson.addProperty("locality", baseForm.getLocality());
-			baseRegisterJson.addProperty("reSurveyNumber", baseForm.getReSurveyNumber());
-			baseRegisterJson.addProperty("address", baseForm.getAddress());
-			baseRegisterJson.addProperty("serviceType", defaultIfBlank(baseForm.getServiceType()));
-			baseRegisterJson.addProperty("occupancy", baseForm.getOccupancy());
-			baseRegisterJson.addProperty("currentOwner", baseForm.getCurrentOwner());
-			baseRegisterJson.addProperty("pendingAction", baseForm.getPendingAction());
-			baseRegisterJson.addProperty("electionWard", baseForm.getElectionWard());
-			baseRegisterJson.addProperty("ward", baseForm.getWard());
-			baseRegisterJson.addProperty("zone", baseForm.getZone());
-			baseRegisterJson.addProperty("isFeeCollected", baseForm.isFeeCollected());
-			baseRegisterJson.addProperty("status", baseForm.getStatus());
-			baseRegisterJson.addProperty("rescheduledByEmployee", baseForm.getIsRescheduledByEmployee());
-			baseRegisterJson.addProperty("onePermitApplication", baseForm.getOnePermitApplication());
-			baseRegisterJson.addProperty("applicationType", baseForm.getApplicationType());
-			baseRegisterJson.addProperty("appointmentDate", defaultString(DateUtils.toDefaultDateFormat(baseForm.getAppointmentDate()), "N/A"));
-			baseRegisterJson.addProperty("appointmentTime", defaultString(baseForm.getAppointmentTime(), "N/A"));
-			baseRegisterJson.addProperty("id", baseForm.getId());
-			baseRegisterJson.addProperty("revocationNumber", baseForm.getRevocationNumber());
+    @Override
+    public JsonElement serialize(final DataTable<SearchBpaApplicationForm> baseRegisterResponse, final Type type,
+            final JsonSerializationContext jsc) {
+        final List<SearchBpaApplicationForm> baseRegisterResult = baseRegisterResponse.getData();
+        final JsonArray baseRegisterResultData = new JsonArray();
+        baseRegisterResult.forEach(baseForm -> {
+            final JsonObject baseRegisterJson = new JsonObject();
+            baseRegisterJson.addProperty("applicantName", defaultIfBlank(baseForm.getApplicantName()));
+            baseRegisterJson.addProperty("applicationNumber", baseForm.getApplicationNumber());
+            baseRegisterJson.addProperty("applicationDate",
+                    defaultString(DateUtils.toDefaultDateFormat(baseForm.getApplicationDate()), "N/A"));
+            baseRegisterJson.addProperty("planPermissionDate",
+                    defaultString(DateUtils.toDefaultDateFormat(baseForm.getPlanPermissionDate()), "N/A"));
+            baseRegisterJson.addProperty("planPermissionNumber", defaultString(baseForm.getPlanPermissionNumber(), "N/A"));
+            baseRegisterJson.addProperty("locality", baseForm.getLocality());
+            baseRegisterJson.addProperty("reSurveyNumber", baseForm.getReSurveyNumber());
+            baseRegisterJson.addProperty("address", baseForm.getAddress());
+            baseRegisterJson.addProperty("serviceType", defaultIfBlank(baseForm.getServiceType()));
+            baseRegisterJson.addProperty("occupancy", baseForm.getOccupancy());
+            baseRegisterJson.addProperty("currentOwner", baseForm.getCurrentOwner());
+            baseRegisterJson.addProperty("pendingAction", baseForm.getPendingAction());
+            baseRegisterJson.addProperty("electionWard", baseForm.getElectionWard());
+            baseRegisterJson.addProperty("ward", baseForm.getWard());
+            baseRegisterJson.addProperty("zone", baseForm.getZone());
+            baseRegisterJson.addProperty("isFeeCollected", baseForm.isFeeCollected());
+            baseRegisterJson.addProperty("status", baseForm.getStatus());
+            baseRegisterJson.addProperty("rescheduledByEmployee", baseForm.getIsRescheduledByEmployee());
+            baseRegisterJson.addProperty("onePermitApplication", baseForm.getOnePermitApplication());
+            baseRegisterJson.addProperty("applicationType", baseForm.getApplicationType());
+            baseRegisterJson.addProperty("appointmentDate",
+                    defaultString(DateUtils.toDefaultDateFormat(baseForm.getAppointmentDate()), "N/A"));
+            baseRegisterJson.addProperty("appointmentTime", defaultString(baseForm.getAppointmentTime(), "N/A"));
+            baseRegisterJson.addProperty("id", baseForm.getId());
+            baseRegisterJson.addProperty("revocationNumber", baseForm.getRevocationNumber());
 
-			baseRegisterResultData.add(baseRegisterJson);
-		});
-		return enhance(baseRegisterResultData, baseRegisterResponse);
-	}
-
+            baseRegisterResultData.add(baseRegisterJson);
+        });
+        return enhance(baseRegisterResultData, baseRegisterResponse);
+    }
 
 }

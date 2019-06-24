@@ -61,7 +61,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.master.entity.ApplicationSubType;
-import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
@@ -69,7 +68,6 @@ import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
-import org.egov.bpa.transaction.service.PdfQrCodeAppendService;
 import org.egov.bpa.transaction.service.PermitNocApplicationService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationAdaptor;
@@ -87,18 +85,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/application")
 public class SearchBpaApplicationController extends BpaGenericApplicationController {
 
-    private static final String DATA = "{ \"data\":";
     private static final String APPLICATION_HISTORY = "applicationHistory";
+    private static final String SEARCH_BPA_APPLICATION_FORM = "searchBpaApplicationForm";
 
     @Autowired
     private SearchBpaApplicationService searchBpaApplicationService;
@@ -113,23 +112,19 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     @Autowired
     private CrossHierarchyService crossHierarchyService;
     @Autowired
-    private PdfQrCodeAppendService pdfQrCodeAppendService;
-    @Autowired
     private BpaDcrService bpaDcrService;
     @Autowired
     private PermitNocApplicationService permitNocService;
-    @Autowired
-    private NocConfigurationService nocConfigurationService;
 
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @GetMapping("/search")
     public String showSearchApprovedforFee(final Model model) {
         prepareFormData(model);
-        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
         return "search-bpa-application";
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchRegisterStatusMarriageRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         return new DataTable<>(searchBpaApplicationService.pagedSearch(searchBpaApplicationForm),
@@ -137,16 +132,10 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                 .toJson(SearchBpaApplicationAdaptor.class);
     }
 
-    @RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/view/{applicationNumber}")
     public String viewApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-     /* for (DCRDocument dcrDocument : application.getDcrDocuments()) {
-            for (StoreDCRFiles file : dcrDocument.getDcrAttachments()) {
-                bpaUtils.addQrCodeToPdfDocuments(file.getFileStoreMapper(), application);
-                pdfQrCodeAppendService.addStamp(file.getFileStoreMapper(),application);
-            }
-        }*/
         List<PermitNocApplication> nocApplication = permitNocService.findByPermitApplicationNumber(applicationNumber);
         model.addAttribute("nocApplication",nocApplication);
 
@@ -171,19 +160,19 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         return "viewapplication-form";
     }
 
-    @RequestMapping(value = "/downloadfile/{fileStoreId}")
+    @GetMapping("/downloadfile/{fileStoreId}")
     public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, FILESTORE_MODULECODE, true);
     }
 
-    @RequestMapping(value = "/bpacollectfee", method = RequestMethod.GET)
+    @GetMapping("/bpacollectfee")
     public String showCollectionPendingRecords(final Model model) {
         prepareFormData(model);
-        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
         return "search-collect-fee";
     }
 
-    @RequestMapping(value = "/bpacollectfee", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/bpacollectfee", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchCollectionPendingRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
 		return new DataTable<>(searchBpaApplicationService.hasFeeCollectionPending(searchBpaApplicationForm),
@@ -191,7 +180,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
 				.toJson(SearchBpaApplicationAdaptor.class);
     }
     
-    @RequestMapping(value = "/bpadocumentscrutiny", method = RequestMethod.GET)
+    @GetMapping("/bpadocumentscrutiny")
     public String showDocumentScrutinyPendingRecords(final Model model) {
         Set<Boundary> employeeMappedZone = new HashSet<>();
         Set<Boundary> mappedElectionWard = new HashSet<>();
@@ -222,7 +211,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
 								REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
 			}
 		}
-        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
         
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
@@ -230,16 +219,15 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         List<ApplicationSubType> appTyps = applicationTypeService.getAllSlotRequiredApplicationTypes();
 		List<ApplicationSubType> applicationTypes = new ArrayList<>();
                 for (ApplicationSubType applType : appTyps)
-                    if (applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
-                        continue;
-                    else
-                    	applicationTypes.add(applType);
+                    if (!applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
+                        applicationTypes.add(applType);
+                    	
 		model.addAttribute("applicationTypes", applicationTypes);
           model.addAttribute("isUnattendedCancelled",isUnattendedCancelled);
         return "search-document-scrutiny";
     }
 
-    @RequestMapping(value = "/bpadocumentscrutiny", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/bpadocumentscrutiny", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchDocumentScrutinyPendingRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
 		return new DataTable<>(searchBpaApplicationService.searchForDocumentScrutinyPending(searchBpaApplicationForm),
@@ -247,7 +235,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
 				.toJson(SearchBpaApplicationAdaptor.class);
     }
 
-    @RequestMapping(value = "/details-view/by-permit-number/{permitNumber}", method = RequestMethod.GET)
+    @GetMapping("/details-view/by-permit-number/{permitNumber}")
     public String viewApplicationByPermitNumber(final Model model, @PathVariable final String permitNumber) {
         BpaApplication application = applicationBpaService.findByPermitNumber(permitNumber);
         bpaUtils.loadBoundary(application);
@@ -259,6 +247,22 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
         return "viewapplication-form";
+    }
+    
+    @GetMapping("/search/initiate-revocation")
+    public String showRevocationSearchForm(final Model model) {
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
+        return "search-revocation-applications";
+    }
+
+    @PostMapping(value = "/search/initiate-revocation", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchApplicationsForRevocation(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(securityUtils.getCurrentUser().getId());
+        return new DataTable<>(searchBpaApplicationService.searchForRevocation(searchBpaApplicationForm, userIds),
+                searchBpaApplicationForm.draw())
+                .toJson(SearchBpaApplicationAdaptor.class);
     }
     
 }

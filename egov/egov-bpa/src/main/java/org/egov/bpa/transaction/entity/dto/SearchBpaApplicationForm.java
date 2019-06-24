@@ -96,6 +96,8 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private Long revenueBoundary;
     private Long locationBoundary;
     private String revocationNumber;
+    private Date planPermissionDate;
+    private String occupancyCertificateNumber;
 
     public String getRevocationNumber() {
         return revocationNumber;
@@ -128,6 +130,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setServiceType(application.getServiceType().getDescription());
         setServiceCode(application.getServiceType().getCode());
         setPlanPermissionNumber(application.getPlanPermissionNumber());
+        setPlanPermissionDate(application.getPlanPermissionDate());
         setStakeHolderName(application.getStakeHolder().get(0).getStakeHolder().getName());
         if (!application.getSiteDetail().isEmpty()) {
             SiteDetail site = application.getSiteDetail().get(0);
@@ -164,6 +167,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setServiceCode(occupancyCertificate.getParent().getServiceType().getCode());
         setPlanPermissionNumber(occupancyCertificate.getParent().getPlanPermissionNumber());
         setStakeHolderName(occupancyCertificate.getParent().getStakeHolder().get(0).getStakeHolder().getName());
+        setOccupancyCertificateNumber(occupancyCertificate.getOccupancyCertificateNumber());
         if (!occupancyCertificate.getParent().getSiteDetail().isEmpty()) {
             SiteDetail site = occupancyCertificate.getParent().getSiteDetail().get(0);
             setReSurveyNumber(site.getReSurveyNumber());
@@ -561,4 +565,21 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     public void setLocationBoundary(Long locationBoundary) {
         this.locationBoundary = locationBoundary;
     }
+
+    public Date getPlanPermissionDate() {
+        return planPermissionDate;
+    }
+
+    public void setPlanPermissionDate(Date planPermissionDate) {
+        this.planPermissionDate = planPermissionDate;
+    }
+
+    public String getOccupancyCertificateNumber() {
+        return occupancyCertificateNumber;
+    }
+
+    public void setOccupancyCertificateNumber(String occupancyCertificateNumber) {
+        this.occupancyCertificateNumber = occupancyCertificateNumber;
+    }
+    
 }

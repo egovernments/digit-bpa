@@ -120,18 +120,6 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "zone",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "ward",
-														"sClass" : "text-left"
-													},
-													{
-														"data" : "electionWard",
-														"sClass" : "text-left"
-													},
-													{
 														"data" : "status",
 														"sClass" : "text-left"
 													},

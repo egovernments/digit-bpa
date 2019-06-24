@@ -108,9 +108,6 @@
 					<th><spring:message code="lbl.build.plan.permission.date" /></th>
 					<th><spring:message code="lbl.service.type" /></th>
 					<th><spring:message code="lbl.occupancy" /></th>
-					<th><spring:message code="lbl.zonal.office" /></th>
-					<th><spring:message code="lbl.reven.ward" /></th>
-					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.action" /></th>
 				</tr>

@@ -1,0 +1,1 @@
+update eg_action set enabled=true where name='search applications for revocation of issued permit order';

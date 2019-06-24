@@ -978,5 +978,41 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inconst-show-inspection" />
 	</definition>
+	<definition name="search-revocation-applications"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.revoke.search" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/search-revocation-applications.jsp" />
+	</definition>
+	<definition name="permit-revocation-initiate"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.revoke.initiate" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/permit-revocation-initiate.jsp" />
+	</definition>
+	<definition name="permit-revocation-approve"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.revoke.approve" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/permit-revocation-approve.jsp" />
+	</definition>
+	<definition name="view-permit-revocation-details"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.revoke.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/view-permit-revocation-details.jsp" />
+	</definition>
+	<definition name="application-success"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.appln.success" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/application-success.jsp" />
+	</definition>
+	
 	
 </tiles-definitions>
