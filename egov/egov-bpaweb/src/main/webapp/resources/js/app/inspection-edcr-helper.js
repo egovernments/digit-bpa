@@ -197,6 +197,7 @@ $(document).ready(
 	        dataType: "json",
 	        success: function (response) {
 	            if(response) {
+                    $('#bpaApplicationNumber').val(response.applicationNumber);
                     $('#permissionNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + $('#planPermissionNumber').val() + '\')" href="javascript:void(0);">' + $('#planPermissionNumber').val()  + '</a>');
                     $('#applicationDate').html(response.applicationDate);
                     $('#resurveyNo').html(response.reSurveyNumber);
