@@ -113,7 +113,7 @@
 					</div>
 						</c:otherwise>
 					</c:choose>
-				</div>
+				</div> </div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="../oc-dcr-documents.jsp"></jsp:include>
@@ -125,7 +125,7 @@
 						<jsp:include page="../oc-noc-documents.jsp"></jsp:include>
 					</div>
 				</div>
-			</div>
+			
 
 			<div align="center">
 				<form:button type="submit" id="ocSave" class="btn btn-primary"

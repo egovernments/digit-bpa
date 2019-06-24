@@ -143,7 +143,7 @@ var otherBldgDetails = '<div class="block-{{bldgIdx}}">'+
     '                    maxlength="6" data-pattern="decimalvalue"' +
     '                    id="heightFromGroundWithOutStairRoomFromEdcr{{bldgIdx}}" required="required"' +
     '                    name="buildingDetail[{{bldgIdx}}].heightFromGroundWithOutStairRoom"' +
-    '                    value="{{height}}"/>' +
+    '                    value="{{height}}" disabled="true"/>' +
     '        </div>' +
     /*    '       <label' +
     '                class="col-sm-2 control-label text-right heightFromGroundWithStairRoom{{bldgIdx}}">' +
