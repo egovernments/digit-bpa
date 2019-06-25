@@ -61,8 +61,8 @@
 		</thead>
 		<tbody>
 		<c:choose>
-			<c:when test="${not empty bpaApplication.revocations}">
-				<c:forEach items="${bpaApplication.revocations}" var="revoke" varStatus="status">
+			<c:when test="${not empty bpaApplication.permitRevocation}">
+				<c:forEach items="${bpaApplication.permitRevocation}" var="revoke" varStatus="status">
 					<tr id="lprow">
 						<td align="center" class="view-content" style="font-size: 90%;">${status.index+1}</td>
 						<td align="center" class="view-content" style="font-size: 90%;"><span class="bold">

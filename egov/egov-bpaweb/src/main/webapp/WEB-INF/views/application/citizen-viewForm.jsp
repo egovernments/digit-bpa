@@ -105,6 +105,10 @@
 					<li><a data-toggle="tab" href="#view-lp" data-tabidx=6><spring:message
 								code='lbl.lp.details' /></a></li>
 				</c:if>
+				<c:if test="${not empty bpaApplication.permitRevocation}">
+					<li><a data-toggle="tab" href="#view-revoke" data-tabidx=7><spring:message
+								code='lbl.revoke.details' /></a></li>
+				</c:if>
 			</ul>
 			<div class="tab-content">
 				<div id="document-info" class="tab-pane fade">
@@ -217,6 +221,13 @@
 						</div>
 					</div>
 				</c:if>
+				<c:if test="${not empty bpaApplication.permitRevocation}">
+					<div id="view-revoke" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="show-permit-revocations.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
 			</div>
 			<div class="buttonbottom" align="center">
 				<table>
@@ -283,7 +294,7 @@
 								</form:button>&nbsp;
 							</c:if></td>
 						<c:if
-							test="${(bpaApplication.status.code eq 'Order Issued to Applicant' || bpaApplication.applicationType.name eq 'Low Risk') && (bpaApplication.status.code ne 'Revocated') && not empty bpaApplication.bpaNotice}">
+							test="${bpaApplication.status.code eq 'Order Issued to Applicant' || bpaApplication.status.code eq 'Revocation cancelled' || (bpaApplication.applicationType.name eq 'Low Risk' && bpaApplication.status.code ne 'Revocated')}">
 							<td><a
 								href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}"
 								target="popup" class="btn btn-primary"
@@ -400,14 +411,15 @@
 			<input type="hidden" id="existingBuildDetailsNotPresent"
 				value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />
 			<input type="hidden" id="acceptDisclaimer"
-				value="<spring:message code='msg.validate.accept.disclaimer'/>" /> <input
-				type="hidden" id="validateCitizenAcceptance"
+				value="<spring:message code='msg.validate.accept.disclaimer'/>" />
+			<input type="hidden" id="validateCitizenAcceptance"
 				name="validateCitizenAcceptance"
 				value="${validateCitizenAcceptance}" /> <input type="hidden"
 				id="citizenDisclaimerAccepted" name="citizenDisclaimerAccepted"
 				value="${citizenDisclaimerAccepted}" /> <input type="hidden"
-				id="isCitizen" name="isCitizen" value="${isCitizen}" />
-				<input type="hidden" id="applicationNo" value="${bpaApplication.applicationNumber}"/>
+				id="isCitizen" name="isCitizen" value="${isCitizen}" /> <input
+				type="hidden" id="applicationNo"
+				value="${bpaApplication.applicationNumber}" />
 		</div>
 	</div>
 </div>
@@ -420,5 +432,5 @@
 	src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/citizen-view-helper.js?rnd=${app_release_no}'/>"></script>
-<script 		
-    src="<cdn:url value='/resources/js/app/noc-helper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/noc-helper.js?rnd=${app_release_no}'/>"></script>

@@ -108,7 +108,7 @@
 					</div>
 				</div>
 			</div>
-			<c:if test="${not empty bpaApplication.revocations}">
+			<c:if test="${not empty permitRevocation.revocationDetails}">
 				<div class="panel-body">
 					<table class="table table-bordered  multiheadertbl"
 						id=permitRevocationDetails>

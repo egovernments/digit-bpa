@@ -87,6 +87,10 @@
                     <li><a data-toggle="tab" href="#view-lp" data-tabidx=6><spring:message
                             code='lbl.lp.details'/></a></li>
                 </c:if>
+                <c:if test="${not empty bpaApplication.permitRevocation}">
+					<li><a data-toggle="tab" href="#view-revoke" data-tabidx=7><spring:message
+								code='lbl.revoke.details' /></a></li>
+				</c:if>
             </ul>
             <div class="tab-content">
                 <div id="document-info" class="tab-pane fade">
@@ -183,6 +187,13 @@
                         </div>
                     </div>
                 </c:if>
+                <c:if test="${not empty bpaApplication.permitRevocation}">
+					<div id="view-revoke" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="show-permit-revocations.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
             </div>
             <div class="buttonbottom" align="center">
                 <table>
