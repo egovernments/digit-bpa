@@ -207,6 +207,9 @@ $(document).ready(
                     $('#occupancyName').html(response.occupancy);
                     $('#serviceType').html(response.serviceTypeDesc);
                     $('#dcrNumber').html(response.dcrNumber);
+                  
+                    if(response.reSurveyNumber == null)
+                    	$('#resurveyNo').html('N/A');
 
 	            	$.ajax({
 	                    async: false,

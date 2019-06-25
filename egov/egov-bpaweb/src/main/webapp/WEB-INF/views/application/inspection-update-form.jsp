@@ -129,19 +129,15 @@
 							</div>
 						</div>
 						<div class="form-group">
-
 							<div class="col-sm-3 control-label text-right">
-								<spring:message code="lbl.status" />
+								<spring:message code="lbl.applicant.remarks" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
-								<c:out
-									value="${inspectionApplication.status.code}"
-									default="N/A"></c:out>
+								<c:out value="${inspectionApplication.remarks}" default="N/A"></c:out>
 							</div>
-							
 						</div>
-						
-			 </div>
+
+					</div>
 		
 		
 		         <div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
@@ -199,7 +195,7 @@
 					<input type="button" name="save" id="btnSave" value="Save" class="btn btn-primary"/>
 				</c:if>
 				
-			</div>
+			</div> <br>
 				
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.portal.submit.appln'/>" /> 
 			    <input type="hidden" id="eDcrNumber" value="${eDcrNumber}"/>
