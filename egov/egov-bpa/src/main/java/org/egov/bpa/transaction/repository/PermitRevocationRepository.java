@@ -49,7 +49,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PermitRevocationRepository extends JpaRepository<PermitRevocation, Long> {
     
-    List<PermitRevocation> findByApplicationPlanPermissionNumberOrderByApplicationDateDesc(String permitNumber);
+    List<PermitRevocation> findByApplicationPlanPermissionNumberOrderByIdDesc(String permitNumber);
     
     PermitRevocation findByRevocationNumber(String revocationNumber);
     

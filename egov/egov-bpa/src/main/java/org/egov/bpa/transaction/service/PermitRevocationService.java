@@ -144,7 +144,7 @@ public class PermitRevocationService {
 
     public PermitRevocation findByPlanPermissionNumberAndRevocationApplnDate(final String permitNumber) {
         List<PermitRevocation> permitRevocations = permitRevocationRepository
-                .findByApplicationPlanPermissionNumberOrderByApplicationDateDesc(permitNumber);
+                .findByApplicationPlanPermissionNumberOrderByIdDesc(permitNumber);
         return permitRevocations.isEmpty() ? null : permitRevocations.get(0);
     }
 

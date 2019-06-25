@@ -193,20 +193,19 @@ $(document)
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ demandNoticeurl
 																		+ row.applicationNumber + '>Generate Demand Notice</option></select>');
-															} 
-															else if (row.status == 'Order Issued to Applicant' || (row.applicationType == 'Low Risk' && !row.isFeeCollected ) && !row.status == 'Revocated') {
-																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
-																		+ permitorderurl
-																		+ row.applicationNumber + '>Generate Permit Order</option></select>');
 															} else if (row.status == 'Cancelled' && row.pendingAction == 'END') {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ rejectionnoticeurl
 																		+ row.applicationNumber + '>Print Rejection Notice</option></select>');
-															}else if (row.status == 'Revocated' && row.pendingAction == 'END') {
+															} else if (row.status == 'Revocated') {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
 																		+ revocationNoticeurl
 																		+ row.revocationNumber + '>Print Revocation Notice</option></select>'); 
-															}else {
+															} else if (row.status == 'Order Issued to Applicant' || row.status == 'Revocation cancelled' || (row.applicationType == 'Low Risk' && !row.isFeeCollected )) {
+																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'<option  value='
+																		+ permitorderurl
+																		+ row.applicationNumber + '>Generate Permit Order</option></select>');
+															} else {
 																return ('<select class="dropchange" style="width:160px;font-size: small">'+commonOptions+'></select>');
 															}
 														}

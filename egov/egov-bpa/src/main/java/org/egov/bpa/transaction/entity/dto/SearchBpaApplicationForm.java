@@ -41,7 +41,9 @@ package org.egov.bpa.transaction.entity.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Optional;
 
+import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.SlotDetail;
@@ -144,8 +146,10 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setCurrentOwner(currentOwner);
         setPendingAction(pendingAction);
         setFeeCollected(isFeeCollected);
-        if (!application.getPermitRevocation().isEmpty())
-            setRevocationNumber(application.getPermitRevocation().get(0).getRevocationNumber());
+        if (!application.getPermitRevocation().isEmpty()) {
+            Optional<PermitRevocation> revoke = application.getPermitRevocation().stream().reduce((revoke1, revoke2) -> revoke2);
+            setRevocationNumber(revoke.isPresent() ? revoke.get().getRevocationNumber() : "");
+        }
     }
 
     public SearchBpaApplicationForm(OccupancyCertificate occupancyCertificate, String currentOwner, String pendingAction,
