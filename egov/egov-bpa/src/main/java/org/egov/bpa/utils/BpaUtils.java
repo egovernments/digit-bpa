@@ -7,6 +7,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECT_CLERK;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_INIT_REVOKE;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
 import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
@@ -265,6 +266,8 @@ public class BpaUtils {
                 || (application.getStatus() != null
                         && application.getStatus().getCode().equals(APPLICATION_STATUS_CANCELLED)))
             isResolved = true;
+        if (APPLICATION_STATUS_INIT_REVOKE.equals(application.getStatus().getCode()))
+            isResolved = false;
         String url = "/bpa/application/citizen/update/" + application.getApplicationNumber();
         if (application.getStatus() != null)
             portalInboxService.updateInboxMessage(application.getApplicationNumber(), module.getId(),

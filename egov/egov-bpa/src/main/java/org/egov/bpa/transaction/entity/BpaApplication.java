@@ -268,6 +268,7 @@ public class BpaApplication extends StateAware<Position> {
     private List<PermitDcrDocument> permitDcrDocuments = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BuildingSubUsage> buildingSubUsages = new ArrayList<>(0);
+    @OrderBy("id DESC")
     @OneToMany(cascade = CascadeType.ALL,mappedBy="application", fetch = FetchType.LAZY)
     private List<PermitRevocation> permitRevocation = new ArrayList<>();
 
