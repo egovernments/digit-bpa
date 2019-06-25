@@ -47,10 +47,12 @@
 
 package org.egov.bpa.transaction.entity.common;
 
+import org.egov.common.entity.bpa.ChecklistType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -77,6 +79,10 @@ public class DocketCommon extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "inspection")
     private InspectionCommon inspection;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "checklisttype")
+    private ChecklistType checklistType;
 
     @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL)
     private List<DocketConstructionStageCommon> docketConstructionStage = new ArrayList<>(0);
@@ -120,4 +126,10 @@ public class DocketCommon extends AbstractAuditable {
     public void setDocketDetail(List<DocketDetailCommon> docketDetail) {
         this.docketDetail = docketDetail;
     }
+	public ChecklistType getChecklistType() {
+		return checklistType;
+	}
+	public void setChecklistType(ChecklistType checklistType) {
+		this.checklistType = checklistType;
+	}
 }

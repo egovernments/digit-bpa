@@ -98,7 +98,7 @@ public class InspectionController extends BpaGenericApplicationController {
         Position ownerPosition = application.getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
-        inspection.getInspection().setDocket(inspectionService.buildDocDetFromUI(inspection));
+       // inspection.getInspection().setDocket(inspectionService.buildDocDetFromUI(inspection));
         final PermitInspection savedInspection = inspectionService.save(inspection, application);
         model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
         return "redirect:/application/view-inspection/" + savedInspection.getId();

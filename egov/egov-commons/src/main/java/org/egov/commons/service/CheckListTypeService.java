@@ -19,4 +19,7 @@ public class CheckListTypeService {
 		return checkListTypeRepository.findAll();
 	}
 
+	public ChecklistType findByCode(String code) {
+		return checkListTypeRepository.findByCode(code);
+	}
 }

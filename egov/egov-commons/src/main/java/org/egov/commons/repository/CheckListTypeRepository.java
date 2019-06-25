@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface CheckListTypeRepository extends JpaRepository<ChecklistType, Long> {
 	
 	List<ChecklistType> findAll();
+	
+	ChecklistType findByCode(String code);
 }

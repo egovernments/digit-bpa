@@ -138,7 +138,7 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
         final InspectionService inspectionService = (InspectionService) specificNoticeService
                 .find(InspectionService.class, specificNoticeService.getCityDetails());
         inspectionService.prepareImagesForView(permitInspn);
-        inspectionService.buildDocketDetailForModifyAndViewList(permitInspn, model);
+       // inspectionService.buildDocketDetailForModifyAndViewList(permitInspn, model);
         model.addAttribute("permitInspection", permitInspn);
         model.addAttribute(BpaConstants.BPA_APPLICATION, application);
         model.addAttribute("planScrutinyValues", ChecklistValues.values());

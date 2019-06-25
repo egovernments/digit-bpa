@@ -139,6 +139,7 @@ public class InspectionCommon extends AbstractAuditable {
     private transient List<DocketDetailCommon> docketDetailErectionTower = new ArrayList<>();
     private transient List<DocketDetailCommon> docketDetailShutter = new ArrayList<>();
     private transient List<DocketDetailCommon> docketDetailRoofConversion = new ArrayList<>();
+    
     private transient List<PlanScrutinyChecklistCommon> planScrutinyChecklistForRuleTemp = new ArrayList<>(0);
     private transient List<PlanScrutinyChecklistCommon> planScrutinyChecklistForDrawingTemp = new ArrayList<>(0);
 

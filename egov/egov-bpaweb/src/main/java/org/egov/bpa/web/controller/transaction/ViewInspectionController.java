@@ -100,7 +100,7 @@ public class ViewInspectionController {
         model.addAttribute("message", "Inspection Saved Successfully");
         final InspectionService inspectionService = (InspectionService) specificNoticeService
                 .find(InspectionService.class, specificNoticeService.getCityDetails());
-        inspectionService.buildDocketDetailForModifyAndViewList(inspectionObj, model);
+       // inspectionService.buildDocketDetailForModifyAndViewList(inspectionObj, model);
         inspectionService.prepareImagesForView(inspectionObj);
         model.addAttribute(PERMIT_INSPECTION, inspectionObj);
         inspectionService.buildPlanScrutinyChecklistDetails(inspectionObj);

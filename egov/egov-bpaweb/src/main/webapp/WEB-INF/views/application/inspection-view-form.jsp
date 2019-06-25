@@ -183,29 +183,31 @@
 								</div>
 							</div>
 						</div>
-						<c:if test="${not empty docketDetailLocList}">
-							<div class="panel-heading custom_form_panel_heading">
-								<div class="panel-title">
-									<c:out value="${docketDetailLocList[0].serviceChecklist.checklist.checklistType.description}" />
-								</div>
-							</div>
-							<div class="panel-body">
-								<c:forEach items="${docketDetailLocList}" var="doc"
-									varStatus="counter">
-									<div class="row add-border">
-										<div class="col-sm-5 add-margin view-content">
-											<c:out value="${doc.serviceChecklist.checklist.description}"
-												default="N/A"></c:out>
-										</div>
-										<div class="col-sm-2 add-margin view-content">
-											<c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-										</div>
-										<div class="col-sm-5 add-margin view-content text-justify">
-											<c:out value="${doc.remarks}" default="N/A"></c:out>
-										</div>
+						<c:if test="${not empty permitInspection.inspection.docket}">
+							<c:forEach var="doc" items="${permitInspection.inspection.docket}" varStatus="status">
+								<div class="panel-heading custom_form_panel_heading">
+									<div class="panel-title">
+										<c:out value="${doc.checklistType.description}" />
 									</div>
-								</c:forEach>
-							</div>
+								</div>
+								<div class="panel-body">
+									<c:forEach items="${doc.docketDetail}" var="docs"
+										varStatus="counter">
+										<div class="row add-border">
+											<div class="col-sm-5 add-margin view-content">
+												<c:out value="${docs.serviceChecklist.checklist.description}"
+													default="N/A"></c:out>
+											</div>
+											<div class="col-sm-2 add-margin view-content">
+												<c:out value="${docs.value.checkListVal}" default="N/A"></c:out>
+											</div>
+											<div class="col-sm-5 add-margin view-content text-justify">
+												<c:out value="${docs.remarks}" default="N/A"></c:out>
+											</div>
+										</div>
+									</c:forEach>
+								</div>
+							</c:forEach>
 						</c:if>
 						<c:if test="${not empty docketDetailMeasurementList}">
 							<div class="panel-heading custom_form_panel_heading">
