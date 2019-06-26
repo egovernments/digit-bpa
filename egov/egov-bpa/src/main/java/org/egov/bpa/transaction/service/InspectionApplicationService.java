@@ -40,6 +40,7 @@ package org.egov.bpa.transaction.service;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
+import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
@@ -125,6 +126,8 @@ public class InspectionApplicationService {
         if (APPLICATION_STATUS_TS_INS_INITIATED.equals(permitInspectionApplication.getInspectionApplication().getStatus().getCode())) {
         	permitInspectionApplication.getInspectionApplication().setTownSurveyorInspectionRequire(false);
         }
+        permitInspectionApplication.getInspectionApplication().setLPRequestInitiated(FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(permitInspectionApplication.getInspectionApplication().getState().getNextAction()));
+
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             bpaUtils.redirectInspectionWorkFlow(permitInspectionApplication, wfBean);
         

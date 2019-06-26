@@ -31,6 +31,7 @@ package org.egov.bpa.transaction.service;
 
 import java.util.List;
 
+import org.egov.bpa.transaction.entity.InspectionLetterToParty;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.egov.bpa.transaction.repository.LettertoPartyDocumentRepository;
@@ -63,6 +64,12 @@ public class LettertoPartyDocumentService {
             PermitLetterToParty lettertoParty) {
         return lettertoPartyDocumentRepository
                 .findByIsRequestedTrueAndIsSubmittedTrueAndLetterToPartyOrderByIdAsc(lettertoParty.getLetterToParty());
+    }
+    
+    public List<LetterToPartyDocumentCommon> findByIsrequestedTrueAndLettertoPartyOrderByIdAsc(
+            InspectionLetterToParty lettertoParty) {
+        return lettertoPartyDocumentRepository
+                .findByIsRequestedTrueAndLetterToPartyOrderByIdAsc(lettertoParty.getLetterToParty());
     }
 
 }

@@ -95,23 +95,32 @@ jQuery(document)
                         removeWorkFlowMandatoryAndHideDepartmentDetails();
                         $("#approverDetailBody").hide();
 					}
+					 if ($('#wfstateDesc').val() == 'LP Created') {
+							removeWorkFlowMandatoryAndHideDepartmentDetails();
+							$("#buttonSubmit").hide();
+						} else if ($('#wfstateDesc').val() == 'LP Reply Received') {
+							removeWorkFlowMandatoryAndHideDepartmentDetails();
+							$("#buttonSubmit").show();
+						}
 
-
+						
 					function removeWorkFlowMandatoryAndHideDepartmentDetails() {
 						$('#approvalDepartment').removeAttr('required');
 						$('#approvalDesignation').removeAttr('required');
 						$('#approvalPosition').removeAttr('required');
                         $("#approverDetailBody").hide();
+						$('#amountRule').removeAttr('required');
+
+                        
 					}
 
 					
 
 					var tabfocus;
-					if ($('#captureTSRemarks').val() === 'true') {
-                        tabfocus = '#ts-remarks';
-                    } else if ($('#captureTSRemarks').val() === 'false') {
-                        tabfocus = '#view-inspection';
-                    } else {
+					if($('#wfstateDesc').val() == 'LP Created'
+						|| $('#wfstateDesc').val() == 'LP Reply Received') {
+                        tabfocus = '#view-lp';
+					}  else {
 						tabfocus = '#applicant-info';
 					}
 

@@ -4,10 +4,10 @@ import static java.io.File.separator;
 import static org.apache.commons.io.FileUtils.getUserDirectoryPath;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_INIT_REVOKE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECT_CLERK;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_INIT_REVOKE;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
 import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
@@ -602,6 +602,16 @@ public class BpaUtils {
         wfBean.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
         wfBean.setApproverPositionId(approvalPositionId);
         if (inspectionWorkflowCustomDefaultImpl != null) 
+        	if (LETTERTOPARTYINITIATE.equals(wfBean.getCurrentState())) {
+                wfBean.setWorkFlowAction(LETTERTOPARTYINITIATE);
+                inspectionWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitInspection, wfBean);
+            } else if (LPCREATED.equals(wfBean.getCurrentState())) {
+                wfBean.setWorkFlowAction(LPCREATED);
+                inspectionWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitInspection, wfBean);
+            } else if (LPREPLIED.equals(wfBean.getCurrentState())) {
+                wfBean.setWorkFlowAction(LPREPLYRECEIVED);
+                inspectionWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitInspection, wfBean);
+            } else 
         		inspectionWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitInspection, wfBean);
     }
 

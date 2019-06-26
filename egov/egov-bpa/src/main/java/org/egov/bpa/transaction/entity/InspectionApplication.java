@@ -125,13 +125,14 @@ public class InspectionApplication extends StateAware<Position> {
     @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("id DESC ")
     private List<InConstructionInspection> inspections = new ArrayList<>();
-    
+    @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InspectionLetterToParty> inspectionLetterToParties = new ArrayList<>();
     @Length(min = 1, max = 5000)
     private String townSurveyorRemarks;
     private Boolean isTownSurveyorInspectionRequire = false;
     private transient Long approvalDepartment;
     private transient Long approvalDesignation;
-
+    private Boolean isLPRequestInitiated;
     private transient String approvalComent;
     private transient MultipartFile[] files;
 
@@ -206,6 +207,14 @@ public class InspectionApplication extends StateAware<Position> {
 		this.approvalComent = approvalComent;
 	}
 
+	public List<InspectionLetterToParty> getInspectionLetterToParties() {
+		return inspectionLetterToParties;
+	}
+
+	public void setInspectionLetterToParties(List<InspectionLetterToParty> inspectionLetterToParties) {
+		this.inspectionLetterToParties = inspectionLetterToParties;
+	}
+
 	public List<InspectionAppointmentSchedule> getAppointmentSchedules() {
 		return appointmentSchedules;
 	}
@@ -229,6 +238,14 @@ public class InspectionApplication extends StateAware<Position> {
 	public void setTsInspnSupportDocs(Set<FileStoreMapper> tsInspnSupportDocs) {
 		this.tsInspnSupportDocs = tsInspnSupportDocs;
 	}
+	
+	public Boolean getLPRequestInitiated() {
+        return isLPRequestInitiated;
+    }
+
+    public void setLPRequestInitiated(Boolean LPRequestInitiated) {
+        isLPRequestInitiated = LPRequestInitiated;
+    }
 
 	public MultipartFile[] getFiles() {
 		return files;

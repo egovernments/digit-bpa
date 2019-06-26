@@ -63,8 +63,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.eis.entity.Assignment;
@@ -429,5 +431,14 @@ public class BpaWorkFlowService {
         }
         return amountRule.setScale(0, BigDecimal.ROUND_UP);
     }
+    
+	public Position getApproverPositionOfElectionWardByCurrentState(final PermitInspectionApplication permitInspection,
+			final String currentState) {
+		WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(permitInspection.getInspectionApplication().getStateType(),
+				currentState,BpaConstants.INSPECTIONAPPLICATION);
+		return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
+				bpaUtils.getBoundaryForWorkflow(permitInspection.getApplication().getSiteDetail().get(0)).getId());
+	}
+
 
 }

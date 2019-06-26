@@ -48,11 +48,11 @@ package org.egov.bpa.web.controller.transaction;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_AE;
 import static org.egov.bpa.utils.BpaConstants.DESIGNATION_OVERSEER;
 import static org.egov.bpa.utils.BpaConstants.FIELD_INSPECTION_COMPLETED;
+import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_AE_AFTER_TS_INSP;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_AE_FOR_APPROVAL;
 import static org.egov.bpa.utils.BpaConstants.FWD_TO_OVERSEER_AFTER_TS_INSPN;
@@ -72,16 +72,17 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.InspectionAppointmentSchedule;
+import org.egov.bpa.transaction.entity.InspectionLetterToParty;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
-import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.transaction.service.InConstructionInspectionService;
+import org.egov.bpa.transaction.service.InspectionApplicationService;
+import org.egov.bpa.transaction.service.InspectionLetterToPartyService;
 import org.egov.bpa.transaction.service.PermitFeeService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
@@ -89,6 +90,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -114,8 +116,6 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     private static final String ADDITIONALRULE = "additionalRule";
     private static final String AMOUNT_RULE = "amountRule";
 
-
-
     @Autowired
     private InConstructionInspectionService inspectionService;
     @Autowired
@@ -124,6 +124,8 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     protected PermitFeeService permitFeeService;
     @Autowired
     private InspectionApplicationService inspectionAppService;
+    @Autowired
+    private InspectionLetterToPartyService letterToPartyService;
     
     @ModelAttribute("inspectionApplication")
     public InspectionApplication getInspectionApplication(@PathVariable final String applicationNumber) {
@@ -170,6 +172,12 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
         if (StringUtils.isNotBlank(request.getParameter(APPRIVALPOSITION))
                 && !WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
+        }else if (FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(inspectionApplication.getState().getNextAction())) {
+            List<InspectionLetterToParty> lettertoParties = letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication);
+            StateHistory<Position> stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(
+            		inspectionApplication.getStateHistory(),
+                    lettertoParties.get(0).getLetterToParty().getStateForOwnerPosition());
+            approvalPosition = stateHistory.getOwnerPosition().getId();
         }
 
         if (WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
@@ -277,6 +285,8 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
         } else if ((hasInspectionPendingAction && hasInspectionStatus)
                 || isAfterTSInspection && !inspectionApplication.getInspections().isEmpty())
             mode = "modifyInspection";
+        else if(BpaConstants.FORWARDED_TO_CLERK.equals(inspectionApplication.getState().getNextAction()))
+            model.addAttribute("createlettertoparty", true);
         else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(pendingAction)
                 && !inspectionApplication.getInspections().isEmpty())
             mode = "initiatedForApproval";
@@ -304,6 +314,7 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     
     private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
     	model.addAttribute("inspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
+        model.addAttribute("lettertopartylist", letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication));
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(), inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
    }

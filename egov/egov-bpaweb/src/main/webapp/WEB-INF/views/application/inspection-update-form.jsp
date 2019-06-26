@@ -64,6 +64,8 @@
 <div class="row">
 	<div class="col-md-12">	
 		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+					<form:hidden  path="" id="amountRule" name="amountRule" value="${amountRule}"/>
+		
 		<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage" value="${noJAORSAMessage}" />	
 		<form:hidden path="id"  id="inspectionApplicationid"
 				   value="${inspectionApplication.id}"/>	
@@ -77,7 +79,12 @@
 				<c:if test="${not empty inspectionApplication.inspections}">
 					<li><a data-toggle="tab" href="#view-inspection" data-tabidx=3><spring:message
 							code='lbl.inspection.appln' /></a></li>
-				</c:if></ul>
+				</c:if>
+				<c:if test="${not empty lettertopartylist}">
+					<li><a data-toggle="tab" href="#view-lp" data-tabidx=7><spring:message
+							code='lbl.lp.details' /></a></li>
+				</c:if>
+				</ul>
       </br>
 		  <div class="tab-content">
 				<div id="applicant-info" class="tab-pane fade in active">
@@ -165,6 +172,13 @@
 						</c:if>
 					</div>
 				</c:if>
+				<c:if test="${not empty lettertopartylist}">
+					<div id="view-lp" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="../lettertoparty/ins-lettertoparty-details.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
 				</div>
 		
 		
@@ -190,6 +204,11 @@
 							href="/bpa/inspection/scheduleappointment/${inspectionApplication.applicationNumber}"
 							class="btn btn-primary"> <spring:message code="lbl.btn.new.appointment"/> </a>
 				</c:if>
+				<c:if test="${createlettertoparty}">
+					<a
+							href="/bpa/inspection/lettertoparty/create/${inspectionApplication.applicationNumber}"
+							target="_self" class="btn btn-primary"> <spring:message code="lbl.btn.letter.to.party"/> </a>
+				</c:if>
 				
 				<c:if test="${inspectionApplication.state.value ne 'Field Inspection completed' && inspectionApplication.status.code eq 'Field Inspected'}">
 					<input type="button" name="save" id="btnSave" value="Save" class="btn btn-primary"/>
@@ -212,7 +231,7 @@
 				<c:otherwise>
 					<c:choose>
 						<c:when
-							test="${ (citizenOrBusinessUser && inspectionApplication.id !=null) }">
+							test="${ (citizenOrBusinessUser && inspectionApplication.id !=null) || inspectionApplication.state.value eq 'LP Created' || inspectionApplication.state.value eq 'LP Reply Received'}">
 							<div class="buttonbottom" align="center">
 								<form:button type="submit" id="buttonSubmit"
 									class="btn btn-primary" value="Forward">

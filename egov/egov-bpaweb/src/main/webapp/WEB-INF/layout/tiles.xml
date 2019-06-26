@@ -1014,5 +1014,45 @@
 			value="/WEB-INF/views/application/application-success.jsp" />
 	</definition>
 	
-	
+	<definition name="ins-lettertoparty-create"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.create" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/ins-lettertoparty-create.jsp" />
+	</definition>
+	<definition name="ins-lettertoparty-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.success" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/ins-lettertoparty-result.jsp" />
+	</definition>
+	<definition name="ins-lettertoparty-lpreply"
+		extends="base_layout">
+		<put-attribute name="page-title" value="title.lpreply "
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/ins-lettertoparty-lpreply.jsp" />
+	</definition>
+	<definition name="ins-lettertoparty-capturesentdate"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/ins-lettertoparty-capturesentdate.jsp" />
+	</definition>
+	<definition name="ins-lettertoparty-view" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/ins-lettertoparty-view.jsp" />
+	</definition>
+	<definition name="ins-lettertoparty-update"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/ins-lettertoparty-update.jsp" />
+	</definition>
 </tiles-definitions>
