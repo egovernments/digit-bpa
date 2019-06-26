@@ -87,7 +87,7 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 								   @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
 		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
-		ocInspection.getInspection().setDocket(ocInspectionService.buildDocDetFromUI(ocInspection));
+		//ocInspection.getInspection().setDocket(ocInspectionService.buildDocDetFromUI(ocInspection));
 		if (resultBinder.hasErrors()) {
 			loadApplication(model, applicationNumber);
 			return CREATE_INSPECTION;

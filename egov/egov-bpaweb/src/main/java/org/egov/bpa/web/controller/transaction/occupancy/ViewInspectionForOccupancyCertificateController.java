@@ -71,7 +71,7 @@ public class ViewInspectionForOccupancyCertificateController {
                 inspectionNumber);
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
         model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
-        ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
+        //ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
         ocInspectionService.prepareImagesForView(ocInspection);
         ocInspectionService.buildPlanScrutinyChecklistDetails(ocInspection);
         model.addAttribute("ocInspection", ocInspection);
@@ -87,7 +87,7 @@ public class ViewInspectionForOccupancyCertificateController {
                 inspectionNumber);
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
         model.addAttribute("inspection", ocInspection);
-        ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
+       // ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
         ocInspectionService.prepareImagesForView(ocInspection);
         model.addAttribute("ocInspection", ocInspection);
         ocInspectionService.buildPlanScrutinyChecklistDetails(ocInspection);

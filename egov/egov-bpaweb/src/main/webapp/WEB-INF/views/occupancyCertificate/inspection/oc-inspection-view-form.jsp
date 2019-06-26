@@ -114,57 +114,31 @@
 						</div>
 					</div>
 					<c:choose>
-						<c:when test="${!docketDetailLocList.isEmpty()}">
-							<div class="panel-heading custom_form_panel_heading">
-								<div class="panel-title">
-									<c:out
-						value="${docketDetailLocList[0].serviceChecklist.checklist.checklistType.description}" />
-								</div>
-							</div>
-							<div class="panel-body">
-								<c:forEach items="${docketDetailLocList}" var="doc"
-									varStatus="counter">
-									<div class="row add-border">
-										<div class="col-sm-5 add-margin view-content">
-											<c:out value="${doc.serviceChecklist.checklist.description}"
-												default="N/A"></c:out>
-										</div>
-										<div class="col-sm-3 add-margin view-content">
-											<c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-										</div>
-										<div class="col-sm-4 add-margin view-content">
-											<c:out value="${doc.remarks}" default="N/A"></c:out>
-										</div>
+						<c:when test="${!ocInspection.inspection.docket.isEmpty()}">
+							<c:forEach var="doc" items="${ocInspection.inspection.docket}" varStatus="status">
+								<div class="panel-heading custom_form_panel_heading">
+									<div class="panel-title">
+										<c:out value="${doc.checklistType.description}" />
 									</div>
-								</c:forEach>
-							</div>
-						</c:when>
-					</c:choose>
-					<c:choose>
-						<c:when test="${!docketDetailMeasurementList.isEmpty()}">
-							<div class="panel-heading custom_form_panel_heading">
-								<div class="panel-title">
-									<c:out
-						value="${docketDetailMeasurementList[0].serviceChecklist.checklist.checklistType.description}" />
 								</div>
-							</div>
-							<div class="panel-body">
-								<c:forEach items="${docketDetailMeasurementList}" var="doc"
-									varStatus="counter">
-									<div class="row add-border">
-										<div class="col-sm-5 add-margin view-content">
-											<c:out value="${doc.serviceChecklist.checklist.description}"
-												default="N/A"></c:out>
+								<div class="panel-body">
+									<c:forEach items="${doc.docketDetail}" var="docs"
+										varStatus="counter">
+										<div class="row add-border">
+											<div class="col-sm-5 add-margin view-content">
+												<c:out value="${docs.serviceChecklist.checklist.description}"
+													default="N/A"></c:out>
+											</div>
+											<div class="col-sm-3 add-margin view-content">
+												<c:out value="${docs.value.checkListVal}" default="N/A"></c:out>
+											</div>
+											<div class="col-sm-4 add-margin view-content">
+												<c:out value="${docs.remarks}" default="N/A"></c:out>
+											</div>
 										</div>
-										<div class="col-sm-3 add-margin view-content">
-											<c:out value="${doc.value.checkListVal}" default="N/A"></c:out>
-										</div>
-										<div class="col-sm-4 add-margin view-content">
-											<c:out value="${doc.remarks}" default="N/A"></c:out>
-										</div>
-									</div>
-								</c:forEach>
-							</div>
+									</c:forEach>
+								</div>
+							</c:forEach>
 						</c:when>
 					</c:choose>
 				</div>

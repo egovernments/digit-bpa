@@ -87,8 +87,8 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 			loadApplication(model, ocInspection);
 			return "oc-inspection-edit";
 		}
-		final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(ocInspection);
-		ocInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);
+		/*final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(ocInspection);
+		ocInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);*/
 		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
 		OCInspection ocInspectionRes = ocInspectionService.save(ocInspection);
@@ -125,7 +125,7 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
 		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
 		ocInspectionService.prepareImagesForView(ocInspection);
-		ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
+		//ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
 		model.addAttribute("ocInspection", ocInspection);
 		model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
 		model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
