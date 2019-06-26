@@ -87,7 +87,7 @@ public class InConstructionInspectionController extends BpaGenericApplicationCon
         inConstructionInspection.setInspectionApplication(permitInspection.getInspectionApplication());
 		final InConstructionInspectionService inConstructionInspectionService = (InConstructionInspectionService) specificNoticeService
                 .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
-		inConstructionInspection.getInspection().setDocket(inConstructionInspectionService.buildDocDetFromUI(inConstructionInspection));
+		//inConstructionInspection.getInspection().setDocket(inConstructionInspectionService.buildDocDetFromUI(inConstructionInspection));
 		if (resultBinder.hasErrors()) {
 			loadApplication(model, applicationNumber);
 			return CREATE_INSPECTION;

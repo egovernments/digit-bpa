@@ -107,8 +107,8 @@ public class UpdateInConstructionInspectionController extends BpaGenericApplicat
 			loadApplication(model, inConstructionInspection);
 			return "inconst-inspection-edit";
 		}
-		final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(inConstructionInspection);
-		inConstructionInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);
+		/*final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(inConstructionInspection);
+		inConstructionInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);*/
 		final InConstructionInspectionService inConstInspectionService = (InConstructionInspectionService) specificNoticeService
                 .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
 		InConstructionInspection inConstInspectionRes = inConstInspectionService.save(inConstructionInspection);
@@ -145,7 +145,7 @@ public class UpdateInConstructionInspectionController extends BpaGenericApplicat
 		final InConstructionInspectionService inConstInspectionService  = (InConstructionInspectionService) specificNoticeService
                 .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
 		inConstInspectionService.prepareImagesForView(inConstructionInspection);
-		inConstInspectionService.buildDocketDetailForModifyAndViewList(inConstructionInspection.getInspection(), model);
+		//inConstInspectionService.buildDocketDetailForModifyAndViewList(inConstructionInspection.getInspection(), model);
 		model.addAttribute("inConstructionInspection", inConstructionInspection);
 		//model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
 		model.addAttribute("inConstructionInspection", inConstructionInspection);
@@ -164,7 +164,7 @@ public class UpdateInConstructionInspectionController extends BpaGenericApplicat
 			InConstructionInspection inConstructionInspection = inConstInspectionService.findByInspectionApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
 	        model.addAttribute("docketDetail", inConstructionInspection.getInspection().getDocket().get(0).getDocketDetail());
 	        model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
-	        inConstInspectionService.buildDocketDetailForModifyAndViewList(inConstructionInspection.getInspection(), model);
+	        //inConstInspectionService.buildDocketDetailForModifyAndViewList(inConstructionInspection.getInspection(), model);
 	        inConstInspectionService.prepareImagesForView(inConstructionInspection);
 	        inConstInspectionService.buildPlanScrutinyChecklistDetails(inConstructionInspection);
 	        model.addAttribute("inConstructionInspection", inConstructionInspection);
@@ -178,7 +178,7 @@ public class UpdateInConstructionInspectionController extends BpaGenericApplicat
 	                .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
 			InConstructionInspection inConstructionInspection = inConstInspectionService.findByInspectionApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
 	        model.addAttribute("docketDetail", inConstructionInspection.getInspection().getDocket().get(0).getDocketDetail());
-	        inConstInspectionService.buildDocketDetailForModifyAndViewList(inConstructionInspection.getInspection(), model);
+	        //inConstInspectionService.buildDocketDetailForModifyAndViewList(inConstructionInspection.getInspection(), model);
 	        inConstInspectionService.prepareImagesForView(inConstructionInspection);
 	        inConstInspectionService.buildPlanScrutinyChecklistDetails(inConstructionInspection);
 	        model.addAttribute("inConstructionInspection", inConstructionInspection);

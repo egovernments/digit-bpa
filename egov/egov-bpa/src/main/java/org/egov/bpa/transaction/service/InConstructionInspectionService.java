@@ -39,7 +39,6 @@
  */
 package org.egov.bpa.transaction.service;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +49,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -70,6 +68,7 @@ import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.repository.InConstructionRepository;
 import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.commons.service.CheckListTypeService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -85,118 +84,133 @@ import org.springframework.util.FileCopyUtils;
 @Transactional(readOnly = true)
 public class InConstructionInspectionService {
 
-    private static final Logger LOGGER = Logger.getLogger(InConstructionInspectionService.class);
-    
-    @PersistenceContext
-    private EntityManager entityManager;    
-    @Autowired
-    private InConstructionRepository inspectionRepository;
-    @Autowired
-    private SecurityUtils securityUtils;
-    @Autowired
-    private ChecklistServicetypeMappingService checklistServicetypeMappingService;
-    @Autowired
-    private AutonumberServiceBeanResolver beanResolver;
-    @Autowired
-    private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
-    @Autowired
-    private ApplicationBpaService applicationBpaService;
-    @Autowired
-    private FileStoreService fileStoreService;
+	private static final Logger LOGGER = Logger.getLogger(InConstructionInspectionService.class);
+	public static final List<String> CHECKLIST_TYPES = new ArrayList<String>() {
 
-    
-    public InConstructionInspection findById(Long id) {
-        return inspectionRepository.getOne(id);
-    }
+		private static final long serialVersionUID = -8635512652794219693L;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-    
-    @Transactional
-    public InConstructionInspection save(final InConstructionInspection inConstInspection) {
-        InspectionCommon inspection = inConstInspection.getInspection();
-        if (inspection.getId() == null) {
-            inspection.setInspectionNumber(generateInspectionNumber());
-            inspection.setInspectedBy(securityUtils.getCurrentUser());
-        }
-        if (inspection.getInspectionDate() == null)
-            inspection.setInspectionDate(new Date());
-        buildInspectionFiles(inspection);
-        buildPlanScrutinyChecklistItems(inConstInspection);
-        inspection.getDocket().get(0).setInspection(inspection);
-        buildDocketDetails(inConstInspection.getInspection().getDocket().get(0));
-        return inspectionRepository.save(inConstInspection);
-    }
-    
-    public List<DocketCommon> buildDocDetFromUI(final InConstructionInspection inConstInspection) {
-        List<DocketCommon> docket = new ArrayList<>();
-        DocketCommon docObject = new DocketCommon();
-        docObject.setInspection(inConstInspection.getInspection());
-        final List<DocketDetailCommon> docketDetailList = buildDocketDetail(inConstInspection.getInspection());
-        docObject.setDocketDetail(docketDetailList);
-        docket.add(docObject);
-        return docket;
-    }
-    
-    public List<DocketDetailCommon> buildDocketDetail(final InspectionCommon inspection) {
-        final List<DocketDetailCommon> docketDetailList = new ArrayList<>();
-        docketDetailList.addAll(inspection.getDocketDetailLocList());
-        return docketDetailList;
-    }
-    
-    public DocketCommon buildDocketDetails(final DocketCommon docket) {
-        for (final DocketDetailCommon dd : docket.getDocketDetail()) {
-            final ChecklistServiceTypeMapping chkListDtl = checklistServicetypeMappingService
-                    .load(dd.getServiceChecklist().getId());
-            dd.setServiceChecklist(chkListDtl);
-            dd.setDocket(docket);
-        }
-        return docket;
-    }
-    
-    private void buildInspectionFiles(InspectionCommon inspection) {
-        if (!inspection.getInspectionSupportDocs().isEmpty())
-            for (InspectionFilesCommon filesCommon : inspection.getInspectionSupportDocs()) {
-                filesCommon.setInspection(inspection);
-                buildInspectionFiles(filesCommon);
-            }
-    }
-    
-    public void buildDocketDetailList(InspectionCommon inspection, final Long serviceTypeId) {
-    	List<DocketDetailCommon> docketTempLocList = new ArrayList<>();
+		{
+			add("INCNSTRNINSPPLOT");
+			add("INCNSTRNINSPECTION");
 
-		List<DocketDetailCommon> docketTempMeasumentList = new ArrayList<>();
-
-		List<ChecklistServiceTypeMapping> inspectionCheckPlot = checklistServicetypeMappingService
-				.findByActiveByServiceTypeAndChecklist(serviceTypeId, "INCNSTRNINSPPLOT");
-		List<ChecklistServiceTypeMapping> inspectionCheckConstruction = checklistServicetypeMappingService
-				.findByActiveByServiceTypeAndChecklist(serviceTypeId, "INCNSTRNINSPECTION");
-
-		for (final ChecklistServiceTypeMapping checkDet : inspectionCheckPlot) {
-			final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
-			docketTempLocList.add(docdet);
 		}
-		for (final ChecklistServiceTypeMapping checkDet : inspectionCheckConstruction) {
-			final DocketDetailCommon docdet = createDocketDetailObject(checkDet);
-			docketTempMeasumentList.add(docdet);
+	};
+	@PersistenceContext
+	private EntityManager entityManager;
+	@Autowired
+	private InConstructionRepository inspectionRepository;
+	@Autowired
+	private SecurityUtils securityUtils;
+	@Autowired
+	private ChecklistServicetypeMappingService checklistServicetypeMappingService;
+	@Autowired
+	private AutonumberServiceBeanResolver beanResolver;
+	@Autowired
+	private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
+	@Autowired
+	private ApplicationBpaService applicationBpaService;
+	@Autowired
+	private FileStoreService fileStoreService;
+	@Autowired
+	private CheckListTypeService checkListTypeService;
+
+	public InConstructionInspection findById(Long id) {
+		return inspectionRepository.getOne(id);
+	}
+
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	@Transactional
+	public InConstructionInspection save(final InConstructionInspection inConstInspection) {
+		InspectionCommon inspection = inConstInspection.getInspection();
+		if (inspection.getId() == null) {
+			inspection.setInspectionNumber(generateInspectionNumber());
+			inspection.setInspectedBy(securityUtils.getCurrentUser());
+		}
+		if (inspection.getInspectionDate() == null)
+			inspection.setInspectionDate(new Date());
+		for (DocketCommon d : inConstInspection.getInspection().getDocket()) {
+			d.setInspection(inConstInspection.getInspection());
+			for (DocketDetailCommon ddc : d.getDocketDetail()) {
+				ddc.setDocket(d);
+			}
+		}
+		buildInspectionFiles(inspection);
+		buildPlanScrutinyChecklistItems(inConstInspection);
+		buildDocketDetails(inConstInspection.getInspection().getDocket());
+		return inspectionRepository.save(inConstInspection);
+	}
+
+	public List<DocketCommon> buildDocDetFromUI(final InConstructionInspection inConstInspection) {
+		List<DocketCommon> docket = new ArrayList<>();
+		DocketCommon docObject = new DocketCommon();
+		docObject.setInspection(inConstInspection.getInspection());
+		final List<DocketDetailCommon> docketDetailList = buildDocketDetail(inConstInspection.getInspection());
+		docObject.setDocketDetail(docketDetailList);
+		docket.add(docObject);
+		return docket;
+	}
+
+	public List<DocketDetailCommon> buildDocketDetail(final InspectionCommon inspection) {
+		final List<DocketDetailCommon> docketDetailList = new ArrayList<>();
+		docketDetailList.addAll(inspection.getDocketDetailLocList());
+		return docketDetailList;
+	}
+
+	public void buildDocketDetails(final List<DocketCommon> dockets) {
+		for (DocketCommon docket : dockets) {
+			for (final DocketDetailCommon dd : docket.getDocketDetail()) {
+				final ChecklistServiceTypeMapping chkListDtl = checklistServicetypeMappingService
+						.load(dd.getServiceChecklist().getId());
+				dd.setServiceChecklist(chkListDtl);
+				dd.setDocket(docket);
+			}
+		}
+	}
+
+	private void buildInspectionFiles(InspectionCommon inspection) {
+		if (!inspection.getInspectionSupportDocs().isEmpty())
+			for (InspectionFilesCommon filesCommon : inspection.getInspectionSupportDocs()) {
+				filesCommon.setInspection(inspection);
+				buildInspectionFiles(filesCommon);
+			}
+	}
+
+	public void buildDocketDetailList(InspectionCommon inspection, final Long serviceTypeId) {
+
+		List<ChecklistServiceTypeMapping> mappingList;
+		List<DocketDetailCommon> commonList;
+		DocketCommon docket;
+		for (String type : CHECKLIST_TYPES) {
+			mappingList = checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceTypeId, type);
+			commonList = new ArrayList<>();
+			for (final ChecklistServiceTypeMapping checkDet : mappingList) {
+				commonList.add(new DocketDetailCommon(checkDet));
+			}
+
+			docket = new DocketCommon();
+			if (mappingList != null && !mappingList.isEmpty())
+				docket.setChecklistType(checkListTypeService.findByCode(type));
+			docket.setDocketDetail(commonList);
+			inspection.getDocket().add(docket);
+
 		}
 
-		inspection.setDocketDetailLocList(docketTempLocList);
-		inspection.setDocketDetailMeasurementList(docketTempMeasumentList);
-    }
-    
-    private void buildInspectionFiles(final InspectionFilesCommon inspectionFiles) {
-        if (inspectionFiles.getFiles() != null && inspectionFiles.getFiles().length > 0) {
-            Set<FileStoreMapper> existingFiles = new HashSet<>();
-            existingFiles.addAll(inspectionFiles.getImages());
-            existingFiles.addAll(applicationBpaService.addToFileStore(inspectionFiles.getFiles()));
-            inspectionFiles.setImages(existingFiles);
-        }
-    }
-    
-    public void buildDocketDetailForModifyAndViewList(final InspectionCommon inspection, final Model model) {
-    	if (inspection != null && !inspection.getDocket().isEmpty())
+	}
+
+	private void buildInspectionFiles(final InspectionFilesCommon inspectionFiles) {
+		if (inspectionFiles.getFiles() != null && inspectionFiles.getFiles().length > 0) {
+			Set<FileStoreMapper> existingFiles = new HashSet<>();
+			existingFiles.addAll(inspectionFiles.getImages());
+			existingFiles.addAll(applicationBpaService.addToFileStore(inspectionFiles.getFiles()));
+			inspectionFiles.setImages(existingFiles);
+		}
+	}
+
+	public void buildDocketDetailForModifyAndViewList(final InspectionCommon inspection, final Model model) {
+		if (inspection != null && !inspection.getDocket().isEmpty())
 			for (final DocketDetailCommon docketDet : inspection.getDocket().get(0).getDocketDetail()) {
 				String checkListType = docketDet.getServiceChecklist().getChecklist().getChecklistType().getCode();
 				if ("INCNSTRNINSPPLOT".equals(checkListType))
@@ -207,53 +221,56 @@ public class InConstructionInspectionService {
 		model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
 		model.addAttribute("docketDetailMeasurementList", inspection.getDocketDetailMeasurementList());
 
-    }
-    
-    public void prepareImagesForView(final InConstructionInspection inConstructionInspection) {
-        if (!inConstructionInspection.getInspection().getInspectionSupportDocs().isEmpty())
-        	inConstructionInspection.getInspection().getInspectionSupportDocs().forEach(
-                    docketFile -> {
-                        if (docketFile != null) {
-                            Map<Long, String> imageMap = new HashMap<>();
-                            docketFile.getImages().forEach(
-                                    imageFilestore -> {
-                                        final File file = fileStoreService.fetch(imageFilestore.getFileStoreId(),
-                                                BpaConstants.FILESTORE_MODULECODE);
-                                        if (file != null) {
-                                            try {
-                                                imageMap.put(imageFilestore.getId(), Base64.getEncoder().encodeToString(
-                                                        FileCopyUtils.copyToByteArray(file)));
-                                            } catch (final IOException e) {
-                                                LOGGER.error("Error while preparing the images for view", e);
-                                            }
-                                        }
-                                    });
-                            docketFile.setEncodedImages(imageMap);
-                        }
-                    });
-    }
-    
-    public void buildPlanScrutinyChecklistDetails(InConstructionInspection inConstructionInspection) {
-    	inConstructionInspection.getInspection().getPlanScrutinyChecklistForRule().clear();
-    	inConstructionInspection.getInspection().setPlanScrutinyChecklistForRule(getPlanScrutinyForRuleValidation(inConstructionInspection));
-    	inConstructionInspection.getInspection().getPlanScrutinyChecklistForDrawing().clear();
-    	inConstructionInspection.getInspection().setPlanScrutinyChecklistForDrawing(getPlanScrutinyForDrawingDetails(inConstructionInspection));
+	}
 
-    }
-    
-    public InConstructionInspection findByInspectionApplicationNoAndInspectionNo(String applicationNo, String inspectionNo) {
-        return inspectionRepository.findByInspectionApplication_ApplicationNumberAndInspection_InspectionNumber(applicationNo, inspectionNo);
-    }
-    
-    public List<ChecklistServiceTypeMapping> buildPlanScrutiny(Long serviceTypeId){
-        return null;
-    }
-    
-    public List<ChecklistServiceTypeMapping> buildPlanScrutinyDrawing(Long serviceTypeId){
-        return checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceTypeId, "INCNSTRNPLANSCRTDRWNG");
-    }
-    
-    private void buildPlanScrutinyChecklistItems(final InConstructionInspection inspection) {
+	public void prepareImagesForView(final InConstructionInspection inConstructionInspection) {
+		if (!inConstructionInspection.getInspection().getInspectionSupportDocs().isEmpty())
+			inConstructionInspection.getInspection().getInspectionSupportDocs().forEach(docketFile -> {
+				if (docketFile != null) {
+					Map<Long, String> imageMap = new HashMap<>();
+					docketFile.getImages().forEach(imageFilestore -> {
+						final File file = fileStoreService.fetch(imageFilestore.getFileStoreId(),
+								BpaConstants.FILESTORE_MODULECODE);
+						if (file != null) {
+							try {
+								imageMap.put(imageFilestore.getId(),
+										Base64.getEncoder().encodeToString(FileCopyUtils.copyToByteArray(file)));
+							} catch (final IOException e) {
+								LOGGER.error("Error while preparing the images for view", e);
+							}
+						}
+					});
+					docketFile.setEncodedImages(imageMap);
+				}
+			});
+	}
+
+	public void buildPlanScrutinyChecklistDetails(InConstructionInspection inConstructionInspection) {
+		inConstructionInspection.getInspection().getPlanScrutinyChecklistForRule().clear();
+		inConstructionInspection.getInspection()
+				.setPlanScrutinyChecklistForRule(getPlanScrutinyForRuleValidation(inConstructionInspection));
+		inConstructionInspection.getInspection().getPlanScrutinyChecklistForDrawing().clear();
+		inConstructionInspection.getInspection()
+				.setPlanScrutinyChecklistForDrawing(getPlanScrutinyForDrawingDetails(inConstructionInspection));
+
+	}
+
+	public InConstructionInspection findByInspectionApplicationNoAndInspectionNo(String applicationNo,
+			String inspectionNo) {
+		return inspectionRepository.findByInspectionApplication_ApplicationNumberAndInspection_InspectionNumber(
+				applicationNo, inspectionNo);
+	}
+
+	public List<ChecklistServiceTypeMapping> buildPlanScrutiny(Long serviceTypeId) {
+		return null;
+	}
+
+	public List<ChecklistServiceTypeMapping> buildPlanScrutinyDrawing(Long serviceTypeId) {
+		return checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceTypeId,
+				"INCNSTRNPLANSCRTDRWNG");
+	}
+
+	private void buildPlanScrutinyChecklistItems(final InConstructionInspection inspection) {
 		if (!inspection.getInspection().getPlanScrutinyChecklistForRuleTemp().isEmpty()) {
 			planScrutinyChecklistService.delete(inspection.getInspection().getPlanScrutinyChecklistForRule());
 			inspection.getInspection().getPlanScrutinyChecklistForRule().clear();
@@ -268,39 +285,41 @@ public class InConstructionInspectionService {
 			inspection.getInspection().setPlanScrutinyChecklistForDrawing(
 					inspection.getInspection().getPlanScrutinyChecklistForDrawingTemp());
 			inspection.getInspection().getPlanScrutinyChecklistForDrawing()
-            .forEach(planScrutiny -> planScrutiny.setInspection(inspection.getInspection()));
+					.forEach(planScrutiny -> planScrutiny.setInspection(inspection.getInspection()));
 		}
-    }
-    
-    private String generateInspectionNumber() {
-        final InspectionNumberGenerator inspectionNUmber = beanResolver
-                .getAutoNumberServiceFor(InspectionNumberGenerator.class);
-        return inspectionNUmber.generateInspectionNumber("INSP");
-    }
-    
-    public InConstructionInspection findByIdOrderByIdAsc(final Long id) {
-        return inspectionRepository.findByIdOrderByIdAsc(id);
-    }
+	}
 
-    public List<InConstructionInspection> findByInspectionApplicationOrderByIdAsc(final InspectionApplication application) {
-        return inspectionRepository.findByInspectionApplicationOrderByIdDesc(application);
-    }
-    
-    public List<PlanScrutinyChecklistCommon> getPlanScrutinyForRuleValidation(InConstructionInspection inConstructionInspection){
-  	   	return planScrutinyChecklistService
-				.findByInspectionAndScrutinyChecklistType(inConstructionInspection.getInspection(), ScrutinyChecklistType.RULE_VALIDATION);
-    }
+	private String generateInspectionNumber() {
+		final InspectionNumberGenerator inspectionNUmber = beanResolver
+				.getAutoNumberServiceFor(InspectionNumberGenerator.class);
+		return inspectionNUmber.generateInspectionNumber("INSP");
+	}
 
-    public List<PlanScrutinyChecklistCommon> getPlanScrutinyForDrawingDetails(InConstructionInspection inConstructionInspection){
- 	   return planScrutinyChecklistService.findByInspectionAndScrutinyChecklistType(inConstructionInspection.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS);
-    }
-    
+	public InConstructionInspection findByIdOrderByIdAsc(final Long id) {
+		return inspectionRepository.findByIdOrderByIdAsc(id);
+	}
+
+	public List<InConstructionInspection> findByInspectionApplicationOrderByIdAsc(
+			final InspectionApplication application) {
+		return inspectionRepository.findByInspectionApplicationOrderByIdDesc(application);
+	}
+
+	public List<PlanScrutinyChecklistCommon> getPlanScrutinyForRuleValidation(
+			InConstructionInspection inConstructionInspection) {
+		return planScrutinyChecklistService.findByInspectionAndScrutinyChecklistType(
+				inConstructionInspection.getInspection(), ScrutinyChecklistType.RULE_VALIDATION);
+	}
+
+	public List<PlanScrutinyChecklistCommon> getPlanScrutinyForDrawingDetails(
+			InConstructionInspection inConstructionInspection) {
+		return planScrutinyChecklistService.findByInspectionAndScrutinyChecklistType(
+				inConstructionInspection.getInspection(), ScrutinyChecklistType.DRAWING_DETAILS);
+	}
 
 	private DocketDetailCommon createDocketDetailObject(final ChecklistServiceTypeMapping checkDet) {
 		final DocketDetailCommon docdet = new DocketDetailCommon();
 		docdet.setServiceChecklist(checkDet);
 		return docdet;
 	}
-    
-    
+
 }
