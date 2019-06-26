@@ -99,14 +99,14 @@
 							<td class="view-content" style="font-size: 97%;"><c:out
 									value="${modifiablePermitCondition.noticeCondition.checklistServicetype.checklist.description}"></c:out></td>
 							<td><form:input
-									class="form-control permitConditionNumber addremovemandatory" maxlength="30"
-									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditionNumber" /><span
-									class="error-msg display-hide">Required</span></td>
+									class="form-control permitConditionNumber addremovemandatory" maxlength="30" 
+									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditionNumber" required="required"/>
+									<!-- <span class="error-msg display-hide">Required</span> --></td>
 							<td><form:input
 									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditiondDate"
 									class="form-control datepicker permitConditiondDate addremovemandatory"
-									data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" /><span
-									class="error-msg display-hide">Required</span></td>
+									data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"  required="required"/><!-- <span
+									class="error-msg display-hide">Required</span> --></td>
 						</tr>
 					</c:forEach>
 				</c:when>
@@ -139,13 +139,13 @@
 							<td><form:input
 									class="form-control permitConditionNumber addremovemandatory"
 									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditionNumber"
-									required="true" maxlength="30" /><span class="error-msg display-hide">Required</span>
+									required="required" maxlength="30" /><!-- <span class="error-msg display-hide">Required</span> -->
 							</td>
 							<td><form:input
 									path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].noticeCondition.conditiondDate"
 									class="form-control datepicker permitConditiondDate addremovemandatory"
 									data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"
-									required="true" /><span class="error-msg display-hide">Required</span></td>
+									required="required" /><!-- <span class="error-msg display-hide">Required</span> --></td>
 						</tr>
 					</c:forEach>
 				</c:otherwise>
