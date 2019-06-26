@@ -56,9 +56,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.bpa.master.entity.LpReason;
+import org.egov.bpa.transaction.entity.InspectionLetterToParty;
+import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.egov.bpa.transaction.notice.LetterToPartyFormat;
+import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.common.entity.bpa.Checklist;
 import org.egov.infra.admin.master.service.CityService;
@@ -68,6 +71,8 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 /*
@@ -87,6 +92,8 @@ public class LetterToPartyReplyFormatImpl implements LetterToPartyFormat {
     private ReportService reportService;
     @Autowired
     private CityService cityService;
+    @Autowired
+    private InspectionApplicationService inspectionAppService;
 
     @Override
     public ReportOutput generateNotice(PermitLetterToParty letterToParty) {
@@ -120,6 +127,46 @@ public class LetterToPartyReplyFormatImpl implements LetterToPartyFormat {
         reportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         reportParams.put("lpReason",
                 lettertoParty.getLetterToParty().getLpReason().stream().map(LpReason::getDescription).collect(Collectors.joining(",")));
+        return reportParams;
+    }
+    
+    public ReportOutput generateInsNotice(InspectionLetterToParty letterToParty) {
+
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput;
+        if (letterToParty != null) {
+            reportInput = new ReportRequest("inslettertopartyreply", letterToParty, buildInsReportParameters(letterToParty));
+            reportInput.setPrintDialogOnOpenReport(true);
+        }
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(MediaType.APPLICATION_PDF_VALUE));
+        headers.add("content-disposition", "inline;filename=inslettertopartyreply.pdf");
+        reportOutput = reportService.createReport(reportInput);
+        return reportOutput;
+    }
+
+    public Map<String, Object> buildInsReportParameters(final InspectionLetterToParty lettertoParty) {
+        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(lettertoParty.getInspectionApplication().getApplicationNumber());
+
+    	final Map<String, Object> reportParams = new HashMap<>();
+        Boolean checkListPresent = Boolean.FALSE;
+        List<Checklist> chkList = new ArrayList<>();
+        for (LetterToPartyDocumentCommon document : lettertoParty.getLetterToParty().getLetterToPartyDocuments()) {
+            if (!isEmpty(document.getServiceChecklist()) && document.getIsRequested().equals(Boolean.TRUE)
+                    && document.getServiceChecklist().getChecklist() != null) {
+                chkList.add(document.getServiceChecklist().getChecklist());
+            }
+            checkListPresent = chkList.isEmpty() ? Boolean.FALSE : Boolean.TRUE;
+        }
+        reportParams.put("ownerName", permitInspection.getApplication().getOwner().getName());
+        reportParams.put("ownerAddress", permitInspection.getApplication().getOwner().getAddress());
+        reportParams.put("stateLogo", ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH));
+        reportParams.put("checkListPresent", checkListPresent);
+        reportParams.put("logoPath", cityService.getCityLogoAsStream());
+        reportParams.put("cityName", ApplicationThreadLocals.getCityName());
+        reportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
+        reportParams.put("lpReason",
+        		lettertoParty.getLetterToParty().getLpReason().stream().map(LpReason::getDescription).collect(Collectors.joining(",")));
         return reportParams;
     }
 }

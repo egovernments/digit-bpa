@@ -43,6 +43,7 @@ import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.service.InConstructionInspectionService;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
+import org.egov.bpa.transaction.service.InspectionLetterToPartyService;
 import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -62,6 +63,8 @@ public class CitizenUpdateInspectionApplicationController {
     private InspectionApplicationService inspectionAppService;
     @Autowired
     private InConstructionInspectionService inspectionService;
+    @Autowired
+    private InspectionLetterToPartyService letterToPartyService;
     
     @GetMapping("/citizen/update/{applicationNumber}")
     public String createInspection(@PathVariable final String applicationNumber,final Model model) {
@@ -75,7 +78,8 @@ public class CitizenUpdateInspectionApplicationController {
     
     private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
     	model.addAttribute("inspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
-        model.addAttribute("applicationHistory",
+        model.addAttribute("lettertopartylist", letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication));
+    	model.addAttribute("applicationHistory",
                 workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(), inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
    }
 }

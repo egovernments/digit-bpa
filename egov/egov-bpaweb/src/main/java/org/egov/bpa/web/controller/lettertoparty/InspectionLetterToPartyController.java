@@ -39,11 +39,14 @@
  */
 package org.egov.bpa.web.controller.lettertoparty;
 
+import static org.egov.infra.utils.StringUtils.append;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.LpReason;
@@ -51,18 +54,28 @@ import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.LpReasonService;
 import org.egov.bpa.transaction.entity.InspectionLetterToParty;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
+import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.common.LetterToPartyCommon;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
+import org.egov.bpa.transaction.notice.LetterToPartyFormat;
+import org.egov.bpa.transaction.notice.impl.LetterToPartyCreateFormatImpl;
+import org.egov.bpa.transaction.notice.impl.LetterToPartyReplyFormatImpl;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.transaction.service.InspectionLetterToPartyService;
 import org.egov.bpa.transaction.service.LettertoPartyDocumentService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.custom.CustomImplProvider;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -71,6 +84,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -78,6 +92,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class InspectionLetterToPartyController extends BpaGenericApplicationController {
 
 	public static final String COMMON_ERROR = "common-error";
+    private static final String PDFEXTN = ".pdf";
+    private static final String INLINE_FILENAME = "inline;filename=";
+    private static final String CONTENT_DISPOSITION = "content-disposition";
     private static final String MSG_LETTERTOPARTY_REPLY_SUCCESS = "msg.lettertoparty.reply.success";
     private static final String MSG_LP_FORWARD_CREATE = "msg.lp.forward.create";
     private static final String MSG_LETTERTOPARTY_UPDATE_SUCCESS = "msg.lettertoparty.update.success";
@@ -105,6 +122,8 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
     private InspectionApplicationService inspectionAppService;
     @Autowired
     private InspectionLetterToPartyService insLettertoPartyService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @ModelAttribute("lpReasonList")
     public List<LpReason> getLpReasonList() {
@@ -328,6 +347,42 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
                 messageSource.getMessage(MSG_LETTERTOPARTY_REPLY_SUCCESS, null, null));
         return REDIRECT_LETTERTOPARTY_RESULT + lettertoparty.getId();
     }  
+    
+    @GetMapping("/lettertopartyprint/lp")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateLettertoPartyCreate(final HttpServletRequest request,
+            final HttpSession session) {
+        final InspectionLetterToParty lettertoParty = insLettertoPartyService.findById(new Long(request.getParameter("pathVar")));
+        LetterToPartyCreateFormatImpl letterToPartyFormat = (LetterToPartyCreateFormatImpl) specificNoticeService
+                .find(LetterToPartyCreateFormatImpl.class, specificNoticeService.getCityDetails());
+        return getFileAsResponseEntity(lettertoParty.getLetterToParty().getLpNumber(),
+                letterToPartyFormat.generateInsNotice(lettertoParty),
+                "inslettertoparty");
+    }
+
+    @GetMapping("/lettertopartyprint/lpreply")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateLettertoPartyReply(final HttpServletRequest request,
+            final HttpSession session) {
+        final InspectionLetterToParty lettertoParty = insLettertoPartyService.findById(new Long(request.getParameter("pathVar")));
+        LetterToPartyReplyFormatImpl letterToPartyFormat = (LetterToPartyReplyFormatImpl) specificNoticeService
+                .find(LetterToPartyReplyFormatImpl.class, specificNoticeService.getCityDetails());
+        return getFileAsResponseEntity(lettertoParty.getLetterToParty().getLpNumber(),
+                letterToPartyFormat.generateInsNotice(lettertoParty),
+                "inslettertopartyreply");
+    }
+
+    private ResponseEntity<InputStreamResource> getFileAsResponseEntity(String lpNumber, ReportOutput reportOutput,
+            String prefixFileName) {
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .cacheControl(CacheControl.noCache())
+                .contentLength(reportOutput.getReportOutputData().length)
+                .header(CONTENT_DISPOSITION, String.format(INLINE_FILENAME,
+                        append(prefixFileName, lpNumber) + PDFEXTN))
+                .body(new InputStreamResource(reportOutput.asInputStream()));
+    }
     
     
     

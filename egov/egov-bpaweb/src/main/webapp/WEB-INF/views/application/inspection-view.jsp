@@ -79,7 +79,12 @@
 				<c:if test="${not empty inspectionApplication.inspections}">
 					<li><a data-toggle="tab" href="#view-inspection" data-tabidx=3><spring:message
 							code='lbl.inspection.appln' /></a></li>
-				</c:if></ul>
+				</c:if>
+				<c:if test="${not empty lettertopartylist}">
+					<li><a data-toggle="tab" href="#view-lp" data-tabidx=7><spring:message
+							code='lbl.lp.details' /></a></li>
+				</c:if>
+			</ul>
       </br>
 		  <div class="tab-content">
 				<div id="applicant-info" class="tab-pane fade in active">
@@ -170,6 +175,13 @@
 								<jsp:include page="view-town-surveyor-remarks.jsp"></jsp:include>
 							</div>
 						</c:if>
+					</div>
+				</c:if>
+				<c:if test="${not empty lettertopartylist}">
+					<div id="view-lp" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="../lettertoparty/ins-lettertoparty-details.jsp"></jsp:include>
+						</div>
 					</div>
 				</c:if>
 		</div>

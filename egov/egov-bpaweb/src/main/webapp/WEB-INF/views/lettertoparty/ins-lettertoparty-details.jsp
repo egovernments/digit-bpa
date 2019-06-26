@@ -109,7 +109,7 @@
 							</c:choose>
 						</td>
 						<td align="center" class="view-content" style="font-size: 90%;">
-							<a style="cursor: pointer; font-size: 12px;" class="open-popup" href="/bpa/inspection/lettertoparty/inspection/lettertopartyprint/lp?pathVar=${inspn.id}">
+							<a style="cursor: pointer; font-size: 12px;" class="open-popup" href="/bpa/inspection/lettertoparty/lettertopartyprint/lp?pathVar=${inspn.id}">
 								<i class="fa fa-print" aria-hidden="true"></i>
 								<spring:message code="lbl.print"/>
 							</a>
@@ -133,7 +133,7 @@
 							</c:choose>
 						</td>
 						<td align="center" class="view-content" style="font-size: 90%;">
-							<a style="cursor: pointer; font-size: 12px;" class="open-popup" href="/bpa/inspection/lettertoparty/inspection/lettertopartyprint/lpreply?pathVar=${inspn.id}">
+							<a style="cursor: pointer; font-size: 12px;" class="open-popup" href="/bpa/inspection/lettertoparty/lettertopartyprint/lpreply?pathVar=${inspn.id}">
 								<i class="fa fa-print" aria-hidden="true"></i>
 								<spring:message code="lbl.print"/>
 							</a>
