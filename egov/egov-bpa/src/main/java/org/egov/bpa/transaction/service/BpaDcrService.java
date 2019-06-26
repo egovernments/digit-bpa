@@ -41,9 +41,9 @@
 package org.egov.bpa.transaction.service;
 
 import static org.egov.bpa.utils.BpaConstants.DCR_BPA_INTEGRATION_REQUIRE;
+import static org.egov.bpa.utils.BpaConstants.DCR_SCRUTINIZED_PLANEXPIRYDAYS;
 import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
 import static org.egov.bpa.utils.BpaConstants.MESSAGE;
-import static org.egov.bpa.utils.BpaConstants.RECENT_DCRRULE_AMENDMENTDAYS;
 import static org.egov.bpa.utils.BpaConstants.YES;
 
 import java.util.Date;
@@ -150,7 +150,7 @@ public class BpaDcrService {
     public Map<String, String> checkEdcrExpiry(final String eDcrNumber, HttpServletRequest request) {
         Map<String, String> eDcrExpiryDetails = new HashMap<>();
         List<AppConfigValues> appConfigValueList = appConfigValueService
-                .getConfigValuesByModuleAndKey(EGMODULE_NAME, RECENT_DCRRULE_AMENDMENTDAYS);
+                .getConfigValuesByModuleAndKey(EGMODULE_NAME, DCR_SCRUTINIZED_PLANEXPIRYDAYS);
         int expirydays = Integer.parseInt(appConfigValueList.get(0).getValue());
         Date dcrCreatedDate = dcrRestService.getDcrCreatedDate(eDcrNumber, request);
 
