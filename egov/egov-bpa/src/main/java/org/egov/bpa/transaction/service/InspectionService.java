@@ -160,6 +160,7 @@ public class InspectionService {
 		if (permitInspn.getInspection().getInspectionDate() == null)
 			permitInspn.getInspection().setInspectionDate(new Date());
 		for (DocketCommon d : permitInspn.getInspection().getDocket()) {
+			d.setInspection(permitInspn.getInspection());
 			for (DocketDetailCommon ddc : d.getDocketDetail()) {
 				ddc.setDocket(d);
 			}
@@ -167,7 +168,6 @@ public class InspectionService {
 		buildInspectionFiles(permitInspn.getInspection());
 		buildPlanScrutinyChecklistItems(permitInspn);
 		permitInspn.setApplication(application);
-		permitInspn.getInspection().getDocket().get(0).setInspection(permitInspn.getInspection());
 		buildDocketDetails(permitInspn.getInspection().getDocket());
 		return inspectionRepository.save(permitInspn);
 	}

@@ -132,6 +132,7 @@ public class OcInspectionService {
 		if (inspection.getInspectionDate() == null)
 			inspection.setInspectionDate(new Date());
 		for (DocketCommon d : ocInspection.getInspection().getDocket()) {
+			d.setInspection(ocInspection.getInspection());
 			for (DocketDetailCommon ddc : d.getDocketDetail()) {
 				ddc.setDocket(d);
 			}
