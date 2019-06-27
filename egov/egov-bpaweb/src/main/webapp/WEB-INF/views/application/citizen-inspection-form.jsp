@@ -64,45 +64,57 @@
 <div class="row">
 	<div class="col-md-12">	
 		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-		<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage" value="${noJAORSAMessage}" />	
-			
-      <div class="panel panel-primary" data-collapsed="0">   
-      </br>
-		   <div class="form-group" >			
-		    	       <label class="col-sm-3 control-label text-right"><spring:message code="lbl.plan.permission.no" /><span class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation resetValues"
-				maxlength="20" id="planPermissionNumber"
-				placeholder="Enter plan permission number" path="application.planPermissionNumber"
-				value="${permitInspectionApplication.application.planPermissionNumber}" required="required" />
-		</div>
-				    	        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.insp.bldngconststage" /></label>
-				<div class="col-sm-2 add-margin">
-		
-		<form:select path="inspectionApplication.buildingConstructionStage"
-														id="category"
-														cssClass="form-control category" required="required">
-														<form:option value="">
-															<spring:message code="lbl.select" />
-														</form:option>
-														<form:options items="${constructions}" itemValue="id"
-															itemLabel="name" />
-													</form:select> <form:errors path="inspectionApplication.buildingConstructionStage"
-														cssClass="add-margin error-msg" />	</div>	
-		 
-		</div>	</div> 
-		
-		
-		<div id="application-info" class="tab-pane fade in active">
-		         <div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
-						<jsp:include page="edcr-application-details-form.jsp"></jsp:include>
-				 </div>
-				 	  <div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="view-application-details.jsp"></jsp:include>
-						</div> 
-		</div>
-			
-    	     <div class="panel panel-primary docdetails" data-collapsed="0">  
+		<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage" value="${noJAORSAMessage}" />
+
+			<div class="panel panel-primary" data-collapsed="0">
+				</br>
+				<div class="form-group">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.plan.permission.no" /><span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
+						<form:input class="form-control patternvalidation resetValues"
+							maxlength="20" id="planPermissionNumber"
+							placeholder="Enter plan permission number"
+							path="application.planPermissionNumber"
+							value="${permitInspectionApplication.application.planPermissionNumber}"
+							required="required" />
+						<form:errors path="application.planPermissionNumber"
+							cssClass="add-margin error-msg" />
+					</div>
+					
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.insp.bldngconststage" /></label>
+					<div class="col-sm-2 add-margin">
+
+						<form:select
+							path="inspectionApplication.buildingConstructionStage"
+							id="category" cssClass="form-control category" >
+							<%-- required="required" --%>
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${constructions}" itemValue="id"
+								itemLabel="name" />
+						</form:select>
+						<form:errors
+							path="inspectionApplication.buildingConstructionStage"
+							cssClass="add-margin error-msg" />
+					</div>
+
+				</div>
+			</div>
+
+
+			<div id="application-info" class="tab-pane fade in active">
+				<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
+					<jsp:include page="edcr-application-details-form.jsp"></jsp:include>
+				</div>
+				<div class="panel panel-primary" data-collapsed="0">
+					<jsp:include page="view-application-details.jsp"></jsp:include>
+				</div>
+			</div>
+
+			<div class="panel panel-primary docdetails" data-collapsed="0">  
     	     <div class="panel-heading custom_form_panel_heading">				
 	                	<div class="panel-title"><spring:message code="lbl.applicant.remarks" /></div>
 					</div>	  	    

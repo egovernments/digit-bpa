@@ -45,8 +45,9 @@ $(document).ready(
 			        bootbox.alert($('#noJAORSAMessage').val());
 			 
 			$('#buttonSubmit').click(function (e) {
+				var  button =$('#buttonSubmit').val();
 				document.getElementById("workFlowAction").value = 'Submit';
-
+				if(validateFormOnSubmit(button,validator)){
 			        bootbox
 			            .dialog({
 			                message: $('#submitApplication').val(),
@@ -71,7 +72,57 @@ $(document).ready(
 			                    }
 			                }
 			            });
-			   
+				}
 			    return false;
 			});
 		});
+
+var validator = $("#createInspectionForm").validate({
+	highlight : function(element, errorClass) {
+		$(element).fadeOut(function() {
+			$(element).fadeIn();
+		});
+	}
+});
+
+function validateFormOnSubmit(button, validator) {
+
+    if ($('#createInspectionForm').valid()) {
+        document.getElementById("workFlowAction").value = 'Submit';
+        return true;
+    } else {
+        return validateMandatoryAndFocus(validator);
+    }
+}
+
+function validateMandatoryAndFocus(validator) {
+	$errorInput = undefined;
+
+	$
+			.each(validator.invalidElements(),
+					function(index, elem) {
+
+						if (!$(elem).is(":visible")
+								&& !$(elem).val()
+								&& index == 0
+								&& $(elem).closest('div').find(
+										'.bootstrap-tagsinput').length > 0) {
+							$errorInput = $(elem);
+						}
+
+						if (!$(elem).is(":visible")
+								&& !$(elem).closest('div.panel-body').is(
+										":visible")) {
+							$(elem).closest('div.panel-body').show();
+							console.log("elem", $(elem));
+						}
+					});
+
+	if ($errorInput)
+		$errorInput.tagsinput('focus');
+
+	validator.focusInvalid();
+	return false;
+}
+
+
