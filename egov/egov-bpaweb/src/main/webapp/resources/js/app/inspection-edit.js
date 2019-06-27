@@ -182,7 +182,34 @@ jQuery(document)
                                 e.preventDefault();
                             }
                             return false;
-                        } else {
+                        } else if (action == 'Revoke') {
+                            if (validateOnRevokePermit()) {
+                                bootbox
+                                    .dialog({
+                                        message: $('#updateInspectionForm').val(),
+                                        buttons: {
+                                            'confirm': {
+                                                label: 'Yes',
+                                                className: 'btn-primary',
+                                                callback: function (result) {
+                                                    $('#updateInspectionForm').trigger('submit');
+                                                }
+                                            },
+                                            'cancel': {
+                                                label: 'No',
+                                                className: 'btn-danger',
+                                                callback: function (result) {
+                                                    e.stopPropagation();
+                                                    e.preventDefault();
+                                                }
+                                            }
+                                        },
+                                    });
+                            } else {
+                                e.preventDefault();
+                            }
+                            return false;
+                        }else {
                             validateOnApproveAndForward(validator, action);
                         }
                     });
@@ -193,7 +220,7 @@ jQuery(document)
                         document
                             .getElementById("workFlowAction").value = 'Save';
                         if(validateForm(validator))
-                            $('#viewBpaApplicationForm').trigger('submit');
+                            $('#updateInspectionForm').trigger('submit');
                     });
 
 
@@ -243,24 +270,18 @@ function validateOnRevert() {
 }
 
 function validateOnRevokePermit() {
-    makePermitConditionsNotMandatory();
     var approvalComent = $('#approvalComent').val();
    
-    var revocationReasonsLength = $('.rejectionReasons:checked').length;
-    if (revocationReasonsLength <= 0) {
-        $('.rejectionReason').show();
-        bootbox.alert($('#revocationReasonMandatory').val());
-        return false;
-    } else if (approvalComent == "") {
+   if (approvalComent == "") {
         $('#approvalComent').focus();
-        bootbox.alert($('#revokePermitCommentsRequired').val());
+        bootbox.alert($('#revokeInsCommentsRequired').val());
         return false;
     }
     return true;
 }
 
 function validateForm(validator) {
-    if ($('#viewBpaApplicationForm').valid()) {
+    if ($('#updateInspectionForm').valid()) {
         return true;
     } else {
         $errorInput = undefined;

@@ -74,6 +74,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.InspectionAppointmentSchedule;
 import org.egov.bpa.transaction.entity.InspectionLetterToParty;
@@ -84,6 +85,7 @@ import org.egov.bpa.transaction.service.InConstructionInspectionService;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.transaction.service.InspectionLetterToPartyService;
 import org.egov.bpa.transaction.service.PermitFeeService;
+import org.egov.bpa.transaction.service.PermitRevocationService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
@@ -126,6 +128,8 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     private InspectionApplicationService inspectionAppService;
     @Autowired
     private InspectionLetterToPartyService letterToPartyService;
+    @Autowired
+    private PermitRevocationService permitRevocationService;
     
     @ModelAttribute("inspectionApplication")
     public InspectionApplication getInspectionApplication(@PathVariable final String applicationNumber) {
@@ -188,7 +192,8 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
                     		inspectionApplication.getCurrentState()))
                     .getId();
         } 
-
+        if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
+            return COMMON_ERROR;
         wfBean.setApproverPositionId(approvalPosition);
         wfBean.setApproverComments(inspectionApplication.getApprovalComent());
         if (inspectionApplication.getState().getValue() != null)
@@ -215,14 +220,15 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
                                     .concat(getDesinationNameByPosition(pos)),
                                     inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
       
-       else if(BpaConstants.APPLICATION_STATUS_REVOKED.equalsIgnoreCase(wfBean.getWorkFlowAction())){
-        		message = messageSource.getMessage("msg.revoke.inspection", new String[] {
-                        user == null ? ""
-                                : user.getUsername().concat("~")
-                                        .concat(getDesinationNameByPosition(pos)),
-                                        inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
-     
-        } else {
+       else if(BpaConstants.WF_REVOKE_STATE.equalsIgnoreCase(wfBean.getWorkFlowAction())){
+    	   PermitRevocation permitRevocation = new PermitRevocation();
+    	   permitRevocation.setApplication(permitInspection.getApplication());
+    	   permitRevocation.setInitiateRemarks(inspectionApplication.getApprovalComent());
+    	   PermitRevocation permitRevocationRes = permitRevocationService.save(permitRevocation);
+    	   message = messageSource.getMessage("msg.permit.revoke.initiate",
+                   new String[] { permitRevocationRes.getApplicationNumber() }, LocaleContextHolder.getLocale());
+    
+       } else {
             message = messageSource.getMessage("msg.update.forward.inspection", new String[] {
                     user == null ? ""
                             : user.getUsername().concat("~")

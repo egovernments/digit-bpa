@@ -206,7 +206,20 @@ public abstract class InspectionWorkflowCustomImpl implements InspectionWorkflow
                     .withComments(wfBean.getApproverComments()).withStateValue(wfmatrix.getNextState())
                     .withDateInfo(currentDate.toDate()).withOwner(stateHistory.getOwnerPosition()).withOwner(stateHistory.getOwnerUser())
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
-        } else {
+        }else if (wfBean.getWorkFlowAction().equalsIgnoreCase(BpaConstants.WF_REVOKE_STATE)) {
+        	
+        	wfmatrix = inspectionWorkflowService.getWfMatrix(permitInspection.getInspectionApplication().getStateType(), null,
+                    null, wfBean.getAdditionalRule(), permitInspection.getInspectionApplication().getCurrentState().getValue(), null);  
+            
+            
+			permitInspection.getInspectionApplication().setStatus(getStatusByPassingCode("Revocated"));
+			permitInspection.getInspectionApplication().transition().end()
+            .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+            .withComments(wfBean.getApproverComments())
+            .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+            .withOwner(pos).withOwner(ownerUser)
+            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
+		} else {
             Assignment approverAssignment = bpaWorkFlowService.getApproverAssignment(pos);
             if(approverAssignment == null)
                 approverAssignment = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0);
@@ -226,24 +239,13 @@ public abstract class InspectionWorkflowCustomImpl implements InspectionWorkflow
                         null, wfBean.getAdditionalRule(), permitInspection.getInspectionApplication().getCurrentState().getValue(), null);
             }
             if (wfmatrix != null) {
-               // BpaStateInfo bpaStateInfo = bpaWorkFlowService.getBpaStateInfo(permitInspection.getInspectionApplication().getCurrentState(), permitInspection.getInspectionApplication().getStateHistory(), application.getTownSurveyorInspectionRequire(), new BpaStateInfo(), wfmatrix, workFlowAction);
                 BpaStatus status = getStatusByCurrentMatrxiStatus(wfmatrix);
                 ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0).getEmployee();
                 if (status != null)
                 	permitInspection.getInspectionApplication().setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 
                   
-				if (wfBean.getWorkFlowAction().equalsIgnoreCase(BpaConstants.WF_REVOCATE_BUTTON)) {
-					permitInspection.getInspectionApplication().setStatus(getStatusByPassingCode("Revocated"));
-					permitInspection.getInspectionApplication().transition().end()
-	                .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
-	                .withComments(wfBean.getApproverComments())
-	                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-	                .withOwner(pos).withOwner(ownerUser)
-	                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
-				}
-				
-				if (wfmatrix.getNextAction().contains("END"))
+				if(wfmatrix.getNextAction().contains("END"))
 					permitInspection.getInspectionApplication().transition().end()
                                .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                                .withComments(wfBean.getApproverComments()).withDateInfo(currentDate.toDate())
@@ -253,7 +255,7 @@ public abstract class InspectionWorkflowCustomImpl implements InspectionWorkflow
                                .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                                .withComments(wfBean.getApproverComments())
                                .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos).withOwner(ownerUser)
-                               .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);             
+                               .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);            
                 
                 
             }

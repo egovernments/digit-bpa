@@ -45,7 +45,7 @@ jQuery(document)
 					$('#approvalComent').keyup(function () {
 			            $(this).val($(this).val().replace(/["]/g, "'"));
 			        });
-					
+								
 
 					//To show notification to business user/citizen on application open
 					if($('#appointmentDateRes').val() && $('#appointmentTimeRes').val() && $('#appointmentTitle').val()) {

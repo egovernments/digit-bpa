@@ -156,6 +156,8 @@ public class BpaConstants {
     public static final String WF_DOC_VERIFY_PEND = "Document verification pending";
     public static final String WF_INIT_AUTO_RESCHDLE = "Initiated For Auto Rescheduling Appointment";
     public static final String INSPECTION_MODULE_TYPE = "INSPECTION";
+    public static final String WF_REVOKE_STATE ="Revoke";
+
 
     // application status constants
     public static final String APPROVED = "Approved";
