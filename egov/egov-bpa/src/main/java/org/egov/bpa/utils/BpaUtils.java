@@ -261,6 +261,10 @@ public class BpaUtils {
             status = APPLICATION_FEE_PAYMENT_PENDING;
         else
             status = application.getStatus().getDescription();
+       if(isCitizenAcceptanceRequired() && application.isCitizenAccepted()
+        && logedInuserIsCitizen())
+    	   status="Accepted by Applicant";
+       
         if ((application.getState() != null && (CLOSED.equals(application.getState().getValue())
                 || WF_END_ACTION.equals(application.getState().getValue())))
                 || (application.getStatus() != null
@@ -279,9 +283,12 @@ public class BpaUtils {
     public void createPortalUserinbox(final BpaApplication application, final List<User> portalInboxUser,
             final String workFlowAction) {
         String status = StringUtils.EMPTY;
-        if ("Save".equalsIgnoreCase(workFlowAction) || "Send".equalsIgnoreCase(workFlowAction)) {
+        if ("Send".equalsIgnoreCase(workFlowAction)) {
+            status = "Applicant Acceptance Pending";
+        } else if ("Save".equalsIgnoreCase(workFlowAction)){
             status = "To be submitted";
-        } else if (null != application.getStatus().getDescription()
+        }
+        else if (null != application.getStatus().getDescription()
                 && WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(workFlowAction)) {
             if (checkAnyTaxIsPendingToCollect(application.getDemand()))
                 status = APPLICATION_FEE_PAYMENT_PENDING;
