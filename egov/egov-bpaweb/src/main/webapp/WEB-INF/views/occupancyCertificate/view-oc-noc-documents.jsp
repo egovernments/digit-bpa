@@ -57,8 +57,8 @@
 				<th><spring:message code="lbl.srl.no" /></th>
 				<th><spring:message code="lbl.department" /></th>
 				<th><spring:message code="lbl.nature.noc.req" /></th>
-				<th><spring:message code="lbl.letr.sent.on" /></th>
-				<th><spring:message code="lbl.reply.recv.on" /></th>
+				<th><spring:message code="lbl.noc.initiated.date" /></th>
+				<th><spring:message code="lbl.noc.approved.date" /></th>
 				<th><spring:message code="lbl.noc.status" /></th>
 				<th><spring:message code="lbl.remarks" /></th>
 				<th><spring:message code="lbl.files" /></th>
@@ -80,8 +80,40 @@
 					<td class="view-content text-center" style="font-size: 97%;"><c:out value="${status.index+1}"></c:out></td>
 					<td class="view-content" style="font-size: 97%;"><c:out value="${nocDoc.nocDocument.serviceChecklist.checklist.description}" default="N/A"></c:out></td>
 					<td class="view-content" style="font-size: 97%;"><c:out value="${nocDoc.nocDocument.natureOfRequest}" default="N/A"></c:out></td>
-					<td class="view-content" style="font-size: 97%;"><c:if test="${nocDoc.nocDocument.letterSentOn eq null}"> <c:out value="N/A"></c:out></c:if> <fmt:formatDate value="${nocDoc.nocDocument.letterSentOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
-					<td class="view-content" style="font-size: 97%;"><c:if test="${nocDoc.nocDocument.replyReceivedOn eq null}"> <c:out value="N/A"></c:out></c:if><fmt:formatDate value="${nocDoc.nocDocument.replyReceivedOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
+					<c:choose>
+						<c:when test="${not empty nocApplication}">
+							<td class="view-content" style="font-size: 97%;"><c:if
+									test="${nocDoc.ocNoc.bpaNocApplication.createdDate eq null}">
+									<c:out value="N/A"></c:out>
+								</c:if> <fmt:formatDate value="${nocDoc.ocNoc.bpaNocApplication.createdDate}"
+									pattern="dd/MM/yyyy"></fmt:formatDate>
+									</td>
+						</c:when>
+						<c:otherwise>
+							<td class="view-content" style="font-size: 97%;"><c:if
+									test="${nocDoc.nocDocument.letterSentOn eq null}">
+									<c:out value="N/A"></c:out>
+								</c:if> <fmt:formatDate value="${nocDoc.nocDocument.letterSentOn}"
+									pattern="dd/MM/yyyy"></fmt:formatDate></td>
+						</c:otherwise>
+					</c:choose>
+					<c:choose>
+						<c:when test="${not empty nocApplication}">
+							<td class="view-content" style="font-size: 97%;"><c:if
+									test="${nocDoc.ocNoc.bpaNocApplication.deemedApprovedDate eq null}">
+									<c:out value="N/A"></c:out>
+								</c:if> <fmt:formatDate value="${nocDoc.ocNoc.bpaNocApplication.deemedApprovedDate}"
+									pattern="dd/MM/yyyy"></fmt:formatDate>
+									</td>
+						</c:when>
+						<c:otherwise>
+							<td class="view-content" style="font-size: 97%;"><c:if
+									test="${nocDoc.nocDocument.replyReceivedOn eq null}">
+									<c:out value="N/A"></c:out>
+								</c:if> <fmt:formatDate value="${nocdoc.nocDocument.replyReceivedOn}"
+									pattern="dd/MM/yyyy"></fmt:formatDate></td>
+						</c:otherwise>
+					</c:choose>
 					<td class="view-content" style="font-size: 97%;"><c:out value="${nocDoc.nocDocument.nocStatus.nocStatusVal}" default="N/A"></c:out></td>
 					<td class="view-content" style="font-size: 97%;"><c:out value="${nocDoc.nocDocument.remarks}" default="N/A"></c:out></td>
 					<td class="view-content" style="font-size: 97%;"><c:set value="false" var="isDocFound"></c:set> <c:forEach

@@ -62,8 +62,8 @@
 				<th><spring:message code="lbl.srl.no" /></th>
 				<th><spring:message code="lbl.department" /></th>
 				<th><spring:message code="lbl.nature.noc.req" /></th>
-				<th class="hide"><spring:message code="lbl.letr.sent.on" /></th>
-				<th class="hide"><spring:message code="lbl.reply.recv.on" /></th>
+				<th class="hide"><spring:message code="lbl.noc.initiated.date" /></th>
+				<th class="hide"><spring:message code="lbl.noc.approved.date" /></th>
 				<th class="nocStatusHeader hide"><spring:message
 						code="lbl.noc.status" /></th>
 				<th><spring:message code="lbl.remarks" /></th>
