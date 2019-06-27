@@ -85,9 +85,9 @@
 							<td class="view-content" style="font-size: 97%;"><c:if
 									test="${nocdoc.permitNoc.bpaNocApplication.createdDate eq null}">
 									<c:out value="N/A"></c:out>
-								</c:if> <fmt:formatDate value="${nocdoc.permitNoc.bpaNocApplication.createdDate}"
-									pattern="dd/MM/yyyy"></fmt:formatDate>
-									</td>
+								</c:if> <fmt:formatDate
+									value="${nocdoc.permitNoc.bpaNocApplication.createdDate}"
+									pattern="dd/MM/yyyy"></fmt:formatDate></td>
 						</c:when>
 						<c:otherwise>
 							<td class="view-content" style="font-size: 97%;"><c:if
@@ -102,9 +102,9 @@
 							<td class="view-content" style="font-size: 97%;"><c:if
 									test="${nocdoc.permitNoc.bpaNocApplication.deemedApprovedDate eq null}">
 									<c:out value="N/A"></c:out>
-								</c:if> <fmt:formatDate value="${nocdoc.permitNoc.bpaNocApplication.deemedApprovedDate}"
-									pattern="dd/MM/yyyy"></fmt:formatDate>
-									</td>
+								</c:if> <fmt:formatDate
+									value="${nocdoc.permitNoc.bpaNocApplication.deemedApprovedDate}"
+									pattern="dd/MM/yyyy"></fmt:formatDate></td>
 						</c:when>
 						<c:otherwise>
 							<td class="view-content" style="font-size: 97%;"><c:if
