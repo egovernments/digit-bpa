@@ -24,14 +24,20 @@ public class PortalRestController {
 
 	@Autowired
 	private PortalInboxUserService portalInboxUserService;
-	
+
 	@Autowired
 	private TenantService tenantService;
-	
+
 	@PostMapping(value = "/rest/fetch/servicesapplied", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public InboxRenderResponse fetchServicesApplied(@RequestParam final Long id) {
 		List<PortalInboxUser> totalServicesAppliedList = portalInboxUserService.getPortalInboxByUserId(id);
+		List<Tenant> tenants = tenantService.findAll();
+		Map<String, String> tenantsMap = new HashMap<>();
+		for (Tenant t : tenants) {
+			tenantsMap.put(t.getCode(), t.getName());
+		}
+		populateUlbNames(totalServicesAppliedList, tenantsMap);
 		InboxRenderResponse inboxRenderResponse = new InboxRenderResponse();
 		inboxRenderResponse.setPortalInboxHelper(getPortalInboxHelperList(totalServicesAppliedList));
 		inboxRenderResponse.setTotalServices((long) totalServicesAppliedList.size());
@@ -45,6 +51,12 @@ public class PortalRestController {
 	@ResponseBody
 	public InboxRenderResponse fetchServicesCompleted(@RequestParam final Long id) {
 		List<PortalInboxUser> totalServicesCompletedList = portalInboxUserService.getPortalInboxByResolved(id, true);
+		List<Tenant> tenants = tenantService.findAll();
+		Map<String, String> tenantsMap = new HashMap<>();
+		for (Tenant t : tenants) {
+			tenantsMap.put(t.getCode(), t.getName());
+		}
+		populateUlbNames(totalServicesCompletedList, tenantsMap);
 		InboxRenderResponse inboxRenderResponse = new InboxRenderResponse();
 		inboxRenderResponse.setPortalInboxHelper(getPortalInboxHelperList(totalServicesCompletedList));
 		inboxRenderResponse.setTotalServices(portalInboxUserService.getPortalInboxUserCount(id));
@@ -72,7 +84,7 @@ public class PortalRestController {
 
 		return inboxRenderResponse;
 	}
-	
+
 	private void populateUlbNames(List<PortalInboxUser> items, Map<String, String> tenantsMap) {
 
 		for (PortalInboxUser i : items) {
