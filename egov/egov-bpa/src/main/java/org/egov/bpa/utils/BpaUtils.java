@@ -262,8 +262,12 @@ public class BpaUtils {
         else
             status = application.getStatus().getDescription();
        if(isCitizenAcceptanceRequired() && application.isCitizenAccepted()
-        && logedInuserIsCitizen())
+        && logedInuserIsCitizen() )
     	   status="Accepted by Applicant";
+       
+       if(isCitizenAcceptanceRequired() && !application.isCitizenAccepted()
+    	        && !logedInuserIsCitizen() && additionalPortalInboxUser!=null)
+           status = "Applicant Acceptance Pending";
        
         if ((application.getState() != null && (CLOSED.equals(application.getState().getValue())
                 || WF_END_ACTION.equals(application.getState().getValue())))
