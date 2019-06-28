@@ -45,6 +45,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -94,6 +95,11 @@ public class InspectionApplicationService {
 	public PermitInspectionApplication findByInspectionApplicationNumber(final String appNo) {
 		return inspectionReposiory.findByInspectionApplication_ApplicationNumber(appNo);
 	}
+    
+    @Transactional
+   	public List<PermitInspectionApplication> findByApplicationNumber(final String appNo) {
+   		return inspectionReposiory.findByApplication_ApplicationNumber(appNo);
+   	}
     
     public String generateInspectionNumber() {
         final InspectionApplicationNumberGenerator inspectionNUmber = beanResolver

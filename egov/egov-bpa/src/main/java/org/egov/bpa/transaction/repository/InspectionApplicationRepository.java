@@ -40,6 +40,8 @@
 
 package org.egov.bpa.transaction.repository;
 
+import java.util.List;
+
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -49,4 +51,7 @@ import org.springframework.stereotype.Repository;
 public interface InspectionApplicationRepository extends JpaRepository<PermitInspectionApplication, Long> {
 	
 	PermitInspectionApplication findByInspectionApplication_ApplicationNumber(String applicationNumber);
+	
+	List<PermitInspectionApplication> findByApplication_ApplicationNumber(String applicationNumber);
+
 }

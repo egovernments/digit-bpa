@@ -79,10 +79,14 @@ import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.PermitInspectionApplication;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.DcrRestService;
+import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
@@ -189,6 +193,10 @@ public class BpaAjaxController {
     private NocConfigurationService nocConfigService;
     @Autowired
 	private DcrRestService drcRestService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private InspectionApplicationService inspectionApplicationService;
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -741,6 +749,31 @@ public class BpaAjaxController {
 	    	        .collect(Collectors.toList());	
         return !userList.isEmpty();
 
+    }
+    
+    @GetMapping(value = "/application/workflowstatus", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void getApplicationWorkFlowStatus(@RequestParam final String permitNumber,
+            final HttpServletResponse response) throws IOException {
+        BpaApplication application = StringUtils.isBlank(permitNumber) ? null
+                : applicationBpaService.findByPermitNumber(permitNumber);      
+   
+        List<PermitInspectionApplication> inspectionApp = inspectionApplicationService.findByApplicationNumber(application.getApplicationNumber());
+       
+        List<PermitInspectionApplication> activeInspections = inspectionApp
+        .stream()
+        .filter(ins-> !ins.getInspectionApplication().getStatus().getCode().equals("Approved")).collect(Collectors.toList());
+        
+        
+
+        final JsonObject jsonObj = new JsonObject();
+        jsonObj.addProperty("activeInspections", activeInspections.size()>0);
+        jsonObj.addProperty("applicationWFEnded", application.getState().isEnded());
+        jsonObj.addProperty("isRevocated", application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REVOKED));
+        List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByPermitNumber(permitNumber);
+        jsonObj.addProperty("ocInitiated", occupancyCertificates.size()>0);
+
+        IOUtils.write(jsonObj.toString(), response.getWriter());
     }
     
 }

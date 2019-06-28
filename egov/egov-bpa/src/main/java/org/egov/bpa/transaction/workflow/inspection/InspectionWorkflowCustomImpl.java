@@ -151,10 +151,9 @@ public abstract class InspectionWorkflowCustomImpl implements InspectionWorkflow
                            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
             }
 
-        }  else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
-                   && (BpaConstants.APPLICATION_STATUS_APPROVED.equalsIgnoreCase(permitInspection.getInspectionApplication().getStatus().getCode()))) {
-                wfmatrix = inspectionWorkflowService.getWfMatrix(permitInspection.getInspectionApplication().getStateType(), null, null,
-                		wfBean.getAdditionalRule(), "Application Approval Pending", "Forwarded to Assistant Engineer For Approval");
+        }  else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+        	wfmatrix = inspectionWorkflowService.getWfMatrix(permitInspection.getInspectionApplication().getStateType(), null,
+                    null, wfBean.getAdditionalRule(), permitInspection.getInspectionApplication().getCurrentState().getValue(), null);  
             	
             BpaStatus status = bpaStatusService
                     .findByModuleTypeAndCode(BpaConstants.INSPECTION_MODULE_TYPE, BpaConstants.APPLICATION_STATUS_APPROVED);

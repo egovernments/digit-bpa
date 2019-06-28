@@ -43,7 +43,8 @@ $(document).ready(
             $('#planPermissionNumber').blur(function () {
 
 			 if ($('#planPermissionNumber').val()) {
-				 getApplicationByPermitNo();
+				    validatePermitApplication();
+				     getApplicationByPermitNo();
 	         }
 	    });
             
@@ -59,7 +60,45 @@ $(document).ready(
              }
         	 
         	 if ($('#planPermissionNumber').val()) {
-        		 getApplicationByPermitNo($('#planPermissionNumber').val());
+        		   getApplicationByPermitNo($('#planPermissionNumber').val());
+             }
+        	 
+        	 
+        	 function validatePermitApplication() {
+        		 $.ajax({
+                     url: "/bpa/application/workflowstatus",
+                     type: "GET",
+                     data: {
+                    	 permitNumber : $('#planPermissionNumber').val()
+                     },
+                     dataType: "json",
+                     success: function (response) {
+                     if(response.isRevocated){   					      
+                        	 bootbox.alert('Permit application for entered plan permission number is revocated, hence cannot proceed.');
+                        	 $("#buttonSubmit").hide();
+                             return false;
+         			   }else if(!response.applicationWFEnded){
+                             bootbox.alert('Entered plan permission number is still in progress, hence cannot proceed.');
+                        	 $("#buttonSubmit").hide();
+                             return false;
+                       }else if(response.ocInitiated){   					      
+                        	 bootbox.alert('Occupancy certificate is already submitted for entered plan permission number, hence cannot proceed.');
+                        	 $("#buttonSubmit").hide();
+                        	 return false;
+         			   }
+                       else if(response.activeInspections){
+                    	   bootbox.alert('For the entered plan permission number inspection is already initiated.');
+                      	   $("#buttonSubmit").hide();
+                      	   return false;
+                       }
+                         else
+                        	 $("#buttonSubmit").show();
+                        	 return true;
+                     },
+                     error: function (response) {
+                     }
+                 });
+        		 return false;
              }
         	 
         	 
