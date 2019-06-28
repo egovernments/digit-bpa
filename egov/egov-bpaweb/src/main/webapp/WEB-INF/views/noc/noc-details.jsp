@@ -260,7 +260,7 @@
 				</div>  </div>
 				<div align="center">
 					<c:if
-						test="${permitNocApplication.bpaNocApplication.status.code eq 'NOC_INITIATED'}">
+						test="${permitNocApplication.bpaNocApplication.status.code eq 'Initiated'}">
 
 						<form:button type="submit" id="buttonApprove"
 							class="btn btn-primary" value="submit">

@@ -162,19 +162,10 @@ $(document).ready(
             });
         }
 		});
-/*
-$(document).on('click','#buttonApprove',function(){
-	document.getElementById("workFlowAction").value = 'NOC_APPROVED';
- return true});
 
-
-$(document).on('click','#buttonReject',function(){
-	document.getElementById("workFlowAction").value = 'NOC_REJECTED';
-    $('#editNocApplicationForm').trigger('submit');
-});*/
 
 $('#buttonApprove').click(function (e) {
-	document.getElementById("workFlowAction").value = 'NOC_APPROVED';
+	document.getElementById("workFlowAction").value = 'Approved';
 
         bootbox
             .dialog({
@@ -203,7 +194,7 @@ $('#buttonApprove').click(function (e) {
 });
 
 $('#buttonReject').click(function (e) {
-	document.getElementById("workFlowAction").value = 'NOC_REJECTED';
+	document.getElementById("workFlowAction").value = 'Rejected';
 	$('#remarks').attr('required', 'required');
 	if ($('#editNocApplicationForm').valid()){
         bootbox
