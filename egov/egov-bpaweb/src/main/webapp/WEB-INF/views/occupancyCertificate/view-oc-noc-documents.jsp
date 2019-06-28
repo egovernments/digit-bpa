@@ -99,18 +99,33 @@
 					</c:choose>
 					<c:choose>
 						<c:when test="${not empty nocApplication}">
-							<td class="view-content" style="font-size: 97%;"><c:if
-									test="${nocDoc.ocNoc.bpaNocApplication.deemedApprovedDate eq null}">
-									<c:out value="N/A"></c:out>
-								</c:if> <fmt:formatDate
-									value="${nocDoc.ocNoc.bpaNocApplication.deemedApprovedDate}"
-									pattern="dd/MM/yyyy"></fmt:formatDate></td>
+							<td class="view-content" style="font-size: 97%;"><c:choose>
+									<c:when
+										test="${nocDoc.ocNoc.bpaNocApplication.status.code eq 'NOC_APPROVED'}">
+										<c:if
+											test="${nocDoc.ocNoc.bpaNocApplication.lastModifiedDate eq null}">
+											<c:out value="N/A"></c:out>
+										</c:if>
+										<fmt:formatDate
+											value="${nocDoc.ocNoc.bpaNocApplication.lastModifiedDate}"
+											pattern="dd/MM/yyyy"></fmt:formatDate>
+									</c:when>
+									<c:otherwise>
+										<c:if
+											test="${nocDoc.ocNoc.bpaNocApplication.deemedApprovedDate eq null}">
+											<c:out value="N/A"></c:out>
+										</c:if>
+										<fmt:formatDate
+											value="${nocDoc.ocNoc.bpaNocApplication.deemedApprovedDate}"
+											pattern="dd/MM/yyyy"></fmt:formatDate>
+									</c:otherwise>
+								</c:choose></td>
 						</c:when>
 						<c:otherwise>
 							<td class="view-content" style="font-size: 97%;"><c:if
 									test="${nocDoc.nocDocument.replyReceivedOn eq null}">
 									<c:out value="N/A"></c:out>
-								</c:if> <fmt:formatDate value="${nocdoc.nocDocument.replyReceivedOn}"
+								</c:if> <fmt:formatDate value="${nocDoc.nocDocument.replyReceivedOn}"
 									pattern="dd/MM/yyyy"></fmt:formatDate></td>
 						</c:otherwise>
 					</c:choose>
