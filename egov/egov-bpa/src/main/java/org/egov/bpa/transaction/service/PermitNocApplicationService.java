@@ -60,6 +60,7 @@ import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.repository.PermitNocApplicationRepository;
+import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
@@ -95,7 +96,8 @@ public class PermitNocApplicationService {
 	public HolidayListService holidayListService;
 	@Autowired
 	private DcrRestService drcRestService;
-
+	@Autowired
+	private BPASmsAndEmailService bpaSmsAndEmailService;
 	
 	@Transactional
 	public PermitNocApplication save(final PermitNocApplication permitNoc) {
@@ -129,7 +131,10 @@ public class PermitNocApplicationService {
 		permitNoc.getBpaNocApplication().setNocType(nocConfig.getDepartment());
 		permitNoc.getBpaNocApplication().setStatus(status);	
 		addSlaEndDate(permitNoc.getBpaNocApplication(), nocConfig);
-		return permitNocRepository.save(permitNoc);	
+		PermitNocApplication nocApp = permitNocRepository.save(permitNoc);	
+		bpaSmsAndEmailService.sendSMSAndEmailForNocProcess(BpaConstants.NOC_INITIATED,nocApp);
+		return nocApp;
+		
 	}
 	
 	public void initiateNoc(BpaApplication application) {

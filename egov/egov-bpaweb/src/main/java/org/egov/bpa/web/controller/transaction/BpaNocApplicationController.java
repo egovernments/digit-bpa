@@ -63,6 +63,7 @@ import org.egov.bpa.transaction.repository.PermitNocApplicationRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.PermitNocApplicationService;
+import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.service.OccupancyService;
@@ -98,7 +99,10 @@ public class BpaNocApplicationController {
     private PermitNocApplicationService permitNocService;
     
     @Autowired
-    private PermitNocApplicationRepository permitNocRepository;   
+    private PermitNocApplicationRepository permitNocRepository;  
+    
+    @Autowired
+	private BPASmsAndEmailService bpaSmsAndEmailService;
     
 	@RequestMapping(value = "/create/{applicationNumber}", method = RequestMethod.GET)
     public String createNoc(@PathVariable final String applicationNumber, final Model model,final RedirectAttributes redirectAttributes) {
@@ -139,13 +143,15 @@ public class BpaNocApplicationController {
         buildNocFiles(permitNocApplication.getBpaNocApplication());
         permitNocRepository.save(permitNocApplication);
 		bpaUtils.updateNocPortalUserinbox(permitNocApplication, null);
-		if(workFlowAction.equalsIgnoreCase(BpaConstants.NOC_APPROVED))
+		if(workFlowAction.equalsIgnoreCase(BpaConstants.NOC_APPROVED)){
 			redirectAttributes.addFlashAttribute("message",
                 "Noc Application is approved with application number " + permitNocApplication.getBpaNocApplication().getNocApplicationNumber() + ".");
-		else
+			bpaSmsAndEmailService.sendSMSAndEmailForNocProcess(BpaConstants.NOC_APPROVED,permitNocApplication);
+		}else{
 			redirectAttributes.addFlashAttribute("message",
 	            "Noc Application is rejected with " + permitNocApplication.getBpaNocApplication().getNocApplicationNumber() + ".");
-		
+			bpaSmsAndEmailService.sendSMSAndEmailForNocProcess(BpaConstants.NOC_REJECTED,permitNocApplication);
+		}
         return "redirect:/nocapplication/success/" + permitNocApplication.getBpaNocApplication().getNocApplicationNumber();
 	}
 	

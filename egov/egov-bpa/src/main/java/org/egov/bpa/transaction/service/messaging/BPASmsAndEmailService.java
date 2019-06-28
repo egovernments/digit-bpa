@@ -159,6 +159,15 @@ public class BPASmsAndEmailService {
     private static final String SMS_BPA_NOC_DEEMED_APPROVE = "msg.bpa.noc.deemed.approve.sms";
     private static final String SUB_BPA_NOC_DEEMED_APPROVE = "msg.bpa.noc.deemed.approve.email.sub";
     private static final String BODY_BPA_NOC_DEEMED_APPROVE = "msg.bpa.noc.deemed.approve.email.body";
+    private static final String SMS_BPA_NOC_INITIATION = "msg.bpa.noc.initiation.sms";
+    private static final String SUB_BPA_NOC_INITIATION = "msg.bpa.noc.initiation.email.sub";
+    private static final String BODY_BPA_NOC_INITIATION = "msg.bpa.noc.initiation.email.body";
+    private static final String SMS_BPA_NOC_APPROVE = "msg.bpa.noc.approve.sms";
+    private static final String SUB_BPA_NOC_APPROVE = "msg.bpa.noc.approve.email.sub";
+    private static final String BODY_BPA_NOC_APPROVE = "msg.bpa.noc.approve.email.body";
+    private static final String SMS_BPA_NOC_REJECT = "msg.bpa.noc.reject.sms";
+    private static final String SUB_BPA_NOC_REJECT = "msg.bpa.noc.reject.email.sub";
+    private static final String BODY_BPA_NOC_REJECT = "msg.bpa.noc.reject.email.body";
 
     @Autowired
     private NotificationService notificationService;
@@ -1100,5 +1109,88 @@ public class BPASmsAndEmailService {
                         inspectionApplication.getApplicationNumber() },
                 locale);
     }
+    
+    public void sendSMSAndEmailForNocProcess(String status,PermitNocApplication permitNoc) {
+        if (isSmsEnabled() || isEmailEnabled()) {
+            ApplicationStakeHolder applnStakeHolder = permitNoc.getBpaApplication().getStakeHolder().get(0);
+            if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
+                Applicant owner = applnStakeHolder.getApplication().getOwner();
+				if (status.equalsIgnoreCase(BpaConstants.NOC_INITIATED)) {
+					buildSmsAndEmailForNocInitiation(permitNoc.getBpaApplication().getApplicationNumber(),
+							permitNoc.getBpaNocApplication(), owner.getName(), owner.getUser().getMobileNumber(),
+							owner.getEmailId());
+				}else if (status.equalsIgnoreCase(BpaConstants.NOC_APPROVED)) {
+					buildSmsAndEmailForNocApproval(permitNoc.getBpaApplication().getApplicationNumber(),
+							permitNoc.getBpaNocApplication(), owner.getName(), owner.getUser().getMobileNumber(),
+							owner.getEmailId());
+				}else if (status.equalsIgnoreCase(BpaConstants.NOC_REJECTED)) {
+					buildSmsAndEmailForNocRejection(permitNoc.getBpaApplication().getApplicationNumber(),
+							permitNoc.getBpaNocApplication(), owner.getName(), owner.getUser().getMobileNumber(),
+							owner.getEmailId());
+				}
 
+            }
+            if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
+                StakeHolder stakeHolder = applnStakeHolder.getStakeHolder();
+				if (status.equalsIgnoreCase(BpaConstants.NOC_INITIATED)) {
+					buildSmsAndEmailForNocInitiation(permitNoc.getBpaApplication().getApplicationNumber(),
+							permitNoc.getBpaNocApplication(), stakeHolder.getName(), stakeHolder.getMobileNumber(),
+							stakeHolder.getEmailId());
+				}else if (status.equalsIgnoreCase(BpaConstants.NOC_APPROVED)) {
+					buildSmsAndEmailForNocApproval(permitNoc.getBpaApplication().getApplicationNumber(),
+							permitNoc.getBpaNocApplication(), stakeHolder.getName(), stakeHolder.getMobileNumber(),
+							stakeHolder.getEmailId());
+				}else if (status.equalsIgnoreCase(BpaConstants.NOC_REJECTED)) {
+					buildSmsAndEmailForNocRejection(permitNoc.getBpaApplication().getApplicationNumber(),
+							permitNoc.getBpaNocApplication(), stakeHolder.getName(), stakeHolder.getMobileNumber(),
+							stakeHolder.getEmailId());
+				}
+            }
+        }
+    }
+
+    private void buildSmsAndEmailForNocInitiation(String bpaApplno,BpaNocApplication noc,
+            String name, String mobileNumber, String emailId) {
+        String smsMsg = EMPTY;
+        String body = EMPTY;
+        String subject = EMPTY;
+        smsMsg = bpaMessageSource.getMessage(SMS_BPA_NOC_INITIATION, new String[] { name,noc.getNocApplicationNumber(),bpaApplno , getMunicipalityName() }, null);
+        body = bpaMessageSource.getMessage(BODY_BPA_NOC_INITIATION,
+                new String[] { name,noc.getNocApplicationNumber(),bpaApplno , getMunicipalityName() }, null);
+        subject = bpaMessageSource.getMessage(SUB_BPA_NOC_INITIATION, new String[] { getMunicipalityName() }, null);
+        if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
+            notificationService.sendSMS(mobileNumber, smsMsg);
+        if (isNotBlank(emailId) && isNotBlank(body))
+            notificationService.sendEmail(emailId, subject, body);
+    }
+
+    private void buildSmsAndEmailForNocApproval(String bpaApplno,BpaNocApplication noc,
+            String name, String mobileNumber, String emailId) {
+        String smsMsg = EMPTY;
+        String body = EMPTY;
+        String subject = EMPTY;
+        smsMsg = bpaMessageSource.getMessage(SMS_BPA_NOC_APPROVE, new String[] { name,noc.getNocApplicationNumber(),bpaApplno ,getMunicipalityName() }, null);
+        body = bpaMessageSource.getMessage(BODY_BPA_NOC_APPROVE,
+                new String[] { name,noc.getNocApplicationNumber(),bpaApplno , getMunicipalityName() }, null);
+        subject = bpaMessageSource.getMessage(SUB_BPA_NOC_APPROVE, new String[] { getMunicipalityName() }, null);
+        if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
+            notificationService.sendSMS(mobileNumber, smsMsg);
+        if (isNotBlank(emailId) && isNotBlank(body))
+            notificationService.sendEmail(emailId, subject, body);
+    }
+
+    private void buildSmsAndEmailForNocRejection(String bpaApplno,BpaNocApplication noc,
+            String name, String mobileNumber, String emailId) {
+        String smsMsg = EMPTY;
+        String body = EMPTY;
+        String subject = EMPTY;
+        smsMsg = bpaMessageSource.getMessage(SMS_BPA_NOC_REJECT, new String[] { name,noc.getNocApplicationNumber(),bpaApplno,noc.getRemarks(),noc.getNocType(),getMunicipalityName() }, null);
+        body = bpaMessageSource.getMessage(BODY_BPA_NOC_REJECT,
+                new String[] { name,noc.getNocApplicationNumber(),bpaApplno ,noc.getRemarks(),noc.getNocType(),getMunicipalityName() }, null);
+        subject = bpaMessageSource.getMessage(SUB_BPA_NOC_REJECT, new String[] { getMunicipalityName() }, null);
+        if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
+            notificationService.sendSMS(mobileNumber, smsMsg);
+        if (isNotBlank(emailId) && isNotBlank(body))
+            notificationService.sendEmail(emailId, subject, body);
+    }
 }
