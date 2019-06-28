@@ -55,7 +55,7 @@ public interface OccupancyCertificateNocRepository extends JpaRepository<Occupan
 	@Query("select noc from OccupancyNocApplication noc where noc.bpaNocApplication.nocApplicationNumber =:appNo")
 	OccupancyNocApplication findByNocApplicationNumber(@Param("appNo") String appNo);
 	
-	@Query("select noc from OccupancyNocApplication noc where noc.bpaNocApplication.nocType = :type and noc.bpaNocApplication.status.code='NOC_INITIATED'")
+	@Query("select noc from OccupancyNocApplication noc where noc.bpaNocApplication.nocType = :type and noc.bpaNocApplication.status.code='Initiated'")
     List<OccupancyNocApplication> findInitiatedAppByType(@Param("type") String nocType);
 	
 	@Query("select noc from OccupancyNocApplication noc where noc.oc.applicationNumber =:appNo and noc.bpaNocApplication.nocType = :type ") 

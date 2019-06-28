@@ -279,10 +279,10 @@ public class BpaConstants {
     public static final String NMANOCTYPE = "NMA NOC"; 
     public static final String ENVNOCTYPE = "MOEF NOC"; 
     public static final String IRRNOCTYPE = "IDA NOC"; 
-    public static final String NOC_INITIATED = "NOC_INITIATED";
-    public static final String NOC_APPROVED = "NOC_APPROVED";
-    public static final String NOC_REJECTED = "NOC_REJECTED";
-    public static final String NOC_DEEMED_APPROVED = "NOC_DEEMED_APPROVED";
+    public static final String NOC_INITIATED = "Initiated";
+    public static final String NOC_APPROVED = "Approved";
+    public static final String NOC_REJECTED = "Rejected";
+    public static final String NOC_DEEMED_APPROVED = "Deemed Approved";
     public static final String NOC_APPL_REJECTED= "Permit Application Rejected";
     public static final String PERMIT = "Permit";
     public static final String OC = "OC";

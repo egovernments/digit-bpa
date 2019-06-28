@@ -56,7 +56,7 @@ public interface PermitNocApplicationRepository extends JpaRepository<PermitNocA
 	@Query("select noc from PermitNocApplication noc where noc.bpaNocApplication.nocApplicationNumber =:appNo")
 	PermitNocApplication findByNocApplicationNumber(@Param("appNo") String appNo);
 	
-	@Query("select noc from PermitNocApplication noc where noc.bpaNocApplication.nocType = :type and noc.bpaNocApplication.status.code='NOC_INITIATED'")
+	@Query("select noc from PermitNocApplication noc where noc.bpaNocApplication.nocType = :type and noc.bpaNocApplication.status.code='Initiated'")
     List<PermitNocApplication> findInitiatedAppByType(@Param("type") String nocType);
 	
 	@Query("select noc from PermitNocApplication noc where noc.bpaApplication.applicationNumber =:appNo and noc.bpaNocApplication.nocType = :type ") 
