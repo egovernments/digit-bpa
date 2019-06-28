@@ -277,7 +277,7 @@
 				<input type="hidden" id="submitApplication"
 					value="<spring:message code='msg.confirm.approve.appln'/>" /> <input
 					type="hidden" id="rejectApplication"
-					value="<spring:message code='msg.confirm.intiate.rejection.forappln'/>" />
+					value="<spring:message code='msg.confirm.rejection.forappln'/>" />
 			</div>
 		
 	</div>
