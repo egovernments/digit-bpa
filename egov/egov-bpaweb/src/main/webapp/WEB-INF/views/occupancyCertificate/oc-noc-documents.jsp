@@ -237,10 +237,7 @@
 		                                ${doc.ocNoc.bpaNocApplication.nocApplicationNumber}
 	                                </a><br/>						  
 									${doc.ocNoc.bpaNocApplication.status.code} <br/>
-									${applicationDate} <br />							
-                                    <c:if test="${not empty doc.ocNoc.bpaNocApplication.remarks}">																	
-									  Remarks : ${doc.ocNoc.bpaNocApplication.remarks}
-								    </c:if>										
+									${applicationDate} <br />															
 						</td>	
 						<td class="view-content tdsla" style="font-size: 97%;">												
 							    <fmt:formatDate value="${doc.ocNoc.bpaNocApplication.slaEndDate}"

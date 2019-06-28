@@ -160,10 +160,7 @@
 		                             ${nocDoc.ocNoc.bpaNocApplication.nocApplicationNumber}
 	                            </a><br/>						  
 									${nocDoc.ocNoc.bpaNocApplication.status.code} <br/>
-									${applicationDate} <br />
-									<c:if test="${not empty nocDoc.ocNoc.bpaNocApplication.remarks}">																	
-									  Remarks : ${nocDoc.ocNoc.bpaNocApplication.remarks}
-								    </c:if>									
+									${applicationDate} <br />									
 						</td>
 						<td class="view-content tdsla" style="font-size: 97%;">	
 							  <fmt:formatDate value="${nocDoc.ocNoc.bpaNocApplication.slaEndDate}"

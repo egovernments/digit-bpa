@@ -175,10 +175,7 @@
 		                             ${nocdoc.permitNoc.bpaNocApplication.nocApplicationNumber}
 	                            </a><br/>						  
 									${nocdoc.permitNoc.bpaNocApplication.status.code} <br/>
-									${applicationDate} <br />
-									<c:if test="${not empty nocdoc.permitNoc.bpaNocApplication.remarks}">																	
-									  Remarks : ${nocdoc.permitNoc.bpaNocApplication.remarks}
-								    </c:if>									
+									${applicationDate} <br />								
 						</td>
 						<td class="view-content tdsla" style="font-size: 97%;">	
 							  <fmt:formatDate value="${nocdoc.permitNoc.bpaNocApplication.slaEndDate}"
