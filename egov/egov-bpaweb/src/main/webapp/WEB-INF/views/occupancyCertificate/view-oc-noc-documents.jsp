@@ -101,7 +101,7 @@
 						<c:when test="${not empty nocApplication}">
 							<td class="view-content" style="font-size: 97%;"><c:choose>
 									<c:when
-										test="${nocDoc.ocNoc.bpaNocApplication.status.code eq 'NOC_APPROVED'}">
+										test="${nocDoc.ocNoc.bpaNocApplication.status.code eq 'Approved'}">
 										<c:if
 											test="${nocDoc.ocNoc.bpaNocApplication.lastModifiedDate eq null}">
 											<c:out value="N/A"></c:out>
