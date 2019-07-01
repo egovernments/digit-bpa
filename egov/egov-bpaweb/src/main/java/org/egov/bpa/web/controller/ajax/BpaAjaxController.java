@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.web.controller.ajax;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_INIT_REVOKE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 
 import java.io.IOException;
@@ -764,12 +765,12 @@ public class BpaAjaxController {
         .stream()
         .filter(ins-> !ins.getInspectionApplication().getStatus().getCode().equals("Approved")).collect(Collectors.toList());
         
-        
+       
 
         final JsonObject jsonObj = new JsonObject();
         jsonObj.addProperty("activeInspections", activeInspections.size()>0);
         jsonObj.addProperty("applicationWFEnded", application.getState().isEnded());
-        jsonObj.addProperty("isRevocated", application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REVOKED));
+        jsonObj.addProperty("isRevocated", application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_INIT_REVOKE));
         List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByPermitNumber(permitNumber);
         jsonObj.addProperty("ocInitiated", occupancyCertificates.size()>0);
 

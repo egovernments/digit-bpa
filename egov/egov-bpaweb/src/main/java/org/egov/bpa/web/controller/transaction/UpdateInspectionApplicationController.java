@@ -225,6 +225,7 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     	   permitRevocation.setApplication(permitInspection.getApplication());
     	   permitRevocation.setInitiateRemarks(inspectionApplication.getApprovalComent());
     	   PermitRevocation permitRevocationRes = permitRevocationService.save(permitRevocation);
+    	   bpaUtils.updatePortalUserinbox(permitRevocationRes.getApplication(), null);
     	   message = messageSource.getMessage("msg.permit.revoke.initiate",
                    new String[] { permitRevocationRes.getApplicationNumber() }, LocaleContextHolder.getLocale());
     
