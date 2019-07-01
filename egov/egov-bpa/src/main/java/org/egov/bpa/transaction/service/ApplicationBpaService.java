@@ -589,9 +589,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             }
         }
         if (WF_APPROVE_BUTTON.equals(workFlowAction)) {
+            
+            if(application.getPlanPermissionNumber() == null){
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
             application.setPlanPermissionDate(new Date());
-
+            }
             PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService.find(
                     DemandDetailsFormatImpl.class,
                     specificNoticeService.getCityDetails());
