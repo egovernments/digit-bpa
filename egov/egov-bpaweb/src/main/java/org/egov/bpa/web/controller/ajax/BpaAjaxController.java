@@ -540,6 +540,8 @@ public class BpaAjaxController {
             jsonObj.addProperty("applicationNumber", application.getApplicationNumber());
             jsonObj.addProperty("planPermissionNumber", application.getPlanPermissionNumber());
             jsonObj.addProperty("applicationWF", application.getState().isEnded());
+            jsonObj.addProperty("applicationRevoke",(application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REVOKED) 
+            		||application.getStatus().getCode().equalsIgnoreCase(BpaConstants. APPLICATION_STATUS_INIT_REVOKE)));
             if (!application.getBuildingDetail().isEmpty()) {
                 BigDecimal floorArea = permitFeeCalculationService.getTotalFloorArea(application);
                 Optional<Occupancy> occ = application.getPermitOccupancies().stream()

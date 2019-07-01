@@ -228,11 +228,15 @@ function getPermitApplicationByPermitNo(permitNumber) {
             		$('.resetValues').val('');
             		return false;
             	} else if($('#isCitizen').val() === 'true' && !response.isSingleFamily) {
-            		bootbox.alert("Dear Citizen, you are not allowed to submit plan, as per permit application do not comply these conditions such as a single family residential and floor area is less then or equal to 150 m² and Maximum Ground+1 floors can be submitted");
+            		bootbox.alert("Dear Citizen, you are not allowed to submit plan, as per permit application do not comply these conditions such as a single family residential and floor area is less then or equal to 150 m² and Maximum Ground+1 floors can be submitted.");
             		$('.resetValues').val('');
             		return false;
             	} else if(response.applicationWF != true) {
-            		bootbox.alert("Building permit application "+permitNumber+" still under process, you are not allowed to submit plan ");
+            		bootbox.alert("Building permit application "+permitNumber+" still under process, you are not allowed to submit plan. ");
+            		$('.resetValues').val('');
+            		return false;
+            	}else if(response.applicationRevoke == true){
+            		bootbox.alert("Building permit application "+permitNumber+" is revocated, you cannot proceed further with this permit.");
             		$('.resetValues').val('');
             		return false;
             	}
