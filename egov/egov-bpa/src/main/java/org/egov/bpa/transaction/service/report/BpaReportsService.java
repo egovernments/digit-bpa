@@ -364,7 +364,7 @@ public class BpaReportsService {
                 bpaRegister.setDevelopmentPermitFees(developmentPermitFees);
             }
             if (application.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_CANCELLED)) {
-                bpaRegister.setRejectionReason(bpaNoticeUtil.buildRejectionReasons(application));
+                bpaRegister.setRejectionReason(bpaNoticeUtil.buildRejectionReasons(application, false));
                 Assignment rejectedOwner;
                 Assignment assignment = bpaWorkFlowService.getApproverAssignmentByDate(
                         application.getCurrentState().getPreviousOwner(), application.getState().getLastModifiedDate());

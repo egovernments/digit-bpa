@@ -374,7 +374,7 @@ public class BpaNoticeUtil {
         reportParams.put("qrCodeEnabled", mergeEnabled && serviceEnabled && bpaApplication.geteDcrNumber() != null);
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(bpaApplication.getApplicationDate()));
         if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
-            reportParams.put("rejectionReasons", buildRejectionReasons(bpaApplication));
+            reportParams.put("rejectionReasons", buildRejectionReasons(bpaApplication, false));
         } else {
             reportParams.put("permitConditions", buildPermitConditions(bpaApplication));
         }
@@ -651,7 +651,7 @@ public class BpaNoticeUtil {
         return additionalOrder;
     }
 
-    public String buildRejectionReasons(final BpaApplication bpaApplication) {
+    public String buildRejectionReasons(final BpaApplication bpaApplication, final boolean isForRevocation) {
         StringBuilder rejectReasons = new StringBuilder();
         if (!bpaApplication.getRejectionReasons().isEmpty()) {
             List<ApplicationPermitConditions> additionalPermitConditions = bpaApplicationPermitConditionsService
@@ -660,7 +660,7 @@ public class BpaNoticeUtil {
             int additionalOrder = buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions,
                     order);
             StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication.getStateHistory());
-            if (stateHistory != null && isNotBlank(stateHistory.getComments()))
+            if (stateHistory != null && isNotBlank(stateHistory.getComments()) && !isForRevocation)
                 rejectReasons.append(additionalOrder + ") "
                         + stateHistory.getComments() + TWO_NEW_LINE);
         } else {
