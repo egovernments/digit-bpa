@@ -423,8 +423,7 @@ public class BpaNoticeUtil {
                     : bpaApplication.getSiteDetail().get(0).getPostalAddress().getDistrict());
         }
         reportParams.put("certificateValidity",
-                getValidityDescription(bpaApplication.getServiceType().getCode(), bpaApplication.getServiceType().getValidity(),
-                        bpaApplication.getPlanPermissionDate()));
+                getValidityDescription(bpaApplication.getServiceType().getValidity(), bpaApplication.getPlanPermissionDate()));
         reportParams.put("isBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         reportParams.put(DESIGNATION, approverDesignation);
         reportParams.put("approverName", approverName);
@@ -589,7 +588,7 @@ public class BpaNoticeUtil {
         return qrCodeValue.toString();
     }
 
-    private String getValidityDescription(final String serviceTypeCode, Double validity, final Date planPermissionDate) {
+    private String getValidityDescription(Double validity, final Date planPermissionDate) {
         StringBuilder certificateValidatiy = new StringBuilder();
         String validityExpiryDate;
         validityExpiryDate = calculateCertExpryDate(new DateTime(planPermissionDate), validity);
