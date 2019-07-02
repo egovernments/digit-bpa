@@ -1092,7 +1092,7 @@ public class BPASmsAndEmailService {
             String planPermissionNumber,
             String loginUserName, String password) {
         return bpaMessageSource.getMessage(code,
-                new String[] { bpaUtils.getCurrentUser().getName(), planPermissionNumber, applicationNumber,
+                new String[] { applicantName,bpaUtils.getCurrentUser().getName(), planPermissionNumber, applicationNumber,
                         getMunicipalityName(), ApplicationThreadLocals.getDomainURL() },
                 null);
     }
