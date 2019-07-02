@@ -115,9 +115,7 @@ import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.eis.entity.Assignment;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -195,8 +193,6 @@ public class BpaNoticeUtil {
     private CityService cityService;
     @Autowired
     private BpaApplicationReportProperties bpaApplicationReportProperties;
-    @Autowired
-    private BoundaryService boundaryService;
 
     public BpaNotice findByApplicationAndNoticeType(final BpaApplication application, final String noticeType) {
         return bpaNoticeRepository.findByApplicationAndNoticeType(application, noticeType);
@@ -261,7 +257,7 @@ public class BpaNoticeUtil {
                 Path path = fileStoreService.fetchAsPath(reportOutputId, "Digit DCR");
                 byte[] convertedDigitDcr = Files.readAllBytes(path);
                 ByteArrayInputStream dcrReport = new ByteArrayInputStream(convertedDigitDcr);
-                if (dcrReport != null)
+                if (dcrReport.read() != -1)
                     pdfs.add(dcrReport);
 
                 if (reportOutputForPermitNote != null)
@@ -646,7 +642,7 @@ public class BpaNoticeUtil {
             for (ApplicationPermitConditions addnlPermitConditions : additionalPermitConditions) {
                 if (isNotBlank(addnlPermitConditions.getNoticeCondition().getAdditionalCondition())) {
                     permitConditions.append(
-                            String.valueOf(additionalOrder) + ") "
+                            additionalOrder + ") "
                                     + addnlPermitConditions.getNoticeCondition().getAdditionalCondition()
                                     + TWO_NEW_LINE);
                     additionalOrder++;
@@ -666,7 +662,7 @@ public class BpaNoticeUtil {
                     order);
             StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication.getStateHistory());
             if (stateHistory != null && isNotBlank(stateHistory.getComments()))
-                rejectReasons.append(String.valueOf(additionalOrder) + ") "
+                rejectReasons.append(additionalOrder + ") "
                         + stateHistory.getComments() + TWO_NEW_LINE);
         } else {
             rejectReasons.append(bpaApplication.getState().getComments() != null
@@ -684,7 +680,7 @@ public class BpaNoticeUtil {
             if (rejectReason.getNoticeCondition().isRequired()
                     && ConditionType.REJECTIONREASONS.equals(rejectReason.getNoticeCondition().getType())) {
                 permitConditions
-                        .append(String.valueOf(order) + ") "
+                        .append(order + ") "
                                 + rejectReason.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription()
                                 + TWO_NEW_LINE);
                 order++;
@@ -700,7 +696,7 @@ public class BpaNoticeUtil {
             if (applnPermit.getNoticeCondition().isRequired()
                     && ConditionType.PERMITDEFAULTCONDITIONS.equals(applnPermit.getNoticeCondition().getType())) {
                 permitConditions
-                        .append(String.valueOf(order) + ") "
+                        .append(order + ") "
                                 + applnPermit.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription()
                                 + TWO_NEW_LINE);
                 order++;
@@ -710,7 +706,7 @@ public class BpaNoticeUtil {
             if (applnPermit.getNoticeCondition().isRequired()
                     && ConditionType.NOCCONDITIONS.equals(applnPermit.getNoticeCondition().getType())) {
                 permitConditions
-                        .append(String.valueOf(order) + ") "
+                        .append(order + ") "
                                 + applnPermit.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription()
                                 + applnPermit.getNoticeCondition().getConditionNumber() + " Dtd "
                                 + DateUtils.toDefaultDateFormat(applnPermit.getNoticeCondition().getConditiondDate()) + "."
@@ -723,7 +719,7 @@ public class BpaNoticeUtil {
             if (applnPermit.getNoticeCondition().isRequired()
                     && ConditionType.GENERALCONDITIONS.equals(applnPermit.getNoticeCondition().getType())) {
                 permitConditions
-                        .append(String.valueOf(order) + ") "
+                        .append(order + ") "
                                 + applnPermit.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription()
                                 + TWO_NEW_LINE);
                 order++;
