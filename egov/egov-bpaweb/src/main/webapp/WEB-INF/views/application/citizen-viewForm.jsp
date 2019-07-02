@@ -294,7 +294,7 @@
 								</form:button>&nbsp;
 							</c:if></td>
 						<c:if
-							test="${bpaApplication.status.code eq 'Order Issued to Applicant' || bpaApplication.status.code eq 'Revocation cancelled' || (bpaApplication.applicationType.name eq 'Low Risk' && bpaApplication.status.code ne 'Revocated')}">
+							test="${bpaApplication.status.code eq 'Order Issued to Applicant' || bpaApplication.status.code eq 'Revocation cancelled' || (bpaApplication.applicationType.name eq 'Low Risk' && !isFeeCollected)}">
 							<td><a
 								href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}"
 								target="popup" class="btn btn-primary"

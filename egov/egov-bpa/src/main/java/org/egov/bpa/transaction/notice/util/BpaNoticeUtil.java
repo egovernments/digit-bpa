@@ -257,7 +257,7 @@ public class BpaNoticeUtil {
                 Path path = fileStoreService.fetchAsPath(reportOutputId, "Digit DCR");
                 byte[] convertedDigitDcr = Files.readAllBytes(path);
                 ByteArrayInputStream dcrReport = new ByteArrayInputStream(convertedDigitDcr);
-                if (dcrReport.read() != -1)
+                if (dcrReport != null)
                     pdfs.add(dcrReport);
 
                 if (reportOutputForPermitNote != null)
