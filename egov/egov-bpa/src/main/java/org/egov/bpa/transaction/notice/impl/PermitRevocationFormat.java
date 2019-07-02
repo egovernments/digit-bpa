@@ -47,7 +47,9 @@
 
 package org.egov.bpa.transaction.notice.impl;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -57,6 +59,7 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -92,9 +95,10 @@ public class PermitRevocationFormat {
         StringBuilder serviceTypeDesc = new StringBuilder();
         BpaApplication appln = revocation.getApplication();
         final Map<String, Object> reportParams = new HashMap<>();
-        String approverName = bpaNoticeUtil.getApproverName(appln);
-        String approverDesignation = bpaNoticeUtil
-                .getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(appln).intValue());
+        List<Assignment> assignments = bpaWorkFlowService.getAssignmentByUserAsOnDate(revocation.getLastModifiedBy().getId(),
+                revocation.getRevocationDate() == null ? new Date() : revocation.getRevocationDate());
+        String approverName = assignments.get(0).getEmployee().getName();
+        String approverDesignation = assignments.get(0).getDesignation().getName();
         reportParams.put("lawAct", "[See Rule 16]");
         String amenities = appln.getApplicationAmenity().stream().map(ServiceType::getDescription)
                 .collect(Collectors.joining(", "));
@@ -116,6 +120,5 @@ public class PermitRevocationFormat {
         return reportParams;
 
     }
-    
-    
+
 }
