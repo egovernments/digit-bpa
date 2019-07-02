@@ -285,6 +285,8 @@
 			</div>
 		</form:form>
 	</div>
+	<input type="hidden" id="uploadMsg"
+		value="<spring:message code='msg.upload' />" />
 </div>
 
 <script
