@@ -26,24 +26,24 @@ FAQ related to various deployment and development issues are discussed [here][FA
 * Clone the eGov repository (development is done on the develop branch).
 ```bash
 $ mkdir -p ${HOME}/egovgithub && cd egovgithub
-$ git clone  -b develop --single-branch  https://github.com/egovernments/eGov.git
+$ git clone  -b develop --single-branch  https://github.com/egovernments/digit-bpa.git
 ```
 * First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make all
+$ cd ${HOME}/egovgithub/digit-bpa && make all
 ```
 -----
 * To install the prerequisites Phoenix stacks
 ```bash
-$ cd ${HOME}/egovgithub/eGov &&  make install
+$ cd ${HOME}/egovgithub/digit-bpa &&  make install
 ```
 * To build the source code base
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make build
+$ cd ${HOME}/egovgithub/digit-bpa && make build
 ```
 * To deploy the artifact to WILDFLY
 ```bash
-$ cd ${HOME}/egovgithub/eGov && make deploy
+$ cd ${HOME}/egovgithub/digit-bpa && make deploy
 ```
 
 ## Manual Setup Instruction
@@ -80,7 +80,7 @@ $ id -un
 ```bash
 $ mkdir egovgithub
 $ cd egovgithub
-$ git clone https://github.com/egovernments/eGov.git
+$ git clone https://github.com/egovernments/digit-bpa.git
 $ git checkout develop
 ```
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
@@ -272,16 +272,16 @@ Browser:-
 [Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://devops.egovernments.org/downloads/wildfly/wildfly-latest.zip
+[Wildfly Customized]: https://devops.egovernments.org/Downloads/wildfly/wildfly-11.0.0.Final.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.4.1.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
-[eGov Tools Repository]: http://downloads.egovernments.org/
+[eGov Tools Repository]: https://devops.egovernments.org/Downloads/
 [PostgreSQL]: http://www.postgresql.org/download/
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
-[FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
+[FAQ]:https://digit-discuss.atlassian.net/wiki/spaces/FAQ/overview
 [GHPAGE]:https://egovernments.org/solutions.php
 [versioneye]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2
 [versioneye img]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2/badge.svg?style=flat-square
