@@ -772,7 +772,7 @@ public class BpaAjaxController {
         final JsonObject jsonObj = new JsonObject();
         jsonObj.addProperty("activeInspections", activeInspections.size()>0);
         jsonObj.addProperty("applicationWFEnded", application.getState().isEnded());
-        jsonObj.addProperty("isRevocated", application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_INIT_REVOKE));
+        jsonObj.addProperty("isRevocated", application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_INIT_REVOKE) || application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REVOKED));
         List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByPermitNumber(permitNumber);
         jsonObj.addProperty("ocInitiated", occupancyCertificates.size()>0);
 
