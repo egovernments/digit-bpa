@@ -60,7 +60,6 @@ import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.Chimney;
 import org.egov.edcr.feature.CommonFeature;
 import org.egov.edcr.feature.Coverage;
-import org.egov.edcr.feature.ExitWidth;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.FireStair;
 import org.egov.edcr.feature.FireTenderMovement;
@@ -177,8 +176,9 @@ public class PlanFeatureRepository {
         features.add(pf);
         pf = new PlanFeature(Solar.class);
         features.add(pf);
-        pf = new PlanFeature(ExitWidth.class);
-        features.add(pf);
+        /*
+         * pf = new PlanFeature(ExitWidth.class); features.add(pf);
+         */
         pf = new PlanFeature(SegregatedToilet.class);
         features.add(pf);
 

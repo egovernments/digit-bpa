@@ -47,6 +47,9 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.A_AF;
+import static org.egov.edcr.constants.DxfFileConstants.A_R;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -144,13 +147,17 @@ public class RampService extends FeatureProcess {
                             pl.addErrors(errors);
                         }
                     } else {
-                        errors.put(String.format("DA Ramp", block.getNumber()),
-                                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                        new String[] { String.format("DA Ramp",
-                                                block.getNumber()) },
-                                        LocaleContextHolder.getLocale()));
-                        pl.addErrors(errors);
-                        break;
+                        OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+                        if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
+                                && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
+                            errors.put(String.format("DA Ramp", block.getNumber()),
+                                    edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                                            new String[] { String.format("DA Ramp",
+                                                    block.getNumber()) },
+                                            LocaleContextHolder.getLocale()));
+                            pl.addErrors(errors);
+                            break;
+                        }
 
                     }
                 }
@@ -298,7 +305,9 @@ public class RampService extends FeatureProcess {
                     }
 
                     if (block.getBuilding().getBuildingHeight().compareTo(new BigDecimal(15)) > 0) {
-                        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
+                        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
+                                ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                                : null;
                         if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                             for (Floor floor : block.getBuilding().getFloors()) {
                                 /*
@@ -364,8 +373,9 @@ public class RampService extends FeatureProcess {
                                                     RoundingMode.HALF_UP);
                                             ramp.setSlope(rampSlope);
                                             BigDecimal expectedSlope = BigDecimal.ZERO;
-                                            if (mostRestrictiveFarHelper != null && ((mostRestrictiveFarHelper.getType() != null && mostRestrictiveFarHelper.getType()
-                                                    .getCode().equalsIgnoreCase(DxfFileConstants.C))
+                                            if (mostRestrictiveFarHelper != null && ((mostRestrictiveFarHelper.getType() != null
+                                                    && mostRestrictiveFarHelper.getType()
+                                                            .getCode().equalsIgnoreCase(DxfFileConstants.C))
                                                     || (mostRestrictiveFarHelper.getSubtype() != null &&
                                                             (mostRestrictiveFarHelper.getSubtype().getCode()
                                                                     .equalsIgnoreCase(DxfFileConstants.C_MA)
