@@ -47,6 +47,7 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.A_R;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
@@ -63,6 +64,7 @@ import java.util.TreeSet;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Occupancy;
+import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -93,9 +95,9 @@ public class ExitWidth extends FeatureProcess {
         if (!pl.getBlocks().isEmpty()) {
             blk: for (Block block : pl.getBlocks()) {
                 if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
-                    if ((pl.getPlot() != null && ProcessHelper.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block))
-                            ||
-                            ProcessHelper.checkExemptionConditionForBuildingParts(block)) {
+                    OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+                    if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
+                            && A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
                         continue blk;
                     }
                     for (Floor floor : block.getBuilding().getFloors()) {
@@ -139,8 +141,7 @@ public class ExitWidth extends FeatureProcess {
                 scrutinyDetail2.setKey("Block_" + block.getNumber() + "_" + "Exit Width- Maximum Occupant Load");
                 if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                     
-                    if ((pl.getPlot() != null && ProcessHelper.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(),
-                            block)) || ProcessHelper.checkExemptionConditionForBuildingParts(block)) {
+                    if (ProcessHelper.checkExemptionConditionForBuildingParts(block)) {
                         continue blk;
                     }
                      
