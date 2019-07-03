@@ -156,13 +156,3 @@ function dateDifference(start,end){
 	return difference;
 
 }
-
-function setAppointmentTime(){
-	$('#appointmentTime').datetimepicker('destroy');
-	$('#appointmentTime').datetimepicker({
-		format : 'LT',
-		useCurrent : true,
-		minDate : new Date(),
-		maxDate : moment({ h : 17 })
-	});
-}
