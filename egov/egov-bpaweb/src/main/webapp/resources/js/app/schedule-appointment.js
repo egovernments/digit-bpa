@@ -54,6 +54,27 @@ $(document).ready(function() {
 	// To clear schedule time after enter schedule time if try to change schedule date
 	$('#appointmentDate').on('changeDate', function() {
 		$('#appointmentTime').datetimepicker('clear');
+		var dt = new Date();
+		if (dateDifference($('#appointmentDate').val(), getdate()) == 0 && dt.getHours() >=10 && dt.getHours() <=17) {
+			
+			$('#appointmentTime').datetimepicker('destroy');
+			$('#appointmentTime').datetimepicker({
+				format : 'LT',
+				useCurrent : true,
+				minDate : new Date(),
+				maxDate : moment({ h : 17 })
+			});
+		}
+		else{
+			$('#appointmentTime').datetimepicker('destroy');
+			$('#appointmentTime').datetimepicker({
+				format : 'LT',
+				useCurrent : true,
+				minDate : moment({ h : 10 }),
+				maxDate : moment({ h : 17 })
+			});
+		}
+    	
 	});
 	
 	// For time picker initialization
@@ -75,12 +96,16 @@ $(document).ready(function() {
 			return;
 		validateDateAndTime();
 	});
+	
+	
 
 	// To validate on submit,if date and time entered manually
 	$('#rescheduleSubmit').click(function(e) {
 		validateDateAndTime();
 	});
 });
+
+
 
 function validateDateAndTime() {
 	if ($('#previoueappointmentDate') && $('#previoueappointmentDate').val() && $('#appointmentTime').datetimepicker('date')) {
@@ -97,4 +122,47 @@ function validateDateAndTime() {
 			$('#appointmentTime').datetimepicker('clear');
 		}
 	}
+}
+
+function getdate() {
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth() + 1; // January is 0!
+
+	var yyyy = today.getFullYear();
+	if (dd < 10) {
+		dd = '0' + dd
+	}
+	if (mm < 10) {
+		mm = '0' + mm
+	}
+	var today = dd + '/' + mm + '/' + yyyy;
+	return today;
+}
+
+function dateDifference(start,end){
+	var stsplit = start.split("/");
+	var ensplit = end.split("/");
+
+	start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+	end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+
+
+	var startDate = Date.parse(start);
+	var endDate = Date.parse(end);
+
+	// Check the date range, 86400000 is the number of milliseconds in one day
+	var difference = (endDate - startDate) / (86400000 * 7);
+	return difference;
+
+}
+
+function setAppointmentTime(){
+	$('#appointmentTime').datetimepicker('destroy');
+	$('#appointmentTime').datetimepicker({
+		format : 'LT',
+		useCurrent : true,
+		minDate : new Date(),
+		maxDate : moment({ h : 17 })
+	});
 }
