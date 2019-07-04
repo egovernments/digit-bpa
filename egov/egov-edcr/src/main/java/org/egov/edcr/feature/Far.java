@@ -253,7 +253,7 @@ public class Far extends FeatureProcess {
 				for (Floor flr : blk.getBuilding().getFloors()) {
 					for (Occupancy occupancy : flr.getOccupancies()) {
 						if (occupancyType.getType() != null && occupancy.getTypeHelper() != null
-								&& occupancy.getTypeHelper().getType().equals(occupancyType.getType())) {
+								&& occupancy.getTypeHelper().getType().getCode().equals(occupancyType.getType().getCode())) {
 							blockWiseFloorArea = blockWiseFloorArea.add(occupancy.getFloorArea());
 							blockWiseBuiltupArea = blockWiseBuiltupArea.add(occupancy.getBuiltUpArea() == null
 									? BigDecimal.valueOf(0) : occupancy.getBuiltUpArea());
@@ -582,7 +582,8 @@ public class Far extends FeatureProcess {
 		String typeOfArea = pl.getPlanInformation().getTypeOfArea();
 		BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
 
-		if (StringUtils.isNotBlank(typeOfArea) && roadWidth != null && !processFarForSpecialOccupancy(pl,
+		if (mostRestrictiveOccupancyType != null && 
+		        StringUtils.isNotBlank(typeOfArea) && roadWidth != null && !processFarForSpecialOccupancy(pl,
 				mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs)) {
 			if ((mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))
