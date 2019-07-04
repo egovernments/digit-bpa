@@ -307,14 +307,14 @@
 				default="N/A"></c:out>
 		</div>
 		<div id="isEconomicallyWeakerSec">
-			<div class="col-sm-3 add-margin">
+			<%--<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.infrastructure.cost" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
+			 <div class="col-sm-3 add-margin view-content">
 				<c:out
 					value="${bpaApplication.infrastructureCost}"
 					default="N/A"></c:out>
-			</div>
+			</div> --%>
 		</div>
 	</div>
 
