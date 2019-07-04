@@ -118,6 +118,8 @@ public class RampService extends FeatureProcess {
 
         // validate necessary
         HashMap<String, String> errors = new HashMap<>();
+        OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+
         if (pl != null && !pl.getBlocks().isEmpty()) {
             blk: for (Block block : pl.getBlocks()) {
                 /*
@@ -130,7 +132,9 @@ public class RampService extends FeatureProcess {
                  * edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{String.format(DcrConstants.RAMP,
                  * block.getNumber())}, LocaleContextHolder.getLocale())); pl.addErrors(errors); break; } } } }
                  */
-                if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)) {
+                if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)
+                        && mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
+                        && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
                     if (!block.getDARamps().isEmpty()) {
                         boolean isSlopeDefined = false;
                         for (DARamp daRamp : block.getDARamps()) {
@@ -147,18 +151,13 @@ public class RampService extends FeatureProcess {
                             pl.addErrors(errors);
                         }
                     } else {
-                        OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
-                        if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
-                                && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
-                            errors.put(String.format("DA Ramp", block.getNumber()),
-                                    edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                            new String[] { String.format("DA Ramp",
-                                                    block.getNumber()) },
-                                            LocaleContextHolder.getLocale()));
-                            pl.addErrors(errors);
-                            break;
-                        }
-
+                        errors.put(String.format("DA Ramp", block.getNumber()),
+                                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                                        new String[] { String.format("DA Ramp",
+                                                block.getNumber()) },
+                                        LocaleContextHolder.getLocale()));
+                        pl.addErrors(errors);
+                        break;
                     }
                 }
             }
@@ -237,6 +236,7 @@ public class RampService extends FeatureProcess {
                 scrutinyDetail5.addColumnHeading(6, STATUS);
                 scrutinyDetail5.setKey("Block_" + block.getNumber() + "_" + "Ramp - Maximum Slope");
 
+                OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
                 if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
                     /*
                      * if (Util.checkExemptionConditionForBuildingParts(block)) { continue blk; }
@@ -252,7 +252,9 @@ public class RampService extends FeatureProcess {
                      * setReportOutputDetails(pl, SUBRULE_40_A1, SUBRULE_40_A_1_DESC, "", DcrConstants.OBJECTNOTDEFINED_DESC,
                      * Result.Not_Accepted.getResultVal(), scrutinyDetail); break; } } } }
                      */
-                    if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)) {
+                    if (pl.getPlot() != null && !Util.checkExemptionConditionForSmallPlotAtBlkLevel(pl.getPlot(), block)
+                            && mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getSubtype() != null
+                            && !A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())) {
                         if (!block.getDARamps().isEmpty()) {
                             boolean isSlopeDefined = false;
                             for (DARamp daRamp : block.getDARamps()) {
