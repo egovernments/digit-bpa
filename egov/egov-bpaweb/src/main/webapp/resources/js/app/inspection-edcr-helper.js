@@ -45,6 +45,8 @@ $(document).ready(
 			 if ($('#planPermissionNumber').val()) {
 				    validatePermitApplication();
 				     getApplicationByPermitNo();
+	         }else{
+	        	 resetDCRPopulatedValues();
 	         }
 	    });
             
@@ -88,7 +90,9 @@ $(document).ready(
          			   }
                        else if(response.activeInspections){
                     	   bootbox.alert('For the entered plan permission number inspection is already initiated.');
-                      	   $("#buttonSubmit").hide();
+                    	   resetDCRPopulatedValues();
+                    	   $('#planPermissionNumber').val('');
+                      	  /* $("#buttonSubmit").hide();*/
                       	   return false;
                        }
                          else
@@ -114,6 +118,7 @@ $(document).ready(
                      	if (response.errorDetail && response.errorDetail.errorCode != null && response.errorDetail.errorCode != '') {
                              bootbox.alert(response.errorDetail.errorMessage);
                              $('#eDcrNumber').val('');
+                             $('#planPermissionNumber').val('');
                              resetDCRPopulatedValues();
                          } else if(response.applicationType !== 'Permit') {
                              bootbox.alert($('#dcrforoc').val());
@@ -261,12 +266,14 @@ $(document).ready(
 	                    	if (response.errorDetail && response.errorDetail.errorCode != null && response.errorDetail.errorCode != '') {
 	                            bootbox.alert(response.errorDetail.errorMessage);
 	                            $('#eDcrNumber').val('');
+	                            $('#planPermissionNumber').val('');
 	                            resetDCRPopulatedValues();
 	                        } else if(response.applicationType !== 'Permit') {
 	                            bootbox.alert($('#dcrforoc').val());
 	                    	} else if ($("#serviceType option:selected").text()&& response.serviceType && response.serviceType !== $("#serviceType option:selected").text()) {
 	                            bootbox.alert($('#buildScrutinyNumber').val() + response.serviceType + $('#buildingPlanApplnForServiceType').val() + $("#serviceType option:selected").text() + $('#buildServiceType').val());
 	                            $('#eDcrNumber').val('');
+	                            $('#planPermissionNumber').val('');
 	                            resetDCRPopulatedValues();
 	                        } else {
 	                            if ($('#loadingFloorDetailsFromEdcrRequire').val() === 'true' && $('#mode').val() && $('#mode').val() === 'new')
@@ -294,6 +301,7 @@ $(document).ready(
 	                                    // Validate proposed building details if not present
 	                                    bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + $('#floorDetailsNotExtracted').val());
 	                                    $('#eDcrNumber').val('');
+	                                    $('#planPermissionNumber').val('');
 	                                    resetDCRPopulatedValues();
 	                                    return false;
 	                                } else if (response.plan.blocks.length > 0 && existingBldgPresent.length > 0
@@ -304,6 +312,7 @@ $(document).ready(
 	                                    // Validate existing building details if not present for required service
 	                                    bootbox.alert($('#forBuildScrutinyNumber').val() + $('#eDcrNumber').val() + $('#existingBuildDetailsNotPresent').val());
 	                                    $('#eDcrNumber').val('');
+	                                    $('#planPermissionNumber').val('');
 	                                    resetDCRPopulatedValues();
 	                                    return false;
 	                                } else {
@@ -390,6 +399,22 @@ $(document).ready(
 		return true;
 	}
 });
+
+function resetDCRPopulatedValues() {
+    $('#planPermissionNumber').html('');
+    $('#edcrApplicationNumber').html('');
+    $('#edcrUploadedDate').html('');
+    $('#edcrDxfFile').html('');
+    $('#edcrPlanReportOutput').html('');
+    $('#permissionNumber').html('');
+    $('#dcrNumber').html('');
+    $('#ownerName').html('');
+    $('#occupancyName').html('');
+    $('#serviceType').html('');
+    $('#ownerAddress').html('');
+    $('#applicationDate').html('');
+    $('#resurveyNo').html('');  
+}
 
 function openPopup(url) {
 	window.open(url, 'window',
