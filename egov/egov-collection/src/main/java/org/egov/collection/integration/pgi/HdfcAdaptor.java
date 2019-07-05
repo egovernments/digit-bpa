@@ -474,6 +474,7 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
 
     private UrlEncodedFormEntity prepareEntityData(OnlinePayment onlinePayment) {
         List<NameValuePair> formData = new ArrayList<>();
+        String cityCode =  ApplicationThreadLocals.getCityCode();
         formData.add(new BasicNameValuePair(CollectionConstants.HDFC_KEY, collectionApplicationProperties.hdfcKey()));
         formData.add(new BasicNameValuePair(CollectionConstants.HDFC_COMMAND,
                 collectionApplicationProperties.hdfcReconsileCommand()));
@@ -482,7 +483,9 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
         hashData.append(SINGLE_DELIMITER);
         hashData.append(collectionApplicationProperties.hdfcReconsileCommand());
         hashData.append(SINGLE_DELIMITER);
-        hashData.append(onlinePayment.getReceiptHeader().getId().toString());
+		hashData.append(cityCode + CollectionConstants.SEPARATOR_HYPHEN
+				+ onlinePayment.getReceiptHeader().getId().toString() + CollectionConstants.SEPARATOR_HYPHEN
+				+ onlinePayment.getReceiptHeader().getService().getCode());
         hashData.append(SINGLE_DELIMITER);
         hashData.append(collectionApplicationProperties.hdfcSalt());
         String hashValue = "";
@@ -492,7 +495,10 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
         }
         LOGGER.info("Reconcile - Hashing data before encryption" + hashData.toString());
         formData.add(new BasicNameValuePair(CollectionConstants.HDFC_HASH, hashValue));
-        formData.add(new BasicNameValuePair(CollectionConstants.HDFC_VARIABLE, onlinePayment.getReceiptHeader().getId().toString()));
+		formData.add(new BasicNameValuePair(CollectionConstants.HDFC_VARIABLE,
+				cityCode + CollectionConstants.SEPARATOR_HYPHEN + onlinePayment.getReceiptHeader().getId().toString()
+						+ CollectionConstants.SEPARATOR_HYPHEN
+						+ onlinePayment.getReceiptHeader().getService().getCode()));
         LOGGER.debug("HDFC  Reconcilation request: " + formData);
 
         UrlEncodedFormEntity urlEncodedFormEntity = null;
