@@ -179,7 +179,8 @@ public class SideYardService extends GeneralRule {
                     if (sideYard1 != null || sideYard2 != null) {
                         // If there is changes in height of building, then consider the maximum height
                         // among both side
-                        if (sideYard1 != null && sideYard1.getHeight() != null && sideYard1.getHeight().compareTo(BigDecimal.ZERO) > 0
+                        if (sideYard1 != null && sideYard1.getHeight() != null
+                                && sideYard1.getHeight().compareTo(BigDecimal.ZERO) > 0
                                 && sideYard2 != null && sideYard2.getHeight() != null
                                 && sideYard2.getHeight().compareTo(BigDecimal.ZERO) > 0) {
                             buildingHeight = sideYard1.getHeight().compareTo(sideYard2.getHeight()) >= 0
@@ -269,58 +270,105 @@ public class SideYardService extends GeneralRule {
 
                             }
 
-                            if (sideYard1Result != null) {
-                                Map<String, String> details = new HashMap<>();
-                                details.put(RULE_NO, sideYard1Result.subRule);
-                                details.put(LEVEL,
-                                        sideYard1Result.level != null ? sideYard1Result.level.toString() : "");
-                                details.put(OCCUPANCY, sideYard1Result.occupancy);
-
-                                details.put(FIELDVERIFIED, MINIMUMLABEL);
-                                details.put(PERMISSIBLE, sideYard1Result.expectedDistance.toString());
-                                details.put(PROVIDED, sideYard1Result.actualDistance.toString());
-
-                                details.put(SIDENUMBER, SIDE_YARD1_DESC);
-
-                                if (sideYard1Result.status) {
-                                    details.put(STATUS, Result.Accepted.getResultVal());
-                                } else {
-                                    details.put(STATUS, Result.Not_Accepted.getResultVal());
-                                }
-
-                                scrutinyDetail.getDetail().add(details);
-                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                            }
-
-                            if (errors.isEmpty()) {
-                                if (sideYard2Result != null) {
-                                    Map<String, String> detailsSideYard2 = new HashMap<>();
-                                    detailsSideYard2.put(RULE_NO, sideYard2Result.subRule);
-                                    detailsSideYard2.put(LEVEL,
-                                            sideYard2Result.level != null ? sideYard2Result.level.toString() : "");
-                                    detailsSideYard2.put(OCCUPANCY, sideYard2Result.occupancy);
-                                    detailsSideYard2.put(SIDENUMBER, SIDE_YARD2_DESC);
-
-                                    detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
-                                    detailsSideYard2.put(PERMISSIBLE, sideYard2Result.expectedDistance.toString());
-                                    detailsSideYard2.put(PROVIDED, sideYard2Result.actualDistance.toString());
-                                    // }
-                                    if (sideYard2Result.status) {
-                                        detailsSideYard2.put(STATUS, Result.Accepted.getResultVal());
-                                    } else {
-                                        detailsSideYard2.put(STATUS, Result.Not_Accepted.getResultVal());
-                                    }
-
-                                    scrutinyDetail.getDetail().add(detailsSideYard2);
-                                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-                                }
-                            }
+                            addSideYardResult(pl, errors, sideYard1Result, sideYard2Result);
                         }
+                    } else {
+
+                        if (pl.getPlanInformation() != null
+                                && pl.getPlanInformation().getWidthOfPlot().compareTo(BigDecimal.valueOf(10)) <= 0) {
+                            exemptSideYardForResidential(pl, block, sideYard1Result, sideYard2Result);
+                            addSideYardResult(pl, errors, sideYard1Result, sideYard2Result);   
+                        }
+
                     }
                 }
             }
         }
 
+    }
+
+    private void addSideYardResult(final Plan pl, HashMap<String, String> errors, SideYardResult sideYard1Result,
+            SideYardResult sideYard2Result) {
+        if (sideYard1Result != null) {
+            Map<String, String> details = new HashMap<>();
+            details.put(RULE_NO, sideYard1Result.subRule);
+            details.put(LEVEL,
+                    sideYard1Result.level != null ? sideYard1Result.level.toString() : "");
+            details.put(OCCUPANCY, sideYard1Result.occupancy);
+
+            details.put(FIELDVERIFIED, MINIMUMLABEL);
+            details.put(PERMISSIBLE, sideYard1Result.expectedDistance.toString());
+            details.put(PROVIDED, sideYard1Result.actualDistance.toString());
+
+            details.put(SIDENUMBER, SIDE_YARD1_DESC);
+
+            if (sideYard1Result.status) {
+                details.put(STATUS, Result.Accepted.getResultVal());
+            } else {
+                details.put(STATUS, Result.Not_Accepted.getResultVal());
+            }
+
+            scrutinyDetail.getDetail().add(details);
+            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+        }
+
+        if (errors.isEmpty()) {
+            if (sideYard2Result != null) {
+                Map<String, String> detailsSideYard2 = new HashMap<>();
+                detailsSideYard2.put(RULE_NO, sideYard2Result.subRule);
+                detailsSideYard2.put(LEVEL,
+                        sideYard2Result.level != null ? sideYard2Result.level.toString() : "");
+                detailsSideYard2.put(OCCUPANCY, sideYard2Result.occupancy);
+                detailsSideYard2.put(SIDENUMBER, SIDE_YARD2_DESC);
+
+                detailsSideYard2.put(FIELDVERIFIED, MINIMUMLABEL);
+                detailsSideYard2.put(PERMISSIBLE, sideYard2Result.expectedDistance.toString());
+                detailsSideYard2.put(PROVIDED, sideYard2Result.actualDistance.toString());
+                // }
+                if (sideYard2Result.status) {
+                    detailsSideYard2.put(STATUS, Result.Accepted.getResultVal());
+                } else {
+                    detailsSideYard2.put(STATUS, Result.Not_Accepted.getResultVal());
+                }
+
+                scrutinyDetail.getDetail().add(detailsSideYard2);
+                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+            }
+        }
+    }
+
+    private void exemptSideYardForResidential(final Plan pl, Block block, SideYardResult sideYard1Result,
+            SideYardResult sideYard2Result) {
+        for (final Occupancy occupancy : block.getBuilding().getTotalArea()) {
+            scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Side Setback");
+            if (occupancy.getTypeHelper().getSubtype() != null
+                    && A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
+                    || A_AF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())) {
+                if (pl.getErrors().containsKey(SIDE_YARD_2_NOTDEFINED)) {
+                    pl.getErrors().remove(SIDE_YARD_2_NOTDEFINED);
+                }
+                if (pl.getErrors().containsKey(SIDE_YARD_1_NOTDEFINED)) {
+                    pl.getErrors().remove(SIDE_YARD_1_NOTDEFINED);
+                }
+                if (pl.getErrors().containsKey(SIDE_YARD_DESC)) {
+                    pl.getErrors().remove(SIDE_YARD_DESC);
+                }
+                if (pl.getErrors().containsValue("BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK1 not defined in the plan.")) {
+                    pl.getErrors().remove("", "BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK1 not defined in the plan.");
+                }
+                if (pl.getErrors().containsValue("BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.")) {
+                    pl.getErrors().remove("", "BLK_" + block.getNumber() + "_LVL_0_SIDE_SETBACK2 not defined in the plan.");
+                }
+
+            }
+
+            compareSideYard2Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard2Result, true, RULE_35, SIDE_YARD_DESC,
+                    0);
+            compareSideYard1Result(block.getName(), BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                    BigDecimal.ZERO, occupancy.getTypeHelper(), sideYard1Result, true, RULE_35, SIDE_YARD_DESC,
+                    0);
+        }
     }
 
     private void checkSideYardUptoTenMts(final Plan pl, Building building, BigDecimal buildingHeight, String blockName,
@@ -670,7 +718,7 @@ public class SideYardService extends GeneralRule {
                         valid2, valid1, side2val, side1val, widthOfPlot);
             } else {
                 checkResidentialUptoSixteen(pl, blockName, level, min, max, minMeanlength, maxMeanLength,
-                        mostRestrictiveOccupancy, sideYard1Result, sideYard2Result, errors, rule, valid2, valid1,
+                        mostRestrictiveOccupancy, sideYard1Result, sideYard2Result, errors, subRule, valid2, valid1,
                         side2val, side1val, widthOfPlot);
             }
         } else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
@@ -766,10 +814,10 @@ public class SideYardService extends GeneralRule {
             valid2 = true;
 
         compareSideYard2Result(blockName, side2val, BigDecimal.valueOf(min), BigDecimal.ZERO,
-                BigDecimal.valueOf(minMeanlength), mostRestrictiveOccupancy, sideYard2Result, valid2, StringUtils.EMPTY,
+                BigDecimal.valueOf(minMeanlength), mostRestrictiveOccupancy, sideYard2Result, valid2, rule,
                 rule, level);
         compareSideYard1Result(blockName, side1val, BigDecimal.valueOf(max), BigDecimal.ZERO,
-                BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, StringUtils.EMPTY,
+                BigDecimal.valueOf(maxMeanLength), mostRestrictiveOccupancy, sideYard1Result, valid1, rule,
                 rule, level);
     }
 

@@ -199,7 +199,7 @@ public class RampService extends FeatureProcess {
                 scrutinyDetail1.addColumnHeading(3, REQUIRED);
                 scrutinyDetail1.addColumnHeading(4, PROVIDED);
                 scrutinyDetail1.addColumnHeading(5, STATUS);
-                scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "DA Ramp - Slope");
+                scrutinyDetail1.setKey("Block_" + block.getNumber() + "_" + "DA Ramp - Slope width");
 
                 ScrutinyDetail scrutinyDetail2 = new ScrutinyDetail();
                 scrutinyDetail2.addColumnHeading(1, RULE_NO);
