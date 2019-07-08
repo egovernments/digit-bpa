@@ -550,6 +550,8 @@ public class BpaAjaxController {
                         occ.isPresent() && application.getBuildingDetail().get(0).getFloorCount().intValue() <= 2
                                 && floorArea.doubleValue() <= 150);
             }
+        }else{ 
+        	jsonObj.addProperty("notExistPermissionNo", application == null);
         }
         IOUtils.write(jsonObj.toString(), response.getWriter());
     }
