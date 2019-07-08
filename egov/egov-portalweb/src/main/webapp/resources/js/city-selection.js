@@ -49,7 +49,7 @@ $(document).ready( function () {
 	//form submit
 	$('#buttonSubmit').click(function(e) {
 		var selectedUrl = $("#tenantId").val();
-		if(tenantId){
+		if(selectedUrl){
 			var url = $("#url").val();
 			var stateUrl=url.substring(0, url.indexOf("/",9)+1);
 			window.open(url.replace(stateUrl, selectedUrl),"_self");
