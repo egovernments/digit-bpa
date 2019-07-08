@@ -251,7 +251,7 @@
 						<div class="col-sm-5 add-margin">
 							<form:textarea path="bpaNocApplication.remarks" id="remarks"
 								class="form-control patternvalidation"
-								data-pattern="alphanumericspecialcharacters" maxlength="256"
+								data-pattern="alphanumericspecialcharacters" maxlength="128"
 								cols="25" rows="4" />
 							<form:errors path="bpaNocApplication.remarks"
 								cssClass="add-margin error-msg" />
