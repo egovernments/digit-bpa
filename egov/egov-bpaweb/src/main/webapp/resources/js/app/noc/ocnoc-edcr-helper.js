@@ -200,7 +200,7 @@ $('#buttonApprove').click(function (e) {
 $('#buttonReject').click(function (e) {
 	document.getElementById("workFlowAction").value = 'Rejected';
 	$('#remarks').attr('required', 'required');
-	if ($('#editNocApplicationForm').valid()){
+	if ($('#editOCNocApplicationForm').valid()){
         bootbox
             .dialog({
                 message: $('#rejectApplication').val(),

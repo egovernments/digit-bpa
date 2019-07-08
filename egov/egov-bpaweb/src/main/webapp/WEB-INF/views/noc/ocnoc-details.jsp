@@ -121,26 +121,33 @@
 							</div>							
 						</div>	
 					</div>
-					
-					
+
+
 					<div id="nocdoc-info" class="tab-pane fade in active">
-			 		<div class="panel panel-primary" data-collapsed="0">
-			 
-			 			<div class="panel-heading custom_form_panel_heading">				
-	                		<div class="panel-title"><spring:message code="lbl.noc.existing.doc" /></div>
-						</div>		
-							<c:forEach
-								var="bpanoc" items="${nocDocs.nocDocument.nocSupportDocs}" varStatus="loop">
-								<c:if test="${bpanoc.fileStoreId ne null}">&nbsp;&nbsp;&nbsp;&nbsp;
-									<a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
-							  	 	data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
-								<c:if test="${!loop.last}">,</c:if>&nbsp;
+						<div class="panel panel-primary" data-collapsed="0">
+
+							<div class="panel-heading custom_form_panel_heading">
+								<div class="panel-title">
+									<spring:message code="lbl.noc.existing.doc" />
+								</div>
+							</div>
+							<c:set value="false" var="isDocFound"></c:set>
+							<c:forEach var="bpanoc"
+								items="${nocDocs.nocDocument.nocSupportDocs}" varStatus="loop">
+								<c:if test="${bpanoc.fileStoreId ne null}">
+								 <c:set value="true" var="isDocFound"></c:set>
+									<a target="_blank"
+										href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
+										data-gallery>${loop.index +1} - ${bpanoc.fileName} </a>
+									<c:if test="${!loop.last}">,</c:if>&nbsp;
 								</c:if>
-							</c:forEach>	
-					</div>			
-    	         </div>
-    	         
-    	         <div class="panel panel-primary docdetails" data-collapsed="0">    	    
+							</c:forEach>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<c:if test="${!isDocFound}"> N/A  </c:if>
+						</div>
+					</div>
+
+					<div class="panel panel-primary docdetails" data-collapsed="0">    	    
     	            <div class="panel-heading custom_form_panel_heading">				
 	                	<div class="panel-title">${occupancyNocApplication.bpaNocApplication.nocType} <spring:message code="lbl.noc.dept.doc" /></div>
 					</div>									
@@ -224,11 +231,11 @@
 		                      <label class="col-sm-2 control-label text-right"><spring:message code="lbl.remarks" /></label>
 							<div class="col-sm-5 add-margin">
 								<form:textarea path="bpaNocApplication.remarks" id="remarks"	class="form-control patternvalidation"
-			                            data-pattern="alphanumericspecialcharacters" maxlength="256" cols="25" rows="4" />
+			                            data-pattern="alphanumericspecialcharacters" maxlength="128" cols="25" rows="4" />
 								<form:errors path="bpaNocApplication.remarks" cssClass="add-margin error-msg" />
 							</div>		
 						</div>	
-			</div> 		
+			</div> 	</div>	
 			<div align="center">
 				<c:if test="${occupancyNocApplication.bpaNocApplication.status.code eq 'Initiated'}">
 	
@@ -243,7 +250,7 @@
 			</div>	 	
 				<input	type="hidden" id="submitApplication" value="<spring:message code='msg.confirm.approve.appln'/>" /> 
                 <input	type="hidden" id="rejectApplication" value="<spring:message code='msg.confirm.intiate.rejection.forappln'/>" />                  
-			</div>
+			
 </div></div>
 </form:form>
 
