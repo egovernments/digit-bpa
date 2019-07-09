@@ -294,8 +294,8 @@ $(document).ready(
 
 	                            //$('#edcrApplicationNumber').html(response.applicationNumber);
 	                            $('#edcrUploadedDate').html(response.applicationDate);
-	                            $('#edcrDxfFile').html('<a href="/egi/downloadfile?fileStoreId=' + $('#planPermissionNumber').val() + '&moduleName=Digit DCR&toSave=true">' + response.dxfFile.fileName + '</a>');
-	                            $('#edcrPlanReportOutput').html('<a href="/egi/downloadfile?fileStoreId=' + $('#planPermissionNumber').val() + '&moduleName=Digit DCR&toSave=true">' + response.reportOutput.fileName + '</a>');
+	                            $('#edcrDxfFile').html('<a href="/egi/downloadfile?fileStoreId=' + response.dxfFile.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.dxfFile.fileName + '</a>');
+	                            $('#edcrPlanReportOutput').html('<a href="/egi/downloadfile?fileStoreId=' + response.reportOutput.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.reportOutput.fileName + '</a>');
 	                            if ($('#loadingFloorDetailsFromEdcrRequire').val() === 'true' && $('#mode').val() && $('#mode').val() === 'new' && response.plan) {
 	                                var existingBldgPresent = [];
 	                                if (response.plan.blocks.length > 0)
