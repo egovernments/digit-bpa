@@ -48,7 +48,7 @@
 	<div class="col-md-12">
 		<ul class="nav nav-tabs" id="settingstab">
 			<li class="active"><a data-toggle="tab"
-				href="#inconst-inspection-details" data-tabidx=0><spring:message
+				href="#oc-inspection-details" data-tabidx=0><spring:message
 						code='lbl.inspn.details' /></a></li>
 			<li><a data-toggle="tab" href="#oc-plan-scrutiny" data-tabidx=1><spring:message
 						code='lbl.plan.scrutiny' /></a></li>
@@ -64,7 +64,7 @@
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading custom_form_panel_heading">
 						<div class="panel-title">
-							<spring:message code="lbl.inspn.details" />
+							<spring:message code="lbl.basic.info" />
 						</div>
 					</div>
 					<div class="panel-body">
@@ -95,18 +95,23 @@
 									default="N/A"></c:out>
 							</div>
 						</div>
+						<div class="panel-heading custom_form_panel_heading">
+							<div class="panel-title">
+								<spring:message code="lbl.inpn.chklst.dtl" />
+							</div>
+						</div>
 						<div class="row add-border">
-							<div class="col-sm-5 add-margin view-content">
-								<div class="panel-title">
-									<spring:message code="lbl.inspec.checklist" />
+							<div class="col-sm-5 add-margin view-content bg-info">
+								<div class="panel-title text-info">
+									<spring:message code="lbl.description" />
 								</div>
 							</div>
-							<div class="col-sm-3 add-margin view-content">
-								<div class="panel-title">
+							<div class="col-sm-2 add-margin view-content bg-info">
+								<div class="panel-title text-info">
 									<spring:message code="lbl.is.applicable" />
 								</div>
 							</div>
-							<div class="col-sm-4 add-margin view-content">
+							<div class="col-sm-5 add-margin view-content bg-info">
 								<div class="panel-title">
 									<spring:message code="lbl.remarks" />
 								</div>
