@@ -249,7 +249,7 @@
 						</c:otherwise>
 					</c:choose>
 				</c:otherwise>
-			</c:choose></div>
+			</c:choose></div></div>
 </form:form>
 	<input type="hidden" id="revokeInsCommentsRequired" value="<spring:message code='msg.validate.comments.required.revoke.permit' />" />
 

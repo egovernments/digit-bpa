@@ -197,6 +197,8 @@
 						<input type="button" name="button2" value="Close"
 							class="btn btn-default" onclick="window.close();" />
 					</div>
+					</div>
+					</div>
 </form:form>
 
 	

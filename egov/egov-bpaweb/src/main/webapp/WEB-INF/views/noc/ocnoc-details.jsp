@@ -218,7 +218,7 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-ocnoc-building-details.jsp"></jsp:include>
 					</div>	 				
-    	    </div>  	    
+    	     	    
 			 
 		
 			 
@@ -235,7 +235,7 @@
 								<form:errors path="bpaNocApplication.remarks" cssClass="add-margin error-msg" />
 							</div>		
 						</div>	
-			</div> 	</div>	
+			</div> 	</div>	</div> 
 			<div align="center">
 				<c:if test="${occupancyNocApplication.bpaNocApplication.status.code eq 'Initiated'}">
 	
