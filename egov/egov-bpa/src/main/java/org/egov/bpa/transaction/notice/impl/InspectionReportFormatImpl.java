@@ -320,11 +320,11 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
 
 			AbstractColumn inspectionRm = ColumnBuilder.getNew()
 					.setColumnProperty("inspectionRemarks", String.class.getName())
-					.setWidth(250).setStyle(jasperReportHelperService.getBldgDetlsHeaderStyle()).build();
+					.setWidth(542).setStyle(jasperReportHelperService.getBldgDetlsHeaderStyle()).build();
 
 			frb.addColumn(inspectionRm);
 			frb.setMargins(0, 0, 0, 0);
-			frb.setUseFullPageWidth(true);
+			frb.setUseFullPageWidth(false);
 			frb.setTopMargin(5);
 			frb.setAllowDetailSplit(false);
 			frb.setPageSizeAndOrientation(Page.Page_A4_Portrait());
@@ -381,6 +381,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         dd.setDocumentType(cl.getServiceChecklist().getChecklist().getDescription());
         dd.setProvided(cl.getScrutinyValue().getCheckListVal());
         dd.setRemarks(cl.getRemarks() == null || cl.getRemarks().isEmpty() ? "NA" : cl.getRemarks());
+        dd.setCheckListType(cl.getServiceChecklist().getChecklist().getChecklistType().getDescription());
         return dd;
     }
 
@@ -444,14 +445,14 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
                     .build();
 
             AbstractColumn carpetArea = ColumnBuilder.getNew().setColumnProperty("remarks", String.class.getName())
-                    .setTitle("Remarks").setWidth(200).setStyle(jasperReportHelperService.getBldgDetlsHeaderStyle())
+                    .setTitle("Remarks").setWidth(222).setStyle(jasperReportHelperService.getBldgDetlsHeaderStyle())
                     .build();
 
             frb.addColumn(builtUpArea);
             frb.addColumn(floorArea);
             frb.addColumn(carpetArea);
             frb.setMargins(0, 0, 0, 0);
-            frb.setUseFullPageWidth(true);
+            frb.setUseFullPageWidth(false);
             frb.setTitle(title);
             frb.setTitleStyle(jasperReportHelperService.getTitleStyle());
             frb.setHeaderHeight(5);
@@ -483,14 +484,14 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
     	           try {
     	            	
     	                frb.addColumn("Description ", "description", String.class.getName(),60,true);
-    	                frb.addImageColumn("Photograph", "img", 200, false, ImageScaleMode.FILL_PROPORTIONALLY);
+    	                frb.addImageColumn("Photograph", "img", 482, false, ImageScaleMode.FILL_PROPORTIONALLY);
     	                
     	            } catch (ClassNotFoundException cnfe) {
                 LOGGER.error("Error occurred while getting subreport image", cnfe);
             }
             frb.setDetailHeight(250);
             frb.setMargins(0, 0, 0, 0);
-            frb.setUseFullPageWidth(true);
+            frb.setUseFullPageWidth(false);
             frb.setTitle("Inspection Site Images");
             frb.setTitleStyle(jasperReportHelperService.getTitleStyle());
             frb.setHeaderHeight(5);
