@@ -909,7 +909,7 @@
 	
 		<definition name="inspection-update-form" extends="base_layout">
 		<put-attribute name="page-title"
-			value="title.inspection.appln" cascade="true" />
+			value="title.inspection.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-update-form.jsp" />
 	</definition>
@@ -924,7 +924,7 @@
 	<definition name="inspection-view"
 		extends="base_layout">
 		<put-attribute name="page-title"
-			value="title.bpa.appln.success" cascade="true" />
+			value="title.inspection.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-view.jsp" />
 	</definition>
