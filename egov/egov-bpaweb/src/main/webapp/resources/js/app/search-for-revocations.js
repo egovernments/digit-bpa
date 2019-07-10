@@ -138,7 +138,7 @@ $(document)
                                                                     return '<button type="button" class="btn btn-xs btn-secondary initiateRevoke pull-left"  value='
                                                                     + approveRevoke
                                                                     + row.planPermissionNumber
-                                                                    + '><span class="glyphicon glyphicon-view"></span>&nbsp;Update/Approve Revocation</button>';
+                                                                    + '><span class="glyphicon glyphicon-view"></span>&nbsp;Approve/Cancel Revocation</button>';
 															}
 														}
 													} ]

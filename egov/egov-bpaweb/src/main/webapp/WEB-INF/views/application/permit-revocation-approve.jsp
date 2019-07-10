@@ -207,13 +207,13 @@
 								value="${permitRevocation.application.serviceType.description}"
 								default="N/A"></c:out>
 						</div>
-						<div class="amenityHideShow">
+					<%-- 	<div class="amenityHideShow">
 							<div class="col-sm-3 add-margin">Amenity Type</div>
 							<div class="col-sm-3 add-margin view-content">
 								<c:out
 									value="${permitRevocation.application.amenityName ne '' ?  permitRevocation.application.amenityName : 'N/A'}"></c:out>
 							</div>
-						</div>
+						</div> --%>
 					</div>
 					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
