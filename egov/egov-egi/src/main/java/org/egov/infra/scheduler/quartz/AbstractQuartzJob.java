@@ -48,6 +48,12 @@
 
 package org.egov.infra.scheduler.quartz;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
@@ -60,82 +66,92 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
-import javax.annotation.Resource;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-
 /**
- * An abstract base class wrapper for {@link QuartzJobBean} and implements {@link GenericJob}. A class which extends this will be
- * eligible for doing Quartz Jobs. Those classes required Statefulness (Threadsafety) so need to annotate class
- * with @DisallowConcurrentExecution. This class also wrap up wiring of some of the common settings and beans.
+ * An abstract base class wrapper for {@link QuartzJobBean} and implements
+ * {@link GenericJob}. A class which extends this will be eligible for doing
+ * Quartz Jobs. Those classes required Statefulness (Threadsafety) so need to
+ * annotate class with @DisallowConcurrentExecution. This class also wrap up
+ * wiring of some of the common settings and beans.
  **/
 public abstract class AbstractQuartzJob extends QuartzJobBean implements GenericJob {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuartzJob.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuartzJob.class);
 
-    @Resource(name = "cities")
-    private transient List<String> cities;
+	@Value("${client.id}")
+	private String clientId;
 
-    @Autowired
-    private transient CityService cityService;
+	@Resource(name = "cities")
+	private transient List<String> cities;
 
-    @Autowired
-    private transient UserService userService;
+	@Autowired
+	private transient CityService cityService;
 
-    private String userName;
+	@Autowired
+	private transient UserService userService;
 
-    private String moduleName;
+	private String userName;
 
-    private boolean cityDataRequired;
+	private String moduleName;
 
-    @Override
-    protected void executeInternal(JobExecutionContext jobCtx) throws JobExecutionException {
-        try {
-            MDC.put("appname", String.format("%s-%s", moduleName, jobCtx.getJobDetail().getKey().getName()));
-            for (String tenant : this.cities) {
-                MDC.put("ulbcode", tenant);
+	private boolean cityDataRequired;
 
-                this.prepareThreadLocal(tenant);
-                this.executeJob();
-            }
-        } catch (Exception ex) {
-            LOGGER.error("Unable to complete execution Scheduler ", ex);
-            throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
-        } finally {
-            ApplicationThreadLocals.clearValues();
-            MDC.clear();
-        }
-    }
+	@Override
+	protected void executeInternal(JobExecutionContext jobCtx) throws JobExecutionException {
+		try {
+			MDC.put("appname", String.format("%s-%s", moduleName, jobCtx.getJobDetail().getKey().getName()));
+			for (String tenant : this.cities) {
+				MDC.put("ulbcode", tenant);
 
-    public void setModuleName(final String moduleName) {
-        this.moduleName = moduleName;
-    }
+				this.prepareThreadLocal(tenant);
+				this.executeJob();
+			}
+		} catch (Exception ex) {
+			LOGGER.error("Unable to complete execution Scheduler ", ex);
+			throw new JobExecutionException("Unable to execute batch job Scheduler", ex, false);
+		} finally {
+			ApplicationThreadLocals.clearValues();
+			MDC.clear();
+		}
+	}
 
-    public void setUserName(String userName) {
-        this.userName = defaultIfBlank(userName, "system");
-    }
+	public void setModuleName(final String moduleName) {
+		this.moduleName = moduleName;
+	}
 
-    public void setCityDataRequired(boolean cityDataRequired) {
-        this.cityDataRequired = cityDataRequired;
-    }
+	public void setUserName(String userName) {
+		this.userName = defaultIfBlank(userName, "system");
+	}
 
-    private void prepareThreadLocal(String tenant) {
-        ApplicationThreadLocals.setTenantID(tenant);
-        ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
-        if (cityDataRequired) {
-            City city = this.cityService.findAll().get(0);
-            ApplicationThreadLocals.setCityCode(city.getCode());
-            ApplicationThreadLocals.setCityName(city.getName());
-            CityPreferences cityPreferences = city.getPreferences();
-            if (cityPreferences != null)
-                ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
-            else
-                LOGGER.warn("City preferences not set for {}", city.getName());
-            ApplicationThreadLocals.setDomainName(city.getDomainURL());
-        }
-    }
+	public void setCityDataRequired(boolean cityDataRequired) {
+		this.cityDataRequired = cityDataRequired;
+	}
+
+	private void prepareThreadLocal(String tenant) {
+		ApplicationThreadLocals.setTenantID(tenant);
+		ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
+		if (cityDataRequired) {
+			// TODO: get the city by tenant
+			City city = this.cityService.findAll().get(0);
+			if (city != null) {
+				ApplicationThreadLocals.setCityCode(city.getCode());
+				ApplicationThreadLocals.setCityName(city.getName());
+				ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
+				ApplicationThreadLocals.setDistrictName(city.getDistrictName());
+				ApplicationThreadLocals.setStateName(clientId);
+				ApplicationThreadLocals.setGrade(city.getGrade());
+			} else {
+				LOGGER.warn("Unable to find the city");
+			}
+			CityPreferences cityPreferences = city.getPreferences();
+			if (cityPreferences != null)
+				ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
+			else
+				LOGGER.warn("City preferences not set for {}", city.getName());
+			ApplicationThreadLocals.setDomainName(city.getDomainURL());
+		}
+	}
 }
