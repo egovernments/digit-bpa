@@ -102,7 +102,7 @@
 										<label><input type="radio" value="${scrutinyVal}"
 											class="scrutinyValue"
 											name="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].scrutinyValue"
-											<c:if test="${scrutinyVal eq planScrutinyDraw.scrutinyValue}"> checked="checked" </c:if> />${scrutinyVal}
+											<c:if test="${scrutinyVal eq planScrutinyDraw.scrutinyValue}"> checked="checked" </c:if> />${scrutinyVal.checkListVal}
 										</label>
 									</div>
 								</c:forEach></td>
