@@ -77,15 +77,21 @@ $(document).ready(
                      success: function (response) {
                      if(response.isRevocated){   					      
                         	 bootbox.alert('Permit application for entered plan permission number is revocated, hence cannot proceed.');
-                        	 $("#buttonSubmit").hide();
+                        	 resetDCRPopulatedValues();
+                        	 $('#planPermissionNumber').val('');
+                        	/* $("#buttonSubmit").hide();*/
                              return false;
          			   }else if(!response.applicationWFEnded){
                              bootbox.alert('Entered plan permission number is still in progress, hence cannot proceed.');
-                        	 $("#buttonSubmit").hide();
+                             resetDCRPopulatedValues();
+                      	   $('#planPermissionNumber').val('');
+                        	/* $("#buttonSubmit").hide();*/
                              return false;
                        }else if(response.ocInitiated){   					      
                         	 bootbox.alert('Occupancy certificate is already submitted for entered plan permission number, hence cannot proceed.');
-                        	 $("#buttonSubmit").hide();
+                        	 resetDCRPopulatedValues();
+                      	   $('#planPermissionNumber').val('');
+                        	 /* $("#buttonSubmit").hide();*/
                         	 return false;
          			   }
                        else if(response.activeInspections){
