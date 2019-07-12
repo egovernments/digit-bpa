@@ -86,10 +86,6 @@ public class InspectionApplicationService {
     @PersistenceContext
 	private EntityManager entityManager;
     
-    @Transactional
-	public PermitInspectionApplication save(final PermitInspectionApplication inspection) {
-		return inspectionReposiory.save(inspection);
-	}
     
     @Transactional
 	public PermitInspectionApplication findByInspectionApplicationNumber(final String appNo) {
@@ -119,6 +115,17 @@ public class InspectionApplicationService {
         }        
         return inspectionReposiory.save(permitInspection);  
     } 
+    
+    @Transactional
+    public PermitInspectionApplication save(final PermitInspectionApplication permitInspection) {
+        if (permitInspection.getInspectionApplication().getApplicationDate() == null)
+        	permitInspection.getInspectionApplication().setApplicationDate(new Date());
+        if (permitInspection.getInspectionApplication().getApplicationNumber() == null)
+        	permitInspection.getInspectionApplication().setApplicationNumber(inspectionService.generateInspectionNumber());
+        permitInspection.getInspectionApplication().setStatus(statusRepository.findByCodeAndModuleType(BpaConstants.APPROVED, BpaConstants.INSPECTION_MODULE_TYPE));
+        return inspectionReposiory.save(permitInspection);  
+    } 
+   
     
     
     @Transactional

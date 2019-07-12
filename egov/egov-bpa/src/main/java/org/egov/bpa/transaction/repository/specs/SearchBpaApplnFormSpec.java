@@ -73,9 +73,12 @@ import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.springframework.data.jpa.domain.Specification;
@@ -268,6 +271,28 @@ public final class SearchBpaApplnFormSpec {
             predicate.getExpressions()
                     .add(root.get(STATUS).get("code").in(APPLICATION_STATUS_ORDER_ISSUED, APPLICATION_STATUS_INIT_REVOKE,
                             APPLICATION_STATUS_REVOKE_CANCELED));
+            query.distinct(true);
+            return predicate;
+        };
+    }
+    
+    
+    public static Specification<BpaApplication> searchInspectionSpecification(final SearchBpaApplicationForm requestForm) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+
+            if (requestForm.getPlanPermissionNumber() != null)
+                predicate.getExpressions()
+                        .add(builder.equal(root.get(PLAN_PERMISSION_NUMBER), requestForm.getPlanPermissionNumber()));
+            if (requestForm.getFromDate() != null)
+                predicate.getExpressions()
+                        .add(builder.greaterThanOrEqualTo(root.get(APPLICATION_DATE), requestForm.getFromDate()));
+            if (requestForm.getToDate() != null)
+                predicate.getExpressions()
+                        .add(builder.lessThanOrEqualTo(root.get(APPLICATION_DATE), requestForm.getToDate()));
+            predicate.getExpressions().add(builder.notEqual(root.get(STATUS).get("code"), (BpaConstants.APPLICATION_STATUS_REVOKED)));
+            predicate.getExpressions().add(builder.notEqual(root.get(STATUS).get("code"), (BpaConstants.APPLICATION_STATUS_INIT_REVOKE)));
+            predicate.getExpressions().add(builder.equal(root.get("state").get("status"), StateStatus.ENDED));
             query.distinct(true);
             return predicate;
         };

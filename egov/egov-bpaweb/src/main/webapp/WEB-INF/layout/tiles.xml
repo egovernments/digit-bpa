@@ -1055,4 +1055,25 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/ins-lettertoparty-update.jsp" />
 	</definition>
+	<definition name="search-inspection-application"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.search" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/search-inspection-application.jsp" />
+	</definition>
+	<definition name="inconst-capture-inspection"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.appln" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inconst-capture-inspection.jsp" />
+	</definition>
+	<definition name="inconst-inspection-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.inspection.result" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/inconst-inspection-result.jsp" />
+	</definition>
 </tiles-definitions>
