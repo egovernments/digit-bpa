@@ -56,7 +56,7 @@
 
 
 <form:form role="form"  modelAttribute="inspectionApplication" id="updateInspectionForm" 
- action="/bpa/inspection/update-submit/${inspectionApplication.applicationNumber}"
+ action="/bpa/inspection/update/${inspectionApplication.applicationNumber}"
  method="post" 
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -65,6 +65,7 @@
 	<div class="col-md-12">	
 		<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 					<form:hidden  path="" id="amountRule" name="amountRule" value="${amountRule}"/>
+				<input type="hidden" id="appNumber" name="appNumber" value="${inspectionApplication.applicationNumber}" />	
 		
 		<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage" value="${noJAORSAMessage}" />	
 		<form:hidden path="id"  id="inspectionApplicationid"
@@ -252,6 +253,9 @@
 			</c:choose></div></div>
 </form:form>
 	<input type="hidden" id="revokeInsCommentsRequired" value="<spring:message code='msg.validate.comments.required.revoke.permit' />" />
+	<input type="hidden" id="forwardAppln" value="<spring:message code='msg.confirm.forward.application' />" />
+	<input type="hidden" id="revokeAppln" value="<spring:message code='msg.confirm.revoke.insp' />" />
+	<input type="hidden" id="approveAppln" value="<spring:message code='msg.confirm.approve.appln' />" />
 
 	
 <script

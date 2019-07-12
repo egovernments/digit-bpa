@@ -151,7 +151,7 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     }
 
     
-    @PostMapping("/update-submit/{applicationNumber}")
+    @PostMapping("/update/{applicationNumber}")
     public String updateApplication(@ModelAttribute InspectionApplication inspectionApplication,
             @PathVariable final String applicationNumber,
             final BindingResult resultBinder,

@@ -159,13 +159,15 @@ jQuery(document)
                             if (validateOnApproveAndForward(validator, action) && validateAdditionalConditionsOnFwd()) {
                                 bootbox
                                     .dialog({
-                                        message: $('#updateInspectionForm').val(),
+                                        message: $('#forwardAppln').val(),
                                         buttons: {
                                             'confirm': {
                                                 label: 'Yes',
                                                 className: 'btn-primary',
                                                 callback: function (result) {
-                                                    $('#viewBpaApplicationForm').trigger('submit');
+            			                         //   $("#updateInspectionForm").attr('action', 'update/' + $("#appNumber").val());
+
+                                                    $('#updateInspectionForm').trigger('submit');
                                                 }
                                             },
                                             'cancel': {
@@ -186,7 +188,7 @@ jQuery(document)
                             if (validateOnRevokePermit()) {
                                 bootbox
                                     .dialog({
-                                        message: $('#updateInspectionForm').val(),
+                                        message: $('#revokeAppln').val(),
                                         buttons: {
                                             'confirm': {
                                                 label: 'Yes',
