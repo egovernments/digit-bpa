@@ -318,8 +318,8 @@ public class Parking extends FeatureProcess {
 				maxHeightOfBuilding = block.getBuilding().getBuildingHeight();
 			}
 		}
-		if (maxHeightOfBuilding.compareTo(new BigDecimal(15)) >= 0
-				|| totalBuiltupArea.compareTo(new BigDecimal(500)) > 0) {
+        if (maxHeightOfBuilding.compareTo(new BigDecimal(15)) >= 0
+                || (pl.getPlot() != null && pl.getPlot().getArea().compareTo(new BigDecimal(500)) > 0)) {
 			if (pl.getParkingDetails().getValidSpecialSlots() == 0) {
 				pl.addError(SUB_RULE_40_11, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, SP_PARKING));
 			} else {
