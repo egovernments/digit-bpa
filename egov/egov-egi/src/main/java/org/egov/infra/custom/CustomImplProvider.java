@@ -10,6 +10,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,9 @@ public class CustomImplProvider {
 	public static final String STATE_NAME = "STATE_NAME";
 	private static final Logger LOG = Logger.getLogger(CustomImplProvider.class);
 
+	@Value("${client.id}")
+	private String clientId;
+	
 	@Autowired
 	private ApplicationContext applicationContext;
 	@Autowired
@@ -33,15 +37,16 @@ public class CustomImplProvider {
 		LOG.info("Getting city Details");
 		Map<String, String> cityDetails = new HashMap<>();
 		try {
-
+			cityDetails.put(STATE_NAME, clientId);
 			cityDetails.put(ULB_CODE, ApplicationThreadLocals.getCityCode());
 			City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
-			cityDetails.put(ULB_NAME, city.getName());
-			cityDetails.put(DISTRICT_CODE, city.getDistrictCode());
-			cityDetails.put(DISTRICT_NAME, city.getDistrictName());
-			cityDetails.put(STATE_NAME, city.getDistrictName());
-			cityDetails.put(GRADE, city.getGrade());
-
+			if (city != null) {
+				cityDetails.put(ULB_NAME, city.getName());
+				cityDetails.put(DISTRICT_CODE, city.getDistrictCode());
+				cityDetails.put(DISTRICT_NAME, city.getDistrictName());
+				cityDetails.put(STATE_NAME, clientId);
+				cityDetails.put(GRADE, city.getGrade());
+			}
 			LOG.info(cityDetails);
 
 		} catch (Exception e) {
