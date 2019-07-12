@@ -1,0 +1,2585 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.egov:egov-ear:ear:BPA-3.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.wildfly.plugins:wildfly-maven-plugin is missing. @ line 238, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] e-governments erp
+[INFO] e-governments config
+[INFO] e-governments database
+[INFO] e-governments egi
+[INFO] e-governments commons
+[INFO] e-governments eis
+[INFO] e-governments egf
+[INFO] e-governments portal
+[INFO] e-governments collection
+[INFO] e-governments demand
+[INFO] e-governments bpa
+[INFO] e-governments commons web
+[INFO] e-governments eis web
+[INFO] e-governments egi web
+[INFO] e-governments egf web
+[INFO] e-governments portal web
+[INFO] e-governments collection web
+[INFO] e-governments bpa web
+[INFO] e-governments pass
+[INFO] e-governments pass web
+[INFO] e-governments edcr
+[INFO] e-governments edcrweb
+[INFO] e-governments services
+[INFO] e-governments erp ear
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments erp BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-erp ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-erp ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/target/jacoco.exec
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-erp ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-erp ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments config BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-config ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-config ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:resources (default-resources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 9 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ egov-config ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:testResources (default-testResources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ egov-config ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.20.1:test (default-test) @ egov-config ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-config ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:test-jar (default) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-config ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments database BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ egov-database ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db (includes = [**], excludes = [])
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-database ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:copy-resources (copy-migrations) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 96 resources
+[INFO] Copying 64 resources
+[INFO] Copying 37 resources
+[INFO] Copying 295 resources
+[INFO] Copying 129 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-pgr/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-wtms/src/main/resources/db/migration
+[INFO] Copying 16 resources
+[INFO] Copying 34 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-ptis/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-adtax/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-tl/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-assets/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-works/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-council/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-lcms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-stms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-mrs/src/main/resources/db/migration
+[INFO] Copying 373 resources
+[INFO] Copying 49 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:resources (default-resources) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1094 resources
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:repair (migrate-database) @ egov-database ---
+[INFO] Flyway Community Edition 5.0.3 by Boxfuse
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] e-governments erp ................................. SUCCESS [3.586s]
+[INFO] e-governments config .............................. SUCCESS [1.569s]
+[INFO] e-governments database ............................ FAILURE [3.215s]
+[INFO] e-governments egi ................................. SKIPPED
+[INFO] e-governments commons ............................. SKIPPED
+[INFO] e-governments eis ................................. SKIPPED
+[INFO] e-governments egf ................................. SKIPPED
+[INFO] e-governments portal .............................. SKIPPED
+[INFO] e-governments collection .......................... SKIPPED
+[INFO] e-governments demand .............................. SKIPPED
+[INFO] e-governments bpa ................................. SKIPPED
+[INFO] e-governments commons web ......................... SKIPPED
+[INFO] e-governments eis web ............................. SKIPPED
+[INFO] e-governments egi web ............................. SKIPPED
+[INFO] e-governments egf web ............................. SKIPPED
+[INFO] e-governments portal web .......................... SKIPPED
+[INFO] e-governments collection web ...................... SKIPPED
+[INFO] e-governments bpa web ............................. SKIPPED
+[INFO] e-governments pass ................................ SKIPPED
+[INFO] e-governments pass web ............................ SKIPPED
+[INFO] e-governments edcr ................................ SKIPPED
+[INFO] e-governments edcrweb ............................. SKIPPED
+[INFO] e-governments services ............................ SKIPPED
+[INFO] e-governments erp ear ............................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 9.070s
+[INFO] Finished at: Sun Mar 31 04:47:50 IST 2019
+[INFO] Final Memory: 37M/576M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.flywaydb:flyway-maven-plugin:5.0.3:repair (migrate-database) on project egov-database: org.flywaydb.core.internal.exception.FlywaySqlException:
+[ERROR] Unable to obtain connection from database (jdbc:postgresql://localhost:5432/digitbpa) for user 'postgres': FATAL: database "digitbpa" does not exist
+[ERROR] ----------------------------------------------------------------------------------------------------------------------------------------------------
+[ERROR] SQL State  : 3D000
+[ERROR] Error Code : 0
+[ERROR] Message    : FATAL: database "digitbpa" does not exist
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :egov-database
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.egov:egov-ear:ear:BPA-3.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.wildfly.plugins:wildfly-maven-plugin is missing. @ line 238, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] e-governments erp
+[INFO] e-governments config
+[INFO] e-governments database
+[INFO] e-governments egi
+[INFO] e-governments commons
+[INFO] e-governments eis
+[INFO] e-governments egf
+[INFO] e-governments portal
+[INFO] e-governments collection
+[INFO] e-governments demand
+[INFO] e-governments bpa
+[INFO] e-governments commons web
+[INFO] e-governments eis web
+[INFO] e-governments egi web
+[INFO] e-governments egf web
+[INFO] e-governments portal web
+[INFO] e-governments collection web
+[INFO] e-governments bpa web
+[INFO] e-governments pass
+[INFO] e-governments pass web
+[INFO] e-governments edcr
+[INFO] e-governments edcrweb
+[INFO] e-governments services
+[INFO] e-governments erp ear
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments erp BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-erp ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-erp ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/target/jacoco.exec
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-erp ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-erp ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments config BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-config ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-config ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:resources (default-resources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 9 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ egov-config ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:testResources (default-testResources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ egov-config ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.20.1:test (default-test) @ egov-config ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-config ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:test-jar (default) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-config ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments database BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ egov-database ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db (includes = [**], excludes = [])
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-database ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:copy-resources (copy-migrations) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 96 resources
+[INFO] Copying 64 resources
+[INFO] Copying 37 resources
+[INFO] Copying 295 resources
+[INFO] Copying 129 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-pgr/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-wtms/src/main/resources/db/migration
+[INFO] Copying 16 resources
+[INFO] Copying 34 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-ptis/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-adtax/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-tl/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-assets/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-works/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-council/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-lcms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-stms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-mrs/src/main/resources/db/migration
+[INFO] Copying 373 resources
+[INFO] Copying 49 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:resources (default-resources) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1094 resources
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:repair (migrate-database) @ egov-database ---
+[INFO] Flyway Community Edition 5.0.3 by Boxfuse
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Repair of failed migration in Schema History table "state"."flyway_schema_history" not necessary. No failed migration detected.
+[INFO] Successfully repaired schema history table "state"."flyway_schema_history" (execution time 00:00.308s).
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:migrate (migrate-database) @ egov-database ---
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Creating schema "state" ...
+[INFO] Creating Schema History table: "state"."flyway_schema_history"
+[INFO] Current version of schema "state": null
+[WARNING] outOfOrder mode is active. Migration of schema "state" may not be reproducible.
+[INFO] Migrating schema "state" to version 20150918161430 - egi core ddl
+[INFO] Migrating schema "state" to version 20150918161507 - egi initial data
+[INFO] Migrating schema "state" to version 20150918161523 - egi sample data
+[INFO] Migrating schema "state" to version 20150918162945 - commons core DDL
+[INFO] Migrating schema "state" to version 20150918164659 - commons initial data
+[INFO] Migrating schema "state" to version 20150918164712 - commons sample data
+[INFO] Migrating schema "state" to version 20150918172705 - eis core ddl
+[INFO] Migrating schema "state" to version 20150918172716 - eis sample data
+[INFO] Migrating schema "state" to version 20150920070211 - portal core ddl
+[INFO] Migrating schema "state" to version 20150920070215 - portal initial data
+[INFO] Migrating schema "state" to version 20150920070221 - portal sample data
+[INFO] Migrating schema "state" to version 20150920070243 - egf main DDL
+[INFO] Migrating schema "state" to version 20150920070247 - egf eg module DML
+[INFO] Migrating schema "state" to version 20150920070251 - egf eg action DML
+[INFO] Migrating schema "state" to version 20150920070261 - egf setup data
+[INFO] Migrating schema "state" to version 20150920070271 - egf sample data
+[INFO] Migrating schema "state" to version 20150920071204 - collection core DDL
+[INFO] Migrating schema "state" to version 20150920071226 - collection initial data
+[INFO] Migrating schema "state" to version 20150920071243 - collection sample data
+[INFO] Migrating schema "state" to version 20150920071442 - demand core DDL
+[INFO] Migrating schema "state" to version 20150920071458 - demand initial data
+[INFO] Migrating schema "state" to version 20151013120810 - commons incremental DDL
+[INFO] Migrating schema "state" to version 20151013130939 - portal userrole mapping
+[INFO] Migrating schema "state" to version 20151013141119 - collection user counter map sample
+[INFO] Migrating schema "state" to version 20151013161320 - eis correcting assignment sample data
+[INFO] Migrating schema "state" to version 20151013181057 - portal editprofile DML
+[INFO] Migrating schema "state" to version 20151014140741 - egf createvoucher from bill
+[INFO] Migrating schema "state" to version 20151014151724 - egi del kml and add region to city
+[INFO] Migrating schema "state" to version 20151015111431 - collection bank account service mapping
+[INFO] Migrating schema "state" to version 20151015121741 - collection user counter map sample
+[INFO] Migrating schema "state" to version 20151016145155 - egi add grade to city
+[INFO] Migrating schema "state" to version 20151016150753 - egi rem duplicate crosshierarchy table
+[INFO] Migrating schema "state" to version 20151019174548 - egi ajaxloadboundaries
+[INFO] Migrating schema "state" to version 20151019174644 - egi decoupling zoneward
+[INFO] Migrating schema "state" to version 20151020173647 - egi boundaryType and hierarchyType renaming
+[INFO] Migrating schema "state" to version 20151021141618 - egi add natureoftask to state
+[INFO] Migrating schema "state" to version 20151021165811 - collection role action dishonor report
+[INFO] Migrating schema "state" to version 20151022124851 - egi action and roleaction for listing boundary
+[INFO] Migrating schema "state" to version 20151022132150 - egi create system user
+[INFO] Migrating schema "state" to version 20151022161416 - eis jurischanges duetohierachychanges
+[INFO] Migrating schema "state" to version 20151024180403 - egi user auditing
+[INFO] Migrating schema "state" to version 20151024180431 - eis employee auditing
+[INFO] Migrating schema "state" to version 20151027130427 - eis employee type drop n recreate
+[INFO] Migrating schema "state" to version 20151028010234 - eis employee role common action mapping
+[INFO] Migrating schema "state" to version 20151028140403 - egf actioncorrection
+[INFO] Migrating schema "state" to version 20151028140603 - egi action DDL
+[INFO] Migrating schema "state" to version 20151030160703 - egi update user sequence
+[INFO] Migrating schema "state" to version 20151103130222 - egf statusexcludeReport appconfig
+[INFO] Migrating schema "state" to version 20151104154057 - egi update revenue deptcode
+[INFO] Migrating schema "state" to version 20151105003606 - collection department appconfig
+[INFO] Migrating schema "state" to version 20151109124343 - egi createboundary action and roleaction
+[INFO] Migrating schema "state" to version 20151113104758 - eis signaturecolumn
+[INFO] Migrating schema "state" to version 20151114134716 - collection department appconfig
+[INFO] Migrating schema "state" to version 20151118144614 - collection servicedetails roleaction
+[INFO] Migrating schema "state" to version 20151118144639 - collection onlinereceipt roleaction
+[INFO] Migrating schema "state" to version 20151119170241 - collection disable bankremittancereport
+[INFO] Migrating schema "state" to version 20151119172735 - collection callbackurl online
+[INFO] Migrating schema "state" to version 20151123102101 - egi designationcode
+[INFO] Migrating schema "state" to version 20151123171037 - eis new employee master role action mapping
+[INFO] Migrating schema "state" to version 20151124160416 - eis designationcode
+[INFO] Migrating schema "state" to version 20151126141156 - collection approver designation
+[INFO] Migrating schema "state" to version 20151126141216 - collection appconfig department
+[INFO] Migrating schema "state" to version 20151201170101 - egi applicationIndex Add ownerColumn
+[INFO] Migrating schema "state" to version 20151201171248 - collection receiptheader add source
+[INFO] Migrating schema "state" to version 20151201180947 - collection receiptReconcileOnlinePayment action
+[INFO] Migrating schema "state" to version 20151202143703 - collection onlinestatus failed
+[INFO] Migrating schema "state" to version 20151202200644 - egi applicationIndex alter DDL
+[INFO] Migrating schema "state" to version 20151204140243 - egi reset password
+[INFO] Migrating schema "state" to version 20151215141511 - collection new role for collection operator
+[INFO] Migrating schema "state" to version 20151215152433 - collection counter mapping for collection operator
+[INFO] Migrating schema "state" to version 20151216153306 - collection search receipt roleaction
+[INFO] Migrating schema "state" to version 20151216182503 - collection remove roleaction remitdishonor
+[INFO] Migrating schema "state" to version 20151216213656 - collection roleaction reports
+[INFO] Migrating schema "state" to version 20151217131423 - egf disable duplicate link for dishonorcheque
+[INFO] Migrating schema "state" to version 20151221110759 - collection roleaction reportsummary
+[INFO] Migrating schema "state" to version 20151221150743 - commons installment add financialyear
+[INFO] Migrating schema "state" to version 20151221184840 - collection roleaction remitter reports
+[INFO] Migrating schema "state" to version 20151222153331 - egf subscheme modify Action
+[INFO] Migrating schema "state" to version 20151222183032 - collection delete roleaction cancelreceipt
+[INFO] Migrating schema "state" to version 20151223121804 - collection updatesource system
+[INFO] Migrating schema "state" to version 20151223160856 - egf subscheme edit action
+[INFO] Migrating schema "state" to version 20151228184257 - egi menuitem update
+[INFO] Migrating schema "state" to version 20151229151334 - egf directBankPayment action
+[INFO] Migrating schema "state" to version 20160107120401 - commons deptdesig sample data
+[INFO] Migrating schema "state" to version 20160107120455 - commons alter deptdesig notnull
+[INFO] Migrating schema "state" to version 20160108171801 - egf telephone data
+[INFO] Migrating schema "state" to version 20160108175652 - egf voucherheader drop cgn
+[INFO] Migrating schema "state" to version 20160109141250 - egf COA tree acton DML
+[INFO] Migrating schema "state" to version 20160110151803 - egf coa data
+[INFO] Migrating schema "state" to version 20160112130001 - commons accountdetailkey
+[INFO] Migrating schema "state" to version 20160112160453 - commons supplier entity
+[INFO] Migrating schema "state" to version 20160113134608 - egi location alter
+[INFO] Migrating schema "state" to version 20160113142009 - egi drop usercounter locationipmap
+[INFO] Migrating schema "state" to version 20160113142110 - egf appconfig
+[INFO] Migrating schema "state" to version 20160113153452 - egi location active to boolean
+[INFO] Migrating schema "state" to version 20160114180513 - egf report search
+[INFO] Migrating schema "state" to version 20160118154908 - egf trialBalance search
+[INFO] Migrating schema "state" to version 20160118160301 - egf bankaccount purpose code
+[INFO] Migrating schema "state" to version 20160119131801 - egf wf users designation
+[INFO] Migrating schema "state" to version 20160119161301 - egf roles
+[INFO] Migrating schema "state" to version 20160119195119 - egf bill status contractor supplier
+[INFO] Migrating schema "state" to version 20160120122205 - collection miscellaneous receipt roleaction
+[INFO] Migrating schema "state" to version 20160121121717 - egf createvoucher wf changes
+[INFO] Migrating schema "state" to version 20160121121725 - egf createvoucher wf actions
+[INFO] Migrating schema "state" to version 20160121130246 - egf createvoucerwf fix
+[INFO] Migrating schema "state" to version 20160121161130 - egf bankaccount glcode add notnull constraint
+[INFO] Migrating schema "state" to version 20160122121335 - egf billPayment actions
+[INFO] Migrating schema "state" to version 20160122123710 - eis desigrolemap table
+[INFO] Migrating schema "state" to version 20160122160751 - egi applicationIndex alter DDL
+[INFO] Migrating schema "state" to version 20160123111220 - egf payment workflow changes
+[INFO] Migrating schema "state" to version 20160123111230 - egf billPayment workflow changes
+[INFO] Migrating schema "state" to version 20160123130001 - egf roleaction mapping
+[INFO] Migrating schema "state" to version 20160123145505 - egf FA roleaction mapping
+[INFO] Migrating schema "state" to version 20160123172844 - egf voucher and payment wf changes
+[INFO] Migrating schema "state" to version 20160124094348 - egf missing actions for VoucherCreator role
+[INFO] Migrating schema "state" to version 20160125152340 - egf config vouchernumber
+[INFO] Migrating schema "state" to version 20160125171354 - egf hibernate to jpa migration
+[INFO] Migrating schema "state" to version 20160127004303 - egf directbankpayment actions
+[INFO] Migrating schema "state" to version 20160127144356 - egf jpa changes revertfile
+[INFO] Migrating schema "state" to version 20160127174935 - egf chartofaccounts new actions
+[INFO] Migrating schema "state" to version 20160128112938 - egf roleaction mapping
+[INFO] Migrating schema "state" to version 20160128125931 - collection collectionindex ddl
+[INFO] Migrating schema "state" to version 20160128151309 - egf accoundetailtype int boolean DDL
+[INFO] Migrating schema "state" to version 20160128151402 - egf accountdetailtype actions DML
+[INFO] Migrating schema "state" to version 20160128172236 - egf Generalledger searchDrilldown
+[INFO] Migrating schema "state" to version 20160128214118 - egf paymentaction mapping
+[INFO] Migrating schema "state" to version 20160128233018 - egf Relation ddl
+[INFO] Migrating schema "state" to version 20160128233028 - egf Relation actions DML
+[INFO] Migrating schema "state" to version 20160129142647 - egf updateAccountdetailtype version
+[INFO] Migrating schema "state" to version 20160129172755 - egf accoundetailtype boolean int DDL
+[INFO] Migrating schema "state" to version 20160130141646 - egf accountentityMaster alter DDL
+[INFO] Migrating schema "state" to version 20160130163359 - egf drop cbill
+[INFO] Migrating schema "state" to version 20160131141628 - egf AccountEntity actions DML
+[INFO] Migrating schema "state" to version 20160201001118 - egf payment report action mapping
+[INFO] Migrating schema "state" to version 20160201133519 - egf update trialbalance
+[INFO] Migrating schema "state" to version 20160201140949 - egi applicationIndex alter DDL
+[INFO] Migrating schema "state" to version 20160201154423 - egf billPaymentPrint action
+[INFO] Migrating schema "state" to version 20160201164551 - egf function master actions
+[INFO] Migrating schema "state" to version 20160202125029 - egf accoundetailtype int boolean DDL
+[INFO] Migrating schema "state" to version 20160203130733 - egf expensebill workflow changes
+[INFO] Migrating schema "state" to version 20160203130742 - egf cbill workflow changes
+[INFO] Migrating schema "state" to version 20160203163551 - collection challan action
+[INFO] Migrating schema "state" to version 20160204003825 - egf opb action role mapping
+[INFO] Migrating schema "state" to version 20160204135212 - collection challan receipts actions
+[INFO] Migrating schema "state" to version 20160204222424 - egf transactionsummary actions
+[INFO] Migrating schema "state" to version 20160205114210 - collection modules entry
+[INFO] Migrating schema "state" to version 20160205120014 - egf openingbalance report
+[INFO] Migrating schema "state" to version 20160205180010 - collection searchchallan action
+[INFO] Migrating schema "state" to version 20160206224010 - demand change amount type float
+[INFO] Migrating schema "state" to version 20160208124203 - egf update coa
+[INFO] Migrating schema "state" to version 20160208171251 - collection workflow challan
+[INFO] Migrating schema "state" to version 20160208204448 - egf createVoucherFromBill roleactions
+[INFO] Migrating schema "state" to version 20160209120658 - collection collectionindex alter DDL
+[INFO] Migrating schema "state" to version 20160209153440 - egf remove statuses
+[INFO] Migrating schema "state" to version 20160209155208 - egf budget Adding status
+[INFO] Migrating schema "state" to version 20160209174610 - egf remove ExpenseBillApprovalStatus for cbill
+[INFO] Migrating schema "state" to version 20160209174617 - egf ExpenseJournalVoucherPrint actions
+[INFO] Migrating schema "state" to version 20160209194303 - egf bill number generator script py
+[INFO] Migrating schema "state" to version 20160210131059 - egf bill budgetcheck changes py
+[INFO] Migrating schema "state" to version 20160210135225 - collection collectionindex alter DDL
+[INFO] Migrating schema "state" to version 20160210163535 - egf fund create date and actions
+[INFO] Migrating schema "state" to version 20160210171918 - egf receipt action mapping
+[INFO] Migrating schema "state" to version 20160210175339 - collection collectionindex alter DDL
+[INFO] Migrating schema "state" to version 20160210223759 - egf bill budgetcheck correction py
+[INFO] Migrating schema "state" to version 20160211121536 - collection challansubledger action
+[INFO] Migrating schema "state" to version 20160211124743 - collection challan reset action
+[INFO] Migrating schema "state" to version 20160211145719 - egf payment bill roleaction
+[INFO] Migrating schema "state" to version 20160211152650 - egf expenseBill exportOptions
+[INFO] Migrating schema "state" to version 20160212123154 - egf RemitRecovery Actions
+[INFO] Migrating schema "state" to version 20160212174637 - egf remittance recovery view roleactions
+[INFO] Migrating schema "state" to version 20160213103438 - egf pendingTDSReport roleactions
+[INFO] Migrating schema "state" to version 20160214113551 - egf drawingofficer full qualified name change
+[INFO] Migrating schema "state" to version 20160215125329 - collection collectionindex alter DDL
+[INFO] Migrating schema "state" to version 20160215161630 - egf int to boolean ddl
+[INFO] Migrating schema "state" to version 20160215180839 - egf remittance missing roleAction
+[INFO] Migrating schema "state" to version 20160217110824 - egf deduction reports roleactions for report viewer
+[INFO] Migrating schema "state" to version 20160217194525 - egf recovery masters actions roleactions
+[INFO] Migrating schema "state" to version 20160217194620 - egf recovery alter colums
+[INFO] Migrating schema "state" to version 20160218123158 - egf budget rolemapping
+[INFO] Migrating schema "state" to version 20160218161630 - egf istrument int to boolean ddl
+[INFO] Migrating schema "state" to version 20160218170506 - egf budget urlupdate
+[INFO] Migrating schema "state" to version 20160218180654 - commons RegionalHeirarchy entity
+[INFO] Migrating schema "state" to version 20160219103620 - egf partytype
+[INFO] Migrating schema "state" to version 20160219121621 - egf subschedule
+[INFO] Migrating schema "state" to version 20160219122041 - egf BS schedulemapping
+[INFO] Migrating schema "state" to version 20160219132921 - egf excessIE COA
+[INFO] Migrating schema "state" to version 20160219154421 - egf bankBook roleaction
+[INFO] Migrating schema "state" to version 20160219161059 - egf recovery alter columns
+[INFO] Migrating schema "state" to version 20160219161112 - egf recovery masters roleactions for FA
+[INFO] Migrating schema "state" to version 20160222111603 - collection collectionindex alter DDL
+[INFO] Migrating schema "state" to version 20160222121224 - collection collectionindex alter DDL
+[INFO] Migrating schema "state" to version 20160222224113 - egf ModifyJVoucher action for voucherCreator
+[INFO] Migrating schema "state" to version 20160223134814 - egf balance sheet action
+[INFO] Migrating schema "state" to version 20160223193041 - egf chequeAssignment Actions roleActions
+[INFO] Migrating schema "state" to version 20160224133210 - collection challan services
+[INFO] Migrating schema "state" to version 20160225170342 - egf accountcheques actions roleactions
+[INFO] Migrating schema "state" to version 20160225184926 - egf OPB entryScreen roleAction
+[INFO] Migrating schema "state" to version 20160226143711 - egf roleaction mapping
+[INFO] Migrating schema "state" to version 20160228220516 - collection challan receipt cancel action
+[INFO] Migrating schema "state" to version 20160229102446 - egf IE schedulemapping
+[INFO] Migrating schema "state" to version 20160229111354 - collection order action
+[INFO] Migrating schema "state" to version 20160301125427 - egf roleaction reports
+[INFO] Migrating schema "state" to version 20160301140144 - egf OPBentryScreen roleaction
+[INFO] Migrating schema "state" to version 20160302130739 - egf rtgsAssignment actions roleActions
+[INFO] Migrating schema "state" to version 20160302193119 - egf recovery gl cleanup
+[INFO] Migrating schema "state" to version 20160304182627 - egf cheque roleactionmap
+[INFO] Migrating schema "state" to version 20160308103046 - egf budgetLoad actions
+[INFO] Migrating schema "state" to version 20160308103056 - egf budget alter
+[INFO] Migrating schema "state" to version 20160309065234 - egf budgetdetail add status
+[INFO] Migrating schema "state" to version 20160311142740 - egf budgetuploadreport actions
+[INFO] Migrating schema "state" to version 20160311174734 - egf surrender rtgs actions
+[INFO] Migrating schema "state" to version 20160312130228 - egf surrender cheques actions
+[INFO] Migrating schema "state" to version 20160314175046 - egf reappropriation misc status
+[INFO] Migrating schema "state" to version 20160314175054 - egf budget reappropriation sequence py
+[INFO] Migrating schema "state" to version 20160314175103 - egf budgetReAppropriation appconfigs
+[INFO] Migrating schema "state" to version 20160314175111 - egf budgetReAppropriation actions
+[INFO] Migrating schema "state" to version 20160315185600 - egf contraBTB actions
+[INFO] Migrating schema "state" to version 20160317074510 - egf SLreport roleaction
+[INFO] Migrating schema "state" to version 20160317124947 - egf remittance chequeassignment actions
+[INFO] Migrating schema "state" to version 20160317161034 - egf chequeAssigment rtgsAssignment actions for PaymentCreator
+[INFO] Migrating schema "state" to version 20160317161045 - egf budget roles
+[INFO] Migrating schema "state" to version 20160317161055 - egf budgetUpload approve report actions for budgetroles
+[INFO] Migrating schema "state" to version 20160318151031 - egf budget ReAppropriation actions for PaymentCreator
+[INFO] Migrating schema "state" to version 20160318171548 - egf budget ReAppropriation actions for BudgetCreator
+[INFO] Migrating schema "state" to version 20160320133425 - egf function actionMapping
+[INFO] Migrating schema "state" to version 20160320133445 - egf function update
+[INFO] Migrating schema "state" to version 20160321142540 - egf function delete oldAction
+[INFO] Migrating schema "state" to version 20160321162027 - egf voucherheader alter refvhid
+[INFO] Migrating schema "state" to version 20160321190207 - collection miscellaneous receipt roleaction
+[INFO] Migrating schema "state" to version 20160322160732 - egf searchBudget roleaction
+[INFO] Migrating schema "state" to version 20160322171854 - egf function FA roleAction
+[INFO] Migrating schema "state" to version 20160322180812 - egf accountCheques roleactions for PaymentCreator
+[INFO] Migrating schema "state" to version 20160323152142 - egf ChequeAssignmentSave for PaymentCreator
+[INFO] Migrating schema "state" to version 20160323171401 - egf Fund actions DML
+[INFO] Migrating schema "state" to version 20160323171447 - egf fund jpa version add DDL
+[INFO] Migrating schema "state" to version 20160324111607 - commons financialyear sequence
+[INFO] Migrating schema "state" to version 20160324131632 - egf function version
+[INFO] Migrating schema "state" to version 20160325113428 - egf transactionsummary drop columns
+[INFO] Migrating schema "state" to version 20160325113444 - egf financialyear fiscalperiod drop columns
+[INFO] DB: column "createddate" of relation "financialyear" does not exist, skipping
+[INFO] DB: column "lastmodifiedby" of relation "financialyear" does not exist, skipping
+[INFO] DB: column "lastmodifieddate" of relation "financialyear" does not exist, skipping
+[INFO] DB: column "version" of relation "financialyear" does not exist, skipping
+[INFO] DB: column "createdby" of relation "financialyear" does not exist, skipping
+[INFO] DB: column "createddate" of relation "fiscalperiod" does not exist, skipping
+[INFO] DB: column "lastmodifiedby" of relation "fiscalperiod" does not exist, skipping
+[INFO] DB: column "lastmodifieddate" of relation "fiscalperiod" does not exist, skipping
+[INFO] DB: column "version" of relation "fiscalperiod" does not exist, skipping
+[INFO] DB: column "createdby" of relation "fiscalperiod" does not exist, skipping
+[INFO] Migrating schema "state" to version 20160325113454 - egf financialyear fiscalperiod add columns
+[INFO] Migrating schema "state" to version 20160325113505 - egf financialyear fiscalperiod update columns
+[INFO] Migrating schema "state" to version 20160325113514 - egf financialyear delete actions
+[INFO] Migrating schema "state" to version 20160325113524 - egf financialyear actions roleactions
+[INFO] Migrating schema "state" to version 20160325113536 - commons financialyear fiscalperiod sample data
+[INFO] Migrating schema "state" to version 20160328000850 - egf autoreconcile
+[INFO] Migrating schema "state" to version 20160328115352 - egf disable edit account entity
+[INFO] Migrating schema "state" to version 20160328123000 - egf fund disable other then municipal fund
+[INFO] Migrating schema "state" to version 20160328123011 - eg bill subtype new data
+[INFO] Migrating schema "state" to version 20160328172604 - egf fund update
+[INFO] Migrating schema "state" to version 20160328180731 - eis new role actionmapping
+[INFO] Migrating schema "state" to version 20160329114601 - egf instrument challan
+[INFO] Migrating schema "state" to version 20160329115739 - egf FY under periodEndActivities
+[INFO] Migrating schema "state" to version 20160330131407 - egf account cheques serialno data
+[INFO] Migrating schema "state" to version 20160330131427 - egf account cheques serialno
+[INFO] Migrating schema "state" to version 20160330145630 - collection bankremittance roleaction
+[INFO] Migrating schema "state" to version 20160330160016 - eis searchuser roleaction mapping
+[INFO] Migrating schema "state" to version 20160330183336 - eis roleaction map search employee
+[INFO] Migrating schema "state" to version 20160331145939 - egf changing from double to numeric
+[INFO] Migrating schema "state" to version 20160331182013 - egf fund update
+[INFO] Migrating schema "state" to version 20160401122415 - egf update fund versionColumn
+[INFO] Migrating schema "state" to version 20160401132400 - collection enable createvoucher for remittance
+[INFO] Migrating schema "state" to version 20160401132539 - egf bankadvicereport action roleactions
+[INFO] Migrating schema "state" to version 20160401174802 - egf rtgsIssueRegisterReport action roleactions
+[INFO] Migrating schema "state" to version 20160405102801 - egf order budgetreport
+[INFO] Migrating schema "state" to version 20160405112347 - egf FA roleaction fund FY
+[INFO] Migrating schema "state" to version 20160405151021 - egf menutree corrections
+[INFO] Migrating schema "state" to version 20160407123010 - egf budgetgroup alter columns
+[INFO] Migrating schema "state" to version 20160407163229 - collection bankremittance functioncode appconfig
+[INFO] Migrating schema "state" to version 20160411143918 - egf ReconciliationSum action
+[INFO] Migrating schema "state" to version 20160412132921 - egf PC role contraEntries
+[INFO] Migrating schema "state" to version 20160412172119 - collection remittance reports roleaction
+[INFO] Migrating schema "state" to version 20160413161811 - collection collectionindex alter DDL
+[INFO] Migrating schema "state" to version 20160414075644 - collection dishonorCheque action roleaction
+[INFO] Migrating schema "state" to version 20160414075730 - egf instrument dishonor reason ddl
+[INFO] Migrating schema "state" to version 20160414075758 - egf instrument dishonor reason sample data
+[INFO] Migrating schema "state" to version 20160414075832 - egf dishonorcheque alter
+[INFO] Migrating schema "state" to version 20160414075901 - egf dishonorcheque status
+[INFO] Migrating schema "state" to version 20160414170554 - egf dishonorcheque sl detail ddl
+[INFO] Migrating schema "state" to version 20160414192815 - egf manual reconcile actions
+[INFO] Migrating schema "state" to version 20160414223850 - collection remittace voucher roleaction mapping
+[INFO] Migrating schema "state" to version 20160415124219 - egf rename brs menutree
+[INFO] Migrating schema "state" to version 20160415131641 - collection DishonoredCheque roleactions for Remitter
+[INFO] Migrating schema "state" to version 20160415160127 - egf billregister mis add version
+[INFO] Migrating schema "state" to version 20160415173241 - egf billregistermis add version default value
+[INFO] Migrating schema "state" to version 20160419130642 - egf rename brs
+[INFO] Migrating schema "state" to version 20160419133155 - egf process commonAction
+[INFO] Migrating schema "state" to version 20160420144340 - egf PaymentCreator BankToBank role
+[INFO] Migrating schema "state" to version 20160420170926 - egf bankEntriesNotInBankBook Action roleactions
+[INFO] Migrating schema "state" to version 20160420170937 - egf bankentries alter columns
+[INFO] Migrating schema "state" to version 20160420180544 - egf BankStatementEntries-NotinBankBook oldAction disable
+[INFO] Migrating schema "state" to version 20160421121231 - egf scheme subscheme role
+[INFO] Migrating schema "state" to version 20160421164328 - egf instrumentheader serialno alter
+[INFO] Migrating schema "state" to version 20160421164336 - egf createvoucher workflow fix
+[INFO] Migrating schema "state" to version 20160421183329 - egf brs bankreconciler role action map
+[INFO] Migrating schema "state" to version 20160423114457 - egf budgetAddAppropriation roleAction
+[INFO] Migrating schema "state" to version 20160425111312 - collection service details attributes
+[INFO] Migrating schema "state" to version 20160426114657 - collection add function servicedet
+[INFO] Migrating schema "state" to version 20160426150301 - egf bankEntriesNotInBankBook actions
+[INFO] Migrating schema "state" to version 20160426151549 - collection collectionindex alter DDL
+[INFO] Migrating schema "state" to version 20160426174435 - egf reconcile bankstmt role
+[INFO] Migrating schema "state" to version 20160427145134 - collection update function servicedetails
+[INFO] Migrating schema "state" to version 20160427145150 - collection drop column function
+[INFO] Migrating schema "state" to version 20160427175428 - egf subscheme roleaction
+[INFO] Migrating schema "state" to version 20160428152850 - collection update action remittance
+[INFO] Migrating schema "state" to version 20160428154211 - egi workflowmatrix notification
+[INFO] Migrating schema "state" to version 20160503111755 - egf accountentityMaster alter
+[INFO] Migrating schema "state" to version 20160503115310 - collection print challan roleaction
+[INFO] Migrating schema "state" to version 20160504131441 - egf transferClosingBalance actions
+[INFO] Migrating schema "state" to version 20160505111329 - collection ServiceTypeToBankMapping
+[INFO] Migrating schema "state" to version 20160506223204 - collection master servicebankmapping roleaction
+[INFO] Migrating schema "state" to version 20160506223218 - collection alter dept notnull
+[INFO] Migrating schema "state" to version 20160508010525 - collection master servicebankmapping roleaction
+[INFO] Migrating schema "state" to version 20160510181642 - egf scheme subscheme update
+[INFO] Migrating schema "state" to version 20160511150641 - commons fund sequence change
+[INFO] Migrating schema "state" to version 20160513115235 - egf autobankaccountglcode appconfig
+[INFO] Migrating schema "state" to version 20160513150419 - egf cancelBill action
+[INFO] Migrating schema "state" to version 20160513155540 - commons supplier Adding primary key
+[INFO] Migrating schema "state" to version 20160513190714 - egf oldsequence generatror cleanup
+[INFO] Migrating schema "state" to version 20160518145641 - egf fundsource actions DML
+[INFO] Migrating schema "state" to version 20160518145655 - egf altertable fundsource
+[INFO] Migrating schema "state" to version 20160519105335 - collection bankaccountservicemapping aud
+[INFO] Migrating schema "state" to version 20160519120007 - collection roleaction submitallworkflow
+[INFO] Migrating schema "state" to version 20160519140744 - egi drop numbergeneric
+[INFO] Migrating schema "state" to version 20160522222352 - egf closedperiod table
+[INFO] Migrating schema "state" to version 20160522224116 - egf ClosedPeriod actions DML
+[INFO] Migrating schema "state" to version 20160523143343 - collection appconfig bankremittance showcolumn cardonline
+[INFO] Migrating schema "state" to version 20160523170914 - commons fundsource sequence
+[INFO] Migrating schema "state" to version 20160527175000 - collection create index
+[INFO] Migrating schema "state" to version 20160527195210 - egf jv billnumber sequence fix
+[INFO] DB: sequence "seq_jv_billnumber_2016_17" does not exist, skipping
+[INFO] Migrating schema "state" to version 20160527232215 - egf seq jv billnumber update
+[INFO] Migrating schema "state" to version 20160529083120 - egf expense billnumber seq
+[INFO] DB: sequence "seq_expense_billnumber_2015_16" does not exist, skipping
+[INFO] DB: sequence "seq_expense_billnumber_2016_17" does not exist, skipping
+[INFO] Migrating schema "state" to version 20160530125629 - egf budget reapp sequence generator
+[INFO] Migrating schema "state" to version 20160530165257 - collection appconfig bankremittance showremitdate
+[INFO] Migrating schema "state" to version 20160603112150 - eis update displayname
+[INFO] Migrating schema "state" to version 20160603113306 - egf fundsource roleaction
+[INFO] Migrating schema "state" to version 20160603114013 - collection dropduplicateindex
+[INFO] Migrating schema "state" to version 20160606172951 - egf expensebill print view for bilcreator
+[INFO] Migrating schema "state" to version 20160614100626 - egf update financialyear displayname
+[INFO] Migrating schema "state" to version 20160615161215 - commons reportviewer role
+[INFO] Migrating schema "state" to version 20160615173213 - commons reportlink dashboard
+[INFO] Migrating schema "state" to version 20160615173929 - collection roleactionmapping erpreportviewer
+[INFO] Migrating schema "state" to version 20160616111654 - egf Erp ReportViewerRole RoleActionmapping
+[INFO] Migrating schema "state" to version 20160617123900 - collection colldetailpurpose
+[INFO] Migrating schema "state" to version 20160620084511 - collection remittance DDL
+[INFO] Migrating schema "state" to version 20160620084527 - collection remittance status
+[INFO] Migrating schema "state" to version 20160621220059 - collection coll view access roleaction
+[INFO] Migrating schema "state" to version 20160621220108 - collection coll cancel access roleaction
+[INFO] Migrating schema "state" to version 20160621220115 - collection coll master access roleaction
+[INFO] Migrating schema "state" to version 20160622183441 - demand eg bill detail purpose field added
+[INFO] Migrating schema "state" to version 20160623174251 - egf chequeAssignment action
+[INFO] Migrating schema "state" to version 20160624151154 - egi crosshierarchy action and roleaction
+[INFO] Migrating schema "state" to version 20160624172226 - egi user lockout
+[INFO] Migrating schema "state" to version 20160627121004 - egi update crosshierarchy url
+[INFO] Migrating schema "state" to version 20160628160729 - collection remittance addcolumn bankccount
+[INFO] Migrating schema "state" to version 20160628223132 - collection remittance voucher challanreceiptreportaction
+[INFO] Migrating schema "state" to version 20160629163737 - commons altertable uomcategory
+[INFO] Migrating schema "state" to version 20160629163743 - commons UOMCategory actions DML
+[INFO] Migrating schema "state" to version 20160629174957 - commons uomcategory sequence
+[INFO] Migrating schema "state" to version 20160702133742 - collection summary headwise report action
+[INFO] Migrating schema "state" to version 20160704122445 - collection roleaction ajaxservice classification
+[INFO] Migrating schema "state" to version 20160713154527 - egf chequeformat createtable
+[INFO] Migrating schema "state" to version 20160715180052 - egf chequeformatprint action
+[INFO] Migrating schema "state" to version 20160715185653 - egi feature
+[INFO] Migrating schema "state" to version 20160718132139 - collection coll viewaccess missing actions
+[INFO] Migrating schema "state" to version 20160718154737 - commons altertable uom
+[INFO] Migrating schema "state" to version 20160718154745 - commons UOM actions DML
+[INFO] Migrating schema "state" to version 20160718154753 - commons uom sequence
+[INFO] Migrating schema "state" to version 20160719185429 - egi delete duplicate roleaction
+[INFO] Migrating schema "state" to version 20160721151113 - collection roleaction mapping ajaxLoadServiceByCategoryForChallan
+[INFO] Migrating schema "state" to version 20160726164647 - egf expenseCutOffDate action
+[INFO] Migrating schema "state" to version 20160726164719 - egf cutOffDate appConfig
+[INFO] Migrating schema "state" to version 20160727143336 - collection add payee email
+[INFO] Migrating schema "state" to version 20160728144909 - egf expensebill deleteAction
+[INFO] Migrating schema "state" to version 20160729120848 - egi updatemenu
+[INFO] Migrating schema "state" to version 20160801120410 - demand add column email egbill DDL
+[INFO] Migrating schema "state" to version 20160802151715 - egi feature mapping
+[INFO] Migrating schema "state" to version 20160804120344 - collection servicedetailname unique
+[INFO] Migrating schema "state" to version 20160804175209 - commons bankaccount addcolumn chequeformat
+[INFO] Migrating schema "state" to version 20160804175254 - egf chequeprinting roleaction
+[INFO] Migrating schema "state" to version 20160804175303 - egf chequeprinting appconfig
+[INFO] Migrating schema "state" to version 20160804175345 - egf chequeprinting appconfig values
+[INFO] Migrating schema "state" to version 20160805112418 - collection dataentry cutoffdate
+[INFO] Migrating schema "state" to version 20160805165428 - collection update cutoffdate
+[INFO] Migrating schema "state" to version 20160809105346 - eis feature mapping
+[INFO] Migrating schema "state" to version 20160810152300 - egi applicationIndex alter DDL
+[INFO] Migrating schema "state" to version 20160811131307 - egf feature transaction mapping
+[INFO] Migrating schema "state" to version 20160811131325 - egf feature reports rolemapping
+[INFO] Migrating schema "state" to version 20160811131342 - egf feature master rolemapping
+[INFO] Migrating schema "state" to version 20160811131404 - egf feature deductionAndBudget rolemapping
+[INFO] Migrating schema "state" to version 20160815225239 - egi update app config
+[INFO] Migrating schema "state" to version 20160816103858 - collection feature action mapping
+[INFO] Migrating schema "state" to version 20160816171846 - egf budetconfig ddl
+[INFO] Migrating schema "state" to version 20160816193852 - egf BudgetCheckConfig actions DML
+[INFO] Migrating schema "state" to version 20160825110039 - egf bankAdvice action
+[INFO] Migrating schema "state" to version 20160825111303 - egf feature rolemapping
+[INFO] Migrating schema "state" to version 20160826004946 - egi alter workflow type
+[INFO] Migrating schema "state" to version 20160826144517 - egf bankAdvice rolemapping
+[INFO] Migrating schema "state" to version 20160826163610 - demand added indexes egbill
+[INFO] DB: index "idx_bill_demand" does not exist, skipping
+[INFO] DB: index "idx_bill_cancelled" does not exist, skipping
+[INFO] DB: index "idx_bill_billtype" does not exist, skipping
+[INFO] Migrating schema "state" to version 20160830122729 - egf budgetAppReport action
+[INFO] Migrating schema "state" to version 20160830122902 - egf feature budgetAppReport roleMapping
+[INFO] Migrating schema "state" to version 20160830132523 - egi update egaction version not null
+[INFO] Migrating schema "state" to version 20160831125628 - collection missing feature action
+[INFO] Migrating schema "state" to version 20160831152709 - egf bankreconciler rolemapping
+[INFO] Migrating schema "state" to version 20160831193925 - eis employeeassignmentreport roleactionmappings
+[INFO] Migrating schema "state" to version 20160901172809 - egf chrtofaccount action
+[INFO] Migrating schema "state" to version 20160901172842 - egf coa feature rolemapping
+[INFO] Migrating schema "state" to version 20160902125616 - egf coa tree action
+[INFO] Migrating schema "state" to version 20160907111811 - egf budgetappregister rename
+[INFO] Migrating schema "state" to version 20160907173309 - egf coatree action
+[INFO] Migrating schema "state" to version 20160908112147 - egf chequemaster action
+[INFO] Migrating schema "state" to version 20160909103749 - egf bankmaster action
+[INFO] Migrating schema "state" to version 20160909135011 - egf bank feature rolemapping
+[INFO] Migrating schema "state" to version 20160913101705 - egi crosshierarchy boundarytype appconfig
+[INFO] Migrating schema "state" to version 20160916125345 - collection missing roleaction collectionoperator
+[INFO] Migrating schema "state" to version 20160919104320 - eis assignmentreport viewemployee roleaction
+[INFO] Migrating schema "state" to version 20160921170103 - eis primarypositionajax roleaction
+[INFO] Migrating schema "state" to version 20160922112506 - commons update module sequence
+[INFO] Migrating schema "state" to version 20160922114318 - egf chequeformat table
+[INFO] Migrating schema "state" to version 20160922171524 - egi add initiatorposition state
+[INFO] Migrating schema "state" to version 20161004132702 - collection dishonorcheque details
+[INFO] Migrating schema "state" to version 20161004132716 - collection dishonorcheque status
+[INFO] Migrating schema "state" to version 20161013154624 - egi boundary fk constraint ddl
+[INFO] Migrating schema "state" to version 20161014134221 - egf loadbudgetdetail action
+[INFO] Migrating schema "state" to version 20161014134248 - egf budgetdetail alter column
+[INFO] Migrating schema "state" to version 20161014144516 - egf budgetdetail status
+[INFO] Migrating schema "state" to version 20161014173449 - collection create servicedetails index
+[INFO] Migrating schema "state" to version 20161014174759 - egf add columns index contra
+[INFO] Migrating schema "state" to version 20161017103519 - egf budgetdefinition master
+[INFO] Migrating schema "state" to version 20161017103530 - egf budgetgroup master
+[INFO] Migrating schema "state" to version 20161017104908 - egf budget alter column
+[INFO] Migrating schema "state" to version 20161017123738 - egf budget columnrename
+[INFO] Migrating schema "state" to version 20161017161450 - egf budgetdetail update version
+[INFO] Migrating schema "state" to version 20161017173358 - egf budget alterversion default
+[INFO] Migrating schema "state" to version 20161021102122 - egf changein ajaxurl
+[INFO] Migrating schema "state" to version 20161021111604 - collection remittance schedular
+[INFO] Migrating schema "state" to version 20161021204715 - egf budgetdetail createaction
+[INFO] Migrating schema "state" to version 20161021204724 - egf budgetdetail unique constraint
+[INFO] Migrating schema "state" to version 20161021204735 - egf budgetdetail workflow
+[INFO] Migrating schema "state" to version 20161024150756 - eis employeepositionreport roleactionmapping
+[INFO] Migrating schema "state" to version 20161030110636 - collection servicemodulemapping DDL
+[INFO] Migrating schema "state" to version 20161030160308 - collection servicemodulemapping wtms delete
+[INFO] Migrating schema "state" to version 20161103120359 - egf budget approval
+[INFO] Migrating schema "state" to version 20161103162447 - egf financials viewaccess role
+[INFO] Migrating schema "state" to version 20161103181151 - egf next sequence budget
+[INFO] Migrating schema "state" to version 20161104045548 - egf billregister billstatus drop notnull const
+[INFO] Migrating schema "state" to version 20161104050059 - egf expensebill with subledgers actions
+[INFO] Migrating schema "state" to version 20161104132526 - egf delete budgetdetail group oldaction
+[INFO] Migrating schema "state" to version 20161104133944 - egf reorder budgetingmenutree
+[INFO] Migrating schema "state" to version 20161104143810 - egi applicationindex alter DDL
+[INFO] Migrating schema "state" to version 20161104174803 - collection addcolumn revenueward collectionindex
+[INFO] Migrating schema "state" to version 20161105114442 - egf expensebill rejected egw status
+[INFO] Migrating schema "state" to version 20161105122725 - egf update expense bill actions
+[INFO] Migrating schema "state" to version 20161106050201 - egf view expense bill actions
+[INFO] Migrating schema "state" to version 20161107145812 - commons eg checklists hbm to jpa changes
+[INFO] Migrating schema "state" to version 20161108124435 - eis view access roleaction
+[INFO] Migrating schema "state" to version 20161109121907 - egf budget reject action
+[INFO] Migrating schema "state" to version 20161109190147 - egf budget workflow
+[INFO] Migrating schema "state" to version 20161115130655 - egf journalvoucher actions
+[INFO] Migrating schema "state" to version 20161115140439 - eis load toaudit
+[INFO] Migrating schema "state" to version 20161118153716 - egf bill edit appconfigvalue
+[INFO] Migrating schema "state" to version 20161118163102 - eis employeepositions roleaction
+[INFO] Migrating schema "state" to version 20161120131047 - egf ajax journalvoucher actions
+[INFO] Migrating schema "state" to version 20161122164753 - egf get accountdetailtypes by glcodeid actions
+[INFO] Migrating schema "state" to version 20161123115233 - egf enabled new expensebill screen
+[INFO] Migrating schema "state" to version 20161128124635 - commons chartofaccount aud
+[INFO] Migrating schema "state" to version 20161128154153 - commons bank bankbranch jpa changes
+[INFO] Migrating schema "state" to version 20161128165422 - egf create bank actions
+[INFO] Migrating schema "state" to version 20161128214210 - egf create bankbranch actions
+[INFO] Migrating schema "state" to version 20161129122100 - egf create bankaccount actions
+[INFO] Migrating schema "state" to version 20161208181202 - eis load position proc
+[INFO] Migrating schema "state" to version 20161215145156 - collection alter collectionheader
+[INFO] Migrating schema "state" to version 20161215160256 - demand egbill alter consumerTypeUpdate
+[INFO] Migrating schema "state" to version 20161216130211 - collection createindex
+[INFO] DB: index "idx_collhd_consumercode" does not exist, skipping
+[INFO] DB: index "idx_collindex_consumercode" does not exist, skipping
+[INFO] Migrating schema "state" to version 20161216173014 - egf financialyear fiscalperiod sampledata
+[INFO] Migrating schema "state" to version 20161217211505 - commons nationality DDL
+[INFO] Migrating schema "state" to version 20161218132007 - commons nationality intialdata
+[INFO] Migrating schema "state" to version 20161220185206 - collection collectionindex DDL
+[INFO] DB: index "idx_collidx_billingservice" does not exist, skipping
+[INFO] DB: index "idx_collidx_consumertype" does not exist, skipping
+[INFO] Migrating schema "state" to version 20161222114015 - eis ajaxloaddesignation withcurrentdesignation
+[INFO] Migrating schema "state" to version 20161222164803 - egf bankbalance appconfig
+[INFO] Migrating schema "state" to version 20161222164910 - egf bankbalance appconfig value
+[INFO] Migrating schema "state" to version 20161222180234 - commons nationality intialdata update
+[INFO] Migrating schema "state" to version 20161223103821 - eis employee assignment aud
+[INFO] Migrating schema "state" to version 20161227154724 - egf bank account setup
+[INFO] Migrating schema "state" to version 20170103152109 - collection sbimops service data
+[INFO] Migrating schema "state" to version 20170103152752 - collection billingservice pgi appconfig
+[INFO] Migrating schema "state" to version 20170103185251 - commons educational qualification DML
+[INFO] Migrating schema "state" to version 20170104151602 - eis updateandview searchactions
+[INFO] Migrating schema "state" to version 20170104160646 - eis contactdetails actions roleactions
+[INFO] Migrating schema "state" to version 20170105121129 - eis dpo roleaction for updatecontactdetail
+[INFO] Migrating schema "state" to version 20170106162550 - eis updatecontactdetail roleaction
+[INFO] Migrating schema "state" to version 20170109145341 - egf intrument card
+[INFO] Migrating schema "state" to version 20170110182317 - egf alter coaaudit billregistermis table
+[INFO] Migrating schema "state" to version 20170117134528 - demand add version ddl
+[INFO] Migrating schema "state" to version 20170118111654 - collection search application viewaccess
+[INFO] Migrating schema "state" to version 20170119175201 - collection accountcodes paymentgateway
+[INFO] Migrating schema "state" to version 20170119175225 - collection ajax onlinereceipt createdby roleaction
+[INFO] Migrating schema "state" to version 20170127182544 - commons accountdetailtype aud
+[INFO] Migrating schema "state" to version 20170207120944 - collection addcolumn conflict collectionindex
+[INFO] Migrating schema "state" to version 20170218184041 - egi update boundry action url
+[INFO] Migrating schema "state" to version 20170222134020 - demand add index
+[INFO] Migrating schema "state" to version 20170227135249 - egi create business user
+[INFO] Migrating schema "state" to version 20170313111610 - egi applicationindex alter DDL
+[INFO] Migrating schema "state" to version 20170313133010 - egi applicationindex alter DDL
+[INFO] Migrating schema "state" to version 20170315110531 - egi add previous state ref column
+[INFO] Migrating schema "state" to version 20170323130534 - egi adding previousowner column
+[INFO] Migrating schema "state" to version 20170324112859 - egf remitrecovery bank
+[INFO] Migrating schema "state" to version 20170403125612 - bpa core ddl
+[INFO] Migrating schema "state" to version 20170403175010 - bpa fiedchanges
+[INFO] Migrating schema "state" to version 20170403175515 - bpa application action
+[INFO] Migrating schema "state" to version 20170403175610 - bpa sample demandreason master
+[INFO] Migrating schema "state" to version 20170404153853 - egf egbillregister type update
+[INFO] Migrating schema "state" to version 20170404171526 - bpa workflow status
+[INFO] Migrating schema "state" to version 20170405093621 - bpa stake holder master roleaction
+[INFO] Migrating schema "state" to version 20170405105949 - bpa dept code app config value
+[INFO] Migrating schema "state" to version 20170405111545 - bpa master data
+[INFO] Migrating schema "state" to version 20170405124910 - bpa update actions
+[INFO] Migrating schema "state" to version 20170405144905 - bpa Applicant removingApplication FK
+[INFO] Migrating schema "state" to version 20170405181051 - egf financialyear activeforpst true
+[INFO] Migrating schema "state" to version 20170406124602 - bpa documentScrutiny ddl
+[INFO] Migrating schema "state" to version 20170406140745 - bpa checklist document ddl
+[INFO] Migrating schema "state" to version 20170407131510 - bpa checklist disabledocument
+[INFO] Migrating schema "state" to version 20170407132203 - collection manual receipt configuration
+[INFO] Migrating schema "state" to version 20170407200523 - bpa sms email for doc scrutiny roleaction
+[INFO] Migrating schema "state" to version 20170408141532 - bpa get stake holders ajax roleaction
+[INFO] Migrating schema "state" to version 20170408152835 - bpa document scrutiny roleaction
+[INFO] Migrating schema "state" to version 20170410174828 - bpa search appln roleaction
+[INFO] Migrating schema "state" to version 20170417135538 - bpa lettertoparty document
+[INFO] Migrating schema "state" to version 20170418131426 - bpa masterdata fornoc and addtnalcolumns
+[INFO] Migrating schema "state" to version 20170418160110 - bpa CheckList detail Inspection
+[INFO] Migrating schema "state" to version 20170418181550 - bpa insepction createView corrected
+[INFO] Migrating schema "state" to version 20170418185521 - bpa removed unnecessary roleaction
+[INFO] Migrating schema "state" to version 20170419112021 - bpa changed column type
+[INFO] Migrating schema "state" to version 20170420154434 - egf billaccounting appconfig
+[INFO] Migrating schema "state" to version 20170420173020 - bpa checklist inspection
+[INFO] Migrating schema "state" to version 20170421160216 - bpa user role mapping sample data
+[INFO] Migrating schema "state" to version 20170421160312 - bpa wf matrix changes
+[INFO] Migrating schema "state" to version 20170422115725 - bpa feecalculation changes
+[INFO] Migrating schema "state" to version 20170422125145 - bpa demandreason updation
+[INFO] Migrating schema "state" to version 20170422130754 - bpa workflow matrixchanges
+[INFO] Migrating schema "state" to version 20170422161823 - bpa inspection roleaction mapping
+[INFO] Migrating schema "state" to version 20170422172029 - bpa inspection sequencefornumbergeneration
+[INFO] Migrating schema "state" to version 20170424151812 - bpa get documentby servicetype roleaction
+[INFO] Migrating schema "state" to version 20170425105610 - egi module alter ddl
+[INFO] Migrating schema "state" to version 20170425143446 - bpa demand notice roleaction
+[INFO] Migrating schema "state" to version 20170425153010 - bpa collectFees actions
+[INFO] Migrating schema "state" to version 20170427112328 - bpa lettertoparty document
+[INFO] Migrating schema "state" to version 20170427182320 - bpa approvalcycle matrix
+[INFO] Migrating schema "state" to version 20170428105047 - bpa rejection matrix
+[INFO] Migrating schema "state" to version 20170429103029 - bpa matrix changes
+[INFO] Migrating schema "state" to version 20170502115537 - bpa lettertoparty roleaction
+[INFO] Migrating schema "state" to version 20170502141948 - bpa lp status wfmatrix
+[INFO] Migrating schema "state" to version 20170503183031 - bpa lettertoparty
+[INFO] Migrating schema "state" to version 20170504182220 - bpa inspection checListMaster
+[INFO] Migrating schema "state" to version 20170505003245 - bpa approval cycle matrix
+[INFO] Migrating schema "state" to version 20170505130525 - bpa appplication amenities createtable
+[INFO] Migrating schema "state" to version 20170505130810 - bpa appplication amenities masterData
+[INFO] Migrating schema "state" to version 20170505165141 - egf drop duplicate index
+[INFO] Migrating schema "state" to version 20170505165154 - demand drop duplicate index
+[INFO] Migrating schema "state" to version 20170506153347 - egi public role for anonymous user
+[INFO] Migrating schema "state" to version 20170508110820 - bpa extra fields sitedetail
+[INFO] Migrating schema "state" to version 20170508173655 - portal changes core ddl
+[INFO] Migrating schema "state" to version 20170508183655 - portal firm roleaction
+[INFO] Migrating schema "state" to version 20170508184655 - portal firm alter
+[INFO] Migrating schema "state" to version 20170509134655 - portal action update
+[INFO] Migrating schema "state" to version 20170509154655 - egf alter table
+[INFO] Migrating schema "state" to version 20170509160318 - bpa generate permit order roleaction
+[INFO] Migrating schema "state" to version 20170509184655 - portal firm alter
+[INFO] Migrating schema "state" to version 20170510140110 - bpa occupancy master
+[INFO] Migrating schema "state" to version 20170510140204 - bpa occupancy master data
+[INFO] Migrating schema "state" to version 20170511150110 - bpa new masterData
+[INFO] Migrating schema "state" to version 20170511150639 - egi add not null constraint on feature
+[INFO] Migrating schema "state" to version 20170511191227 - bpa sitedetails new field
+[INFO] Migrating schema "state" to version 20170512131226 - bpa newfileds related Regularization
+[INFO] Migrating schema "state" to version 20170512181450 - collection roleactionmap
+[INFO] Migrating schema "state" to version 20170514165532 - collection branchuser map
+[INFO] Migrating schema "state" to version 20170515141024 - collection appconfigvalue
+[INFO] Migrating schema "state" to version 20170515144645 - egf audit fields having lm timestamp
+[INFO] Migrating schema "state" to version 20170515154655 - portal inbox alter
+[INFO] Migrating schema "state" to version 20170516135841 - portal service type roleaction
+[INFO] Migrating schema "state" to version 20170516145841 - portal eg role
+[INFO] Migrating schema "state" to version 20170516181122 - bpa demandreason updation
+[INFO] Migrating schema "state" to version 20170516203145 - bpa dmdReason BpaFee master
+[INFO] Migrating schema "state" to version 20170517114256 - bpa sitedetails addtnl fields
+[INFO] Migrating schema "state" to version 20170517132010 - bpa update demandreason Well
+[INFO] Migrating schema "state" to version 20170517135841 - portal portal roleaction
+[INFO] Migrating schema "state" to version 20170517145841 - portal portal inbox alter
+[INFO] Migrating schema "state" to version 20170518191923 - bpa building details addtnl fields
+[INFO] Migrating schema "state" to version 20170519130115 - bpa occupancyMaster area
+[INFO] Migrating schema "state" to version 20170523102005 - bpa portal integration
+[INFO] Migrating schema "state" to version 20170523124059 - egi crossheirarchy alter table
+[INFO] Migrating schema "state" to version 20170523144910 - egi update role names
+[INFO] Migrating schema "state" to version 20170523160854 - egi add column internal
+[INFO] Migrating schema "state" to version 20170524152635 - bpa servicetypewise citizenapplication
+[INFO] Migrating schema "state" to version 20170524152740 - bpa servicetypewise citizenactions
+[INFO] Migrating schema "state" to version 20170524173420 - bpa delete oldportalservice
+[INFO] Migrating schema "state" to version 20170524234532 - bpa get occupancy details roleaction
+[INFO] Migrating schema "state" to version 20170525103601 - collection bankcollectionremitter roleactionmap
+[INFO] Migrating schema "state" to version 20170525105842 - portal firm update menutree
+[INFO] Migrating schema "state" to version 20170525115842 - portal portal inbox data migrate
+[INFO] Migrating schema "state" to version 20170525122345 - portal notification ddl
+[INFO] Migrating schema "state" to version 20170525181156 - egf alter createddate datattype
+[INFO] Migrating schema "state" to version 20170526165503 - portal createproperty change link uppercase
+[INFO] Migrating schema "state" to version 20170526174530 - bpa draft application
+[INFO] Migrating schema "state" to version 20170526223627 - collection bankcollectionremitter roleactionmap
+[INFO] Migrating schema "state" to version 20170529131029 - bpa ordering occupancy and reject btn at approval
+[INFO] Migrating schema "state" to version 20170530152230 - egf update version nullvalue
+[INFO] Migrating schema "state" to version 20170530205635 - bpa letter to party new fields
+[INFO] Migrating schema "state" to version 20170531124027 - amenity portal application
+[INFO] Migrating schema "state" to version 20170601155616 - disable online payment busineesorcitizen
+[INFO] Migrating schema "state" to version 20170601164332 - bpa lp reason master datd
+[INFO] Migrating schema "state" to version 20170606113644 - collection collectionreportviewer roleaction
+[INFO] Migrating schema "state" to version 20170606122547 - bpa lp document master data
+[INFO] Migrating schema "state" to version 20170607134645 - bpa rename admissionfee applicationfee
+[INFO] Migrating schema "state" to version 20170607172545 - commons accountdetailtype update
+[INFO] Migrating schema "state" to version 20170609103316 - collection bankBranchToUserMap master roleactionmap
+[INFO] Migrating schema "state" to version 20170609161027 - bpa roleaction for business user
+[INFO] Migrating schema "state" to version 20170609180906 - egi wf matrix current next designation alter
+[INFO] Migrating schema "state" to version 20170609180916 - egf egbillregister wf matrix
+[INFO] Migrating schema "state" to version 20170612131029 - egi new role for emp portal access
+[INFO] Migrating schema "state" to version 20170612172955 - eis ajax designations for active assignments by dept and desg
+[INFO] Migrating schema "state" to version 20170615104715 - bpa applicant ddl
+[INFO] Migrating schema "state" to version 20170620174201 - egi userrole auditing
+[INFO] Migrating schema "state" to version 20170621145526 - bpa citizendisclaimer appconfig
+[INFO] Migrating schema "state" to version 20170621145544 - bpa adminRole stakeHolderActionMap
+[INFO] Migrating schema "state" to version 20170621171626 - bpa inspection document ddl
+[INFO] Migrating schema "state" to version 20170622191233 - egi feature auditing
+[INFO] Migrating schema "state" to version 20170623132134 - bpa servicewise status report roleaction
+[INFO] Migrating schema "state" to version 20170623203840 - bpa zonewise services report roleaction
+[INFO] Migrating schema "state" to version 20170628100425 - bpa applicant ddl
+[INFO] Migrating schema "state" to version 20170628113839 - collection onlinepayment status
+[INFO] Migrating schema "state" to version 20170628114042 - egf rebate accountcode purpose
+[INFO] Migrating schema "state" to version 20170629190942 - bpa construction stages master data
+[INFO] Migrating schema "state" to version 20170630111223 - egf voucher action
+[INFO] Migrating schema "state" to version 20170630143157 - bpa stakeholder changes
+[INFO] Migrating schema "state" to version 20170630165052 - bpa ajaxApplicantDetails dml
+[INFO] Migrating schema "state" to version 20170630172639 - bpa document ismandatory
+[INFO] Migrating schema "state" to version 20170630183300 - bpa ajaxApplicantDetailsByEmailId dml
+[INFO] Migrating schema "state" to version 20170704231812 - bpa postal address ddl
+[INFO] Migrating schema "state" to version 20170704231946 - bpa postal address sample data
+[INFO] Migrating schema "state" to version 20170705112041 - collection creatorreceiptcancelrole appconfig
+[INFO] Migrating schema "state" to version 20170706164021 - bpa fees audit log ddl
+[INFO] Migrating schema "state" to version 20170707125944 - eis alter table assignment add employee constraint
+[INFO] Migrating schema "state" to version 20170707170216 - bpa for existing permit ddl
+[INFO] Migrating schema "state" to version 20170714151513 - bpa updatefeesmaster roleaction
+[INFO] Migrating schema "state" to version 20170714151525 - bpa audit updatefeesmaster ddl
+[INFO] Migrating schema "state" to version 20170716232833 - bpa floor details ddl
+[INFO] Migrating schema "state" to version 20170717200805 - bpa ajaxLoadVillageByWard
+[INFO] Migrating schema "state" to version 20170719001215 - bpa portal new services roleaction
+[INFO] Migrating schema "state" to version 20170719190527 - collection axispgi
+[INFO] Migrating schema "state" to version 20170720115429 - bpa tower pole noc checklist
+[INFO] Migrating schema "state" to version 20170720174645 - bpa scheme usage master ddl
+[INFO] Migrating schema "state" to version 20170721131136 - bpa floor wise occupancy ddl
+[INFO] Migrating schema "state" to version 20170721153035 - bpa scheme usage roleaction
+[INFO] Migrating schema "state" to version 20170721153622 - bpa scheme sampledata
+[INFO] Migrating schema "state" to version 20170721173746 - egi remove unwanted roles from admin user
+[INFO] Migrating schema "state" to version 20170725131703 - egi password reset username autocomplete action
+[INFO] Migrating schema "state" to version 20170725201833 - bpa fee changes
+[INFO] Migrating schema "state" to version 20170801133252 - bpa mixed occupancy master data
+[INFO] Migrating schema "state" to version 20170801204534 - bpa schemelandusagecolumnchanges
+[INFO] Migrating schema "state" to version 20170801204852 - bpa schemelandusagemasterdata
+[INFO] Migrating schema "state" to version 20170801205746 - bpa inspection changes dml
+[INFO] Migrating schema "state" to version 20170802125623 - eis positionsearch roleaction
+[INFO] Migrating schema "state" to version 20170802164929 - bpa appointment location master and ddl
+[INFO] Migrating schema "state" to version 20170804165032 - bpa get approval pos by boundary roleaction
+[INFO] Migrating schema "state" to version 20170807172525 - egi remove unwanted roles from admin user
+[INFO] Migrating schema "state" to version 20170807172535 - egi user actions
+[INFO] Migrating schema "state" to version 20170807172551 - egi login audit report
+[INFO] Migrating schema "state" to version 20170807180429 - bpa tower construction checklist documents
+[INFO] Migrating schema "state" to version 20170809172943 - egi audit reports
+[INFO] Migrating schema "state" to version 20170809183642 - bpa remove duplicate wf matrix of rejection
+[INFO] Migrating schema "state" to version 20170817161445 - bpa buildingdetail feepaymentaccept flag
+[INFO] Migrating schema "state" to version 20170818194028 - bpa building floordetail validation appconfig
+[INFO] Migrating schema "state" to version 20170821154806 - bpa ajaxloadelectionwardbyrevenueward
+[INFO] Migrating schema "state" to version 20170822120013 - egf document upload table
+[INFO] Migrating schema "state" to version 20170822120033 - egf billdoc download insert
+[INFO] Migrating schema "state" to version 20170822221629 - bpa checklist document dml
+[INFO] Migrating schema "state" to version 20170823120446 - egf document add column
+[INFO] Migrating schema "state" to version 20170823120458 - egf bankstatement upload action
+[INFO] Migrating schema "state" to version 20170830130108 - egi alter boundary ishistory column
+[INFO] Migrating schema "state" to version 20170830130118 - egi boundary update
+[INFO] Migrating schema "state" to version 20170830132227 - collection roleactionmap
+[INFO] Migrating schema "state" to version 20170830151727 - bpa lp wf matrix changes
+[INFO] Migrating schema "state" to version 20170831173049 - bpa registrar office village mapping ddl
+[INFO] Migrating schema "state" to version 20170901180245 - bpa registrar office village roleaction
+[INFO] Migrating schema "state" to version 20170906215029 - bpa existing-building details ddl
+[INFO] Migrating schema "state" to version 20170911200610 - egf receiptpayment actions
+[INFO] Migrating schema "state" to version 20170912162130 - bpa lp add new column
+[INFO] Migrating schema "state" to version 20170913200640 - egi new system user
+[INFO] Migrating schema "state" to version 20170914233535 - bpa additional checklist document
+[INFO] Migrating schema "state" to version 20170915172543 - bpa revenue ward roleaction mapping
+[INFO] Migrating schema "state" to version 20170920095100 - egi alter fileStore mapper
+[INFO] Migrating schema "state" to version 20170927160519 - egi city preference changes
+[INFO] Migrating schema "state" to version 20170927161020 - egi city preference google api key sample
+[INFO] Migrating schema "state" to version 20171004173827 - bpa permit conditions ddl and masterdata
+[INFO] Migrating schema "state" to version 20171008223236 - bpa save notices ddl
+[INFO] Migrating schema "state" to version 20171017125123 - bpa checklist document for polestructures
+[INFO] Migrating schema "state" to version 20171020162536 - egi rename loginaudit table
+[INFO] Migrating schema "state" to version 20171023135252 - egi wfmatrix ddl
+[INFO] Migrating schema "state" to version 20171027160743 - bpa rejection reasonmstr data roleaction
+[INFO] Migrating schema "state" to version 20171029144441 - egi add boundary master code
+[INFO] Migrating schema "state" to version 20171102110254 - egf alter billmis narrationsize
+[INFO] Migrating schema "state" to version 20171106144936 - egi ownergroup sequence
+[INFO] Migrating schema "state" to version 20171106144951 - commons ownergroup seq setwith maxof position seq
+[INFO] Migrating schema "state" to version 20171110183816 - egi remove nondefault actions from employeerole
+[INFO] Migrating schema "state" to version 20171209134348 - egi alter eg audit column
+[INFO] Migrating schema "state" to version 20171219110657 - egf voucher sequence creation
+[INFO] DB: sequence "sq_1_ejv_201516" does not exist, skipping
+[INFO] DB: sequence "sq_1_bpv_201516" does not exist, skipping
+[INFO] DB: sequence "sq_1_jvg_cgvn_201516" does not exist, skipping
+[INFO] Migrating schema "state" to version 20171220160700 - demand add version column
+[INFO] Migrating schema "state" to version 20171220160710 - demand remove timestamp column
+[INFO] Migrating schema "state" to version 20171225142526 - bpa permit conditions master changes new
+[INFO] Migrating schema "state" to version 20171226121302 - egf voucher number seq
+[INFO] DB: sequence "sq_1_brv_201516" does not exist, skipping
+[INFO] DB: sequence "sq_1_cjv_201516" does not exist, skipping
+[INFO] DB: sequence "sq_1_csl_201516" does not exist, skipping
+[INFO] DB: sequence "sq_1_csl_201617" does not exist, skipping
+[INFO] DB: sequence "sq_1_gjv_201516" does not exist, skipping
+[INFO] DB: sequence "sq_1_csl_cgvn_201516" does not exist, skipping
+[INFO] Migrating schema "state" to version 20171228183421 - demand index on id bill of eg bill detail
+[INFO] Migrating schema "state" to version 20180102152243 - egf financialyear 201819
+[INFO] Migrating schema "state" to version 20180104132934 - egi wardbylocality action
+[INFO] Migrating schema "state" to version 20180201202035 - egi wf matrix current status alter
+[INFO] Migrating schema "state" to version 20180201202036 - egi wf matrix next status alter
+[INFO] Migrating schema "state" to version 20180201202037 - bpa new workflow changes
+[INFO] Migrating schema "state" to version 20180206190223 - bpa additional fee update and noc ddl
+[INFO] Migrating schema "state" to version 20180208185523 - bpa slot
+[INFO] Migrating schema "state" to version 20180209120859 - bpa no of slots app status
+[INFO] Migrating schema "state" to version 20180213141919 - edcr core ddl
+[INFO] Migrating schema "state" to version 20180213175603 - bpa holiday mstr role action dml
+[INFO] Migrating schema "state" to version 20180213175616 - bpa holiday mstr ddl
+[INFO] Migrating schema "state" to version 20180214211854 - bpa update occupancy dml
+[INFO] Migrating schema "state" to version 20180214211943 - bpa workflow matrix changes
+[INFO] Migrating schema "state" to version 20180214212037 - bpa scrutiny scheduling roleaction mapping
+[INFO] Migrating schema "state" to version 20180216144903 - edcr EdcrApplication ddl
+[INFO] Migrating schema "state" to version 20180216151004 - edcr planrule
+[INFO] Migrating schema "state" to version 20180216151201 - edcr planerule data sample
+[INFO] Migrating schema "state" to version 20180217133124 - bpa slot mapping roleaction
+[INFO] Migrating schema "state" to version 20180217133141 - bpa slotmapping alter
+[INFO] Migrating schema "state" to version 20180218222037 - bpa reschedule scrutiny workflow changes
+[INFO] Migrating schema "state" to version 20180218222128 - bpa reschedule scrutiny roleaction
+[INFO] Migrating schema "state" to version 20180219113721 - edcr EdcrApplication actions DML
+[INFO] Migrating schema "state" to version 20180219113846 - bpa remove digi sign workflow
+[INFO] Migrating schema "state" to version 20180220135408 - edcr plan info
+[INFO] Migrating schema "state" to version 20180220135414 - edcr application
+[INFO] Migrating schema "state" to version 20180220135420 - edcr dxf document
+[INFO] Migrating schema "state" to version 20180220214037 - bpa document scrutiny ddl
+[INFO] Migrating schema "state" to version 20180221095912 - bpa search document scrutiny egaction
+[INFO] Migrating schema "state" to version 20180221105133 - edcr alter dxf document
+[INFO] Migrating schema "state" to version 20180221125040 - bpa oneday permit ddl
+[INFO] Migrating schema "state" to version 20180222012628 - edcr dxf ddl and roleaction
+[INFO] Migrating schema "state" to version 20180222124708 - edcr applicationno sequence
+[INFO] Migrating schema "state" to version 20180222200726 - bpa slot application ddl
+[INFO] Migrating schema "state" to version 20180223002239 - edcr resubmit plan roleaction
+[INFO] Migrating schema "state" to version 20180223090259 - bpa oneday permit wfmatrix
+[INFO] Migrating schema "state" to version 20180223090315 - bpa slot ddl
+[INFO] Migrating schema "state" to version 20180223155507 - bpa slotmapping
+[INFO] Migrating schema "state" to version 20180224002026 - edcr application roleaction changes
+[INFO] Migrating schema "state" to version 20180226001829 - bpa disable createappln for employee
+[INFO] Migrating schema "state" to version 20180226143141 - bpa slotmapping electionward roleaction
+[INFO] Migrating schema "state" to version 20180228164012 - bpa application submit roleaction
+[INFO] Migrating schema "state" to version 20180228164134 - bpa one day permit workflow changes
+[INFO] Migrating schema "state" to version 20180301153321 - collection pnb service
+[INFO] Migrating schema "state" to version 20180301153342 - collection pnb servicedetails data
+[INFO] Migrating schema "state" to version 20180302175041 - edcr alter document
+[INFO] Migrating schema "state" to version 20180303231647 - bpa election bndry roleaction for approver
+[INFO] Migrating schema "state" to version 20180305161543 - bpa scheduling appointments gap
+[INFO] Migrating schema "state" to version 20180307104659 - bpa ajaxonedaypermit slotmapping dml
+[INFO] Migrating schema "state" to version 20180307114823 - collection pnb service namecorrection dml
+[INFO] Migrating schema "state" to version 20180307114837 - collection pnb servicedetails datacorrection dml
+[INFO] Migrating schema "state" to version 20180308115341 - dcr rename document
+[INFO] Migrating schema "state" to version 20180309192656 - bpa scheduler rejection dml
+[INFO] Migrating schema "state" to version 20180310120534 - dcr get plan details rest roleaction
+[INFO] Migrating schema "state" to version 20180310121046 - bpa validate edcr roleaction
+[INFO] Migrating schema "state" to version 20180310230224 - bpa workflow update frmqty toqty
+[INFO] Migrating schema "state" to version 20180311113354 - bpa town surveyor inspn doc ddl
+[INFO] Migrating schema "state" to version 20180312202149 - bpa pay online from portal roleaction
+[INFO] Migrating schema "state" to version 20180313161010 - bpa appconfig helpline number value
+[INFO] Migrating schema "state" to version 20180313163648 - portal disable bpa edcr services for citizen
+[INFO] Migrating schema "state" to version 20180313164337 - edcr alter plainfo add column
+[INFO] Migrating schema "state" to version 20180321194214 - bpa alter menutree display name
+[INFO] Migrating schema "state" to version 20180321194356 - bpa corrected spelling in permit conditions
+[INFO] Migrating schema "state" to version 20180321195438 - bpa lp workflow changes
+[INFO] Migrating schema "state" to version 20180322013545 - bpa approval cycle workflow enhancement
+[INFO] Migrating schema "state" to version 20180323124255 - commons occupancy DDL
+[INFO] Migrating schema "state" to version 20180323124355 - bpa alter occupancy reference
+[INFO] Migrating schema "state" to version 20180323172254 - edcr add status column toapplication
+[INFO] Migrating schema "state" to version 20180323182137 - bpa cheklist name correction dml
+[INFO] Migrating schema "state" to version 20180323182225 - bpa schemelandusage masterdata dml
+[INFO] Migrating schema "state" to version 20180326165432 - bpa sla appconfig value
+[INFO] Migrating schema "state" to version 20180326195527 - bpa demandreason updation
+[INFO] Migrating schema "state" to version 20180326195528 - bpa newfeetype demandreason updation
+[INFO] Migrating schema "state" to version 20180329204425 - bpa slotdetails report roleaction
+[INFO] Migrating schema "state" to version 20180331222748 - bpa slot viewapplndetails roleaction
+[INFO] Migrating schema "state" to version 20180402134529 - bpa 18 19 installment demandreason masterdata
+[INFO] Migrating schema "state" to version 20180402142259 - bpa slot alter
+[INFO] Migrating schema "state" to version 20180402142320 - bpa onedaypermit workflow changes
+[INFO] Migrating schema "state" to version 20180402144151 - bpa application alter
+[INFO] Migrating schema "state" to version 20180402145238 - bpa onedaypermit slot gap
+[INFO] Migrating schema "state" to version 20180402190824 - bpa update wfmatrix onedaypermit
+[INFO] Migrating schema "state" to version 20180403125637 - bpa document scrutiniser role
+[INFO] Migrating schema "state" to version 20180406191235 - bpa stakeholder servicetype roleaction
+[INFO] Migrating schema "state" to version 20180406194208 - bpa amenities roleaction
+[INFO] Migrating schema "state" to version 20180409184716 - bpa failure in scheduler records roleaction
+[INFO] Migrating schema "state" to version 20180410125300 - bpa stakeholder bycitizen roleaction
+[INFO] Migrating schema "state" to version 20180412145147 - bpa alter app scheduler remarks
+[INFO] Migrating schema "state" to version 20180416150639 - bpa alter applicant ddl
+[INFO] Migrating schema "state" to version 20180420113304 - bpa add stakeholder checklist
+[INFO] Migrating schema "state" to version 20180420113326 - bpa stakeholder srch roleaction
+[INFO] Migrating schema "state" to version 20180422234745 - bpa plan scrutiny ddl and master data
+[INFO] Migrating schema "state" to version 20180423130719 - bpa alter slotmapping ordernumber
+[INFO] Migrating schema "state" to version 20180423222138 - edcr rename module name
+[INFO] Migrating schema "state" to version 20180423222231 - portal edcr rename edcr services
+[INFO] Migrating schema "state" to version 20180425124326 - edcr disable dcr items menutree for employee
+[INFO] Migrating schema "state" to version 20180425124451 - portal edcr rename edcr services name
+[INFO] Migrating schema "state" to version 20180425130929 - bpa checklist detail changes
+[INFO] Migrating schema "state" to version 20180427174130 - portal add applntname column to inbox
+[INFO] Migrating schema "state" to version 20180427183520 - bpa validate mobile email roleaction
+[INFO] Migrating schema "state" to version 20180430103248 - bpa stakeholder documents name correction
+[INFO] Migrating schema "state" to version 20180507132032 - bpa dcr doc checklist ddl and dml
+[INFO] Migrating schema "state" to version 20180507222430 - bpa personal register report roleaction
+[INFO] Migrating schema "state" to version 20180510121337 - bpa register report roleaction
+[INFO] Migrating schema "state" to version 20180510195723 - bpa check edcr integration require roleaction
+[INFO] Migrating schema "state" to version 20180511162139 - bpa pdf height width app config
+[INFO] Migrating schema "state" to version 20180514073943 - bpa applicant add columns
+[INFO] Migrating schema "state" to version 20180514182044 - edcr application add columns
+[INFO] Migrating schema "state" to version 20180515122547 - bpa personal registerreport roleaction
+[INFO] Migrating schema "state" to version 20180515134645 - bpa dcr qr code enabled
+[INFO] Migrating schema "state" to version 20180516163732 - bpa stakeholder roleaction superuser
+[INFO] Migrating schema "state" to version 20180517093926 - bpa permit conditions changes
+[INFO] Migrating schema "state" to version 20180521125245 - bpa admin reports
+[INFO] Migrating schema "state" to version 20180523155644 - bpa alter pdf appconfig
+[INFO] Migrating schema "state" to version 20180523173143 - bpa stakeholder checklist changes
+[INFO] Migrating schema "state" to version 20180524113559 - bpa stakeholder add isaddresssame
+[INFO] Migrating schema "state" to version 20180525132045 - bpa update stakeholder checklistdetail
+[INFO] Migrating schema "state" to version 20180525140245 - bpa inspection checklist changes
+[INFO] Migrating schema "state" to version 20180525140329 - bpa add search roleaction to admin
+[INFO] Migrating schema "state" to version 20180525182730 - bpa update appconfig value scheduling regular
+[INFO] Migrating schema "state" to version 20180530191849 - bpa application auth tosubmit add column
+[INFO] Migrating schema "state" to version 20180531141504 - bpa slotmapping slot update
+[INFO] Migrating schema "state" to version 20180601181801 - bpa slotmapping data
+[INFO] Migrating schema "state" to version 20180602183245 - delete edcr get action
+[INFO] Migrating schema "state" to version 20180602183253 - edcr report fetch action
+[INFO] Migrating schema "state" to version 20180602183327 - delete permit merge config
+[INFO] Migrating schema "state" to version 20180602183340 - permitorder edcrreport merge config
+[INFO] Migrating schema "state" to version 20180602223752 - bpa oneday permit workflow changes
+[INFO] Migrating schema "state" to version 20180605153847 - bpa document scrutiny ddl and bar report roleaction
+[INFO] Migrating schema "state" to version 20180617160529 - bpa stakeholder auditing ddl
+[INFO] Migrating schema "state" to version 20180620160218 - edcr building scrutiny roleaction
+[INFO] Migrating schema "state" to version 20180629152047 - bpa plan scrutiny checklist dml
+[INFO] Migrating schema "state" to version 20180710112648 - edcr plan scrutiny menutree rename
+[INFO] Migrating schema "state" to version 20180716121919 - bpa update inspection chklist
+[INFO] Migrating schema "state" to version 20180731115830 - edcr save serialized object infilestore
+[INFO] Migrating schema "state" to version 20180813102849 - edcr scrunitizeddxf column
+[INFO] Migrating schema "state" to version 20180826163627 - commons add new occupancies and updated codes
+[INFO] Migrating schema "state" to version 20180826170827 - bpa add number and name of building details
+[INFO] Migrating schema "state" to version 20180826170903 - bpa dcr checklist
+[INFO] Migrating schema "state" to version 20180830151938 - commons update occupancies
+[INFO] Migrating schema "state" to version 20180830152056 - bpa add demolition area column
+[INFO] Migrating schema "state" to version 20180903163129 - edcr plan info demolition area column
+[INFO] Migrating schema "state" to version 20180910134556 - edcr planinfo additional columns
+[INFO] Migrating schema "state" to version 20180920205220 - bpa alter existing building details
+[INFO] Migrating schema "state" to version 20180924143415 - commons update occupancy
+[INFO] Migrating schema "state" to version 20181011175621 - commons add new occupancy
+[INFO] Migrating schema "state" to version 20181014223847 - edcr add project type column
+[INFO] Migrating schema "state" to version 20181015130909 - edcr failurereasons
+[INFO] Migrating schema "state" to version 20181015130914 - edcr pdf table
+[INFO] Migrating schema "state" to version 20181015130920 - edcr app config values
+[INFO] Migrating schema "state" to version 20181022150148 - bpa one day permit agrmnt documents
+[INFO] Migrating schema "state" to version 20181022172002 - collection hdfc payment
+[INFO] Migrating schema "state" to version 20181022172003 - collection hdfc serviceinsc payment
+[INFO] Migrating schema "state" to version 20181025102704 - edcr alter application detail
+[INFO] Migrating schema "state" to version 20181025102714 - edcr pdf detail
+[INFO] Migrating schema "state" to version 20181026105937 - collection enable hdfc gateway
+[INFO] Migrating schema "state" to version 20181026112311 - edcr pdf detail alter
+[INFO] Migrating schema "state" to version 20181031160506 - bpa update one day permit slot days
+[INFO] Migrating schema "state" to version 20181105095422 - edcr dxftoodf
+[INFO] Migrating schema "state" to version 20181105215142 - bpa building sub usage ddl
+[INFO] Migrating schema "state" to version 20181105215238 - commons occupancy add column and dml
+[INFO] Migrating schema "state" to version 20181105215245 - commons sub occupancy usage ddl and dml
+[INFO] Migrating schema "state" to version 20181107140248 - bpa building sub usage details ddl
+[INFO] Migrating schema "state" to version 20181107140254 - bpa fetch sub occupancies roleaction
+[INFO] Migrating schema "state" to version 20181109112211 - edcr fetch edcr pdf
+[INFO] Migrating schema "state" to version 20181113164309 - bpa app config one day permit slot
+[INFO] Migrating schema "state" to version 20181114002224 - bpa occupancy certificate core ddl
+[INFO] Migrating schema "state" to version 20181114002230 - bpa occupancy certificate wf matrix dml
+[INFO] Migrating schema "state" to version 20181114002240 - bpa occupancy certificate role action dml
+[INFO] Migrating schema "state" to version 20181114002250 - bpa occupancy certificate checklist dml
+[INFO] Migrating schema "state" to version 20181114002346 - portal bpa occupancy certificate service
+[INFO] Migrating schema "state" to version 20181114103228 - portal bpa disable occupancy certificate service
+[INFO] Migrating schema "state" to version 20181116234126 - bpa update general documents mandatory dml
+[INFO] Migrating schema "state" to version 20181119185228 - bpa app config oc slot open
+[INFO] Migrating schema "state" to version 20181119185247 - bpa app config oc schedule
+[INFO] Migrating schema "state" to version 20181119191252 - bpa add roleaction oc document scrutiny
+[INFO] Migrating schema "state" to version 20181120235345 - bpa lp and inspection wf matrix ddl
+[INFO] Migrating schema "state" to version 20181120235351 - bpa lp and inspection role action dml
+[INFO] Migrating schema "state" to version 20181120235402 - bpa alter lp and inspection ddl
+[INFO] Migrating schema "state" to version 20181120235434 - bpa inspection master data dml
+[INFO] Migrating schema "state" to version 20181121094002 - edcr delete old mappings pdf conversionlayers
+[INFO] Migrating schema "state" to version 20181121094009 - edcr dxf pdf config
+[INFO] Migrating schema "state" to version 20181121094016 - edcr fetch pdf url
+[INFO] Migrating schema "state" to version 20181122112726 - bpa oc letter to party checklist data dml
+[INFO] Migrating schema "state" to version 20181122135942 - bpa oc notice
+[INFO] Migrating schema "state" to version 20181122135957 - bpa oc generate roleaction
+[INFO] Migrating schema "state" to version 20181122140030 - bpa oc approvaldate
+[INFO] Migrating schema "state" to version 20181126231028 - bpa application success roleaction
+[INFO] Migrating schema "state" to version 20181127160547 - bpa disable oc module
+[INFO] Migrating schema "state" to version 20181127232231 - bpa citizen appln submit success roleaction
+[INFO] Migrating schema "state" to version 20181129194031 - bpa lp roleaction
+[INFO] Migrating schema "state" to version 20181203100349 - edcr application detail planinfo
+[INFO] Migrating schema "state" to version 20181206100625 - edcr pdf detail standardviolation
+[INFO] Migrating schema "state" to version 20181206152846 - edcr pdf detail standard violation
+[INFO] Migrating schema "state" to version 20181226162643 - bpa dcr docs upload mode app config
+[INFO] Migrating schema "state" to version 20181227144336 - bpa update dcr chklist docs description and mandatory
+[INFO] Migrating schema "state" to version 20181228130624 - bpa rename dcr floor plan doc desc and make inactive
+[INFO] Migrating schema "state" to version 20190101185024 - bpa update inspection plan scrutiny chklst items
+[INFO] Migrating schema "state" to version 20190108181119 - bpa inspection schedule configurable dml
+[INFO] Migrating schema "state" to version 20190108181151 - bpa doc scrutiny configurable and wf changes dml
+[INFO] Migrating schema "state" to version 20190108181242 - bpa one day permit appln configurable dml
+[INFO] Migrating schema "state" to version 20190118165158 - bpa appconfig for recent dCR rule amendment date
+[INFO] Migrating schema "state" to version 20190118165210 - bpa roleaction mapping for dcr expiry
+[INFO] Migrating schema "state" to version 20190124093757 - bpa update citizenportal approval appconfig value
+[INFO] Migrating schema "state" to version 20190125115131 - bpa update citizenacceptance config value
+[INFO] Migrating schema "state" to version 20190128131545 - portal bpa oc plan scrutiny service
+[INFO] Migrating schema "state" to version 20190128131628 - edcr oc plan scrutiny roleaction dml
+[INFO] Migrating schema "state" to version 20190128131655 - edcr oc plan scrutiny ddl
+[INFO] Migrating schema "state" to version 20190128132202 - bpa oc application ddl
+[INFO] Migrating schema "state" to version 20190128132235 - bpa oc rejection wf matrix dml
+[INFO] Migrating schema "state" to version 20190128132303 - bpa oc rejection reasons master data
+[INFO] Migrating schema "state" to version 20190128144324 - bpa validate oc dcr no roleaction
+[INFO] Migrating schema "state" to version 20190128154330 - bpa oc checklist documents master data
+[INFO] Migrating schema "state" to version 20190130143843 - create stateholderstate
+[INFO] Migrating schema "state" to version 20190130143855 - stakeholder workflow
+[INFO] Migrating schema "state" to version 20190130165951 - portal edcr services integration
+[INFO] Migrating schema "state" to version 20190131170128 - portal bpa dcr enable oc service
+[INFO] Migrating schema "state" to version 20190131175617 - bpa stake holder demandcolumn
+[INFO] Migrating schema "state" to version 20190131175628 - bpa dmdreason regfee
+[INFO] Migrating schema "state" to version 20190131175638 - bpa demandcheck reloactions
+[INFO] Migrating schema "state" to version 20190131175646 - bpa collectionredirect roleaction
+[INFO] Migrating schema "state" to version 20190201101515 - bpa oc lpreply reject demand notice roleaction
+[INFO] Migrating schema "state" to version 20190201161325 - commons change occupancy enumto master
+[INFO] DB: truncate cascades to table "egbpa_sub_usage"
+[INFO] DB: truncate cascades to table "egbpa_application"
+[INFO] DB: truncate cascades to table "egbpa_application_floordetail"
+[INFO] DB: truncate cascades to table "egbpa_existing_building_floordetail"
+[INFO] DB: truncate cascades to table "egbpa_sub_occupancy"
+[INFO] DB: truncate cascades to table "egbpa_building_sub_usage_details"
+[INFO] DB: truncate cascades to table "egbpa_oc_floor"
+[INFO] DB: truncate cascades to table "egbpa_oc_existing_floor"
+[INFO] DB: truncate cascades to table "egbpa_applicationstakeholder"
+[INFO] DB: truncate cascades to table "egbpa_sitedetail"
+[INFO] DB: truncate cascades to table "egbpa_buildingdetail"
+[INFO] DB: truncate cascades to table "egbpa_documenthistory"
+[INFO] DB: truncate cascades to table "egbpa_inspection"
+[INFO] DB: truncate cascades to table "egbpa_dd_detail"
+[INFO] DB: truncate cascades to table "egbpa_application_fee"
+[INFO] DB: truncate cascades to table "egbpa_lettertoparty"
+[INFO] DB: truncate cascades to table "egbpa_permitted_floordetail"
+[INFO] DB: truncate cascades to table "egbpa_autodcrmap"
+[INFO] DB: truncate cascades to table "egbpa_application_document"
+[INFO] DB: truncate cascades to table "egbpa_noc_document"
+[INFO] DB: truncate cascades to table "egbpa_documentscrutiny"
+[INFO] DB: truncate cascades to table "egbpa_appointment_schedule"
+[INFO] DB: truncate cascades to table "egbpa_applicationamenity"
+[INFO] DB: truncate cascades to table "egbpa_existing_buildingdetail"
+[INFO] DB: truncate cascades to table "egbpa_application_permit_conditions"
+[INFO] DB: truncate cascades to table "egbpa_notice"
+[INFO] DB: truncate cascades to table "egbpa_slotapplication"
+[INFO] DB: truncate cascades to table "egbpa_ts_inspn_documents"
+[INFO] DB: truncate cascades to table "egbpa_application_dcr_document"
+[INFO] DB: truncate cascades to table "egbpa_building_sub_usage"
+[INFO] DB: truncate cascades to table "egbpa_sub_usage"
+[INFO] DB: truncate cascades to table "egbpa_occupancy_certificate"
+[INFO] DB: truncate cascades to table "egbpa_dochist_detail"
+[INFO] DB: truncate cascades to table "egbpa_docket"
+[INFO] DB: truncate cascades to table "egbpa_application_feedetails"
+[INFO] DB: truncate cascades to table "egbpa_document"
+[INFO] DB: truncate cascades to table "egbpa_lettertoparty_document"
+[INFO] DB: truncate cascades to table "egbpa_lp_and_reason"
+[INFO] DB: truncate cascades to table "egbpa_noc_document_store"
+[INFO] DB: truncate cascades to table "egbpa_plan_scrutiny_checklist"
+[INFO] DB: truncate cascades to table "egbpa_dcr_document"
+[INFO] DB: truncate cascades to table "egbpa_oc_appointment_schedule"
+[INFO] DB: truncate cascades to table "egbpa_oc_documents"
+[INFO] DB: truncate cascades to table "egbpa_oc_document_scrutiny"
+[INFO] DB: truncate cascades to table "egbpa_oc_inspection"
+[INFO] DB: truncate cascades to table "egbpa_oc_noc_document"
+[INFO] DB: truncate cascades to table "egbpa_oc_slot"
+[INFO] DB: truncate cascades to table "egbpa_oc_letter_to_party"
+[INFO] DB: truncate cascades to table "egbpa_oc_notice"
+[INFO] DB: truncate cascades to table "egbpa_oc_building"
+[INFO] DB: truncate cascades to table "egbpa_oc_existing_building"
+[INFO] DB: truncate cascades to table "egbpa_oc_dcr_document"
+[INFO] DB: truncate cascades to table "egbpa_oc_notice_conditions"
+[INFO] DB: truncate cascades to table "egbpa_docket_constrnstage"
+[INFO] DB: truncate cascades to table "egbpa_docket_detail"
+[INFO] DB: truncate cascades to table "egbpa_lettertoparty_filestore"
+[INFO] Migrating schema "state" to version 20190201171230 - commons Occupancy SubOccupancy mstr data
+[INFO] Migrating schema "state" to version 20190201200205 - bpa servicecode for stakehodercollection
+[INFO] Migrating schema "state" to version 20190202190315 - bpa correct zoneward parentmap
+[INFO] Migrating schema "state" to version 20190202190425 - bpa user assignment mapping sample data2
+[INFO] Migrating schema "state" to version 20190202210634 - bpa workflow designation correction
+[INFO] Migrating schema "state" to version 20190203015933 - bpa correct adminward parentmap
+[INFO] Migrating schema "state" to version 20190203142512 - edcr add roleaction to citizen
+[INFO] Migrating schema "state" to version 20190203142634 - bpa postal address remove notnull constraint
+[INFO] Migrating schema "state" to version 20190203204745 - bpa oc plan scrutiny checklist ddl
+[INFO] Migrating schema "state" to version 20190203214535 - bpa oc planscrutiny checklist master data
+[INFO] Migrating schema "state" to version 20190204084318 - bpa appconfig for recent dcr rule amendment days
+[INFO] Migrating schema "state" to version 20190204154825 - egi city preference linktocity
+[INFO] Migrating schema "state" to version 20190204180146 - update version value
+[INFO] Migrating schema "state" to version 20190204201434 - bpa correct zoneward map
+[INFO] Migrating schema "state" to version 20190204203952 - bpa correct assignment department
+[INFO] Migrating schema "state" to version 20190205103045 - bpa appconfig to allow oc deviation
+[INFO] Migrating schema "state" to version 20190207112035 - bpa comparison report roleaction
+[INFO] Migrating schema "state" to version 20190207151825 - commons update ownergroup sequence
+[INFO] Migrating schema "state" to version 20190208183631 - role action mapping for view application status
+[INFO] Migrating schema "state" to version 20190209164529 - bpa search appln by anonymous user url update
+[INFO] Migrating schema "state" to version 20190209223333 - bpa oc bpafee master
+[INFO] Migrating schema "state" to version 20190209223343 - bpa oc demand master reason
+[INFO] Migrating schema "state" to version 20190209223357 - bpa permit oc fee table
+[INFO] Migrating schema "state" to version 20190209223419 - bpa oc feemode appconfig
+[INFO] Migrating schema "state" to version 20190209223431 - bpa applicationfee dropcolumn application
+[INFO] Migrating schema "state" to version 20190210173047 - bpa oc collection service details dml
+[INFO] Migrating schema "state" to version 20190211102438 - egf allbanks action collectionoperator
+[INFO] Migrating schema "state" to version 20190211125547 - bpa oc search appln dml
+[INFO] Migrating schema "state" to version 20190212114458 - bpa oc ltpdocuments masterdata
+[INFO] Migrating schema "state" to version 20190212152137 - bpa automanual fee calculate
+[INFO] Migrating schema "state" to version 20190213115445 - bpa oc enable options in menutree
+[INFO] Migrating schema "state" to version 20190213115520 - bpa oc workflow changes on payment
+[INFO] Migrating schema "state" to version 20190214123113 - bpa appconfig for cancel unattended document scrutiny application
+[INFO] Migrating schema "state" to version 20190215102520 - bpa oc alter floordetails for occupancy
+[INFO] Migrating schema "state" to version 20190215103525 - bpa roleaction mapping for suboccupancies
+[INFO] Migrating schema "state" to version 20190215105820 - bpa oc online payment roleaction
+[INFO] Migrating schema "state" to version 20190215122538 - bpa permit appln ts wf removal
+[INFO] Migrating schema "state" to version 20190218154305 - bpa inspection report action roleaction
+[INFO] Migrating schema "state" to version 20190219160428 - bpa inspection notice ddl
+[INFO] Migrating schema "state" to version 20190219182410 - OneStepWorkflow
+[INFO] Migrating schema "state" to version 20190221220309 - bpa feemaster
+[INFO] Migrating schema "state" to version 20190221220320 - bpa feemaster roleaction
+[INFO] Migrating schema "state" to version 20190222110607 - bpa occupancy certificate collection fee required
+[INFO] Migrating schema "state" to version 20190222110615 - bpa permit appl collection fee required
+[INFO] Migrating schema "state" to version 20190222110623 - bpa inspection report roleaction
+[INFO] Migrating schema "state" to version 20190222110736 - bpa add column dcr madatory in servicetype
+[INFO] Migrating schema "state" to version 20190222110927 - bpa dcr integration require with bpa config
+[INFO] Migrating schema "state" to version 20190223151030 - commons checklist checklisttype ddl
+[INFO] Migrating schema "state" to version 20190223161530 - commons checklist type data
+[INFO] Migrating schema "state" to version 20190223171230 - commons roleaction for checklist
+[INFO] Migrating schema "state" to version 20190223172200 - disable search to approve online bussiness user registration
+[INFO] Migrating schema "state" to version 20190223184525 - bpa checklist servicetype mapping ddl
+[INFO] Migrating schema "state" to version 20190223194015 - bpa roleaction for checklist servicetype mapping
+[INFO] Migrating schema "state" to version 20190225113537 - bpa enable modify feemaster
+[INFO] Migrating schema "state" to version 20190226112230 - bpa update usage description spelling
+[INFO] Migrating schema "state" to version 20190226235327 - bpa capture usage floor level ddl
+[INFO] Migrating schema "state" to version 20190226235346 - bpa capture multiple occupancy ddl
+[INFO] Migrating schema "state" to version 20190226235429 - bpa fetch sub occupancy and usages roleaction
+[INFO] Migrating schema "state" to version 20190227092510 - common alter checklist description
+[INFO] Migrating schema "state" to version 20190227101520 - common checklist master data
+[INFO] Migrating schema "state" to version 20190227123025 - bpa checklist servicetype mapping master data
+[INFO] Migrating schema "state" to version 20190227125812 - bpa alter occupancycertificate to add column addmissionfee
+[INFO] Migrating schema "state" to version 20190227131638 - bpa generic boundary configuration
+[INFO] Migrating schema "state" to version 20190227131750 - bpa genericboundary roleaction map
+[INFO] Migrating schema "state" to version 20190227164008 - collection disable axisbank
+[INFO] Migrating schema "state" to version 20190227171126 - bpa disable pr report and add column inappln
+[INFO] Migrating schema "state" to version 20190228121038 - bpa servicetype oc require add column
+[INFO] Migrating schema "state" to version 20190228121241 - portal disable dcr permit services for citizen
+[INFO] Migrating schema "state" to version 20190228154809 - bpa generic boundary configuration update
+[INFO] Migrating schema "state" to version 20190301120325 - bpa auto cancel oc unattended document scrutiny
+[INFO] Migrating schema "state" to version 20190302105038 - bpa add submitted status dml
+[INFO] Migrating schema "state" to version 20190304133242 - bpa fee master data
+[INFO] Migrating schema "state" to version 20190304133248 - bpa delete application details data
+[INFO] Migrating schema "state" to version 20190304133252 - bpa alter feemapping category
+[INFO] Migrating schema "state" to version 20190305145247 - bpa applicationtype master table
+[INFO] Migrating schema "state" to version 20190305145300 - bpa applicationtype master data
+[INFO] Migrating schema "state" to version 20190305180948 - bpa demand reason csdc
+[INFO] Migrating schema "state" to version 20190305192436 - bpa workflow boundary hierarchy configuration
+[INFO] Migrating schema "state" to version 20190306150302 - eis employee jurisdiction hierarchy configuration
+[INFO] Migrating schema "state" to version 20190306150942 - bpa additionalfee master data
+[INFO] Migrating schema "state" to version 20190307093002 - bpa oc applicationfee masterdata
+[INFO] Migrating schema "state" to version 20190307203028 - bpa oc inspection checklist master data
+[INFO] Migrating schema "state" to version 20190307203130 - bpa permit inspection checklist master data
+[INFO] Migrating schema "state" to version 20190307203245 - bpa permit and oc appln ddl
+[INFO] DB: drop cascades to constraint fk_egbpa_autdcrmap_lettertoparty on table egbpa_autodcrmap
+[INFO] Migrating schema "state" to version 20190308102137 - bpa permit document scrutiny ddl
+[INFO] Migrating schema "state" to version 20190308121010 - egi drop user constrns
+[INFO] Migrating schema "state" to version 20190308121011 - commons drop user constrns
+[INFO] Migrating schema "state" to version 20190308121104 - bpa drop user consnts
+[INFO] Migrating schema "state" to version 20190308121105 - eis drop view employee
+[INFO] Migrating schema "state" to version 20190308121254 - egf drop fin masters userref
+[INFO] Migrating schema "state" to version 20190308121340 - portal drop user conts
+[INFO] Migrating schema "state" to version 20190308121438 - demand drop user constrnts.sql
+[INFO] Migrating schema "state" to version 20190308121628 - collection drop state level constrnts
+[INFO] Migrating schema "state" to version 20190308122256 - edcr drop user constrnts
+[INFO] Migrating schema "state" to version 20190308122622 - egi drop state level masters ddl
+[INFO] Migrating schema "state" to version 20190308122701 - bpa drop state level masters ddl
+[INFO] Migrating schema "state" to version 20190308122758 - portal drop state level masters
+[INFO] Migrating schema "state" to version 20190308164214 - eis delete sample data
+[INFO] Migrating schema "state" to version 20190308235034 - common doc scrutny checklist master data
+[INFO] Migrating schema "state" to version 20190308235156 - bpa doc scrutiny chklst service master data
+[INFO] Migrating schema "state" to version 20190310174648 - common inspn images checklist master data
+[INFO] Migrating schema "state" to version 20190310174759 - bpa inspn images chklst service master data
+[INFO] Migrating schema "state" to version 20190311104437 - eis delete duplicate designation
+[INFO] Migrating schema "state" to version 20190311174550 - common permit conditions checklist master data
+[INFO] Migrating schema "state" to version 20190311180702 - bpa add column for sanction plan validity
+[INFO] Migrating schema "state" to version 20190311181645 - bpa permit conditions chklst service master data
+[INFO] Migrating schema "state" to version 20190312100510 - common add ocltp checklist master data
+[INFO] Migrating schema "state" to version 20190312105445 - bpa remove oc unnecessary service master data
+[INFO] Migrating schema "state" to version 20190312115845 - bpa ocltpdoc service master data
+[INFO] Migrating schema "state" to version 20190312142830 - common update checklists description
+[INFO] Migrating schema "state" to version 20190313121526 - bpa add column applicationtype
+[INFO] Migrating schema "state" to version 20190313121536 - bpa labour shelterfund feemaster
+[INFO] Migrating schema "state" to version 20190314133059 - bpa genericajaxcall rolemap employee
+[INFO] Migrating schema "state" to version 20190314162839 - bpa genericajaxcall rolemap otherroles
+[INFO] Migrating schema "state" to version 20190314174523 - egi state level masters ddl
+[INFO] Migrating schema "state" to version 20190314174533 - egi initial user data
+[INFO] Migrating schema "state" to version 20190314174541 - bpa state level masters ddl
+[WARNING] DB: relation "egbpa_mstr_stakeholder_aud" already exists, skipping (SQL State: 42P07 - Error Code: 0)
+[INFO] Migrating schema "state" to version 20190314174629 - bpa stakeholdertype master ddl
+[INFO] Migrating schema "state" to version 20190314174654 - portal state level masters ddl
+[INFO] Migrating schema "state" to version 20190314183915 - egi add user constrnts
+[INFO] Migrating schema "state" to version 20190314184009 - bpa add user constrnts
+[INFO] Migrating schema "state" to version 20190314184051 - portal add user constrnts
+[INFO] Migrating schema "state" to version 20190314185126 - collection add user constrnts
+[INFO] Migrating schema "state" to version 20190314185236 - commons add user constrnts
+[INFO] Migrating schema "state" to version 20190314185407 - demand add user constrnts
+[INFO] Migrating schema "state" to version 20190314185527 - edcr add user constrnts
+[INFO] Migrating schema "state" to version 20190314185614 - egf add user constrnts
+[INFO] Migrating schema "state" to version 20190314185739 - egi initial userrole data
+[INFO] Migrating schema "state" to version 20190314190052 - bpa document scrutiny chklist ddl
+[INFO] Migrating schema "state" to version 20190315103435 - egi process sla column
+[INFO] Migrating schema "state" to version 20190315110210 - bpa permit oc noticeconditions ddl
+[INFO] Migrating schema "state" to version 20190315110330 - common additional checklists master data
+[INFO] Migrating schema "state" to version 20190315111030 - bpa checklist servicetype mapping master data
+[INFO] Migrating schema "state" to version 20190315121906 - bpa add column slotapplicationtype
+[INFO] Migrating schema "state" to version 20190315121916 - bpa add column slotrequired applicationtype
+[INFO] Migrating schema "state" to version 20190315153850 - bpa delete applicationfee amenities
+[INFO] Migrating schema "state" to version 20190316131704 - bpa genericajaxcall rolemap citizenrole
+[INFO] Migrating schema "state" to version 20190317143025 - common occupancy add colorcode ddl
+[INFO] Migrating schema "state" to version 20190317143037 - common dcr additional features colorcode ddl dml
+[INFO] Migrating schema "state" to version 20190317143155 - common occupancies update colorcode dml
+[INFO] Migrating schema "state" to version 20190318110844 - egi initial user aud data
+[INFO] Migrating schema "state" to version 20190318112530 - bpa roleaction for modify checklist servicetype
+[INFO] Migrating schema "state" to version 20190318115830 - commons roleaction for checklist modify
+[INFO] Migrating schema "state" to version 20190318163023 - bpa wf matrix correction
+[INFO] Migrating schema "state" to version 20190318195428 - common dcr sub feature colorcode rename ddl
+[INFO] Migrating schema "state" to version 20190319175555 - egi drop eg address ddl
+[INFO] Migrating schema "state" to version 20190319175605 - egi add eg address ddl
+[INFO] Migrating schema "state" to version 20190320155739 - bpa stakeholder licencenumber issuedate drop notnull
+[INFO] Migrating schema "state" to version 20190320162610 - common update checklist type master data
+[INFO] Migrating schema "state" to version 20190320163820 - bpa update checklist servicetype mapping master menutree order
+[INFO] Migrating schema "state" to version 20190320170611 - bpa state licence number seq ddl
+[INFO] Migrating schema "state" to version 20190320171714 - bpa stakeholder type add validyears
+[ERROR] Migration of schema "state" to version 20190320171714 - bpa stakeholder type add validyears failed! Changes successfully rolled back.
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] e-governments erp ................................. SUCCESS [2.557s]
+[INFO] e-governments config .............................. SUCCESS [1.042s]
+[INFO] e-governments database ............................ FAILURE [1:43.639s]
+[INFO] e-governments egi ................................. SKIPPED
+[INFO] e-governments commons ............................. SKIPPED
+[INFO] e-governments eis ................................. SKIPPED
+[INFO] e-governments egf ................................. SKIPPED
+[INFO] e-governments portal .............................. SKIPPED
+[INFO] e-governments collection .......................... SKIPPED
+[INFO] e-governments demand .............................. SKIPPED
+[INFO] e-governments bpa ................................. SKIPPED
+[INFO] e-governments commons web ......................... SKIPPED
+[INFO] e-governments eis web ............................. SKIPPED
+[INFO] e-governments egi web ............................. SKIPPED
+[INFO] e-governments egf web ............................. SKIPPED
+[INFO] e-governments portal web .......................... SKIPPED
+[INFO] e-governments collection web ...................... SKIPPED
+[INFO] e-governments bpa web ............................. SKIPPED
+[INFO] e-governments pass ................................ SKIPPED
+[INFO] e-governments pass web ............................ SKIPPED
+[INFO] e-governments edcr ................................ SKIPPED
+[INFO] e-governments edcrweb ............................. SKIPPED
+[INFO] e-governments services ............................ SKIPPED
+[INFO] e-governments erp ear ............................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1:47.905s
+[INFO] Finished at: Sun Mar 31 04:50:27 IST 2019
+[INFO] Final Memory: 39M/748M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.flywaydb:flyway-maven-plugin:5.0.3:migrate (migrate-database) on project egov-database: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateSqlException:
+[ERROR] Migration V20190320171714__bpa_stakeholder_type_add_validyears.sql failed
+[ERROR] -------------------------------------------------------------------------
+[ERROR] SQL State  : 42601
+[ERROR] Error Code : 0
+[ERROR] Message    : ERROR: syntax error at or near "NOT"
+[ERROR] Position: 71
+[ERROR] Location   : /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190320171714__bpa_stakeholder_type_add_validyears.sql (/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190320171714__bpa_stakeholder_type_add_validyears.sql)
+[ERROR] Line       : 1
+[ERROR] Statement  : alter table IF EXISTS state.EGBPA_MSTR_STAKEHOLDERTYPE  ADD COLUMN IF NOT EXISTS validYears bigint not null default 5
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :egov-database
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.egov:egov-ear:ear:BPA-3.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.wildfly.plugins:wildfly-maven-plugin is missing. @ line 238, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] e-governments erp
+[INFO] e-governments config
+[INFO] e-governments database
+[INFO] e-governments egi
+[INFO] e-governments commons
+[INFO] e-governments eis
+[INFO] e-governments egf
+[INFO] e-governments portal
+[INFO] e-governments collection
+[INFO] e-governments demand
+[INFO] e-governments bpa
+[INFO] e-governments commons web
+[INFO] e-governments eis web
+[INFO] e-governments egi web
+[INFO] e-governments egf web
+[INFO] e-governments portal web
+[INFO] e-governments collection web
+[INFO] e-governments bpa web
+[INFO] e-governments pass
+[INFO] e-governments pass web
+[INFO] e-governments edcr
+[INFO] e-governments edcrweb
+[INFO] e-governments services
+[INFO] e-governments erp ear
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments erp BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-erp ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-erp ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/target/jacoco.exec
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-erp ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-erp ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments config BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-config ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-config ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:resources (default-resources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 9 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ egov-config ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:testResources (default-testResources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ egov-config ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.20.1:test (default-test) @ egov-config ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-config ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:test-jar (default) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-config ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments database BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ egov-database ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db (includes = [**], excludes = [])
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-database ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:copy-resources (copy-migrations) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 96 resources
+[INFO] Copying 64 resources
+[INFO] Copying 37 resources
+[INFO] Copying 295 resources
+[INFO] Copying 129 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-pgr/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-wtms/src/main/resources/db/migration
+[INFO] Copying 16 resources
+[INFO] Copying 34 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-ptis/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-adtax/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-tl/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-assets/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-works/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-council/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-lcms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-stms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-mrs/src/main/resources/db/migration
+[INFO] Copying 373 resources
+[INFO] Copying 49 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:resources (default-resources) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1094 resources
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:repair (migrate-database) @ egov-database ---
+[INFO] Flyway Community Edition 5.0.3 by Boxfuse
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Repair of failed migration in Schema History table "state"."flyway_schema_history" not necessary. No failed migration detected.
+[INFO] Successfully repaired schema history table "state"."flyway_schema_history" (execution time 00:00.455s).
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:migrate (migrate-database) @ egov-database ---
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Successfully validated 1092 migrations (execution time 00:00.161s)
+[INFO] Current version of schema "state": 20190320170611
+[WARNING] outOfOrder mode is active. Migration of schema "state" may not be reproducible.
+[INFO] Migrating schema "state" to version 20190320171714 - bpa stakeholder type add validyears
+[INFO] Migrating schema "state" to version 20190320185634 - egi city missing values
+[INFO] Migrating schema "state" to version 20190321133801 - bpa appconfig statelogo
+[INFO] Migrating schema "state" to version 20190321134509 - bpa rejectionno sequence
+[INFO] Migrating schema "state" to version 20190322101828 - portal disable few services
+[INFO] Migrating schema "state" to version 20190322101944 - bpa disable few service types
+[INFO] Migrating schema "state" to version 20190331005800 - egi WorkflowTypes ddl
+[ERROR] Migration of schema "state" to version 20190331005800 - egi WorkflowTypes ddl failed! Changes successfully rolled back.
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] e-governments erp ................................. SUCCESS [2.616s]
+[INFO] e-governments config .............................. SUCCESS [1.185s]
+[INFO] e-governments database ............................ FAILURE [3.923s]
+[INFO] e-governments egi ................................. SKIPPED
+[INFO] e-governments commons ............................. SKIPPED
+[INFO] e-governments eis ................................. SKIPPED
+[INFO] e-governments egf ................................. SKIPPED
+[INFO] e-governments portal .............................. SKIPPED
+[INFO] e-governments collection .......................... SKIPPED
+[INFO] e-governments demand .............................. SKIPPED
+[INFO] e-governments bpa ................................. SKIPPED
+[INFO] e-governments commons web ......................... SKIPPED
+[INFO] e-governments eis web ............................. SKIPPED
+[INFO] e-governments egi web ............................. SKIPPED
+[INFO] e-governments egf web ............................. SKIPPED
+[INFO] e-governments portal web .......................... SKIPPED
+[INFO] e-governments collection web ...................... SKIPPED
+[INFO] e-governments bpa web ............................. SKIPPED
+[INFO] e-governments pass ................................ SKIPPED
+[INFO] e-governments pass web ............................ SKIPPED
+[INFO] e-governments edcr ................................ SKIPPED
+[INFO] e-governments edcrweb ............................. SKIPPED
+[INFO] e-governments services ............................ SKIPPED
+[INFO] e-governments erp ear ............................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.347s
+[INFO] Finished at: Sun Mar 31 04:52:00 IST 2019
+[INFO] Final Memory: 37M/618M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.flywaydb:flyway-maven-plugin:5.0.3:migrate (migrate-database) on project egov-database: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateSqlException:
+[ERROR] Migration V20190331005800__egi_WorkflowTypes_ddl.sql failed
+[ERROR] -----------------------------------------------------------
+[ERROR] SQL State  : 42P07
+[ERROR] Error Code : 0
+[ERROR] Message    : ERROR: relation "eg_wf_types" already exists
+[ERROR] Location   : /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql (/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql)
+[ERROR] Line       : 2
+[ERROR] Statement  : Create table EG_WF_TYPES(
+[ERROR] id bigint,
+[ERROR] module bigint ,
+[ERROR] type varchar(50),
+[ERROR] typeFQN varchar(50),
+[ERROR] link varchar(50),
+[ERROR] displayName varchar(50),
+[ERROR] enabled boolean,
+[ERROR] grouped boolean,
+[ERROR] createdby bigint,
+[ERROR] createddate timestamp without time zone,
+[ERROR] lastmodifiedby bigint,
+[ERROR] lastmodifieddate timestamp without time zone,
+[ERROR] tenantId varchar(250),
+[ERROR] version bigint
+[ERROR] )
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :egov-database
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.egov:egov-ear:ear:BPA-3.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.wildfly.plugins:wildfly-maven-plugin is missing. @ line 238, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] e-governments erp
+[INFO] e-governments config
+[INFO] e-governments database
+[INFO] e-governments egi
+[INFO] e-governments commons
+[INFO] e-governments eis
+[INFO] e-governments egf
+[INFO] e-governments portal
+[INFO] e-governments collection
+[INFO] e-governments demand
+[INFO] e-governments bpa
+[INFO] e-governments commons web
+[INFO] e-governments eis web
+[INFO] e-governments egi web
+[INFO] e-governments egf web
+[INFO] e-governments portal web
+[INFO] e-governments collection web
+[INFO] e-governments bpa web
+[INFO] e-governments pass
+[INFO] e-governments pass web
+[INFO] e-governments edcr
+[INFO] e-governments edcrweb
+[INFO] e-governments services
+[INFO] e-governments erp ear
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments erp BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-erp ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-erp ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/target/jacoco.exec
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-erp ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-erp ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments config BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-config ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-config ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:resources (default-resources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 9 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ egov-config ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:testResources (default-testResources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ egov-config ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.20.1:test (default-test) @ egov-config ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-config ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:test-jar (default) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-config ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments database BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ egov-database ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db (includes = [**], excludes = [])
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-database ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:copy-resources (copy-migrations) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 96 resources
+[INFO] Copying 64 resources
+[INFO] Copying 37 resources
+[INFO] Copying 295 resources
+[INFO] Copying 129 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-pgr/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-wtms/src/main/resources/db/migration
+[INFO] Copying 16 resources
+[INFO] Copying 34 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-ptis/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-adtax/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-tl/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-assets/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-works/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-council/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-lcms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-stms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-mrs/src/main/resources/db/migration
+[INFO] Copying 373 resources
+[INFO] Copying 49 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:resources (default-resources) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1094 resources
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:repair (migrate-database) @ egov-database ---
+[INFO] Flyway Community Edition 5.0.3 by Boxfuse
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Repair of failed migration in Schema History table "state"."flyway_schema_history" not necessary. No failed migration detected.
+[INFO] Successfully repaired schema history table "state"."flyway_schema_history" (execution time 00:00.433s).
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:migrate (migrate-database) @ egov-database ---
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Successfully validated 1092 migrations (execution time 00:00.260s)
+[INFO] Current version of schema "state": 20190322101944
+[WARNING] outOfOrder mode is active. Migration of schema "state" may not be reproducible.
+[INFO] Migrating schema "state" to version 20190331005800 - egi WorkflowTypes ddl
+[ERROR] Migration of schema "state" to version 20190331005800 - egi WorkflowTypes ddl failed! Changes successfully rolled back.
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] e-governments erp ................................. SUCCESS [2.796s]
+[INFO] e-governments config .............................. SUCCESS [1.373s]
+[INFO] e-governments database ............................ FAILURE [3.661s]
+[INFO] e-governments egi ................................. SKIPPED
+[INFO] e-governments commons ............................. SKIPPED
+[INFO] e-governments eis ................................. SKIPPED
+[INFO] e-governments egf ................................. SKIPPED
+[INFO] e-governments portal .............................. SKIPPED
+[INFO] e-governments collection .......................... SKIPPED
+[INFO] e-governments demand .............................. SKIPPED
+[INFO] e-governments bpa ................................. SKIPPED
+[INFO] e-governments commons web ......................... SKIPPED
+[INFO] e-governments eis web ............................. SKIPPED
+[INFO] e-governments egi web ............................. SKIPPED
+[INFO] e-governments egf web ............................. SKIPPED
+[INFO] e-governments portal web .......................... SKIPPED
+[INFO] e-governments collection web ...................... SKIPPED
+[INFO] e-governments bpa web ............................. SKIPPED
+[INFO] e-governments pass ................................ SKIPPED
+[INFO] e-governments pass web ............................ SKIPPED
+[INFO] e-governments edcr ................................ SKIPPED
+[INFO] e-governments edcrweb ............................. SKIPPED
+[INFO] e-governments services ............................ SKIPPED
+[INFO] e-governments erp ear ............................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.500s
+[INFO] Finished at: Sun Mar 31 04:54:55 IST 2019
+[INFO] Final Memory: 37M/616M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.flywaydb:flyway-maven-plugin:5.0.3:migrate (migrate-database) on project egov-database: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateSqlException:
+[ERROR] Migration V20190331005800__egi_WorkflowTypes_ddl.sql failed
+[ERROR] -----------------------------------------------------------
+[ERROR] SQL State  : 42P07
+[ERROR] Error Code : 0
+[ERROR] Message    : ERROR: relation "eg_wf_types" already exists
+[ERROR] Location   : /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql (/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql)
+[ERROR] Line       : 2
+[ERROR] Statement  : Create table EG_WF_TYPES(
+[ERROR] id bigint,
+[ERROR] module bigint ,
+[ERROR] type varchar(50),
+[ERROR] typeFQN varchar(50),
+[ERROR] link varchar(50),
+[ERROR] displayName varchar(50),
+[ERROR] enabled boolean,
+[ERROR] grouped boolean,
+[ERROR] createdby bigint,
+[ERROR] createddate timestamp without time zone,
+[ERROR] lastmodifiedby bigint,
+[ERROR] lastmodifieddate timestamp without time zone,
+[ERROR] tenantId varchar(250),
+[ERROR] version bigint
+[ERROR] )
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :egov-database
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.egov:egov-ear:ear:BPA-3.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.wildfly.plugins:wildfly-maven-plugin is missing. @ line 238, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] e-governments erp
+[INFO] e-governments config
+[INFO] e-governments database
+[INFO] e-governments egi
+[INFO] e-governments commons
+[INFO] e-governments eis
+[INFO] e-governments egf
+[INFO] e-governments portal
+[INFO] e-governments collection
+[INFO] e-governments demand
+[INFO] e-governments bpa
+[INFO] e-governments commons web
+[INFO] e-governments eis web
+[INFO] e-governments egi web
+[INFO] e-governments egf web
+[INFO] e-governments portal web
+[INFO] e-governments collection web
+[INFO] e-governments bpa web
+[INFO] e-governments pass
+[INFO] e-governments pass web
+[INFO] e-governments edcr
+[INFO] e-governments edcrweb
+[INFO] e-governments services
+[INFO] e-governments erp ear
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments erp BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-erp ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-erp ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/target/jacoco.exec
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-erp ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-erp ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments config BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-config ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-config ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:resources (default-resources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 9 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ egov-config ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:testResources (default-testResources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ egov-config ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.20.1:test (default-test) @ egov-config ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-config ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:test-jar (default) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-config ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments database BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ egov-database ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-database ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:copy-resources (copy-migrations) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 96 resources
+[INFO] Copying 64 resources
+[INFO] Copying 37 resources
+[INFO] Copying 295 resources
+[INFO] Copying 129 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-pgr/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-wtms/src/main/resources/db/migration
+[INFO] Copying 16 resources
+[INFO] Copying 34 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-ptis/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-adtax/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-tl/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-assets/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-works/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-council/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-lcms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-stms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-mrs/src/main/resources/db/migration
+[INFO] Copying 373 resources
+[INFO] Copying 49 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:resources (default-resources) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1094 resources
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:repair (migrate-database) @ egov-database ---
+[INFO] Flyway Community Edition 5.0.3 by Boxfuse
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Repair of failed migration in Schema History table "state"."flyway_schema_history" not necessary. No failed migration detected.
+[INFO] Successfully repaired schema history table "state"."flyway_schema_history" (execution time 00:00.378s).
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:migrate (migrate-database) @ egov-database ---
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Successfully validated 1092 migrations (execution time 00:00.253s)
+[INFO] Current version of schema "state": 20190322101944
+[WARNING] outOfOrder mode is active. Migration of schema "state" may not be reproducible.
+[INFO] Migrating schema "state" to version 20190331005800 - egi WorkflowTypes ddl
+[ERROR] Migration of schema "state" to version 20190331005800 - egi WorkflowTypes ddl failed! Changes successfully rolled back.
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] e-governments erp ................................. SUCCESS [2.802s]
+[INFO] e-governments config .............................. SUCCESS [1.243s]
+[INFO] e-governments database ............................ FAILURE [3.541s]
+[INFO] e-governments egi ................................. SKIPPED
+[INFO] e-governments commons ............................. SKIPPED
+[INFO] e-governments eis ................................. SKIPPED
+[INFO] e-governments egf ................................. SKIPPED
+[INFO] e-governments portal .............................. SKIPPED
+[INFO] e-governments collection .......................... SKIPPED
+[INFO] e-governments demand .............................. SKIPPED
+[INFO] e-governments bpa ................................. SKIPPED
+[INFO] e-governments commons web ......................... SKIPPED
+[INFO] e-governments eis web ............................. SKIPPED
+[INFO] e-governments egi web ............................. SKIPPED
+[INFO] e-governments egf web ............................. SKIPPED
+[INFO] e-governments portal web .......................... SKIPPED
+[INFO] e-governments collection web ...................... SKIPPED
+[INFO] e-governments bpa web ............................. SKIPPED
+[INFO] e-governments pass ................................ SKIPPED
+[INFO] e-governments pass web ............................ SKIPPED
+[INFO] e-governments edcr ................................ SKIPPED
+[INFO] e-governments edcrweb ............................. SKIPPED
+[INFO] e-governments services ............................ SKIPPED
+[INFO] e-governments erp ear ............................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.276s
+[INFO] Finished at: Sun Mar 31 04:56:18 IST 2019
+[INFO] Final Memory: 37M/615M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.flywaydb:flyway-maven-plugin:5.0.3:migrate (migrate-database) on project egov-database: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateSqlException:
+[ERROR] Migration V20190331005800__egi_WorkflowTypes_ddl.sql failed
+[ERROR] -----------------------------------------------------------
+[ERROR] SQL State  : 42P07
+[ERROR] Error Code : 0
+[ERROR] Message    : ERROR: relation "eg_wf_types" already exists
+[ERROR] Location   : /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql (/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql)
+[ERROR] Line       : 2
+[ERROR] Statement  : Create table EG_WF_TYPES(
+[ERROR] id bigint,
+[ERROR] module bigint ,
+[ERROR] type varchar(50),
+[ERROR] typeFQN varchar(50),
+[ERROR] link varchar(50),
+[ERROR] displayName varchar(50),
+[ERROR] enabled boolean,
+[ERROR] grouped boolean,
+[ERROR] createdby bigint,
+[ERROR] createddate timestamp without time zone,
+[ERROR] lastmodifiedby bigint,
+[ERROR] lastmodifieddate timestamp without time zone,
+[ERROR] tenantId varchar(250),
+[ERROR] version bigint
+[ERROR] )
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :egov-database
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.egov:egov-ear:ear:BPA-3.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.wildfly.plugins:wildfly-maven-plugin is missing. @ line 238, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] e-governments erp
+[INFO] e-governments config
+[INFO] e-governments database
+[INFO] e-governments egi
+[INFO] e-governments commons
+[INFO] e-governments eis
+[INFO] e-governments egf
+[INFO] e-governments portal
+[INFO] e-governments collection
+[INFO] e-governments demand
+[INFO] e-governments bpa
+[INFO] e-governments commons web
+[INFO] e-governments eis web
+[INFO] e-governments egi web
+[INFO] e-governments egf web
+[INFO] e-governments portal web
+[INFO] e-governments collection web
+[INFO] e-governments bpa web
+[INFO] e-governments pass
+[INFO] e-governments pass web
+[INFO] e-governments edcr
+[INFO] e-governments edcrweb
+[INFO] e-governments services
+[INFO] e-governments erp ear
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments erp BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-erp ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-erp ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/target/jacoco.exec
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-erp ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-erp ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments config BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-config ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-config ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:resources (default-resources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 9 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ egov-config ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:testResources (default-testResources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ egov-config ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.20.1:test (default-test) @ egov-config ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-config ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:test-jar (default) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-config ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments database BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ egov-database ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db (includes = [**], excludes = [])
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-database ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:copy-resources (copy-migrations) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 96 resources
+[INFO] Copying 64 resources
+[INFO] Copying 37 resources
+[INFO] Copying 295 resources
+[INFO] Copying 129 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-pgr/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-wtms/src/main/resources/db/migration
+[INFO] Copying 16 resources
+[INFO] Copying 34 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-ptis/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-adtax/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-tl/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-assets/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-works/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-council/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-lcms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-stms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-mrs/src/main/resources/db/migration
+[INFO] Copying 373 resources
+[INFO] Copying 49 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:resources (default-resources) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1094 resources
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:repair (migrate-database) @ egov-database ---
+[INFO] Flyway Community Edition 5.0.3 by Boxfuse
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Repair of failed migration in Schema History table "state"."flyway_schema_history" not necessary. No failed migration detected.
+[INFO] Successfully repaired schema history table "state"."flyway_schema_history" (execution time 00:00.369s).
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:migrate (migrate-database) @ egov-database ---
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Successfully validated 1092 migrations (execution time 00:00.224s)
+[INFO] Current version of schema "state": 20190322101944
+[WARNING] outOfOrder mode is active. Migration of schema "state" may not be reproducible.
+[INFO] Migrating schema "state" to version 20190331005800 - egi WorkflowTypes ddl
+[ERROR] Migration of schema "state" to version 20190331005800 - egi WorkflowTypes ddl failed! Changes successfully rolled back.
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] e-governments erp ................................. SUCCESS [2.761s]
+[INFO] e-governments config .............................. SUCCESS [1.187s]
+[INFO] e-governments database ............................ FAILURE [3.337s]
+[INFO] e-governments egi ................................. SKIPPED
+[INFO] e-governments commons ............................. SKIPPED
+[INFO] e-governments eis ................................. SKIPPED
+[INFO] e-governments egf ................................. SKIPPED
+[INFO] e-governments portal .............................. SKIPPED
+[INFO] e-governments collection .......................... SKIPPED
+[INFO] e-governments demand .............................. SKIPPED
+[INFO] e-governments bpa ................................. SKIPPED
+[INFO] e-governments commons web ......................... SKIPPED
+[INFO] e-governments eis web ............................. SKIPPED
+[INFO] e-governments egi web ............................. SKIPPED
+[INFO] e-governments egf web ............................. SKIPPED
+[INFO] e-governments portal web .......................... SKIPPED
+[INFO] e-governments collection web ...................... SKIPPED
+[INFO] e-governments bpa web ............................. SKIPPED
+[INFO] e-governments pass ................................ SKIPPED
+[INFO] e-governments pass web ............................ SKIPPED
+[INFO] e-governments edcr ................................ SKIPPED
+[INFO] e-governments edcrweb ............................. SKIPPED
+[INFO] e-governments services ............................ SKIPPED
+[INFO] e-governments erp ear ............................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 7.943s
+[INFO] Finished at: Sun Mar 31 04:57:21 IST 2019
+[INFO] Final Memory: 37M/648M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.flywaydb:flyway-maven-plugin:5.0.3:migrate (migrate-database) on project egov-database: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateSqlException:
+[ERROR] Migration V20190331005800__egi_WorkflowTypes_ddl.sql failed
+[ERROR] -----------------------------------------------------------
+[ERROR] SQL State  : 42P07
+[ERROR] Error Code : 0
+[ERROR] Message    : ERROR: relation "eg_wf_types" already exists
+[ERROR] Location   : /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql (/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql)
+[ERROR] Line       : 2
+[ERROR] Statement  : Create table EG_WF_TYPES(
+[ERROR] id bigint,
+[ERROR] module bigint ,
+[ERROR] type varchar(50),
+[ERROR] typeFQN varchar(50),
+[ERROR] link varchar(50),
+[ERROR] displayName varchar(50),
+[ERROR] enabled boolean,
+[ERROR] grouped boolean,
+[ERROR] createdby bigint,
+[ERROR] createddate timestamp without time zone,
+[ERROR] lastmodifiedby bigint,
+[ERROR] lastmodifieddate timestamp without time zone,
+[ERROR] tenantId varchar(250),
+[ERROR] version bigint
+[ERROR] )
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :egov-database
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.egov:egov-ear:ear:BPA-3.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.wildfly.plugins:wildfly-maven-plugin is missing. @ line 238, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] e-governments erp
+[INFO] e-governments config
+[INFO] e-governments database
+[INFO] e-governments egi
+[INFO] e-governments commons
+[INFO] e-governments eis
+[INFO] e-governments egf
+[INFO] e-governments portal
+[INFO] e-governments collection
+[INFO] e-governments demand
+[INFO] e-governments bpa
+[INFO] e-governments commons web
+[INFO] e-governments eis web
+[INFO] e-governments egi web
+[INFO] e-governments egf web
+[INFO] e-governments portal web
+[INFO] e-governments collection web
+[INFO] e-governments bpa web
+[INFO] e-governments pass
+[INFO] e-governments pass web
+[INFO] e-governments edcr
+[INFO] e-governments edcrweb
+[INFO] e-governments services
+[INFO] e-governments erp ear
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments erp BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-erp ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-erp ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/target/jacoco.exec
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-erp ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-erp ---
+[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments config BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ egov-config ---
+[INFO] Deleting /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-config ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:resources (default-resources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 9 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ egov-config ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.3:testResources (default-testResources) @ egov-config ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ egov-config ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.20.1:test (default-test) @ egov-config ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:report (default-report) @ egov-config ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:test-jar (default) @ egov-config ---
+[INFO] Building jar: /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-config/target/egov-config-BPA-3.0.0-SNAPSHOT-tests.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:2.10.4:jar (attach-javadocs) @ egov-config ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building e-governments database BPA-3.0.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ egov-database ---
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.7.9:prepare-agent (default-prepare-agent) @ egov-database ---
+[INFO] argLine set to -javaagent:/home/mani/.m2/repository/org/jacoco/org.jacoco.agent/0.7.9/org.jacoco.agent-0.7.9-runtime.jar=destfile=/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/target/jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:copy-resources (copy-migrations) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 96 resources
+[INFO] Copying 64 resources
+[INFO] Copying 37 resources
+[INFO] Copying 295 resources
+[INFO] Copying 129 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-pgr/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-wtms/src/main/resources/db/migration
+[INFO] Copying 16 resources
+[INFO] Copying 34 resources
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-ptis/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-adtax/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-tl/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-assets/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-works/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-council/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-lcms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-stms/src/main/resources/db/migration
+[INFO] skip non existing resourceDirectory /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/../egov-mrs/src/main/resources/db/migration
+[INFO] Copying 373 resources
+[INFO] Copying 49 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.1:resources (default-resources) @ egov-database ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1094 resources
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:repair (migrate-database) @ egov-database ---
+[INFO] Flyway Community Edition 5.0.3 by Boxfuse
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Repair of failed migration in Schema History table "state"."flyway_schema_history" not necessary. No failed migration detected.
+[INFO] Successfully repaired schema history table "state"."flyway_schema_history" (execution time 00:00.401s).
+[INFO] 
+[INFO] --- flyway-maven-plugin:5.0.3:migrate (migrate-database) @ egov-database ---
+[INFO] Database: jdbc:postgresql://localhost:5432/digitbpa (PostgreSQL 9.5)
+[INFO] Successfully validated 1092 migrations (execution time 00:00.262s)
+[INFO] Current version of schema "state": 20190322101944
+[WARNING] outOfOrder mode is active. Migration of schema "state" may not be reproducible.
+[INFO] Migrating schema "state" to version 20190331005800 - egi WorkflowTypes ddl
+[ERROR] Migration of schema "state" to version 20190331005800 - egi WorkflowTypes ddl failed! Changes successfully rolled back.
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] e-governments erp ................................. SUCCESS [2.649s]
+[INFO] e-governments config .............................. SUCCESS [1.142s]
+[INFO] e-governments database ............................ FAILURE [3.508s]
+[INFO] e-governments egi ................................. SKIPPED
+[INFO] e-governments commons ............................. SKIPPED
+[INFO] e-governments eis ................................. SKIPPED
+[INFO] e-governments egf ................................. SKIPPED
+[INFO] e-governments portal .............................. SKIPPED
+[INFO] e-governments collection .......................... SKIPPED
+[INFO] e-governments demand .............................. SKIPPED
+[INFO] e-governments bpa ................................. SKIPPED
+[INFO] e-governments commons web ......................... SKIPPED
+[INFO] e-governments eis web ............................. SKIPPED
+[INFO] e-governments egi web ............................. SKIPPED
+[INFO] e-governments egf web ............................. SKIPPED
+[INFO] e-governments portal web .......................... SKIPPED
+[INFO] e-governments collection web ...................... SKIPPED
+[INFO] e-governments bpa web ............................. SKIPPED
+[INFO] e-governments pass ................................ SKIPPED
+[INFO] e-governments pass web ............................ SKIPPED
+[INFO] e-governments edcr ................................ SKIPPED
+[INFO] e-governments edcrweb ............................. SKIPPED
+[INFO] e-governments services ............................ SKIPPED
+[INFO] e-governments erp ear ............................. SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.034s
+[INFO] Finished at: Sun Mar 31 04:58:21 IST 2019
+[INFO] Final Memory: 37M/618M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.flywaydb:flyway-maven-plugin:5.0.3:migrate (migrate-database) on project egov-database: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateSqlException:
+[ERROR] Migration V20190331005800__egi_WorkflowTypes_ddl.sql failed
+[ERROR] -----------------------------------------------------------
+[ERROR] SQL State  : 42P07
+[ERROR] Error Code : 0
+[ERROR] Message    : ERROR: relation "eg_wf_types" already exists
+[ERROR] Location   : /home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql (/home/mani/Workspaces/digitbpa/digit-bpa/egov/egov-database/src/main/resources/db/migration/main/V20190331005800__egi_WorkflowTypes_ddl.sql)
+[ERROR] Line       : 2
+[ERROR] Statement  : Create table EG_WF_TYPES(
+[ERROR] id bigint,
+[ERROR] module bigint ,
+[ERROR] type varchar(50),
+[ERROR] typeFQN varchar(50),
+[ERROR] link varchar(50),
+[ERROR] displayName varchar(50),
+[ERROR] enabled boolean,
+[ERROR] grouped boolean,
+[ERROR] createdby bigint,
+[ERROR] createddate timestamp without time zone,
+[ERROR] lastmodifiedby bigint,
+[ERROR] lastmodifieddate timestamp without time zone,
+[ERROR] tenantId varchar(250),
+[ERROR] version bigint
+[ERROR] )
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :egov-database

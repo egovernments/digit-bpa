@@ -60,38 +60,33 @@ import java.util.List;
 @Repository
 public interface CrossHierarchyRepository extends JpaRepository<CrossHierarchy, Long> {
 
-    @Query("select ch from CrossHierarchy ch where UPPER(ch.childType.name)= UPPER(:boundaryTypeName)"
-            + " and UPPER(ch.childType.hierarchyType.name) =UPPER(:hierarchyTypeName) and "
-            + " UPPER(ch.parentType.hierarchyType.name) = UPPER(:parentHTypeName) and"
-            + " UPPER(ch.child.name) like UPPER(:name) and ch.child.active=true order by ch.child.name")
+    @Query("select ch from CrossHierarchy ch ")
     List<CrossHierarchy> findByChildBoundaryNameAndBoundaryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName,
             @Param("parentHTypeName") String parentHTypeName, @Param("name") String name);
 
-    @Query("select ch.child from CrossHierarchy ch where UPPER(ch.childType.name)= UPPER(:boundaryTypeName) " +
-            "and UPPER(ch.childType.hierarchyType.name) =UPPER(:hierarchyTypeName)")
+   /* @Query("select ch from CrossHierarchy ch ")
     List<Boundary> findChildBoundariesByBoundaryTypeAndHierarchyTypeNames(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName);
 
-    @Query("select ch.child from CrossHierarchy ch where ch.parent.id= :parentId and ch.parent.active=true")
+    @Query("select ch from CrossHierarchy ch  ")
     List<Boundary> findChildBoundariesByActiveParentBoundaryId(@Param("parentId") Long parentId);
 
-    @Query("select ch.parent from CrossHierarchy ch where ch.child.id=:childId and ch.child.active=true and ch.parentType.id=:parentTypeId")
+    @Query("select ch from CrossHierarchy ch ")
     List<Boundary> findParentBoundariesByChildBoundaryAndParentBoundaryTypeIds(@Param("childId") Long childId,
                                                                                @Param("parentTypeId") Long parentTypeId);
 
-    @Query("select ch.child from CrossHierarchy ch where UPPER(ch.parentType.name)= UPPER(:boundaryTypeName) " +
-            "and UPPER(ch.parentType.hierarchyType.name) =UPPER(:hierarchyTypeName) and UPPER(ch.parent.name) = UPPER(:boundaryName)")
+    @Query("select ch from CrossHierarchy ")
     List<Boundary> findChildBoundariesByParentBoundary(@Param("boundaryTypeName") String boundaryTypeName,
                                                        @Param("hierarchyTypeName") String hierarchyTypeName,
                                                        @Param("boundaryName") String boundaryName);
 
     List<CrossHierarchy> findByParentIdAndChildId(Long parentId, Long childId);
     
-    @Query("select ch.child from CrossHierarchy ch where ch.parent.id=:parentId and  UPPER(ch.parentType.name)= UPPER(:parentBoundaryTypeName) and UPPER(ch.parentType.hierarchyType.name) =UPPER(:parentHierarchyTypeName) and UPPER(ch.childType.name) = UPPER(:childBoundaryTypeName) order by ch.child.name")
+    @Query("select ch from CrossHierarchy ")
     List<Boundary> findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(
             @Param("parentBoundaryTypeName") String parentBoundaryTypeName,
             @Param("parentHierarchyTypeName") String parentHierarchyTypeName,
-            @Param("childBoundaryTypeName") String childBoundaryTypeName, @Param("parentId") Long id);
+            @Param("childBoundaryTypeName") String childBoundaryTypeName, @Param("parentId") Long id);*/
 
 }

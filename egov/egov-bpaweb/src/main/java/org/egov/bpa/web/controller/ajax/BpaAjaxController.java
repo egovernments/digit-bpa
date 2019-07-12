@@ -248,7 +248,7 @@ public class BpaAjaxController {
     @GetMapping(value = "/bpaajaxWorkFlow-positionsByDepartmentAndDesignationAndBoundary", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getPositionByDepartmentAndDesignationAndBoundary(@RequestParam final Long approvalDepartment,
-            @RequestParam final Long approvalDesignation, @RequestParam final Long boundaryId,
+            @RequestParam final Long approvalDesignation, @RequestParam final String boundaryId,
             final HttpServletResponse response) {
         if (approvalDepartment != null && approvalDepartment != 0 && approvalDepartment != -1
                 && approvalDesignation != null && approvalDesignation != 0 && approvalDesignation != -1) {
@@ -600,25 +600,27 @@ public class BpaAjaxController {
             for (int i = 0; i < validBoundaryTypeJsonArray.length(); i++) {
                 boundaryInfoJson = new JSONObject();
                 boundaryTypeInJson = validBoundaryTypeJsonArray.getJSONObject(i);
+               String btype= boundaryTypeInJson.getString("boundary");
                 boundaryArray = new JSONArray();
-                boundaryType = boundaryTypeService
-                        .getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeInJson.getString("boundary"), heirarchy);
-                for (final Boundary boundary : boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getId())) {
+               
+                for (final Boundary boundary : boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(btype,heirarchy)) {
                     boundaryJson = new JSONObject();
-                    boundaryJson.put("id", boundary.getId());
+                    boundaryJson.put("id", boundary.getCode());
                     boundaryJson.put("name", boundary.getName());
-                    boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getId());
+                    boundaryJson.put("code", boundary.getCode());
+                    boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getCode());
                     boundaryJson.put("materialpath", boundary.getMaterializedPath());
                     boundaryArray.put(boundaryJson);
                 }
                 boundaryInfoJson.put("data", boundaryArray);
-                boundaryDataJson.put(boundaryType.getHierarchyType().getId() + "-" + boundaryType.getHierarchy() + ":"
+                boundaryDataJson.put(heirarchy + "-" + heirarchy + ":"
                         + heirarchy + ":" + boundaryTypeInJson.getString("displayName"), boundaryInfoJson);
             }
         }
         boundaryOutputJson.put("boundaryData", boundaryDataJson);
         boundaryOutputJson.put("uniformBoundary", uniformBoundaryJson);
         System.out.println("getBoundaryConfiguration--->" + boundaryOutputJson.toString());
+        System.out.println("boundaryData--->" + boundaryOutputJson.toString());
         IOUtils.write(boundaryOutputJson.toString(), response.getWriter());
     }
 
@@ -642,8 +644,9 @@ public class BpaAjaxController {
                 boundaryArray = new JSONArray();
                 for (final Boundary boundary : childBoundaries) {
                     boundaryJson = new JSONObject();
-                    boundaryJson.put("id", boundary.getId());
+                    boundaryJson.put("id", boundary.getCode());
                     boundaryJson.put("name", boundary.getName());
+                    boundaryJson.put("code", boundary.getCode());
                     boundaryJson.put("materialpath", boundary.getMaterializedPath());
                     boundaryArray.put(boundaryJson);
                 }
@@ -670,12 +673,13 @@ public class BpaAjaxController {
 
         String[] childBoundary = child.split(",");
         if (selectedParent != null && !selectedParent.isEmpty()) {
-            childBoundaries = boundaryService.findActiveImmediateChildrenWithOutParent(Long.valueOf(selectedParent));
+            childBoundaries = boundaryService.findActiveImmediateChildrenWithOutParent(selectedParent);
             boundaryArray = new JSONArray();
             for (final Boundary boundary : childBoundaries) {
                 boundaryJson = new JSONObject();
-                boundaryJson.put("id", boundary.getId());
+                boundaryJson.put("id", boundary.getCode());
                 boundaryJson.put("name", boundary.getName());
+                boundaryJson.put("code", boundary.getCode());
                 boundaryJson.put("materialpath", boundary.getMaterializedPath());
                 boundaryArray.put(boundaryJson);
             }

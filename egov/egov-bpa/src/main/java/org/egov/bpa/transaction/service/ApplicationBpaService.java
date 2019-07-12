@@ -315,7 +315,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             }
             if (wfMatrix != null)
                 approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                        bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+                        bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)));
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, currentState, null, null,
                     null);
         }
@@ -457,7 +457,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         buildPermitConditions(application);
         application.setPermitDcrDocuments(persistApplnDCRDocuments(application.getPermitDcrDocuments()));
         // persistPostalAddress(application);
-        // buildRegistrarOfficeForVillage(application);
+         buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
         applicationBpaRepository.saveAndFlush(application);
         
@@ -477,7 +477,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
         // persistPostalAddress(application);
-        // buildRegistrarOfficeForVillage(application);
+         buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
 		if (application.getApplicationType() != null && application.getApplicationType().getName() != null
 				&& application.getApplicationType().getName().equals(BpaConstants.APPLICATION_TYPE_LOWRISK)

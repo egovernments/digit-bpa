@@ -46,6 +46,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.bpa.master.entity.RegistrarOfficeVillage;
+import org.egov.bpa.master.repository.BoundaryPojoRepository;
 import org.egov.bpa.master.repository.RegistrarOfficeVillageRepository;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -62,6 +63,8 @@ public class RegistrarOfficeVillageService {
     private EntityManager entityManager;
     @Autowired
     private RegistrarOfficeVillageRepository registrarOfficeVillageRepository;
+    @Autowired
+    private BoundaryPojoRepository boundaryRepository;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -69,13 +72,19 @@ public class RegistrarOfficeVillageService {
 
     @SuppressWarnings("unchecked")
     public List<RegistrarOfficeVillage> getRegistrarOfficeByVillage(final Long villageId) {
-        final Criteria criteria = getCurrentSession().createCriteria(RegistrarOfficeVillage.class, "registrarOffice");
+      /*  final Criteria criteria = getCurrentSession().createCriteria(RegistrarOfficeVillage.class, "registrarOffice");
         if (villageId != null) {
-            criteria.createAlias("registrarOffice.village", "village");
-            criteria.add(Restrictions.eq("village.id", villageId));
+         //   criteria.createAlias("registrarOffice.village", "village");
+            criteria.add(Restrictions.eq("villageId", villageId));
         }
-        criteria.add(Restrictions.eq("registrarOffice.isActive", true));
-        return criteria.list();
+        criteria.add(Restrictions.eq("registrarOffice.isActive", true));*/
+        List<RegistrarOfficeVillage> rovs = registrarOfficeVillageRepository.findAll();
+        for(RegistrarOfficeVillage rov:rovs)
+        {
+        	rov.setVillage(boundaryRepository.findById(rov.getVillageId()));
+        }
+        return rovs;
+        
     }
 
     public RegistrarOfficeVillage findById(Long id) {

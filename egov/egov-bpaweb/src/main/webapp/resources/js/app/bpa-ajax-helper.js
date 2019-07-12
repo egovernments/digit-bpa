@@ -227,12 +227,12 @@ $(document).ready(
 			});				
 			
 			
-			$('#localitys').change(function(){
+			$('#holdingNumber').change(function(){
 				$.ajax({
 					url: "/bpa/ajax/registraroffice",
 					type: "GET",
 					data: {
-						villageId : $("#localitys option:selected").val()
+						villageId : 1
 					},
 					cache: false,
 					dataType: "json",

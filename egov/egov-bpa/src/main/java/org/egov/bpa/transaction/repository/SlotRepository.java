@@ -53,7 +53,7 @@ import java.util.List;
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long>, JpaSpecificationExecutor<Slot> {
 
-    @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate >= :slotDate and slot.type = 'Normal' order by slot.appointmentDate asc")
+  /*  @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate >= :slotDate and slot.type = 'Normal' order by slot.appointmentDate asc")
     List<Slot> findByZoneAndApplicationDate(@Param("zone") Boundary zone, @Param("slotDate") Date slotDate);
 
     @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate = :appointmentDate and slot.type='Normal'")
@@ -68,12 +68,12 @@ public interface SlotRepository extends JpaRepository<Slot, Long>, JpaSpecificat
     Slot getOpenSlotForOneDayPermit(@Param("zone") Boundary zone, @Param("electionWard") Boundary electionWard,
             @Param("appointmentDate") Date appointmentDate, @Param("type") String type);
 
-    Slot findByZoneAndElectionWardAndAppointmentDate(Boundary zone, Boundary electionWard, Date appointmentDate);
+  //  Slot findByZoneAndElectionWardAndAppointmentDate(Boundary zone, Boundary electionWard, Date appointmentDate);
 
     @Query("select slot from Slot slot where slot.zone = :zone  and slot.electionWard = :ward and slot.appointmentDate >= :slotDate and slot.type = 'One Day Permit' order by slot.appointmentDate asc")
     List<Slot> findByZoneWardAndApplicationDateForOneDayPermit(@Param("zone") Boundary zone, @Param("ward") Boundary ward,
             @Param("slotDate") Date slotDate);
 
     @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate >= :slotDate and slot.type = 'Occupancy Certificate' order by slot.appointmentDate asc")
-    List<Slot> findByZoneApplicationDateForOc(@Param("zone") Boundary zone, @Param("slotDate") Date slotDate);
+    List<Slot> findByZoneApplicationDateForOc(@Param("zone") Boundary zone, @Param("slotDate") Date slotDate);*/
 }

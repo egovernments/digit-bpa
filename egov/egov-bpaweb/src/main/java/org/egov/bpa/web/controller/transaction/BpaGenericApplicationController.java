@@ -205,13 +205,13 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("governmentTypeList", Arrays.asList(GovernmentType.values()));
         model.addAttribute("constStages", constructionStagesService.findAll());
         model.addAttribute("appTypes", applicationTypeService.getAllEnabledApplicationTypes());
-        model.addAttribute("electionwards", getElectionWards());
-        model.addAttribute("wards", getRevenueWards());
-        model.addAttribute("street", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(STREET,
-                REVENUE_HIERARCHY_TYPE));
-        model.addAttribute("localitys", boundaryService
+      //  model.addAttribute("electionwards", getElectionWards());
+       // model.addAttribute("wards", getRevenueWards());
+      /*  model.addAttribute("street", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(STREET,
+                REVENUE_HIERARCHY_TYPE));*/
+       /* model.addAttribute("localitys", boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
-                        LOCATION_HIERARCHY_TYPE));
+                        LOCATION_HIERARCHY_TYPE));*/
         model.addAttribute("applicationModes", getApplicationModeMap());
         model.addAttribute("buildingFloorList", getBuildingFloorsList());
         model.addAttribute("uomList", BpaUom.values());
@@ -269,13 +269,13 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
     public List<Boundary> getElectionWards() {
         List<Boundary> boundaries = boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMINISTRATION_HIERARCHY_TYPE);
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.BLOCK, ADMINISTRATION_HIERARCHY_TYPE);
         sortBoundaryByBndryNumberAsc(boundaries);
         return boundaries;
     }
 
     public List<Boundary> getRevenueWards() {
-        List<Boundary> boundaries = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+        List<Boundary> boundaries = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.BLOCK,
                 REVENUE_HIERARCHY_TYPE);
         sortBoundaryByBndryNumberAsc(boundaries);
         return boundaries;

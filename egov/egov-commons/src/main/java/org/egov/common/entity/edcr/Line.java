@@ -50,7 +50,7 @@ package org.egov.common.entity.edcr;
 import java.math.BigDecimal;
 
 public class Line {
-	
+	  private static final long serialVersionUID = 138L;
 	private BigDecimal length;
 	
 	public Line(BigDecimal length) {

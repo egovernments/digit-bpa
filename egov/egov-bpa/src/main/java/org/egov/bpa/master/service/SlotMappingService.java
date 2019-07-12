@@ -134,7 +134,7 @@ public class SlotMappingService {
 	}
 
 	public List<SlotMapping> findByZoneAndAppType(Boundary zone, ApplicationSubType applType) {
-		return noOfApplicationsRepository.findByApplicationTypeIdAndZone(applType.getId(),zone);
+		return noOfApplicationsRepository.findByApplicationTypeIdAndZoneId(applType.getId(),zone.getId()); 
 	}
 
     public List<Boundary> slotfindZoneByApplType(ApplicationSubType applType) {
@@ -149,9 +149,9 @@ public class SlotMappingService {
 
     public List<SlotMapping> findByZoneElectionWardAndAppType(Boundary zone,
             Boundary electionWard, ApplicationSubType applType) {
-        return noOfApplicationsRepository.findByZoneElectionWardAndAppType(zone, electionWard,
+        return noOfApplicationsRepository.findByZoneElectionWardAndAppType(zone.getId(), electionWard.getId(),
                 applType.getId());
 
-    }
+    }     
 
 }

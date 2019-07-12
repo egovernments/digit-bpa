@@ -115,7 +115,7 @@ public class BpaConstants {
     public static final String LOCALITY_BNDRY_TYPE = "Locality";
     public static final String LOCATION_HIERARCHY_TYPE = "LOCATION";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
-    public static final String ADMINISTRATION_HIERARCHY_TYPE = "ADMINISTRATION";
+    public static final String ADMINISTRATION_HIERARCHY_TYPE = "ADMIN";//ISTRATION
     public static final String ZONE = "Zone";
     public static final String WARD = "Ward";
     public static final String BLOCK = "Block";

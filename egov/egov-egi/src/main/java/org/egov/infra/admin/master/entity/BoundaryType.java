@@ -32,7 +32,7 @@
  *
  *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
  *            For any further queries on attribution, including queries on brand guidelines,
- *            please contact contact@egovernments.org
+ *            please contact contact
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -42,82 +42,66 @@
  *            with regards to rights under trademark law for use of the trade names
  *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact
  *
  */
 
 package org.egov.infra.admin.master.entity;
 
-import com.google.common.base.Objects;
-import com.google.gson.annotations.Expose;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
-import static org.egov.infra.admin.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
+import org.egov.infra.microservice.models.Auditable;
 
-@Entity
-@Table(name = "EG_BOUNDARY_TYPE")
-@Unique(fields = "code", enableDfltMsg = true)
-@SequenceGenerator(name = SEQ_BOUNDARY_TYPE, sequenceName = SEQ_BOUNDARY_TYPE, allocationSize = 1)
-public class BoundaryType extends AbstractAuditable {
+import com.google.common.base.Objects;
+
+
+
+
+
+public class BoundaryType extends Auditable {
 
     public static final String SEQ_BOUNDARY_TYPE = "SEQ_EG_BOUNDARY_TYPE";
     private static final long serialVersionUID = 859229842367886336L;
-    @Expose
-    @Id
-    @GeneratedValue(generator = SEQ_BOUNDARY_TYPE, strategy = GenerationType.SEQUENCE)
+    
+    
+    
     private Long id;
 
-    @NotBlank
-    @SafeHtml
+    
+    
     private String name;
 
-    @NotBlank
-    @Length(max = 25)
-    @SafeHtml
+    
+    
+    
     private String code;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "hierarchytype")
+    
+    
+    
     private HierarchyType hierarchyType;
 
-    @ManyToOne
-    @JoinColumn(name = "parent")
+    
+    
     private BoundaryType parent;
 
     private Long hierarchy;
 
-    @SafeHtml
+    
     private String localName;
 
-    @Transient
+    
     private String parentName;
 
-    @Transient
+    
     private Set<BoundaryType> childBoundaryTypes;
 
-    @Override
+    
     public Long getId() {
         return id;
     }
 
-    @Override
+    
     public void setId(Long id) {
         this.id = id;
     }
@@ -191,7 +175,7 @@ public class BoundaryType extends AbstractAuditable {
         this.localName = localName;
     }
 
-    @Override
+    
     public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -202,7 +186,7 @@ public class BoundaryType extends AbstractAuditable {
                 Objects.equal(hierarchyType, that.hierarchyType);
     }
 
-    @Override
+    
     public int hashCode() {
         return Objects.hashCode(name, hierarchyType);
     }

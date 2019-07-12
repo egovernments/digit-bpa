@@ -199,7 +199,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             model.addAttribute("mode", "showRescheduleToCitizen");
         }
         prepareFormData(model);
-        buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
+        //buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
         application.setApplicationAmenityTemp(application.getApplicationAmenity());
         application.setPermitOccupanciesTemp(application.getPermitOccupancies());
         applicationBpaService.buildExistingAndProposedBuildingDetails(application);
@@ -397,7 +397,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 bpaApplication.getApplicationType().getName());
         if (wfMatrix != null)
             approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
+                    bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)));
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (approvalPosition == 0 || approvalPosition == null)) {
             model.addAttribute("noJAORSAMessage", messageSource.getMessage("msg.official.not.exist",

@@ -48,11 +48,24 @@
 
 package org.egov.infra.microservice.utils;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.microservice.contract.Boundary;
+import org.egov.infra.microservice.contract.BoundaryMdmsResponse;
+import org.egov.infra.microservice.contract.BoundaryRequest;
 import org.egov.infra.microservice.contract.CreateUserRequest;
+import org.egov.infra.microservice.contract.MdmsTenantBoundary;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
 import org.egov.infra.microservice.contract.Task;
 import org.egov.infra.microservice.contract.TaskResponse;
@@ -68,15 +81,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
-import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 
 @Service
 public class MicroserviceUtils {
@@ -195,4 +199,55 @@ public class MicroserviceUtils {
     public boolean hasWorkflowService() {
         return isNotBlank(workflowServiceUrl);
     }
+
+	public static List<MdmsTenantBoundary> getBoundaryById(String btype,String htype) {
+
+		 LOGGER.info("Calling get Boundary........htype."+htype+"  --btype--  "+btype);
+		StringBuffer url=new StringBuffer();
+		url.append("/egov-location/location/v11/boundarys/_search?tenantId=pb.amritsar");
+		
+		//hierarchyTypeCode="+"ADMIN"+"&boundaryType="+"Locality"+
+		if(htype!=null)
+		{
+			url.append("&hierarchyTypeCode=").append(htype);
+		}
+		if(btype!=null)
+		{
+			url.append("&boundaryType=").append(btype);
+		}
+    	String host="https://egov-micro-qa.egovernments.org";
+    	String authToken="0d305edf-5416-4996-bace-e6faccf77b2b";
+         List<MdmsTenantBoundary> boundarys = new ArrayList<>();
+        if (isNotBlank(url)) {
+            final RestTemplate restTemplate = new RestTemplate();
+            BoundaryMdmsResponse tresp;
+            try {
+            	
+            	UserInfo userInfo=new UserInfo();
+            	userInfo.setTenantId("pb");
+            	final RequestInfo requestInfo = new RequestInfo();
+                requestInfo.setApiId("apiId");
+                requestInfo.setVer("ver");
+                requestInfo.setTs(new Date());
+                requestInfo.setUserInfo(userInfo);
+                requestInfo.setAuthToken(authToken);
+              
+            	   RequestInfoWrapper requestInfo1 = new RequestInfoWrapper();
+            	 final BoundaryRequest brequest = new BoundaryRequest();
+              
+            	 requestInfo1.setRequestInfo(requestInfo);
+                
+               
+                tresp = restTemplate.postForObject(host+url.toString(), requestInfo1, BoundaryMdmsResponse.class);
+                boundarys = tresp.getBoundarys();
+            } catch (final Exception e) {
+                final String errMsg = "Exception while getting boundary  from microservice ";
+               // throw new ApplicationRuntimeException(errMsg, e);
+                LOGGER.error(errMsg,e);
+            }
+        }
+        LOGGER.info("Got Boundary........."+boundarys.size());
+        return boundarys;
+		
+	}
 }

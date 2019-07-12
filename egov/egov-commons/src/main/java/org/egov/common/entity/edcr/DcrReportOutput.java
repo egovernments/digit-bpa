@@ -48,7 +48,7 @@
 package org.egov.common.entity.edcr;
 
 public class DcrReportOutput {
-
+	  private static final long serialVersionUID = 136L;
     public String key;
 
     public String description;

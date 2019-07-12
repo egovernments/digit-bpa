@@ -50,7 +50,7 @@ package org.egov.common.entity.edcr;
 import java.math.BigDecimal;
 
 public class VirtualBuildingReport {
-
+	  private static final long serialVersionUID = 144L;
     private BigDecimal proposedBuitUpArea;
 
     private BigDecimal proposedFloorArea;

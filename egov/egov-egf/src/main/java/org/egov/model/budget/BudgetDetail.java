@@ -47,18 +47,14 @@
  */
 package org.egov.model.budget;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.model.budget.BudgetDetail.SEQ_BUDGETDETAIL;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -74,14 +70,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import static org.egov.model.budget.BudgetDetail.SEQ_BUDGETDETAIL;
+import org.egov.commons.CFunction;
+import org.egov.commons.EgwStatus;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGF_BUDGETDETAIL")
@@ -146,8 +147,12 @@ public class BudgetDetail extends StateAware<Position> {
     @JoinColumn(name = "functionary")
     private Functionary functionary;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boundary")
+   
+  
+
+	@JoinColumn(name = "boundary")
+    private Long boundaryId;
+    @Transient
     private Boundary boundary;
 
     @Length(max = 10)
@@ -314,6 +319,14 @@ public class BudgetDetail extends StateAware<Position> {
     public void setComment(final String comment) {
         this.comment = comment;
     }
+    
+    public Long getBoundaryId() {
+  		return boundaryId;
+  	}
+
+  	public void setBoundaryId(Long boundaryId) {
+  		this.boundaryId = boundaryId;
+  	}
 
     /**
      * @return the materializedPath

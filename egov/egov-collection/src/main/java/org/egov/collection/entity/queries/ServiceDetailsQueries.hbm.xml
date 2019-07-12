@@ -108,8 +108,8 @@
 	<query name="getAllFundsource">
 	<![CDATA[select f  from Fundsource f where f.isactive=true and f.isnotleaf=false order by name]]></query>
 	
-	<query name="getAllField">
-	<![CDATA[select b  from Boundary b where lower(b.boundaryType.name)='zone']]></query>
+	<!-- <query name="getAllField">
+	<![CDATA[select b  from Boundary b where lower(b.boundaryType.name)='zone']]></query> -->
 	
 	<query name="SERVICE_BY_ID">
     <![CDATA[select s from ServiceDetails s where s.id = ?]]></query>

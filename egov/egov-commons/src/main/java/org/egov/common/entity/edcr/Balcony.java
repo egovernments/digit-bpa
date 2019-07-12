@@ -52,7 +52,7 @@ import java.util.List;
 
 public class Balcony extends Measurement {
 
-    private static final long serialVersionUID = 80L;
+    private static final long serialVersionUID = 800L;
 
     private String number;
 

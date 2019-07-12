@@ -47,8 +47,7 @@
  */
 package org.egov.commons;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Department;
+import static org.egov.commons.Vouchermis.SEQ_VOUCHERMIS;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,8 +59,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import static org.egov.commons.Vouchermis.SEQ_VOUCHERMIS;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
 
 @Entity
 @Table(name = "VOUCHERMIS")
@@ -78,8 +79,10 @@ public class Vouchermis implements java.io.Serializable {
     private Fundsource fundsource;
 
     private Integer billnumber;
-    @ManyToOne(fetch = FetchType.LAZY)
+   // @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "divisionid")
+    private Long division;
+    @Transient
     private Boundary divisionid;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -48,20 +48,18 @@
 
 package org.egov.infra.admin.master.entity;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import static org.egov.infra.admin.master.entity.CrossHierarchy.SEQ_CROSSHIERARCHY;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import static org.egov.infra.admin.master.entity.CrossHierarchy.SEQ_CROSSHIERARCHY;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "EG_CROSSHIERARCHY")
@@ -73,24 +71,26 @@ public class CrossHierarchy extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_CROSSHIERARCHY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne
+    
     @JoinColumn(name = "parent")
-    @Fetch(value = FetchMode.JOIN)
+    private Long parentId;
+    @Transient
     private Boundary parent;
 
-    @ManyToOne
     @JoinColumn(name = "child")
-    @Fetch(value = FetchMode.JOIN)
+    private Long childId;
+    @Transient
     private Boundary child;
 
-    @ManyToOne
+    
     @JoinColumn(name = "parenttype")
-    @Fetch(value = FetchMode.JOIN)
+    private Long parentTypeId;
+    @Transient
     private BoundaryType parentType;
 
-    @ManyToOne
     @JoinColumn(name = "childtype")
-    @Fetch(value = FetchMode.JOIN)
+    private Long childTypeId;
+    @Transient
     private BoundaryType childType;
 
     @Override

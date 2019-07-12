@@ -253,14 +253,14 @@ public class BpaIndexService {
 	}
 
 	private void buildSiteBoundaryDetails(BpaApplication bpaApplication, BpaIndex bpaIndex) {
-		bpaIndex.setZone(bpaApplication.getSiteDetail().get(0).getAdminBoundary() == null ? EMPTY
+		bpaIndex.setZone(bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent() == null ? EMPTY
 				: bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent().getName());
 		bpaIndex.setRevenueWard(bpaApplication.getSiteDetail().get(0).getAdminBoundary() == null ? EMPTY
-				: bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName());
+				: bpaApplication.getSiteDetail().get(0).getAdminBoundary().getCode());
 		bpaIndex.setVillage(bpaApplication.getSiteDetail().get(0).getLocationBoundary() == null ? EMPTY
-				: bpaApplication.getSiteDetail().get(0).getLocationBoundary().getName());
+				: bpaApplication.getSiteDetail().get(0).getLocationBoundary().getCode());
 		bpaIndex.setElectionWard(bpaApplication.getSiteDetail().get(0).getElectionBoundary() == null ? EMPTY
-				: bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName());
+				: bpaApplication.getSiteDetail().get(0).getElectionBoundary().getCode());
 		bpaIndex.setRegistrarOffice(bpaApplication.getSiteDetail().get(0).getRegistrarOffice() == null ? EMPTY
 				: bpaApplication.getSiteDetail().get(0).getRegistrarOffice().getRegistrarOffice().getName());
 	}

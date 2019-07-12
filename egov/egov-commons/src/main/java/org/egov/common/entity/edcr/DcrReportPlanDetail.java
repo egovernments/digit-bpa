@@ -50,7 +50,7 @@ package org.egov.common.entity.edcr;
 import java.util.List;
 
 public class DcrReportPlanDetail {
-
+	  private static final long serialVersionUID = 137L;
     private VirtualBuildingReport virtualBuildingReport;
 
     private List<DcrReportBlockDetail> dcrReportBlockDetailList;

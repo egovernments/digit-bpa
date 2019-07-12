@@ -32,7 +32,7 @@
  *
  *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
  *            For any further queries on attribution, including queries on brand guidelines,
- *            please contact contact@egovernments.org
+ *            please contact contact
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -42,103 +42,71 @@
  *            with regards to rights under trademark law for use of the trade names
  *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact
  *
  */
 
 package org.egov.infra.admin.master.entity;
 
+import org.egov.infra.microservice.models.Auditable;
+
 import com.google.common.base.Objects;
-import com.google.gson.annotations.Expose;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+public class HierarchyType extends Auditable {
 
-import static org.egov.infra.admin.master.entity.HierarchyType.SEQ_HIERARCHY_TYPE;
+	public static final String SEQ_HIERARCHY_TYPE = "SEQ_EG_HIERARCHY_TYPE";
+	private static final long serialVersionUID = -7131667806935923935L;
 
-@Entity
-@Unique(fields = {"name", "code"}, enableDfltMsg = true)
-@Table(name = "eg_hierarchy_type")
-@SequenceGenerator(name = SEQ_HIERARCHY_TYPE, sequenceName = SEQ_HIERARCHY_TYPE, allocationSize = 1)
-public class HierarchyType extends AbstractAuditable {
+	private Long id;
 
-    public static final String SEQ_HIERARCHY_TYPE = "SEQ_EG_HIERARCHY_TYPE";
-    private static final long serialVersionUID = -7131667806935923935L;
-    @Expose
-    @Id
-    @GeneratedValue(generator = SEQ_HIERARCHY_TYPE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	private String name;
 
-    @NotBlank
-    @Length(max = 128)
-    @SafeHtml
-    private String name;
+	private String code;
 
-    @NotBlank
-    @Length(max = 25)
-    @SafeHtml
-    private String code;
+	private String localName;
 
-    @Length(max = 256)
-    @SafeHtml
-    private String localName;
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public String getLocalName() {
+		return localName;
+	}
 
-    public String getLocalName() {
-        return localName;
-    }
+	public void setLocalName(String localName) {
+		this.localName = localName;
+	}
 
-    public void setLocalName(String localName) {
-        this.localName = localName;
-    }
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof HierarchyType))
+			return false;
+		HierarchyType that = (HierarchyType) o;
+		return Objects.equal(name, that.name) && Objects.equal(code, that.code);
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof HierarchyType))
-            return false;
-        HierarchyType that = (HierarchyType) o;
-        return Objects.equal(name, that.name) &&
-                Objects.equal(code, that.code);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(name, code);
-    }
+	public int hashCode() {
+		return Objects.hashCode(name, code);
+	}
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SepticTank extends Measurement {
-
+	  private static final long serialVersionUID = 143L;
 	private List<BigDecimal> distanceFromWaterSource = new ArrayList<>();
 
 	private List<BigDecimal> distanceFromBuilding = new ArrayList<>();

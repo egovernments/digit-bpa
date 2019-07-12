@@ -74,12 +74,12 @@ public class HierarchyTypeService {
 
     @Transactional
     public HierarchyType createHierarchyType(HierarchyType hierarchyType) {
-        return hierarchyTypeRepository.save(hierarchyType);
+       return hierarchyType;
     }
 
     @Transactional
     public HierarchyType updateHierarchyType(HierarchyType hierarchyType) {
-        return hierarchyTypeRepository.saveAndFlush(hierarchyType);
+        return hierarchyType;
     }
 
     public HierarchyType getHierarchyTypeByName(String name) {

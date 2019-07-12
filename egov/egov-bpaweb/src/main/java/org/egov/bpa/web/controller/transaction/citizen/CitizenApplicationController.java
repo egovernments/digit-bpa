@@ -474,7 +474,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                 bpaApplication.getApplicationType().getName());
         if (wfMatrix != null)
             approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
+                    bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)));
         if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (approvalPosition == 0 || approvalPosition == null)) {
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);

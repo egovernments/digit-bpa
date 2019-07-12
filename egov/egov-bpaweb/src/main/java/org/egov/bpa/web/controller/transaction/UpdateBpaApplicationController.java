@@ -316,7 +316,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                     && (bpaApplication.getCurrentState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
                             || bpaApplication.getCurrentState().getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED))) {
                 approvalPosition = bpaUtils.getUserPositionIdByZone(DESIGNATION_AE,
-                        bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
+                        bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)));
             } else
                 approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
             List<Assignment> assignments;

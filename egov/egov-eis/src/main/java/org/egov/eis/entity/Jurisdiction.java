@@ -47,9 +47,7 @@
  */
 package org.egov.eis.entity;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import static org.egov.eis.entity.Jurisdiction.SEQ_JURISDICTION;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -60,63 +58,85 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import static org.egov.eis.entity.Jurisdiction.SEQ_JURISDICTION;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "egeis_jurisdiction")
 @SequenceGenerator(name = SEQ_JURISDICTION, sequenceName = SEQ_JURISDICTION, allocationSize = 1)
 public class Jurisdiction extends AbstractAuditable {
 
-    public static final String SEQ_JURISDICTION = "SEQ_EGEIS_JURISDICTION";
-    private static final long serialVersionUID = 8931560836436430730L;
-    @Id
-    @GeneratedValue(generator = SEQ_JURISDICTION, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	public static final String SEQ_JURISDICTION = "SEQ_EGEIS_JURISDICTION";
+	private static final long serialVersionUID = 8931560836436430730L;
+	@Id
+	@GeneratedValue(generator = SEQ_JURISDICTION, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee")
-    private Employee employee;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "employee")
+	private Employee employee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boundarytype")
-    private BoundaryType boundaryType;
+	@JoinColumn(name = "boundarytype")
+	private Long boundaryTypeId;
+	@Transient
+	private BoundaryType boundaryType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boundary")
-    private Boundary boundary;
+	@JoinColumn(name = "boundary")
+	private Long boundaryId;
 
-    public Employee getEmployee() {
-        return employee;
-    }
+	public Long getBoundaryId() {
+		return boundaryId;
+	}
 
-    public void setEmployee(final Employee employee) {
-        this.employee = employee;
-    }
+	public Long getBoundaryTypeId() {
+		return boundaryTypeId;
+	}
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	public void setBoundaryTypeId(Long boundaryTypeId) {
+		this.boundaryTypeId = boundaryTypeId;
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	public void setBoundaryId(Long boundaryId) {
+		this.boundaryId = boundaryId;
+	}
 
-    public BoundaryType getBoundaryType() {
-        return boundaryType;
-    }
+	@Transient
+	private Boundary boundary;
 
-    public void setBoundaryType(final BoundaryType boundaryType) {
-        this.boundaryType = boundaryType;
-    }
+	public Employee getEmployee() {
+		return employee;
+	}
 
-    public Boundary getBoundary() {
-        return boundary;
-    }
+	public void setEmployee(final Employee employee) {
+		this.employee = employee;
+	}
 
-    public void setBoundary(Boundary boundary) {
-        this.boundary = boundary;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
+
+	public BoundaryType getBoundaryType() {
+		return boundaryType;
+	}
+
+	public void setBoundaryType(final BoundaryType boundaryType) {
+		this.boundaryType = boundaryType;
+	}
+
+	public Boundary getBoundary() {
+		return boundary;
+	}
+
+	public void setBoundary(Boundary boundary) {
+		this.boundary = boundary;
+	}
 }

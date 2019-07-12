@@ -47,16 +47,6 @@
  */
 package org.egov.model.brs;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractPersistable;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -66,6 +56,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Fundsource;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 
 @Entity
 @Table(name = "BANKENTRIES_MIS")
@@ -100,8 +101,10 @@ public class BrsEntrieMis extends AbstractPersistable<Long>
     @JoinColumn(name = "fundsourceid")
     private Fundsource fundsource;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+     
     @JoinColumn(name = "divisionid")
+    private Long divisionId;
+    @Transient
     private Boundary division;
 
     @ManyToOne(fetch = FetchType.LAZY)

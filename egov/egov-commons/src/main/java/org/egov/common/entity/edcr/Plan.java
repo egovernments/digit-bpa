@@ -71,7 +71,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Plan implements Serializable {
 
-	private static final long serialVersionUID = 7276648029097296311L;
+	private static final long serialVersionUID = 1;
 
 	@JsonIgnore
 	private ReportOutput reportOutput = new ReportOutput();
@@ -126,6 +126,7 @@ public class Plan implements Serializable {
 	@Transient
 	@JsonIgnore
 	private List<EdcrPdfDetail> edcrPdfDetails;
+	
 	private FarDetails farDetails;
 
 	private transient List<BigDecimal> distancesFromMonument = new ArrayList<>();

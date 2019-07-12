@@ -50,8 +50,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryPojo;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -67,10 +68,22 @@ public class RegistrarOfficeVillage extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "registrarOffice")
     private RegistrarOffice registrarOffice;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+    @Transient
+    private BoundaryPojo village;
+  
     @JoinColumn(name = "village")
-    private Boundary village;
-    private Boolean isActive;
+    private Long villageId;
+    
+    public Long getVillageId() {
+		return villageId;
+	}
+
+	public void setVillageId(Long villageId) {
+		this.villageId = villageId;
+	}
+
+	private Boolean isActive;
 
     @Override
     public Long getId() {
@@ -98,11 +111,11 @@ public class RegistrarOfficeVillage extends AbstractAuditable {
         this.registrarOffice = registrarOffice;
     }
 
-    public Boundary getVillage() {
+    public BoundaryPojo getVillage() {
         return village;
     }
 
-    public void setVillage(Boundary village) {
+    public void setVillage(BoundaryPojo village) {
         this.village = village;
     }
 

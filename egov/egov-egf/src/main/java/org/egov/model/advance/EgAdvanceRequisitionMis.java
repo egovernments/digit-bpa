@@ -67,7 +67,9 @@ public class EgAdvanceRequisitionMis implements java.io.Serializable {
     private static final long serialVersionUID = 699827158343906305L;
     private Long id;
     private Boundary fieldId;
+    private Long field;
     private Boundary subFieldId;
+    private Long subField;
     private Department egDepartment;
     private Date lastupdatedtime;
     private Scheme scheme;
@@ -269,5 +271,21 @@ public class EgAdvanceRequisitionMis implements java.io.Serializable {
     public void setFunction(final CFunction function) {
         this.function = function;
     }
+
+	public Long getField() {
+		return field;
+	}
+
+	public void setField(Long field) {
+		this.field = field;
+	}
+
+	public Long getSubField() {
+		return subField;
+	}
+
+	public void setSubField(Long subField) {
+		this.subField = subField;
+	}
 
 }

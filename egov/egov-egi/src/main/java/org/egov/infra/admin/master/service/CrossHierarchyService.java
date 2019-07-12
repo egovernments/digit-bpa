@@ -116,16 +116,19 @@ public class CrossHierarchyService {
     }
 
     public List<Boundary> getChildBoundariesNameAndBndryTypeAndHierarchyType(String boundaryTypeName, String hierarchyTypeName) {
-        return crossHierarchyRepository.findChildBoundariesByBoundaryTypeAndHierarchyTypeNames(boundaryTypeName,
-                hierarchyTypeName);
+    	return null;
+       /* return crossHierarchyRepository.findChildBoundariesByBoundaryTypeAndHierarchyTypeNames(boundaryTypeName,
+                hierarchyTypeName);*/
     }
 
     public List<Boundary> getParentBoundaryByChildBoundaryAndParentBoundaryType(Long childId, Long parentTypeId) {
-        return crossHierarchyRepository.findParentBoundariesByChildBoundaryAndParentBoundaryTypeIds(childId, parentTypeId);
+    	return null;
+       // return crossHierarchyRepository.findParentBoundariesByChildBoundaryAndParentBoundaryTypeIds(childId, parentTypeId);
     }
 
     public List<Boundary> getActiveChildBoundariesByParentId(Long parentId) {
-        return crossHierarchyRepository.findChildBoundariesByActiveParentBoundaryId(parentId);
+    	return null;
+        //return crossHierarchyRepository.findChildBoundariesByActiveParentBoundaryId(parentId);
     }
 
     public CrossHierarchy findById(Long id) {
@@ -134,12 +137,14 @@ public class CrossHierarchyService {
 
     public List<Boundary> findChildBoundariesByParentBoundary(String boundaryTypeName, String hierarchyTypeName,
                                                               String parentBoundary) {
-        return crossHierarchyRepository.findChildBoundariesByParentBoundary(boundaryTypeName, hierarchyTypeName,
-                parentBoundary);
+    	return null;
+       /* return crossHierarchyRepository.findChildBoundariesByParentBoundary(boundaryTypeName, hierarchyTypeName,
+                parentBoundary);*/
     }
 
     public List<CrossHierarchy> getAllByParentAndChildBoundaryId(Long parentId, Long childId) {
-        return crossHierarchyRepository.findByParentIdAndChildId(parentId, childId);
+    	return null;
+       // return crossHierarchyRepository.findByParentIdAndChildId(parentId, childId);
     }
 
     public List<Boundary> getBoundaryByBoundaryType() {
@@ -166,7 +171,8 @@ public class CrossHierarchyService {
     public List<Boundary> findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(
             String parentBoundaryTypeName,
             String parentHierarchyTypeName, String childBoundaryTypeName, Long parentId) {
-        return crossHierarchyRepository.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(
-                parentBoundaryTypeName, parentHierarchyTypeName, childBoundaryTypeName, parentId);
+    	return null;
+       /* return crossHierarchyRepository.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(
+                parentBoundaryTypeName, parentHierarchyTypeName, childBoundaryTypeName, parentId);*/
     }
 }

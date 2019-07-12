@@ -48,45 +48,76 @@
 
 package org.egov.infra.admin.master.repository;
 
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.entity.HierarchyType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Set;
 
-@Repository
-public interface BoundaryTypeRepository extends JpaRepository<BoundaryType, Long> {
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
+import org.egov.infra.microservice.contract.SaveRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Service;
 
-    BoundaryType findByName(String name);
+@Service
+public class BoundaryTypeRepository extends SaveRepository  {
 
-    BoundaryType findByNameContainingIgnoreCase(String name);
+  public  BoundaryType findByName(String name) {
+		return null;
+	}
+
+  public  BoundaryType findByNameContainingIgnoreCase(String name) {
+		return null;
+	}
 
     @Query("select bt from BoundaryType bt where bt.hierarchyType.name=:hierarchyName and bt.hierarchy=:hierarchyLevel")
-    BoundaryType findByHierarchyTypeNameAndLevel(@Param("hierarchyName") String name,
-            @Param("hierarchyLevel") Long hierarchyLevel);
+    public BoundaryType findByHierarchyTypeNameAndLevel(@Param("hierarchyName") String name,
+            @Param("hierarchyLevel") Long hierarchyLevel) {
+		return null;
+	}
 
-    @Query("select bt from BoundaryType bt where bt.hierarchyType.id=:hierarchyId")
-    List<BoundaryType> findByHierarchyTypeId(@Param("hierarchyId") Long id);
+    public @Query("select bt from BoundaryType bt where bt.hierarchyType.id=:hierarchyId")
+    List<BoundaryType> findByHierarchyTypeId(@Param("hierarchyId") Long id) {
+		return null;
+	}
 
-    @Query("select bt from BoundaryType bt where bt.parent.id=:parentId")
-    BoundaryType findByParent(@Param("parentId") Long parentId);
+     @Query("select bt from BoundaryType bt where bt.parent.id=:parentId")
+     public BoundaryType findByParent(@Param("parentId") Long parentId) {
+		return null;
+	}
 
-    @Query("select bt from BoundaryType bt where bt.id = :id and bt.hierarchyType.id = :hierarchyId")
-    BoundaryType findByIdAndHierarchy(@Param("id") Long id, @Param("hierarchyId") Long hierarchyId);
+     @Query("select bt from BoundaryType bt where bt.id = :id and bt.hierarchyType.id = :hierarchyId")
+     public BoundaryType findByIdAndHierarchy(@Param("id") Long id, @Param("hierarchyId") Long hierarchyId) {
+		return null;
+	}
 
-    BoundaryType findByNameAndHierarchyType(String name, HierarchyType hierarchyType);
+     public BoundaryType findByNameAndHierarchyType(String name, HierarchyType hierarchyType) {
+		return null;
+	}
 
     @Query("select bt from BoundaryType bt where bt.name = :boundaryTypeName and bt.hierarchyType.name = :hierarchyTypeName")
-    BoundaryType findByNameAndHierarchyTypeName(@Param("boundaryTypeName") String name,
-            @Param("hierarchyTypeName") String hierarchyTypeName);
+    public BoundaryType findByNameAndHierarchyTypeName(@Param("boundaryTypeName") String name,
+            @Param("hierarchyTypeName") String hierarchyTypeName) {
+    	
+		return null;
+	}
 
     @Query("select bt from BoundaryType bt where bt.hierarchyType.name=:name")
-    List<BoundaryType> findByHierarchyTypeName(@Param("name") String hierarchyName);
+    public List<BoundaryType> findByHierarchyTypeName(@Param("name") String hierarchyName) {
+		return null;
+	}
 
     @Query("select bt from BoundaryType bt where bt.hierarchyType.code in :names and bt.name like 'W%'")
-    List<BoundaryType> findByHierarchyTypeNames(@Param("names") final Set<String> names);
+    public List<BoundaryType> findByHierarchyTypeNames(@Param("names") final Set<String> names) {
+		return null;
+	}
+
+	public BoundaryType findOne(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void save(BoundaryType boundaryType) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -53,7 +53,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NorthDirection {
-
+	 private static final long serialVersionUID = 221L;
 	private String direction;
 
 	private List<Measurement> directions;

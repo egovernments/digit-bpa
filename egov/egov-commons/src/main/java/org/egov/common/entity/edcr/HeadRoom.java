@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class HeadRoom extends Measurement {
-
+	private static final long serialVersionUID = 331L;
     private List<BigDecimal> headRoomDimensions;
 
     public List<BigDecimal> getHeadRoomDimensions() {

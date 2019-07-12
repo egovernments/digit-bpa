@@ -102,7 +102,8 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
     	fromHierarchy=crosslinkConfig['fromHierarchy'];
     	toHierarchy=crosslinkConfig['toHierarchy'];
 	}
-	
+	//alert("uniformBoundary--"+uniformBoundary);
+	//alert("boundaryData--"+boundaryData);
 	for(var k in boundaryData) {
 		tempId = k.split(':');
 		orderArray.push(k);
@@ -124,6 +125,7 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 	}
 
 		orderArray.sort();
+		//alert("orderArray--"+orderArray);
 	for (var i = 0; i < orderArray.length; i++) {
 		displayName = orderArray[i].split(':')[2];
 		hierarchy = orderArray[i].split(':')[1];
@@ -158,18 +160,23 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 				$('#boundarydivision').append('<div class="col-sm-3 add-margin"><select name="" class="form-control" required="required" data-first-option="false" id="'+domOptionId+'"> <option value="">select</option></select></div>');
 			}
 			if(toHierarchy.indexOf(displayName) == -1){
+				//alert("inside -1--"+boundaryData[orderArray[i]]['data']);
 				$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
-					$("#"+domOptionId).append($('<option>').text(value.name).attr('value', value.id));
+					//alert(value.name+"--"+value.code);
+					$("#"+domOptionId).append($('<option>').text(value.name).attr('value', value.code));
 				});
 			}
-			if(Math.max.apply(null, orderMap.get(orderArray[i].split('-')[0]))==orderArray[i].split(':')[0].split('-')[1]){
-				if(hierarchy=='ADMINISTRATION')
+			console.log("orderMap.get(orderArray[i].split('-')[0])"+orderMap.get(orderArray[i].split('-')[0]));
+			console.log("orderArray[i].split(':')[0].split('-')[1]"+orderArray[i].split(':')[0].split('-')[1]);
+			
+		//	if(Math.max.apply(null, orderMap.get(orderArray[i].split('-')[0]))==orderArray[i].split(':')[0].split('-')[1]){
+				if(hierarchy=='ADMIN')
 					document.getElementById(domOptionId).name="adminBoundary";
 				if(hierarchy=='REVENUE')
 					document.getElementById(domOptionId).name="revenueBoundary";
 				if(hierarchy=='LOCATION')
 					document.getElementById(domOptionId).name="locationBoundary";
-			}
+			//}
 			
 			if(uniformMap!=null && uniformMap!=''){
 				var result = uniformMap.get(hierarchy);
@@ -212,6 +219,7 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
     	fromHierarchy=crosslinkConfig['fromHierarchy'];
     	toHierarchy=crosslinkConfig['toHierarchy'];
 	}
+	//alert("boundaryData-->"+boundaryData);
 	for(var k in boundaryData) {
 		tempId = k.split(':');
 		orderArray.push(k);
@@ -250,6 +258,7 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 			}
 		}
 		if(boundaryData[orderArray[i]]['data']!=null && boundaryData[orderArray[i]]['data']!=''){
+			alert("hierarchy----"+hierarchy);
 			if(isEven(i))
 				$('#boundarydivision').append('<label class="col-sm-3 control-label text-right"> '+displayName+'<span class="mandatory"></span></label>');
 			 else 
@@ -269,7 +278,7 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 
 			if(toHierarchy.indexOf(displayName) == -1){
 				$.each(boundaryData[orderArray[i]]['data'], function(index, value) {
-					$("#"+domOptionId).append($('<option>').text(value.name).attr('value', value.id));
+					$("#"+domOptionId).append($('<option>').text(value.name).attr('value', value.code));
 				});
 			}
 			if(uniformMap!=null && uniformMap!=''){
@@ -285,10 +294,11 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 					}
 			}
 			
-			
+			alert("hierarchy----"+hierarchy);
 			if(Math.max.apply(null, orderMap.get(orderArray[i].split('-')[0]))==orderArray[i].split(':')[0].split('-')[1]){
-				if(hierarchy=='ADMINISTRATION'){
+				if(hierarchy=='ADMIN'){
 					document.getElementById(domOptionId).name="adminBoundary";
+					console.log(document.getElementById(domOptionId).name);
 					adminBoundaryId=domOptionId;
 				}
 				if(hierarchy=='REVENUE'){
@@ -315,7 +325,7 @@ function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary
 		}
 		
           setParentDetails(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary,uniformMap,'REVENUE',crosslinkConfig);
-          setParentDetails(genericBoundaryConfigData['boundaryData'], selectedAdminBoundary,uniformMap,'ADMINISTRATION',crosslinkConfig);
+          setParentDetails(genericBoundaryConfigData['boundaryData'], selectedAdminBoundary,uniformMap,'ADMIN',crosslinkConfig);
           setParentDetails(genericBoundaryConfigData['boundaryData'], selectedLocationBoundary,uniformMap,'LOCATION',crosslinkConfig);
 }
 
@@ -339,7 +349,7 @@ function crossBoundaryNew(selectedBndryId, fromHeirarchy, toHeirarchy) {
 				$("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, "")).empty()
 				.append('<option value="">select</option></select>');
 				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[1]], function(index, value) {
-					$($("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+					$($("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.code));
 				});
 		    }
 		},
@@ -370,7 +380,8 @@ function uniformBoundaryNew(selectedBndryId, hierarchy, toHeirarchy){
 				$("#"+hierarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, "")).empty()
 				.append('<option value="">select</option></select>');
 				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[0]], function(index, value) {
-					$($("#"+hierarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+					console.log(value.name+"---------"+value.code);
+					$($("#"+hierarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.code));
 				});
 		    }
 		},
@@ -408,7 +419,7 @@ function crossBoundaryModify(selectedBoundary, fromHeirarchy, toHeirarchy) {
 				$("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, "")).empty()
 				.append('<option value="">select</option></select>');
 				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[1]], function(index, value) {
-					$($("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+					$($("#"+toHeirarchyArray[i].split(':')[0]+toHeirarchyArray[i].split(':')[2].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.code));
 				});
 		    }
 		},
@@ -440,7 +451,7 @@ function uniformBoundaryModify(selectedBndryId, heirarchy, toHeirarchy) {
 				$("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, "")).empty()
 				.append('<option value="">select</option></select>');
 				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[0]], function(index, value) {
-					$($("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+					$($("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.code));
 				});
 		    }
 		},
@@ -516,7 +527,7 @@ function parentDetails(selectedBndryId, heirarchy, toHeirarchy) {
 				$("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, "")).empty()
 				.append('<option value="">select</option></select>');
 				$.each(crossBoundaryData[toHeirarchyArray[i].split(':')[0]], function(index, value) {
-					$($("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.id));
+					$($("#"+heirarchy+toHeirarchyArray[i].split(':')[1].replace(/ +/g, ""))).append($('<option>').text(value.name).attr('value', value.code));
 				});
 		    }
 		},

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SegregatedToilet {
-
+	  private static final long serialVersionUID = 142L;
 	private List<Measurement> segregatedToilets = new ArrayList<>();
 
 	protected List<BigDecimal> distancesToMainEntrance = new ArrayList<>();

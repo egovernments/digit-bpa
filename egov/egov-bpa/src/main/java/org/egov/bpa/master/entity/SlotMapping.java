@@ -73,19 +73,46 @@ public class SlotMapping extends AbstractAuditable {
 	private Long id;
 
 	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "zone")
+	private Long zoneId;
+	@Transient
 	private Boundary zone;
-	
-	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "revenueward")
-	private Boundary revenueWard; 
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "revenueward")
+	private Long revenueWardId;
+	@Transient
+	private Boundary revenueWard;
+
 	@JoinColumn(name = "electionward")
+	private Long electionWardId;
+
+	public Long getZoneId() {
+		return zoneId;
+	}
+
+	public void setZoneId(Long zoneId) {
+		this.zoneId = zoneId;
+	}
+
+	public Long getRevenueWardId() {
+		return revenueWardId;
+	}
+
+	public void setRevenueWardId(Long revenueWardId) {
+		this.revenueWardId = revenueWardId;
+	}
+
+	public Long getElectionWardId() {
+		return electionWardId;
+	}
+
+	public void setElectionWardId(Long electionWardId) {
+		this.electionWardId = electionWardId;
+	}
+
+	@Transient
 	private Boundary electionWard;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "slotApplicationType")
 	private ApplicationSubType applicationType;

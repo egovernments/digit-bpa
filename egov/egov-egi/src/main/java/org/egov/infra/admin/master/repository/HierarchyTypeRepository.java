@@ -48,15 +48,29 @@
 
 package org.egov.infra.admin.master.repository;
 
-import org.egov.infra.admin.master.entity.HierarchyType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
-@Repository
-public interface HierarchyTypeRepository extends JpaRepository<HierarchyType, Long> {
-    HierarchyType findByName(String name);
+import org.egov.infra.admin.master.entity.HierarchyType;
+import org.springframework.stereotype.Service;
 
-    List<HierarchyType> findByNameContainingIgnoreCase(String name);
+@Service
+public class HierarchyTypeRepository  {
+  
+	public  HierarchyType findByName(String name){
+    	return null;
+    }
+
+    public List<HierarchyType> findByNameContainingIgnoreCase(String name) {
+		return null;
+	}
+
+	public List<HierarchyType> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void save(HierarchyType hierarchyType) {
+		// TODO Auto-generated method stub
+		
+	}
 }

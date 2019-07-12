@@ -57,28 +57,28 @@ public interface SlotDetailRepository extends JpaRepository<SlotDetail, Long>, J
     @Query("select detail from SlotDetail detail where detail.maxScheduledSlots - detail.utilizedScheduledSlots > 0 order by detail.slot.appointmentDate , detail.id asc")
     List<SlotDetail> findSlotDetailOrderByAppointmentDate();
 
-    @Query("select detail from SlotDetail detail where detail.appointmentTime  = :appointmentTime and detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone and detail.slot.type = :type")
+    @Query("select detail from SlotDetail detail where detail.appointmentTime  = :appointmentTime and detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zoneId = :zone and detail.slot.type = :type")
     SlotDetail findByAppointmentDateTimeAndZone(@Param("rescheduleAppointmentDate") Date rescheduleAppointmentDate,
             @Param("appointmentTime") String appointmentTime,
-            @Param("zone") Boundary zone,@Param("type") String type);
+            @Param("zone") Long zone,@Param("type") String type);
 
     @Query("select slotdetail from SlotDetail slotdetail"
             + " where slotdetail.slot.appointmentDate >= :appointmentDate and (slotdetail.maxScheduledSlots"
             + " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"
             + " slotdetail.utilizedRescheduledSlots >0 or (slotdetail.maxScheduledSlots -"
             + " slotdetail.utilizedScheduledSlots >0 and slotdetail.maxRescheduledSlots -"
-            + " slotdetail.utilizedRescheduledSlots >0)) and slotdetail.slot.zone = :zone and slotdetail.slot.type = :type order by slotdetail.slot.appointmentDate ,"
+            + " slotdetail.utilizedRescheduledSlots >0)) and slotdetail.slot.zoneId = :zone and slotdetail.slot.type = :type order by slotdetail.slot.appointmentDate ,"
             + " slotdetail.id")
     List<SlotDetail> findSlotsByAppointmentDateAndZone(@Param("appointmentDate") Date appointmentDate,
-            @Param("zone") Boundary zone,@Param("type") String type);
+            @Param("zone") Long zone,@Param("type") String type);
 
-    @Query("select detail from SlotDetail detail where detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone"
+    @Query("select detail from SlotDetail detail where detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zoneId = :zone"
             + " and (detail.maxScheduledSlots" + " - detail.utilizedScheduledSlots >0 or detail.maxRescheduledSlots -"
             + " detail.utilizedRescheduledSlots >0 or (detail.maxScheduledSlots -"
             + " detail.utilizedScheduledSlots >0 and detail.maxRescheduledSlots -"
             + " detail.utilizedRescheduledSlots >0)) and detail.slot.type = :type order by detail.id asc")
     List<SlotDetail> findOneByAppointmentDateAndZoneId(
-            @Param("rescheduleAppointmentDate") Date rescheduleAppointmentDate, @Param("zone") Boundary zone, @Param("type") String type);
+            @Param("rescheduleAppointmentDate") Date rescheduleAppointmentDate, @Param("zone") Long zone, @Param("type") String type);
 
     @Query("select slotdetail from SlotDetail slotdetail where slotdetail.slot =:slot and (slotdetail.maxScheduledSlots"
             + " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"

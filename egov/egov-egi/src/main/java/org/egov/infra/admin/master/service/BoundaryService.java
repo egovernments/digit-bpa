@@ -106,18 +106,19 @@ public class BoundaryService {
 
     @Transactional
     public Boundary createBoundary(final Boundary boundary) {
-        boundary.setMaterializedPath(getMaterializedPath(null, boundary.getParent()));
-        return boundaryRepository.save(boundary);
+    	return boundary;
     }
 
     @Transactional
     public void updateBoundary(final Boundary boundary) {
-        boundary.setMaterializedPath(getMaterializedPath(boundary, boundary.getParent()));
-        boundaryRepository.save(boundary);
+       
     }
 
     public Boundary getBoundaryById(final Long id) {
-        return boundaryRepository.findOne(id);
+        return boundaryRepository.findById(id);
+    }
+    public Boundary getBoundaryByCode(final String code) {
+        return boundaryRepository.findByCode(code);
     }
 
     public List<Boundary> getAllBoundariesOrderByBoundaryNumAsc(BoundaryType boundaryType) {
@@ -216,16 +217,21 @@ public class BoundaryService {
         return list;
     }
 
-    public List<Boundary> findActiveChildrenWithParent(final Long parentBoundaryId) {
-        return boundaryRepository.findActiveChildrenWithParent(parentBoundaryId);
+    public List<Boundary> findActiveChildrenWithParent(final String  parentBoundaryId) {
+        return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentBoundaryId);
     }
+    
+    public List<Boundary> findActiveChildrenWithParent(final long  parentBoundaryId) {
+        return null;// boundaryRepository.findActiveImmediateChildrenWithOutParent(parentBoundaryId);
+    }
+
 
     public List<Boundary> findActiveBoundariesForMpath(final Set<String> mpath) {
         return boundaryRepository.findActiveBoundariesForMpath(mpath);
     }
     
-    public List<Boundary> findActiveImmediateChildrenWithOutParent(Long parentId){
-    	return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentId);
+    public List<Boundary> findActiveImmediateChildrenWithOutParent(String parentCode){
+    	return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentCode);
     }
 
     public String getMaterializedPath(final Boundary child, final Boundary parent) {
@@ -234,7 +240,7 @@ public class BoundaryService {
         if (null == parent)
             mpath = String.valueOf(boundaryRepository.findAllParents().size() + 1);
         else
-            childSize = boundaryRepository.findActiveImmediateChildrenWithOutParent(parent.getId()).size();
+            childSize = boundaryRepository.findActiveImmediateChildrenWithOutParent(parent.getCode()).size();
         if (mpath.isEmpty())
             if (null != child) {
                 if (parent != null && !child.getMaterializedPath().equalsIgnoreCase(parent.getMaterializedPath() + "." + childSize)) {

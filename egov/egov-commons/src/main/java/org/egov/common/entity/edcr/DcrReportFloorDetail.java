@@ -50,7 +50,7 @@ package org.egov.common.entity.edcr;
 import java.math.BigDecimal;
 
 public class DcrReportFloorDetail {
-
+	  private static final long serialVersionUID = 135L;
     private String floorNo;
 
     private String occupancy;

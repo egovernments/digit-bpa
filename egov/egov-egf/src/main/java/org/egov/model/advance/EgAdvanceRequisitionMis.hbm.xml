@@ -65,8 +65,8 @@
 			access="property"
 		unsaved-value="null"/>        
         
-          <many-to-one name="fieldId" class="org.egov.infra.admin.master.entity.Boundary" column="FIELDID" />
-          <many-to-one name="subFieldId" class="org.egov.infra.admin.master.entity.Boundary" column="SUBFIELDID" />
+          <property name="field" type="long" column="FIELDID" />
+          <property name="subField" type="long" column="SUBFIELDID" />
     
          <many-to-one name="egDepartment" class="org.egov.infra.admin.master.entity.Department"  fetch="select">
 	    	<column name="DEPARTMENTID" precision="22" scale="0" />

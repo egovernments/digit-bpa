@@ -123,7 +123,7 @@ public class CitizenInspectionApplicationController {
         		permitInspectionApplication.getInspectionApplication().getStateType(), WF_NEW_STATE, null);
         if (wfMatrix != null)
             approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    bpaUtils.getBoundaryForWorkflow(permitInspectionApplication.getApplication().getSiteDetail().get(0)).getId());
+                    bpaUtils.getBoundaryForWorkflow(permitInspectionApplication.getApplication().getSiteDetail().get(0)));
         
         if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (approvalPosition == 0 || approvalPosition == null)) {

@@ -51,7 +51,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class DcrReportBlockDetail {
-
+	  private static final long serialVersionUID = 134L;
     private String blockNo;
 
     private BigDecimal coverageArea;

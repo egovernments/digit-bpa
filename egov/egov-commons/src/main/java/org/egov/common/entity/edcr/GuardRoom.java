@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuardRoom {
-
+	private static final long serialVersionUID = 311L;
 	private List<Measurement> guardRooms = new ArrayList<>();
 
 	protected List<BigDecimal> cabinHeights = new ArrayList<>();

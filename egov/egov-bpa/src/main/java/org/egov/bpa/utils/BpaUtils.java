@@ -450,24 +450,27 @@ public class BpaUtils {
     }
 
     @Transactional(readOnly = true)
-    public Long getUserPositionIdByZone(final String designation, final Long boundary) {
-        List<Assignment> assignment = getAssignmentsByDesigAndBndryId(designation, boundary);
+    public Long getUserPositionIdByZone(final String designation, final Boundary boundary) {
+    	
+        List<Assignment> assignment = assignmentService.findAssignmentForDepartmentId(1l);
+        ////getAssignmentsByDesigAndBndryId(designation, boundary);
+        //assignmentService.findAssignmentForDepartmentId(1l);
         return assignment.isEmpty() ? 0 : assignment.get(0).getPosition().getId();
     }
 
     @Transactional(readOnly = true)
-    public Position getUserPositionByZone(final String designation, final Long boundary) {
+    public Position getUserPositionByZone(final String designation, final Boundary boundary) {
         List<Assignment> assignment = getAssignmentsByDesigAndBndryId(designation, boundary);
         return assignment.isEmpty() ? null : assignment.get(0).getPosition();
     }
 
-    public List<Assignment> getAssignmentsByDesigAndBndryId(String designation, Long boundary) {
-        final Boundary boundaryObj = getBoundaryById(boundary);
+    public List<Assignment> getAssignmentsByDesigAndBndryId(String designation, Boundary boundary) {
+        final Boundary boundaryObj =boundary;// getBoundaryById(boundary);
         final String[] designationarr = designation.split(",");
         List<Assignment> assignment = new ArrayList<>();
         for (final String desg : designationarr) {
             assignment = assignmentService.findAssignmentByDepartmentDesignationAndBoundary(null,
-                    designationService.getDesignationByName(desg).getId(), boundaryObj.getId());
+                    designationService.getDesignationByName(desg).getId(), boundaryObj.getCode());
             if (assignment.isEmpty()) {
                 // Ward->Zone
                 if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType() != null && boundaryObj
@@ -542,7 +545,7 @@ public class BpaUtils {
         Long approvalPositionId = approvalPosition;
         if (approvalPosition == null) {
             approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+                    getBoundaryForWorkflow(application.getSiteDetail().get(0)));
         }
         if (applicationWorkflowCustomDefaultImpl != null)
             if (LETTERTOPARTYINITIATE.equals(currentState))
@@ -581,7 +584,7 @@ public class BpaUtils {
         Long approvalPositionId = wfBean.getApproverPositionId();
         if (wfBean.getApproverPositionId() == null)
             approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId());
+                    getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)));
         wfBean.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE_OC);
         wfBean.setApproverPositionId(approvalPositionId);
         if (ocWorkflowCustomDefaultImpl != null)
@@ -609,7 +612,7 @@ public class BpaUtils {
         Long approvalPositionId = wfBean.getApproverPositionId();
         if (wfBean.getApproverPositionId() == null)
             approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    getBoundaryForWorkflow(permitInspection.getApplication().getSiteDetail().get(0)).getId());
+                    getBoundaryForWorkflow(permitInspection.getApplication().getSiteDetail().get(0)));
         wfBean.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
         wfBean.setApproverPositionId(approvalPositionId);
         if (inspectionWorkflowCustomDefaultImpl != null) 
@@ -887,20 +890,23 @@ public class BpaUtils {
 
     public void saveOrUpdateBoundary(BpaApplication bpaApplication) {
         SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
+      //  bpaApplication.setAdminBoundary(1l);
         List<SiteDetail> siteDetails = new ArrayList<>();
         if (bpaApplication.getAdminBoundary() != null && !bpaApplication.getAdminBoundary().isEmpty()) {
-            siteDetail.setElectionBoundary(
-                    boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getAdminBoundary())));
-        }
-        if (bpaApplication.getRevenueBoundary() != null && !bpaApplication.getRevenueBoundary().isEmpty()) {
-            siteDetail.setAdminBoundary(
-                    boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getRevenueBoundary())));
-            bpaApplication.setWardId(Long.valueOf(bpaApplication.getRevenueBoundary()));
-        }
-        if (bpaApplication.getLocationBoundary() != null && !bpaApplication.getLocationBoundary().isEmpty()) {
-            siteDetail.setLocationBoundary(
-                    boundaryService.getBoundaryById(Long.valueOf(bpaApplication.getLocationBoundary())));
-        }
+      	  siteDetail.setElectionBoundaryId(bpaApplication.getAdminBoundary());
+            siteDetail.setElectionBoundary(boundaryService.getBoundaryByCode(bpaApplication.getAdminBoundary()));
+              }
+      if (bpaApplication.getRevenueBoundary() != null && !bpaApplication.getRevenueBoundary().isEmpty()) {
+          siteDetail.setAdminBoundaryId(bpaApplication.getRevenueBoundary());
+          siteDetail.setAdminBoundary(boundaryService.getBoundaryByCode(bpaApplication.getRevenueBoundary()));
+          //bpaApplication.setWardId(Long.valueOf(bpaApplication.getRevenueBoundary()));
+      }
+      if (bpaApplication.getLocationBoundary() != null && !bpaApplication.getLocationBoundary().isEmpty()) {
+          siteDetail.setLocationBoundary(boundaryService.getBoundaryByCode(bpaApplication.getLocationBoundary()));
+          siteDetail.setLocationBoundaryId(bpaApplication.getLocationBoundary());
+         
+          
+      }
         siteDetails.add(siteDetail);
         bpaApplication.setSiteDetail(siteDetails);
     }
@@ -908,11 +914,11 @@ public class BpaUtils {
     public void loadBoundary(BpaApplication bpaApplication) {
         SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
         bpaApplication.setAdminBoundary(
-                siteDetail.getElectionBoundary() == null ? "" : String.valueOf(siteDetail.getElectionBoundary().getId()));
+                siteDetail.getElectionBoundaryId() == null ? "" : siteDetail.getElectionBoundaryId());
         bpaApplication.setLocationBoundary(
-                siteDetail.getLocationBoundary() == null ? "" : String.valueOf(siteDetail.getLocationBoundary().getId()));
+                siteDetail.getLocationBoundaryId() == null ? "" : String.valueOf(siteDetail.getLocationBoundaryId()));
         bpaApplication.setRevenueBoundary(
-                siteDetail.getAdminBoundary() == null ? "" : String.valueOf(siteDetail.getAdminBoundary().getId()));
+                siteDetail.getAdminBoundaryId() == null ? "" : String.valueOf(siteDetail.getAdminBoundaryId()));
     }
 
     public Boundary getBoundaryForWorkflow(SiteDetail siteDetail) {
@@ -920,16 +926,18 @@ public class BpaUtils {
         String workflowBoundary = appConfigValuesService.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME,
                 BpaConstants.WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY).get(0).getValue();
         if (workflowBoundary != null && !workflowBoundary.isEmpty()) {
-            if (workflowBoundary.equals("ADMINISTRATION")) {
+            if (workflowBoundary.contains("ADMIN")) {
                 workFlowBoundary = siteDetail.getElectionBoundary();
             } else if (workflowBoundary.equals("REVENUE")) {
                 workFlowBoundary = siteDetail.getAdminBoundary();
             } else {
-                workFlowBoundary = siteDetail.getLocationBoundary();
+            	  workFlowBoundary = siteDetail.getElectionBoundary();
+               // workFlowBoundary = siteDetail.getLocationBoundary();
             }
         }
         return workFlowBoundary;
     }
+
 
     public String getStateLogoPath() {
         List<AppConfigValues> appConfigValueList = appConfigValueService

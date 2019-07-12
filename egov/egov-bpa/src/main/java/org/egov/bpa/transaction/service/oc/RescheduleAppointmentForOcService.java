@@ -109,7 +109,7 @@ public class RescheduleAppointmentForOcService {
         ocSlot.setActive(true);
         ocSlot.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
         SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
-                appointmentTime, occupancyCertificate.getParent().getSiteDetail().get(0).getAdminBoundary().getParent(), "Occupancy Certificate");
+                appointmentTime, occupancyCertificate.getParent().getSiteDetail().get(0).getAdminBoundary().getParent().getId(), "Occupancy Certificate");
         if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
             slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
         else
@@ -145,7 +145,7 @@ public class RescheduleAppointmentForOcService {
         ocSlot.setActive(true);
         ocSlot.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
         SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
-                appointmentTime, occupancyCertificate.getParent().getSiteDetail().get(0).getAdminBoundary().getParent(), "Occupancy Certificate");
+                appointmentTime, occupancyCertificate.getParent().getSiteDetail().get(0).getAdminBoundary().getParent().getId(), "Occupancy Certificate");
         if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
             slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
         else
@@ -169,7 +169,7 @@ public class RescheduleAppointmentForOcService {
         List<OCSlot> ocSlots = ocSlotRepository
                 .findByOcOrderByIdDesc(occupancyCertificate);
         Date appointmentDate = ocSlots.get(0).getSlotDetail().getSlot().getAppointmentDate();
-        return slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate, zone, "Occupancy Certificate");
+        return slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate, zone.getId(), "Occupancy Certificate");
 
     }
 
@@ -198,7 +198,7 @@ public class RescheduleAppointmentForOcService {
     }
 
     public List<SlotDetail> getSlotDetailsByAppointmentDateAndZoneIdForOc(final Date appointmentDate, final Long zoneId) {
-        return slotDetailRepository.findOneByAppointmentDateAndZoneId(appointmentDate, boundaryService.getBoundaryById(zoneId), "Occupancy Certificate");
+        return slotDetailRepository.findOneByAppointmentDateAndZoneId(appointmentDate, zoneId, "Occupancy Certificate");
     }
 
 }

@@ -30,7 +30,6 @@
 package org.egov.bpa.master.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Boundary;
@@ -54,13 +54,23 @@ public class FeeBoundaryMapping extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_BPAFEEBOUNDARYMAPPING, strategy = GenerationType.SEQUENCE)
     private Long id;
    
-    @ManyToOne(fetch = FetchType.LAZY)
+    
     @NotNull
     @JoinColumn(name = "boundary")
+    private Long boundaryId;
+    @Transient
     private Boundary boundary; 
     
 
-    @ManyToOne
+    public Long getBoundaryId() {
+		return boundaryId;
+	}
+
+	public void setBoundaryId(Long boundaryId) {
+		this.boundaryId = boundaryId;
+	}
+
+	@ManyToOne
     @JoinColumn(name = "bpafeemapping")
     private BpaFeeMapping bpaFeeMapping;
     

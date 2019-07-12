@@ -55,7 +55,7 @@ import java.io.Serializable;
  *
  */
 public class FarDetails implements Serializable {
-
+	private static final long serialVersionUID = 332L;
 	private Double permissableFar;
 	private Double providedFar;
 

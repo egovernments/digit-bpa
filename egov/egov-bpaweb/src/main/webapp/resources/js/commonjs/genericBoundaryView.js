@@ -108,59 +108,62 @@ function paintBoundaryForView(genericBoundaryConfigData, selectedAdminBoundary, 
 			$('#boundarydivision').append('<div class="col-sm-3 add-margin"> '+displayName+'</div>');
 			$('#boundarydivision').append('<div class="col-sm-3 add-margin view-content" id="'+domOptionId+'"></div>');
 		}
-		if(Math.max.apply(null, orderMap.get(orderArray[i].split('-')[0]))==orderArray[i].split(':')[0].split('-')[1]){
-			if(hierarchy=='ADMINISTRATION')
+	//	if(Math.max.apply(null, orderMap.get(orderArray[i].split('-')[0]))==orderArray[i].split(':')[0].split('-')[1]){
+			if(hierarchy=='ADMIN')
 				document.getElementById(domOptionId).innerHTML=findNameById(boundaryData, selectedAdminBoundary);
 			if(hierarchy=='REVENUE')
 				document.getElementById(domOptionId).innerHTML=findNameById(boundaryData, selectedRevenueBoundary);
 			if(hierarchy=='LOCATION')
 				document.getElementById(domOptionId).innerHTML=findNameById(boundaryData, selectedLocationBoundary);
-		}
+		//}
 	}
-	while(parentId==''){
+	/*while(parentId=''){
 		parentId = findParentById(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary);
 		var domId = findDomIdByParent(genericBoundaryConfigData['boundaryData'], parentId);
 		if(parentId!=null && domId!=null)
 		document.getElementById(domId).innerHTML=findNameById(boundaryData, parentId);
-	}
+	}*/
 }
 
 function findNameById(boundaryData, bndryId){
 	var dataJson;
 	var boundary;
+	console.log("findNameById boundaryData"+boundaryData+"----"+bndryId);
 	for(var k in boundaryData) {
 		dataJson = boundaryData[k].data;
 		for (var i = 0;  i < dataJson.length; i++) {
 			boundary = dataJson[i];
-			if(boundary.id==bndryId){
+			if(boundary.code==bndryId){
 				return boundary.name;
 			}
 		}
 	}
 }
 
-function findDomIdByParent(boundaryData, bndryParentId){
+/*function findDomIdByParent(boundaryData, bndryParentId){
 	var dataJson;
 	var boundary;
+	console.log("findDomIdByParent boundaryData"+boundaryData+"----"+bndryParentId);
 	for(var k in boundaryData) {
 		dataJson = boundaryData[k].data;
 		for (var i = 0;  i < dataJson.length; i++) {
 			boundary = dataJson[i];
-			if(boundary.id==bndryParentId){
+			if(boundary.code==bndryParentId){
 				return k.split(":")[1]+k.split(":")[2].replace(/ +/g, "");
 			}
 		}
 	}
-}
+}*/
 
 function findParentById(boundaryData, bndryId){
 	var dataJson;
 	var boundary;
+	console.log("findParentById boundaryData"+boundaryData+"----"+bndryId);
 	for(var k in boundaryData) {
 		dataJson = boundaryData[k].data;
 		for (var i = 0;  i < dataJson.length; i++) {
 			boundary = dataJson[i];
-			if(boundary.id==bndryId){
+			if(boundary.code==bndryId){
 				return boundary.parent;
 			}
 		}
@@ -170,11 +173,12 @@ function findParentById(boundaryData, bndryId){
 function findDomIdByParent(boundaryData, bndryParentId){
 	var dataJson;
 	var boundary;
+	console.log("findDomIdByParent boundaryData"+boundaryData.len+"----"+bndryParentId);
 	for(var k in boundaryData) {
 		dataJson = boundaryData[k].data;
 		for (var i = 0;  i < dataJson.length; i++) {
 			boundary = dataJson[i];
-			if(boundary.id==bndryParentId){
+			if(boundary.code==bndryParentId){
 				return k.split(":")[1]+k.split(":")[2].replace(/ +/g, "");
 			}
 		}

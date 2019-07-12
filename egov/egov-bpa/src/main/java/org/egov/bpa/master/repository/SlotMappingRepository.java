@@ -53,17 +53,17 @@ public interface SlotMappingRepository extends JpaRepository<SlotMapping, Long> 
 
    // List<SlotMapping> findByApplicationTypeId(Long id);
 
-    List<SlotMapping> findByApplicationTypeIdAndZone(Long id, Boundary zone);
+    List<SlotMapping> findByApplicationTypeIdAndZoneId(Long id, Long zoneId);
 
     @Query("select sm from SlotMapping sm where sm.applicationType.id = :id")
     List<SlotMapping> findByApplicationTypeId(@Param("id") Long id);
 
-    @Query("select distinct (sm.zone) from SlotMapping sm where sm.applicationType.id = :id")
+    @Query("select distinct (sm.zoneId) from SlotMapping sm where sm.applicationType.id = :id")
     List<Boundary> findZoneByApplType(@Param("id") Long id);
 
-    @Query("select sm from SlotMapping sm where sm.zone = :zone  and sm.electionWard = :electionWard and sm.applicationType.id =:id")
-    List<SlotMapping> findByZoneElectionWardAndAppType(@Param("zone") Boundary zone,
-            @Param("electionWard") Boundary electionWard,
+    @Query("select sm from SlotMapping sm where sm.zoneId = :zone  and sm.electionWardId = :electionWard and sm.applicationType.id =:id")
+    List<SlotMapping> findByZoneElectionWardAndAppType(@Param("zone") Long zone,
+            @Param("electionWard") Long electionWard,
             @Param("id") Long id);
 
 }

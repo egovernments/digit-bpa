@@ -126,7 +126,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     	ApplicationSubType appType = applicationTypeService.findByName(APPLICATION_TYPE_REGULAR.toUpperCase());
         List<Boundary> zonesList = slotMappingService.slotfindZoneByApplType(appType);
         for (Boundary bndry : zonesList) {
-            List<Slot> slotList = slotRepository.findByZoneAndApplicationDate(bndry, calendar.getTime());
+            List<Slot> slotList = new ArrayList<>();//slotRepository.findByZoneAndApplicationDate(bndry.getId(), calendar.getTime());
             if (!slotList.isEmpty()) {
                 for (Slot slot : slotList) {
                     List<SlotDetail> slotDetailList = slotDetailRepository.findBySlot(slot);
@@ -362,7 +362,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     	ApplicationSubType appType = applicationTypeService.findByName(APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase());
         List<SlotMapping> slotMappings = slotMappingService.slotMappingForOneDayPermit(appType);
         for (SlotMapping sltMapping : slotMappings) {
-            List<Slot> slotList = slotRepository.findByZoneWardAndApplicationDateForOneDayPermit(sltMapping.getZone(),sltMapping.getElectionWard(), calendar.getTime());
+            List<Slot> slotList = new ArrayList<>();//slotRepository.findByZoneWardAndApplicationDateForOneDayPermit(sltMapping.getZone(),sltMapping.getElectionWard(), calendar.getTime());
             if (!slotList.isEmpty()) {
                 for (Slot slot : slotList) {
                     List<SlotDetail> slotDetailList = slotDetailRepository.findBySlotForOneDayPermit(slot);

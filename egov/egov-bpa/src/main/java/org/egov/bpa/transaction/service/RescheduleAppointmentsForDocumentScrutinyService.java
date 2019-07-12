@@ -106,7 +106,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
         slotApp.setActive(true);
         slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
         SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
-                appointmentTime, application.getSiteDetail().get(0).getAdminBoundary().getParent(),"Normal");
+                appointmentTime, application.getSiteDetail().get(0).getAdminBoundary().getParent().getId(),"Normal");
         if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
             slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
         else
@@ -142,7 +142,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
         slotApp.setActive(true);
         slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
         SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
-                appointmentTime, bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent(),"Normal");
+                appointmentTime, bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent().getId(),"Normal");
         if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
             slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
         else
@@ -166,7 +166,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		List<SlotApplication> slotApplication = slotApplicationRepository
 				.findByApplicationOrderByIdDesc(bpaApplication);
 		Date appointmentDate = slotApplication.get(0).getSlotDetail().getSlot().getAppointmentDate();
-		return slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate,zone,"Normal");
+		return slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate,zone.getId(),"Normal");
 		
 	}
 
@@ -195,7 +195,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 	}
 
 	public List<SlotDetail> getOneSlotDetailsByAppointmentDateAndZoneId(final Date appointmentDate, final Long zoneId) {
-		return slotDetailRepository.findOneByAppointmentDateAndZoneId(appointmentDate, boundaryService.getBoundaryById(zoneId),"Normal");
+		return slotDetailRepository.findOneByAppointmentDateAndZoneId(appointmentDate, zoneId,"Normal");
 	}
 
 }

@@ -126,7 +126,7 @@ public class ScheduleAppointmentForOcService {
 
         List<Boundary> zonesList = slotMappingService.slotfindZoneByApplType(appType);
         for (Boundary bndry : zonesList) {
-            List<Slot> slotList = slotRepository.findByZoneApplicationDateForOc(bndry, calendar.getTime());
+            List<Slot> slotList = new ArrayList<>();//slotRepository.findByZoneApplicationDateForOc(bndry.getId(), calendar.getTime());
             if (!slotList.isEmpty()) {
                 for (Slot slot : slotList) {
                     List<SlotDetail> slotDetailList = slotDetailRepository.findBySlot(slot);

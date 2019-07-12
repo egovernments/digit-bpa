@@ -76,7 +76,7 @@ public class BoundaryTypeService {
 
     @Transactional
     public void updateBoundaryType(final BoundaryType boundaryType) {
-        boundaryTypeRepository.save(boundaryType);
+       // boundaryTypeRepository.save(boundaryType);
     }
 
     public BoundaryType getBoundaryTypeById(final Long id) {

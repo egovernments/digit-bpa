@@ -126,7 +126,7 @@
 			<form:errors path="siteDetail[0].subdivisionNumber"
 				cssClass="add-margin error-msg" />
 		</div> --%>
-		<%-- <label class="col-sm-3 control-label text-right"><spring:message
+		 <label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.registrar.office" /> </label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden path="siteDetail[0].registrarVillageId" id="registrarVillageIdHdn"/>
@@ -140,7 +140,7 @@
 			</select>
 			<form:errors path="siteDetail[0].registrarOffice"
 				cssClass="add-margin error-msg" />
-		</div> --%>
+		</div> 
 	</div>
 
 	<div class="form-group">
