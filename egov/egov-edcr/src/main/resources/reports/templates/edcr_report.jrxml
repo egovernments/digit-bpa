@@ -54,7 +54,7 @@
 	<field name="electricLine" class="org.egov.common.entity.edcr.ElectricLine"/>
 	<variable name="SUB_REPORT_ROW_CNT" class="java.lang.Integer"/>
 	<title>
-		<band height="641" splitType="Stretch">
+		<band height="694" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
 				<reportElement x="112" y="27" width="306" height="20" uuid="8a112e59-5ebc-4b5b-ac94-947d91b2912e"/>
@@ -91,7 +91,7 @@
 				<imageExpression><![CDATA[$P{cityLogo}]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="16" y="282" width="186" height="18" uuid="3f3325d3-7390-4b18-a07b-d723a2d91099"/>
+				<reportElement x="16" y="337" width="186" height="18" uuid="3f3325d3-7390-4b18-a07b-d723a2d91099"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -105,7 +105,7 @@
 				<text><![CDATA[Declaration in drawings]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="12" y="90" width="276" height="18" uuid="c90071fa-f965-4d78-8e92-98e7658a97b9"/>
+				<reportElement x="12" y="90" width="536" height="18" uuid="c90071fa-f965-4d78-8e92-98e7658a97b9"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -120,7 +120,7 @@
 				<text><![CDATA[APPLICATION DETAILS]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="288" y="90" width="260" height="18" uuid="defdf9e4-9f6d-416a-9ca4-be8e0a575bb0"/>
+				<reportElement x="12" y="192" width="536" height="18" uuid="defdf9e4-9f6d-416a-9ca4-be8e0a575bb0"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -165,7 +165,7 @@
 				<textFieldExpression><![CDATA[$P{reportStatus}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="9" y="588" width="193" height="19" isRemoveLineWhenBlank="true" uuid="1bc539b3-3399-4906-9c6d-2f6ce7399eb8">
+				<reportElement x="9" y="638" width="193" height="19" isRemoveLineWhenBlank="true" uuid="1bc539b3-3399-4906-9c6d-2f6ce7399eb8">
 					<printWhenExpression><![CDATA[!$P{errors}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left">
@@ -174,13 +174,13 @@
 				<text><![CDATA[Errors ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="9" y="607" width="537" height="34" isRemoveLineWhenBlank="true" uuid="3993cc76-bd9f-4699-897a-2330010ece90">
+				<reportElement x="9" y="657" width="537" height="34" isRemoveLineWhenBlank="true" uuid="3993cc76-bd9f-4699-897a-2330010ece90">
 					<printWhenExpression><![CDATA[!$P{errors}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA[$P{errorString}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="142" y="213" width="146" height="21" uuid="4baabfce-be8c-41ca-a630-4f652544996b"/>
+				<reportElement x="142" y="273" width="146" height="21" uuid="4baabfce-be8c-41ca-a630-4f652544996b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -194,8 +194,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getDemolitionArea()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="213" width="114" height="21" uuid="949ab0e1-96dd-4960-9c81-ea624c41bc50"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="273" width="114" height="21" uuid="949ab0e1-96dd-4960-9c81-ea624c41bc50"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -209,8 +209,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["DEMOLITION AREA in m²"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="213" width="16" height="21" uuid="693763ca-77cb-4196-b15f-41f09c68ce9b"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="273" width="16" height="21" uuid="693763ca-77cb-4196-b15f-41f09c68ce9b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -222,10 +222,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA["6"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["7"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="288" y="213" width="16" height="21" uuid="d35eb498-18f0-48a9-8ac6-f9e1ed783adc"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="288" y="252" width="16" height="21" uuid="d35eb498-18f0-48a9-8ac6-f9e1ed783adc"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -237,10 +237,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["14"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["6"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="304" y="213" width="114" height="21" uuid="c4d393ba-132c-4efd-a1bb-2c3e92261995"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="304" y="252" width="114" height="21" uuid="c4d393ba-132c-4efd-a1bb-2c3e92261995"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -255,7 +255,7 @@
 				<textFieldExpression><![CDATA["AVERAGE WIDTH OF PLOT  in m"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="213" width="130" height="21" uuid="e8d25a86-a1fc-42e5-88e1-a141e99c948c"/>
+				<reportElement x="418" y="252" width="130" height="21" uuid="e8d25a86-a1fc-42e5-88e1-a141e99c948c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -277,7 +277,7 @@
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="142" y="234" width="146" height="21" uuid="1688cff2-ebdb-4833-8ad4-58856fa1fa1f"/>
+				<reportElement x="142" y="294" width="146" height="21" uuid="1688cff2-ebdb-4833-8ad4-58856fa1fa1f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -291,8 +291,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getRoadWidth()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="234" width="114" height="21" uuid="849c724f-0594-45bf-a196-f038c12e413b"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="294" width="114" height="21" uuid="849c724f-0594-45bf-a196-f038c12e413b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -306,8 +306,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["ROAD WIDTH in m"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="234" width="16" height="21" uuid="cab5d9fb-9a13-4f92-ab30-3e04433c5640"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="294" width="16" height="21" uuid="cab5d9fb-9a13-4f92-ab30-3e04433c5640"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -319,10 +319,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA["7"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["9"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="288" y="234" width="16" height="21" uuid="fe9edd41-9fc5-4786-bb80-770f83caf5bf"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="288" y="273" width="16" height="21" uuid="fe9edd41-9fc5-4786-bb80-770f83caf5bf"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -334,10 +334,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["15"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["8"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="304" y="234" width="114" height="21" uuid="f0670f1e-85d0-4976-8a82-c6f38b3069b4"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="304" y="273" width="114" height="21" uuid="f0670f1e-85d0-4976-8a82-c6f38b3069b4"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -352,7 +352,7 @@
 				<textFieldExpression><![CDATA["AVERAGE DEPTH OF PLOT  in m"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="234" width="130" height="21" uuid="64d2fa34-995d-44b8-b32f-a9753ee0cfac"/>
+				<reportElement x="418" y="273" width="130" height="21" uuid="64d2fa34-995d-44b8-b32f-a9753ee0cfac"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -367,7 +367,7 @@
 				<textFieldExpression><![CDATA[$F{planInformation}.getDepthOfPlot()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="142" y="255" width="146" height="21" uuid="74a5768c-4cea-442c-a0f1-989b90ef9d2e"/>
+				<reportElement x="142" y="315" width="406" height="21" uuid="74a5768c-4cea-442c-a0f1-989b90ef9d2e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -381,8 +381,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getTypeOfArea()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="255" width="114" height="21" uuid="10f0b035-0fa1-470b-9b21-2a84161cdc18"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="315" width="114" height="21" uuid="10f0b035-0fa1-470b-9b21-2a84161cdc18"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -396,8 +396,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["AREA TYPE"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="255" width="16" height="21" uuid="6aa97529-5f46-4fcf-bfd5-27cc1edbd803"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="315" width="16" height="21" uuid="6aa97529-5f46-4fcf-bfd5-27cc1edbd803"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -409,10 +409,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="0"/>
 				</textElement>
-				<textFieldExpression><![CDATA["8"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["11"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="288" y="255" width="16" height="21" uuid="1b6a2c8a-52ed-45ef-a759-b507ef675e52"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="288" y="294" width="16" height="21" uuid="1b6a2c8a-52ed-45ef-a759-b507ef675e52"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -424,10 +424,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["16"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["10"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="304" y="255" width="114" height="21" uuid="46d7a195-3574-4009-9a9b-5db59269b36d"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="304" y="294" width="114" height="21" uuid="46d7a195-3574-4009-9a9b-5db59269b36d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -442,7 +442,7 @@
 				<textFieldExpression><![CDATA["SURRENDER ROAD WIDTH AREA in  m²"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="255" width="130" height="21" uuid="a732c1c1-fd0a-4f6b-aa1c-b42c329c4479"/>
+				<reportElement x="418" y="294" width="130" height="21" uuid="a732c1c1-fd0a-4f6b-aa1c-b42c329c4479"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -457,7 +457,7 @@
 				<textFieldExpression><![CDATA[$P{surrenderRoadArea}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="142" y="108" width="146" height="21" uuid="0c9dd40a-5542-435b-b664-4f5295233d85"/>
+				<reportElement x="142" y="108" width="406" height="21" uuid="0c9dd40a-5542-435b-b664-4f5295233d85"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -471,7 +471,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="28" y="108" width="114" height="21" uuid="29b74df7-4ebb-43eb-9f30-e791efc2a54e"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -486,7 +486,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["APPLICANT NAME"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="108" width="16" height="21" uuid="6cd21600-1d5f-4237-85e6-949575143adc"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -501,8 +501,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["1"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="288" y="108" width="16" height="21" uuid="37859ad8-df86-4a66-bc54-b8d98cb5ae3c"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="210" width="16" height="21" uuid="37859ad8-df86-4a66-bc54-b8d98cb5ae3c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -514,10 +514,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["9"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["1"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="304" y="108" width="114" height="21" uuid="0410bc14-d978-40dc-b7f0-34b8fb9615ac"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="210" width="114" height="21" uuid="0410bc14-d978-40dc-b7f0-34b8fb9615ac"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -532,7 +532,7 @@
 				<textFieldExpression><![CDATA["PLOT NO"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="108" width="130" height="21" uuid="ebc6335a-c403-4524-8218-61738726fdf6"/>
+				<reportElement x="142" y="210" width="146" height="21" uuid="ebc6335a-c403-4524-8218-61738726fdf6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -561,7 +561,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicationNumber}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="28" y="129" width="114" height="21" uuid="215a195d-e83a-4a52-8d83-3b6e2a377d3e"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -576,7 +576,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["APPLICATION NUMBER"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="129" width="16" height="21" uuid="5fbc4d05-4b4c-44bb-bd20-1771929a9ead"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -591,8 +591,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["2"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="288" y="129" width="16" height="21" uuid="12cd46b5-bb59-4ee5-acd8-4e385c76d508"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="288" y="210" width="16" height="21" uuid="12cd46b5-bb59-4ee5-acd8-4e385c76d508"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -604,10 +604,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["10"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["2"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="304" y="129" width="114" height="21" uuid="a5a33c45-055b-414d-8bc2-7ed65ff5cacd"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="304" y="210" width="114" height="21" uuid="a5a33c45-055b-414d-8bc2-7ed65ff5cacd"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -622,7 +622,7 @@
 				<textFieldExpression><![CDATA["KHATA NO"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="129" width="130" height="21" uuid="a3b7760f-a182-4336-91dc-39f9c990f235"/>
+				<reportElement x="418" y="210" width="130" height="21" uuid="a3b7760f-a182-4336-91dc-39f9c990f235"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -637,7 +637,7 @@
 				<textFieldExpression><![CDATA[$F{planInformation}.getKhataNo()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="142" y="150" width="146" height="21" uuid="7776029d-8555-4904-8dbe-2a76cae77301"/>
+				<reportElement x="418" y="129" width="130" height="21" uuid="7776029d-8555-4904-8dbe-2a76cae77301"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -651,8 +651,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicationDate}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="150" width="114" height="21" uuid="59cdd5fe-88e2-4452-8400-8baee86639be"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="304" y="129" width="114" height="21" uuid="59cdd5fe-88e2-4452-8400-8baee86639be"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -666,8 +666,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["APPLICATION DATE"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="150" width="16" height="21" uuid="924258b9-ad2f-4a6e-9917-4702b6a35d7e"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="288" y="129" width="16" height="21" uuid="924258b9-ad2f-4a6e-9917-4702b6a35d7e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -681,8 +681,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["3"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="288" y="150" width="16" height="21" uuid="8afb29b2-a570-4e45-9b54-5b47924b29fe"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="231" width="16" height="21" uuid="8afb29b2-a570-4e45-9b54-5b47924b29fe"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -694,10 +694,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["11"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["3"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="304" y="150" width="114" height="21" uuid="d3fe580e-eb32-4d21-8af8-841a599a5198"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="231" width="114" height="21" uuid="d3fe580e-eb32-4d21-8af8-841a599a5198"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -712,7 +712,7 @@
 				<textFieldExpression><![CDATA["MAUZA"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="150" width="130" height="21" uuid="83458a69-6cf0-44af-b9f1-d27925ba674b"/>
+				<reportElement x="142" y="231" width="146" height="21" uuid="83458a69-6cf0-44af-b9f1-d27925ba674b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -727,7 +727,7 @@
 				<textFieldExpression><![CDATA[$F{planInformation}.getMauza()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="142" y="171" width="146" height="21" uuid="eb3c9a40-3143-4f3c-b8a7-1bc769be2c4d"/>
+				<reportElement x="142" y="150" width="406" height="21" uuid="eb3c9a40-3143-4f3c-b8a7-1bc769be2c4d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -741,8 +741,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getOccupancy()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="171" width="114" height="21" uuid="cf89ccc2-267a-4e0d-8e8c-7cb9cdc4c1a9"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="150" width="114" height="21" uuid="cf89ccc2-267a-4e0d-8e8c-7cb9cdc4c1a9"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -756,8 +756,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["OCCUPANCY TYPE"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="171" width="16" height="21" uuid="99933eb8-9eb0-46a9-ac0c-5131dc5845d1"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="150" width="16" height="21" uuid="99933eb8-9eb0-46a9-ac0c-5131dc5845d1"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -771,8 +771,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["4"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="288" y="171" width="16" height="21" uuid="4654e680-00d1-4f27-8530-84dbe3cbecfb"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="288" y="231" width="16" height="21" uuid="4654e680-00d1-4f27-8530-84dbe3cbecfb"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -784,10 +784,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["12"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["4"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="304" y="171" width="114" height="21" uuid="16889ffd-896b-42c4-869c-f0134ae1c79c"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="304" y="231" width="114" height="21" uuid="16889ffd-896b-42c4-869c-f0134ae1c79c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -802,7 +802,7 @@
 				<textFieldExpression><![CDATA["DISTRICT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="171" width="130" height="21" uuid="f1329572-0b6b-4770-b290-d9167fa99096"/>
+				<reportElement x="418" y="231" width="130" height="21" uuid="f1329572-0b6b-4770-b290-d9167fa99096"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -817,7 +817,7 @@
 				<textFieldExpression><![CDATA[$F{planInformation}.getDistrict()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="142" y="192" width="146" height="21" uuid="34708d02-2315-4393-84d4-4c61443c9a75"/>
+				<reportElement x="142" y="171" width="406" height="21" uuid="34708d02-2315-4393-84d4-4c61443c9a75"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -831,8 +831,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{licensee}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="192" width="114" height="21" uuid="169e8032-c050-4c75-8780-a6c90693dd84"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="171" width="114" height="21" uuid="169e8032-c050-4c75-8780-a6c90693dd84"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -846,8 +846,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["TECHNICAL PERSON LICENSEE NAME"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="192" width="16" height="21" uuid="d12adcfd-088c-420f-8ded-a567ef05e071"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="171" width="16" height="21" uuid="d12adcfd-088c-420f-8ded-a567ef05e071"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -861,8 +861,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["5"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="288" y="192" width="16" height="21" uuid="98287aea-b453-4d10-93bb-b1c8b7f59dd9"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="252" width="16" height="21" uuid="98287aea-b453-4d10-93bb-b1c8b7f59dd9"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -874,10 +874,10 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["13"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["5"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="304" y="192" width="114" height="21" uuid="3cb69236-5321-46e4-a139-6d311b020e2e"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="252" width="114" height="21" uuid="3cb69236-5321-46e4-a139-6d311b020e2e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -892,7 +892,7 @@
 				<textFieldExpression><![CDATA["PLOT AREA in m²"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="418" y="192" width="130" height="21" uuid="2280df2e-7f1e-480c-a703-d2fb9a872d0b"/>
+				<reportElement x="142" y="252" width="146" height="21" uuid="2280df2e-7f1e-480c-a703-d2fb9a872d0b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -906,8 +906,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getPlotArea()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="300" width="16" height="30" uuid="0b650422-ec24-4c2f-8bad-e98a7a96f8dd"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="355" width="16" height="30" uuid="0b650422-ec24-4c2f-8bad-e98a7a96f8dd"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -921,8 +921,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["1"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="360" width="343" height="30" uuid="8c11d7a3-ceab-4b5e-893d-467a7e6a399c"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="415" width="343" height="30" uuid="8c11d7a3-ceab-4b5e-893d-467a7e6a399c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -937,7 +937,7 @@
 				<textFieldExpression><![CDATA["NOC from the concerned airport authority if site under reference falling air funnel zone or within vicinity of airport available? "]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="360" width="146" height="30" uuid="148c27fd-a793-4703-930b-7adfcd5bb119"/>
+				<reportElement x="371" y="415" width="177" height="30" uuid="148c27fd-a793-4703-930b-7adfcd5bb119"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -951,8 +951,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getNocNearAirport()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="330" width="16" height="30" uuid="9fbc44f1-8d68-4e79-9edf-09fa938aded6"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="385" width="16" height="30" uuid="9fbc44f1-8d68-4e79-9edf-09fa938aded6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -966,8 +966,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["2"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="390" width="343" height="30" uuid="4ea62cb9-2d9e-4957-96b5-93275327e0dc"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="445" width="343" height="30" uuid="4ea62cb9-2d9e-4957-96b5-93275327e0dc"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -982,7 +982,7 @@
 				<textFieldExpression><![CDATA["NOC from the Defense Institutions in case the site is located in vicinity of defence Aerodromes of Defense Area)  available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="390" width="146" height="30" uuid="66850446-2663-4002-a8b3-9f2c0bcdf981"/>
+				<reportElement x="371" y="445" width="177" height="30" uuid="66850446-2663-4002-a8b3-9f2c0bcdf981"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -996,8 +996,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getNocNearDefenceAerodomes()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="360" width="16" height="30" uuid="41215c9c-61d0-4957-a1a0-8223035d5eab"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="415" width="16" height="30" uuid="41215c9c-61d0-4957-a1a0-8223035d5eab"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1011,8 +1011,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["3"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="420" width="343" height="30" uuid="a985866b-9db1-41da-8b86-d5e889af1e28"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="475" width="343" height="30" uuid="a985866b-9db1-41da-8b86-d5e889af1e28"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1027,7 +1027,7 @@
 				<textFieldExpression><![CDATA["NOC from State Environmental/MoEF Impact Assessment Authority available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="420" width="146" height="30" uuid="a0ebbafd-7003-4b9e-919e-f47ee55e7b8a"/>
+				<reportElement x="371" y="475" width="177" height="30" uuid="a0ebbafd-7003-4b9e-919e-f47ee55e7b8a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1041,8 +1041,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getNocStateEnvImpact()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="390" width="16" height="30" uuid="e69a735a-46bc-4d97-8826-98f319d8a636"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="445" width="16" height="30" uuid="e69a735a-46bc-4d97-8826-98f319d8a636"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1056,8 +1056,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["4"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="450" width="343" height="30" uuid="dc2e353b-4eed-4dd5-8d48-3b2812cb44ef"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="505" width="343" height="30" uuid="dc2e353b-4eed-4dd5-8d48-3b2812cb44ef"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1072,7 +1072,7 @@
 				<textFieldExpression><![CDATA["NOC from Heritage Conservation Committee (National Monuments Authority) available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="450" width="146" height="30" uuid="b1921a1c-b5e2-4f42-9556-0745ac52338d"/>
+				<reportElement x="371" y="505" width="177" height="30" uuid="b1921a1c-b5e2-4f42-9556-0745ac52338d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1086,8 +1086,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getNocNearMonument()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="420" width="16" height="30" uuid="41df6618-b136-4128-9eef-e9cfb4c946b8"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="475" width="16" height="30" uuid="41df6618-b136-4128-9eef-e9cfb4c946b8"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1101,8 +1101,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["5"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="480" width="343" height="30" uuid="9e8f3668-dd55-4f95-aa26-d97f64f64cb0"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="535" width="343" height="30" uuid="9e8f3668-dd55-4f95-aa26-d97f64f64cb0"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1117,7 +1117,7 @@
 				<textFieldExpression><![CDATA["NOC from Railways available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="480" width="146" height="30" uuid="80d9a919-c613-4ddb-9600-c39edb19ed05"/>
+				<reportElement x="371" y="535" width="177" height="30" uuid="80d9a919-c613-4ddb-9600-c39edb19ed05"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1131,8 +1131,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getNocRailways()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="450" width="16" height="30" uuid="fdceed65-f55a-4089-a933-da6f310f911e"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="505" width="16" height="30" uuid="fdceed65-f55a-4089-a933-da6f310f911e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1146,8 +1146,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["6"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="540" width="343" height="40" uuid="23cb8d54-d340-4549-b8d3-77025ed53acb"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="595" width="343" height="40" uuid="23cb8d54-d340-4549-b8d3-77025ed53acb"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1162,7 +1162,7 @@
 				<textFieldExpression><![CDATA["NOC from Tehsildar / Collector if the land under reference is recorded as Government land as per records available in Authority  available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="540" width="146" height="40" uuid="88336fbe-81a3-4043-9ff0-14880d9ac9f6"/>
+				<reportElement x="371" y="595" width="177" height="40" uuid="88336fbe-81a3-4043-9ff0-14880d9ac9f6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1176,8 +1176,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getNocCollectorGvtLand()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="480" width="16" height="30" uuid="f3594287-1c88-4208-8c59-73ec2432037a"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="535" width="16" height="30" uuid="f3594287-1c88-4208-8c59-73ec2432037a"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1191,8 +1191,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["7"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="510" width="343" height="30" uuid="64e36724-d50e-48fc-bc74-dc3f23d59c0f"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="565" width="343" height="30" uuid="64e36724-d50e-48fc-bc74-dc3f23d59c0f"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1207,7 +1207,7 @@
 				<textFieldExpression><![CDATA["NOC to be submitted issued by the Irrigation Department  available?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="510" width="146" height="30" uuid="61fab795-1167-4593-bf59-694d9001ad47"/>
+				<reportElement x="371" y="565" width="177" height="30" uuid="61fab795-1167-4593-bf59-694d9001ad47"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1221,8 +1221,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getNocIrrigationDept()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="510" width="16" height="30" uuid="f4af6927-09d9-4074-ba15-6137ce97546d"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="565" width="16" height="30" uuid="f4af6927-09d9-4074-ba15-6137ce97546d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1236,8 +1236,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA["8"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="300" width="343" height="30" uuid="d4d02a1e-db23-48c0-8e69-f4cce4da1cae"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="355" width="343" height="30" uuid="d4d02a1e-db23-48c0-8e69-f4cce4da1cae"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1252,7 +1252,7 @@
 				<textFieldExpression><![CDATA["Whether building near government building?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="300" width="146" height="30" uuid="004298e8-45f6-4095-a084-809e0658e44c"/>
+				<reportElement x="371" y="355" width="177" height="30" uuid="004298e8-45f6-4095-a084-809e0658e44c"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1266,8 +1266,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getBuildingNearGovtBuilding()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="28" y="330" width="343" height="30" uuid="3ef13b8a-34a4-4be3-a714-84484de4a776"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="28" y="385" width="343" height="30" uuid="3ef13b8a-34a4-4be3-a714-84484de4a776"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1282,7 +1282,7 @@
 				<textFieldExpression><![CDATA["Whether building present near monument?"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="371" y="330" width="146" height="30" uuid="277ae2bb-2372-44a0-a330-ab75596da242"/>
+				<reportElement x="371" y="385" width="177" height="30" uuid="277ae2bb-2372-44a0-a330-ab75596da242"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1296,8 +1296,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{planInformation}.getBuildingNearMonument()]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement x="12" y="540" width="16" height="40" uuid="dc76f7c2-e44d-4674-8950-3f55f8d76414"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="12" y="595" width="16" height="40" uuid="dc76f7c2-e44d-4674-8950-3f55f8d76414"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1329,34 +1329,34 @@
 		</band>
 	</title>
 	<pageFooter>
-		<band height="110">
+		<band height="52">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="225" y="84" width="15" height="12" uuid="68b285d7-eec7-41c7-a617-0e666c163f7a"/>
+				<reportElement x="225" y="26" width="15" height="12" uuid="68b285d7-eec7-41c7-a617-0e666c163f7a"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="252" y="84" width="22" height="12" uuid="0c301f1e-dfac-47e6-bcce-a509c0366641"/>
+				<reportElement x="252" y="27" width="22" height="12" uuid="0c301f1e-dfac-47e6-bcce-a509c0366641"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="235" y="84" width="11" height="12" uuid="2656c6b1-22db-4ad7-962b-92d966d3917d"/>
+				<reportElement x="235" y="27" width="11" height="12" uuid="2656c6b1-22db-4ad7-962b-92d966d3917d"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="9"/>
 				</textElement>
 				<text><![CDATA[of]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="327" y="84" width="238" height="16" uuid="b797c101-877f-4213-8b70-47b46efc4ccd"/>
+				<reportElement x="327" y="26" width="238" height="16" uuid="b797c101-877f-4213-8b70-47b46efc4ccd"/>
 				<textFieldExpression><![CDATA["Powered by Egovernments Foundation " +$P{currentYear}]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="11" y="85" width="107" height="25" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>
+				<reportElement mode="Transparent" x="11" y="27" width="107" height="25" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>
 				<imageExpression><![CDATA[$P{egovLogo}]]></imageExpression>
 			</image>
 		</band>

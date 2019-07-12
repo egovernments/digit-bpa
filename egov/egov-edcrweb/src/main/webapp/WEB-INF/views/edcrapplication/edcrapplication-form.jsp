@@ -93,7 +93,7 @@
 					code="lbl.applicantname" /> <span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input type="text" cssClass="form-control addremoverequired"
-					path="applicantName" maxlength="128" id="applicantName"
+					path="applicantName" maxlength="100" id="applicantName"
 					required="required" />
 				<form:errors path="applicantName" cssClass="error-msg" />
 			</div>
