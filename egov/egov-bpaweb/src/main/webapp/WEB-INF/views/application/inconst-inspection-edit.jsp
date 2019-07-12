@@ -79,6 +79,43 @@
 							<jsp:include page="../view-oc-application-details.jsp"></jsp:include>
 						</div>
 					</div> --%>
+					 <div class="panel panel-primary" data-collapsed="0">
+				  
+						<div class="panel-heading custom_form_panel_heading">
+							<div class="panel-title">
+								<spring:message code="lbl.basic.info" />
+							</div>
+						</div>
+						<div class="form-group">
+
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.inspn.no" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out
+									value="${inConstructionInspection.inspection.inspectionNumber}"
+									default="N/A"></c:out>
+							</div>
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.inspn.date" />
+							</div>
+							<fmt:formatDate
+								value="${inConstructionInspection.inspection.inspectionDate}"
+								pattern="dd/MM/yyyy" var="applicationDate" />
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out value="${applicationDate}" default="N/A"></c:out>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.ins.remarks" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out value="${inConstructionInspection.inspection.inspectionRemarks}" default="N/A"></c:out>
+							</div>
+						</div>
+
+					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 					    <div class="panel-body custom-form ">
 							<jsp:include page="inconst-inspection-detail-form.jsp"></jsp:include>

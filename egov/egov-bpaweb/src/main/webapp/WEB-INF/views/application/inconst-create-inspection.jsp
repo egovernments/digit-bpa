@@ -87,6 +87,63 @@
 							<jsp:include page="../view-bpa-basic-application-details.jsp"></jsp:include>
 						</div>
 					</div> --%>
+					 <div class="panel panel-primary" data-collapsed="0">
+				  
+						<div class="panel-heading custom_form_panel_heading">
+							<div class="panel-title">
+								<spring:message code="lbl.inspection.application" />
+							</div>
+						</div>
+						<div class="form-group">
+
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.application.number" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out
+									value="${inspectionApplication.applicationNumber}"
+									default="N/A"></c:out>
+							</div>
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.appln.date" />
+							</div>
+							<fmt:formatDate
+								value="${inspectionApplication.applicationDate}"
+								pattern="dd/MM/yyyy" var="applicationDate" />
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out value="${applicationDate}" default="N/A"></c:out>
+							</div>
+						</div>
+						<div class="form-group">
+
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.status" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out
+									value="${inspectionApplication.status.code}"
+									default="N/A"></c:out>
+							</div>
+							
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.insp.bldngconststage" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out
+									value="${inspectionApplication.buildingConstructionStage.name}"
+									default="N/A"></c:out>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-3 control-label text-right">
+								<spring:message code="lbl.applicant.remarks" />
+							</div>
+							<div class="col-sm-3 add-margin view-content text-justify">
+								<c:out value="${inspectionApplication.remarks}" default="N/A"></c:out>
+							</div>
+						</div>
+
+					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-body custom-form ">
 							<jsp:include page="inconst-inspection-detail-form.jsp"></jsp:include>

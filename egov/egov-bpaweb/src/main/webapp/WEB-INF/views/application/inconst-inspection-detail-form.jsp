@@ -45,7 +45,7 @@
 
 <div class="panel-heading toggle-header custom_form_panel_heading">
 	<div class="panel-title">
-		<spring:message code="lbl.inspn.details" />
+		<spring:message code="lbl.inpn.chklst.dtl" />
 	</div>
 </div>
 <div class="panel-body">
@@ -66,7 +66,7 @@
 						</div>
 						<div class="form-group view-content header-color hidden-xs">
 							<div class="col-sm-5 text-left">
-								<spring:message code="lbl.files" />
+								<spring:message code="lbl.description" />
 							</div>
 							<div class="col-sm-3 text-left">&nbsp;&nbsp;
 								<spring:message code="lbl.is.applicable" />
