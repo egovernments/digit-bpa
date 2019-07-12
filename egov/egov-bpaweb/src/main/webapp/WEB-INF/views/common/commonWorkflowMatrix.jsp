@@ -54,7 +54,14 @@
     <div class="panel panel-primary" id="approverDetailBody" data-collapsed="0">
         <div class="panel-heading">
             <div class="panel-title">
+            <c:choose>
+            <c:when test="${nextAction eq 'END'}">
+            <spring:message code="lbl.approverComment"/>
+            </c:when>
+            <c:otherwise>
                 <spring:message code="lbl.approverdetails"/>
+            </c:otherwise>
+                </c:choose>
             </div>
         </div>
         <div class="panel-body">
