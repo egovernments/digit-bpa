@@ -1,5 +1,7 @@
 package org.egov.portal.web.controller.citizen;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,12 +9,15 @@ import java.util.Map;
 
 import org.egov.infra.admin.master.entity.Tenant;
 import org.egov.infra.admin.master.service.TenantService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.portal.entity.InboxRenderResponse;
 import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxHelper;
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.service.PortalInboxUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,11 +32,15 @@ public class PortalRestController {
 
 	@Autowired
 	private TenantService tenantService;
+	
+	@Autowired
+	private ConfigurableEnvironment environment;
 
 	@PostMapping(value = "/rest/fetch/servicesapplied", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public InboxRenderResponse fetchServicesApplied(@RequestParam final Long id) {
 		List<PortalInboxUser> totalServicesAppliedList = portalInboxUserService.getPortalInboxByUserId(id);
+		totalServicesAppliedList = enrichPortalInboxUser(totalServicesAppliedList);
 		List<Tenant> tenants = tenantService.findAll();
 		Map<String, String> tenantsMap = new HashMap<>();
 		for (Tenant t : tenants) {
@@ -51,6 +60,7 @@ public class PortalRestController {
 	@ResponseBody
 	public InboxRenderResponse fetchServicesCompleted(@RequestParam final Long id) {
 		List<PortalInboxUser> totalServicesCompletedList = portalInboxUserService.getPortalInboxByResolved(id, true);
+		totalServicesCompletedList = enrichPortalInboxUser(totalServicesCompletedList);
 		List<Tenant> tenants = tenantService.findAll();
 		Map<String, String> tenantsMap = new HashMap<>();
 		for (Tenant t : tenants) {
@@ -70,6 +80,7 @@ public class PortalRestController {
 	@ResponseBody
 	public InboxRenderResponse fetchServicesUnderScrutiny(@RequestParam final Long id) {
 		List<PortalInboxUser> totalServicesPendingList = portalInboxUserService.getPortalInboxByResolved(id, false);
+		totalServicesPendingList = enrichPortalInboxUser(totalServicesPendingList);
 		List<Tenant> tenants = tenantService.findAll();
 		Map<String, String> tenantsMap = new HashMap<>();
 		for (Tenant t : tenants) {
@@ -90,7 +101,6 @@ public class PortalRestController {
 		for (PortalInboxUser i : items) {
 			if (i.getPortalInbox() != null)
 				i.getPortalInbox().setUlbName(tenantsMap.get(i.getPortalInbox().getTenantId()));
-
 		}
 	}
 
@@ -110,8 +120,39 @@ public class PortalRestController {
 			portalInboxHelper.setPendingAction(portalInbox.getPendingAction());
 			portalInboxHelper.setResolved(portalInbox.isResolved());
 			portalInboxHelper.setTenantId(portalInbox.getTenantId());
+			portalInboxHelper.setDomainUrl(portalInbox.getDomainUrl());
 			portalInboxHelperList.add(portalInboxHelper);
 		}
 		return portalInboxHelperList;
+	}
+	
+	private Map<String, String> tenants() {
+		URL url;
+		Map<String, String> tenants = new HashMap<>();
+		try {
+			url = new URL(ApplicationThreadLocals.getDomainURL());
+
+			environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
+				if (propertySource instanceof MapPropertySource)
+					((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+						if (key.startsWith("tenant."))
+							tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
+									+ (url.getPort() == 80 ? "" : ":" + url.getPort()));
+					});
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return tenants;
+	}
+
+	private List<PortalInboxUser> enrichPortalInboxUser(List<PortalInboxUser> portalInboxUsers) {
+		Map<String, String> allTenants = tenants();
+		portalInboxUsers.stream().forEach((portalInboxUser) -> {
+			portalInboxUser.getPortalInbox()
+					.setDomainUrl(allTenants.get(portalInboxUser.getPortalInbox().getTenantId()));
+		});
+		return portalInboxUsers;
 	}
 }

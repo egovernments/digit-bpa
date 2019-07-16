@@ -160,6 +160,9 @@ public class PortalInbox extends AbstractAuditable {
 
 	@Transient
 	private String ulbName;
+	
+	@Transient
+	private String domainUrl;
 
 	@Override
 	public Long getId() {
@@ -341,5 +344,13 @@ public class PortalInbox extends AbstractAuditable {
 
 	public void setUlbName(String ulbName) {
 		this.ulbName = ulbName;
+	}
+
+	public String getDomainUrl() {
+		return domainUrl;
+	}
+
+	public void setDomainUrl(String domainUrl) {
+		this.domainUrl = domainUrl;
 	}
 }
