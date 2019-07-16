@@ -100,6 +100,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private String revocationNumber;
     private Date planPermissionDate;
     private String occupancyCertificateNumber;
+    private Boolean wfEnded;
 
     public String getRevocationNumber() {
         return revocationNumber;
@@ -149,7 +150,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         if (!application.getPermitRevocation().isEmpty()) {
             Optional<PermitRevocation> revoke = application.getPermitRevocation().stream().reduce((revoke1, revoke2) -> revoke2);
             setRevocationNumber(revoke.isPresent() ? revoke.get().getRevocationNumber() : "");
-        }
+        }        
     }
 
     public SearchBpaApplicationForm(OccupancyCertificate occupancyCertificate, String currentOwner, String pendingAction,
@@ -184,6 +185,19 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setCurrentOwner(currentOwner);
         setPendingAction(pendingAction);
         setFeeCollected(isFeeCollected);
+    }
+    
+    public SearchBpaApplicationForm(BpaApplication application, OccupancyCertificate occupancyCertificate) {
+        setApplicationNumber(application.getApplicationNumber());
+        setApplicantName(application.getOwner().getName());
+        setPlanPermissionNumber(application.getPlanPermissionNumber());
+        setPlanPermissionDate(application.getPlanPermissionDate());
+        setOccupancy(application.getOccupanciesName());
+        setStatus(application.getStatus().getCode());
+        setServiceType(application.getServiceType().getDescription());
+        setWfEnded(application.getState().isEnded());
+        if(occupancyCertificate != null)
+            setOccupancyCertificateNumber(occupancyCertificate.getApplicationNumber());
     }
 
     public Boolean getIsRescheduledByEmployee() {
@@ -585,5 +599,13 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     public void setOccupancyCertificateNumber(String occupancyCertificateNumber) {
         this.occupancyCertificateNumber = occupancyCertificateNumber;
     }
+
+	public Boolean getWfEnded() {
+		return wfEnded;
+	}
+
+	public void setWfEnded(Boolean wfEnded) {
+		this.wfEnded = wfEnded;
+	}
     
 }

@@ -58,6 +58,9 @@ $(document)
 			                }
 			            });
 					var captureInspection = '/bpa/inspection/captureinspection/';
+					var preCaptureInspection = '/bpa/application/createpreinspectiondetails/';
+					var postCaptureInspection = '/bpa/application/occupancy-certificate/create-inspection/';
+
 					
    
 					function callAjaxSearch() {
@@ -138,11 +141,22 @@ $(document)
 														"render" : function(
 																data, type,
 																row, meta) {
-                                                                    return '<button type="button" class="btn btn-xs btn-secondary captureInspection pull-left"  value='
-                                                                        + captureInspection
-                                                                        + row.applicationNumber
-                                                                        + '><span class="glyphicon glyphicon-view"></span>&nbsp;Capture Inspection</button>';
-																
+															if(row.wfEnded == true && row.occupancyCertificateNumber === 'N_A'){
+                                                                return '<button type="button" class="btn btn-xs btn-secondary captureInspection pull-left"  value='
+                                                                    + captureInspection
+                                                                    + row.applicationNumber
+                                                                    + '><span class="glyphicon glyphicon-view"></span>&nbsp;Capture Inspection</button>';
+															} else if(row.wfEnded == true && row.occupancyCertificateNumber !== 'N_A'){
+                                                                return '<button type="button" class="btn btn-xs btn-secondary captureInspection pull-left"  value='
+                                                                + postCaptureInspection
+                                                                + row.occupancyCertificateNumber
+                                                                + '><span class="glyphicon glyphicon-view"></span>&nbsp;Capture Inspection</button>';
+														}	else if(row.wfEnded == false){
+                                                            return '<button type="button" class="btn btn-xs btn-secondary captureInspection pull-left"  value='
+                                                            + preCaptureInspection
+                                                            + row.applicationNumber
+                                                            + '><span class="glyphicon glyphicon-view"></span>&nbsp;Capture Inspection</button>';
+													}			
 														}
 													} ]
 										});

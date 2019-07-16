@@ -73,12 +73,10 @@ import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
-import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.springframework.data.jpa.domain.Specification;
@@ -290,9 +288,10 @@ public final class SearchBpaApplnFormSpec {
             if (requestForm.getToDate() != null)
                 predicate.getExpressions()
                         .add(builder.lessThanOrEqualTo(root.get(APPLICATION_DATE), requestForm.getToDate()));
-            predicate.getExpressions().add(builder.notEqual(root.get(STATUS).get("code"), (BpaConstants.APPLICATION_STATUS_REVOKED)));
-            predicate.getExpressions().add(builder.notEqual(root.get(STATUS).get("code"), (BpaConstants.APPLICATION_STATUS_INIT_REVOKE)));
-            predicate.getExpressions().add(builder.equal(root.get("state").get("status"), StateStatus.ENDED));
+            predicate.getExpressions().add(root.get("state").isNotNull());
+            predicate.getExpressions()
+            .add(root.get(STATUS).get("code").in(BpaConstants.APPLICATION_STATUS_FIELD_INS, BpaConstants.APPLICATION_STATUS_NOCUPDATED,
+                    BpaConstants.APPLICATION_STATUS_ORDER_ISSUED, BpaConstants.APPROVED));
             query.distinct(true);
             return predicate;
         };

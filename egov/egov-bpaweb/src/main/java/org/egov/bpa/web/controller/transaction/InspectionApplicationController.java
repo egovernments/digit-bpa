@@ -56,7 +56,6 @@ import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.service.BuildingConstructionStageService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.InConstructionInspection;
-import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.bpa.transaction.entity.common.InspectionFilesCommon;
@@ -67,7 +66,7 @@ import org.egov.bpa.transaction.service.InConstructionInspectionService;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationAdaptor;
+import org.egov.bpa.web.controller.adaptor.InspectionCaptureAdaptor;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,12 +107,12 @@ public class InspectionApplicationController extends BpaGenericApplicationContro
 
     @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchApplicationsForRevocation(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+    public String searchApplications(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         List<Long> userIds = new ArrayList<>();
         userIds.add(securityUtils.getCurrentUser().getId());
         return new DataTable<>(searchBpaApplicationService.searchInspection(searchBpaApplicationForm, userIds),
                 searchBpaApplicationForm.draw())
-                .toJson(SearchBpaApplicationAdaptor.class);
+                .toJson(InspectionCaptureAdaptor.class);
     }
     
     @GetMapping("/captureinspection/{applicationNumber}")
@@ -147,12 +146,14 @@ public class InspectionApplicationController extends BpaGenericApplicationContro
 		            @PathVariable final String inspectionNumber, final Model model) {
 		final InConstructionInspectionService inConstInspectionService  = (InConstructionInspectionService) specificNoticeService
 		    .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
+        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
 		InConstructionInspection inConstructionInspection = inConstInspectionService.findByInspectionApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
 		model.addAttribute("docketDetail", inConstructionInspection.getInspection().getDocket().get(0).getDocketDetail());
 		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
 	    inConstInspectionService.prepareImagesForView(inConstructionInspection);
 		inConstInspectionService.buildPlanScrutinyChecklistDetails(inConstructionInspection);
 		model.addAttribute("inConstructionInspection", inConstructionInspection);
+		model.addAttribute(BpaConstants.BPA_APPLICATION,permitInspection.getApplication());
 		return "inconst-inspection-result";
 	}
 	

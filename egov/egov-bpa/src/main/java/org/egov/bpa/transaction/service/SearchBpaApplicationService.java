@@ -55,7 +55,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -64,7 +63,6 @@ import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BuildingDetail;
-import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
@@ -74,7 +72,6 @@ import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.repository.specs.SearchBpaApplnFormSpec;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -86,12 +83,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-
-import com.google.gson.JsonObject;
 
 @Service
 @Transactional(readOnly = true)
@@ -114,8 +108,6 @@ public class SearchBpaApplicationService {
     private EntityManager entityManager;
     @Autowired
     private OccupancyCertificateService occupancyCertificateService;
-    @Autowired
-    private InspectionApplicationService inspectionApplicationService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -424,8 +416,13 @@ public class SearchBpaApplicationService {
         
         List<SearchBpaApplicationForm> searchResults = new ArrayList<>();
         for (BpaApplication application : bpaApplications) {
-            searchResults.add(
-                    new SearchBpaApplicationForm(application, "", "", false));
+        	List<OccupancyCertificate> occupancyCertificate = occupancyCertificateService.findByPermitNumber(application.getPlanPermissionNumber());
+            if(occupancyCertificate.isEmpty())
+        	 searchResults.add(
+                    new SearchBpaApplicationForm(application, null));
+            else
+            	searchResults.add(
+                        new SearchBpaApplicationForm(application, occupancyCertificate.get(0)));
         }
         return new PageImpl<>(searchResults, pageable, bpaApplications.getTotalElements());
     }

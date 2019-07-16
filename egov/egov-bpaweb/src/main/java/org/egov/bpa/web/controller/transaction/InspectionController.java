@@ -86,6 +86,13 @@ public class InspectionController extends BpaGenericApplicationController {
         loadApplication(model, application);
         return CREATEINSPECTIONDETAIL_FORM;
     }
+    
+    @GetMapping("/createpreinspectiondetails/{applicationNumber}")
+    public String inspectionDetail(final Model model, @PathVariable final String applicationNumber) {
+        final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        loadApplication(model, application);
+        return CREATEINSPECTIONDETAIL_FORM;
+    }
 
     @PostMapping("/createinspectiondetails/{applicationNumber}")
     public String createInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection inspection,
@@ -99,6 +106,19 @@ public class InspectionController extends BpaGenericApplicationController {
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
        // inspection.getInspection().setDocket(inspectionService.buildDocDetFromUI(inspection));
+        final PermitInspection savedInspection = inspectionService.save(inspection, application);
+        model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
+        return "redirect:/application/view-inspection/" + savedInspection.getId();
+    }
+    
+    @PostMapping("/createpreinspectiondetails/{applicationNumber}")
+    public String createPreInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection inspection,
+            @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+        BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        if (resultBinder.hasErrors()) {
+            loadApplication(model, application);
+            return CREATEINSPECTIONDETAIL_FORM;
+        }
         final PermitInspection savedInspection = inspectionService.save(inspection, application);
         model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
         return "redirect:/application/view-inspection/" + savedInspection.getId();
