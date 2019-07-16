@@ -66,6 +66,7 @@
 		<div class="tab-content">
 			<div id="oc-inspection-details" class="tab-pane fade in active">
 				<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="viewapplication-details.jsp"></jsp:include>	
 				
 				<div class="panel-heading custom_form_panel_heading">
 						<div class="panel-title">
