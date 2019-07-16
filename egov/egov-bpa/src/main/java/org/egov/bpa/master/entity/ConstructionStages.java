@@ -60,8 +60,14 @@ public class ConstructionStages extends AbstractAuditable {
     @NotNull
     @Length(min = 1, max = 256)
     private String description;
-
+    @NotNull
     private Boolean isActive;
+    @NotNull
+    private Boolean requireForRegularization;
+    @NotNull
+    private Boolean requireForPermitRenewal;
+    @NotNull
+    private Integer orderNumber;
 
     @Override
     public Long getId() {
@@ -96,4 +102,29 @@ public class ConstructionStages extends AbstractAuditable {
     public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
+
+    public Boolean getRequireForRegularization() {
+        return requireForRegularization;
+    }
+
+    public void setRequireForRegularization(Boolean requireForRegularization) {
+        this.requireForRegularization = requireForRegularization;
+    }
+
+    public Boolean getRequireForPermitRenewal() {
+        return requireForPermitRenewal;
+    }
+
+    public void setRequireForPermitRenewal(Boolean requireForPermitRenewal) {
+        this.requireForPermitRenewal = requireForPermitRenewal;
+    }
+
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
 }

@@ -272,7 +272,6 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
             }
         } else if (BpaConstants.LPCREATED.equalsIgnoreCase(workFlowAction)) {
-            System.out.println(application.getStateType());
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null, additionalRule,
                     BpaConstants.LPCREATED, null);
             application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));

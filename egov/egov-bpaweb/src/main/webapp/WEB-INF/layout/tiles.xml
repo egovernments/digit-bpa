@@ -269,11 +269,11 @@
 			value="/WEB-INF/views/application/createbpafee-form.jsp" />
 	</definition>
 	<definition name="modifybpafee-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.modifyfee.create"
-					   cascade="true" />
+		<put-attribute name="page-title"
+			value="title.modifyfee.create" cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/application/modifybpafee-form.jsp" />
-    </definition>
+			value="/WEB-INF/views/application/modifybpafee-form.jsp" />
+	</definition>
 	<definition name="createbpafee-view" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.createfee.view" cascade="true" />
@@ -281,8 +281,8 @@
 			value="/WEB-INF/views/application/createbpafee-view.jsp" />
 	</definition>
 	<definition name="modifybpafee-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.createfee.view"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.createfee.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/modifybpafee-view.jsp" />
 	</definition>
@@ -704,78 +704,90 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/application-status.jsp" />
 	</definition>
-	
+
 	<definition name="modifyocfee-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.createocfee.create"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.createocfee.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/occupancyCertificate/modifyocfee-form.jsp" />
 	</definition>
 	<definition name="modifyocfee-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.createocfee.view"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.createocfee.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/occupancyCertificate/modifyocfee-view.jsp" />
 	</definition>
 	<definition name="createocfee-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.createfee.create"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.createfee.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/occupancyCertificate/createocfee-form.jsp" />
 	</definition>
 	<definition name="createocfee-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.createfee.view"
-			cascade="true" />
+		<put-attribute name="page-title"
+			value="title.createfee.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/occupancyCertificate/createocfee-view.jsp" />
 	</definition>
-	
-	<definition name="search-occupany-certificate" extends="base_layout">
+
+	<definition name="search-occupany-certificate"
+		extends="base_layout">
 		<put-attribute name="page-title" value="title.search.oc"
-					   cascade="true" />
+			cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/application/search-occupany-certificate.jsp" />
+			value="/WEB-INF/views/application/search-occupany-certificate.jsp" />
 	</definition>
-	
-	<definition name="search-occupancy-certificate-view" extends="base_layout">
+
+	<definition name="search-occupancy-certificate-view"
+		extends="base_layout">
 		<put-attribute name="page-title" value="title.oc.view"
-					   cascade="true" />
+			cascade="true" />
 		<put-attribute name="body"
-					   value="/WEB-INF/views/occupancyCertificate/search-occupancy-certificate-view.jsp" />
+			value="/WEB-INF/views/occupancyCertificate/search-occupancy-certificate-view.jsp" />
 	</definition>
-	
-  <definition name="view-fees" extends="base_layout">
-        <put-attribute name="page-title" value="title.fee.view" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/fees/view-fees.jsp"/>
-    </definition>
-    <definition name="fees-search-update" extends="base_layout">
-        <put-attribute name="page-title" value="title.fee.search" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/fees/fees-search-update.jsp"/>
-    </definition>
-    <definition name="fees-update" extends="base_layout">
-        <put-attribute name="page-title" value="title.fee.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/fees/fees-update.jsp"/>
-    </definition>
-    <definition name="fees-search-view" extends="base_layout">
-        <put-attribute name="page-title" value="title.fee.search" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/fees/fees-search-view.jsp"/>
-    </definition>
-    	<definition name="fees-view" extends="base_layout">
+
+	<definition name="view-fees" extends="base_layout">
+		<put-attribute name="page-title" value="title.fee.view"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/view-fees.jsp" />
+	</definition>
+	<definition name="fees-search-update" extends="base_layout">
 		<put-attribute name="page-title"
-			value="title.fee.view" cascade="true" />
+			value="title.fee.search" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/fees-search-update.jsp" />
+	</definition>
+	<definition name="fees-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.fee.edit"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/fees-update.jsp" />
+	</definition>
+	<definition name="fees-search-view" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.fee.search" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/fees-search-view.jsp" />
+	</definition>
+	<definition name="fees-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.fee.view"
+			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/fees/fees-view.jsp" />
 	</definition>
-    <definition name="fees-new" extends="base_layout">
+	<definition name="fees-new" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.create.fee" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/fees/fees-new.jsp" />
 	</definition>
-	    <definition name="update-fees" extends="base_layout">
-        <put-attribute name="page-title" value="title.fee.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/fees/update-fees.jsp"/>
-    </definition>
+	<definition name="update-fees" extends="base_layout">
+		<put-attribute name="page-title" value="title.fee.edit"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/fees/update-fees.jsp" />
+	</definition>
 	<definition name="fees-result" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.fees.success" cascade="true" />
@@ -788,108 +800,117 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/fees/fees-create.jsp" />
 	</definition>
-	
-	<definition name="servicetype-checklist-mapping" extends="base_layout">
+
+	<definition name="servicetype-checklist-mapping"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/checklistservicetype/servicetype-checklist-mapping.jsp" />
 	</definition>
-	
-	<definition name="update-servicetype-checklist-mapping" extends="base_layout">
+
+	<definition name="update-servicetype-checklist-mapping"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/checklistservicetype/update-servicetype-checklist-mapping.jsp" />
 	</definition>
-	
-	<definition name="servicetype-checklist-mapping-create" extends="base_layout">
+
+	<definition name="servicetype-checklist-mapping-create"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.create" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/checklistservicetype/servicetype-checklist-mapping-create.jsp" />
 	</definition>
-	
-	<definition name="servicetype-checklist-mapping-update" extends="base_layout">
+
+	<definition name="servicetype-checklist-mapping-update"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.update" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/checklistservicetype/servicetype-checklist-mapping-update.jsp" />
 	</definition>
-	
-	<definition name="checklist-servicetype-mapping-result" extends="base_layout">
+
+	<definition name="checklist-servicetype-mapping-result"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.result" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/checklistservicetype/checklist-servicetype-mapping-result.jsp" />
 	</definition>
-	
-	<definition name="checklist-servicetype-mapping-update-result" extends="base_layout">
+
+	<definition
+		name="checklist-servicetype-mapping-update-result"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.result" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/checklistservicetype/checklist-servicetype-mapping-update-result.jsp" />
 	</definition>
-	
-	<definition name="checklist-servicetype-mapping-search" extends="base_layout">
+
+	<definition name="checklist-servicetype-mapping-search"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.checklist.servicetype.mapping.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/checklistservicetype/checklist-servicetype-mapping-search.jsp" />
 	</definition>
-	
+
 	<definition name="city-selection" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.common.city.selection" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/common/city-selection.jsp" />
 	</definition>
-	
+
 	<definition name="noc-details" extends="base_layout">
-		<put-attribute name="page-title"
-			value="title.noc" cascade="true" />
+		<put-attribute name="page-title" value="title.noc"
+			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/noc-details.jsp" />
 	</definition>
-	
+
 	<definition name="noc-success" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.noc.appln.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/noc-success.jsp" />
 	</definition>
-	
+
 	<definition name="view-noc-details" extends="base_layout">
-		<put-attribute name="page-title"
-			value="title.noc" cascade="true" />
+		<put-attribute name="page-title" value="title.noc"
+			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/view-noc-details.jsp" />
 	</definition>
-	
-	<definition name="noc-clearance-report" extends="base_layout">
+
+	<definition name="noc-clearance-report"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.report.noc.clearance" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/noc-clearance-report.jsp" />
 	</definition>
-	
+
 	<definition name="ocnoc-details" extends="base_layout">
-		<put-attribute name="page-title"
-			value="title.noc" cascade="true" />
+		<put-attribute name="page-title" value="title.noc"
+			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/ocnoc-details.jsp" />
 	</definition>
-	
+
 	<definition name="ocnoc-success" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.noc.appln.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/ocnoc-success.jsp" />
 	</definition>
-	
+
 	<definition name="view-ocnoc-details" extends="base_layout">
-		<put-attribute name="page-title"
-			value="title.noc" cascade="true" />
+		<put-attribute name="page-title" value="title.noc"
+			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/noc/view-ocnoc-details.jsp" />
 	</definition>
@@ -900,42 +921,42 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/citizen-inspection-form.jsp" />
 	</definition>
-	<definition name="citizen-inspection-success" extends="base_layout">
+	<definition name="citizen-inspection-success"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.bpa.appln.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/citizen-inspection-success.jsp" />
 	</definition>
-	
-		<definition name="inspection-update-form" extends="base_layout">
+
+	<definition name="inspection-update-form"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.inspection.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-update-form.jsp" />
 	</definition>
-	
-	<definition name="inspection-result"
-		extends="base_layout">
+
+	<definition name="inspection-result" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.inspection.appln" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-result.jsp" />
 	</definition>
-	<definition name="inspection-view"
-		extends="base_layout">
+	<definition name="inspection-view" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.inspection.view" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-view.jsp" />
 	</definition>
-		<definition name="inspection-schedule-appointment-new"
+	<definition name="inspection-schedule-appointment-new"
 		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.schedule.appmnt" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-schedule-appointment-new.jsp" />
 	</definition>
-	
+
 	<definition name="inspection-reschedule-appointment"
 		extends="base_layout">
 		<put-attribute name="page-title"
@@ -943,14 +964,14 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-reschedule-appointment.jsp" />
 	</definition>
-    <definition name="inspection-scheduled-appointment-result"
+	<definition name="inspection-scheduled-appointment-result"
 		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.reschedule.appmnt" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inspection-scheduled-appointment-result.jsp" />
 	</definition>
-	
+
 	<definition name="inconst-create-inspection"
 		extends="base_layout">
 		<put-attribute name="page-title"
@@ -958,7 +979,7 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inconst-create-inspection.jsp" />
 	</definition>
-	
+
 	<definition name="inconst-inspection-success"
 		extends="base_layout">
 		<put-attribute name="page-title"
@@ -966,13 +987,15 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inconst-inspection-success.jsp" />
 	</definition>
-		<definition name="inconst-inspection-edit" extends="base_layout">
+	<definition name="inconst-inspection-edit"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.inspection.modify" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inconst-inspection-edit.jsp" />
 	</definition>
-	<definition name="inconst-show-inspection" extends="base_layout">
+	<definition name="inconst-show-inspection"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.inspection.result" cascade="true" />
 		<put-attribute name="body"
@@ -1006,14 +1029,13 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/view-permit-revocation-details.jsp" />
 	</definition>
-	<definition name="application-success"
-		extends="base_layout">
+	<definition name="application-success" extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.appln.success" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/application-success.jsp" />
 	</definition>
-	
+
 	<definition name="ins-lettertoparty-create"
 		extends="base_layout">
 		<put-attribute name="page-title"
@@ -1042,7 +1064,8 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/ins-lettertoparty-capturesentdate.jsp" />
 	</definition>
-	<definition name="ins-lettertoparty-view" extends="base_layout">
+	<definition name="ins-lettertoparty-view"
+		extends="base_layout">
 		<put-attribute name="page-title"
 			value="title.lettertoparty.view" cascade="true" />
 		<put-attribute name="body"
@@ -1075,5 +1098,12 @@
 			value="title.inspection.result" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/inconst-inspection-result.jsp" />
+	</definition>
+	<definition name="permit-renewal-citizen-new"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.renewal.apply" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/permitRenewal/permit-renewal-citizen-new.jsp" />
 	</definition>
 </tiles-definitions>

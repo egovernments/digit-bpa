@@ -75,160 +75,164 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-
 @Service
 @Transactional(readOnly = true)
 public class PermitNocApplicationService {
-	
-	@Autowired
-	private PermitNocApplicationRepository permitNocRepository;
-	@Autowired
-	private BpaStatusService statusService;
-	@Autowired
-	private BpaUtils bpaUtils;
-	@Autowired
+
+    @Autowired
+    private PermitNocApplicationRepository permitNocRepository;
+    @Autowired
+    private BpaStatusService statusService;
+    @Autowired
+    private BpaUtils bpaUtils;
+    @Autowired
     private NocConfigurationService nocConfigurationService;
-	@Autowired
+    @Autowired
     private UserService userService;
-	@Autowired
-	private NocNumberGenerator nocNumberGenerator;
-	@Autowired
-	public HolidayListService holidayListService;
-	@Autowired
-	private DcrRestService drcRestService;
-	@Autowired
-	private BPASmsAndEmailService bpaSmsAndEmailService;
-	
-	@Transactional
-	public PermitNocApplication save(final PermitNocApplication permitNoc) {
-		return permitNocRepository.save(permitNoc);
-	}
-	
-	@Transactional
-	public List<PermitNocApplication> save(final List<PermitNocApplication> permitNoc) {
-		return permitNocRepository.save(permitNoc);
-	}
-	
-	public PermitNocApplication findByNocApplicationNumber(String appNo) {
-		return permitNocRepository.findByNocApplicationNumber(appNo);		
-	}
-	
-	public List<PermitNocApplication> findByPermitApplicationNumber(String appNo) {
-		return permitNocRepository.findByPermitApplicationNumber(appNo);		
-	}
-	
-	public List<PermitNocApplication> findInitiatedAppByType(final String nocType) {
-		return permitNocRepository.findInitiatedAppByType(nocType);		
-	}
-	
-	public PermitNocApplication findByApplicationNumberAndType(String appNo, final String nocType) {
-		return permitNocRepository.findByApplicationNumberAndType(appNo, nocType);		
-	}
-	
-	public PermitNocApplication createNocApplication(PermitNocApplication permitNoc, NocConfiguration nocConfig) {
-		BpaStatus status = statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_INITIATED);
-		permitNoc.getBpaNocApplication().setNocApplicationNumber(nocNumberGenerator.generateNocNumber(nocConfig.getDepartment()));
-		permitNoc.getBpaNocApplication().setNocType(nocConfig.getDepartment());
-		permitNoc.getBpaNocApplication().setStatus(status);	
-		addSlaEndDate(permitNoc.getBpaNocApplication(), nocConfig);
-		PermitNocApplication nocApp = permitNocRepository.save(permitNoc);	
-		bpaSmsAndEmailService.sendSMSAndEmailForNocProcess(BpaConstants.NOC_INITIATED,nocApp);
-		return nocApp;
-		
-	}
-	
-	public void initiateNoc(BpaApplication application) {
-	Map<String, String> edcrNocMandatory = getEdcrNocMandatory(application.geteDcrNumber());
-    for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
-		PermitNocApplication permitNoc = new PermitNocApplication();
-		BpaNocApplication nocApplication = new BpaNocApplication();
+    @Autowired
+    private NocNumberGenerator nocNumberGenerator;
+    @Autowired
+    public HolidayListService holidayListService;
+    @Autowired
+    private DcrRestService drcRestService;
+    @Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
 
-		List<User> nocUser = new ArrayList<>();
-		List<User> userList = new ArrayList<>();
-		NocConfiguration nocConfig = nocConfigurationService
-				.findByDepartmentAndType(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode(), BpaConstants.PERMIT);
-		if (nocConfig!=null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
-				&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
-			List<User> nocUsers = new ArrayList<User>(userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
-			userList = nocUsers.stream()
-		    	      .filter(usr -> usr.getRoles().stream()
-		    	        .anyMatch(usrrl -> 
-		    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-		    	        .collect(Collectors.toList());	
-			if(userList.isEmpty()) {
-				nocUsers = userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationConstant.STATE_TENANTID);
-				userList = nocUsers.stream()
-			    	      .filter(usr -> usr.getRoles().stream()
-			    	        .anyMatch(usrrl -> 
-			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-			    	        .collect(Collectors.toList());	
-			}	
-		     nocUser.add(userList.get(0));
-		     permitNoc.setBpaApplication(application);
-		     permitNoc.setBpaNocApplication(nocApplication);
-		     permitNoc = createNocApplication(permitNoc, nocConfig);	
-	        bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
-		}
-      }
-	}
-	
-	public PermitNocApplication createNoc(BpaApplication application, String nocType) {
-		PermitNocApplication permitNoc = new PermitNocApplication();
-		BpaNocApplication nocApplication = new BpaNocApplication();
-		List<User> nocUser = new ArrayList<>();
-		List<User> userList = new ArrayList<>();
-		NocConfiguration nocConfig = nocConfigurationService
-				.findByDepartmentAndType(nocType, BpaConstants.PERMIT);
-		if (nocConfig!=null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
-			List<User> nocUsers = new ArrayList<User>(userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
-			userList = nocUsers.stream()
-		    	      .filter(usr -> usr.getRoles().stream()
-		    	        .anyMatch(usrrl -> 
-		    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-		    	        .collect(Collectors.toList());	
-			if(userList.isEmpty()) {
-				nocUsers = userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationConstant.STATE_TENANTID);
-				userList = nocUsers.stream()
-			    	      .filter(usr -> usr.getRoles().stream()
-			    	        .anyMatch(usrrl -> 
-			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-			    	        .collect(Collectors.toList());	
-			}	
-		     nocUser.add(userList.get(0));
-		     permitNoc.setBpaApplication(application);
-		     permitNoc.setBpaNocApplication(nocApplication);
-		     permitNoc = createNocApplication(permitNoc, nocConfig);	
-			 
-		     permitNoc.getBpaNocApplication().setOwnerUser(nocUser.get(0));
+    @Transactional
+    public PermitNocApplication save(final PermitNocApplication permitNoc) {
+        return permitNocRepository.save(permitNoc);
+    }
 
-	        bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
-		}
-		return permitNoc;
-	}
-	
-	public void addSlaEndDate(BpaNocApplication nocApplication,NocConfiguration nocConfig ) {
-		
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date()); // todays date.
-		c.add(Calendar.DATE, Integer.parseInt(nocConfig.getSla().toString())); 
-		
-		List<Holiday> holiday = holidayListService.findByFromAndToDate(new Date(), c.getTime());
-		c.add(Calendar.DATE, holiday.size()); 
+    @Transactional
+    public List<PermitNocApplication> save(final List<PermitNocApplication> permitNoc) {
+        return permitNocRepository.save(permitNoc);
+    }
 
-		nocApplication.setSlaEndDate(c.getTime());
-	}
-	
-	public Map<String, String> getEdcrNocMandatory(final String edcrNumber){	
-	
-		EdcrApplicationInfo edcrPlanInfo = drcRestService.getDcrPlanInfo(edcrNumber, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
-	    Map<String, String> nocTypeMap = new HashMap<>();
-	        nocTypeMap.put(BpaConstants.FIRENOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
-	        nocTypeMap.put(BpaConstants.AIRPORTNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport());
-	        nocTypeMap.put(BpaConstants.NMANOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocNearMonument());
-	        nocTypeMap.put(BpaConstants.ENVNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact());
-	        nocTypeMap.put(BpaConstants.IRRNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept());
-	   return nocTypeMap;
-	}
+    public PermitNocApplication findByNocApplicationNumber(String appNo) {
+        return permitNocRepository.findByNocApplicationNumber(appNo);
+    }
+
+    public List<PermitNocApplication> findByPermitApplicationNumber(String appNo) {
+        return permitNocRepository.findByPermitApplicationNumber(appNo);
+    }
+
+    public List<PermitNocApplication> findInitiatedAppByType(final String nocType) {
+        return permitNocRepository.findInitiatedAppByType(nocType);
+    }
+
+    public PermitNocApplication findByApplicationNumberAndType(String appNo, final String nocType) {
+        return permitNocRepository.findByApplicationNumberAndType(appNo, nocType);
+    }
+
+    public PermitNocApplication createNocApplication(PermitNocApplication permitNoc, NocConfiguration nocConfig) {
+        BpaStatus status = statusService.findByModuleTypeAndCode(BpaConstants.CHECKLIST_TYPE_NOC, BpaConstants.NOC_INITIATED);
+        permitNoc.getBpaNocApplication().setNocApplicationNumber(nocNumberGenerator.generateNocNumber(nocConfig.getDepartment()));
+        permitNoc.getBpaNocApplication().setNocType(nocConfig.getDepartment());
+        permitNoc.getBpaNocApplication().setStatus(status);
+        addSlaEndDate(permitNoc.getBpaNocApplication(), nocConfig);
+        PermitNocApplication nocApp = permitNocRepository.save(permitNoc);
+        bpaSmsAndEmailService.sendSMSAndEmailForNocProcess(BpaConstants.NOC_INITIATED, nocApp);
+        return nocApp;
+
+    }
+
+    public void initiateNoc(BpaApplication application) {
+        Map<String, String> edcrNocMandatory = getEdcrNocMandatory(application.geteDcrNumber());
+        for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+            PermitNocApplication permitNoc = new PermitNocApplication();
+            BpaNocApplication nocApplication = new BpaNocApplication();
+
+            List<User> nocUser = new ArrayList<>();
+            List<User> userList = new ArrayList<>();
+            NocConfiguration nocConfig = nocConfigurationService
+                    .findByDepartmentAndType(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode(),
+                            BpaConstants.PERMIT);
+            if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+                List<User> nocUsers = new ArrayList<User>(
+                        userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
+                userList = nocUsers.stream()
+                        .filter(usr -> usr.getRoles().stream()
+                                .anyMatch(usrrl -> usrrl.getName()
+                                        .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                        .collect(Collectors.toList());
+                if (userList.isEmpty()) {
+                    nocUsers = userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationConstant.STATE_TENANTID);
+                    userList = nocUsers.stream()
+                            .filter(usr -> usr.getRoles().stream()
+                                    .anyMatch(usrrl -> usrrl.getName()
+                                            .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                            .collect(Collectors.toList());
+                }
+                nocUser.add(userList.get(0));
+                permitNoc.setBpaApplication(application);
+                permitNoc.setBpaNocApplication(nocApplication);
+                permitNoc = createNocApplication(permitNoc, nocConfig);
+                bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+            }
+        }
+    }
+
+    public PermitNocApplication createNoc(BpaApplication application, String nocType) {
+        PermitNocApplication permitNoc = new PermitNocApplication();
+        BpaNocApplication nocApplication = new BpaNocApplication();
+        List<User> nocUser = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
+        NocConfiguration nocConfig = nocConfigurationService
+                .findByDepartmentAndType(nocType, BpaConstants.PERMIT);
+        if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
+            List<User> nocUsers = new ArrayList<User>(
+                    userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
+            userList = nocUsers.stream()
+                    .filter(usr -> usr.getRoles().stream()
+                            .anyMatch(usrrl -> usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                    .collect(Collectors.toList());
+            if (userList.isEmpty()) {
+                nocUsers = userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationConstant.STATE_TENANTID);
+                userList = nocUsers.stream()
+                        .filter(usr -> usr.getRoles().stream()
+                                .anyMatch(usrrl -> usrrl.getName()
+                                        .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                        .collect(Collectors.toList());
+            }
+            nocUser.add(userList.get(0));
+            permitNoc.setBpaApplication(application);
+            permitNoc.setBpaNocApplication(nocApplication);
+            permitNoc = createNocApplication(permitNoc, nocConfig);
+
+            permitNoc.getBpaNocApplication().setOwnerUser(nocUser.get(0));
+
+            bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+        }
+        return permitNoc;
+    }
+
+    public void addSlaEndDate(BpaNocApplication nocApplication, NocConfiguration nocConfig) {
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date()); // todays date.
+        c.add(Calendar.DATE, Integer.parseInt(nocConfig.getSla().toString()));
+
+        List<Holiday> holiday = holidayListService.findByFromAndToDate(new Date(), c.getTime());
+        c.add(Calendar.DATE, holiday.size());
+
+        nocApplication.setSlaEndDate(c.getTime());
+    }
+
+    public Map<String, String> getEdcrNocMandatory(final String edcrNumber) {
+
+        EdcrApplicationInfo edcrPlanInfo = drcRestService.getDcrPlanInfo(edcrNumber,
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        Map<String, String> nocTypeMap = new HashMap<>();
+        nocTypeMap.put(BpaConstants.FIRENOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
+        nocTypeMap.put(BpaConstants.AIRPORTNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport());
+        nocTypeMap.put(BpaConstants.NMANOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocNearMonument());
+        nocTypeMap.put(BpaConstants.ENVNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact());
+        nocTypeMap.put(BpaConstants.IRRNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept());
+        return nocTypeMap;
+    }
 }

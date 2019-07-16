@@ -203,7 +203,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
         model.addAttribute("stakeHolderTypeList", stakeholderTypeService.findAllIsActive());
         model.addAttribute("governmentTypeList", Arrays.asList(GovernmentType.values()));
-        model.addAttribute("constStages", constructionStagesService.findAll());
+        model.addAttribute("constStages", constructionStagesService.findByRequiredForRegularization());
         model.addAttribute("appTypes", applicationTypeService.getAllEnabledApplicationTypes());
         model.addAttribute("electionwards", getElectionWards());
         model.addAttribute("wards", getRevenueWards());

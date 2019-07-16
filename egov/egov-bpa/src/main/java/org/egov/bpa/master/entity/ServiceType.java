@@ -84,6 +84,10 @@ public class ServiceType extends AbstractAuditable {
     @Column(name = "validity")
     private Double validity;
 
+    @NotNull
+    @Column(name = "renewalValidity")
+    private Double renewalValidity;
+
     @Override
     public Long getId() {
         return id;
@@ -213,13 +217,21 @@ public class ServiceType extends AbstractAuditable {
     public void setIsOCRequired(Boolean isOCRequired) {
         this.isOCRequired = isOCRequired;
     }
-    
-    public Double getValidity() {
-		return validity;
-	}
 
-	public void setValidity(Double validity) {
-		this.validity = validity;
-	}
+    public Double getValidity() {
+        return validity;
+    }
+
+    public void setValidity(Double validity) {
+        this.validity = validity;
+    }
+
+    public Double getRenewalValidity() {
+        return renewalValidity;
+    }
+
+    public void setRenewalValidity(Double renewalValidity) {
+        this.renewalValidity = renewalValidity;
+    }
 
 }

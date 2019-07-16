@@ -181,6 +181,8 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_TS_INS_INITIATED = "Town Surveyor Inspection Initiated";
     public static final String APPLICATION_STATUS_REJECT_CLERK = "Rejection initiated by clerk";
     public static final String APPLICATION_APPROVAL_PENDING = "Secretary Application Approval Pending";
+    public static final String RENEWAL_MODULE_TYPE = "RENEWAL";
+    
     // Checklist document type constants
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
     public static final String CHECKLIST_TYPE_NOC = "NOC";
@@ -449,7 +451,10 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_REVOKED ="Revocated";
     public static final String APPLICATION_STATUS_REVOKE_CANCELED ="Revocation cancelled";
     
-
+    //Permit Renewal related
+    public static final String PERMIT_RENEW_WFTYPE = "PermitRenewal";
+    public static final String RENEWALSTATUS_MODULETYPE = "RENEWAL";
+    
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {
         BUILDPERMIT.add(ST_CODE_01); // New Construction

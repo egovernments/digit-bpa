@@ -14,10 +14,17 @@ public class ConstructionStagesService {
 
     @Autowired
     private ConstructionStagesRepository constructionStagesRepository;
-    
 
     public List<ConstructionStages> findAll() {
         return constructionStagesRepository.findAll();
+    }
+
+    public List<ConstructionStages> findByRequiredForPermitRenewal() {
+        return constructionStagesRepository.findByRequireForPermitRenewalTrueOrderByOrderNumberAsc();
+    }
+
+    public List<ConstructionStages> findByRequiredForRegularization() {
+        return constructionStagesRepository.findByRequireForRegularizationTrueOrderByOrderNumberAsc();
     }
 
 }

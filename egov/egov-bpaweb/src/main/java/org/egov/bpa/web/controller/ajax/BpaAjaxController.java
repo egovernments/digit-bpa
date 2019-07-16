@@ -39,7 +39,6 @@
  */
 package org.egov.bpa.web.controller.ajax;
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_INIT_REVOKE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT;
 
 import java.io.IOException;
@@ -59,6 +58,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.BpaScheme;
 import org.egov.bpa.master.entity.BpaSchemeLandUsage;
@@ -82,6 +82,7 @@ import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
+import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.DcrRestService;
@@ -116,6 +117,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +138,9 @@ import com.google.gson.reflect.TypeToken;
 @Controller
 public class BpaAjaxController {
 
+    private static final String MATERIALPATH = "materialpath";
+    private static final String MANDATORY = "mandatory";
+    private static final Logger LOG = Logger.getLogger(BpaAjaxController.class);
     private static final String BLOCK_NAME = "blockName";
 
     private static final String BLOCK_ID = "blockId";
@@ -193,15 +198,17 @@ public class BpaAjaxController {
     @Autowired
     private NocConfigurationService nocConfigService;
     @Autowired
-	private DcrRestService drcRestService;
+    private DcrRestService drcRestService;
     @Autowired
     private OccupancyCertificateService occupancyCertificateService;
     @Autowired
     private InspectionApplicationService inspectionApplicationService;
+    @Autowired
+    private BpaNoticeUtil bpaNoticeUtil;
 
     @GetMapping(value = "/ajax/getAdmissionFees", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BigDecimal isConnectionPresentForProperty(@RequestParam final Long[] serviceTypeIds,
+    public BigDecimal getApplicationFee(@RequestParam final Long[] serviceTypeIds,
             @RequestParam final Long applicationTypeId) {
         BigDecimal amount = BigDecimal.ZERO;
         if (serviceTypeIds.length > 0) {
@@ -493,7 +500,7 @@ public class BpaAjaxController {
     @GetMapping(value = "/check/auto-generate-licence-details", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Boolean checkAutoGenerateLicenceDetails(@RequestParam final String code) {
-        return code != null && !code.isEmpty() ? stakeholderTypeService.findByCode(code).getAutoGenerateLicenceDetails() : false;
+        return code != null && !code.isEmpty() && stakeholderTypeService.findByCode(code).getAutoGenerateLicenceDetails();
     }
 
     @GetMapping(value = "/occupancy/sub-usages", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -521,7 +528,8 @@ public class BpaAjaxController {
             jsonObj.addProperty("zone", application.getSiteDetail().get(0).getAdminBoundary().getParent().getName());
             jsonObj.addProperty("revenueWard", application.getSiteDetail().get(0).getAdminBoundary().getName());
             jsonObj.addProperty("electionWard", application.getSiteDetail().get(0).getElectionBoundary() != null
-                    ? application.getSiteDetail().get(0).getElectionBoundary().getName() : "");
+                    ? application.getSiteDetail().get(0).getElectionBoundary().getName()
+                    : "");
             jsonObj.addProperty("reSurveyNumber", application.getSiteDetail().get(0).getReSurveyNumber());
             jsonObj.addProperty("khataNumber", application.getSiteDetail().get(0).getKhataNumber());
             jsonObj.addProperty("holdingNumber", application.getSiteDetail().get(0).getHoldingNumber());
@@ -539,9 +547,13 @@ public class BpaAjaxController {
             jsonObj.addProperty("applicantAddress", application.getOwner().getAddress());
             jsonObj.addProperty("applicationNumber", application.getApplicationNumber());
             jsonObj.addProperty("planPermissionNumber", application.getPlanPermissionNumber());
+            jsonObj.addProperty("planPermissionDate", DateUtils.toDefaultDateFormat(application.getPlanPermissionDate()));
+            jsonObj.addProperty("permitExpiryDate", bpaNoticeUtil.calculateCertExpryDate(
+                    new DateTime(application.getPlanPermissionDate()), application.getServiceType().getValidity()));
             jsonObj.addProperty("applicationWF", application.getState().isEnded());
-            jsonObj.addProperty("applicationRevoke",(application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REVOKED) 
-            		||application.getStatus().getCode().equalsIgnoreCase(BpaConstants. APPLICATION_STATUS_INIT_REVOKE)));
+            jsonObj.addProperty("applicationRevoke",
+                    (application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REVOKED)
+                            || application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_INIT_REVOKE)));
             if (!application.getBuildingDetail().isEmpty()) {
                 BigDecimal floorArea = permitFeeCalculationService.getTotalFloorArea(application);
                 Optional<Occupancy> occ = application.getPermitOccupancies().stream()
@@ -550,8 +562,8 @@ public class BpaAjaxController {
                         occ.isPresent() && application.getBuildingDetail().get(0).getFloorCount().intValue() <= 2
                                 && floorArea.doubleValue() <= 150);
             }
-        }else{ 
-        	jsonObj.addProperty("notExistPermissionNo", application == null);
+        } else {
+            jsonObj.addProperty("notExistPermissionNo", application == null);
         }
         IOUtils.write(jsonObj.toString(), response.getWriter());
     }
@@ -569,7 +581,7 @@ public class BpaAjaxController {
                     jsonObj.addProperty("checklistDesc", servicecklst.getChecklist().getDescription());
                     jsonObj.addProperty("checklistType", servicecklst.getChecklist().getChecklistType().getCode());
                     jsonObj.addProperty("serviceId", servicecklst.getServiceType().getId());
-                    jsonObj.addProperty("mandatory", servicecklst.isMandatory());
+                    jsonObj.addProperty(MANDATORY, servicecklst.isMandatory());
                     jsonObj.addProperty("code", servicecklst.getChecklist().getCode());
                     jsonObjects.add(jsonObj);
                 });
@@ -610,7 +622,7 @@ public class BpaAjaxController {
                     boundaryJson.put("id", boundary.getId());
                     boundaryJson.put("name", boundary.getName());
                     boundaryJson.put("parent", boundary.getParent() == null ? "" : boundary.getParent().getId());
-                    boundaryJson.put("materialpath", boundary.getMaterializedPath());
+                    boundaryJson.put(MATERIALPATH, boundary.getMaterializedPath());
                     boundaryArray.put(boundaryJson);
                 }
                 boundaryInfoJson.put("data", boundaryArray);
@@ -620,7 +632,7 @@ public class BpaAjaxController {
         }
         boundaryOutputJson.put("boundaryData", boundaryDataJson);
         boundaryOutputJson.put("uniformBoundary", uniformBoundaryJson);
-        System.out.println("getBoundaryConfiguration--->" + boundaryOutputJson.toString());
+        LOG.info("getBoundaryConfiguration--->" + boundaryOutputJson.toString());
         IOUtils.write(boundaryOutputJson.toString(), response.getWriter());
     }
 
@@ -646,13 +658,13 @@ public class BpaAjaxController {
                     boundaryJson = new JSONObject();
                     boundaryJson.put("id", boundary.getId());
                     boundaryJson.put("name", boundary.getName());
-                    boundaryJson.put("materialpath", boundary.getMaterializedPath());
+                    boundaryJson.put(MATERIALPATH, boundary.getMaterializedPath());
                     boundaryArray.put(boundaryJson);
                 }
                 childBoundaryJson.put(childBoundary[i].split(":")[1], boundaryArray);
             }
         }
-        System.out.println("getCrossBoundary--->" + childBoundaryJson.toString());
+        LOG.info("getCrossBoundary--->" + childBoundaryJson.toString());
         IOUtils.write(childBoundaryJson.toString(), response.getWriter());
     }
 
@@ -678,47 +690,53 @@ public class BpaAjaxController {
                 boundaryJson = new JSONObject();
                 boundaryJson.put("id", boundary.getId());
                 boundaryJson.put("name", boundary.getName());
-                boundaryJson.put("materialpath", boundary.getMaterializedPath());
+                boundaryJson.put(MATERIALPATH, boundary.getMaterializedPath());
                 boundaryArray.put(boundaryJson);
             }
             childBoundaryJson.put(childBoundary[0].split(":")[0], boundaryArray);
         }
-        System.out.println("getChildBoundaries--->" + childBoundaryJson.toString());
+        LOG.info("getChildBoundaries--->" + childBoundaryJson.toString());
         IOUtils.write(childBoundaryJson.toString(), response.getWriter());
     }
-    
-	@GetMapping(value = "/application/getapplicationsubtypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public List<ApplicationSubType> getApplicationSubType() {
-	  return applicationTypeService.getAllEnabledApplicationTypes();
-	}
-	
+
+    @GetMapping(value = "/application/getapplicationsubtypes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ApplicationSubType> getApplicationSubType() {
+        return applicationTypeService.getAllEnabledApplicationTypes();
+    }
+
     @GetMapping(value = "/ajax/getNocUsersByCode", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Boolean getNocUsersByCode(@RequestParam String code) {
-	  List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
-      List<User> userList = nocUsers.stream()
-	        .filter(usr -> usr.getRoles().stream()
-	    	        .anyMatch(usrrl -> 
-	    	          usrrl.getName().equals(BpaConstants.getNocRole().get(code))))
-	    	        .collect(Collectors.toList());	
+    @ResponseBody
+    public Boolean getNocUsersByCode(@RequestParam String code) {
+        List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+        List<User> userList = nocUsers.stream()
+                .filter(usr -> usr.getRoles().stream()
+                        .anyMatch(usrrl -> usrrl.getName().equals(BpaConstants.getNocRole().get(code))))
+                .collect(Collectors.toList());
         return !userList.isEmpty();
 
     }
-    
+
     @GetMapping(value = "/application/getocdocumentlistbyservicetype", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void getOCDocumentsByServiceType(@RequestParam final Long serviceType,
-            @RequestParam final String checklistType, @RequestParam final String ocEdcrNumber, final HttpServletResponse response) throws IOException {
+            @RequestParam final String checklistType, @RequestParam final String ocEdcrNumber, final HttpServletResponse response)
+            throws IOException {
         final List<JsonObject> jsonObjects = new ArrayList<>();
-        EdcrApplicationInfo odcrPlanInfo = drcRestService.getDcrPlanInfo(ocEdcrNumber, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        EdcrApplicationInfo odcrPlanInfo = drcRestService.getDcrPlanInfo(ocEdcrNumber,
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
         Map<String, Boolean> nocTypeMap = new HashMap<>();
-	        nocTypeMap.put(BpaConstants.FIREOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocFireDept().equals("YES") ? true : false);
-	        nocTypeMap.put(BpaConstants.AIRPORTOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport().equals("YES") ? true : false);
-	        nocTypeMap.put(BpaConstants.NMAOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact().equals("YES") ? true : false);
-	        nocTypeMap.put(BpaConstants.ENVOCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact().equals("YES") ? true : false);
-	        nocTypeMap.put(BpaConstants.IRROCNOCTYPE, odcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept().equals("YES") ? true : false);
-	        
+        nocTypeMap.put(BpaConstants.FIREOCNOCTYPE,
+                odcrPlanInfo.getPlan().getPlanInformation().getNocFireDept().equals("YES"));
+        nocTypeMap.put(BpaConstants.AIRPORTOCNOCTYPE,
+                odcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport().equals("YES"));
+        nocTypeMap.put(BpaConstants.NMAOCNOCTYPE,
+                odcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact().equals("YES"));
+        nocTypeMap.put(BpaConstants.ENVOCNOCTYPE,
+                odcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact().equals("YES"));
+        nocTypeMap.put(BpaConstants.IRROCNOCTYPE,
+                odcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept().equals("YES"));
+
         checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceType, checklistType).stream()
                 .forEach(servicecklst -> {
                     final JsonObject jsonObj = new JsonObject();
@@ -727,58 +745,53 @@ public class BpaAjaxController {
                     jsonObj.addProperty("checklistDesc", servicecklst.getChecklist().getDescription());
                     jsonObj.addProperty("checklistType", servicecklst.getChecklist().getChecklistType().getCode());
                     jsonObj.addProperty("serviceId", servicecklst.getServiceType().getId());
-
-                    if(servicecklst.getChecklist().getChecklistType().getCode().equalsIgnoreCase("OCNOC")){
-                     NocConfiguration nocConfig = nocConfigService.findByDepartmentAndType(servicecklst.getChecklist().getCode(), BpaConstants.OC);
-                     jsonObj.addProperty("documentMandatory", nocConfig.getIntegrationType().equals("MANUAL") ? true : false);
-                     jsonObj.addProperty("mandatory", nocTypeMap.get(servicecklst.getChecklist().getCode()));
-
-                    }else {
-                        jsonObj.addProperty("mandatory", servicecklst.isMandatory());
-
+                    if (servicecklst.getChecklist().getChecklistType().getCode().equalsIgnoreCase("OCNOC")) {
+                        NocConfiguration nocConfig = nocConfigService
+                                .findByDepartmentAndType(servicecklst.getChecklist().getCode(), BpaConstants.OC);
+                        jsonObj.addProperty("documentMandatory", nocConfig.getIntegrationType().equals("MANUAL"));
+                        jsonObj.addProperty(MANDATORY, nocTypeMap.get(servicecklst.getChecklist().getCode()));
+                    } else {
+                        jsonObj.addProperty(MANDATORY, servicecklst.isMandatory());
                     }
                     jsonObjects.add(jsonObj);
                 });
         IOUtils.write(jsonObjects.toString(), response.getWriter());
     }
-    
-    
+
     @GetMapping(value = "/ajax/getOCNocUsersByCode", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Boolean getOCNocUsersByCode(@RequestParam String code) {
-	  List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
-      List<User> userList = nocUsers.stream()
-	        .filter(usr -> usr.getRoles().stream()
-	    	        .anyMatch(usrrl -> 
-	    	          usrrl.getName().equals(BpaConstants.getOCNocRole().get(code))))
-	    	        .collect(Collectors.toList());	
+    @ResponseBody
+    public Boolean getOCNocUsersByCode(@RequestParam String code) {
+        List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+        List<User> userList = nocUsers.stream()
+                .filter(usr -> usr.getRoles().stream()
+                        .anyMatch(usrrl -> usrrl.getName().equals(BpaConstants.getOCNocRole().get(code))))
+                .collect(Collectors.toList());
         return !userList.isEmpty();
 
     }
-    
+
     @GetMapping(value = "/application/workflowstatus", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void getApplicationWorkFlowStatus(@RequestParam final String permitNumber,
             final HttpServletResponse response) throws IOException {
-        BpaApplication application = StringUtils.isBlank(permitNumber) ? null
-                : applicationBpaService.findByPermitNumber(permitNumber);      
-   
-        List<PermitInspectionApplication> inspectionApp = inspectionApplicationService.findByApplicationNumber(application.getApplicationNumber());
-       
-        List<PermitInspectionApplication> activeInspections = inspectionApp
-        .stream()
-        .filter(ins-> !ins.getInspectionApplication().getStatus().getCode().equals("Approved")).collect(Collectors.toList());
-        
-       
-
         final JsonObject jsonObj = new JsonObject();
-        jsonObj.addProperty("activeInspections", activeInspections.size()>0);
-        jsonObj.addProperty("applicationWFEnded", application.getState().isEnded());
-        jsonObj.addProperty("isRevocated", application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_INIT_REVOKE) || application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REVOKED));
-        List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByPermitNumber(permitNumber);
-        jsonObj.addProperty("ocInitiated", occupancyCertificates.size()>0);
-
+        if (StringUtils.isNotBlank(permitNumber)) {
+            BpaApplication application = applicationBpaService.findByPermitNumber(permitNumber);
+            List<PermitInspectionApplication> inspectionApp = inspectionApplicationService
+                    .findByApplicationNumber(application.getApplicationNumber());
+            List<PermitInspectionApplication> activeInspections = inspectionApp
+                    .stream()
+                    .filter(ins -> !ins.getInspectionApplication().getStatus().getCode().equals("Approved"))
+                    .collect(Collectors.toList());
+            jsonObj.addProperty("activeInspections", !activeInspections.isEmpty());
+            jsonObj.addProperty("applicationWFEnded", application.getState().isEnded());
+            jsonObj.addProperty("isRevocated",
+                    application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_INIT_REVOKE)
+                            || application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REVOKED));
+            List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByPermitNumber(permitNumber);
+            jsonObj.addProperty("ocInitiated", !occupancyCertificates.isEmpty());
+        }
         IOUtils.write(jsonObj.toString(), response.getWriter());
     }
-    
+
 }

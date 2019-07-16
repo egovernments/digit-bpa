@@ -1,132 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) 2017  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
-  -->
+<!-- ~ eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency, 
+	~ accountability and the service delivery of the government organizations. 
+	~ ~ Copyright (C) 2017 eGovernments Foundation ~ ~ The updated version of 
+	eGov suite of products as by eGovernments Foundation ~ is available at http://www.egovernments.org 
+	~ ~ This program is free software: you can redistribute it and/or modify 
+	~ it under the terms of the GNU General Public License as published by ~ 
+	the Free Software Foundation, either version 3 of the License, or ~ any later 
+	version. ~ ~ This program is distributed in the hope that it will be useful, 
+	~ but WITHOUT ANY WARRANTY; without even the implied warranty of ~ MERCHANTABILITY 
+	or FITNESS FOR A PARTICULAR PURPOSE. See the ~ GNU General Public License 
+	for more details. ~ ~ You should have received a copy of the GNU General 
+	Public License ~ along with this program. If not, see http://www.gnu.org/licenses/ 
+	or ~ http://www.gnu.org/licenses/gpl.html . ~ ~ In addition to the terms 
+	of the GPL license to be adhered to in using this ~ program, the following 
+	additional terms are to be complied with: ~ ~ 1) All versions of this program, 
+	verbatim or modified must carry this ~ Legal Notice. ~ Further, all user 
+	interfaces, including but not limited to citizen facing interfaces, ~ Urban 
+	Local Bodies interfaces, dashboards, mobile applications, of the program 
+	and any ~ derived works should carry eGovernments Foundation logo on the 
+	top right corner. ~ ~ For the logo, please refer http://egovernments.org/html/logo/egov_logo.png. 
+	~ For any further queries on attribution, including queries on brand guidelines, 
+	~ please contact contact@egovernments.org ~ ~ 2) Any misrepresentation of 
+	the origin of the material is prohibited. It ~ is required that all modified 
+	versions of this material be marked in ~ reasonable ways as different from 
+	the original version. ~ ~ 3) This license does not grant any rights to any 
+	user of the program ~ with regards to rights under trademark law for use 
+	of the trade names ~ or trademarks of eGovernments Foundation. ~ ~ In case 
+	of any queries, you can reach eGovernments Foundation at contact@egovernments.org. 
+	~ -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
-       default-lazy-init="true">
+	default-lazy-init="true">
 
-    <context:component-scan base-package="org.egov.bpa"/>
-    
-    <bean id="stakeHolderBillable"
-          class="org.egov.bpa.transaction.service.collection.StakeHolderBillable"
-          scope="prototype"/>
+	<context:component-scan
+		base-package="org.egov.bpa" />
 
-    <bean id="bpaApplicationBillable"
-          class="org.egov.bpa.transaction.service.collection.BpaApplicationBillable"
-          scope="prototype"/>
+	<bean id="stakeHolderBillable"
+		class="org.egov.bpa.transaction.service.collection.StakeHolderBillable"
+		scope="prototype" />
 
-    <bean id="occupancyCertificateBillable"
-          class="org.egov.bpa.transaction.service.collection.OccupancyCertificateBillable"
-          scope="prototype"/>
+	<bean id="bpaApplicationBillable"
+		class="org.egov.bpa.transaction.service.collection.BpaApplicationBillable"
+		scope="prototype" />
 
-    <bean id="BpaApplicationInboxRenderService"
-          class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-        <constructor-arg index="0"
-                         ref="BpaApplicationPersistenceService"/>
-    </bean>
+	<bean id="occupancyCertificateBillable"
+		class="org.egov.bpa.transaction.service.collection.OccupancyCertificateBillable"
+		scope="prototype" />
 
-    <bean id="OccupancyCertificateInboxRenderService"
-          class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-        <constructor-arg index="0"
-                         ref="OccupancyCertificatePersistenceService"/>
-    </bean>
+	<bean id="BpaApplicationInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="BpaApplicationPersistenceService" />
+	</bean>
 
-    <bean id="BpaApplicationPersistenceService" parent="abstractPersistenceService">
-        <constructor-arg name="type"
-                         value="org.egov.bpa.transaction.entity.BpaApplication"/>
-    </bean>
-     <bean id="StakeHolderStateInboxRenderService"
-          class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-        <constructor-arg index="0"
-                         ref="StakeHolderStatePersistenceService"/>
-    </bean>
-    
-    <bean id="StakeHolderStatePersistenceService" parent="abstractPersistenceService">
-    <constructor-arg name="type" value="org.egov.bpa.master.entity.StakeHolderState"/>
-    </bean>
-    
+	<bean id="OccupancyCertificateInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="OccupancyCertificatePersistenceService" />
+	</bean>
 
-    <bean id="OccupancyCertificatePersistenceService" parent="abstractPersistenceService">
-        <constructor-arg name="type"
-                         value="org.egov.bpa.transaction.entity.oc.OccupancyCertificate"/>
-    </bean>
+	<bean id="BpaApplicationPersistenceService"
+		parent="abstractPersistenceService">
+		<constructor-arg name="type"
+			value="org.egov.bpa.transaction.entity.BpaApplication" />
+	</bean>
+	<bean id="StakeHolderStateInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="StakeHolderStatePersistenceService" />
+	</bean>
 
-    <bean id="BPACollectionsInterface"
-	class="org.egov.bpa.transaction.service.collection.BpaTaxCollection" />
+	<bean id="StakeHolderStatePersistenceService"
+		parent="abstractPersistenceService">
+		<constructor-arg name="type"
+			value="org.egov.bpa.master.entity.StakeHolderState" />
+	</bean>
+
+
+	<bean id="OccupancyCertificatePersistenceService"
+		parent="abstractPersistenceService">
+		<constructor-arg name="type"
+			value="org.egov.bpa.transaction.entity.oc.OccupancyCertificate" />
+	</bean>
+
+	<bean id="BPACollectionsInterface"
+		class="org.egov.bpa.transaction.service.collection.BpaTaxCollection" />
 
 	<bean id="BPASHCollectionsInterface"
 		class="org.egov.bpa.transaction.service.collection.StakeHolderTaxCollection" />
 
 
-    <bean id="OCCollectionsInterface"
-          class="org.egov.bpa.transaction.service.collection.OccupancyCertificateTaxCollection"/>
+	<bean id="OCCollectionsInterface"
+		class="org.egov.bpa.transaction.service.collection.OccupancyCertificateTaxCollection" />
 
-    <bean id="bpaApplicationWorkflowCustomDefaultImpl"
-          class="org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl"/>
+	<bean id="bpaApplicationWorkflowCustomDefaultImpl"
+		class="org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl" />
 
-    <bean id="occupancyCertificateWorkflowCustomDefaultImpl"
-          class="org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl"/>
-    
-    <bean id="inspectionWorkflowCustomDefaultImpl"
-          class="org.egov.bpa.transaction.workflow.inspection.InspectionWorkflowCustomDefaultImpl"/>   
-          
-          
-    <bean id="InspectionApplicationInboxRenderService"
-          class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
-        <constructor-arg index="0"
-                         ref="InspectionApplicationPersistenceService"/>
-    </bean>
-    
-    <bean id="InspectionApplicationPersistenceService" parent="abstractPersistenceService">
-    <constructor-arg name="type" value="org.egov.bpa.transaction.entity.InspectionApplication"/>
-    </bean>         
+	<bean id="occupancyCertificateWorkflowCustomDefaultImpl"
+		class="org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl" />
+
+	<bean id="inspectionWorkflowCustomDefaultImpl"
+		class="org.egov.bpa.transaction.workflow.inspection.InspectionWorkflowCustomDefaultImpl" />
+
+
+	<bean id="InspectionApplicationInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="InspectionApplicationPersistenceService" />
+	</bean>
+
+	<bean id="InspectionApplicationPersistenceService"
+		parent="abstractPersistenceService">
+		<constructor-arg name="type"
+			value="org.egov.bpa.transaction.entity.InspectionApplication" />
+	</bean>
+	<bean id="permitRenewalWorkflowCustomDefaultImpl"
+		class="org.egov.bpa.transaction.workflow.permitrenewal.PermitRenewalWorkflowCustomDefaultImpl" />
+
+	<bean id="PermitRenewalPersistenceService"
+		parent="abstractPersistenceService">
+		<constructor-arg name="type"
+			value="org.egov.bpa.transaction.entity.PermitRenewal" />
+	</bean>
 
 </beans>
