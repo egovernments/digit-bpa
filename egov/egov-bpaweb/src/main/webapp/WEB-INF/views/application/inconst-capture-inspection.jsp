@@ -118,7 +118,7 @@
 							code="lbl.applicant.remarks" /><span class="mandatory"></span></label>
 					<div class="col-sm-5 add-margin">
 						<form:textarea class="form-control patternvalidation resetValues"
-							maxlength="20" id="remarks"
+							maxlength="100" id="remarks"
 							path="inspectionApplication.remarks"
 							value="${inConstructionInspection.inspectionApplication.remarks}"
 							required="required" />

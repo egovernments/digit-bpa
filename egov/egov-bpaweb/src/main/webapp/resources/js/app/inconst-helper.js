@@ -38,11 +38,11 @@
  */
 
 $(document).ready(function($) {$("#buttonSubmit").click(function(e){ 
-	validatePermitApplication();
-		if ($('#inConstInspectionform').valid()) {
+	//validatePermitApplication();
+		if ($('#inConstInspectionform').valid() && validateOnSubmit() ) {
             bootbox
                 .dialog({
-                    message: 'Do you want to capture inspection ?',
+                    message: 'Do you want to capture inspection ?',//
                     buttons: {
                     	'confirm': {
                             label: 'Yes',
@@ -76,12 +76,7 @@ function validatePermitApplication() {
         },
         dataType: "json",
         success: function (response) {
-        if(response.ocInitiated){   					      
-           	 bootbox.alert('Occupancy certificate is already submitted for the permit application, hence cannot proceed.');
-           	 $("#buttonSubmit").hide();
-           	 return false;
-		   }
-          else if(response.activeInspections){
+         if(response.activeInspections){
        	   bootbox.alert('Inspection is already initiated for the application');
        	   resetDCRPopulatedValues();
            return false;
@@ -92,6 +87,16 @@ function validatePermitApplication() {
         }
     });
 	 return false;
+}
+
+function validateOnSubmit() {
+    var approvalComent = $('#remarks').val();
+    if (approvalComent == "" ) {
+        bootbox.alert("Please enter applicant remarks");
+        $('#remarks').focus();
+        return false;
+    }
+    return true;
 }
 
 });
