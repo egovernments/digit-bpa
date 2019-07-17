@@ -99,10 +99,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -799,9 +799,9 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         List<PermitNocApplication> permitNoc = permitNocService.findByPermitApplicationNumber(application.getApplicationNumber());
 
         Map<String, String> edcrNocMandatory = permitNocService.getEdcrNocMandatory(application.geteDcrNumber());
-        Map<String, String> nocAutoMap = new HashMap<>();
-        Map<String, String> nocConfigMap = new HashMap<>();
-        Map<String, String> nocTypeApplMap = new HashMap<>();
+        Map<String, String> nocAutoMap = new ConcurrentHashMap<>();
+        Map<String, String> nocConfigMap = new ConcurrentHashMap<>();
+        Map<String, String> nocTypeApplMap = new ConcurrentHashMap<>();
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
             String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
             NocConfiguration nocConfig = nocConfigurationService
