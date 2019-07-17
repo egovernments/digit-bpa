@@ -131,13 +131,13 @@ public class PortalRestController {
 		Map<String, String> tenants = new HashMap<>();
 		try {
 			url = new URL(ApplicationThreadLocals.getDomainURL());
-
+			System.out.println("url.getPort()---------"+url.getPort());
 			environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
 				if (propertySource instanceof MapPropertySource)
 					((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
 						if (key.startsWith("tenant."))
 							tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
-									+ (url.getPort() == 80 ? "" : ":" + url.getPort()));
+									+ (url.getPort() >= 8080 ? ":" + url.getPort() : ""));
 					});
 			});
 		} catch (MalformedURLException e) {
