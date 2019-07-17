@@ -259,7 +259,7 @@ public class PermitRenewal extends StateAware<Position> {
         return files;
     }
 
-    public void setFiles(MultipartFile[] files) {
+    public void setFiles(MultipartFile... files) {
         this.files = files;
     }
 

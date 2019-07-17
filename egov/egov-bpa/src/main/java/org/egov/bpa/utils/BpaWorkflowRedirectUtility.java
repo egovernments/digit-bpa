@@ -172,9 +172,9 @@ public class BpaWorkflowRedirectUtility {
         String workflowBoundary = appConfigValuesService.getConfigValuesByModuleAndKey(BpaConstants.BPA_MODULE_NAME,
                 BpaConstants.WORKFLOW_EMPLOYEE_BOUNDARY_HIERARCHY).get(0).getValue();
         if (workflowBoundary != null && !workflowBoundary.isEmpty()) {
-            if (workflowBoundary.equals("ADMINISTRATION")) {
+            if ("ADMINISTRATION".equals(workflowBoundary)) {
                 workFlowBoundary = siteDetail.getElectionBoundary();
-            } else if (workflowBoundary.equals("REVENUE")) {
+            } else if ("REVENUE".equals(workflowBoundary)) {
                 workFlowBoundary = siteDetail.getAdminBoundary();
             } else {
                 workFlowBoundary = siteDetail.getLocationBoundary();

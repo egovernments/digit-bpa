@@ -57,8 +57,6 @@ import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,9 +69,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class PermitRenewalService {
 
-    @Autowired
-    @Qualifier("parentMessageSource")
-    private MessageSource bpaMessageSource;
     @Autowired
     private PermitRenewalRepository permitRenewalRepository;
     @Autowired

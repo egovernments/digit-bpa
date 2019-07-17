@@ -57,10 +57,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class PermitRenewalWorkflowCustomDefaultImpl extends PermitRenewalWorkflowCustomImpl {
 
-    public PermitRenewalWorkflowCustomDefaultImpl() {
-        //
-    }
-
     @Override
     @Transactional
     public void createCommonWorkflowTransition(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {

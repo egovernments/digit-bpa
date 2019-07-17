@@ -143,9 +143,7 @@ public class PermitRenewalIndexService {
         User user = getCurrentUser(renewal);
         ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(renewal.getApplicationNumber());
-        if (applicationIndex != null && renewal.getId() != null)
-            buildApplicationIndexForUpdate(renewal, user, applicationIndex);
-        else {
+        if (applicationIndex == null && renewal.getId() == null) {
             String viewUrl = "/bpa/application/view/%s";
             List<AppConfigValues> appConfigValue = appConfigValuesService
                     .getConfigValuesByModuleAndKey(BpaConstants.APPLICATION_MODULE_TYPE, APP_CONFIG_KEY);
@@ -170,6 +168,8 @@ public class PermitRenewalIndexService {
                     .withDisposalDate(disposalDate).withApproved(ApprovalStatus.INPROGRESS).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
             createPermitRenewalIndex(renewal);
+        } else {
+            buildApplicationIndexForUpdate(renewal, user, applicationIndex);
         }
     }
 
@@ -199,12 +199,14 @@ public class PermitRenewalIndexService {
             Assignment assignment = bpaWorkFlowService
                     .getApproverAssignmentByDate(renewal.getState().getOwnerPosition(), new Date());
             List<Assignment> assignments;
-            if (assignment != null) {
-                assignments = new ArrayList<>();
-                assignments.add(assignment);
-            } else
+            if (assignment == null) {
                 assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(
                         renewal.getState().getOwnerPosition().getId(), new Date());
+            } else {
+                assignments = new ArrayList<>();
+                assignments.add(assignment);
+            }
+
             if (!assignments.isEmpty())
                 user = userService.getUserById(assignments.get(0).getEmployee().getId());
         }

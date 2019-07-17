@@ -89,10 +89,10 @@ public class PushBpaApplicationsToPortalUtility {
         boolean isResolved = false;
         String status = renewal.getStatus().getDescription();
 
-        if ((renewal.getState() != null && (CLOSED.equals(renewal.getState().getValue())
-                || WF_END_ACTION.equals(renewal.getState().getValue())))
-                || (renewal.getStatus() != null
-                        && renewal.getStatus().getCode().equals(APPLICATION_STATUS_REJECTED)))
+        if (renewal.getState() != null && (CLOSED.equals(renewal.getState().getValue())
+                || WF_END_ACTION.equals(renewal.getState().getValue()))
+                || renewal.getStatus() != null
+                        && renewal.getStatus().getCode().equals(APPLICATION_STATUS_REJECTED))
             isResolved = true;
         String url = "/bpa/application/citizen/update/" + renewal.getApplicationNumber();
         if (renewal.getStatus() != null)

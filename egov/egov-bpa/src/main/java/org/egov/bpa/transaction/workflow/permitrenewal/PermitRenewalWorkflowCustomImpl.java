@@ -91,11 +91,6 @@ public abstract class PermitRenewalWorkflowCustomImpl implements PermitRenewalWo
     @Autowired
     private BpaUtils bpaUtils;
 
-    @Autowired
-    public PermitRenewalWorkflowCustomImpl() {
-
-    }
-
     @Override
     @Transactional
     public void createCommonWorkflowTransition(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
