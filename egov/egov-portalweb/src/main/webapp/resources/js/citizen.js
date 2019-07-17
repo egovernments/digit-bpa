@@ -84,9 +84,8 @@ $(document).ready(function(){
             } );
         	$('#bpa-home-table tbody').on('click', 'tr', function (e) {
         	    var data = table.row( this ).data();
-        	    var origin = window.origin.replace(clientId, data.tenantId);
         	    e.stopImmediatePropagation();
-        	    openPopUp(origin+data.link);
+        	    openPopUp(data.domainUrl+data.link);
         	} );
         	
         	//Initialize data in global variable
