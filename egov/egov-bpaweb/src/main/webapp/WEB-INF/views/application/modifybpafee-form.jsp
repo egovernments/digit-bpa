@@ -71,7 +71,8 @@
 								<spring:message code="lbl.application.date" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<fmt:formatDate value="${permitFee.application.applicationDate}" pattern="dd/MM/yyyy" var="applicationDate" />
+								<fmt:formatDate value="${permitFee.application.applicationDate}"
+									pattern="dd/MM/yyyy" var="applicationDate" />
 								<c:out value="${applicationDate}" default="N/A"></c:out>
 							</div>
 						</div>
@@ -80,20 +81,19 @@
 								<spring:message code="lbl.service.type" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out
-									value="${permitFee.application.serviceType.description}"
+								<c:out value="${permitFee.application.serviceType.description}"
 									default="N/A"></c:out>
 							</div>
 							<div class="col-sm-3 add-margin">Amenity Type</div>
 							<c:choose>
 								<c:when test="${empty permitFee.application.amenityName}">
 									<div class="col-sm-3 add-margin view-content">
-										<c:out value="N/A"/>
+										<c:out value="N/A" />
 									</div>
 								</c:when>
 								<c:otherwise>
 									<div class="col-sm-3 add-margin view-content">
-									<c:out value="${permitFee.application.amenityName}"/>
+										<c:out value="${permitFee.application.amenityName}" />
 									</div>
 								</c:otherwise>
 							</c:choose>
@@ -117,18 +117,21 @@
 						<div class="col-sm-3 add-margin">
 							<form:hidden path="application" id="feeapplicationid"
 								value="${permitFee.application.id}" />
-							<form:hidden path="applicationFee.status" id="feeapplicationstatusid"
+							<form:hidden path="applicationFee.status"
+								id="feeapplicationstatusid"
 								value="${permitFee.applicationFee.status.id}" />
-	                        <form:hidden path="applicationFee" id="applicationfeeid"
+							<form:hidden path="applicationFee" id="applicationfeeid"
 								value="${permitFee.applicationFee.id}" />
-							<input type="hidden"  id="feeCalculationMode" value="${feeCalculationMode}"/>
+							<input type="hidden" id="feeCalculationMode"
+								value="${feeCalculationMode}" />
 							<form:hidden path="id" id="id" value="${permitFee.id}" />
 
 						</div>
 					</div>
 
 					<c:choose>
-						<c:when test="${!permitFee.applicationFee.applicationFeeDetail.isEmpty()}">
+						<c:when
+							test="${!permitFee.applicationFee.applicationFeeDetail.isEmpty()}">
 							<div class="form-group view-content header-color hidden-xs">
 								<div class="col-sm-5 text-right">
 									<spring:message code="lbl.applicationFee.feeType" />
@@ -137,40 +140,45 @@
 									<spring:message code="lbl.applicationFee.amount" />
 								</div>
 							</div>
-							<c:forEach var="docs"
+							<c:forEach var="permitFee"
 								items="${permitFee.applicationFee.applicationFeeDetail}"
 								varStatus="status">
 								<div class="form-group">
 									<div class="col-sm-5 add-margin check-text text-right">
-										<c:out value="${docs.bpaFeeMapping.bpaFeeCommon.description}" />
+										<c:out
+											value="${permitFee.bpaFeeMapping.bpaFeeCommon.description}" />
 										<form:hidden id="applicationFeeDetail${status.index}id"
 											path="applicationFee.applicationFeeDetail[${status.index}].id"
-											value="${docs.id}" />
-										<form:hidden id="applicationFeeDetail${status.index}bpaFeeMapping"
+											value="${permitFee.id}" />
+										<form:hidden
+											id="applicationFeeDetail${status.index}bpaFeeMapping"
 											path="applicationFee.applicationFeeDetail[${status.index}].bpaFeeMapping"
-											value="${docs.bpaFeeMapping.id}" />
+											value="${permitFee.bpaFeeMapping.id}" />
 										<form:hidden
 											id="applicationFeeDetail${status.index}applicationFee"
 											path="applicationFee.applicationFeeDetail[${status.index}].applicationFee"
-											value="${docs.applicationFee.id}" />
+											value="${permitFee.applicationFee.id}" />
 
 									</div>
 									<div class="col-sm-2 add-margin text-right">
 										<c:choose>
 											<c:when
-												test="${docs.bpaFeeMapping.bpaFeeCommon.description eq 'Other Fees'}">
-												<input type="hidden" id="currentPermitFee" value="${docs.amount}">
-												<form:input class="form-control patternvalidation text-right otherFees"
+												test="${permitFee.bpaFeeMapping.calculationType eq 'OVERRIDE' || permitFee.bpaFeeMapping.calculationType eq 'MANUAL'}">
+												<input type="hidden" id="currentPermitFee"
+													value="${permitFee.amount}">
+												<form:input
+													class="form-control patternvalidation text-right"
 													data-pattern="number" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
-													value="${docs.amount}"
+													value="${permitFee.amount}"
 													path="applicationFee.applicationFeeDetail[${status.index}].amount" />
 											</c:when>
 											<c:otherwise>
-												<form:input class="form-control patternvalidation text-right"
+												<form:input
+													class="form-control patternvalidation text-right"
 													data-pattern="number" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
-													value="${docs.amount}" disabled="true"
+													value="${permitFee.amount}" readonly="true"
 													path="applicationFee.applicationFeeDetail[${status.index}].amount" />
 											</c:otherwise>
 										</c:choose>
@@ -188,8 +196,9 @@
 								code="lbl.modify.fee.reason" /><span class="mandatory"></span></label>
 						<div class="col-sm-7 add-margin text-center">
 							<form:textarea class="form-control patternvalidation"
-								data-pattern="alphanumericspecialcharacters" rows="3" maxlength="510"
-								id="modifyFeeReason" path="applicationFee.modifyFeeReason" required="required" />
+								data-pattern="alphanumericspecialcharacters" rows="3"
+								maxlength="510" id="modifyFeeReason"
+								path="applicationFee.modifyFeeReason" required="required" />
 							<form:errors path="applicationFee.modifyFeeReason"
 								cssClass="add-margin error-msg" />
 						</div>
@@ -209,15 +218,5 @@
 	</div>
 </div>
 
-<script>
-    jQuery(document)
-        .ready(
-            function () {
-                if ($('#feeCalculationMode').val() == 'AUTOFEECAL')
-                    $(".patternvalidation").prop("disabled", disabled);
-                else
-                    $(".patternvalidation").removeAttr("disabled");
-            });
-</script>
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

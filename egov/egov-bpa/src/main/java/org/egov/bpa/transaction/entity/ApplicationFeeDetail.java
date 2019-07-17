@@ -42,7 +42,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.envers.AuditOverride;
@@ -54,7 +53,7 @@ import org.hibernate.envers.RelationTargetAuditMode;
 @Table(name = "EGBPA_APPLICATION_FEEDETAILS")
 @SequenceGenerator(name = ApplicationFeeDetail.SEQ_APPLICATIONFEE_DETAIL, sequenceName = ApplicationFeeDetail.SEQ_APPLICATIONFEE_DETAIL, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class ApplicationFeeDetail extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
@@ -102,12 +101,12 @@ public class ApplicationFeeDetail extends AbstractAuditable {
         this.amount = amount;
     }
 
-	public BpaFeeMapping getBpaFeeMapping() {
-		return bpaFeeMapping;
-	}
+    public BpaFeeMapping getBpaFeeMapping() {
+        return bpaFeeMapping;
+    }
 
-	public void setBpaFeeMapping(BpaFeeMapping bpaFeeMapping) {
-		this.bpaFeeMapping = bpaFeeMapping;
-	}
+    public void setBpaFeeMapping(BpaFeeMapping bpaFeeMapping) {
+        this.bpaFeeMapping = bpaFeeMapping;
+    }
 
 }

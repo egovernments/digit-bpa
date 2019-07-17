@@ -60,103 +60,103 @@ public class BpaFeeMapping extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_BPAFEEMAPPING, strategy = GenerationType.SEQUENCE)
     private Long id;
-   
+
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "bpafeecommon")
     private BpaFeeCommon bpaFeeCommon;
- 
+
     @Enumerated(EnumType.STRING)
-   	private CalculationType calculationType;
-    
+    private CalculationType calculationType;
+
     @Enumerated(EnumType.STRING)
-   	private FeeApplicationType applicationType;
-    
+    private FeeApplicationType applicationType;
+
     @Enumerated(EnumType.STRING)
-   	private FeeSubType feeSubType;
+    private FeeSubType feeSubType;
 
     @ManyToOne
     @JoinColumn(name = "serviceType")
     private ServiceType serviceType;
-    
+
     @ManyToOne
     @JoinColumn(name = "applicationSubType")
     private ApplicationSubType applicationSubType;
-      
+
     @JoinColumn(name = "amount")
     private Double amount;
-       
-	private transient List<BpaFeeMapping> bpaFeeMapTemp = new ArrayList<>();
 
-	public Long getId() {
-		return id;
-	}
+    private transient List<BpaFeeMapping> bpaFeeMapTemp = new ArrayList<>();
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public CalculationType getCalculationType() {
-		return calculationType;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setCalculationType(CalculationType calculationType) {
-		this.calculationType = calculationType;
-	}
+    public CalculationType getCalculationType() {
+        return calculationType;
+    }
 
-	public FeeApplicationType getApplicationType() {
-		return applicationType;
-	}
+    public void setCalculationType(CalculationType calculationType) {
+        this.calculationType = calculationType;
+    }
 
-	public void setApplicationType(FeeApplicationType applicationType) {
-		this.applicationType = applicationType;
-	}
+    public FeeApplicationType getApplicationType() {
+        return applicationType;
+    }
 
-	public ServiceType getServiceType() {
-		return serviceType;
-	}
+    public void setApplicationType(FeeApplicationType applicationType) {
+        this.applicationType = applicationType;
+    }
 
-	public void setServiceType(ServiceType serviceType) {
-		this.serviceType = serviceType;
-	}
+    public ServiceType getServiceType() {
+        return serviceType;
+    }
 
-	public Double getAmount() {
-		return amount;
-	}
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}
+    public Double getAmount() {
+        return amount;
+    }
 
-	public List<BpaFeeMapping> getBpaFeeMapTemp() {
-		return bpaFeeMapTemp;
-	}
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
 
-	public void setBpaFeeMapTemp(List<BpaFeeMapping> bpaFeeMapTemp) {
-		this.bpaFeeMapTemp = bpaFeeMapTemp;
-	}
+    public List<BpaFeeMapping> getBpaFeeMapTemp() {
+        return bpaFeeMapTemp;
+    }
 
-	public BpaFeeCommon getBpaFeeCommon() {
-		return bpaFeeCommon;
-	}
+    public void setBpaFeeMapTemp(List<BpaFeeMapping> bpaFeeMapTemp) {
+        this.bpaFeeMapTemp = bpaFeeMapTemp;
+    }
 
-	public void setBpaFeeCommon(BpaFeeCommon bpaFeeCommon) {
-		this.bpaFeeCommon = bpaFeeCommon;
-	}
+    public BpaFeeCommon getBpaFeeCommon() {
+        return bpaFeeCommon;
+    }
 
-	public FeeSubType getFeeSubType() {
-		return feeSubType;
-	}
+    public void setBpaFeeCommon(BpaFeeCommon bpaFeeCommon) {
+        this.bpaFeeCommon = bpaFeeCommon;
+    }
 
-	public void setFeeSubType(FeeSubType feeSubType) {
-		this.feeSubType = feeSubType;
-	}
+    public FeeSubType getFeeSubType() {
+        return feeSubType;
+    }
 
-	public ApplicationSubType getApplicationSubType() {
-		return applicationSubType;
-	}
+    public void setFeeSubType(FeeSubType feeSubType) {
+        this.feeSubType = feeSubType;
+    }
 
-	public void setApplicationSubType(ApplicationSubType applicationSubType) {
-		this.applicationSubType = applicationSubType;
-	}
+    public ApplicationSubType getApplicationSubType() {
+        return applicationSubType;
+    }
+
+    public void setApplicationSubType(ApplicationSubType applicationSubType) {
+        this.applicationSubType = applicationSubType;
+    }
 }
