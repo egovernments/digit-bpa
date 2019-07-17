@@ -131,7 +131,6 @@ public class PortalRestController {
 		Map<String, String> tenants = new HashMap<>();
 		try {
 			url = new URL(ApplicationThreadLocals.getDomainURL());
-			System.out.println("url.getPort()---------"+url.getPort());
 			environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
 				if (propertySource instanceof MapPropertySource)
 					((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
