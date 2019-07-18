@@ -100,7 +100,7 @@ public class PermitRenewalLetterToPartyService {
             bpaUtils.redirectPermitRenewalWorkflow(permitRenewalLTP.getPermitRenewal(), wfBean);
 
             permitRenewalLTP.getPermitRenewal().setStatus(bpaStatusService
-                    .findByModuleTypeAndCode(BpaConstants.PERMIT_RENEW_WFTYPE, BpaConstants.LETTERTOPARTY_REPLY_RECEIVED));
+                    .findByModuleTypeAndCode(BpaConstants.RENEWALSTATUS_MODULETYPE, BpaConstants.LETTERTOPARTY_REPLY_RECEIVED));
         }
         return lettertoPartyRepository.save(permitRenewalLTP);
     }
