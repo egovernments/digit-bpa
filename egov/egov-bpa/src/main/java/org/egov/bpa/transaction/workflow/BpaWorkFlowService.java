@@ -62,9 +62,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;

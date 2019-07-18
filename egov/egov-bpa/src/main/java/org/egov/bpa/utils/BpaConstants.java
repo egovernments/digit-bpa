@@ -454,6 +454,7 @@ public class BpaConstants {
     //Permit Renewal related
     public static final String PERMIT_RENEW_WFTYPE = "PermitRenewal";
     public static final String RENEWALSTATUS_MODULETYPE = "RENEWAL";
+    public static final String NATURE_OF_WORK_RENEWAL = "Permit Renewal";
     
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {

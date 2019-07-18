@@ -56,10 +56,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.egov.bpa.master.entity.LpReason;
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.InspectionLetterToParty;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.PermitRenewalLetterToParty;
 import org.egov.bpa.transaction.entity.common.LetterToPartyCommon;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;

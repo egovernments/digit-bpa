@@ -49,7 +49,7 @@ package org.egov.bpa.transaction.repository;
 
 import java.util.List;
 
-import org.egov.bpa.master.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.PermitRenewalLetterToParty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

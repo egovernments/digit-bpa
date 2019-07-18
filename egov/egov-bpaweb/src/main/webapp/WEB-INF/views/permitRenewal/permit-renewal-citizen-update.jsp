@@ -54,11 +54,11 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" action="create" method="post"
+		<form:form role="form" action="update" method="post"
 			modelAttribute="permitRenewal" id="permitRenewalInitiateForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<form:hidden path="workflowAction" id="workFlowAction" name="workFlowAction" />
+			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<div class="panel panel-primary" data-collapsed="0">
 
 				<div class="panel-heading custom_form_panel_heading">

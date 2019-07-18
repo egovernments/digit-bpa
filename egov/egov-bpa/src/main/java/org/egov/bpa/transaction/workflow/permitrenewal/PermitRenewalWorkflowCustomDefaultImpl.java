@@ -47,7 +47,7 @@
 
 package org.egov.bpa.transaction.workflow.permitrenewal;
 
-import org.egov.bpa.master.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.springframework.transaction.annotation.Transactional;
 

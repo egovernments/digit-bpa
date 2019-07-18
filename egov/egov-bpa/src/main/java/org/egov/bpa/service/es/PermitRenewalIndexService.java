@@ -56,8 +56,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.bpa.entity.es.PermitRenewalIndex;
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.repository.es.PermitRenewalIndexRepository;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.commons.entity.Source;
@@ -143,8 +143,8 @@ public class PermitRenewalIndexService {
         User user = getCurrentUser(renewal);
         ApplicationIndex applicationIndex = applicationIndexService
                 .findByApplicationNumber(renewal.getApplicationNumber());
-        if (applicationIndex == null && renewal.getId() == null) {
-            String viewUrl = "/bpa/application/view/%s";
+        if (applicationIndex == null || renewal.getId() == null) {
+            String viewUrl = "/bpa/application/permit/renewal/view/%s";
             List<AppConfigValues> appConfigValue = appConfigValuesService
                     .getConfigValuesByModuleAndKey(BpaConstants.APPLICATION_MODULE_TYPE, APP_CONFIG_KEY);
             Date disposalDate = calculateDisposalDate(appConfigValue);

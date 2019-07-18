@@ -49,8 +49,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.service.es.PermitRenewalIndexService;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.repository.PermitRenewalRepository;
 import org.egov.bpa.utils.BpaWorkflowRedirectUtility;

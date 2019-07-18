@@ -45,7 +45,7 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.bpa.master.entity;
+package org.egov.bpa.transaction.entity;
 
 import java.util.Collections;
 import java.util.Date;
@@ -69,8 +69,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.master.entity.ConstructionStages;
 import org.egov.commons.entity.Source;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.DateUtils;
@@ -140,6 +139,7 @@ public class PermitRenewal extends StateAware<Position> {
     private transient MultipartFile[] files;
     private transient String workflowAction;
     private transient Long approvalDepartment;
+    private transient String approvalComent;
 
     @Override
     public Long getId() {
@@ -277,6 +277,14 @@ public class PermitRenewal extends StateAware<Position> {
 
     public void setApprovalDepartment(Long approvalDepartment) {
         this.approvalDepartment = approvalDepartment;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
     }
 
 }

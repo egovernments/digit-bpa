@@ -49,7 +49,7 @@ package org.egov.bpa.transaction.service;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.bpa.master.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.PermitRenewalLetterToParty;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.repository.PermitRenewalLetterToPartyRepository;

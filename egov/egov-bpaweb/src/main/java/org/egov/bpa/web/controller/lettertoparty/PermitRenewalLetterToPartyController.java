@@ -50,9 +50,9 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.LpReason;
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.LpReasonService;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.PermitRenewalLetterToParty;
 import org.egov.bpa.transaction.entity.common.LetterToPartyCommon;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
@@ -61,7 +61,7 @@ import org.egov.bpa.transaction.service.LettertoPartyDocumentService;
 import org.egov.bpa.transaction.service.PermitRenewalLetterToPartyService;
 import org.egov.bpa.transaction.service.PermitRenewalService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.utils.PushBpaApplicationsToPortalUtility;
+import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.custom.CustomImplProvider;
@@ -122,7 +122,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
         @Autowired
         private PermitRenewalService permitRenewalService;
         @Autowired
-        private PushBpaApplicationsToPortalUtility pushBpaApplicationsToPortalUtility;
+        private PushBpaApplicationToPortalUtil pushBpaApplicationsToPortalUtility;
 
         @ModelAttribute("lpReasonList")
         public List<LpReason> getLpReasonList() {

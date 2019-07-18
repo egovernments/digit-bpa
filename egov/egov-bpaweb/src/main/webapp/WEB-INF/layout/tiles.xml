@@ -1106,7 +1106,34 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/permitRenewal/permit-renewal-citizen-new.jsp" />
 	</definition>
-	
+	<definition name="permit-renewal-citizen-update"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.renewal.update" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/permitRenewal/permit-renewal-citizen-update.jsp" />
+	</definition>
+	<definition name="permit-renewal-citizen-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.renewal.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/permitRenewal/permit-renewal-citizen-view.jsp" />
+	</definition>
+	<definition name="permit-renewal-update"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.renewal.update" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/permitRenewal/permit-renewal-update.jsp" />
+	</definition>
+	<definition name="permit-renewal-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.renewal.result" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/permitRenewal/permit-renewal-result.jsp" />
+	</definition>
 	<definition name="permitrenewal-ltp-create"
 		extends="base_layout">
 		<put-attribute name="page-title"

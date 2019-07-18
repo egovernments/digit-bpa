@@ -43,14 +43,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
@@ -91,12 +92,15 @@ public abstract class PermitRenewalWorkflowCustomImpl implements PermitRenewalWo
     @Autowired
     private BpaUtils bpaUtils;
 
+    @Autowired
+    private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
+
     @Override
     @Transactional
     public void createCommonWorkflowTransition(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
 
         if (LOG.isDebugEnabled())
-            LOG.debug(" Create WorkFlow Transition Started  ...");
+            LOG.debug(" Create Permit Renewal WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
@@ -109,10 +113,8 @@ public abstract class PermitRenewalWorkflowCustomImpl implements PermitRenewalWo
         WorkFlowMatrix wfmatrix;
         if (null == permitRenewal.getState()) {
             String pendingAction = "Permit renewal application creation pending";
-
             wfmatrix = permitRenewalWorkflowService.getWfMatrix(permitRenewal.getStateType(), null,
                     null, wfBean.getAdditionalRule(), BpaConstants.WF_NEW_STATE, pendingAction);
-
             if (wfmatrix != null) {
                 if (pos == null) {
                     SiteDetail siteDetail = permitRenewal.getParent().getSiteDetail().get(0);
@@ -122,68 +124,57 @@ public abstract class PermitRenewalWorkflowCustomImpl implements PermitRenewalWo
                     if (!assignments.isEmpty())
                         ownerUser = assignments.get(0).getEmployee();
                 }
-
                 permitRenewal.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 permitRenewal.transition().start()
                         .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                         .withComments(wfBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos).withOwner(ownerUser)
-                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
+                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_RENEWAL);
             }
-
         } else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             wfmatrix = permitRenewalWorkflowService.getWfMatrix(permitRenewal.getStateType(), null,
                     null, wfBean.getAdditionalRule(), permitRenewal.getCurrentState().getValue(), null);
-
-            BpaStatus status = bpaStatusService
-                    .findByModuleTypeAndCode(BpaConstants.INSPECTION_MODULE_TYPE, BpaConstants.APPLICATION_STATUS_APPROVED);
-            if (status != null)
-                permitRenewal.setStatus(status);
-
-            permitRenewal.transition().end()
+            permitRenewal.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
+            permitRenewal.transition().progressWithStateCopy()
                     .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                     .withComments(wfBean.getApproverComments())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                     .withOwner(pos).withOwner(ownerUser)
-                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
-
+                    .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_RENEWAL);
+        } else if (BpaConstants.WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            permitRenewal.transition().end()
+                    .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+                    .withComments(wfBean.getApproverComments()).withDateInfo(currentDate.toDate())
+                    .withStateValue(BpaConstants.WF_END_STATE)
+                    .withNextAction(BpaConstants.WF_END_STATE).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
+            permitRenewal.setStatus(getStatusByPassingCode(BpaConstants.APPLICATION_STATUS_REJECTED));
         } else {
-            if (BpaConstants.APPLICATION_STATUS_APPROVED.equalsIgnoreCase(permitRenewal.getStatus().getCode())) {
-                wfmatrix = permitRenewalWorkflowService.getWfMatrix(permitRenewal.getStateType(), null,
-                        wfBean.getAmountRule(), wfBean.getAdditionalRule(),
-                        permitRenewal.getCurrentState().getValue(), null);
-            } else {
-                wfmatrix = permitRenewalWorkflowService.getWfMatrix(permitRenewal.getStateType(), null,
-                        null, wfBean.getAdditionalRule(), permitRenewal.getCurrentState().getValue(),
-                        permitRenewal.getState().getNextAction());
-                if (wfmatrix == null)
-                    wfmatrix = permitRenewalWorkflowService.getWfMatrix(permitRenewal.getStateType(), null,
-                            null, wfBean.getAdditionalRule(), permitRenewal.getCurrentState().getValue(), null);
-            }
+            wfmatrix = permitRenewalWorkflowService.getWfMatrix(permitRenewal.getStateType(), null,
+                    null, wfBean.getAdditionalRule(), permitRenewal.getCurrentState().getValue(),
+                    permitRenewal.getState().getNextAction());
             if (wfmatrix != null) {
                 BpaStatus status = getStatusByCurrentMatrxiStatus(wfmatrix);
                 ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0).getEmployee();
                 if (status != null)
-                    permitRenewal.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
+                    permitRenewal.setStatus(status);
 
                 if (wfmatrix.getNextAction().contains("END"))
                     permitRenewal.transition().end()
                             .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                             .withComments(wfBean.getApproverComments()).withDateInfo(currentDate.toDate())
-                            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
+                            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_RENEWAL);
                 else
                     permitRenewal.transition().progressWithStateCopy()
                             .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                             .withComments(wfBean.getApproverComments())
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                             .withOwner(ownerUser)
-                            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_INSPECTION);
-
+                            .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_RENEWAL);
             }
         }
         if (LOG.isDebugEnabled())
-            LOG.debug(" WorkFlow Transition Completed ");
-        // bpaUtils.updatePortalUserinbox(permitRenewal, null);
+            LOG.debug("Permit Renewal WorkFlow Transition Completed ");
+        pushBpaApplicationToPortal.updatePortalUserinbox(permitRenewal, null);
     }
 
     private BpaStatus getStatusByCurrentMatrxiStatus(final WorkFlowMatrix wfmatrix) {
@@ -195,7 +186,7 @@ public abstract class PermitRenewalWorkflowCustomImpl implements PermitRenewalWo
     private BpaStatus getStatusByPassingCode(final String code) {
         if (StringUtils.isNotBlank(code))
             return bpaStatusService
-                    .findByModuleTypeAndCode(BpaConstants.RENEWAL_MODULE_TYPE, code);
+                    .findByModuleTypeAndCode(BpaConstants.RENEWALSTATUS_MODULETYPE, code);
         return null;
     }
 

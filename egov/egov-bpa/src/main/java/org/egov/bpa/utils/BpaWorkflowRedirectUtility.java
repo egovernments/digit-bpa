@@ -10,8 +10,8 @@ import static org.egov.bpa.utils.BpaConstants.LPREPLYRECEIVED;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.workflow.permitrenewal.PermitRenewalWorkflowCustomDefaultImpl;

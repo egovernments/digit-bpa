@@ -111,26 +111,6 @@ $(document).ready(function()
 				$.each(response, function(index, value) {
 					$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
 				});
-				
-				if($('#electionBoundaryName').val() == 'WARD 24-KUDILTHODU' && $('#revenueBoundaryName').val() == 'WARD 28-NELLIKKODE') {
-					$('[name=approvalPosition] option').filter(function() { 
-				        return ($(this).text() == 'AETP2/TP_Assistant Engineer_2');
-				    }).prop('selected', true);
-					
-					$('[name=approvalPosition] option').filter(function() { 
-				        return ($(this).text() == 'PWO5/TP_Town Planning Building Overseer_5');
-				    }).prop('selected', true);
-					
-				} else if($('#electionBoundaryName').val() == 'WARD 24-KUDILTHODU' && $('#revenueBoundaryName').val() == 'WARD 33-CHEVAYUR') {
-					$('[name=approvalPosition] option').filter(function() { 
-						return ($(this).text() == 'AETP1/TP_Assistant Engineer_1');
-				    }).prop('selected', true);
-					
-					$('[name=approvalPosition] option').filter(function() { 
-				        return ($(this).text() == 'PWO3/TP_Town Planning Building Overseer_3');
-				    }).prop('selected', true);
-				}
-				
 			}, 
 			error: function (response) {
 				console.log("failed");

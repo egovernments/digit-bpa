@@ -214,7 +214,7 @@ jQuery(document).ready(function ($) {
 	                $('#planPermissionNumber').val(response.planPermissionNumber);
 	                $('#planPermissionDate').val(response.planPermissionDate);
 	                $('#existingPermitExpiryDate').val(response.permitExpiryDate);
-	                $('#plotArea').val(response.plotArea);
+	                $('#extentInSqmts').val(response.plotArea);
 	            } else {
 	            	$('.resetValues').val('');
 	               console.log("No application details available");

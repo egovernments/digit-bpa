@@ -117,9 +117,16 @@
 		<constructor-arg name="type"
 			value="org.egov.bpa.transaction.entity.InspectionApplication" />
 	</bean>
+	
 	<bean id="permitRenewalWorkflowCustomDefaultImpl"
 		class="org.egov.bpa.transaction.workflow.permitrenewal.PermitRenewalWorkflowCustomDefaultImpl" />
 
+	<bean id="PermitRenewalInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="PermitRenewalPersistenceService" />
+	</bean>
+	
 	<bean id="PermitRenewalPersistenceService"
 		parent="abstractPersistenceService">
 		<constructor-arg name="type"

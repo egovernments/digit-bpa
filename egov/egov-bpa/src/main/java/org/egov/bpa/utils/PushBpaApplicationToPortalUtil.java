@@ -53,7 +53,7 @@ import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.bpa.master.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
@@ -70,7 +70,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(readOnly = true)
-public class PushBpaApplicationsToPortalUtility {
+public class PushBpaApplicationToPortalUtil {
 
     private static final String SUCCESS = "Success";
     private static final String CLOSED = "Closed";
@@ -94,7 +94,7 @@ public class PushBpaApplicationsToPortalUtility {
                 || renewal.getStatus() != null
                         && renewal.getStatus().getCode().equals(APPLICATION_STATUS_REJECTED))
             isResolved = true;
-        String url = "/bpa/application/citizen/update/" + renewal.getApplicationNumber();
+        String url = "/bpa/citizen/application/permit/renewal/update/" + renewal.getApplicationNumber();
         if (renewal.getStatus() != null)
             portalInboxService.updateInboxMessage(renewal.getApplicationNumber(), module.getId(),
                     status, isResolved, new Date(), renewal.getState(),
@@ -108,7 +108,7 @@ public class PushBpaApplicationsToPortalUtility {
 
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
-        String url = "/bpa/application/citizen/update/" + renewal.getApplicationNumber();
+        String url = "/bpa/citizen/application/permit/renewal/update/" + renewal.getApplicationNumber();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, renewal.getParent().getOwner().getName(),
                 SERVICETYPE.concat(renewal.getParent().getServiceType().getDescription()), renewal.getApplicationNumber(),
                 renewal.getRenewalNumber(), renewal.getId(), SUCCESS, SUCCESS, url, isResolved,

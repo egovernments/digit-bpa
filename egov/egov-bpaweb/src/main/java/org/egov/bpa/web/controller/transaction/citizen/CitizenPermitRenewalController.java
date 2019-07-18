@@ -48,20 +48,25 @@
 package org.egov.bpa.web.controller.transaction.citizen;
 
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.master.service.ConstructionStagesService;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
+import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.service.PermitRenewalService;
+import org.egov.bpa.transaction.service.WorkflowHistoryService;
 import org.egov.bpa.utils.BpaUtils;
-import org.egov.bpa.utils.PushBpaApplicationsToPortalUtility;
+import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.commons.entity.Source;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -70,6 +75,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -87,17 +93,22 @@ public class CitizenPermitRenewalController {
     private static final String MESSAGE = "message";
     public static final String COMMON_ERROR = "common-error";
     private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String APPLICATION_HISTORY = "applicationHistory";
 
     @Autowired
     private PermitRenewalService permitRenewalService;
     @Autowired
     protected ResourceBundleMessageSource messageSource;
     @Autowired
-    private PushBpaApplicationsToPortalUtility pushBpaApplicationsToPortalUtility;
+    private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
     @Autowired
     private BpaUtils bpaUtils;
     @Autowired
     private ConstructionStagesService constructionStagesService;
+    @Autowired
+    private BpaNoticeUtil bpaNoticeUtil;
+    @Autowired
+    private WorkflowHistoryService workflowHistoryService;
 
     @GetMapping("/permit/renewal/apply")
     public String showPermitRevocationInitiateForm(final Model model) {
@@ -126,13 +137,29 @@ public class CitizenPermitRenewalController {
                     bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
         wfBean.setApproverPositionId(approvalPosition);
         permitRenewalService.save(permitRenewal, wfBean);
-        pushBpaApplicationsToPortalUtility.createPortalUserinbox(permitRenewal,
+        pushBpaApplicationToPortal.createPortalUserinbox(permitRenewal,
                 Arrays.asList(permitRenewal.getParent().getOwner().getUser(),
                         permitRenewal.getParent().getStakeHolder().get(0).getStakeHolder()),
                 wfBean.getWorkFlowAction());
         model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.submit",
                 new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
         return APPLICATION_SUCCESS;
+    }
+
+    @GetMapping("/permit/renewal/update/{applicationNumber}")
+    public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
+        PermitRenewal permitRenewal = permitRenewalService.findByApplicationNumber(applicationNumber);
+        model.addAttribute("permitExpiryDate", bpaNoticeUtil.calculateCertExpryDate(
+                new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
+                permitRenewal.getParent().getServiceType().getValidity()));
+        model.addAttribute(PERMIT_RENEWAL, permitRenewal);
+        model.addAttribute(APPLICATION_HISTORY,
+                workflowHistoryService.getHistory(Collections.emptyList(), permitRenewal.getCurrentState(),
+                        permitRenewal.getStateHistory()));
+        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(permitRenewal.getStatus().getCode()))
+            return "permit-renewal-citizen-update";
+        else
+            return "permit-renewal-citizen-view";
     }
 
 }

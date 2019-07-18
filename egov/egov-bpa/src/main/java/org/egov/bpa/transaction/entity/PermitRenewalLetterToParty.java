@@ -40,7 +40,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.common.LetterToPartyCommon;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
