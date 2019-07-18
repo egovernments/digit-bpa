@@ -54,7 +54,7 @@ import org.egov.bpa.transaction.entity.PermitRenewalLetterToParty;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.repository.PermitRenewalLetterToPartyRepository;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.utils.BpaUtils;
+import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,9 +68,9 @@ public class PermitRenewalLetterToPartyService {
     @Autowired
     private LettertoPartyService lettertoPartyService;
     @Autowired
-    private BpaUtils bpaUtils;
-    @Autowired
     private BpaStatusService bpaStatusService;
+    @Autowired
+    private BpaWorkflowRedirectUtility bpaWorkflowRedirectUtility;
 
     @Transactional
     public PermitRenewalLetterToParty save(final PermitRenewalLetterToParty permitRenewalLTP, final Long approverPosition) {
@@ -84,7 +84,7 @@ public class PermitRenewalLetterToPartyService {
         	wfBean.setApproverComments(BpaConstants.LETTERTOPARTYINITIATE);
         	wfBean.setWorkFlowAction(BpaConstants.LETTERTOPARTYINITIATE);
 
-            bpaUtils.redirectPermitRenewalWorkflow(permitRenewalLTP.getPermitRenewal(), wfBean);
+        	bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(permitRenewalLTP.getPermitRenewal(), wfBean);
         }
 
         if (permitRenewalLTP.getLetterToParty().getReplyDate() != null) {
@@ -94,7 +94,7 @@ public class PermitRenewalLetterToPartyService {
         	wfBean.setWorkFlowAction(BpaConstants.LPCREATED);
 
         	permitRenewalLTP.getLetterToParty().setAcknowledgementNumber(lettertoPartyService.generateLettertpPartyReplyAck());
-            bpaUtils.redirectPermitRenewalWorkflow(permitRenewalLTP.getPermitRenewal(), wfBean);
+        	bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(permitRenewalLTP.getPermitRenewal(), wfBean);
 
             permitRenewalLTP.getPermitRenewal().setStatus(bpaStatusService
                     .findByModuleTypeAndCode(BpaConstants.RENEWALSTATUS_MODULETYPE, BpaConstants.LETTERTOPARTY_REPLY_RECEIVED));
