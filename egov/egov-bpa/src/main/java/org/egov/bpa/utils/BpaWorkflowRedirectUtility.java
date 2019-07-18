@@ -60,7 +60,7 @@ public class BpaWorkflowRedirectUtility {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     public User getCurrentUser() {
         return securityUtils.getCurrentUser();
     }
@@ -139,31 +139,27 @@ public class BpaWorkflowRedirectUtility {
 
     @Transactional
     public void redirectToBpaWorkFlow(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
-        buildWorkFlowForOccupancyCertificate(permitRenewal, wfBean);
-    }
-
-    private void buildWorkFlowForOccupancyCertificate(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
         final WorkFlowMatrix wfMatrix = getWfMatrixByCurrentState(permitRenewal.getStateType(), wfBean.getCurrentState(),
                 permitRenewal.getParent().getApplicationType().getName());
-        final PermitRenewalWorkflowCustomDefaultImpl permitRenewalWorkflowCustomDefaultImpl = getInitialisedWorkFlowBeanOfPermitRenewal();
+        final PermitRenewalWorkflowCustomDefaultImpl permitRenewalWorkflowImpl = getInitialisedWorkFlowBeanOfPermitRenewal();
         Long approvalPositionId = wfBean.getApproverPositionId();
         if (wfBean.getApproverPositionId() == null)
             approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
                     getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
         wfBean.setAdditionalRule(permitRenewal.getParent().getApplicationType().getName());
         wfBean.setApproverPositionId(approvalPositionId);
-        if (permitRenewalWorkflowCustomDefaultImpl != null)
+        if (permitRenewalWorkflowImpl != null)
             if (LETTERTOPARTYINITIATE.equals(wfBean.getCurrentState())) {
                 wfBean.setWorkFlowAction(LETTERTOPARTYINITIATE);
-                permitRenewalWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
+                permitRenewalWorkflowImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
             } else if (LPCREATED.equals(wfBean.getCurrentState())) {
                 wfBean.setWorkFlowAction(LPCREATED);
-                permitRenewalWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
+                permitRenewalWorkflowImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
             } else if (LPREPLIED.equals(wfBean.getCurrentState())) {
                 wfBean.setWorkFlowAction(LPREPLYRECEIVED);
-                permitRenewalWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
+                permitRenewalWorkflowImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
             } else {
-                permitRenewalWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
+                permitRenewalWorkflowImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
             }
     }
 
