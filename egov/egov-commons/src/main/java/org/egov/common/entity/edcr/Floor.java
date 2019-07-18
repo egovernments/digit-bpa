@@ -50,6 +50,7 @@ package org.egov.common.entity.edcr;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Floor extends Measurement {
 
@@ -221,18 +222,23 @@ public class Floor extends Measurement {
         if (occupancies == null) {
             occupancies = new ArrayList<>();
             occupancies.add(occupancy);
-        } else if (occupancies.contains(occupancy)) {
-            occupancies.get(occupancies.indexOf(occupancy))
-                    .setDeduction((occupancies.get(occupancies.indexOf(occupancy)).getDeduction() == null
-                            ? BigDecimal.ZERO
-                            : occupancies.get(occupancies.indexOf(occupancy)).getDeduction())
-                                    .add(occupancy.getDeduction()));
-            occupancies.get(occupancies.indexOf(occupancy)).setExistingDeduction(
-                    (occupancies.get(occupancies.indexOf(occupancy)).getExistingDeduction() == null ? BigDecimal.ZERO
-                            : occupancies.get(occupancies.indexOf(occupancy)).getExistingDeduction())
-                                    .add(occupancy.getExistingDeduction()));
-        } else
-            occupancies.add(occupancy);
+        } else {
+          List<Occupancy> collect = occupancies.stream().filter(o -> o.getTypeHelper() != null
+                    && (o.getTypeHelper().getType().getCode()
+                            .equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))).collect(Collectors.toList());
+            if (!collect.isEmpty()) {
+                collect.get(0)
+                        .setDeduction(collect.get(0).getDeduction() == null
+                                ? BigDecimal.ZERO
+                                : collect.get(0).getDeduction()
+                                        .add(occupancy.getDeduction()));
+                collect.get(0).setExistingDeduction(
+                        (collect.get(0).getExistingDeduction() == null ? BigDecimal.ZERO
+                                : collect.get(0).getExistingDeduction())
+                                        .add(occupancy.getExistingDeduction()));
+            } else
+                occupancies.add(occupancy);
+        }
 
     }
 
