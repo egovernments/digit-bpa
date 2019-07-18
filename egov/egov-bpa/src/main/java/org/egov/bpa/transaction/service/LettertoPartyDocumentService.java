@@ -31,7 +31,6 @@ package org.egov.bpa.transaction.service;
 
 import java.util.List;
 
-import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.InspectionLetterToParty;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.PermitRenewalLetterToParty;

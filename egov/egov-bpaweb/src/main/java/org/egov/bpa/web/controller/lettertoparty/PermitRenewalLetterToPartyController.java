@@ -247,7 +247,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
         }
 
         @PostMapping("/update/{applicationNumber}")
-        public String updateLettertoparty(@ModelAttribute("permitRenewalLetterToParty") final PermitRenewalLetterToParty lettertoparty, final Model model,
+        public String updateLettertoparty(@ModelAttribute("LETTERTO_PARTY") final PermitRenewalLetterToParty lettertoparty, final Model model,
         		@PathVariable final String applicationNumber,final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
             processAndStoreLetterToPartyDocuments(lettertoparty);
             lettertoPartyService.save(lettertoparty, lettertoparty.getPermitRenewal().getState().getOwnerPosition().getId());
@@ -346,7 +346,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
         }
 
         @PostMapping("/lettertopartyreply")
-        public String createLettertoPartyReply(@ModelAttribute("permitRenewalLetterToParty") final PermitRenewalLetterToParty lettertoparty, final Model model,
+        public String createLettertoPartyReply(@ModelAttribute("LETTERTO_PARTY") final PermitRenewalLetterToParty lettertoparty, final Model model,
                 final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
             processAndStoreLetterToPartyDocuments(lettertoparty);
             PermitRenewalLetterToParty lettertopartyRes = lettertoPartyService.save(lettertoparty,

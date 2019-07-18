@@ -62,16 +62,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class PermitRenewalLetterToPartyService {
-	
-    static final String LPCHK = "lp";
-    static final String LPREPLYCHK = "lpreply";
 
     @Autowired
     private PermitRenewalLetterToPartyRepository lettertoPartyRepository;
     @Autowired
     private LettertoPartyService lettertoPartyService;
     @Autowired
-    BpaUtils bpaUtils;
+    private BpaUtils bpaUtils;
     @Autowired
     private BpaStatusService bpaStatusService;
 
