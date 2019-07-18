@@ -382,8 +382,6 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
                 .header(CONTENT_DISPOSITION, String.format(INLINE_FILENAME,
                         append(prefixFileName, lpNumber) + PDFEXTN))
                 .body(new InputStreamResource(reportOutput.asInputStream()));
-    }
-    
-    
+    }     
     
 }

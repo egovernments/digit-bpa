@@ -48,19 +48,20 @@
 <div align="center" class="overflow-x-scroll">
 	<input type="hidden" name="applicationNumber" id="applicationNumber"
 		value="${applicationNumber}">
-	<table class="table table-bordered  multiheadertbl" id="inspedetails">
+	<table class="table table-bordered  multiheadertbl" id="inspedetails" cellspacing="2" cellpadding="3">
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.slno" /></th>
 				<th><spring:message code="lbl.inspn.no" /></th>
 				<th><spring:message code="lbl.inspn.date" /></th>
+				<th><spring:message code="lbl.inspected.by"/></th>
 				<th><spring:message code="lbl.action" /></th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:choose>
-				<c:when test="${not empty inspectionList}">
-					<c:forEach items="${inspectionList}" var="inspn" varStatus="status">
+				<c:when test="${not empty inconstinspectionList}">
+					<c:forEach items="${inconstinspectionList}" var="inspn" varStatus="status">
 						<tr id="lprow">
 							<td align="center" class="view-content" style="font-size: 90%;">${status.index+1}</td>
 							<td align="center" class="view-content" style="font-size: 90%;">
@@ -71,12 +72,13 @@
 									pattern="dd/MM/yyyy" var="inspectionDate" /> <c:out
 									value="${inspectionDate}" />
 							</td>
+							<td align="center" class="view-content" style="font-size: 90%;"> <c:out value="${inspn.inspection.inspectedBy.username.concat('::').concat(inspn.inspection.inspectedBy.name)}" /></td>					
 							<td align="center" style="font-size: 90%;"><a
 								style="cursor: pointer; font-size: 12px;" class="open-popup"
-								href="/bpa/inspection/show-inspection-details/${applicationNumber}/${inspn.inspection.inspectionNumber}"> <i
+								href="/bpa/inspection/show-inspection-details/${inspn.inspectionApplication.applicationNumber}/${inspn.inspection.inspectionNumber}"> <i
 									class="fa fa-eye" aria-hidden="true"><spring:message
 											code='lbl.view' /></i>
-							</a></td>
+							</a>&nbsp; </td>
 						</tr>
 					</c:forEach>
 				</c:when>

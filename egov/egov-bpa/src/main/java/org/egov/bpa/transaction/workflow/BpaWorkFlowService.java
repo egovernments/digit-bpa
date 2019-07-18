@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
@@ -439,6 +440,11 @@ public class BpaWorkFlowService {
 		return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
 				bpaUtils.getBoundaryForWorkflow(permitInspection.getApplication().getSiteDetail().get(0)).getId());
 	}
-
-
+	
+	public Position getApproverPositionOfElectionWardByCurrentState(final PermitRenewal permitRenewal,
+			final String currentState) {
+		WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(permitRenewal.getStateType(), currentState, BpaConstants.PERMIT_RENEW_WFTYPE);
+		return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
+				bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
+	}
 }

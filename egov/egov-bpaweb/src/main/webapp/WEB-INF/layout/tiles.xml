@@ -1106,4 +1106,47 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/permitRenewal/permit-renewal-citizen-new.jsp" />
 	</definition>
+	
+	<definition name="permitrenewal-ltp-create"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.create" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/permitrenewal-ltp-create.jsp" />
+	</definition>
+	<definition name="permitrenewal-ltp-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.success" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/permitrenewal-ltp-result.jsp" />
+	</definition>
+	<definition name="permitrenewal-ltp-lpreply"
+		extends="base_layout">
+		<put-attribute name="page-title" value="title.lpreply "
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/permitrenewal-ltp-lpreply.jsp" />
+	</definition>
+	<definition name="permitrenewal-ltp-capturesentdate"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/permitrenewal-ltp-capturesentdate.jsp" />
+	</definition>
+	<definition name="permitrenewal-ltp-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/permitrenewal-ltp-view.jsp" />
+	</definition>
+	<definition name="permitrenewal-ltp-update"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.lettertoparty.update" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/lettertoparty/permitrenewal-ltp-update.jsp" />
+	</definition>
 </tiles-definitions>

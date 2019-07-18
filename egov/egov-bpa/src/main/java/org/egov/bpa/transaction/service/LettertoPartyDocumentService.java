@@ -31,8 +31,10 @@ package org.egov.bpa.transaction.service;
 
 import java.util.List;
 
+import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.InspectionLetterToParty;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
+import org.egov.bpa.transaction.entity.PermitRenewalLetterToParty;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
 import org.egov.bpa.transaction.repository.LettertoPartyDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,12 @@ public class LettertoPartyDocumentService {
     
     public List<LetterToPartyDocumentCommon> findByIsrequestedTrueAndLettertoPartyOrderByIdAsc(
             InspectionLetterToParty lettertoParty) {
+        return lettertoPartyDocumentRepository
+                .findByIsRequestedTrueAndLetterToPartyOrderByIdAsc(lettertoParty.getLetterToParty());
+    }
+    
+    public List<LetterToPartyDocumentCommon> findByIsrequestedTrueAndLettertoPartyOrderByIdAsc(
+            PermitRenewalLetterToParty lettertoParty) {
         return lettertoPartyDocumentRepository
                 .findByIsRequestedTrueAndLetterToPartyOrderByIdAsc(lettertoParty.getLetterToParty());
     }

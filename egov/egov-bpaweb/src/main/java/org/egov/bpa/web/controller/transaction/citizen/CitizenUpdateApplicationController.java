@@ -83,6 +83,8 @@ import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
+import org.egov.bpa.transaction.entity.InConstructionInspection;
+import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
@@ -93,6 +95,8 @@ import org.egov.bpa.transaction.entity.enums.NocIntegrationTypeEnum;
 import org.egov.bpa.transaction.service.ApplicationBpaFeeCalculation;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
 import org.egov.bpa.transaction.service.BpaDcrService;
+import org.egov.bpa.transaction.service.InConstructionInspectionService;
+import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitFeeCalculationService;
@@ -161,7 +165,11 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private PermitNocApplicationService permitNocService;
-
+    @Autowired
+    private InspectionApplicationService inspectionAppService;
+    @Autowired
+    private InConstructionInspectionService inspectionConstService;
+    
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -289,6 +297,16 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         model.addAttribute("lettertopartylist", lettertoPartyList);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         model.addAttribute("permitApplnFeeRequired", bpaUtils.isApplicationFeeCollectionRequired());
+        List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
+        final List<PermitInspectionApplication> permitInspections = inspectionAppService.findByApplicationNumber(application.getApplicationNumber());
+
+        for( PermitInspectionApplication permitInspection : permitInspections) {
+        	List<InConstructionInspection> inspApp = inspectionConstService.findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
+        	inConstInspections.addAll(inspApp);
+        }        
+        model.addAttribute("inconstinspectionList",inConstInspections);
+        
+        
         ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
                 .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
         if (bpaUtils.isApplicationFeeCollectionRequired())

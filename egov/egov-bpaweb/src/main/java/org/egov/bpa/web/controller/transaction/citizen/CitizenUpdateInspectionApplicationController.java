@@ -77,7 +77,7 @@ public class CitizenUpdateInspectionApplicationController {
     }
     
     private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
-    	model.addAttribute("inspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
+    	model.addAttribute("inconstinspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
         model.addAttribute("lettertopartylist", letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication));
     	model.addAttribute("applicationHistory",
                 workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(), inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));

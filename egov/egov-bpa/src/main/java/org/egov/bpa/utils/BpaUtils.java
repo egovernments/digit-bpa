@@ -44,6 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import org.egov.bpa.master.entity.ApplicationSubType;
+import org.egov.bpa.master.entity.PermitRenewal;
 import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -66,6 +67,7 @@ import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl;
 import org.egov.bpa.transaction.workflow.inspection.InspectionWorkflowCustomDefaultImpl;
 import org.egov.bpa.transaction.workflow.oc.OccupancyCertificateWorkflowCustomDefaultImpl;
+import org.egov.bpa.transaction.workflow.permitrenewal.PermitRenewalWorkflowCustomDefaultImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.common.entity.bpa.SubOccupancy;
@@ -234,6 +236,14 @@ public class BpaUtils {
         	applicationWorkflowCustomDefaultImpl = (InspectionWorkflowCustomDefaultImpl) context
                     .getBean("inspectionWorkflowCustomDefaultImpl");
         return applicationWorkflowCustomDefaultImpl;
+    }
+    
+    private PermitRenewalWorkflowCustomDefaultImpl getInitialisedWorkFlowBeanForPermitRenewal() {
+    	PermitRenewalWorkflowCustomDefaultImpl permitRenewWorkflowCustomDefaultImpl = null;
+        if (null != context)
+        	permitRenewWorkflowCustomDefaultImpl = (PermitRenewalWorkflowCustomDefaultImpl) context
+                    .getBean("permitRenewalWorkflowCustomDefaultImpl");
+        return permitRenewWorkflowCustomDefaultImpl;
     }
 
     public WorkFlowMatrix getWfMatrixByCurrentState(final Boolean isOneDayPermit, final String stateType,
@@ -624,6 +634,33 @@ public class BpaUtils {
                 inspectionWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitInspection, wfBean);
             } else 
         		inspectionWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitInspection, wfBean);
+    }
+    
+    public void redirectPermitRenewalWorkflow(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
+    	buildWorkFlowForPermitRenewal(permitRenewal, wfBean);
+    }
+
+    private void buildWorkFlowForPermitRenewal(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
+        final WorkFlowMatrix wfMatrix = getWfMatrixByCurrentState(permitRenewal.getStateType(), wfBean.getCurrentState(), BpaConstants.PERMIT_RENEW_WFTYPE);
+        final PermitRenewalWorkflowCustomDefaultImpl permitRenewWorkflowCustomDefaultImpl = getInitialisedWorkFlowBeanForPermitRenewal();
+        Long approvalPositionId = wfBean.getApproverPositionId();
+        if (wfBean.getApproverPositionId() == null)
+            approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
+        wfBean.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
+        wfBean.setApproverPositionId(approvalPositionId);
+        if (permitRenewWorkflowCustomDefaultImpl != null) 
+        	if (LETTERTOPARTYINITIATE.equals(wfBean.getCurrentState())) {
+                wfBean.setWorkFlowAction(LETTERTOPARTYINITIATE);
+                permitRenewWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
+            } else if (LPCREATED.equals(wfBean.getCurrentState())) {
+                wfBean.setWorkFlowAction(LPCREATED);
+                permitRenewWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
+            } else if (LPREPLIED.equals(wfBean.getCurrentState())) {
+                wfBean.setWorkFlowAction(LPREPLYRECEIVED);
+                permitRenewWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
+            } else 
+            	permitRenewWorkflowCustomDefaultImpl.createCommonWorkflowTransition(permitRenewal, wfBean);
     }
 
     public void sendSmsEmailOnCitizenSubmit(BpaApplication bpaApplication) {

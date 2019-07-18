@@ -62,10 +62,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.InConstructionInspection;
+import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.service.BpaDcrService;
+import org.egov.bpa.transaction.service.InConstructionInspectionService;
+import org.egov.bpa.transaction.service.InspectionApplicationService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitNocApplicationService;
@@ -115,7 +119,10 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     private BpaDcrService bpaDcrService;
     @Autowired
     private PermitNocApplicationService permitNocService;
-
+    @Autowired
+    private InspectionApplicationService inspectionAppService;
+    @Autowired
+    private InConstructionInspectionService inspectionConstService;
 
     @GetMapping("/search")
     public String showSearchApprovedforFee(final Model model) {
@@ -153,6 +160,14 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(), application.getStateHistory()));
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
+        List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
+        final List<PermitInspectionApplication> permitInspections = inspectionAppService.findByApplicationNumber(application.getApplicationNumber());
+
+        for( PermitInspectionApplication permitInspection : permitInspections) {
+        	List<InConstructionInspection> inspApp = inspectionConstService.findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
+        	inConstInspections.addAll(inspApp);
+        }        
+        model.addAttribute("inconstinspectionList",inConstInspections);
         model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
         model.addAttribute("isEDCRIntegrationRequire",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
@@ -244,6 +259,14 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(), application.getStateHistory()));
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
+        List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
+        final List<PermitInspectionApplication> permitInspections = inspectionAppService.findByApplicationNumber(application.getApplicationNumber());
+
+        for( PermitInspectionApplication permitInspection : permitInspections) {
+        	List<InConstructionInspection> inspApp = inspectionConstService.findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
+        	inConstInspections.addAll(inspApp);
+        }        
+        model.addAttribute("inconstinspectionList",inConstInspections);
         model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
         return "viewapplication-form";

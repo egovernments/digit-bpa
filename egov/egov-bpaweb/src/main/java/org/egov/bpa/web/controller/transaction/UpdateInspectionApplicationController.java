@@ -320,7 +320,7 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     
     
     private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
-    	model.addAttribute("inspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
+    	model.addAttribute("inconstinspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
         model.addAttribute("lettertopartylist", letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication));
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(), inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));

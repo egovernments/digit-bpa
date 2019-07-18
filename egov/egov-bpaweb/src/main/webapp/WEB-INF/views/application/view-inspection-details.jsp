@@ -46,14 +46,21 @@
 
 <br>
 <div align="center" class="overflow-x-scroll">
+
 	<input type="hidden" name="applicationNumber" id="applicationNumber"
 		value="${applicationNumber}">
+	<div class="panel-heading custom_form_panel_heading">
+     <div class="panel-title">
+        <spring:message code="lbl.pre.construction"/>
+     </div>
+    </div>
 	<table class="table table-bordered  multiheadertbl" id="inspedetails">
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.slno" /></th>
 				<th><spring:message code="lbl.inspn.no" /></th>
 				<th><spring:message code="lbl.inspn.date" /></th>
+				<th><spring:message code="lbl.inspected.by"/></th>
 				<th><spring:message code="lbl.action" /></th>
 			</tr>
 		</thead>
@@ -71,6 +78,7 @@
 									pattern="dd/MM/yyyy" var="inspectionDate" /> <c:out
 									value="${inspectionDate}" />
 							</td>
+							<td align="center" class="view-content" style="font-size: 90%;"> <c:out value="${inspn.inspection.inspectedBy.username.concat('::').concat(inspn.inspection.inspectedBy.name)}" /></td>					
 							<td align="center" style="font-size: 90%;"><a
 								style="cursor: pointer; font-size: 12px;" class="open-popup"
 								href="/bpa/application/showinspectiondetails/${inspn.id}"> <i
@@ -92,6 +100,15 @@
 			</c:choose>
 		</tbody>
 	</table>
+   <c:if test="${!inconstinspectionList.isEmpty()}">
+	<div class="panel-heading custom_form_panel_heading">
+     <div class="panel-title">
+        <spring:message code="lbl.in.construction"/>
+     </div>
+    </div>
+	<jsp:include page="view-inconst-inspection-details.jsp"></jsp:include>
+	
+	</c:if>
 </div>
 <script>
 	$(document).ready(function() {
