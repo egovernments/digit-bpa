@@ -44,10 +44,65 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.bpa.transaction.entity;
 
-package org.egov.bpa.transaction.entity.enums;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-public enum ConditionType {
-   /* STATIC_PERMITCONDITION, DYNAMIC_PERMITCONDITION, ADDITIONAL_PERMITCONDITION, REJECTION_REASON;*/
-	NOCCONDITIONS,GENERALCONDITIONS,REJECTIONREASONS,ADDITIONALREJECTIONREASONS,ADDITIONALCONDITIONS,OCREJECTIONREASONS,PERMITDEFAULTCONDITIONS,RENEWALREJECTIONREASONS;
+import org.egov.bpa.transaction.entity.common.NoticeCommon;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
+@Entity
+@Table(name = "egbpa_permitrenewal_notice")
+@SequenceGenerator(name = PermitRenewalNotice.SEQ_EGBPA_PERMITRENEWAL_NOTICE, sequenceName = PermitRenewalNotice.SEQ_EGBPA_PERMITRENEWAL_NOTICE, allocationSize = 1)
+public class PermitRenewalNotice extends AbstractAuditable {
+    private static final long serialVersionUID = -4954480849979881789L;
+
+    public static final String SEQ_EGBPA_PERMITRENEWAL_NOTICE = "seq_egbpa_permitrenewal_notice";
+
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_PERMITRENEWAL_NOTICE, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "permitrenewal", nullable = false)
+    private PermitRenewal permitRenewal;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @NotNull
+    @JoinColumn(name = "notice", nullable = false)
+    private NoticeCommon noticeCommon;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public PermitRenewal getPermitRenewal() {
+		return permitRenewal;
+	}
+
+	public void setPermitRenewal(PermitRenewal permitRenewal) {
+		this.permitRenewal = permitRenewal;
+	}
+
+	public NoticeCommon getNoticeCommon() {
+        return noticeCommon;
+    }
+
+    public void setNoticeCommon(NoticeCommon noticeCommon) {
+        this.noticeCommon = noticeCommon;
+    }
 }

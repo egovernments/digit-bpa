@@ -47,8 +47,10 @@
 
 package org.egov.bpa.transaction.entity;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -63,6 +65,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -93,6 +96,7 @@ public class PermitRenewal extends StateAware<Position> {
     private static final long serialVersionUID = -4954480849979881787L;
 
     public static final String SEQ_PERMIT_RENEWAL = "SEQ_EGBPA_PERMIT_RENEWAL";
+    public static final String ORDER_BY_ID_ASC = "id ASC";
 
     @Id
     @GeneratedValue(generator = SEQ_PERMIT_RENEWAL, strategy = GenerationType.SEQUENCE)
@@ -135,11 +139,22 @@ public class PermitRenewal extends StateAware<Position> {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egbpa_permit_renewal_documents", joinColumns = @JoinColumn(name = "permitrenewal"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> permitRenewalDocs = Collections.emptySet();
+    
+    @OneToMany(mappedBy = "permitRenewal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PermitRenewalNotice> renewalNotices = new ArrayList<>(0);
+    
+    @OneToMany(mappedBy = "permitRenewal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PermitRenewalConditions> rejectionReasons = new ArrayList<>(0);
+    @OrderBy(ORDER_BY_ID_ASC)
+    @OneToMany(mappedBy = "permitRenewal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PermitRenewalConditions> additionalRenewalConditions = new ArrayList<>(0);
 
     private transient MultipartFile[] files;
     private transient String workflowAction;
     private transient Long approvalDepartment;
     private transient String approvalComent;
+    private transient List<PermitRenewalConditions> rejectionReasonsTemp = new ArrayList<>(0);
+    private transient List<PermitRenewalConditions> additionalRejectReasonsTemp = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -254,6 +269,18 @@ public class PermitRenewal extends StateAware<Position> {
     public void setPermitRenewalDocs(Set<FileStoreMapper> permitRenewalDocs) {
         this.permitRenewalDocs = permitRenewalDocs;
     }
+    
+    public void addRenewalNotice(PermitRenewalNotice renewalNotice) {
+        this.renewalNotices.add(renewalNotice);
+    }
+
+	public List<PermitRenewalNotice> getRenewalNotices() {
+		return renewalNotices;
+	}
+
+	public void setRenewalNotices(List<PermitRenewalNotice> renewalNotices) {
+		this.renewalNotices = renewalNotices;
+	}
 
     public MultipartFile[] getFiles() {
         return files;
@@ -286,5 +313,37 @@ public class PermitRenewal extends StateAware<Position> {
     public void setApprovalComent(String approvalComent) {
         this.approvalComent = approvalComent;
     }
+
+	public List<PermitRenewalConditions> getRejectionReasons() {
+		return rejectionReasons;
+	}
+
+	public void setRejectionReasons(List<PermitRenewalConditions> rejectionReasons) {
+		this.rejectionReasons = rejectionReasons;
+	}
+
+	public List<PermitRenewalConditions> getRejectionReasonsTemp() {
+		return rejectionReasonsTemp;
+	}
+
+	public void setRejectionReasonsTemp(List<PermitRenewalConditions> rejectionReasonsTemp) {
+		this.rejectionReasonsTemp = rejectionReasonsTemp;
+	}
+
+	public List<PermitRenewalConditions> getAdditionalRejectReasonsTemp() {
+		return additionalRejectReasonsTemp;
+	}
+
+	public void setAdditionalRejectReasonsTemp(List<PermitRenewalConditions> additionalRejectReasonsTemp) {
+		this.additionalRejectReasonsTemp = additionalRejectReasonsTemp;
+	}
+
+	public List<PermitRenewalConditions> getAdditionalRenewalConditions() {
+		return additionalRenewalConditions;
+	}
+
+	public void setAdditionalRenewalConditions(List<PermitRenewalConditions> additionalRenewalConditions) {
+		this.additionalRenewalConditions = additionalRenewalConditions;
+	}
 
 }

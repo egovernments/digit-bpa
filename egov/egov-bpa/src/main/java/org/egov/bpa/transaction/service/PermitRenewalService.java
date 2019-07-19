@@ -96,6 +96,11 @@ public class PermitRenewalService {
         permitRenewalIndexService.createPermitRenewalIndex(renewalResponse);
         return renewalResponse;
     }
+    
+    @Transactional
+    public void savePermitRenewal(PermitRenewal permitRenewal) {
+    	permitRenewalRepository.saveAndFlush(permitRenewal);
+    }
 
     private void buildDocuments(final PermitRenewal permitRenewal) {
         if (permitRenewal.getFiles() != null) {

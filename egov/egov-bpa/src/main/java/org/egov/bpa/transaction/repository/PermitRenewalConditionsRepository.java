@@ -44,10 +44,24 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.bpa.transaction.repository;
 
-package org.egov.bpa.transaction.entity.enums;
+import java.util.List;
 
-public enum ConditionType {
-   /* STATIC_PERMITCONDITION, DYNAMIC_PERMITCONDITION, ADDITIONAL_PERMITCONDITION, REJECTION_REASON;*/
-	NOCCONDITIONS,GENERALCONDITIONS,REJECTIONREASONS,ADDITIONALREJECTIONREASONS,ADDITIONALCONDITIONS,OCREJECTIONREASONS,PERMITDEFAULTCONDITIONS,RENEWALREJECTIONREASONS;
+import org.egov.bpa.transaction.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewalConditions;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PermitRenewalConditionsRepository extends JpaRepository<PermitRenewalConditions, Long> {
+	
+	@Query("select prn from PermitRenewalConditions prn where prn.noticeCondition.type = :conditionType")
+	List<PermitRenewalConditions> findByTypeOrderByOrderNumberAsc(@Param("conditionType") ConditionType conditionType);
+
+	@Query("select prn from PermitRenewalConditions prn where prn.noticeCondition.type = :conditionType and prn.permitRenewal = :permitRenewal ")
+	List<PermitRenewalConditions> findByRenewalAndTypeOrderByOrderNumberAsc(@Param("permitRenewal") PermitRenewal permitRenewal, @Param("conditionType") ConditionType conditionType);
 }

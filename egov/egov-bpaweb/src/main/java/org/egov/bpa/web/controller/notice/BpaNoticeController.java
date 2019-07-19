@@ -171,6 +171,17 @@ public class BpaNoticeController {
                 .generateNotice(occupancyCertificateService.findByApplicationNumber(applicationNumber));
         return getFileAsResponseEntity(applicationNumber, reportOutput, OCDEMANDFILENAME);
     }
+    
+    @GetMapping(value = "/application/permitrenewal/rejectionnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generatePermitRenewalRejectionNotice(@PathVariable final String applicationNumber,
+            HttpServletRequest request) throws IOException {
+        PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
+                .find(PermitRejectionFormatImpl.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = bpaNoticeFeature
+                .generateNotice(applicationBpaService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, BPAREJECTIONFILENAME);
+    }
 
 
 }

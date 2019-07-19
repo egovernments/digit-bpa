@@ -80,6 +80,11 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
 			</div>
+			<c:if test="${showRejectionReasons}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<jsp:include page="renewal-rejection-reasons.jsp"></jsp:include>
+				</div>
+			</c:if>
 			<jsp:include page="../common/commonWorkflowMatrix.jsp" />
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
@@ -100,6 +105,9 @@
 	value="<spring:message code='msg.confirm.reject.appln' />" />
 <input type="hidden" id="generateRejectNotice"
 	value="<spring:message code='msg.confirm.generate.rejection.notice' />" />
+<input type="hidden" id="rejectionReasonMandatory" 
+    value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
+	
 
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

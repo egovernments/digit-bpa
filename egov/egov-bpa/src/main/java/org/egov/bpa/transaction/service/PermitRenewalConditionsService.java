@@ -45,9 +45,36 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.bpa.transaction.entity.enums;
+package org.egov.bpa.transaction.service;
 
-public enum ConditionType {
-   /* STATIC_PERMITCONDITION, DYNAMIC_PERMITCONDITION, ADDITIONAL_PERMITCONDITION, REJECTION_REASON;*/
-	NOCCONDITIONS,GENERALCONDITIONS,REJECTIONREASONS,ADDITIONALREJECTIONREASONS,ADDITIONALCONDITIONS,OCREJECTIONREASONS,PERMITDEFAULTCONDITIONS,RENEWALREJECTIONREASONS;
+import java.util.List;
+
+import org.egov.bpa.transaction.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewalConditions;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
+import org.egov.bpa.transaction.repository.PermitRenewalConditionsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class PermitRenewalConditionsService {
+
+	@Autowired
+	private PermitRenewalConditionsRepository renewalNoticeConditionsRepository;
+
+	public List<PermitRenewalConditions> findAllRenewalConditionsByType(ConditionType type) {
+		return renewalNoticeConditionsRepository.findByTypeOrderByOrderNumberAsc(type);
+	}
+
+	public List<PermitRenewalConditions> findAllConditionsByRenewalAndType(PermitRenewal renewal, ConditionType type) {
+		return renewalNoticeConditionsRepository.findByRenewalAndTypeOrderByOrderNumberAsc(renewal, type);
+	}
+
+	@Transactional
+	public void delete(List<PermitRenewalConditions> renewalNoticeConditions) {
+		renewalNoticeConditionsRepository.deleteInBatch(renewalNoticeConditions);
+	}
+
 }

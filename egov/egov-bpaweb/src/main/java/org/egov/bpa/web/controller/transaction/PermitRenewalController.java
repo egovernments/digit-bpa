@@ -47,18 +47,29 @@
 
 package org.egov.bpa.web.controller.transaction;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewalConditions;
 import org.egov.bpa.transaction.entity.WorkflowBean;
+import org.egov.bpa.transaction.entity.common.NoticeCondition;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
+import org.egov.bpa.transaction.service.PermitRenewalConditionsService;
 import org.egov.bpa.transaction.service.PermitRenewalService;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.eis.entity.Assignment;
@@ -98,6 +109,7 @@ public class PermitRenewalController extends BpaGenericApplicationController {
     private static final String AMOUNT_RULE = "amountRule";
     private static final String MSG_APPROVE_FORWARD_REGISTRATION = "msg.approve.success";
     private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
+    private static final String MSG_REJECT_FORWARD_REGISTRATION = "msg.reject.forward.registration";
 
     @Autowired
     private BpaNoticeUtil bpaNoticeUtil;
@@ -105,6 +117,8 @@ public class PermitRenewalController extends BpaGenericApplicationController {
     private PermitRenewalService permitRenewalService;
     @Autowired
     private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
+    @Autowired
+    private PermitRenewalConditionsService renewalConditionsService;
 
     @GetMapping("/update/{applicationNumber}")
     public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
@@ -115,8 +129,8 @@ public class PermitRenewalController extends BpaGenericApplicationController {
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), permitRenewal.getCurrentState(),
                         permitRenewal.getStateHistory()));
-        model.addAttribute(PERMIT_RENEWAL, permitRenewal);
         loadFormData(permitRenewal, model);
+        model.addAttribute(PERMIT_RENEWAL, permitRenewal);
         return "permit-renewal-update";
     }
 
@@ -125,12 +139,14 @@ public class PermitRenewalController extends BpaGenericApplicationController {
         workflowContainer.setAdditionalRule(renewal.getParent().getApplicationType().getName());
         workflowContainer.setPendingActions(renewal.getState().getNextAction());
         prepareWorkflow(model, renewal, workflowContainer);
+        buildRejectionReasons(model, renewal);
         model.addAttribute("stateType", renewal.getClass().getSimpleName());
         model.addAttribute("pendingActions", workflowContainer.getPendingActions());
         model.addAttribute("currentState", renewal.getCurrentState().getValue());
         model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
         model.addAttribute(ADDITIONALRULE, workflowContainer.getAdditionalRule());
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
+        
         model.addAttribute("workFlowBoundary",
                 bpaUtils.getBoundaryForWorkflow(renewal.getParent().getSiteDetail().get(0)).getId());
         model.addAttribute("electionBoundary", renewal.getParent().getSiteDetail().get(0).getElectionBoundary() != null
@@ -177,6 +193,13 @@ public class PermitRenewalController extends BpaGenericApplicationController {
                             : user.getUsername().concat("~")
                                     .concat(getDesinationNameByPosition(pos)),
                     permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale());
+        else if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+        	message = messageSource.getMessage(MSG_REJECT_FORWARD_REGISTRATION, new String[] {
+        			user == null ? ""
+                            : user.getUsername().concat("~")
+                                    .concat(getDesinationNameByPosition(ownerPosition)),
+                                    permitRenewal.getApplicationNumber(), request.getParameter(APPROVAL_COMENT) }, LocaleContextHolder.getLocale());
+        }
         else {
             message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
                     user == null ? ""
@@ -199,6 +222,63 @@ public class PermitRenewalController extends BpaGenericApplicationController {
                 workflowHistoryService.getHistory(Collections.emptyList(), permitRenewal.getCurrentState(),
                         permitRenewal.getStateHistory()));
         return "permit-renewal-result";
+    }
+    
+    private void buildRejectionReasons(Model model, PermitRenewal permitRenewal) {
+        if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(permitRenewal.getStatus().getCode())
+                || (APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(permitRenewal.getStatus().getCode())
+                        && APPLICATION_STATUS_SECTION_CLRK_APPROVED.equalsIgnoreCase(permitRenewal.getCurrentState().getValue()))) {
+            model.addAttribute("showRejectionReasons", true);
+            List<ChecklistServiceTypeMapping> additionalRejectionReasonList = checklistServiceTypeService
+                    .findByActiveChecklistAndServiceType(permitRenewal.getParent().getServiceType().getDescription(),
+                            "ADDITIONALREJECTIONREASONS");
+
+            List<ChecklistServiceTypeMapping> rejectionReasonList = checklistServiceTypeService
+                    .findByActiveChecklistAndServiceType(
+                    		permitRenewal.getParent().getServiceType().getDescription(), "RENEWALREJECTIONREASONS");
+
+            List<PermitRenewalConditions> rejectionApplnPermitConditions = new ArrayList<>();
+            List<PermitRenewalConditions> rejectionReasons = renewalConditionsService
+                    .findAllConditionsByRenewalAndType(permitRenewal, ConditionType.REJECTIONREASONS);
+            if (rejectionReasons == null || rejectionReasons.isEmpty()) {
+                for (ChecklistServiceTypeMapping checklistServicetype : rejectionReasonList) {
+                	PermitRenewalConditions condition = new PermitRenewalConditions();
+                    NoticeCondition noticeCondtion = new NoticeCondition();
+                    noticeCondtion.setChecklistServicetype(checklistServicetype);
+                    condition.setNoticeCondition(noticeCondtion);
+                    condition.setPermitRenewal(permitRenewal);
+                    rejectionApplnPermitConditions.add(condition);
+                }
+                permitRenewal.setRejectionReasonsTemp(rejectionApplnPermitConditions);
+            } else {
+                for (PermitRenewalConditions prc : permitRenewal.getRejectionReasons()) {
+                    if (prc.getNoticeCondition().getType().name().equals("REJECTIONREASONS"))
+                        rejectionApplnPermitConditions.add(prc);
+                }
+                permitRenewal.setRejectionReasonsTemp(rejectionApplnPermitConditions);
+            }
+
+            List<PermitRenewalConditions> additionalRejectionRenewalConditions = new ArrayList<>();
+            List<PermitRenewalConditions> additionalRejectionReasons = renewalConditionsService
+                    .findAllConditionsByRenewalAndType(permitRenewal, ConditionType.ADDITIONALREJECTIONREASONS);
+            if (additionalRejectionReasons == null || additionalRejectionReasons.isEmpty()) {
+                for (ChecklistServiceTypeMapping checklistServicetype : additionalRejectionReasonList) {
+                	PermitRenewalConditions condition = new PermitRenewalConditions();
+                    NoticeCondition noticeCondtion = new NoticeCondition();
+                    noticeCondtion.setChecklistServicetype(checklistServicetype);
+                    condition.setNoticeCondition(noticeCondtion);
+                    condition.setPermitRenewal(permitRenewal);
+                    additionalRejectionRenewalConditions.add(condition);
+                }
+                permitRenewal.setAdditionalRejectReasonsTemp(additionalRejectionRenewalConditions);
+            } else {
+                for (PermitRenewalConditions apc : permitRenewal.getAdditionalRenewalConditions()) {
+                    if (apc.getNoticeCondition().getType().name().equals("ADDITIONALREJECTIONREASONS"))
+                    	additionalRejectionRenewalConditions.add(apc);
+                }
+                permitRenewal.setAdditionalRejectReasonsTemp(additionalRejectionRenewalConditions);
+            }
+        }
     }
 
 }

@@ -44,10 +44,18 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.bpa.transaction.repository;
 
-package org.egov.bpa.transaction.entity.enums;
+import org.egov.bpa.transaction.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewalNotice;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-public enum ConditionType {
-   /* STATIC_PERMITCONDITION, DYNAMIC_PERMITCONDITION, ADDITIONAL_PERMITCONDITION, REJECTION_REASON;*/
-	NOCCONDITIONS,GENERALCONDITIONS,REJECTIONREASONS,ADDITIONALREJECTIONREASONS,ADDITIONALCONDITIONS,OCREJECTIONREASONS,PERMITDEFAULTCONDITIONS,RENEWALREJECTIONREASONS;
+@Repository
+public interface PermitRenewalNoticeRepository extends JpaRepository<PermitRenewalNotice, Long> {
+
+    @Query("select prn from PermitRenewalNotice prn where prn.permitRenewal = :permitRenewal and prn.noticeCommon.noticeType = :noticeType ")
+    PermitRenewalNotice findByRenewAndNoticeType(@Param("permitRenewal") PermitRenewal permitRenewal, @Param("noticeType") String noticeType);
 }

@@ -2,7 +2,7 @@
  * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *  Copyright (C) <2019>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -45,9 +45,37 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.bpa.transaction.entity.enums;
+package org.egov.bpa.transaction.notice.impl;
 
-public enum ConditionType {
-   /* STATIC_PERMITCONDITION, DYNAMIC_PERMITCONDITION, ADDITIONAL_PERMITCONDITION, REJECTION_REASON;*/
-	NOCCONDITIONS,GENERALCONDITIONS,REJECTIONREASONS,ADDITIONALREJECTIONREASONS,ADDITIONALCONDITIONS,OCREJECTIONREASONS,PERMITDEFAULTCONDITIONS,RENEWALREJECTIONREASONS;
+import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
+import static org.egov.bpa.utils.BpaConstants.BPA_REJECTION_NOTICE_TYPE;
+
+import java.io.IOException;
+
+import org.egov.bpa.transaction.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewalNotice;
+import org.egov.bpa.transaction.notice.util.RenewalNoticeUtil;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+@Service
+@Transactional(readOnly = true)
+public class PermitRenewalRejectionNoticeService {
+	
+    @Autowired
+    private RenewalNoticeUtil noticeUtil;
+
+    public ReportOutput generateNotice(PermitRenewal permitRenewal) throws IOException {
+        String fileName = "renewal_rejection_notice_" + permitRenewal.getApplicationNumber();
+        PermitRenewalNotice renewalNotice = noticeUtil.findByPermitRenewalAndNoticeType(permitRenewal, BPA_REJECTION_NOTICE_TYPE);
+        ReportOutput reportOutput = noticeUtil.getReportOutput(permitRenewal, fileName, renewalNotice, BPAREJECTIONFILENAME,
+                BPA_REJECTION_NOTICE_TYPE, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        reportOutput.setReportFormat(ReportFormat.PDF);
+        return reportOutput;
+    }
 }
