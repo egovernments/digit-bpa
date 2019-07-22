@@ -90,6 +90,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/citizen/application")
 public class CitizenPermitRenewalController {
 
+    private static final String PERMIT_RENEWAL_CITIZEN_UPDATE = "permit-renewal-citizen-update";
     private static final String PERMIT_RENEWAL_CITIZEN_NEW = "permit-renewal-citizen-new";
     private static final String APPLICATION_SUCCESS = "application-success";
     private static final String PERMIT_RENEWAL = "permitRenewal";
@@ -168,6 +169,14 @@ public class CitizenPermitRenewalController {
     @GetMapping("/permit/renewal/update/{applicationNumber}")
     public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
         PermitRenewal permitRenewal = permitRenewalService.findByApplicationNumber(applicationNumber);
+        prepareUpdateFormData(model, permitRenewal);
+        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(permitRenewal.getStatus().getCode()))
+            return PERMIT_RENEWAL_CITIZEN_UPDATE;
+        else
+            return "permit-renewal-citizen-view";
+    }
+
+    private void prepareUpdateFormData(final Model model, PermitRenewal permitRenewal) {
         model.addAttribute("permitExpiryDate", bpaNoticeUtil.calculateCertExpryDate(
                 new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
                 permitRenewal.getParent().getServiceType().getValidity()));
@@ -176,10 +185,6 @@ public class CitizenPermitRenewalController {
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), permitRenewal.getCurrentState(),
                         permitRenewal.getStateHistory()));
-        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(permitRenewal.getStatus().getCode()))
-            return "permit-renewal-citizen-update";
-        else
-            return "permit-renewal-citizen-view";
     }
 
     @PostMapping("/permit/renewal/update/{applicationNumber}")
@@ -194,6 +199,8 @@ public class CitizenPermitRenewalController {
             if (!isRenewalAllowed) {
                 model.addAttribute("errorMsg", messageSource.getMessage("msg.renewal.not.allowed",
                         new String[] {}, LocaleContextHolder.getLocale()));
+                prepareUpdateFormData(model, permitRenewal);
+                return PERMIT_RENEWAL_CITIZEN_UPDATE;
             }
         }
         Long approvalPosition = null;

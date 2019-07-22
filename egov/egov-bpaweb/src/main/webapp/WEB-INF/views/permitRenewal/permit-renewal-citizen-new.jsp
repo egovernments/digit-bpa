@@ -54,6 +54,13 @@
 
 <div class="row">
 	<div class="col-md-12">
+		<c:if test="${errorMsg ne null}">
+			<div class="panel-heading custom_form_panel_heading">
+				<div class="panel-title text-center no-float">
+					<strong class="error-msg">${errorMsg}</strong>
+				</div>
+			</div>
+		</c:if>
 		<form:form role="form" action="create" method="post"
 			modelAttribute="permitRenewal" id="permitRenewalInitiateForm"
 			cssClass="form-horizontal form-groups-bordered"

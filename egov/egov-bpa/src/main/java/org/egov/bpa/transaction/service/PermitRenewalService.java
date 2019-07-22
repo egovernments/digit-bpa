@@ -158,7 +158,7 @@ public class PermitRenewalService {
         String permitExpiryDateStr = bpaNoticeUtil.calculateCertExpryDate(
                 new DateTime(permit.getPlanPermissionDate()), permit.getServiceType().getValidity());
         Integer noOfDaysAllowed = bpaAppConfigUtil.getDaysMaxAllowedAfterPermitRenewalExpired();
-        DateTime permitExpiryDate = new DateTime(permitExpiryDateStr);
+        DateTime permitExpiryDate = new DateTime(DateUtils.toDateUsingDefaultPattern(permitExpiryDateStr));
         DateTimeFormatter fmt = DateUtils.defaultDateFormatter();
         return fmt.print(permitExpiryDate.plusDays(noOfDaysAllowed));
     }
@@ -173,7 +173,7 @@ public class PermitRenewalService {
         String permitExpiryDateStr = bpaNoticeUtil.calculateCertExpryDate(
                 new DateTime(permit.getPlanPermissionDate()), permit.getServiceType().getValidity());
         Integer noOfDaysPriorAllowed = bpaAppConfigUtil.getDaysPriorPermitRenewalCanApply();
-        DateTime permitExpiryDate = new DateTime(permitExpiryDateStr);
+        DateTime permitExpiryDate = new DateTime(DateUtils.toDateUsingDefaultPattern(permitExpiryDateStr));
         DateTimeFormatter fmt = DateUtils.defaultDateFormatter();
         return fmt.print(permitExpiryDate.minusDays(noOfDaysPriorAllowed));
     }
