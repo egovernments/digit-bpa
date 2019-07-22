@@ -183,9 +183,19 @@ public class CitizenPermitRenewalController {
     }
 
     @PostMapping("/permit/renewal/update/{applicationNumber}")
-    public String updatePermitRenewalDetails(@ModelAttribute PermitRenewal permitRenewal, final HttpServletRequest request,
+    public String updatePermitRenewalDetails(@ModelAttribute PermitRenewal permitRenewal, @PathVariable String applicationNumber,
+            final HttpServletRequest request,
             final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
+        boolean isPermitExt = permitRenewalService.isPermitExtension(permitRenewal.getParent().getPlanPermissionNumber());
+        if (!isPermitExt) {
+            boolean isRenewalAllowed = permitRenewalService
+                    .isPermitRenewalRequestCanAllowed(permitRenewal.getParent().getPlanPermissionNumber());
+            if (!isRenewalAllowed) {
+                model.addAttribute("errorMsg", messageSource.getMessage("msg.renewal.not.allowed",
+                        new String[] {}, LocaleContextHolder.getLocale()));
+            }
+        }
         Long approvalPosition = null;
         WorkflowBean wfBean = new WorkflowBean();
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));

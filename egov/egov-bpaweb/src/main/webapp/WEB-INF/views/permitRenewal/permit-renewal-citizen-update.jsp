@@ -54,7 +54,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" action="update" method="post"
+		<form:form role="form" action="/bpa/citizen/application/permit/renewal/update/${permitRenewal.applicationNumber}" method="post"
 			modelAttribute="permitRenewal" id="permitRenewalInitiateForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">

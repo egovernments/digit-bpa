@@ -42,6 +42,7 @@ package org.egov.bpa.transaction.service;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.RENEWALSTATUS_MODULETYPE;
+import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
 import java.util.Date;
@@ -50,12 +51,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.bpa.service.es.PermitRenewalIndexService;
+import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
+import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.repository.PermitRenewalRepository;
+import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.DateUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,6 +88,10 @@ public class PermitRenewalService {
     private BpaWorkflowRedirectUtility bpaWorkflowRedirectUtility;
     @Autowired
     private BpaStatusService bpaStatusService;
+    @Autowired
+    private BpaNoticeUtil bpaNoticeUtil;
+    @Autowired
+    private BpaAppConfigUtil bpaAppConfigUtil;
 
     @Transactional
     public PermitRenewal save(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
@@ -96,10 +107,10 @@ public class PermitRenewalService {
         permitRenewalIndexService.createPermitRenewalIndex(renewalResponse);
         return renewalResponse;
     }
-    
+
     @Transactional
     public void savePermitRenewal(PermitRenewal permitRenewal) {
-    	permitRenewalRepository.saveAndFlush(permitRenewal);
+        permitRenewalRepository.saveAndFlush(permitRenewal);
     }
 
     private void buildDocuments(final PermitRenewal permitRenewal) {
@@ -113,6 +124,10 @@ public class PermitRenewalService {
 
     @Transactional
     public PermitRenewal update(PermitRenewal permitRenewal, final WorkflowBean wfBean) {
+        if (WF_APPROVE_BUTTON.equals(wfBean.getWorkFlowAction())) {
+            permitRenewal.setRenewalApprovalDate(new Date());
+            permitRenewal.setRenewalNumber(permitRenewal.getParent().getPlanPermissionNumber());
+        }
         PermitRenewal permitRenewalRes = permitRenewalRepository.save(permitRenewal);
         bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(permitRenewal, wfBean);
         permitRenewalIndexService.updateIndexes(permitRenewalRes);
@@ -131,6 +146,36 @@ public class PermitRenewalService {
 
     public PermitRenewal findByRevocationNumber(final String renewalNumber) {
         return permitRenewalRepository.findByRenewalNumber(renewalNumber);
+    }
+
+    public boolean isPermitRenewalRequestCanAllowed(final String permitNumber) {
+        final BpaApplication permit = applicationBpaService.findByPermitNumber(permitNumber);
+        Date maxAllowedRenewalDate = DateUtils.toDateUsingDefaultPattern(getMaxAllowedDateForRenewalAfterExpiry(permit));
+        return new Date().before(maxAllowedRenewalDate);
+    }
+
+    private String getMaxAllowedDateForRenewalAfterExpiry(final BpaApplication permit) {
+        String permitExpiryDateStr = bpaNoticeUtil.calculateCertExpryDate(
+                new DateTime(permit.getPlanPermissionDate()), permit.getServiceType().getValidity());
+        Integer noOfDaysAllowed = bpaAppConfigUtil.getDaysMaxAllowedAfterPermitRenewalExpired();
+        DateTime permitExpiryDate = new DateTime(permitExpiryDateStr);
+        DateTimeFormatter fmt = DateUtils.defaultDateFormatter();
+        return fmt.print(permitExpiryDate.plusDays(noOfDaysAllowed));
+    }
+
+    public boolean isPermitExtension(final String permitNumber) {
+        final BpaApplication permit = applicationBpaService.findByPermitNumber(permitNumber);
+        Date minAllowedRenewalDate = DateUtils.toDateUsingDefaultPattern(getMinAllowedDateForRenewalPriorExpiry(permit));
+        return new Date().before(minAllowedRenewalDate);
+    }
+
+    private String getMinAllowedDateForRenewalPriorExpiry(final BpaApplication permit) {
+        String permitExpiryDateStr = bpaNoticeUtil.calculateCertExpryDate(
+                new DateTime(permit.getPlanPermissionDate()), permit.getServiceType().getValidity());
+        Integer noOfDaysPriorAllowed = bpaAppConfigUtil.getDaysPriorPermitRenewalCanApply();
+        DateTime permitExpiryDate = new DateTime(permitExpiryDateStr);
+        DateTimeFormatter fmt = DateUtils.defaultDateFormatter();
+        return fmt.print(permitExpiryDate.minusDays(noOfDaysPriorAllowed));
     }
 
 }
