@@ -52,7 +52,7 @@
 <div class="form-group">
 	<div class="col-sm-9 col-sm-offset-2">
 		<div class="checkbox view-content">
-			<input type="checkbox" name="acceptance" required="required">
+			<input type="checkbox" name="acceptance" id="acceptance">
 			<span class="mandatory"></span>&nbsp;
 			<spring:message code="lbl.permit.renewal.accpt" />
 			<ul style="list-style-type: none; padding-left: 10px">

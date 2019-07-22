@@ -41,6 +41,10 @@
 
 jQuery(document).ready(function ($) {
 
+	
+	if($('#feePending').val() && $('#feePending').val() === 'true') {
+		bootbox.alert($('#feePendingMsg').val());
+	}
     //toggle between multiple tab
     jQuery('form').validate({
         ignore: ".ignore",
@@ -116,6 +120,7 @@ jQuery(document).ready(function ($) {
 
     $('#prSave').click(function (e) {
         var button = $('#prSave').val();
+        $('#acceptance').removeAttr('required');
         if (validateFormOnSave(button, validator)) {
             bootbox
                 .dialog({
@@ -148,6 +153,7 @@ jQuery(document).ready(function ($) {
 
     $('#prSubmit').click(function (e) {
         var button = $('#prSubmit').val();
+        $('#acceptance').attr('required', 'required');
         if (validateFormOnSubmit(button, validator)) {
             bootbox
                 .dialog({

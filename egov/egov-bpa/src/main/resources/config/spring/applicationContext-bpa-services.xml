@@ -50,6 +50,10 @@
 		class="org.egov.bpa.transaction.service.collection.OccupancyCertificateBillable"
 		scope="prototype" />
 
+	<bean id="permitRenewalBillable"
+		class="org.egov.bpa.transaction.service.collection.PermitRenewalBillable"
+		scope="prototype" />
+
 	<bean id="BpaApplicationInboxRenderService"
 		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
 		<constructor-arg index="0"
@@ -92,9 +96,11 @@
 	<bean id="BPASHCollectionsInterface"
 		class="org.egov.bpa.transaction.service.collection.StakeHolderTaxCollection" />
 
-
 	<bean id="OCCollectionsInterface"
 		class="org.egov.bpa.transaction.service.collection.OccupancyCertificateTaxCollection" />
+
+	<bean id="PRCollectionsInterface"
+		class="org.egov.bpa.transaction.service.collection.PermitRenewalTaxCollection" />
 
 	<bean id="bpaApplicationWorkflowCustomDefaultImpl"
 		class="org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl" />
@@ -117,7 +123,7 @@
 		<constructor-arg name="type"
 			value="org.egov.bpa.transaction.entity.InspectionApplication" />
 	</bean>
-	
+
 	<bean id="permitRenewalWorkflowCustomDefaultImpl"
 		class="org.egov.bpa.transaction.workflow.permitrenewal.PermitRenewalWorkflowCustomDefaultImpl" />
 
@@ -126,7 +132,7 @@
 		<constructor-arg index="0"
 			ref="PermitRenewalPersistenceService" />
 	</bean>
-	
+
 	<bean id="PermitRenewalPersistenceService"
 		parent="abstractPersistenceService">
 		<constructor-arg name="type"

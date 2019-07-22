@@ -43,6 +43,7 @@ package org.egov.bpa.transaction.repository;
 import java.util.List;
 
 import org.egov.bpa.transaction.entity.PermitRenewal;
+import org.egov.demand.model.EgDemand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -58,5 +59,7 @@ public interface PermitRenewalRepository extends JpaRepository<PermitRenewal, Lo
     PermitRenewal findByRenewalNumber(String renewalNumber);
 
     PermitRenewal findByApplicationNumber(String applicationNumber);
+
+    PermitRenewal findByDemand(EgDemand demand);
 
 }

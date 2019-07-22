@@ -48,12 +48,12 @@
 
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <script>
 	function validateWorkFlowApprover(name) {
 		document.getElementById("workFlowAction").value = name;
 		//alert(name);
-		console.log(document.getElementById("workFlowAction").value );
+		console.log(document.getElementById("workFlowAction").value);
 		var approverPosId = document.getElementById("approvalPosition");
 		/* if(approverPosId && approverPosId.value != -1) {
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
@@ -61,14 +61,14 @@
 			validateWorkFlowApprover('Forward');
 		}   */
 		var rejectbutton = document.getElementById("workFlowAction").value;
-		
+
 		if (rejectbutton != null && rejectbutton == 'Reject') {
 			removeMandatory();
 			$('#approvalComent').attr('required', 'required');
-		} else if(rejectbutton !=null && rejectbutton == 'Revoke Permit'){
-		 	removeMandatory();
-		    $('#approvalComent').attr('required', 'required');
-		    return false;
+		} else if (rejectbutton != null && rejectbutton == 'Revoke Permit') {
+			removeMandatory();
+			$('#approvalComent').attr('required', 'required');
+			return false;
 		} else if (rejectbutton != null && rejectbutton == 'CANCEL APPLICATION') {
 			removeMandatory();
 			$('#approvalComent').removeAttr('required');
@@ -95,12 +95,15 @@
 <div class="buttonbottom" align="center">
 	<table>
 		<tr>
-			<td>
-		<c:forEach items="${validActionList}" var="validButtons">
-				<form:button type="submit" id="${validButtons}" class="btn workAction btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
-						<c:out value="${validButtons}" /> </form:button>
-			</c:forEach>
-				<input type="button" name="button2" id="button2" value="Close"
+			<td><c:forEach items="${validActionList}" var="validButtons">
+					<c:if test="${validButtons ne ''}">
+						<form:button type="submit" id="${validButtons}"
+							class="btn workAction btn-primary" value="${validButtons}"
+							onclick="validateWorkFlowApprover('${validButtons}');">
+							<c:out value="${validButtons}" />
+						</form:button>
+					</c:if>
+				</c:forEach> <input type="button" name="button2" id="button2" value="Close"
 				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>
 	</table>

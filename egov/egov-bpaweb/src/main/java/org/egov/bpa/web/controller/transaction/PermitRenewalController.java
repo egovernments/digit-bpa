@@ -144,7 +144,7 @@ public class PermitRenewalController extends BpaGenericApplicationController {
         model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
         model.addAttribute(ADDITIONALRULE, workflowContainer.getAdditionalRule());
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
-
+        model.addAttribute("feePending", bpaUtils.checkAnyTaxIsPendingToCollect(renewal.getDemand()));
         model.addAttribute("workFlowBoundary",
                 bpaUtils.getBoundaryForWorkflow(renewal.getParent().getSiteDetail().get(0)).getId());
         model.addAttribute("electionBoundary", renewal.getParent().getSiteDetail().get(0).getElectionBoundary() != null

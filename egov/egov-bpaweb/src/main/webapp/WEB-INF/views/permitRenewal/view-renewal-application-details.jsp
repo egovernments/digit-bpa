@@ -94,7 +94,7 @@
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.permit.renewal.doc.upload" />
 		</div>
-		<div class="col-sm-9 add-margin view-content">
+		<div class="col-sm-3 add-margin view-content">
 			<c:set value="false" var="isDocFound"></c:set>
 			<c:forEach var="renewalFile"
 				items="${permitRenewal.permitRenewalDocs}" varStatus="renewLoop">
@@ -108,6 +108,12 @@
                                 </c:if>
 			</c:forEach>
 			<c:if test="${!isDocFound}"> N/A </c:if>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.renewal.fee" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${permitRenewal.demand.baseDemand}" default="N/A"></c:out>
 		</div>
 	</div>
 </div>

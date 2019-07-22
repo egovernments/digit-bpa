@@ -74,6 +74,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.ConstructionStages;
 import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -126,6 +127,10 @@ public class PermitRenewal extends StateAware<Position> {
     private Date permitRenewalExpiryDate;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "demand")
+    private EgDemand demand;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "status")
     private BpaStatus status;
 
@@ -139,10 +144,10 @@ public class PermitRenewal extends StateAware<Position> {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egbpa_permit_renewal_documents", joinColumns = @JoinColumn(name = "permitrenewal"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> permitRenewalDocs = Collections.emptySet();
-    
+
     @OneToMany(mappedBy = "permitRenewal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PermitRenewalNotice> renewalNotices = new ArrayList<>(0);
-    
+
     @OneToMany(mappedBy = "permitRenewal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PermitRenewalConditions> rejectionReasons = new ArrayList<>(0);
     @OrderBy(ORDER_BY_ID_ASC)
@@ -238,6 +243,14 @@ public class PermitRenewal extends StateAware<Position> {
         this.permitRenewalExpiryDate = permitRenewalExpiryDate;
     }
 
+    public EgDemand getDemand() {
+        return demand;
+    }
+
+    public void setDemand(EgDemand demand) {
+        this.demand = demand;
+    }
+
     public BpaStatus getStatus() {
         return status;
     }
@@ -269,18 +282,18 @@ public class PermitRenewal extends StateAware<Position> {
     public void setPermitRenewalDocs(Set<FileStoreMapper> permitRenewalDocs) {
         this.permitRenewalDocs = permitRenewalDocs;
     }
-    
+
     public void addRenewalNotice(PermitRenewalNotice renewalNotice) {
         this.renewalNotices.add(renewalNotice);
     }
 
-	public List<PermitRenewalNotice> getRenewalNotices() {
-		return renewalNotices;
-	}
+    public List<PermitRenewalNotice> getRenewalNotices() {
+        return renewalNotices;
+    }
 
-	public void setRenewalNotices(List<PermitRenewalNotice> renewalNotices) {
-		this.renewalNotices = renewalNotices;
-	}
+    public void setRenewalNotices(List<PermitRenewalNotice> renewalNotices) {
+        this.renewalNotices = renewalNotices;
+    }
 
     public MultipartFile[] getFiles() {
         return files;
@@ -314,36 +327,36 @@ public class PermitRenewal extends StateAware<Position> {
         this.approvalComent = approvalComent;
     }
 
-	public List<PermitRenewalConditions> getRejectionReasons() {
-		return rejectionReasons;
-	}
+    public List<PermitRenewalConditions> getRejectionReasons() {
+        return rejectionReasons;
+    }
 
-	public void setRejectionReasons(List<PermitRenewalConditions> rejectionReasons) {
-		this.rejectionReasons = rejectionReasons;
-	}
+    public void setRejectionReasons(List<PermitRenewalConditions> rejectionReasons) {
+        this.rejectionReasons = rejectionReasons;
+    }
 
-	public List<PermitRenewalConditions> getRejectionReasonsTemp() {
-		return rejectionReasonsTemp;
-	}
+    public List<PermitRenewalConditions> getRejectionReasonsTemp() {
+        return rejectionReasonsTemp;
+    }
 
-	public void setRejectionReasonsTemp(List<PermitRenewalConditions> rejectionReasonsTemp) {
-		this.rejectionReasonsTemp = rejectionReasonsTemp;
-	}
+    public void setRejectionReasonsTemp(List<PermitRenewalConditions> rejectionReasonsTemp) {
+        this.rejectionReasonsTemp = rejectionReasonsTemp;
+    }
 
-	public List<PermitRenewalConditions> getAdditionalRejectReasonsTemp() {
-		return additionalRejectReasonsTemp;
-	}
+    public List<PermitRenewalConditions> getAdditionalRejectReasonsTemp() {
+        return additionalRejectReasonsTemp;
+    }
 
-	public void setAdditionalRejectReasonsTemp(List<PermitRenewalConditions> additionalRejectReasonsTemp) {
-		this.additionalRejectReasonsTemp = additionalRejectReasonsTemp;
-	}
+    public void setAdditionalRejectReasonsTemp(List<PermitRenewalConditions> additionalRejectReasonsTemp) {
+        this.additionalRejectReasonsTemp = additionalRejectReasonsTemp;
+    }
 
-	public List<PermitRenewalConditions> getAdditionalRenewalConditions() {
-		return additionalRenewalConditions;
-	}
+    public List<PermitRenewalConditions> getAdditionalRenewalConditions() {
+        return additionalRenewalConditions;
+    }
 
-	public void setAdditionalRenewalConditions(List<PermitRenewalConditions> additionalRenewalConditions) {
-		this.additionalRenewalConditions = additionalRenewalConditions;
-	}
+    public void setAdditionalRenewalConditions(List<PermitRenewalConditions> additionalRenewalConditions) {
+        this.additionalRenewalConditions = additionalRenewalConditions;
+    }
 
 }

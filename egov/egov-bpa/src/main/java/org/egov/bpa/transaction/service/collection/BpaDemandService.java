@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -89,21 +90,39 @@ public class BpaDemandService {
     private DemandGenericDao demandGenericDao;
     @PersistenceContext
     private EntityManager entityManager;
-    
-	@Autowired
-	private EgDemandReasonMasterDao egDemandReasonMasterDao;
-	
-	@Autowired
-	private EgDemandReasonDao egDemandReasonDao;
+
+    @Autowired
+    private EgDemandReasonMasterDao egDemandReasonMasterDao;
+
+    @Autowired
+    private EgDemandReasonDao egDemandReasonDao;
 
     @Autowired
     private InstallmentDao installmentDao;
-    
+
     @Autowired
     private BpaUtils bpaUtills;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
+    }
+
+    @Transactional
+    public EgDemand createDemandUsingDemandReasonCodes(EgDemand demand, Map<String, BigDecimal> demandReasonCodes) {
+
+        final Installment installment = getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date());
+        EgDemand dmd = demand == null ? buildDemandObject(new HashSet<EgDemandDetails>(), BigDecimal.ZERO,
+                installment)
+                : demand;
+        Set<EgDemandDetails> demandDetailsSet = dmd.getEgDemandDetails();
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (Map.Entry<String, BigDecimal> reasonCode : demandReasonCodes.entrySet()) {
+            demandDetailsSet.add(createDemandDetail(reasonCode.getKey(), reasonCode.getValue()));
+            totalAmount = totalAmount.add(reasonCode.getValue());
+        }
+        dmd.getEgDemandDetails().addAll(demandDetailsSet);
+        dmd.setBaseDemand(totalAmount);
+        return dmd;
     }
 
     @Transactional
@@ -136,7 +155,8 @@ public class BpaDemandService {
 
                 // DemandDetailid null mean, its a new fee details entered from UI.
                 if (feecodedemanddetailsIdmap.get(applicationFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getCode()) == null) {
-                    EgDemandDetails dmdDet = createDemandDetail(applicationFeeDtl.getBpaFeeMapping(), applicationFeeDtl.getAmount());
+                    EgDemandDetails dmdDet = createDemandDetail(applicationFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getCode(),
+                            applicationFeeDtl.getAmount());
                     if (dmdDet != null) {
                         dmdDet.setEgDemand(dmd);
                         dmd.getEgDemandDetails().add(dmdDet);
@@ -145,7 +165,8 @@ public class BpaDemandService {
 
                     for (EgDemandDetails dmdDtl : dmd.getEgDemandDetails()) {
                         if (dmdDtl.getId() != null && dmdDtl.getId()
-                                .equals(feecodedemanddetailsIdmap.get(applicationFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getCode()))) {
+                                .equals(feecodedemanddetailsIdmap
+                                        .get(applicationFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getCode()))) {
                             dmdDtl.setAmount(applicationFeeDtl.getAmount());
                             break;
                         }
@@ -154,9 +175,11 @@ public class BpaDemandService {
 
             } else {
                 if (null != feecodedemanddetailsIdmap.get(applicationFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getCode())) {
-                    delDmdDetailList.add(feecodedemanddetailsIdmap.get(applicationFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getCode())); // Delete from
-                                                                                                                  // the existing
-                                                                                                                  // list.
+                    delDmdDetailList
+                            .add(feecodedemanddetailsIdmap.get(applicationFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getCode())); // Delete
+                                                                                                                                   // from
+                    // the existing
+                    // list.
                 }
             }
 
@@ -178,11 +201,9 @@ public class BpaDemandService {
 
         dmd.setBaseDemand(totaldmdAmt);
 
-		/*
-		 * if (demand == null) { applicationFee.getApplication().setDemand(dmd);
-		 * 
-		 * }
-		 */
+        /*
+         * if (demand == null) { applicationFee.getApplication().setDemand(dmd); }
+         */
         return dmd;
     }
 
@@ -202,76 +223,66 @@ public class BpaDemandService {
     }
 
     @Transactional
-    public EgDemandDetails createDemandDetail(BpaFeeMapping feeDet, BigDecimal amount) {
+    public EgDemandDetails createDemandDetail(String demandReasonCode, BigDecimal amount) {
         EgDemandDetails dmdDet = new EgDemandDetails();
         dmdDet.setAmount(amount);
         dmdDet.setAmtCollected(BigDecimal.ZERO);
         dmdDet.setAmtRebate(BigDecimal.ZERO);
-        dmdDet.setEgDemandReason(getEgDemandReason(feeDet));
+        dmdDet.setEgDemandReason(getEgDemandReason(demandReasonCode));
         dmdDet.setCreateDate(new Date());
         dmdDet.setModifiedDate(new Date());
         return dmdDet;
     }
 
     @Transactional
-    public EgDemandReason getEgDemandReason(BpaFeeMapping bpaFee) {
+    public EgDemandReason getEgDemandReason(String demandResaonCode) {
         EgDemandReason egDemandReason;
         EgDemandReasonMaster egDemandReasonMaster;
         Module module = moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
-        egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(bpaFee.getBpaFeeCommon().getCode(), module);
-
-        /*
-         * if (egDemandReasonMaster == null) { egDemandReasonMaster = createEgDemandReasonMaster(bpaFee); }
-         */
-
+        egDemandReasonMaster = demandGenericDao.getDemandReasonMasterByCode(demandResaonCode, module);
         egDemandReason = demandGenericDao
                 .getDmdReasonByDmdReasonMsterInstallAndMod(egDemandReasonMaster,
                         getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date()),
                         module);
-
-        /*
-         * if (egDemandReason == null) { egDemandReason = createEgDemandReason(bpaFee, egDemandReasonMaster); }
-         */
-
         return egDemandReason;
     }
 
+    @Transactional
+    public EgDemandReasonMaster createEgDemandReasonMaster(BpaFeeCommon bpaFeeCommon) {
+        EgDemandReasonMaster egDmdRsnMstr = null;
+        Module module = moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
+        egDmdRsnMstr = (EgDemandReasonMaster) demandGenericDao.getDemandReasonMasterByCode(bpaFeeCommon.getCode(), module);
+        if (egDmdRsnMstr == null) {
+            egDmdRsnMstr = new EgDemandReasonMaster();
+            EgReasonCategory egRsnCategory = demandGenericDao.getReasonCategoryByCode(CATEGORY_FEE);
+            egDmdRsnMstr.setReasonMaster(bpaFeeCommon.getName());
+            egDmdRsnMstr.setCode(bpaFeeCommon.getCode());
+            egDmdRsnMstr.setEgModule(module);
+            egDmdRsnMstr.setOrderId(Long.valueOf("1"));
+            egDmdRsnMstr.setEgReasonCategory(egRsnCategory);
+            egDmdRsnMstr.setIsDebit("N");
+            egDmdRsnMstr.setIsDemand(Boolean.TRUE);
+            egDmdRsnMstr.setCreatedDate(new Date());
+            egDmdRsnMstr.setModifiedDate(new Date());
+            egDemandReasonMasterDao.create(egDmdRsnMstr);
 
-	@Transactional 
-    public EgDemandReasonMaster createEgDemandReasonMaster(BpaFeeCommon bpaFeeCommon) { 
-    	EgDemandReasonMaster egDmdRsnMstr =     null; 
-    	Module module = moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
-    	egDmdRsnMstr = (EgDemandReasonMaster)
-    	      demandGenericDao.getDemandReasonMasterByCode(bpaFeeCommon.getCode(), module); 
-    	if (egDmdRsnMstr == null) { 
-    		egDmdRsnMstr = new    EgDemandReasonMaster();
-    		EgReasonCategory egRsnCategory = demandGenericDao.getReasonCategoryByCode(CATEGORY_FEE);
-    	      egDmdRsnMstr.setReasonMaster(bpaFeeCommon.getName()); 
-    	      egDmdRsnMstr.setCode(bpaFeeCommon.getCode());
-    	      egDmdRsnMstr.setEgModule(module); 
-    	      egDmdRsnMstr.setOrderId(Long.valueOf("1"));
-    	      egDmdRsnMstr.setEgReasonCategory(egRsnCategory); egDmdRsnMstr.setIsDebit("N");
-    	      egDmdRsnMstr.setIsDemand(Boolean.TRUE);
-    	      egDmdRsnMstr.setCreatedDate(new Date()); egDmdRsnMstr.setModifiedDate(new Date()); 
-    	      egDemandReasonMasterDao.create(egDmdRsnMstr); 
+            createEgDemandReason(bpaFeeCommon, egDmdRsnMstr);
+        }
+        return egDmdRsnMstr;
+    }
 
-    	      createEgDemandReason(bpaFeeCommon, egDmdRsnMstr); 
-    	      } 
-    	return egDmdRsnMstr; 
-    	}
-
-	@Transactional
-	public EgDemandReason createEgDemandReason(BpaFeeCommon bpaFeeCommon, EgDemandReasonMaster egDemandReasonMaster) {
-		EgDemandReason egDmdRsn = new EgDemandReason();
-		egDmdRsn.setEgDemandReasonMaster(egDemandReasonMaster);
-		egDmdRsn.setEgInstallmentMaster(
-				getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date()));
-		egDmdRsn.setGlcodeId(bpaFeeCommon.getGlcode());
-		egDmdRsn.setCreateDate(new Date());
-		egDmdRsn.setModifiedDate(new Date());
-		egDemandReasonDao.create(egDmdRsn);
-		return egDmdRsn;
-	}
+    @Transactional
+    public EgDemandReason createEgDemandReason(BpaFeeCommon bpaFeeCommon, EgDemandReasonMaster egDemandReasonMaster) {
+        EgDemandReason egDmdRsn = new EgDemandReason();
+        egDmdRsn.setEgDemandReasonMaster(egDemandReasonMaster);
+        egDmdRsn.setEgInstallmentMaster(
+                getCurrentInstallment(BpaConstants.EGMODULE_NAME, BpaConstants.YEARLY, new Date()));
+        egDmdRsn.setGlcodeId(bpaFeeCommon.getGlcode());
+        egDmdRsn.setCreateDate(new Date());
+        egDmdRsn.setModifiedDate(new Date());
+        egDemandReasonDao.create(egDmdRsn);
+        return egDmdRsn;
+    }
 
     public Installment getCurrentInstallment(final String moduleName, final String installmentType, final Date date) {
         if (null == installmentType)
@@ -298,19 +309,19 @@ public class BpaDemandService {
                 }
         return pendingTaxCollection;
     }
-    
-    public Boolean checkIsReconciliationInProgressInOnline(final String applicationNumber) {
-    	return bpaUtills.checkIsReconciliationInProgress(applicationNumber);
-	}
 
-	public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason,
-			final Installment installment) {
-		final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
-		demandQuery.setString(0, demandReason);
-		demandQuery.setInteger(1, installment.getId());
-		return (EgDemandReason) demandQuery.uniqueResult();
-	}
-    
+    public Boolean checkIsReconciliationInProgressInOnline(final String applicationNumber) {
+        return bpaUtills.checkIsReconciliationInProgress(applicationNumber);
+    }
+
+    public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason,
+            final Installment installment) {
+        final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
+        demandQuery.setString(0, demandReason);
+        demandQuery.setInteger(1, installment.getId());
+        return (EgDemandReason) demandQuery.uniqueResult();
+    }
+
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
         final StringBuilder queryStringBuilder = new StringBuilder();
         queryStringBuilder
@@ -322,7 +333,7 @@ public class BpaDemandService {
         return getCurrentSession().createSQLQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId())
                 .list();
     }
-    
+
     public List<Object> getDmdCollAmtInstallmentWiseForRegFee(final EgDemand egDemand) {
         final StringBuilder queryStringBuilder = new StringBuilder();
         queryStringBuilder
@@ -348,37 +359,37 @@ public class BpaDemandService {
                 .add(Restrictions.or(Restrictions.isNull("endDate"), Restrictions.ge("endDate", new Date())));
         return feeCrit;
     }
-    
-    public Criteria createCriteriaforApplicationFeeAmount(List<Long> serviceTypeList, final String feeType, final FeeSubType feeSubType) {
+
+    public Criteria createCriteriaforApplicationFeeAmount(List<Long> serviceTypeList, final String feeType,
+            final FeeSubType feeSubType) {
 
         final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
                 .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
         feeCrit.add(Restrictions.in("servicetypeObj.id", serviceTypeList));
         if (feeType != null)
-            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType)); 
-        
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType));
+
         feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
         feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.PERMIT_APPLICATION));
         feeCrit.add(Restrictions.isNull("bpaFeeMap.applicationSubType"));
 
         return feeCrit;
     }
-   
+
     public Criteria createCriteriaforApplicationFee(Long serviceType, final String feeType, final FeeSubType feeSubType) {
 
         final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
                 .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
         feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
         if (feeType != null)
-            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType)); 
-        
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType));
+
         feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
         feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.PERMIT_APPLICATION));
 
-
         return feeCrit;
     }
-    
+
     public Criteria createCriteriaforRegistrationFeeAmount(final String feeType) {
 
         final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeDetail.class, "bpafeeDtl")
@@ -391,44 +402,44 @@ public class BpaDemandService {
                 .add(Restrictions.or(Restrictions.isNull("endDate"), Restrictions.ge("endDate", new Date())));
         return feeCrit;
     }
-    
+
     public Criteria createCriteriaforRegistrationFee(final String feeType) {
 
-    	final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
+        final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
                 .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
         if (feeType != null)
             feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType));
 
         return feeCrit;
     }
-    
-    public Criteria createCriteriaforOCApplicationFeeAmount(List<Long> serviceTypeList, final String feeType, final FeeSubType feeSubType) {
+
+    public Criteria createCriteriaforOCApplicationFeeAmount(List<Long> serviceTypeList, final String feeType,
+            final FeeSubType feeSubType) {
 
         final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
                 .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
         feeCrit.add(Restrictions.in("servicetypeObj.id", serviceTypeList));
         if (feeType != null)
-            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType)); 
-        
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType));
+
         feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
         feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
 
         return feeCrit;
     }
-    
+
     public Criteria createCriteriaforOCApplicationFee(Long serviceType, final String feeType, final FeeSubType feeSubType) {
 
         final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
                 .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
         feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
         if (feeType != null)
-            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType)); 
-        
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType));
+
         feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
         feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.OCCUPANCY_CERTIFICATE));
 
-
         return feeCrit;
     }
-    
+
 }

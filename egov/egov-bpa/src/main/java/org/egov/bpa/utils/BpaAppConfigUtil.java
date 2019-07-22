@@ -42,6 +42,7 @@ package org.egov.bpa.utils;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -60,6 +61,8 @@ public class BpaAppConfigUtil {
 
     private static final String PR_APPLY_PRIOR_DAYS_BEFORE_EXPIRY = "PERMIT_RENEWAL_APPLY_PRIOR_DAYS_BEFORE_EXPIRY";
     private static final String PR_ALLOWED_UPTO_AFTER_EXPIRY = "PERMIT_RENEWAL_ALLOWED_UPTO_AFTER_EXPIRY";
+    private static final String PERMIT_EXTENSION_FEE = "PERMIT_EXTENSION_FEE_IN_PERCENTAGE";
+    private static final String PERMIT_RENEWAL_FEE = "PERMIT_RENEWAL_FEE_IN_PERCENTAGE";
     @Autowired
     private AppConfigValueService appConfigValueService;
 
@@ -75,5 +78,13 @@ public class BpaAppConfigUtil {
 
     public Integer getDaysMaxAllowedAfterPermitRenewalExpired() {
         return Integer.valueOf(getAppconfigValueByKeyName(PR_ALLOWED_UPTO_AFTER_EXPIRY));
+    }
+    
+    public BigDecimal getPermitExtensionFeeInPercentage() {
+        return BigDecimal.valueOf(Double.valueOf(getAppconfigValueByKeyName(PERMIT_EXTENSION_FEE)));
+    }
+    
+    public BigDecimal getPermitRenewalFeeInPercentage() {
+        return BigDecimal.valueOf(Double.valueOf(getAppconfigValueByKeyName(PERMIT_RENEWAL_FEE)));
     }
 }

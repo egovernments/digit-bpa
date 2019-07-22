@@ -48,6 +48,7 @@
 package org.egov.bpa.web.controller.transaction.citizen;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
@@ -129,7 +130,7 @@ public class CitizenPermitRenewalController {
             final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
 
-        boolean isPermitExt = permitRenewalService.isPermitExtension(permitRenewal.getParent().getPlanPermissionNumber());
+        boolean isPermitExt = permitRenewalService.isPermitExtensionAllowed(permitRenewal.getParent().getPlanPermissionNumber());
         if (!isPermitExt) {
             boolean isRenewalAllowed = permitRenewalService
                     .isPermitRenewalRequestCanAllowed(permitRenewal.getParent().getPlanPermissionNumber());
@@ -185,6 +186,10 @@ public class CitizenPermitRenewalController {
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), permitRenewal.getCurrentState(),
                         permitRenewal.getStateHistory()));
+        model.addAttribute("feePending", bpaUtils.checkAnyTaxIsPendingToCollect(permitRenewal.getDemand()));
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
+        model.addAttribute("onlinePaymentEnable",
+                (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
     }
 
     @PostMapping("/permit/renewal/update/{applicationNumber}")
@@ -192,7 +197,7 @@ public class CitizenPermitRenewalController {
             final HttpServletRequest request,
             final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
-        boolean isPermitExt = permitRenewalService.isPermitExtension(permitRenewal.getParent().getPlanPermissionNumber());
+        boolean isPermitExt = permitRenewalService.isPermitExtensionAllowed(permitRenewal.getParent().getPlanPermissionNumber());
         if (!isPermitExt) {
             boolean isRenewalAllowed = permitRenewalService
                     .isPermitRenewalRequestCanAllowed(permitRenewal.getParent().getPlanPermissionNumber());

@@ -55,6 +55,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<input type="hidden" id="workFlowAction" name="workFlowAction" /> <input
+			type="hidden" id="feePending" value="${feePending}" /> <input
 			type="hidden" id="wfstateDesc" value="${permitRenewal.state.value}" />
 		<input type="hidden" name="citizenOrBusinessUser"
 			value="${citizenOrBusinessUser}"> <input type="hidden"
@@ -70,11 +71,22 @@
 		</div>
 	</div>
 	<div align="center">
+		<input type="hidden" id="onlinePaymentEnable"
+			value="${onlinePaymentEnable}">
+		<c:if test="${onlinePaymentEnable && feePending}">
+			<td><a
+				href="/bpa/application/permit/renewal/generate-bill/${permitRenewal.applicationNumber}"
+				class="btn btn-primary"> <spring:message
+						code='lbl.btn.pay.fee.online' />
+			</a>&nbsp;</td>
+		</c:if>
 		<input type="button" name="button2" value="Close"
 			class="btn btn-default" onclick="window.close();" />
 	</div>
+	<input type="hidden" id="feePendingMsg"
+		value="<spring:message code="msg.payfees.toprocess.appln"/>">
 </div>
 
 <script
-	src="<cdn:url value='/resources/js/app/permit-renewal/permit-renewal-new.js?rnd=${app_release_no}'/>"></script>
+	src="<cdn:url value='/resources/js/app/permit-renewal/citizen-permit-renewal-helper.js?rnd=${app_release_no}'/>"></script>
 

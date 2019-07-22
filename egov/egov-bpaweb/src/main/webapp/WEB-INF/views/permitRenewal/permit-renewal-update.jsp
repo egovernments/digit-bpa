@@ -54,6 +54,13 @@
 
 <div class="row">
 	<div class="col-md-12">
+		<c:if test="${feePending eq true}">
+			<div class="panel-heading custom_form_panel_heading">
+				<div class="panel-title text-center no-float">
+					<strong class="error-msg"><spring:message code="msg.collect.applnfees.toprocess.appln"/></strong>
+				</div>
+			</div>
+		</c:if>
 		<form:form role="form"
 			action="/bpa/application/permit/renewal/update-submit/${permitRenewal.applicationNumber}"
 			method="post" modelAttribute="permitRenewal"
@@ -105,9 +112,9 @@
 	value="<spring:message code='msg.confirm.reject.appln' />" />
 <input type="hidden" id="generateRejectNotice"
 	value="<spring:message code='msg.confirm.generate.rejection.notice' />" />
-<input type="hidden" id="rejectionReasonMandatory" 
-    value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
-	
+<input type="hidden" id="rejectionReasonMandatory"
+	value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
+
 
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

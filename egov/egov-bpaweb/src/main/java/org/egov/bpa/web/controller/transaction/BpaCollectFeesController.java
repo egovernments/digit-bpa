@@ -42,8 +42,10 @@ package org.egov.bpa.web.controller.transaction;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.PermitRenewalService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
@@ -60,72 +62,84 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/application")
 public class BpaCollectFeesController {
-	
-	private static final String COLLECT_ERROR_PAGE="collect-failure";
 
-	@Autowired
-    private  ApplicationBpaService applicationBpaService;
-	@Autowired
-    private  GenericBillGeneratorService genericBillGeneratorService;
-	@Autowired
-    private  BpaDemandService bpaDemandService;
-	@Autowired
-	private OccupancyCertificateService occupancyCertificateService;
-	@Autowired
-	private BpaUtils bpaUtils;
-	@Autowired
-	protected ResourceBundleMessageSource messageSource;
-	@Autowired
+    private static final String MSG_NOAMOUNT_TOCOLLECT = "msg.noamount.tocollect";
+
+    private static final String MESSAGE = "message";
+
+    private static final String COLLECT_ERROR_PAGE = "collect-failure";
+
+    @Autowired
+    private ApplicationBpaService applicationBpaService;
+    @Autowired
+    private GenericBillGeneratorService genericBillGeneratorService;
+    @Autowired
+    private BpaDemandService bpaDemandService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private BpaUtils bpaUtils;
+    @Autowired
+    protected ResourceBundleMessageSource messageSource;
+    @Autowired
     private StakeHolderService stakeHolderService;
-	
+    @Autowired
+    private PermitRenewalService permitRenewalService;
+
     @GetMapping("/bpageneratebill/{applicationCode}")
     public String showCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
-    	BpaApplication application=applicationBpaService.findByApplicationNumber(applicationCode);
-    	Boolean isBpaOnlineReConcilationPending = bpaDemandService.checkIsReconciliationInProgressInOnline(applicationCode);
-    	if(isBpaOnlineReConcilationPending){
-    		model.addAttribute("message", "For this application payment reconciliation is in progress, please wait for reconciliation process to end!!!!!!");
-    		return COLLECT_ERROR_PAGE;
-    	}
-    	Boolean bpaDuePresent=bpaDemandService.checkAnyTaxIsPendingToCollect(application);
-    	if(bpaDuePresent){
-    	return genericBillGeneratorService.generateBillAndRedirectToCollection(application, model);
-    	}
-    	else{
-    		model.addAttribute("message", messageSource.getMessage("msg.noamount.tocollect", null, null));
-    		return COLLECT_ERROR_PAGE;
-    	}
+        BpaApplication application = applicationBpaService.findByApplicationNumber(applicationCode);
+        Boolean isBpaOnlineReConcilationPending = bpaDemandService.checkIsReconciliationInProgressInOnline(applicationCode);
+        if (isBpaOnlineReConcilationPending) {
+            model.addAttribute(MESSAGE,
+                    "For this application payment reconciliation is in progress, please wait for reconciliation process to end!!!!!!");
+            return COLLECT_ERROR_PAGE;
+        }
+        Boolean bpaDuePresent = bpaDemandService.checkAnyTaxIsPendingToCollect(application);
+        if (bpaDuePresent) {
+            return genericBillGeneratorService.generateBillAndRedirectToCollection(application, model);
+        } else {
+            model.addAttribute(MESSAGE, messageSource.getMessage(MSG_NOAMOUNT_TOCOLLECT, null, null));
+            return COLLECT_ERROR_PAGE;
+        }
     }
 
-	@GetMapping("/occupancy-certificate/generate-bill/{applicationCode}")
-	public String showOCCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
-		OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationCode);
-		Boolean bpaDuePresent=bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand());
-		if(bpaDuePresent){
-			return genericBillGeneratorService.generateBillAndRedirectToCollection(oc, model);
-		}
-		else{
-			model.addAttribute("message", messageSource.getMessage("msg.noamount.tocollect", null, null));
-			return COLLECT_ERROR_PAGE;
-		}
-	}
-	
-	@GetMapping("/stakeholder/generate-bill/{userId}")
-	public String showStakeholderCollectFeeForm(final Model model,@PathVariable("userId") final Long  userId) {
-		StakeHolder stkHldr = stakeHolderService.findById(userId);
-		if(stkHldr != null){
-		if(stkHldr.getStatus().toString().equals(BpaConstants.APPLICATION_STATUS_PENDNING)){
-		    if(bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT).equalsIgnoreCase("YES"))  {
-		        return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr,model);
-		    } else {
-		        model.addAttribute("message", messageSource.getMessage("msg.onlinepayment.disabled", null, null));
-                        return COLLECT_ERROR_PAGE;
-		    }
-		        
-	        
-		}
-		
-		}
-		return null;
-	}
+    @GetMapping("/occupancy-certificate/generate-bill/{applicationCode}")
+    public String showOCCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
+        OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationCode);
+        Boolean bpaDuePresent = bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand());
+        if (bpaDuePresent) {
+            return genericBillGeneratorService.generateBillAndRedirectToCollection(oc, model);
+        } else {
+            model.addAttribute(MESSAGE, messageSource.getMessage(MSG_NOAMOUNT_TOCOLLECT, null, null));
+            return COLLECT_ERROR_PAGE;
+        }
+    }
+
+    @GetMapping("/stakeholder/generate-bill/{userId}")
+    public String showStakeholderCollectFeeForm(final Model model, @PathVariable("userId") final Long userId) {
+        StakeHolder stkHldr = stakeHolderService.findById(userId);
+        if (stkHldr != null && stkHldr.getStatus().toString().equals(BpaConstants.APPLICATION_STATUS_PENDNING)) {
+            if (bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT).equalsIgnoreCase("YES")) {
+                return genericBillGeneratorService.generateBillAndRedirectToCollection(stkHldr, model);
+            } else {
+                model.addAttribute(MESSAGE, messageSource.getMessage("msg.onlinepayment.disabled", null, null));
+                return COLLECT_ERROR_PAGE;
+            }
+        }
+        return null;
+    }
+
+    @GetMapping("/permit/renewal/generate-bill/{applicationCode}")
+    public String showPermitRenewalCOllectForm(final Model model, @PathVariable final String applicationCode) {
+        PermitRenewal renewal = permitRenewalService.findByApplicationNumber(applicationCode);
+        Boolean bpaDuePresent = bpaUtils.checkAnyTaxIsPendingToCollect(renewal.getDemand());
+        if (bpaDuePresent) {
+            return genericBillGeneratorService.generateBillAndRedirectToCollection(renewal, model);
+        } else {
+            model.addAttribute(MESSAGE, messageSource.getMessage(MSG_NOAMOUNT_TOCOLLECT, null, null));
+            return COLLECT_ERROR_PAGE;
+        }
+    }
 
 }

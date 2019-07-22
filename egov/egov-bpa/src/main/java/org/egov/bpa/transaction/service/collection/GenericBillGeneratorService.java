@@ -41,6 +41,7 @@ package org.egov.bpa.transaction.service.collection;
 
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
@@ -69,6 +70,8 @@ public class GenericBillGeneratorService {
     private OccupancyCertificateBillService occupancyCertificateBillService;
     @Autowired
     private StakeHolderBpaBillService stakeHolderBpaBillService;
+    @Autowired
+    private PermitRenewalBillService permitRenewalBillService;
 
     @Transactional
     public String generateBillAndRedirectToCollection(final BpaApplication application, final Model model) {
@@ -82,6 +85,12 @@ public class GenericBillGeneratorService {
         return buildAndRedirectToCollection(model, occupancyCertificateBillService.generateBill(oc), enableOrDisablePayOnline);
     }
 
+    @Transactional
+    public String generateBillAndRedirectToCollection(final PermitRenewal renewal, final Model model) {
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        return buildAndRedirectToCollection(model, permitRenewalBillService.generateBill(renewal), enableOrDisablePayOnline);
+    }
+
     private String buildAndRedirectToCollection(Model model, String s, String onlineEnabled) {
         if (ApplicationThreadLocals.getUserId() == null)
             if (securityUtils.getCurrentUser().getUsername().equals(BpaConstants.USERNAME_ANONYMOUS))
@@ -92,7 +101,7 @@ public class GenericBillGeneratorService {
         return "collecttax-redirection";
     }
 
-    //NOTE: as off now Giving pay online For Architect and Citizen as Per Bpa Requirement
+    // NOTE: as off now Giving pay online For Architect and Citizen as Per Bpa Requirement
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
         if (ApplicationThreadLocals.getUserId() != null) {
@@ -101,8 +110,8 @@ public class GenericBillGeneratorService {
                     && securityUtils.getCurrentUser().getUsername().equals(BpaConstants.USERNAME_ANONYMOUS))
                 citizenrole = Boolean.TRUE;
             for (final Role userrole : currentUser.getRoles())
-                if (userrole != null && (userrole.getName().equals(BpaConstants.ROLE_CITIZEN)||
-                		userrole.getName().equals(BpaConstants.ROLE_BUSINESS_USER))) {
+                if (userrole != null && (userrole.getName().equals(BpaConstants.ROLE_CITIZEN) ||
+                        userrole.getName().equals(BpaConstants.ROLE_BUSINESS_USER))) {
                     citizenrole = Boolean.TRUE;
                     break;
                 }
@@ -110,11 +119,12 @@ public class GenericBillGeneratorService {
             citizenrole = Boolean.TRUE;
         return citizenrole;
     }
-    
+
     @Transactional
     public String generateBillAndRedirectToCollection(final StakeHolder stakeHolder, final Model model) {
         String enableOrDisableStakHolderPayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLESTACKEHOLDERREGFEE);
-        return buildAndRedirectToCollection(model, stakeHolderBpaBillService.generateBill(stakeHolder), enableOrDisableStakHolderPayOnline);
+        return buildAndRedirectToCollection(model, stakeHolderBpaBillService.generateBill(stakeHolder),
+                enableOrDisableStakHolderPayOnline);
     }
 
 }
