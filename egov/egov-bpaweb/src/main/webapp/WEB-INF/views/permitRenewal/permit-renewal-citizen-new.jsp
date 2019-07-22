@@ -58,7 +58,7 @@
 			modelAttribute="permitRenewal" id="permitRenewalInitiateForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<form:hidden path="workflowAction" id="workFlowAction" name="workFlowAction" />
+			<input type="hidden" id="workFlowAction" name="workFlowAction" />
 			<div class="panel panel-primary" data-collapsed="0">
 
 				<div class="panel-heading custom_form_panel_heading">
@@ -222,6 +222,8 @@
 	</div>
 </div>
 
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
 <script

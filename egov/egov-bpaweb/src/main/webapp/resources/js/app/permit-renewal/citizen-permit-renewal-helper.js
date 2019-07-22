@@ -66,7 +66,6 @@ jQuery(document).ready(function ($) {
         bootbox.alert($('#invalidStakeholder').val());
 
     function validateFormOnSave(button, validator) {
-        // On Save documents mandatory check not require and on Submit only need to do documents mandatory check
         if ($('#permitRenewalInitiateForm').valid()) {
             document.getElementById("workFlowAction").value = button;
             return true;
@@ -116,7 +115,7 @@ jQuery(document).ready(function ($) {
     }
 
     $('#prSave').click(function (e) {
-        var button = $('#ocSave').val();
+        var button = $('#prSave').val();
         if (validateFormOnSave(button, validator)) {
             bootbox
                 .dialog({

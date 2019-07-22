@@ -58,7 +58,9 @@
 			modelAttribute="permitRenewal" id="permitRenewalInitiateForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+			<input type="hidden" id="workFlowAction" name="workFlowAction" />
+			<input type="hidden" id="permitRenewal" name="permitRenewal" value="${permitRenewal.id}" />
+			<input type="hidden" id="id" name="id" value="${permitRenewal.id}" />
 			<div class="panel panel-primary" data-collapsed="0">
 
 				<div class="panel-heading custom_form_panel_heading">
@@ -182,9 +184,23 @@
 								data-file-max-size="4">
 								<div class="files-viewer"
 									data-existing-files="${fn:length(permitRenewal.permitRenewalDocs)}">
-									<a href="javascript:void(0);" class="file-add"> <i
-										class="fa fa-plus" aria-hidden="true"></i>
-									</a>
+									<c:if test="${fn:length(permitRenewal.permitRenewalDocs) gt 0}">
+										<c:forEach items="${permitRenewal.permitRenewalDocs}"
+											var="file" varStatus="status1">
+											<div class="file-viewer" data-toggle="tooltip"
+												data-placement="top" title="${file.fileName}">
+												<a class="download" target="_blank"
+													href="/bpa/application/downloadfile/${file.fileStoreId}"></a>
+												<i class="fa fa-file-pdf-o" aria-hidden="true"></i> <span
+													class="doc-numbering">${status1.index+1}</span>
+											</div>
+										</c:forEach>
+									</c:if>
+									<c:if test="${fn:length(permitRenewal.permitRenewalDocs) eq 0}">
+										<a href="javascript:void(0);" class="file-add"> <i
+											class="fa fa-plus" aria-hidden="true"></i>
+										</a>
+									</c:if>
 								</div>
 								<input type="file" name="files" class="filechange inline btn"
 									style="display: none;" />
@@ -222,6 +238,8 @@
 	</div>
 </div>
 
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
 <script
