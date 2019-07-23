@@ -168,7 +168,7 @@ public class PermitRenewalService {
         Date permitExpiryDate = DateUtils.toDateUsingDefaultPattern(bpaNoticeUtil.calculateCertExpryDate(
                 new DateTime(permit.getPlanPermissionDate()), permit.getServiceType().getValidity()));
         Date maxAllowedRenewalDate = DateUtils.toDateUsingDefaultPattern(getMaxAllowedDateForRenewalAfterExpiry(permit));
-        return new Date().after(permitExpiryDate) || new Date().before(maxAllowedRenewalDate);
+        return new Date().after(permitExpiryDate) && new Date().before(maxAllowedRenewalDate);
     }
 
     public String getMaxAllowedDateForRenewalAfterExpiry(final BpaApplication permit) {
@@ -185,7 +185,7 @@ public class PermitRenewalService {
         Date permitExpiryDate = DateUtils.toDateUsingDefaultPattern(bpaNoticeUtil.calculateCertExpryDate(
                 new DateTime(permit.getPlanPermissionDate()), permit.getServiceType().getValidity()));
         Date minAllowedRenewalDate = DateUtils.toDateUsingDefaultPattern(getMinAllowedDateForRenewalPriorExpiry(permit));
-        return new Date().after(minAllowedRenewalDate) | new Date().before(permitExpiryDate);
+        return new Date().after(minAllowedRenewalDate) && new Date().before(permitExpiryDate);
     }
 
     public String getMinAllowedDateForRenewalPriorExpiry(final BpaApplication permit) {
