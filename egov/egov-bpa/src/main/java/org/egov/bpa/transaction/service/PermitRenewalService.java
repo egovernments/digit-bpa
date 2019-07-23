@@ -43,6 +43,7 @@ package org.egov.bpa.transaction.service;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.RENEWALSTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_GENERATE_RENEWAL_ORDER;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
 import java.util.Date;
@@ -130,9 +131,18 @@ public class PermitRenewalService {
 
     @Transactional
     public PermitRenewal update(PermitRenewal permitRenewal, final WorkflowBean wfBean) {
-        if (WF_APPROVE_BUTTON.equals(wfBean.getWorkFlowAction())) {
+        if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             permitRenewal.setRenewalApprovalDate(new Date());
             permitRenewal.setRenewalNumber(permitRenewal.getParent().getPlanPermissionNumber());
+        }
+        if (WF_GENERATE_RENEWAL_ORDER.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            String permitExpiryDateStr = bpaNoticeUtil.calculateCertExpryDate(
+                    new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
+                    permitRenewal.getParent().getServiceType().getValidity());
+            String permitRenewalExpiryDateStr = bpaNoticeUtil.calculateCertExpryDate(
+                    new DateTime(DateUtils.toDateUsingDefaultPattern(permitExpiryDateStr)),
+                    permitRenewal.getParent().getServiceType().getRenewalValidity());
+            permitRenewal.setPermitRenewalExpiryDate(DateUtils.toDateUsingDefaultPattern(permitRenewalExpiryDateStr));
         }
         if ("Initiated for permit renewal".equalsIgnoreCase(permitRenewal.getCurrentState().getValue())) {
             permitRenewal.setDemand(

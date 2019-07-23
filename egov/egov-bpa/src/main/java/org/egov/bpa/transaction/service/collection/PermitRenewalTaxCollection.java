@@ -90,6 +90,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PermitRenewalTaxCollection extends TaxCollection {
     private static final Logger LOGGER = Logger.getLogger(PermitRenewalTaxCollection.class);
+    public static final String RENEWAL_FEE_COLLECTED = "Permit renewal fees collected";
     @Autowired
     private EgBillDao egBillDAO;
     @Autowired
@@ -283,7 +284,7 @@ public class PermitRenewalTaxCollection extends TaxCollection {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(" On Approve *************workflow current state**************" + renewal.getCurrentState());
             redirectUtility.redirectToBpaWorkFlow(renewal,
-                    getWorkflowBean(renewal.getCurrentState().getValue(), OcConstants.OC_FEE_COLLECTED,
+                    getWorkflowBean(renewal.getCurrentState().getValue(), RENEWAL_FEE_COLLECTED,
                             renewal.getCurrentState().getOwnerPosition().getId(),
                             baWorkFlowService.getAmountRuleByServiceType(renewal.getParent())));
         }

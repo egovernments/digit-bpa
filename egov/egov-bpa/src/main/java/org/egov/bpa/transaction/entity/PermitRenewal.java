@@ -50,6 +50,7 @@ package org.egov.bpa.transaction.entity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -74,6 +75,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.ConstructionStages;
 import org.egov.commons.entity.Source;
+import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.DateUtils;
@@ -160,6 +162,7 @@ public class PermitRenewal extends StateAware<Position> {
     private transient String approvalComent;
     private transient List<PermitRenewalConditions> rejectionReasonsTemp = new ArrayList<>(0);
     private transient List<PermitRenewalConditions> additionalRejectReasonsTemp = new ArrayList<>(0);
+    private transient Set<Receipt> receipts = new HashSet<>();
 
     @Override
     public Long getId() {
@@ -357,6 +360,14 @@ public class PermitRenewal extends StateAware<Position> {
 
     public void setAdditionalRenewalConditions(List<PermitRenewalConditions> additionalRenewalConditions) {
         this.additionalRenewalConditions = additionalRenewalConditions;
+    }
+
+    public Set<Receipt> getReceipts() {
+        return receipts;
+    }
+
+    public void setReceipts(Set<Receipt> receipts) {
+        this.receipts = receipts;
     }
 
 }
