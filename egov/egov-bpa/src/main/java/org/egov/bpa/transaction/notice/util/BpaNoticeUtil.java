@@ -53,6 +53,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
 import static org.egov.bpa.utils.BpaConstants.getEdcrRequiredServices;
@@ -90,14 +91,21 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.egov.bpa.config.reports.properties.BpaApplicationReportProperties;
+import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
+import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaNotice;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
+import org.egov.bpa.transaction.entity.PermitNocApplication;
+import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.Response;
 import org.egov.bpa.transaction.entity.SiteDetail;
+import org.egov.bpa.transaction.entity.dto.NocDetailsHelper;
 import org.egov.bpa.transaction.entity.dto.PermitFeeHelper;
 import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
@@ -105,6 +113,7 @@ import org.egov.bpa.transaction.repository.BpaNoticeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.DcrRestService;
+import org.egov.bpa.transaction.service.PermitNocApplicationService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
@@ -193,6 +202,12 @@ public class BpaNoticeUtil {
     private CityService cityService;
     @Autowired
     private BpaApplicationReportProperties bpaApplicationReportProperties;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
+    @Autowired
+    private PermitNocApplicationService permitNocService;
+   
+   
 
     public BpaNotice findByApplicationAndNoticeType(final BpaApplication application, final String noticeType) {
         return bpaNoticeRepository.findByApplicationAndNoticeType(application, noticeType);
@@ -506,8 +521,47 @@ public class BpaNoticeUtil {
             reportParams.put("subheader", subHeaderString + "confirming to the details and conditions here under.");
         }
         reportParams.put("refusalFormat", bpaApplicationReportProperties.getRefusalFormat());
+        reportParams.put("nocDetails" , getNocDetails(bpaApplication));
         return reportParams;
 
+    }
+
+    private List<NocDetailsHelper> getNocDetails(final BpaApplication application) {
+        List<NocDetailsHelper> nocDetails = new ArrayList<>();
+
+        for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
+            NocDetailsHelper nocHelper = new NocDetailsHelper();
+
+            String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+            NocConfiguration nocConfig = nocConfigurationService
+                    .findByDepartmentAndType(code, BpaConstants.PERMIT);
+            nocHelper
+                    .setNocDepartmentName(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getDescription());
+
+            if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)) {
+
+                PermitNocApplication permitNocApp = permitNocService
+                        .findByApplicationNumberAndType(application.getApplicationNumber(), code);
+
+                if (permitNocApp != null) {
+                    nocHelper.setNocApplicationNumber(
+                            permitNocApp.getBpaNocApplication().getNocApplicationNumber() != null
+                                    ? permitNocApp.getBpaNocApplication().getNocApplicationNumber() : "N/A");
+                    nocHelper.setNocApplicationDate(permitNocApp.getBpaNocApplication().getCreatedDate());
+                    nocHelper.setStatusUpdatedDate(permitNocApp.getBpaNocApplication().getLastModifiedDate());
+                    nocHelper.setRemarks(permitNocApp.getBpaNocApplication().getRemarks());
+                    nocHelper.setNocStatusName(permitNocApp.getBpaNocApplication().getStatus().getCode());
+                } else {
+                    nocHelper.setNocApplicationNumber("N/A");
+                    nocHelper.setNocStatusName("N/A");
+                    nocHelper.setRemarks("N/A");
+                }
+
+            }
+            nocDetails.add(nocHelper);
+        }
+
+        return nocDetails;
     }
 
     private List<PermitFeeHelper> getPermitFeeDetails(final BpaApplication application) {

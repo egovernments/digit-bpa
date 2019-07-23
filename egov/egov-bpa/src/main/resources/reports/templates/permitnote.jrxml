@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="permitnote" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="09d7c6a4-db38-4844-a14a-3d253535dae1">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="currentDate" class="java.lang.String"/>
@@ -60,13 +60,17 @@
 		<band height="35" splitType="Stretch"/>
 	</pageHeader>
 	<pageFooter>
-		<band height="72">
+		<band height="73">
 			<image>
 				<reportElement x="403" y="2" width="149" height="60" uuid="81ffb83f-0d97-4c28-9796-e64b1d989ce8">
 					<printWhenExpression><![CDATA[!$P{qrCodeEnabled}]]></printWhenExpression>
 				</reportElement>
 				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
 			</image>
+			<textField isStretchWithOverflow="true" pattern="d/M/yy h:mm a">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="45" width="121" height="22" uuid="53e1b77f-46ea-4f00-a55c-7f1cf6fff156"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 </jasperReport>

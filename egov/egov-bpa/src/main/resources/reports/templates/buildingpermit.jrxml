@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingpermit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="576a1e58-ecb3-4d56-971a-5d1fe019af29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -58,6 +58,7 @@
 	<parameter name="approverName" class="java.lang.String"/>
 	<parameter name="dcrReport" class="java.io.ByteArrayInputStream"/>
 	<parameter name="cityNameLocal" class="java.lang.String"/>
+	<parameter name="nocDetails" class="java.util.Collection"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -741,7 +742,20 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("bpapermitfeedetails.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="15" splitType="Prevent"/>
+		<band splitType="Prevent"/>
+		<band height="36">
+			<subreport>
+				<reportElement x="0" y="1" width="570" height="35" isRemoveLineWhenBlank="true" uuid="c010f16c-fa23-4f24-84de-712ff424e48e">
+					<printWhenExpression><![CDATA[new Boolean($P{permitFeeDetails}.size()!= 0)]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="occupancy">
+					<subreportParameterExpression><![CDATA[$P{occupancy}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{nocDetails},false)]]></dataSourceExpression>
+				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("buildingpermitnocdetailsSubreport.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
 	</detail>
 	<pageFooter>
 		<band height="62">
@@ -755,6 +769,10 @@
 				</reportElement>
 				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
 			</image>
+			<textField isStretchWithOverflow="true" pattern="d/M/yy h:mm a">
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="40" width="113" height="21" uuid="71a8367c-735e-42b8-9dcb-b0053f9b31b3"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 </jasperReport>
