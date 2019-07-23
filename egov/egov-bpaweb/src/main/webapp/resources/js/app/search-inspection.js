@@ -186,3 +186,7 @@ function getFormData($form) {
 
 	return indexed_array;
 }
+
+$('#resetbutton').on('click', function(event) {
+	$('#searchScrutinyApplicationForm')[0].reset();
+    });
