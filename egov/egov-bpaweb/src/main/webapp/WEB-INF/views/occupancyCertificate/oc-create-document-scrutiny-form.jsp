@@ -58,7 +58,8 @@
 			modelAttribute="occupancyCertificate" id="ocDocumentscrutinyform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" name="occupancyCertificate" value="${occupancyCertificate.id}">
+			<input type="hidden" name="occupancyCertificate"
+				value="${occupancyCertificate.id}">
 			<form:hidden path="" value="${areaInSqMtr}" id="areaInSqMtr"
 				name="areaInSqMtr" />
 			<form:hidden path="" value="${currentDesignation}"
@@ -66,18 +67,20 @@
 			<form:hidden path="" value="${isApproveValid}" id="isApproveValid"
 				name="isApproveValid" />
 			<form:hidden path="" id="wfstateDesc"
-						 value="${occupancyCertificate.state.value}" />
-			<input type="hidden" id="authorizedToSubmitPlan" value="${occupancyCertificate.authorizedToSubmitPlan}"/>
-				<ul class="nav nav-tabs" id="settingstab">
-				<li class="active"><a data-toggle="tab" href="#doc-scrutiny-info"
-					data-tabidx=0><spring:message code='lbl.document.scrutiny' /></a></li>
-				<li><a data-toggle="tab" href="#applicant-info"
-						   data-tabidx=1><spring:message code='lbl.appln.details' /></a></li>
+				value="${occupancyCertificate.state.value}" />
+			<input type="hidden" id="authorizedToSubmitPlan"
+				value="${occupancyCertificate.authorizedToSubmitPlan}" />
+			<ul class="nav nav-tabs" id="settingstab">
+				<li class="active"><a data-toggle="tab"
+					href="#doc-scrutiny-info" data-tabidx=0><spring:message
+							code='lbl.document.scrutiny' /></a></li>
+				<li><a data-toggle="tab" href="#applicant-info" data-tabidx=1><spring:message
+							code='lbl.appln.details' /></a></li>
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=2><spring:message
 							code='title.documentdetail' /></a></li>
 				<li><a data-toggle="tab" href="#checklist-info" data-tabidx=3><spring:message
-						code='lbl.noc.doc.details' /></a></li>
-				</ul>
+							code='lbl.noc.doc.details' /></a></li>
+			</ul>
 			<div class="tab-content">
 				<div id="doc-scrutiny-info" class="tab-pane fade in active">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -97,14 +100,17 @@
 									id="scrutinyapplicationid" value="${occupancyCertificate.id}" />
 								<form:hidden path="documentScrutinies[0].docScrutiny.verifiedBy"
 									id="verifiedById" value="${loginUser.id}" />
-								<form:hidden path="documentScrutinies[0].docScrutiny.reSurveyNumber"
-											 id="verifiedById" value="${occupancyCertificate.parent.siteDetail[0].reSurveyNumber}" />
+								<form:hidden
+									path="documentScrutinies[0].docScrutiny.reSurveyNumber"
+									id="verifiedById"
+									value="${occupancyCertificate.parent.siteDetail[0].reSurveyNumber}" />
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric"
-									data-role="tagsinput" id="reSurveynumber"
-									path="" disabled="true"
+									data-role="tagsinput" id="reSurveynumber" path=""
+									disabled="true"
 									value="${occupancyCertificate.parent.siteDetail[0].reSurveyNumber}" />
-								<form:errors path="documentScrutinies[0].docScrutiny.reSurveyNumber"
+								<form:errors
+									path="documentScrutinies[0].docScrutiny.reSurveyNumber"
 									cssClass="add-margin error-msg" />
 							</div>
 
@@ -131,9 +137,11 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation decimalfixed"
 									maxlength="10" data-pattern="number" id="extentinsqmts"
-									path="documentScrutinies[0].docScrutiny.extentInSqmts" readonly="true" required="required"
+									path="documentScrutinies[0].docScrutiny.extentInSqmts"
+									readonly="true" required="required"
 									value="${occupancyCertificate.parent.siteDetail[0].extentinsqmts}" />
-								<form:errors path="documentScrutinies[0].docScrutiny.extentInSqmts"
+								<form:errors
+									path="documentScrutinies[0].docScrutiny.extentInSqmts"
 									cssClass="add-margin error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
@@ -152,9 +160,11 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" required="required"
-									id="registrarOffice" readonly="true" path="documentScrutinies[0].docScrutiny.registrarOffice"
+									id="registrarOffice" readonly="true"
+									path="documentScrutinies[0].docScrutiny.registrarOffice"
 									value="${occupancyCertificate.parent.siteDetail[0].registrarOffice.registrarOffice.name}" />
-								<form:errors path="documentScrutinies[0].docScrutiny.registrarOffice"
+								<form:errors
+									path="documentScrutinies[0].docScrutiny.registrarOffice"
 									cssClass="add-margin error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
@@ -165,7 +175,8 @@
 									id="natureofOwnership" readonly="true"
 									path="documentScrutinies[0].docScrutiny.natureOfOwnership"
 									value="${occupancyCertificate.parent.siteDetail[0].natureofOwnership}" />
-								<form:errors path="documentScrutinies[0].docScrutiny.natureOfOwnership"
+								<form:errors
+									path="documentScrutinies[0].docScrutiny.natureOfOwnership"
 									cssClass="add-margin error-msg" />
 							</div>
 						</div>
@@ -188,7 +199,8 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" id="district"
-									path="documentScrutinies[0].docScrutiny.district" readonly="true"
+									path="documentScrutinies[0].docScrutiny.district"
+									readonly="true"
 									value="${occupancyCertificate.parent.siteDetail[0].postalAddress.district}" />
 								<form:errors path="documentScrutinies[0].docScrutiny.district"
 									cssClass="add-margin error-msg" />
@@ -220,8 +232,12 @@
 						<jsp:include page="view-oc-building-details.jsp"></jsp:include>
 					</div>
 					<c:if test="${not empty  occupancyCertificate.receipts}">
+						<c:set var="receipts" scope="request"
+							value="${occupancyCertificate.receipts}"></c:set>
+						<c:set var="applicationNumber" scope="request"
+							value="${occupancyCertificate.applicationNumber}"></c:set>
 						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="../application/view-bpa-receipt-details.jsp"></jsp:include>
+							<jsp:include page="../common/view-bpa-receipt-details.jsp"></jsp:include>
 						</div>
 					</c:if>
 					<div class="panel panel-primary" data-collapsed="0">
@@ -250,31 +266,53 @@
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 			</div>
 		</form:form>
-		<input type="hidden" id="requiredSignedDocuments" value="<spring:message code='msg.validate.license.requires.tosubmt.signed.plandocs.ondocscrutiny' />"/>
-		<input type="hidden" id="confirmRejection" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />"/>
-		<input type="hidden" id="forwardApplication" value="<spring:message code='msg.confirm.forward.application' />"/>
-		<input type="hidden" id="rejectionReason" value="<spring:message code='msg.validate.onerejection.reason.mandatory' />"/>
-		<input type="hidden" id="rejectionComments" value="<spring:message code='msg.validate.enter.rejection.comments' />"/>
-		<input type="hidden" id="feeAmount" value="<spring:message code='msg.validation.feeamount'/>"/>
-		<input type="hidden" id="incrFeeamtTopOfsysCalcFee" value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>"/>
-	    <input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
-		<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
-		<input type="hidden" id="typeOfMsg" value="<spring:message code='msg.vlaidate.typeof' />"/>
-		<input type="hidden" id="permissibleAreaForFloor1" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />"/>
-		<input type="hidden" id="permissibleAreaForFloor2" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />"/>
-		<input type="hidden" id="builtupAndCarpetDetails" value="<spring:message code='msg.tittle.builtup.carpet.details' />"/>
-		<input type="hidden" id="blockMsg" value="<spring:message code='msg.tittle.blockmsg' />"/>
-		<input type="hidden" id="buildScrutinyNumber" value="<spring:message code='msg.validate.building.scrutiny.number' />"/>
-		<input type="hidden" id="buildingPlanApplnForServiceType" value="<spring:message code='msg.validate.buildingplan.applnfor.servicetype' />"/>
-		<input type="hidden" id="buildServiceType" value="<spring:message code='msg.validate.building.servicetype' />"/>
-		<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
-		<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
-		<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>
-		<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />		
+		<input type="hidden" id="requiredSignedDocuments"
+			value="<spring:message code='msg.validate.license.requires.tosubmt.signed.plandocs.ondocscrutiny' />" />
+		<input type="hidden" id="confirmRejection"
+			value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
+		<input type="hidden" id="forwardApplication"
+			value="<spring:message code='msg.confirm.forward.application' />" />
+		<input type="hidden" id="rejectionReason"
+			value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
+		<input type="hidden" id="rejectionComments"
+			value="<spring:message code='msg.validate.enter.rejection.comments' />" />
+		<input type="hidden" id="feeAmount"
+			value="<spring:message code='msg.validation.feeamount'/>" /> <input
+			type="hidden" id="incrFeeamtTopOfsysCalcFee"
+			value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>" />
+		<input type="hidden" id="floorareaValidate"
+			value="<spring:message code='msg.validate.floorarea' />" /> <input
+			type="hidden" id="carpetareaValidate"
+			value="<spring:message code='msg.validate.carpetarea' />" /> <input
+			type="hidden" id="typeOfMsg"
+			value="<spring:message code='msg.vlaidate.typeof' />" /> <input
+			type="hidden" id="permissibleAreaForFloor1"
+			value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />" />
+		<input type="hidden" id="permissibleAreaForFloor2"
+			value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />" />
+		<input type="hidden" id="builtupAndCarpetDetails"
+			value="<spring:message code='msg.tittle.builtup.carpet.details' />" />
+		<input type="hidden" id="blockMsg"
+			value="<spring:message code='msg.tittle.blockmsg' />" /> <input
+			type="hidden" id="buildScrutinyNumber"
+			value="<spring:message code='msg.validate.building.scrutiny.number' />" />
+		<input type="hidden" id="buildingPlanApplnForServiceType"
+			value="<spring:message code='msg.validate.buildingplan.applnfor.servicetype' />" />
+		<input type="hidden" id="buildServiceType"
+			value="<spring:message code='msg.validate.building.servicetype' />" />
+		<input type="hidden" id="forBuildScrutinyNumber"
+			value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />" />
+		<input type="hidden" id="floorDetailsNotExtracted"
+			value="<spring:message code='msg.validate.floordetsil.not.extracted' />" />
+		<input type="hidden" id="existingBuildDetailsNotPresent"
+			value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />
+		<input type="hidden" id="valuesCannotEmpty"
+			value="<spring:message code='msg.validate.values.cannot.empty' />" />
 	</div>
 </div>
 
-<link rel="stylesheet" href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
+<link rel="stylesheet"
+	href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-tagsinput.css?rnd=${app_release_no}' context='/egi'/>">
 <script
@@ -287,4 +325,4 @@
 	src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-document-scrutiny.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/occupancy-certificate/oc-edcr-helper.js?rnd=${app_release_no}'/>"></script>
-	
+

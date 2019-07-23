@@ -167,8 +167,10 @@
 						</div>
 					</c:if>
 					<c:if test="${not empty  bpaApplication.receipts}">
+						<c:set var="receipts" scope="request" value="${bpaApplication.receipts}"></c:set>
+						<c:set var="applicationNumber" scope="request" value="${bpaApplication.applicationNumber}"></c:set>
 						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="view-bpa-receipt-details.jsp"></jsp:include>
+							<jsp:include page="../common/view-bpa-receipt-details.jsp"></jsp:include>
 						</div>
 					</c:if>
 					<c:if test="${not empty applicationHistory}">

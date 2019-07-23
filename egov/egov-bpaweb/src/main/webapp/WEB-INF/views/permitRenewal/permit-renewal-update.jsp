@@ -57,7 +57,8 @@
 		<c:if test="${feePending eq true}">
 			<div class="panel-heading custom_form_panel_heading">
 				<div class="panel-title text-center no-float">
-					<strong class="error-msg"><spring:message code="msg.collect.applnfees.toprocess.appln"/></strong>
+					<strong class="error-msg"><spring:message
+							code="msg.collect.applnfees.toprocess.appln" /></strong>
 				</div>
 			</div>
 		</c:if>
@@ -84,6 +85,15 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<jsp:include page="view-permit-application-details.jsp"></jsp:include>
 			</div>
+			<c:if test="${not empty  permitRenewal.receipts}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<c:set var="receipts" scope="request"
+						value="${permitRenewal.receipts}"></c:set>
+					<c:set var="applicationNumber" scope="request"
+						value="${permitRenewal.applicationNumber}"></c:set>
+					<jsp:include page="../common/view-bpa-receipt-details.jsp"></jsp:include>
+				</div>
+			</c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
 			</div>

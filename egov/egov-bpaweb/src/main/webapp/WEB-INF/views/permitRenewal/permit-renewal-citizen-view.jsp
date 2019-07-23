@@ -66,6 +66,15 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="view-permit-application-details.jsp"></jsp:include>
 		</div>
+		<c:if test="${not empty  permitRenewal.receipts}">
+			<div class="panel panel-primary" data-collapsed="0">
+				<c:set var="receipts" scope="request"
+					value="${permitRenewal.receipts}"></c:set>
+				<c:set var="applicationNumber" scope="request"
+					value="${permitRenewal.applicationNumber}"></c:set>
+				<jsp:include page="../common/view-bpa-receipt-details.jsp"></jsp:include>
+			</div>
+		</c:if>
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
 		</div>

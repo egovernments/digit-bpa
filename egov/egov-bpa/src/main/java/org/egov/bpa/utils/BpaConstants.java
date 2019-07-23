@@ -373,6 +373,7 @@ public class BpaConstants {
     public static final String WF_INITIATE_REVOCATION_BUTTON = "Initiate Revocation";
     public static final String WF_AUTO_RESCHDLE_APPMNT_BUTTON = "Auto ReSchedule";
     public static final String GENERATE_OCCUPANCY_CERTIFICATE = "Generate Occupancy Certificate";
+    public static final String WF_GENERATE_RENEWAL_ORDER = "Generate Permit Renewal Order";
     // building details related constants
     public static final String TOTAL_PLINT_AREA = "totalPlintArea";
     public static final String BUILDINGHEIGHT_GROUND = "buildingheightGround";

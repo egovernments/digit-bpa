@@ -84,7 +84,7 @@
 				</c:if>
 				<c:if test="${not empty occupancyCertificate.documentScrutinies}">
 					<li><a data-toggle="tab" href="#doc-scrnty" data-tabidx=3><spring:message
-							code='lbl.document.scrutiny' /></a></li>
+								code='lbl.document.scrutiny' /></a></li>
 				</c:if>
 				<c:if test="${not empty occupancyCertificate.inspections}">
 					<li><a data-toggle="tab" href="#view-inspection" data-tabidx=4><spring:message
@@ -97,7 +97,7 @@
 				</c:if>
 				<c:if test="${not empty occupancyCertificate.occupancyFee}">
 					<li><a data-toggle="tab" href="#view-fee" data-tabidx=6><spring:message
-							code='lbl.ocfee.details' /></a></li>
+								code='lbl.ocfee.details' /></a></li>
 				</c:if>
 			</ul>
 			<div class="tab-content">
@@ -109,16 +109,17 @@
 						<jsp:include
 							page="../../application/edcr-application-details-form.jsp"></jsp:include>
 					</div>
-					
+
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="../view-bpa-basic-application-details.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
-	                    <jsp:include page="../../common/generic-boundary-view.jsp">
-	                    <jsp:param name="boundaryData" value="${occupancyCertificate.parent.adminBoundary}:${occupancyCertificate.parent.revenueBoundary}:${occupancyCertificate.parent.locationBoundary}" />
-	                    </jsp:include>
-                    </div>
-					
+						<jsp:include page="../../common/generic-boundary-view.jsp">
+							<jsp:param name="boundaryData"
+								value="${occupancyCertificate.parent.adminBoundary}:${occupancyCertificate.parent.revenueBoundary}:${occupancyCertificate.parent.locationBoundary}" />
+						</jsp:include>
+					</div>
+
 					<c:if test="${not empty occupancyCertificate.existingBuildings}">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="../view-oc-existing-building-details.jsp"></jsp:include>
@@ -129,7 +130,11 @@
 					</div>
 					<c:if test="${not empty  occupancyCertificate.receipts}">
 						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="../view-oc-receipt-details.jsp"></jsp:include>
+							<c:set var="receipts" scope="request"
+								value="${occupancyCertificate.receipts}"></c:set>
+							<c:set var="applicationNumber" scope="request"
+								value="${occupancyCertificate.applicationNumber}"></c:set>
+							<jsp:include page="../common/view-bpa-receipt-details.jsp"></jsp:include>
 						</div>
 					</c:if>
 					<div class="panel panel-primary" data-collapsed="0">

@@ -156,6 +156,8 @@ public class PermitRenewalController extends BpaGenericApplicationController {
         model.addAttribute("revenueBoundaryName", renewal.getParent().getSiteDetail().get(0).getAdminBoundary() != null
                 ? renewal.getParent().getSiteDetail().get(0).getAdminBoundary().getName()
                 : "");
+        if (renewal.getDemand() != null)
+            buildReceiptDetails(renewal.getDemand().getEgDemandDetails(), renewal.getReceipts());
     }
 
     @PostMapping("/update-submit/{applicationNumber}")
@@ -170,7 +172,8 @@ public class PermitRenewalController extends BpaGenericApplicationController {
             return COMMON_ERROR;
 
         WorkflowBean wfBean = new WorkflowBean();
-        wfBean.setApproverPositionId(Long.valueOf(request.getParameter(APPRIVALPOSITION)));
+        if (request.getParameter(APPRIVALPOSITION) != null)
+            wfBean.setApproverPositionId(Long.valueOf(request.getParameter(APPRIVALPOSITION)));
         wfBean.setApproverComments(request.getParameter(APPROVAL_COMENT));
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
         wfBean.setAmountRule(amountRule);

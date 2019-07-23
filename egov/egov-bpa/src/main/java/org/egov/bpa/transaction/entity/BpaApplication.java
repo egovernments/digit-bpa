@@ -269,8 +269,11 @@ public class BpaApplication extends StateAware<Position> {
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BuildingSubUsage> buildingSubUsages = new ArrayList<>(0);
     @OrderBy("id DESC")
-    @OneToMany(cascade = CascadeType.ALL,mappedBy="application", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "application", fetch = FetchType.LAZY)
     private List<PermitRevocation> permitRevocation = new ArrayList<>();
+    @OrderBy("id DESC")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.LAZY)
+    private List<PermitRenewal> permitRenewals = new ArrayList<>();
 
     private transient MultipartFile[] files;
     private transient Long approvalDepartment;
@@ -581,7 +584,7 @@ public class BpaApplication extends StateAware<Position> {
     public List<PermitNocDocument> getPermitNocDocuments() {
         return permitNocDocuments;
     }
-    
+
     public void addPermitDocument(final PermitDocument nocDocument) {
         nocDocument.setApplication(this);
         getPermitDocuments().add(nocDocument);
@@ -595,7 +598,7 @@ public class BpaApplication extends StateAware<Position> {
         nocDocument.setApplication(this);
         getPermitNocDocuments().add(nocDocument);
     }
-    
+
     public Date getBuildingPlanApprovalDate() {
         return buildingPlanApprovalDate;
     }
@@ -672,7 +675,7 @@ public class BpaApplication extends StateAware<Position> {
     }
 
     public boolean isFeeCollected() {
-        return demand == null ? false : demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0;
+        return demand != null && demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0;
     }
 
     public List<ServiceType> getApplicationAmenity() {
@@ -740,14 +743,14 @@ public class BpaApplication extends StateAware<Position> {
     }
 
     public boolean getSentToCitizen() {
-		return sentToCitizen;
-	}
+        return sentToCitizen;
+    }
 
-	public void setSentToCitizen(boolean sentToCitizen) {
-		this.sentToCitizen = sentToCitizen;
-	}
+    public void setSentToCitizen(boolean sentToCitizen) {
+        this.sentToCitizen = sentToCitizen;
+    }
 
-	public Set<Receipt> getReceipts() {
+    public Set<Receipt> getReceipts() {
         return receipts;
     }
 
@@ -958,8 +961,8 @@ public class BpaApplication extends StateAware<Position> {
         return isLPRequestInitiated;
     }
 
-    public void setLPRequestInitiated(Boolean LPRequestInitiated) {
-        isLPRequestInitiated = LPRequestInitiated;
+    public void setLPRequestInitiated(Boolean lpRequestInitiated) {
+        isLPRequestInitiated = lpRequestInitiated;
     }
 
     public OneDayPermitLandType getTypeOfLand() {
@@ -1010,7 +1013,6 @@ public class BpaApplication extends StateAware<Position> {
         this.totalBuiltUpArea = totalBuiltUpArea;
     }
 
-
     public List<PermitDcrDocument> getPermitDcrDocuments() {
         return permitDcrDocuments;
     }
@@ -1051,68 +1053,76 @@ public class BpaApplication extends StateAware<Position> {
         this.permitOccupanciesTemp = permitOccupanciesTemp;
     }
 
-	public String getAdminBoundary() {
-		return adminBoundary;
-	}
+    public String getAdminBoundary() {
+        return adminBoundary;
+    }
 
-	public void setAdminBoundary(String adminBoundary) {
-		this.adminBoundary = adminBoundary;
-	}
+    public void setAdminBoundary(String adminBoundary) {
+        this.adminBoundary = adminBoundary;
+    }
 
-	public String getRevenueBoundary() {
-		return revenueBoundary;
-	}
+    public String getRevenueBoundary() {
+        return revenueBoundary;
+    }
 
-	public void setRevenueBoundary(String revenueBoundary) {
-		this.revenueBoundary = revenueBoundary;
-	}
+    public void setRevenueBoundary(String revenueBoundary) {
+        this.revenueBoundary = revenueBoundary;
+    }
 
-	public String getLocationBoundary() {
-		return locationBoundary;
-	}
+    public String getLocationBoundary() {
+        return locationBoundary;
+    }
 
-	public void setLocationBoundary(String locationBoundary) {
-		this.locationBoundary = locationBoundary;
-	}
+    public void setLocationBoundary(String locationBoundary) {
+        this.locationBoundary = locationBoundary;
+    }
 
-	public ApplicationSubType getApplicationType() {
-		return applicationType;
-	}
+    public ApplicationSubType getApplicationType() {
+        return applicationType;
+    }
 
-	public void setApplicationType(ApplicationSubType applicationType) {
-		this.applicationType = applicationType;
-	}
+    public void setApplicationType(ApplicationSubType applicationType) {
+        this.applicationType = applicationType;
+    }
 
-	public BigDecimal getInfrastructureCost() {
-		return infrastructureCost;
-	}
+    public BigDecimal getInfrastructureCost() {
+        return infrastructureCost;
+    }
 
-	public void setInfrastructureCost(BigDecimal infrastructureCost) {
-		this.infrastructureCost = infrastructureCost;
-	}
+    public void setInfrastructureCost(BigDecimal infrastructureCost) {
+        this.infrastructureCost = infrastructureCost;
+    }
 
-	public BigDecimal getConstructionCost() {
-		return constructionCost;
-	}
+    public BigDecimal getConstructionCost() {
+        return constructionCost;
+    }
 
-	public void setConstructionCost(BigDecimal constructionCost) {
-		this.constructionCost = constructionCost;
-	}
+    public void setConstructionCost(BigDecimal constructionCost) {
+        this.constructionCost = constructionCost;
+    }
 
-	public List<PermitRevocation> getPermitRevocation() {
-		return permitRevocation;
-	}
+    public List<PermitRevocation> getPermitRevocation() {
+        return permitRevocation;
+    }
 
-	public void setPermitRevocation(List<PermitRevocation> permitRevocation) {
-		this.permitRevocation = permitRevocation;
-	}
+    public void setPermitRevocation(List<PermitRevocation> permitRevocation) {
+        this.permitRevocation = permitRevocation;
+    }
 
-	public List<ApplicationPermitConditions> getDefaultPermitConditions() {
-		return defaultPermitConditions;
-	}
+    public List<ApplicationPermitConditions> getDefaultPermitConditions() {
+        return defaultPermitConditions;
+    }
 
-	public void setDefaultPermitConditions(List<ApplicationPermitConditions> defaultPermitConditions) {
-		this.defaultPermitConditions = defaultPermitConditions;
-	}
-	
+    public void setDefaultPermitConditions(List<ApplicationPermitConditions> defaultPermitConditions) {
+        this.defaultPermitConditions = defaultPermitConditions;
+    }
+
+    public List<PermitRenewal> getPermitRenewals() {
+        return permitRenewals;
+    }
+
+    public void setPermitRenewals(List<PermitRenewal> permitRenewals) {
+        this.permitRenewals = permitRenewals;
+    }
+
 }

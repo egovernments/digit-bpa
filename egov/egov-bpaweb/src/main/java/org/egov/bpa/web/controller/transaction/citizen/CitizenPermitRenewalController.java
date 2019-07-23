@@ -59,20 +59,17 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.bpa.master.service.ConstructionStagesService;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.service.PermitRenewalService;
-import org.egov.bpa.transaction.service.WorkflowHistoryService;
-import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
+import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -89,7 +86,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequestMapping(value = "/citizen/application")
-public class CitizenPermitRenewalController {
+public class CitizenPermitRenewalController extends BpaGenericApplicationController {
 
     private static final String PERMIT_RENEWAL_CITIZEN_UPDATE = "permit-renewal-citizen-update";
     private static final String PERMIT_RENEWAL_CITIZEN_NEW = "permit-renewal-citizen-new";
@@ -103,17 +100,9 @@ public class CitizenPermitRenewalController {
     @Autowired
     private PermitRenewalService permitRenewalService;
     @Autowired
-    protected ResourceBundleMessageSource messageSource;
-    @Autowired
     private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
     @Autowired
-    private BpaUtils bpaUtils;
-    @Autowired
-    private ConstructionStagesService constructionStagesService;
-    @Autowired
     private BpaNoticeUtil bpaNoticeUtil;
-    @Autowired
-    private WorkflowHistoryService workflowHistoryService;
 
     @GetMapping("/permit/renewal/apply")
     public String showPermitRenewalForm(final Model model) {
@@ -190,6 +179,8 @@ public class CitizenPermitRenewalController {
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
         model.addAttribute("onlinePaymentEnable",
                 (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+        if (permitRenewal.getDemand() != null)
+            buildReceiptDetails(permitRenewal.getDemand().getEgDemandDetails(), permitRenewal.getReceipts());
     }
 
     @PostMapping("/permit/renewal/update/{applicationNumber}")
