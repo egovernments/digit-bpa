@@ -117,7 +117,7 @@
 <input type="hidden" id="generatePermitOrder"
 	value="<spring:message code='msg.confirm.renew.generate.permitorder' />" />
 <input type="hidden" id="intiateRejectionAppln"
-	value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
+	value="<spring:message code='msg.confirm.generate.rejection.notice' />" />
 <input type="hidden" id="rejectAppln"
 	value="<spring:message code='msg.confirm.reject.appln' />" />
 <input type="hidden" id="generateRejectNotice"

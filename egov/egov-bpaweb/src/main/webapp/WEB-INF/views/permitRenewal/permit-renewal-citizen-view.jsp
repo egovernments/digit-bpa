@@ -89,6 +89,15 @@
 						code='lbl.btn.pay.fee.online' />
 			</a>&nbsp;</td>
 		</c:if>
+		<c:if
+							test="${permitRenewal.status.code eq 'Rejected' && permitRenewal.state ne null}">
+							<td><a
+								href="/bpa/application/permitrenewal/rejectionnotice/${permitRenewal.applicationNumber}"
+								target="popup" class="btn btn-primary"
+								onclick="window.open('/bpa/application/permitrenewal/rejectionnotice/${permitRenewal.applicationNumber}','popup','width=1100,height=700'); return false;">
+									<spring:message code='lbl.btn.print.rejection.notice' />
+							</a>&nbsp;</td>
+						</c:if>
 		<input type="button" name="button2" value="Close"
 			class="btn btn-default" onclick="window.close();" />
 	</div>

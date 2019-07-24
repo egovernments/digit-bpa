@@ -204,7 +204,7 @@ public class RenewalNoticeUtil {
         int order = 1;
         for (PermitRenewalConditions rejectReason : permitRenewal.getRejectionReasons()) {
             if (rejectReason.getNoticeCondition().isRequired()
-                    && ConditionType.REJECTIONREASONS.equals(rejectReason.getNoticeCondition().getType())) {
+                    && ConditionType.RENEWALREJECTIONREASONS.equals(rejectReason.getNoticeCondition().getType())) {
                 permitConditions
                         .append(order + ") "
                                 + rejectReason.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription()
