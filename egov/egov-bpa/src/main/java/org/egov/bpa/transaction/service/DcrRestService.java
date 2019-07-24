@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
-import org.egov.common.entity.edcr.Plan;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +17,10 @@ public class DcrRestService {
 
     public String getDcrReport(final String dcrNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
-
+        
+        System.out.println("DcrRestService--------ApplicationThreadLocals.getDomainURL()--"+ApplicationThreadLocals.getDomainURL());
         final String url = String.format(EDCR_REPORT_RESTURL,ApplicationThreadLocals.getDomainURL());
-
+        System.out.println("DcrRestService--------url--"+url);
         return restTemplate.getForObject(url, String.class, dcrNumber);
     }
     
