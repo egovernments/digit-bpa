@@ -150,7 +150,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 				ApplicationThreadLocals.setStateName(clientId);
 				ApplicationThreadLocals.setGrade(city.getGrade());
 				ApplicationThreadLocals.setDomainName(city.getDomainURL());
-				ApplicationThreadLocals.setDomainURL(city.getDomainURL());
+				ApplicationThreadLocals.setDomainURL("https://"+city.getDomainURL());
 			} else {
 				LOGGER.warn("Unable to find the city");
 			}
@@ -160,6 +160,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 				ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
 			else
 				LOGGER.warn("City preferences not set for {}", city.getName());
+			LOGGER.info("ApplicationThreadLocals.getDomainURL()-->"+ApplicationThreadLocals.getDomainURL());
 		}
 	}
 }
