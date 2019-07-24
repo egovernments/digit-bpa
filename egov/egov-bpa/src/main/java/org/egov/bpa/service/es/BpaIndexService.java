@@ -78,7 +78,7 @@ public class BpaIndexService {
 	private ApplicationBpaService applicationBpaService;
 
 	public BpaIndex createBpaIndex(final BpaApplication bpaApplication) {
-		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainURL());
+		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 		BpaIndex bpaIndex = new BpaIndex();
 		buildUlbDetails(cityWebsite, bpaIndex);
 		bpaIndex.setId(cityWebsite.getCode() + "-" + bpaApplication.getApplicationNumber());
