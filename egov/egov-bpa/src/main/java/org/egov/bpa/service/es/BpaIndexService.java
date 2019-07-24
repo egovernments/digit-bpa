@@ -17,7 +17,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.bpa.entity.es.BpaIndex;
-import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.repository.es.BpaIndexRepository;
@@ -79,7 +78,7 @@ public class BpaIndexService {
 	private ApplicationBpaService applicationBpaService;
 
 	public BpaIndex createBpaIndex(final BpaApplication bpaApplication) {
-		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
+		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainURL());
 		BpaIndex bpaIndex = new BpaIndex();
 		buildUlbDetails(cityWebsite, bpaIndex);
 		bpaIndex.setId(cityWebsite.getCode() + "-" + bpaApplication.getApplicationNumber());
