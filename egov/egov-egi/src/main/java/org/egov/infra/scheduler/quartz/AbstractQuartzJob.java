@@ -131,17 +131,11 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 	}
 
 	private void prepareThreadLocal(String tenant) {
-		LOGGER.info("tenant-->"+tenant);
-		LOGGER.info("this.userName-->"+this.userName);
-		LOGGER.info("clientId-->"+clientId);
 		ApplicationThreadLocals.setTenantID(tenant);
 		ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
-		LOGGER.info("cityDataRequired-->"+cityDataRequired);
 		if (cityDataRequired) {
 			// TODO: get the city by tenant
 			City city = this.cityService.findAll().get(0);
-			LOGGER.info("city.getName()-->"+city.getName());
-			LOGGER.info("city.toMap()-->"+city.toMap());
 			if (city != null) {
 				ApplicationThreadLocals.setCityCode(city.getCode());
 				ApplicationThreadLocals.setCityName(city.getName());
@@ -155,12 +149,10 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
 				LOGGER.warn("Unable to find the city");
 			}
 			CityPreferences cityPreferences = city.getPreferences();
-			LOGGER.info("cityPreferences.getMunicipalityName()-->"+cityPreferences.getMunicipalityName());
 			if (cityPreferences != null)
 				ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
 			else
 				LOGGER.warn("City preferences not set for {}", city.getName());
-			LOGGER.info("ApplicationThreadLocals.getDomainURL()-->"+ApplicationThreadLocals.getDomainURL());
 		}
 	}
 }
