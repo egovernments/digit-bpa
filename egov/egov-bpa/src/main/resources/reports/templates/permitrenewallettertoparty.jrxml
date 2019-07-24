@@ -27,7 +27,7 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="permitRenewal" class="org.egov.bpa.master.entity.PermitRenewal">
+	<field name="permitRenewal" class="org.egov.bpa.transaction.entity.PermitRenewal">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="letterToParty" class="org.egov.bpa.transaction.entity.common.LetterToPartyCommon"/>

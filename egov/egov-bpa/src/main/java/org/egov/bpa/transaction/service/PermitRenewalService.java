@@ -41,11 +41,14 @@
 package org.egov.bpa.transaction.service;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.RENEWALSTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_GENERATE_RENEWAL_ORDER;
+import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +57,7 @@ import java.util.Set;
 import org.egov.bpa.service.es.PermitRenewalIndexService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitRenewal;
+import org.egov.bpa.transaction.entity.PermitRenewalConditions;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.repository.PermitRenewalRepository;
@@ -99,6 +103,8 @@ public class PermitRenewalService {
     private PermitRenewalFeeCalculationService feeCalculationService;
     @Autowired
     private BpaDemandService bpaDemandService;
+    @Autowired
+    private PermitRenewalConditionsService renewalConditionsService;
 
     @Transactional
     public PermitRenewal save(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
@@ -135,6 +141,7 @@ public class PermitRenewalService {
             permitRenewal.setRenewalApprovalDate(new Date());
             permitRenewal.setRenewalNumber(permitRenewal.getParent().getPlanPermissionNumber());
         }
+        
         if (WF_GENERATE_RENEWAL_ORDER.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             String permitExpiryDateStr = bpaNoticeUtil.calculateCertExpryDate(
                     new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
@@ -149,11 +156,32 @@ public class PermitRenewalService {
                     bpaDemandService.createDemandUsingDemandReasonCodes(permitRenewal.getDemand(),
                             feeCalculationService.calculateRenewalFee(permitRenewal)));
         }
+        if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
+                || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(permitRenewal.getStatus().getCode())) {
+            buildRejectionReasons(permitRenewal);
+        }
         PermitRenewal permitRenewalRes = permitRenewalRepository.save(permitRenewal);
         bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(permitRenewal, wfBean);
         permitRenewalIndexService.updateIndexes(permitRenewalRes);
         return permitRenewalRes;
     }
+    
+    private void buildRejectionReasons(final PermitRenewal permitRenewal) {
+    	renewalConditionsService.delete(permitRenewal.getRejectionReasons());
+    	renewalConditionsService.delete(permitRenewal.getAdditionalRenewalConditions());
+        permitRenewal.getAdditionalRenewalConditions().clear();
+        permitRenewal.getRejectionReasons().clear();
+        List<PermitRenewalConditions> additionalRejectReasons = new ArrayList<>();
+        for (PermitRenewalConditions addnlReason : permitRenewal.getAdditionalRejectReasonsTemp()) {
+            addnlReason.setPermitRenewal(permitRenewal);
+            addnlReason.getNoticeCondition().setChecklistServicetype(permitRenewal.getAdditionalRejectReasonsTemp().get(0).getNoticeCondition().getChecklistServicetype());
+            if (addnlReason != null && addnlReason.getNoticeCondition().getAdditionalCondition() != null)
+                additionalRejectReasons.add(addnlReason);
+        }
+        permitRenewal.setRejectionReasons(permitRenewal.getRejectionReasonsTemp());
+        permitRenewal.setAdditionalRenewalConditions(additionalRejectReasons);
+    }
+
 
     public PermitRenewal findByPlanPermissionNumberAndRevocationApplnDate(final String permitNumber) {
         List<PermitRenewal> permitRenewals = permitRenewalRepository

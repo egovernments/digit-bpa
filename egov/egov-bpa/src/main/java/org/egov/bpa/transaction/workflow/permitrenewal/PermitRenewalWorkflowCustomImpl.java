@@ -142,12 +142,22 @@ public abstract class PermitRenewalWorkflowCustomImpl implements PermitRenewalWo
                     .withOwner(pos).withOwner(ownerUser)
                     .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_RENEWAL);
         } else if (BpaConstants.WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
-            permitRenewal.transition().end()
-                    .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
-                    .withComments(wfBean.getApproverComments()).withDateInfo(currentDate.toDate())
-                    .withStateValue(BpaConstants.WF_END_STATE)
-                    .withNextAction(BpaConstants.WF_END_STATE).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
-            permitRenewal.setStatus(getStatusByPassingCode(BpaConstants.APPLICATION_STATUS_REJECTED));
+        	wfmatrix = permitRenewalWorkflowService.getWfMatrix(permitRenewal.getStateType(), null,
+                    null, wfBean.getAdditionalRule(), BpaConstants.WF_REJECT_STATE, null);
+        	permitRenewal.setStatus(getStatusByPassingCode(BpaConstants.WF_REJECT_STATE));
+        	permitRenewal.transition().progressWithStateCopy()
+                       .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+                       .withComments(wfBean.getApproverComments())
+                       .withStateValue(BpaConstants.WF_REJECT_STATE).withDateInfo(currentDate.toDate())
+                       .withOwner(pos).withOwner(ownerUser)
+                       .withNextAction(wfmatrix.getNextAction())
+                       .withNatureOfTask(BpaConstants.NATURE_OF_WORK_RENEWAL);
+        }else if (BpaConstants.GENERATEREJECTNOTICE.equalsIgnoreCase(wfBean.getWorkFlowAction()) || BpaConstants.WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+        	permitRenewal.setStatus(getStatusByPassingCode(BpaConstants.APPLICATION_STATUS_CANCELLED));
+        	permitRenewal.transition().end()
+                       .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+                       .withComments(wfBean.getApproverComments()).withDateInfo(currentDate.toDate())
+                       .withNextAction(BpaConstants.WF_END_STATE).withNatureOfTask(BpaConstants.NATURE_OF_WORK_RENEWAL);
         } else {
             wfmatrix = permitRenewalWorkflowService.getWfMatrix(permitRenewal.getStateType(), null,
                     null, wfBean.getAdditionalRule(), permitRenewal.getCurrentState().getValue(),

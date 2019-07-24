@@ -74,6 +74,10 @@ public class BpaApplicationReportProperties {
 		return environment.getProperty("report.rejectionpermit");
 	}
 	
+	public String getPermitRefusalFormat() {
+		return environment.getProperty("report.rejectionrenewal");
+	}
+	
 	public String getByeLaws() {
 		return environment.getProperty("report.byelaws");
 	}

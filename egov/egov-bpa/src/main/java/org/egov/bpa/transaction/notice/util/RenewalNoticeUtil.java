@@ -133,7 +133,7 @@ public class RenewalNoticeUtil {
         if (permitRenewalNotice == null || permitRenewalNotice.getNoticeCommon().getNoticeFileStore() == null) {
             final Map<String, Object> reportParams = bpaNoticeUtil.buildParametersForReport(permitRenewal.getParent());
             reportParams.putAll(getUlbDetails());
-            reportParams.put("refusalFormat", bpaApplicationReportProperties.getRefusalFormat());
+            reportParams.put("refusalFormat", bpaApplicationReportProperties.getPermitRefusalFormat());
             reportParams.put("applicationNumber", permitRenewal.getApplicationNumber());
             reportParams.put("rejectionReasons", buildRejectionReasons(permitRenewal));
             reportParams.put("approverName", getRejector(permitRenewal));

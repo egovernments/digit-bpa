@@ -73,7 +73,7 @@ public class PermitRenewalRejectionNoticeService {
     public ReportOutput generateNotice(PermitRenewal permitRenewal) throws IOException {
         String fileName = "renewal_rejection_notice_" + permitRenewal.getApplicationNumber();
         PermitRenewalNotice renewalNotice = noticeUtil.findByPermitRenewalAndNoticeType(permitRenewal, BPA_REJECTION_NOTICE_TYPE);
-        ReportOutput reportOutput = noticeUtil.getReportOutput(permitRenewal, fileName, renewalNotice, BPAREJECTIONFILENAME,
+        ReportOutput reportOutput = noticeUtil.getReportOutput(permitRenewal, fileName, renewalNotice, "permitrenewalrejectionnotice",
                 BPA_REJECTION_NOTICE_TYPE, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
         reportOutput.setReportFormat(ReportFormat.PDF);
         return reportOutput;

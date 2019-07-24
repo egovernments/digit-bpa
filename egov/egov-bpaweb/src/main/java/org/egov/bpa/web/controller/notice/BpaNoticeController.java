@@ -50,8 +50,8 @@ package org.egov.bpa.web.controller.notice;
 import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
 import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
-import static org.egov.bpa.utils.BpaConstants.OCREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.OCDEMANDFILENAME;
+import static org.egov.bpa.utils.BpaConstants.OCREJECTIONFILENAME;
 import static org.egov.infra.utils.StringUtils.append;
 import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
@@ -67,7 +67,9 @@ import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
+import org.egov.bpa.transaction.notice.impl.PermitRenewalRejectionNoticeService;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.PermitRenewalService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -95,6 +97,8 @@ public class BpaNoticeController {
     private OccupancyCertificateService occupancyCertificateService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private PermitRenewalService permitRenewalService;
 
     @GetMapping(value = "/application/demandnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
@@ -176,11 +180,11 @@ public class BpaNoticeController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> generatePermitRenewalRejectionNotice(@PathVariable final String applicationNumber,
             HttpServletRequest request) throws IOException {
-        PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
-                .find(PermitRejectionFormatImpl.class, specificNoticeService.getCityDetails());
-        ReportOutput reportOutput = bpaNoticeFeature
-                .generateNotice(applicationBpaService.findByApplicationNumber(applicationNumber));
-        return getFileAsResponseEntity(applicationNumber, reportOutput, BPAREJECTIONFILENAME);
+    	PermitRenewalRejectionNoticeService renewalNoticeFeature = (PermitRenewalRejectionNoticeService) specificNoticeService
+                .find(PermitRenewalRejectionNoticeService.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = renewalNoticeFeature
+                .generateNotice(permitRenewalService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, "permitrenewalrejectionnotice");
     }
 
 

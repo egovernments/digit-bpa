@@ -48,6 +48,72 @@ jQuery(document).ready(function ($) {
             });
         }
     });
+    
+
+    var tbody = $('#renewalAdditionalRejectionReasons').children('tbody');
+    var table = tbody.length ? tbody : $('#renewalAdditionalRejectionReasons');
+    var row = '<tr>' +
+        '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span>'
+        +'<input type="hidden" name="additionalRejectReasonsTemp[{{idx}}].application" value="{{applicationId}}" />'
+        +'<input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].noticeCondition.checklistServicetype" value="{{permitConditionId}}" />'
+        +'<input type="hidden" class="additionalPermitCondition" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.type" value="ADDITIONALREJECTIONREASONS"/>'
+        +'<input type="hidden" class="serialNo" data-sno name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.orderNumber"/></td>' 
+        +'<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalRejectReasonsTemp[{{idx}}].noticeCondition.additionalCondition"/></td>';
+    $('#addAddnlRejectRow').click(function () {
+        var idx = $(tbody).find('tr').length;
+        if(validateAdditionalConditionsOrReasonsOnAdd('renewalAdditionalRejectionReasons')) {
+        	//Add row
+            var row = {
+                'sno': idx + 1,
+                'idx': idx,
+                'permitConditionId': $('#additionalPermitCondition').val(),
+                'applicationId': $('#scrutinyapplicationid').val()
+                
+            };
+            addRowFromObject(row);
+            patternvalidation();
+        }
+    });
+
+
+    function validateAdditionalConditionsOrReasonsOnAdd(tableId){
+    	var isValid=true;
+        $('#'+tableId+' tbody tr').each(function(index){
+        	var additionalPermitCondition  = $(this).find('*[name$="additionalCondition"]').val();
+    	    if(!additionalPermitCondition) { 
+    	    	bootbox.alert("Values cannot be empty"+$('#valuesCannotEmpty').val());
+    	    	isValid=false;
+    	    	return false;
+    	    } 
+        });
+        return isValid;
+    }
+
+    function addRowFromObject(rowJsonObj) {
+        table.append(row.compose(rowJsonObj));
+    }
+    
+    $(".rejectionReasons").change(function () {
+        setCheckBoxValue($(this));
+    });
+    
+    String.prototype.compose = (function () {
+        var re = /\{{(.+?)\}}/g;
+        return function (o) {
+            return this.replace(re, function (_, k) {
+                return typeof o[k] != 'undefined' ? o[k] : '';
+            });
+        }
+    }());
+    
+    function setCheckBoxValue(currentVal) {
+        var $hiddenName = currentVal.data('change-to');
+        if (currentVal.is(':checked')) {
+            $('input[name="' + $hiddenName + '"]').val(true);
+        } else {
+            $('input[name="' + $hiddenName + '"]').val(false);
+        }
+    }
 
     $(".workAction")
     .click(
@@ -226,6 +292,8 @@ jQuery(document).ready(function ($) {
         });
 });
 
+
+
 function validateOnApproveAndForward(validator, action) {
     validateWorkFlowApprover(action);
     if ($('#wfstateDesc').val() == 'NEW') {
@@ -252,7 +320,6 @@ function validateOnReject(isCommentsRequire) {
     }
     return true;
 }
-
 
 function validateForm(validator) {
     if ($('#permitRenewalUpdateForm').valid()) {
