@@ -81,6 +81,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -115,6 +116,7 @@ import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
+import org.egov.bpa.transaction.entity.CoApplicant;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
 import org.egov.bpa.transaction.entity.PermitDcrDocument;
 import org.egov.bpa.transaction.entity.PermitDocument;
@@ -268,7 +270,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
-    }    
+    }
 
     @Transactional
     public BpaApplication createNewApplication(final BpaApplication application, String workFlowAction) {
@@ -301,16 +303,16 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         }
         setSource(application);
         Long approvalPosition = null;
-        
-       
+        application.setCoApplicants(buildCoApplicantDetails(application));
+
         if (!bpaUtils.logedInuseCitizenOrBusinessUser()) {
             WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
-                    application.getStateType(), WF_CREATED_STATE,application.getApplicationType().getName());
+                    application.getStateType(), WF_CREATED_STATE, application.getApplicationType().getName());
             String currentState = WF_CREATED_STATE;
             if (application.getAdmissionfeeAmount() != null
                     && application.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0) {
                 wfMatrix = bpaUtils.getWfMatrixByCurrentState(application.getIsOneDayPermitApplication(),
-                        application.getStateType(), WF_NEW_STATE,application.getApplicationType().getName());
+                        application.getStateType(), WF_NEW_STATE, application.getApplicationType().getName());
                 currentState = WF_NEW_STATE;
             }
             if (wfMatrix != null)
@@ -376,24 +378,24 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         List<ChecklistServiceTypeMapping> defaultChecklist = checklistServicetypeMappingService
                 .findByActiveByServiceTypeAndChecklist(application.getServiceType().getId(), PERMIT_DEFAULT_CONDITIONS);
         List<ApplicationPermitConditions> appPermitConditiontemp = new ArrayList<ApplicationPermitConditions>();
-        if(application.getApplicationType().getName().equals(LOWRISK)){
-        	bpaApplicationPermitConditionsService.delete(application.getDefaultPermitConditions());
-        	application.getDefaultPermitConditions().clear();
+        if (application.getApplicationType().getName().equals(LOWRISK)) {
+            bpaApplicationPermitConditionsService.delete(application.getDefaultPermitConditions());
+            application.getDefaultPermitConditions().clear();
         }
-        if(!application.getApplicationType().getName().equals(LOWRISK))
-        	appPermitConditiontemp = application.getDefaultPermitConditions();
-        for(ChecklistServiceTypeMapping permitDefaultChecklist:defaultChecklist){
-        	ApplicationPermitConditions appPermitCondition = new ApplicationPermitConditions();
-        	appPermitCondition.setApplication(application);
-        	NoticeCondition nc= new NoticeCondition();
-        	nc.setType(ConditionType.PERMITDEFAULTCONDITIONS);
-        	nc.setRequired(true);
-        	nc.setChecklistServicetype(permitDefaultChecklist);
-        	appPermitCondition.setNoticeCondition(nc);
-        	appPermitConditiontemp.add(appPermitCondition);
+        if (!application.getApplicationType().getName().equals(LOWRISK))
+            appPermitConditiontemp = application.getDefaultPermitConditions();
+        for (ChecklistServiceTypeMapping permitDefaultChecklist : defaultChecklist) {
+            ApplicationPermitConditions appPermitCondition = new ApplicationPermitConditions();
+            appPermitCondition.setApplication(application);
+            NoticeCondition nc = new NoticeCondition();
+            nc.setType(ConditionType.PERMITDEFAULTCONDITIONS);
+            nc.setRequired(true);
+            nc.setChecklistServicetype(permitDefaultChecklist);
+            appPermitCondition.setNoticeCondition(nc);
+            appPermitConditiontemp.add(appPermitCondition);
         }
         application.setDefaultPermitConditions(appPermitConditiontemp);
-        
+
     }
 
     private void buildPermitConditions(final BpaApplication application) {
@@ -423,7 +425,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         List<ApplicationPermitConditions> additionalRejectReasons = new ArrayList<>();
         for (ApplicationPermitConditions addnlReason : application.getAdditionalRejectReasonsTemp()) {
             addnlReason.setApplication(application);
-            addnlReason.getNoticeCondition().setChecklistServicetype(application.getAdditionalRejectReasonsTemp().get(0).getNoticeCondition().getChecklistServicetype());
+            addnlReason.getNoticeCondition().setChecklistServicetype(
+                    application.getAdditionalRejectReasonsTemp().get(0).getNoticeCondition().getChecklistServicetype());
             if (addnlReason != null && addnlReason.getNoticeCondition().getAdditionalCondition() != null)
                 additionalRejectReasons.add(addnlReason);
         }
@@ -446,10 +449,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         if (!application.getBuildingSubUsages().isEmpty())
             for (BuildingSubUsage subUsage : application.getBuildingSubUsages())
                 for (BuildingSubUsageDetails subUsageDetails : subUsage.getSubUsageDetails()) {
-                	if(!subUsageDetails.getSubUsagesTemp().isEmpty()) {
-                		subUsageDetails.getSubUsages().clear();
+                    if (!subUsageDetails.getSubUsagesTemp().isEmpty()) {
+                        subUsageDetails.getSubUsages().clear();
                         subUsageDetails.setSubUsages(subUsageDetails.getSubUsagesTemp());
-                	}
+                    }
                 }
 
         buildBuildingSubUsage(application);
@@ -460,7 +463,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
         applicationBpaRepository.saveAndFlush(application);
-        
+
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
             bpaIndexService.updateIndexes(application);
@@ -479,21 +482,22 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // persistPostalAddress(application);
         // buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
-		if (application.getApplicationType() != null && application.getApplicationType().getName() != null
-				&& application.getApplicationType().getName().equals(BpaConstants.APPLICATION_TYPE_LOWRISK)
-				&& application.getStatus()!=null && application.getStatus().getCode()!=null && application.getStatus().getCode().equals("Registered")) {
+        if (application.getApplicationType() != null && application.getApplicationType().getName() != null
+                && application.getApplicationType().getName().equals(BpaConstants.APPLICATION_TYPE_LOWRISK)
+                && application.getStatus() != null && application.getStatus().getCode() != null
+                && application.getStatus().getCode().equals("Registered")) {
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
             application.setPlanPermissionDate(new Date());
-			PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
-					.find(PermitOrderFormatImpl.class, specificNoticeService.getCityDetails());
-			try {
-				ReportOutput reportOutput = bpaNoticeFeature
-						.generateNotice(findByApplicationNumber(application.getApplicationNumber()));
-			} catch (IOException e) {
-				if(LOG.isDebugEnabled())
-					LOG.debug(e.getMessage());
-			}
-		}
+            PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService
+                    .find(PermitOrderFormatImpl.class, specificNoticeService.getCityDetails());
+            try {
+                ReportOutput reportOutput = bpaNoticeFeature
+                        .generateNotice(findByApplicationNumber(application.getApplicationNumber()));
+            } catch (IOException e) {
+                if (LOG.isDebugEnabled())
+                    LOG.debug(e.getMessage());
+            }
+        }
         applicationBpaRepository.saveAndFlush(application);
     }
 
@@ -535,40 +539,40 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         buildSchemeLandUsage(application);
         // For one day permit
 
-        if(workFlowAction.equals(BpaConstants.GENERATEREVOCATIONNOTICE)){
-    	   PermitRevocation permitRevocation = new PermitRevocation();
-    	   permitRevocation.setRevocationNumber(revocationNumberGenerator.generatePermitRevocationNumber());
-    	   permitRevocation.setApplication(application);
-    	   permitRevocation.setApplicationNumber(application.getApplicationNumber());
-    	   permitRevocation.setApplicationDate(new Date());
-    	   permitRevocation.setApproveCancelRemarks(application.getApprovalComent());
-    	   List<PermitRevocation> list = application.getPermitRevocation();
-    	   list.add(permitRevocation);
-    	   application.setPermitRevocation(list);
-    	   final BpaStatus bpaStatus = getStatusByCodeAndModuleType(BpaConstants.APPLICATION_STATUS_REVOKED);
-           application.setStatus(bpaStatus);
-       }
-        
-		if (application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_DOC_VERIFIED
-				.equalsIgnoreCase(application.getState().getValue())
-				|| APPLICATION_STATUS_SECTION_CLRK_APPROVED.equalsIgnoreCase(application.getState().getValue()))) {
+        if (workFlowAction.equals(BpaConstants.GENERATEREVOCATIONNOTICE)) {
+            PermitRevocation permitRevocation = new PermitRevocation();
+            permitRevocation.setRevocationNumber(revocationNumberGenerator.generatePermitRevocationNumber());
+            permitRevocation.setApplication(application);
+            permitRevocation.setApplicationNumber(application.getApplicationNumber());
+            permitRevocation.setApplicationDate(new Date());
+            permitRevocation.setApproveCancelRemarks(application.getApprovalComent());
+            List<PermitRevocation> list = application.getPermitRevocation();
+            list.add(permitRevocation);
+            application.setPermitRevocation(list);
+            final BpaStatus bpaStatus = getStatusByCodeAndModuleType(BpaConstants.APPLICATION_STATUS_REVOKED);
+            application.setStatus(bpaStatus);
+        }
 
-			String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
+        if (application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_DOC_VERIFIED
+                .equalsIgnoreCase(application.getState().getValue())
+                || APPLICATION_STATUS_SECTION_CLRK_APPROVED.equalsIgnoreCase(application.getState().getValue()))) {
 
-			if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL)
-					|| feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
-				ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
-			                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
-			    
-				PermitFee permitFee = feeCalculation.calculateBpaSanctionFees(application);
+            String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
 
-				ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
-				permitFee.setApplicationFee(applicationFee);
-				permitFeeRepository.save(permitFee);
-				application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(),
-						permitFee.getApplication().getDemand()));
-			}
-		}
+            if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL)
+                    || feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
+                ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                        .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+
+                PermitFee permitFee = feeCalculation.calculateBpaSanctionFees(application);
+
+                ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
+                permitFee.setApplicationFee(applicationFee);
+                permitFeeRepository.save(permitFee);
+                application.setDemand(bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(),
+                        permitFee.getApplication().getDemand()));
+            }
+        }
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
@@ -577,8 +581,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
                     feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
-            	 ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
-                         .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+                ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                        .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
                 PermitFee permitFee = feeCalculation.calculateBpaSanctionFees(application);
 
                 ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
@@ -589,10 +593,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             }
         }
         if (WF_APPROVE_BUTTON.equals(workFlowAction)) {
-            
-            if(application.getPlanPermissionNumber() == null){
-            application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
-            application.setPlanPermissionDate(new Date());
+
+            if (application.getPlanPermissionNumber() == null) {
+                application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
+                application.setPlanPermissionDate(new Date());
             }
             PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService.find(
                     DemandDetailsFormatImpl.class,
@@ -621,14 +625,16 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
                 || (!WF_APPROVE_BUTTON.equals(workFlowAction)
                         && APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode()))
-                || (GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction) && application.getApplicationType().getName().equals(LOWRISK))) {
+                || (GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction)
+                        && application.getApplicationType().getName().equals(LOWRISK))) {
             buildRejectionReasons(application);
         }
         application.setLPRequestInitiated(FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(application.getState().getNextAction()));
-        List<ApplicationPermitConditions> defaultPermitCondition = bpaApplicationPermitConditionsService.
-        		findAllByApplicationAndPermitConditionType(application, ConditionType.PERMITDEFAULTCONDITIONS);
-        if(defaultPermitCondition==null || defaultPermitCondition.isEmpty() && !GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction))
-        	buildDefaultPermitConditionsList(application);
+        List<ApplicationPermitConditions> defaultPermitCondition = bpaApplicationPermitConditionsService
+                .findAllByApplicationAndPermitConditionType(application, ConditionType.PERMITDEFAULTCONDITIONS);
+        if (defaultPermitCondition == null
+                || defaultPermitCondition.isEmpty() && !GENERATEREVOCATIONNOTICE.equalsIgnoreCase(workFlowAction))
+            buildDefaultPermitConditionsList(application);
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && updatedApplication.getCurrentState() != null
                 && !updatedApplication.getCurrentState().getValue().equals(WF_NEW_STATE)) {
@@ -1043,6 +1049,17 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return citizen;
     }
 
+    private List<CoApplicant> buildCoApplicantDetails(final BpaApplication application) {
+        List<CoApplicant> coApplicants = new LinkedList<>();
+        for (CoApplicant applicant : application.getCoApplicants()) {
+            if (applicant.getName() != null) {
+                applicant.setApplication(application);
+                coApplicants.add(applicant);
+            }
+        }
+        return coApplicants;
+    }
+
     @Transactional
     public void saveBpaApplication(BpaApplication bpaApp) {
         applicationBpaRepository.saveAndFlush(bpaApp);
@@ -1100,7 +1117,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return criteria.list();
 
     }
-    
+
     public BigDecimal getTotalFloorArea(final BpaApplication application) {
         BigDecimal totalFloorArea = BigDecimal.ZERO;
         for (BuildingDetail buildingDetail : application.getBuildingDetail())
@@ -1119,7 +1136,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             }
         return totalFloorArea;
     }
-    
+
     public boolean isOccupancyContains(final List<Occupancy> occupancies, final String occupancy) {
         Optional<Occupancy> occ = occupancies.stream().filter(o -> o.getCode().equalsIgnoreCase(occupancy)).findAny();
         return occ.isPresent();

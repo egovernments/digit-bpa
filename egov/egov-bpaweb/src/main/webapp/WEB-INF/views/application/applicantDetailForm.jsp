@@ -56,25 +56,27 @@
 	</div>
 </div>
 <div class="panel-body">
+	<input type="hidden" id="genderList" value="${genderList}">
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.applicant.name" /> <span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden path="owner.user" id="userId" />
 			<form:input class="form-control patternvalidation"
-						data-pattern="alphabetspecialcharacters" data-role="tagsinput"
-						maxlength="100" id="name" path="owner.name" cols="5" rows="3"
-						required="required" />
-			<small class="text-info view-content"> <spring:message code="lbl.names.separated.comma" /></small>
+				data-pattern="alphabetspecialcharacters" data-role="tagsinput"
+				maxlength="100" id="name" path="owner.name" cols="5" rows="3"
+				required="required" />
+			<small class="text-info view-content"> <spring:message
+					code="lbl.primary.user.help" /></small>
 			<form:errors path="owner.name" cssClass="add-margin error-msg" />
 		</div>
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.owner.address" /><span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			<form:textarea path="owner.address"
-						   id="address" class="form-control patternvalidation"
-						   data-pattern="alphanumericspecialcharacters" required="required"
-						   maxlength="249" cols="5" rows="4" />
+			<form:textarea path="owner.address" id="address"
+				class="form-control patternvalidation"
+				data-pattern="alphanumericspecialcharacters" required="required"
+				maxlength="249" cols="5" rows="4" />
 			<form:errors path="owner.address" cssClass="add-margin error-msg" />
 		</div>
 	</div>
@@ -83,18 +85,21 @@
 				code="lbl.mobileNo" /> <span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control patternvalidation"
-						data-pattern="number" maxlength="10" id="mobileNumber"
-						path="owner.user.mobileNumber" required="required" />
-			<small class="text-info view-content"> <spring:message code="lbl.sms.send" /></small>
-			<form:errors path="owner.user.mobileNumber" cssClass="add-margin error-msg" />
+				data-pattern="number" maxlength="10" id="mobileNumber"
+				path="owner.user.mobileNumber" required="required" />
+			<small class="text-info view-content"> <spring:message
+					code="lbl.sms.send" /></small>
+			<form:errors path="owner.user.mobileNumber"
+				cssClass="add-margin error-msg" />
 		</div>
 
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.emailid" /></label>
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control " maxlength="128" onblur=""
-						id="emailId" name="emailId" path="owner.emailId" />
-			<small class="text-info view-content"> <spring:message code="lbl.email.send" /></small>
+				id="emailId" name="emailId" path="owner.emailId" />
+			<small class="text-info view-content"> <spring:message
+					code="lbl.email.send" /></small>
 			<form:errors path="owner.emailId" cssClass="add-margin error-msg" />
 		</div>
 	</div>
@@ -102,9 +107,8 @@
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.gender" /> <span class="mandatory"></span></label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="owner.gender" id="gender"
-						 required="required" cssClass="form-control"
-						 cssErrorClass="form-control error">
+			<form:select path="owner.gender" id="gender" required="required"
+				cssClass="form-control" cssErrorClass="form-control error">
 				<form:option value="">
 					<spring:message code="lbl.select" />
 				</form:option>
@@ -117,10 +121,12 @@
 				code="lbl.aadhar" /> </label>
 		<div class="col-sm-3 add-margin">
 			<form:input class="form-control patternvalidation"
-						data-pattern="number" minlength="12" maxlength="12" id="aadhaarNumber"
-						path="owner.aadhaarNumber" />
-			<form:errors path="owner.aadhaarNumber" data-server-error="owner.aadhaarNumber"
-						 cssClass="add-margin error-msg" />
+				data-pattern="number" minlength="12" maxlength="12"
+				id="aadhaarNumber" path="owner.aadhaarNumber" />
+			<form:errors path="owner.aadhaarNumber"
+				data-server-error="owner.aadhaarNumber"
+				cssClass="add-margin error-msg" />
 		</div>
 	</div>
 </div>
+<jsp:include page="co-applicant-detail.jsp"></jsp:include>

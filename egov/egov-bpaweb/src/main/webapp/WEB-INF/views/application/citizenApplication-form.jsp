@@ -46,7 +46,8 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-		<div class="text-left text-info view-content col-sm-12" style="font-size: 14px;">
+		<div class="text-left text-info view-content col-sm-12"
+			style="font-size: 14px;">
 			<span class="applicantname"> <spring:message
 					code="lbl.applicant.name" /> : <span id="applicantName"></span>
 			</span>
@@ -99,8 +100,9 @@
 			<form:hidden path="authorizedToSubmitPlan"
 				id="authorizedToSubmitPlan" />
 			<input type="hidden" id="stakeHolderType" value="${stakeHolderType}" />
-			<input type="hidden" id="permitApplnFeeRequired" value="${permitApplnFeeRequired}" />
-			
+			<input type="hidden" id="permitApplnFeeRequired"
+				value="${permitApplnFeeRequired}" />
+
 
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
@@ -130,7 +132,8 @@
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="generic-boundary-form.jsp">
-  						<jsp:param name="boundaryData" value="new:${bpaApplication.adminBoundary}:${bpaApplication.revenueBoundary}:${bpaApplication.locationBoundary}" />
+							<jsp:param name="boundaryData"
+								value="new:${bpaApplication.adminBoundary}:${bpaApplication.revenueBoundary}:${bpaApplication.locationBoundary}" />
 						</jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
@@ -146,10 +149,10 @@
 								data-collapsed="0">
 								<jsp:include page="edcr-existing-bldg-details.jsp" />
 							</div>
-				 		<div class="panel panel-primary edcrbuildingdetails"
+							<div class="panel panel-primary edcrbuildingdetails"
 								data-collapsed="0">
 								<jsp:include page="edcr-buildingdetails.jsp" />
-							</div>    
+							</div>
 						</c:when>
 						<c:otherwise>
 							<div class="panel panel-primary existingbuildingdetails"
@@ -277,8 +280,7 @@
 	<input type="hidden" id="submitMoreThanPermiPlotArea"
 		value="<spring:message code='msg.validate.onsubmit.morethan.permissible.plotarea'/>" />
 	<input type="hidden" id="saveApplication"
-		value="<spring:message code='msg.confirm.save.appln'/>" /> 
-	<input
+		value="<spring:message code='msg.confirm.save.appln'/>" /> <input
 		type="hidden" id="submitApplication"
 		value="<spring:message code='msg.confirm.submit.appln'/>" /> <input
 		type="hidden" id="acceptDisclaimer"
@@ -324,15 +326,15 @@
 	<input type="hidden" id="dcrforoc"
 		value="<spring:message code='msg.dcr.for.oc' arguments="${currentuser}" htmlEscape="false" argumentSeparator=";"/>" />
 	<input type="hidden" id="sendToCtzAccept"
-			value="<spring:message code='msg.confirm.send.ctzn.accept' />" />
+		value="<spring:message code='msg.confirm.send.ctzn.accept' />" />
 	<c:set var="currentuser" value="${currentuser}" />
 
 </div>
 
 <link rel="stylesheet"
-	  href="<c:url value='/resources/global/css/bootstrap/bootstrap-tagsinput.css?rnd=${app_release_no}' context='/egi'/>">
+	href="<c:url value='/resources/global/css/bootstrap/bootstrap-tagsinput.css?rnd=${app_release_no}' context='/egi'/>">
 <script
-		src="<c:url value='/resources/global/js/bootstrap/bootstrap-tagsinput.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<c:url value='/resources/global/js/bootstrap/bootstrap-tagsinput.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
 	src="<c:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
@@ -349,5 +351,7 @@
 	src="<cdn:url value='/resources/js/app/bpa-application-validations.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/citizen-helper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/applicant-helper.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>

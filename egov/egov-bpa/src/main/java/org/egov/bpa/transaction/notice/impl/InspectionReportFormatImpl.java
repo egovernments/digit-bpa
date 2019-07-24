@@ -191,7 +191,7 @@ public class InspectionReportFormatImpl implements InspectionReportFormat {
         reportParams.put("logoPath", cityService.getCityLogoAsStream());
         reportParams.put("cityName", ApplicationThreadLocals.getCityName());
         reportParams.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
-        reportParams.put("applicantName", inspection.getApplication().getOwner().getName());
+        reportParams.put("applicantName", inspection.getApplication().getApplicantName());
         reportParams.put("address", inspection.getApplication().getOwner().getAddress());
         reportParams.put("plotDetails",
                 inspection.getApplication().getSiteDetail().get(0).getExtentinsqmts().setScale(2, BigDecimal.ROUND_HALF_EVEN));

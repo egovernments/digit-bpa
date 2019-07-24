@@ -198,6 +198,9 @@ public class BpaApplication extends StateAware<Position> {
     private String eDcrNumber;
     private BigDecimal totalBuiltUpArea;
 
+    @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy(ORDER_BY_ID_ASC)
+    private List<CoApplicant> coApplicants = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "egbpa_permit_occupancies", joinColumns = @JoinColumn(name = "application"), inverseJoinColumns = @JoinColumn(name = "occupancy"))
     private List<Occupancy> permitOccupancies = new ArrayList<>();
@@ -311,6 +314,15 @@ public class BpaApplication extends StateAware<Position> {
 
     public String getAmenityName() {
         return applicationAmenity.stream().map(ServiceType::getDescription).collect(Collectors.joining(","));
+    }
+
+    public String getApplicantName() {
+        StringBuilder nameSB = new StringBuilder();
+        nameSB.append(owner == null ? "" : owner.getName());
+        if (!coApplicants.isEmpty())
+            nameSB.append(",").append(
+                    coApplicants.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
+        return nameSB.toString();
     }
 
     public String getOccupanciesName() {
@@ -467,6 +479,14 @@ public class BpaApplication extends StateAware<Position> {
 
     public void setGroupDevelopment(final String groupDevelopment) {
         this.groupDevelopment = groupDevelopment;
+    }
+
+    public List<CoApplicant> getCoApplicants() {
+        return coApplicants;
+    }
+
+    public void setCoApplicants(List<CoApplicant> coApplicants) {
+        this.coApplicants = coApplicants;
     }
 
     public List<Occupancy> getPermitOccupancies() {

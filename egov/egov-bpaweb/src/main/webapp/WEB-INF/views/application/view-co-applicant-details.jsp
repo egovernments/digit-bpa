@@ -46,63 +46,42 @@
   ~
   --%>
 
+
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		<spring:message code="lbl.applicant.details" />
-	</div>
-</div>
 <div class="panel-body">
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.applicant.name" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.name}" default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.owner.address" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.address}" default="N/A"></c:out>
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title">
+			<spring:message code="lbl.coapplicant.details" />
 		</div>
 	</div>
-
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.mobileNo" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.showMobileNumber()}"
-				default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.emailid" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.emailId}" default="N/A"></c:out>
-		</div>
-	</div>
-	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.gender" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.gender}" default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.aadhar" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.showAadhaarNumber()}"
-				default="N/A"></c:out>
-		</div>
-	</div>
+	<table class="table table-striped table-bordered"
+		id="coApplicantDetails" style="width: 100%; margin: 0 auto;">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.srl.no" /></th>
+				<th><spring:message code="lbl.applicant.name" /></th>
+				<th><spring:message code="lbl.mobileNo" /></th>
+				<th><spring:message code="lbl.emailid" /></th>
+				<th><spring:message code="lbl.gender" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${bpaApplication.coApplicants}" var="coap"
+				varStatus="counter">
+				<tr>
+					<td><c:out value="${counter.index+1}" default="N/A" /></td>
+					<td><c:out value="${coap.name}" default="N/A" /></td>
+					<td><c:out value="${coap.mobileNumber}" default="N/A" /></td>
+					<td><c:out value="${coap.emailId}" default="N/A" /></td>
+					<td><c:out value="${coap.gender}" default="N/A" /></td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
 </div>
-<c:if test="${not empty bpaApplication.coApplicants}">
-	<jsp:include page="view-co-applicant-details.jsp"></jsp:include>
-</c:if>

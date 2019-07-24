@@ -337,7 +337,8 @@
 		<input type="hidden" id="existingBuildDetailsNotPresent"
 			value="<spring:message code='msg.validate.existing.building.details.notpresent' />" />
 		<input id="sentToCitizen" name="sentToCitizen" type="hidden"
-			value="${bpaApplication.sentToCitizen}" /> <input type="hidden" id="sendToCtzAccept"
+			value="${bpaApplication.sentToCitizen}" /> <input type="hidden"
+			id="sendToCtzAccept"
 			value="<spring:message code='msg.confirm.send.ctzn.accept' />" />
 	</div>
 </div>
@@ -361,5 +362,7 @@
 	src="<cdn:url value='/resources/js/app/buildingarea-details.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/citizen-update-helper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/applicant-helper.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>

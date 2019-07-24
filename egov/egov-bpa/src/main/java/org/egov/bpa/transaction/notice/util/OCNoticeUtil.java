@@ -196,7 +196,7 @@ public class OCNoticeUtil {
         reportParams.put("ocNumber", oc.getOccupancyCertificateNumber() == null ? EMPTY : oc.getOccupancyCertificateNumber());
         reportParams.put("approvalDate", DateUtils.getDefaultFormattedDate(oc.getApprovalDate()));
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
-        reportParams.put("applicantName", oc.getParent().getOwner().getName());
+        reportParams.put("applicantName", oc.getParent().getApplicantName());
         reportParams.put("approverName", getApproverName(oc));
         StakeHolder stakeholder = oc.getParent().getStakeHolder().get(0).getStakeHolder();
         reportParams.put("supervisedBy",

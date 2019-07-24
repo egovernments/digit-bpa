@@ -60,7 +60,6 @@ import org.egov.bpa.transaction.service.PermitRenewalService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
-import org.egov.bpa.utils.OcConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
@@ -240,10 +239,9 @@ public class PermitRenewalTaxCollection extends TaxCollection {
     public void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
             final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
         final PermitRenewal renewal = permitRenewalService.findByDemand(demand);
-        final StringBuilder query = new StringBuilder(
-                "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
-                        .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
-                        .append("WHERE dmdet.egDemand.id = :demand");
+        final StringBuilder query = new StringBuilder(164);
+        query.append(
+                "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment WHERE dmdet.egDemand.id = :demand");
         final List<EgDemandDetails> demandDetailList = getCurrentSession().createQuery(query.toString())
                 .setLong("demand", demand.getId()).list();
         final Map<String, Map<String, EgDemandDetails>> installmentWiseDemandDetailsByReason = new ConcurrentHashMap<>();

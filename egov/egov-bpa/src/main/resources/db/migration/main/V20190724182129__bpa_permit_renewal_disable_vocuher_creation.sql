@@ -1,0 +1,1 @@
+update egcl_servicedetails set vouchercreation =false, isvoucherapproved = false where name in ('Permit Renewal Charges');

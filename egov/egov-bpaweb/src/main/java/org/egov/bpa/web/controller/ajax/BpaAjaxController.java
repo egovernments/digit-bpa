@@ -543,7 +543,7 @@ public class BpaAjaxController {
             jsonObj.addProperty("applicationDate", DateUtils.toDefaultDateFormat(application.getApplicationDate()));
             jsonObj.addProperty("applicationType", application.getIsOneDayPermitApplication() ? "YES" : "NO");
             jsonObj.addProperty("dcrNumber", application.geteDcrNumber());
-            jsonObj.addProperty("applicantName", application.getOwner().getName());
+            jsonObj.addProperty("applicantName", application.getApplicantName());
             jsonObj.addProperty("applicantAddress", application.getOwner().getAddress());
             jsonObj.addProperty("applicationNumber", application.getApplicationNumber());
             jsonObj.addProperty("planPermissionNumber", application.getPlanPermissionNumber());

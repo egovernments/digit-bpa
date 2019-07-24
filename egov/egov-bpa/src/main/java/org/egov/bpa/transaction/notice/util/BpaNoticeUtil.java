@@ -53,7 +53,6 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
 import static org.egov.bpa.utils.BpaConstants.getEdcrRequiredServices;
@@ -91,13 +90,11 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.egov.bpa.config.reports.properties.BpaApplicationReportProperties;
-import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.bpa.transaction.entity.BpaNotice;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
@@ -206,8 +203,6 @@ public class BpaNoticeUtil {
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private PermitNocApplicationService permitNocService;
-   
-   
 
     public BpaNotice findByApplicationAndNoticeType(final BpaApplication application, final String noticeType) {
         return bpaNoticeRepository.findByApplicationAndNoticeType(application, noticeType);
@@ -336,7 +331,7 @@ public class BpaNoticeUtil {
         String lawAct;
         if (!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0).getIsappForRegularization()
                 && bpaApplication.getDemand().getAmtCollected().compareTo(BigDecimal.ZERO) > 0) {
-            String applicantName = bpaApplication.getOwner().getName();
+            String applicantName = bpaApplication.getApplicantName();
             String serviceType = bpaApplication.getServiceType().getDescription();
             SiteDetail site = bpaApplication.getSiteDetail().get(0);
             List<Receipt> receipts = new ArrayList<>();
@@ -380,7 +375,7 @@ public class BpaNoticeUtil {
         reportParams.put("applicationNumber", bpaApplication.getApplicationNumber());
         reportParams.put("buildingPermitNumber",
                 bpaApplication.getPlanPermissionNumber() == null ? EMPTY : bpaApplication.getPlanPermissionNumber());
-        reportParams.put("applicantName", bpaApplication.getOwner().getName());
+        reportParams.put("applicantName", bpaApplication.getApplicantName());
         reportParams.put("applicantAddress",
                 bpaApplication.getOwner() == null ? "Not Mentioned" : bpaApplication.getOwner().getAddress());
         Boolean serviceEnabled = getEdcrRequiredServices().contains(bpaApplication.getServiceType().getCode());
@@ -521,7 +516,7 @@ public class BpaNoticeUtil {
             reportParams.put("subheader", subHeaderString + "confirming to the details and conditions here under.");
         }
         reportParams.put("refusalFormat", bpaApplicationReportProperties.getRefusalFormat());
-        reportParams.put("nocDetails" , getNocDetails(bpaApplication));
+        reportParams.put("nocDetails", getNocDetails(bpaApplication));
         return reportParams;
 
     }
@@ -546,7 +541,8 @@ public class BpaNoticeUtil {
                 if (permitNocApp != null) {
                     nocHelper.setNocApplicationNumber(
                             permitNocApp.getBpaNocApplication().getNocApplicationNumber() != null
-                                    ? permitNocApp.getBpaNocApplication().getNocApplicationNumber() : "N/A");
+                                    ? permitNocApp.getBpaNocApplication().getNocApplicationNumber()
+                                    : "N/A");
                     nocHelper.setNocApplicationDate(permitNocApp.getBpaNocApplication().getCreatedDate());
                     nocHelper.setStatusUpdatedDate(permitNocApp.getBpaNocApplication().getLastModifiedDate());
                     nocHelper.setRemarks(permitNocApp.getBpaNocApplication().getRemarks());

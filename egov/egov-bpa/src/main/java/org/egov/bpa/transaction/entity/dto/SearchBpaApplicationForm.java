@@ -119,7 +119,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setId(application.getId());
         setApplicationNumber(application.getApplicationNumber());
         setOnePermitApplication(application.getIsOneDayPermitApplication());
-        setApplicantName(application.getOwner().getName());
+        setApplicantName(application.getApplicantName());
         setApplicationDate(application.getApplicationDate());
         if (!application.getSlotApplications().isEmpty()) {
             SlotDetail slotDetail = application.getSlotApplications().get(0).getSlotDetail();
