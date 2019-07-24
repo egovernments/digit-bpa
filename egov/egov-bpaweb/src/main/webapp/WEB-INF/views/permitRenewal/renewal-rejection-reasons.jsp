@@ -83,15 +83,15 @@
 								<form:hidden path="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.orderNumber" value="${rejectPCStatus.index+1}" /> 
 								<c:out value="${rejectPCStatus.index+1}"></c:out></td>
 						<c:choose>
-							<c:when test="${rejectionReason.noticeCondition.isRequired}">
-								<td class="text-center"><input type="checkbox" data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.isRequired"
-															   name="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.isRequired"
-															   class="rejectionReasons" checked="checked" value="${rejectionReason.noticeCondition.isRequired}" /></td>
+							<c:when test="${rejectionReason.noticeCondition.required}">
+								<td class="text-center"><input type="checkbox" data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   name="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   class="rejectionReasons" checked="checked" value="${rejectionReason.noticeCondition.required}" /></td>
 							</c:when>
 							<c:otherwise>
-								<td class="text-center"><input type="checkbox" data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.isRequired"
-															   name="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.isRequired"
-															   class="rejectionReasons" value="${rejectionReason.noticeCondition.isRequired}" /></td>
+								<td class="text-center"><input type="checkbox" data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   name="rejectionReasonsTemp[${rejectPCStatus.index}].noticeCondition.required"
+															   class="rejectionReasons" value="${rejectionReason.noticeCondition.required}" /></td>
 							</c:otherwise>
 						</c:choose>
 						<td class="view-content" style="font-size: 105%;"><c:out
