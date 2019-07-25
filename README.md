@@ -26,7 +26,7 @@ FAQ related to various deployment and development issues are discussed [here][FA
 * Clone the eGov repository (development is done on the develop branch).
 ```bash
 $ mkdir -p ${HOME}/egovgithub && cd egovgithub
-$ git clone  -b develop --single-branch  https://github.com/egovernments/digit-bpa.git
+$ git clone  -b master --single-branch  https://github.com/egovernments/digit-bpa.git
 ```
 * First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
 ```bash
@@ -52,7 +52,7 @@ $ cd ${HOME}/egovgithub/digit-bpa && make deploy
 
 * Install [maven v3.2.x][Maven]
 * Install [PostgreSQL v9.4][PostgreSQL]
-* Install [Elastic Search v2.4.x][Elastic Search]
+* Install [Elastic Search v2.3.5][Elastic Search]
 * Install [Jboss Wildfly v10.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
 * Install [JDK 8 update 112 or higher][JDK8 build]
