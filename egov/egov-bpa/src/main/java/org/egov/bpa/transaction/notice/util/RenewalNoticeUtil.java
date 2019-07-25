@@ -48,7 +48,6 @@ package org.egov.bpa.transaction.notice.util;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.RENEWAL_ORDER_NOTICE_TYPE;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,13 +59,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.config.reports.properties.BpaApplicationReportProperties;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaNotice;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.PermitRenewalConditions;
 import org.egov.bpa.transaction.entity.PermitRenewalNotice;
@@ -81,10 +77,10 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +140,11 @@ public class RenewalNoticeUtil {
             reportParams.put("applicationNumber", permitRenewal.getApplicationNumber());
             reportParams.put("rejectionReasons", buildRejectionReasons(permitRenewal));
             reportParams.put("approverName", getRejector(permitRenewal));
+            reportParams.put("permitOrderTitle", "GENERAL BUILDING PERMIT RENEWAL");
+            reportParams.put("subHeaderTitle", "Building permit renewal to construct,");
+            reportParams.put("renewalNumber", permitRenewal.getRenewalNumber());
+            reportParams.put("expiryDate",DateUtils.toDefaultDateFormat(permitRenewal.getPermitRenewalExpiryDate()));
+        
             ReportRequest reportInput = new ReportRequest(rejectionfilename, permitRenewal, reportParams);
             reportOutput = reportService.createReport(reportInput);
             saveRenewalNotice(permitRenewal, fileName, reportOutput, null, rejectionNoticeType);

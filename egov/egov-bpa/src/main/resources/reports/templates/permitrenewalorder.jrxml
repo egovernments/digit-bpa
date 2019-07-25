@@ -59,8 +59,9 @@
 	<parameter name="dcrReport" class="java.io.ByteArrayInputStream"/>
 	<parameter name="cityNameLocal" class="java.lang.String"/>
 	<parameter name="nocDetails" class="java.util.Collection"/>
+	<parameter name="renewalNumber" class="java.lang.String"/>
+	<parameter name="expiryDate" class="java.lang.String"/>
 	<field name="parent" class="org.egov.bpa.transaction.entity.BpaApplication"/>
-	
 	<variable name="SUB_REPORT_ROW_CNT" class="java.lang.Integer"/>
 	<background>
 		<band height="802" splitType="Stretch">
@@ -130,7 +131,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="92">
+		<band height="113">
 			<staticText>
 				<reportElement x="0" y="7" width="121" height="20" uuid="6928eb55-27ad-4983-93f8-3539c289ba12"/>
 				<textElement>
@@ -160,25 +161,39 @@
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="29" width="555" height="20" uuid="f7a1cee0-eb1e-4bed-a424-cc28aeaf926d"/>
+				<reportElement x="0" y="48" width="555" height="20" uuid="f7a1cee0-eb1e-4bed-a424-cc28aeaf926d"/>
 				<textElement>
 					<font fontName="Arial Unicode MS" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Ref :-  Application number "+ $P{applicationNumber} + " dated " + $P{applicationDate} + "."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="54" width="100" height="20" uuid="824aa1a3-3bb8-4b86-a40b-d7c59d73b964"/>
+				<reportElement x="0" y="74" width="100" height="20" uuid="824aa1a3-3bb8-4b86-a40b-d7c59d73b964"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["From, Smt/Sri "]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="110" y="54" width="442" height="38" uuid="9b393896-3050-4a52-8c24-70b65e1469b0"/>
+				<reportElement stretchType="RelativeToBandHeight" x="110" y="73" width="442" height="38" uuid="9b393896-3050-4a52-8c24-70b65e1469b0"/>
 				<textElement>
 					<font fontName="Arial Unicode MS" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicantName} + " , " + "\n" + $P{applicantAddress} + " , " + "\n" + "Mobile number : " + $P{mobileNo} + " ."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="27" width="120" height="20" uuid="c57629f7-4dad-467c-867e-9d9eddccb712"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Renewal No :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="121" y="27" width="219" height="20" uuid="a972fda6-35d5-4314-a4d1-a8309332ea86"/>
+				<textElement>
+					<font fontName="Arial Unicode MS" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{renewalNumber}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="33" splitType="Stretch">
@@ -752,6 +767,15 @@
 				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("buildingpermitnocdetailsSubreport.jasper")]]></subreportExpression>
 			</subreport>
+		</band>
+		<band height="24">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1" y="0" width="555" height="20" uuid="5f2c41f4-29bb-4054-a9e9-285cbfe3c517"/>
+				<textElement>
+					<font fontName="Arial Unicode MS" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Permit Renewal is valid up to" + $P{expiryDate} + "."]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
