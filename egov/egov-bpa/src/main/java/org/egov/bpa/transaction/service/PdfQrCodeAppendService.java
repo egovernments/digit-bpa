@@ -172,7 +172,7 @@ public class PdfQrCodeAppendService {
 		img.scaleAbsolute(14, 9);
 		img.setAbsolutePosition(29f, 42.5f);
 		document.add(img);
-		String corporationName = "KOZHIKODE MUNICIPAL CORPORATION";
+		String corporationName = ApplicationThreadLocals.getMunicipalityName();
 		Font font = new Font(BaseFont.createFont("/fonts/ROCC____.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED), 4.5f,
 				Font.BOLD, BaseColor.BLACK);
 		PdfContentByte canvas = writer.getDirectContent();

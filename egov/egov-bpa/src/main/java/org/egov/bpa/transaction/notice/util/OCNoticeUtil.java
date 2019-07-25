@@ -387,9 +387,9 @@ public class OCNoticeUtil {
         StringBuilder qrCodeValue = new StringBuilder();
         qrCodeValue = isBlank(ApplicationThreadLocals.getMunicipalityName()) ? qrCodeValue.append("")
                 : qrCodeValue.append(ApplicationThreadLocals.getMunicipalityName()).append(ONE_NEW_LINE);
-        qrCodeValue = oc.getParent().getOwner() == null || isBlank(oc.getParent().getOwner().getName())
+        qrCodeValue = oc.getParent().getOwner() == null || isBlank(oc.getParent().getApplicantName())
                 ? qrCodeValue.append("Applicant Name : ").append(N_A).append(ONE_NEW_LINE)
-                : qrCodeValue.append("Applicant Name : ").append(oc.getParent().getOwner().getName()).append(ONE_NEW_LINE);
+                : qrCodeValue.append("Applicant Name : ").append(oc.getParent().getApplicantName()).append(ONE_NEW_LINE);
         qrCodeValue = isBlank(oc.getApplicationNumber())
                 ? qrCodeValue.append("Application number : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Application number : ").append(oc.getApplicationNumber()).append(ONE_NEW_LINE);
