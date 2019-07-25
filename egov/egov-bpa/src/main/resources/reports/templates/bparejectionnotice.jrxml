@@ -13,6 +13,7 @@
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="logoPath" class="java.io.InputStream"/>
 	<parameter name="refusalFormat" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
 	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="applicationDate" class="java.util.Date"/>
 	<field name="serviceType" class="org.egov.bpa.master.entity.ServiceType"/>
@@ -92,7 +93,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="23" y="19" width="532" height="20" uuid="d7b21c92-04d4-4c38-8a61-56d9052898a3"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{owner}.getName() +",\n"+$F{owner}.getAddress()+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Shri./Smt.\n"+$P{applicantName} +",\n"+$F{owner}.getAddress()+"."]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="78">

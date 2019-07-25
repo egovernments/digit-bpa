@@ -158,7 +158,7 @@ public class LetterToPartyReplyFormatImpl implements LetterToPartyFormat {
             }
             checkListPresent = chkList.isEmpty() ? Boolean.FALSE : Boolean.TRUE;
         }
-        reportParams.put("ownerName", permitInspection.getApplication().getOwner().getName());
+        reportParams.put("ownerName", permitInspection.getApplication().getApplicantName());
         reportParams.put("ownerAddress", permitInspection.getApplication().getOwner().getAddress());
         reportParams.put("stateLogo", ReportUtil.getImageURL(BpaConstants.STATE_LOGO_PATH));
         reportParams.put("checkListPresent", checkListPresent);

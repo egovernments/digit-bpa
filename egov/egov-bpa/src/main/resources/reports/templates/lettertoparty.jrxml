@@ -111,7 +111,7 @@
 				<textElement textAlignment="Justified" markup="none">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Mr/Mrs. "+$F{application}.getOwner().getName() +",\n"+$F{application}.getOwner().getAddress()+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Mr/Mrs. "+$F{application}.getApplicantName() +",\n"+$F{application}.getOwner().getAddress()+"."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="67" y="144" width="488" height="20" uuid="7bc85097-f1bd-4220-a5bd-d987c1c92a87"/>

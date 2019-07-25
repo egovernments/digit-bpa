@@ -103,7 +103,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA[$F{oc}.getParent().getOwner().getName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{oc}.getParent().getApplicantName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="156" y="165" width="404" height="27" isPrintWhenDetailOverflows="true" uuid="5dc50064-3e71-4b95-86ba-99bcebfe8f0f"/>

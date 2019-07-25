@@ -96,7 +96,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="23" y="19" width="532" height="20" uuid="d7b21c92-04d4-4c38-8a61-56d9052898a3"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{parent}.getOwner().getName() +",\n"+$F{parent}.getOwner().getAddress()+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{parent}.getApplicantName() +",\n"+$F{parent}.getOwner().getAddress()+"."]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="78">

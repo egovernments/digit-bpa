@@ -164,7 +164,7 @@ public class LetterToPartyCreateFormatImpl implements LetterToPartyFormat {
             }
             checkListPresent = chkList.isEmpty() ? Boolean.FALSE : Boolean.TRUE;
         }
-        reportParams.put("ownerName", permitInspection.getApplication().getOwner().getName());
+        reportParams.put("ownerName", permitInspection.getApplication().getApplicantName());
         reportParams.put("ownerAddress", permitInspection.getApplication().getOwner().getAddress());
         reportParams.put("applicationNumber", permitInspection.getApplication().getApplicationNumber());
         reportParams.put("serviceType", permitInspection.getApplication().getServiceType().getDescription());
@@ -206,7 +206,7 @@ public class LetterToPartyCreateFormatImpl implements LetterToPartyFormat {
             }
             checkListPresent = chkList.isEmpty() ? Boolean.FALSE : Boolean.TRUE;
         }
-        reportParams.put("ownerName", permitRenewal.getParent().getOwner().getName());
+        reportParams.put("ownerName", permitRenewal.getParent().getApplicantName());
         reportParams.put("ownerAddress", permitRenewal.getParent().getOwner().getAddress());
         reportParams.put("applicationNumber", permitRenewal.getApplicationNumber());
         reportParams.put("serviceType", permitRenewal.getParent().getServiceType().getDescription());
