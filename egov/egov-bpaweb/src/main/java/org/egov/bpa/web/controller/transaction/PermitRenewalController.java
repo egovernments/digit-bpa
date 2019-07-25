@@ -48,17 +48,13 @@
 package org.egov.bpa.web.controller.transaction;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
-import static org.egov.bpa.utils.BpaConstants.FORWARDED_TO_CLERK;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_GENERATE_RENEWAL_ORDER;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -79,7 +75,6 @@ import org.egov.bpa.transaction.notice.impl.PermitRenewalRejectionNoticeService;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.service.PermitRenewalConditionsService;
 import org.egov.bpa.transaction.service.PermitRenewalService;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -219,11 +214,14 @@ public class PermitRenewalController extends BpaGenericApplicationController {
                                     .concat(getDesinationNameByPosition(pos)),
                     permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale());
         }
+        if (isNotBlank(wfBean.getWorkFlowAction()) && WF_GENERATE_RENEWAL_ORDER.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            return "redirect:/application/renewal/generaterenewalorder/" + renewalRes.getApplicationNumber();
+        }
         if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(permitRenewal.getStatus().getCode())) {
             if (isNotBlank(wfBean.getWorkFlowAction()) && GENERATEREJECTNOTICE.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             	PermitRenewalRejectionNoticeService renewalNoticeFeature = (PermitRenewalRejectionNoticeService) specificNoticeService
                         .find(PermitRenewalRejectionNoticeService.class, specificNoticeService.getCityDetails());
-            	ReportOutput reportOutput = renewalNoticeFeature .generateNotice(renewalRes);
+            	ReportOutput reportOutput = renewalNoticeFeature.generateNotice(renewalRes);
             }
         }
        

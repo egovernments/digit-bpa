@@ -47,8 +47,8 @@
 
 package org.egov.bpa.transaction.notice.impl;
 
-import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BPA_REJECTION_NOTICE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.RENEWAL_ORDER_NOTICE_TYPE;
 
 import java.io.IOException;
 
@@ -75,6 +75,15 @@ public class PermitRenewalRejectionNoticeService {
         PermitRenewalNotice renewalNotice = noticeUtil.findByPermitRenewalAndNoticeType(permitRenewal, BPA_REJECTION_NOTICE_TYPE);
         ReportOutput reportOutput = noticeUtil.getReportOutput(permitRenewal, fileName, renewalNotice, "permitrenewalrejectionnotice",
                 BPA_REJECTION_NOTICE_TYPE, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
+        reportOutput.setReportFormat(ReportFormat.PDF);
+        return reportOutput;
+    }
+    
+    public ReportOutput generateRenewalOrder(final PermitRenewal permitRenewal) throws IOException {
+        String fileName = "renewal_order" + permitRenewal.getApplicationNumber();
+        PermitRenewalNotice renewalNotice = noticeUtil.findByPermitRenewalAndNoticeType(permitRenewal, RENEWAL_ORDER_NOTICE_TYPE);
+        ReportOutput reportOutput = noticeUtil.getReportOutput(permitRenewal, fileName, renewalNotice, "permitrenewalorder",
+        		RENEWAL_ORDER_NOTICE_TYPE, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
         reportOutput.setReportFormat(ReportFormat.PDF);
         return reportOutput;
     }

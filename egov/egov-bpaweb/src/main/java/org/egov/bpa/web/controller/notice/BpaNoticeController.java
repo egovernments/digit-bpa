@@ -186,6 +186,15 @@ public class BpaNoticeController {
                 .generateNotice(permitRenewalService.findByApplicationNumber(applicationNumber));
         return getFileAsResponseEntity(applicationNumber, reportOutput, "permitrenewalrejectionnotice");
     }
-
-
+    
+    @GetMapping(value = "/application/renewal/generaterenewalorder/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generatePermitRenewalOrder(@PathVariable final String applicationNumber,
+            HttpServletRequest request) throws IOException {
+    	PermitRenewalRejectionNoticeService renewalNoticeFeature = (PermitRenewalRejectionNoticeService) specificNoticeService
+                .find(PermitRenewalRejectionNoticeService.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = renewalNoticeFeature
+                .generateRenewalOrder(permitRenewalService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, "permitrenewalorder");
+    }
 }

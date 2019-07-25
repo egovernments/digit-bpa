@@ -48,19 +48,25 @@ package org.egov.bpa.transaction.notice.util;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.RENEWAL_ORDER_NOTICE_TYPE;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.config.reports.properties.BpaApplicationReportProperties;
+import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaNotice;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.PermitRenewalConditions;
 import org.egov.bpa.transaction.entity.PermitRenewalNotice;
@@ -75,6 +81,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -139,7 +146,7 @@ public class RenewalNoticeUtil {
             reportParams.put("approverName", getRejector(permitRenewal));
             ReportRequest reportInput = new ReportRequest(rejectionfilename, permitRenewal, reportParams);
             reportOutput = reportService.createReport(reportInput);
-            saveRenewalNotice(permitRenewal, fileName, reportOutput, rejectionNoticeType);
+            saveRenewalNotice(permitRenewal, fileName, reportOutput, null, rejectionNoticeType);
         } else {
             final FileStoreMapper fmp = permitRenewalNotice.getNoticeCommon().getNoticeFileStore();
             Path path = fileStoreService.fetchAsPath(fmp.getFileStoreId(), APPLICATION_MODULE_TYPE);
@@ -147,9 +154,14 @@ public class RenewalNoticeUtil {
         }
         return reportOutput;
     }
+    
+    
 
-    public PermitRenewalNotice saveRenewalNotice(PermitRenewal permitRenewal, String fileName, ReportOutput reportOutput, String noticeType) {
+    public PermitRenewalNotice saveRenewalNotice(PermitRenewal permitRenewal, String fileName, ReportOutput reportOutput,ReportOutput reportOutputForPermitNote, String noticeType) {
     	PermitRenewalNotice renewalNotice = new PermitRenewalNotice();
+        final List<InputStream> pdfs = new ArrayList<>();
+    	if (reportOutputForPermitNote != null)
+            pdfs.add(new ByteArrayInputStream(reportOutputForPermitNote.getReportOutputData()));
     	renewalNotice.setPermitRenewal(permitRenewal);
         NoticeCommon noticeCommon = new NoticeCommon();
         noticeCommon.setNoticeGeneratedDate(new Date());

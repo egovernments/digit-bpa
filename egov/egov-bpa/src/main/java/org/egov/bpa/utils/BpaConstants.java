@@ -354,6 +354,7 @@ public class BpaConstants {
     public static final String REGULARIZATIONFIILENAME = "regularization_permit";
     public static final String REGULARIZATIONOTHERSFIILENAME = "regularization_others_permit";
     public static final String REGULARIZATIONBUILDINGDEVELOPMENTFIILENAME = "regularization_buildingdevelopment_permit";
+    public static final String RENEWAL_ORDER_NOTICE_TYPE = "RenewalOrder";
 
     // button name constants
     public static final String WF_APPROVE_BUTTON = "Approve";

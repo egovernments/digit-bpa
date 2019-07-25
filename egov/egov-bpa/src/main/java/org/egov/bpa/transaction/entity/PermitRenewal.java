@@ -160,6 +160,9 @@ public class PermitRenewal extends StateAware<Position> {
     private transient String workflowAction;
     private transient Long approvalDepartment;
     private transient String approvalComent;
+    private transient List<PermitRenewalConditions> dynamicRenewalConditionsTemp = new ArrayList<>(0);
+    private transient List<PermitRenewalConditions> staticRenewalConditionsTemp = new ArrayList<>(0);
+    private transient List<PermitRenewalConditions> additionalRenewalConditionsTemp = new ArrayList<>(0);
     private transient List<PermitRenewalConditions> rejectionReasonsTemp = new ArrayList<>(0);
     private transient List<PermitRenewalConditions> additionalRejectReasonsTemp = new ArrayList<>(0);
     private transient Set<Receipt> receipts = new HashSet<>();
@@ -369,5 +372,29 @@ public class PermitRenewal extends StateAware<Position> {
     public void setReceipts(Set<Receipt> receipts) {
         this.receipts = receipts;
     }
+
+	public List<PermitRenewalConditions> getDynamicRenewalConditionsTemp() {
+		return dynamicRenewalConditionsTemp;
+	}
+
+	public void setDynamicRenewalConditionsTemp(List<PermitRenewalConditions> dynamicRenewalConditionsTemp) {
+		this.dynamicRenewalConditionsTemp = dynamicRenewalConditionsTemp;
+	}
+
+	public List<PermitRenewalConditions> getStaticRenewalConditionsTemp() {
+		return staticRenewalConditionsTemp;
+	}
+
+	public void setStaticRenewalConditionsTemp(List<PermitRenewalConditions> staticRenewalConditionsTemp) {
+		this.staticRenewalConditionsTemp = staticRenewalConditionsTemp;
+	}
+
+	public List<PermitRenewalConditions> getAdditionalRenewalConditionsTemp() {
+		return additionalRenewalConditionsTemp;
+	}
+
+	public void setAdditionalRenewalConditionsTemp(List<PermitRenewalConditions> additionalRenewalConditionsTemp) {
+		this.additionalRenewalConditionsTemp = additionalRenewalConditionsTemp;
+	}
 
 }
