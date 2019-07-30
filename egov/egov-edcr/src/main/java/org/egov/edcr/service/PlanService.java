@@ -15,6 +15,7 @@ import org.egov.common.entity.edcr.EdcrPdfDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.common.entity.edcr.PlanInformation;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.feature.FeatureProcess;
@@ -107,7 +108,7 @@ public class PlanService {
             LOG.info("got bean :" + rule.getClass().getSimpleName() + " : " + new Date());
             rule.process(plan);
             LOG.info("Completed Process " + rule.getClass().getSimpleName() + "  " + new Date());
-            if (plan.getErrors().containsKey("onlyresidential_allowed") || plan.getErrors().containsKey("units not in meters"))
+            if (plan.getErrors().containsKey(DxfFileConstants.OCCUPANCY_ALLOWED_KEY) || plan.getErrors().containsKey("units not in meters"))
                 return plan;
         }
         return plan;

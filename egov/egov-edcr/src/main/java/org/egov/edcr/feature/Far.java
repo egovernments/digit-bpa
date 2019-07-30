@@ -158,8 +158,7 @@ public class Far extends FeatureProcess {
 	public static final String NEW_AREA_ERROR = "road width new area";
 	public static final String OLD_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 2.4m for old area.";
 	public static final String NEW_AREA_ERROR_MSG = "No construction shall be permitted if the road width is less than 6.1m for new area.";
-	private static final String ONLYRESIDENTIAL_ALLOWED = "Only residential buildings will be scrutinized for now.";
-	private static final String ONLYRESIDENTIAL_ALLOWED_KEY = "onlyresidential_allowed";
+
 
 	@Override
     public Plan validate(Plan pl) {
@@ -556,8 +555,8 @@ public class Far extends FeatureProcess {
 			}
 			pl.getVirtualBuilding().setResidentialOrCommercialBuilding(allResidentialOrCommercialOccTypesForPlan == 1);
 		}
-		if (!pl.getVirtualBuilding().getResidentialBuilding()) {
-			pl.getErrors().put(ONLYRESIDENTIAL_ALLOWED_KEY, ONLYRESIDENTIAL_ALLOWED);
+		if (!pl.getVirtualBuilding().getResidentialOrCommercialBuilding()) {
+			pl.getErrors().put(DxfFileConstants.OCCUPANCY_ALLOWED_KEY, DxfFileConstants.OCCUPANCY_ALLOWED);
 			return pl;
 		}
 		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
@@ -588,8 +587,8 @@ public class Far extends FeatureProcess {
 			if ((mostRestrictiveOccupancyType.getType() != null
 					&& DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode()))
 					|| (mostRestrictiveOccupancyType.getSubtype() != null
-							&& A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
-							|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode()))) {
+							&& (A_R.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())
+							|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getSubtype().getCode())))) {
 				processFarResidential(pl, mostRestrictiveOccupancyType, providedFar, typeOfArea, roadWidth, errorMsgs);
 			}
 			if (mostRestrictiveOccupancyType.getType() != null

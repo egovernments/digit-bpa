@@ -186,10 +186,13 @@ public class AdditionalFeature extends FeatureProcess {
 
     private void validateFireDeclaration(Plan pl, HashMap<String, String> errors) {
         ScrutinyDetail scrutinyDetail = getNewScrutinyDetail("Fire Protection And Fire Safety Requirements");
-
+        OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding() != null
+                ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                : null;
         if (pl.getBlocks() != null && !pl.getBlocks().isEmpty()) {
             for (Block b : pl.getBlocks()) {
-                if (b.getBuilding() != null && b.getBuilding().getIsHighRise())
+                if (b.getBuilding() != null && (b.getBuilding().getIsHighRise()
+                        || isCommercialAbv750sqm(pl, mostRestrictiveOccupancyType)))
                     if (pl.getPlanInformation() != null
                             && !pl.getPlanInformation().getFireProtectionAndFireSafetyRequirements().isEmpty()) {
                         Map<String, String> details = new HashMap<>();
@@ -213,6 +216,13 @@ public class AdditionalFeature extends FeatureProcess {
             }
         }
 
+    }
+
+    private boolean isCommercialAbv750sqm(Plan pl, OccupancyTypeHelper mostRestrictiveOccupancyType) {
+        return pl.getVirtualBuilding() != null && mostRestrictiveOccupancyType != null
+                && mostRestrictiveOccupancyType.getType() != null
+                && DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
+                && pl.getVirtualBuilding().getTotalCoverageArea().compareTo(BigDecimal.valueOf(750)) > 0;
     }
 
     private void validateBarrierFreeAccess(Plan pl, HashMap<String, String> errors) {

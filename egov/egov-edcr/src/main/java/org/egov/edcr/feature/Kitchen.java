@@ -47,8 +47,10 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.A_AF;
 import static org.egov.edcr.constants.DxfFileConstants.A_R;
+import static org.egov.edcr.constants.DxfFileConstants.F;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -106,9 +108,9 @@ public class Kitchen extends FeatureProcess {
         HashMap<String, String> errors = new HashMap<>();
         if (pl != null && pl.getBlocks() != null) {
             OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
-            if (mostRestrictiveOccupancy!=null && mostRestrictiveOccupancy.getSubtype() != null
-                    && (A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
-                    || A_AF.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode()))) {
+            if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getSubtype() != null
+                    && (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
+                            || F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))) {
                 blk: for (Block block : pl.getBlocks()) {
                     if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                         scrutinyDetail = new ScrutinyDetail();
@@ -133,6 +135,19 @@ public class Kitchen extends FeatureProcess {
                             BigDecimal minWidth = BigDecimal.ZERO;
                             String subRule = null;
                             String subRuleDesc = null;
+                            String kitchenRoomColor= "";
+                            String kitchenStoreRoomColor= "";
+                            String kitchenDiningRoomColor= "";
+
+                            if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+                                kitchenRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR;
+                                kitchenStoreRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR;
+                                kitchenDiningRoomColor = DxfFileConstants.RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR;
+                            } else {
+                                kitchenRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_ROOM_COLOR;
+                                kitchenStoreRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_STORE_ROOM_COLOR;
+                                kitchenDiningRoomColor = DxfFileConstants.COMMERCIAL_KITCHEN_DINING_ROOM_COLOR;
+                            }
 
                             if (floor.getKitchen() != null) {
                                 List<BigDecimal> kitchenHeights = new ArrayList<>();
@@ -145,19 +160,19 @@ public class Kitchen extends FeatureProcess {
 
                                 for (Measurement kitchen : kitchenRooms) {
                                     if (pl.getSubFeatureColorCodesMaster()
-                                            .get(DxfFileConstants.RESIDENTIAL_KITCHEN_ROOM_COLOR) == kitchen
+                                            .get(kitchenRoomColor) == kitchen
                                                     .getColorCode()) {
                                         kitchenAreas.add(kitchen.getArea());
                                         kitchenWidths.add(kitchen.getWidth());
                                     }
                                     if (pl.getSubFeatureColorCodesMaster()
-                                            .get(DxfFileConstants.RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR) == kitchen
+                                            .get(kitchenStoreRoomColor) == kitchen
                                                     .getColorCode()) {
                                         kitchenStoreAreas.add(kitchen.getArea());
                                         kitchenStoreWidths.add(kitchen.getWidth());
                                     }
                                     if (pl.getSubFeatureColorCodesMaster()
-                                            .get(DxfFileConstants.RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR) == kitchen
+                                            .get(kitchenDiningRoomColor) == kitchen
                                                     .getColorCode()) {
                                         kitchenDiningAreas.add(kitchen.getArea());
                                         kitchenDiningWidths.add(kitchen.getWidth());

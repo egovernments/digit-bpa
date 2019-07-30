@@ -93,7 +93,9 @@ public class GeneralStair extends FeatureProcess {
                 scrutinyDetailLanding.addColumnHeading(6, STATUS);
                 scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "General Stair - Mid landing");
 
-                OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding() != null ? planDetail.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
+                OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding() != null
+                        ? planDetail.getVirtualBuilding().getMostRestrictiveFarHelper()
+                        : null;
 
                 /*
                  * String occupancyType = mostRestrictiveOccupancy != null ? mostRestrictiveOccupancy.getOccupancyType() : null;
@@ -327,13 +329,16 @@ public class GeneralStair extends FeatureProcess {
 
     private BigDecimal getRequiredWidth(Block block, OccupancyTypeHelper mostRestrictiveOccupancyType) {
         if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+                && DxfFileConstants.A_AF.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+            return BigDecimal.valueOf(1.9);
+        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
+                && DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
+            return BigDecimal.valueOf(0.75);
+        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())
                 && block.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) <= 0
                 && block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
             return BigDecimal.ONE;
-        } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
-                && DxfFileConstants.A_AF_GH.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
-            return BigDecimal.valueOf(0.75);
         } else if (mostRestrictiveOccupancyType != null && mostRestrictiveOccupancyType.getType() != null
                 && DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveOccupancyType.getType().getCode())) {
             return BigDecimal.valueOf(1.25);
@@ -433,11 +438,13 @@ public class GeneralStair extends FeatureProcess {
                     : " floor " + floor.getNumber();
             if (valid) {
                 setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
-                        String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), EXPECTED_NO_OF_RISER,
+                        String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+                        EXPECTED_NO_OF_RISER,
                         String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
             } else {
                 setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
-                        String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), EXPECTED_NO_OF_RISER,
+                        String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
+                        EXPECTED_NO_OF_RISER,
                         String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
             }
         }

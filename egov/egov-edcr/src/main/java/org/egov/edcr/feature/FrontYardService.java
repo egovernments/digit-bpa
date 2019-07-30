@@ -187,9 +187,9 @@ public class FrontYardService extends GeneralRule {
 								}
 
 								if ((occupancy.getTypeHelper().getSubtype() != null
-										&& A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
+										&& (A_R.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode())
 										|| A_AF.equalsIgnoreCase(occupancy.getTypeHelper().getSubtype().getCode()))
-										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+										|| F.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))) {
 
 									if (buildingHeight.compareTo(BigDecimal.valueOf(10)) <= 0 && block.getBuilding()
 											.getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) <= 0) {
@@ -456,8 +456,8 @@ public class FrontYardService extends GeneralRule {
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
 		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
-		if (mostRestrictiveOccupancy.getSubtype() != null && A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
-				|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())) {
+		if (mostRestrictiveOccupancy.getSubtype() != null && (A_R.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode())
+				|| A_AF.equalsIgnoreCase(mostRestrictiveOccupancy.getSubtype().getCode()))) {
 			if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null
 					&& StringUtils.isNotBlank(pl.getPlanInformation().getLandUseZone())
 					&& DxfFileConstants.COMMERCIAL.equalsIgnoreCase(pl.getPlanInformation().getLandUseZone())
@@ -468,7 +468,10 @@ public class FrontYardService extends GeneralRule {
 				valid = residentialUptoTenMts(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult,
 						valid, subRule, rule, minVal, meanVal, depthOfPlot, errors, pl);
 			}
-		}
+        } else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+            valid = commercialUptoSixteenMts(level, blockName, min, mean, mostRestrictiveOccupancy,
+                    frontYardResult, valid, subRule, rule, minVal, meanVal, depthOfPlot);
+}
 		return valid;
 	}
 
@@ -619,7 +622,10 @@ public class FrontYardService extends GeneralRule {
 				valid = residentialUptoTwelveMts(level, blockName, min, mean, mostRestrictiveOccupancy, frontYardResult,
 						valid, subRule, rule, minVal, meanVal, depthOfPlot, errors, pl);
 			}
-		}
+		}else if (F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())) {
+                    valid = commercialUptoSixteenMts(level, blockName, min, mean, mostRestrictiveOccupancy,
+                            frontYardResult, valid, subRule, rule, minVal, meanVal, depthOfPlot);
+    }
 		return valid;
 	}
 

@@ -261,6 +261,9 @@ public class DxfFileConstants {
     public static final String RESIDENTIAL_KITCHEN_ROOM_COLOR = "Residential kitchen room";
     public static final String RESIDENTIAL_KITCHEN_STORE_ROOM_COLOR = "Residential kitchen store room";
     public static final String RESIDENTIAL_KITCHEN_DINING_ROOM_COLOR = "Residential kitchen dining room";
+    public static final String COMMERCIAL_KITCHEN_ROOM_COLOR = "Commercial kitchen room";
+    public static final String COMMERCIAL_KITCHEN_STORE_ROOM_COLOR = "Commercial kitchen store room";
+    public static final String COMMERCIAL_KITCHEN_DINING_ROOM_COLOR = "Commercial kitchen dining room";
     // ******** Sanitation related ************
     public static final String COLOR_KEY_MALE_WATER_CLOSET = "Male water closet";
     public static final String COLOR_KEY_FEMALE_WATER_CLOSET = "Female water closet";
@@ -322,4 +325,7 @@ public class DxfFileConstants {
     public static final String RULE_28 = "28";
     public static final String SETBACK = "SetBack";
     public static final String YARD_NAME = "Yard Name";
+    
+    public static final String OCCUPANCY_ALLOWED = "Only residential or commerical buildings will be scrutinized for now.";
+    public static final String OCCUPANCY_ALLOWED_KEY = "occupancy_allowed";
 }
