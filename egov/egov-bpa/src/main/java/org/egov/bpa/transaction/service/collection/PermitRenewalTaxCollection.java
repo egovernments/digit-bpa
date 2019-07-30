@@ -57,6 +57,7 @@ import org.egov.bpa.transaction.entity.CollectionApportioner;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.service.PermitRenewalService;
+import org.egov.bpa.transaction.service.messaging.renewal.RenewalSmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
@@ -124,6 +125,9 @@ public class PermitRenewalTaxCollection extends TaxCollection {
 
     @Autowired
     private PermitRenewalIndexService permitRenewalIndexService;
+    
+    @Autowired
+    private RenewalSmsAndEmailService renewalSmsAndEmailService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -286,6 +290,7 @@ public class PermitRenewalTaxCollection extends TaxCollection {
                             renewal.getCurrentState().getOwnerPosition().getId(),
                             baWorkFlowService.getAmountRuleByServiceType(renewal.getParent())));
         }
+        renewalSmsAndEmailService.sendSmsForCollection(totalAmount,renewal, billRcptInfo);  
         permitRenewalIndexService.updateIndexes(renewal);
     }
 

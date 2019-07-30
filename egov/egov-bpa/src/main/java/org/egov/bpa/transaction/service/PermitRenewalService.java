@@ -62,6 +62,7 @@ import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.repository.PermitRenewalRepository;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
+import org.egov.bpa.transaction.service.messaging.renewal.RenewalSmsAndEmailService;
 import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
 import org.egov.demand.model.EgDemand;
@@ -105,6 +106,8 @@ public class PermitRenewalService {
     private BpaDemandService bpaDemandService;
     @Autowired
     private PermitRenewalConditionsService renewalConditionsService;
+    @Autowired
+    private RenewalSmsAndEmailService renewalSmsAndEmailService;
 
     @Transactional
     public PermitRenewal save(final PermitRenewal permitRenewal, final WorkflowBean wfBean) {
@@ -140,6 +143,7 @@ public class PermitRenewalService {
         if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             permitRenewal.setRenewalApprovalDate(new Date());
             permitRenewal.setRenewalNumber(permitRenewal.getParent().getPlanPermissionNumber());
+            renewalSmsAndEmailService.sendSmsAndEmailOnRenewalApproval(permitRenewal,null);
         }
         
         if (WF_GENERATE_RENEWAL_ORDER.equalsIgnoreCase(wfBean.getWorkFlowAction())) {

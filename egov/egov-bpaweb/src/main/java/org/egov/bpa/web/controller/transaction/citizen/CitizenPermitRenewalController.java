@@ -63,6 +63,7 @@ import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.service.PermitRenewalService;
+import org.egov.bpa.transaction.service.messaging.renewal.RenewalSmsAndEmailService;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
@@ -103,6 +104,8 @@ public class CitizenPermitRenewalController extends BpaGenericApplicationControl
     private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
     @Autowired
     private BpaNoticeUtil bpaNoticeUtil;
+    @Autowired
+    private RenewalSmsAndEmailService renewalSmsAndEmailService;
 
     @GetMapping("/permit/renewal/apply")
     public String showPermitRenewalForm(final Model model) {
@@ -142,11 +145,14 @@ public class CitizenPermitRenewalController extends BpaGenericApplicationControl
                         bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
             wfBean.setApproverPositionId(approvalPosition);
         }
-        permitRenewalService.save(permitRenewal, wfBean);
+        PermitRenewal renewalRes = permitRenewalService.save(permitRenewal, wfBean);
         pushBpaApplicationToPortal.createPortalUserinbox(permitRenewal,
                 Arrays.asList(permitRenewal.getParent().getOwner().getUser(),
                         permitRenewal.getParent().getStakeHolder().get(0).getStakeHolder()),
                 wfBean.getWorkFlowAction());
+        
+        renewalSmsAndEmailService.sendSMSAndEmail(renewalRes, null, null);
+
         if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.save",
                     new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
@@ -211,8 +217,9 @@ public class CitizenPermitRenewalController extends BpaGenericApplicationControl
                         bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
             wfBean.setApproverPositionId(approvalPosition);
         }
-        permitRenewalService.save(permitRenewal, wfBean);
+        PermitRenewal renewalRes = permitRenewalService.save(permitRenewal, wfBean);
         pushBpaApplicationToPortal.updatePortalUserinbox(permitRenewal, null);
+        renewalSmsAndEmailService.sendSMSAndEmail(renewalRes, null, null);
         if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.save",
                     new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));

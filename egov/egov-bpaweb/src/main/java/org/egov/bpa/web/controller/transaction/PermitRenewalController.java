@@ -51,6 +51,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
+import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_GENERATE_RENEWAL_ORDER;
@@ -75,6 +76,7 @@ import org.egov.bpa.transaction.notice.impl.PermitRenewalRejectionNoticeService;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.transaction.service.PermitRenewalConditionsService;
 import org.egov.bpa.transaction.service.PermitRenewalService;
+import org.egov.bpa.transaction.service.messaging.renewal.RenewalSmsAndEmailService;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -116,7 +118,7 @@ public class PermitRenewalController extends BpaGenericApplicationController {
     private static final String AMOUNT_RULE = "amountRule";
     private static final String MSG_APPROVE_FORWARD_REGISTRATION = "msg.approve.success";
     private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
-    private static final String MSG_REJECT_FORWARD_REGISTRATION = "msg.reject.forward.registration";
+    private static final String PDFEXTN = ".pdf";
 
     @Autowired
     private BpaNoticeUtil bpaNoticeUtil;
@@ -128,6 +130,8 @@ public class PermitRenewalController extends BpaGenericApplicationController {
     private PermitRenewalConditionsService renewalConditionsService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private RenewalSmsAndEmailService renewalSmsAndEmailService;
 
     @GetMapping("/update/{applicationNumber}")
     public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
@@ -205,7 +209,11 @@ public class PermitRenewalController extends BpaGenericApplicationController {
                             : user.getUsername().concat("~")
                                     .concat(getDesinationNameByPosition(pos)),
                     permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale());
-        else if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+        else if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {        
+        	PermitRenewalRejectionNoticeService renewalNoticeFeature = (PermitRenewalRejectionNoticeService) specificNoticeService
+                    .find(PermitRenewalRejectionNoticeService.class, specificNoticeService.getCityDetails());
+        	ReportOutput reportOutput = renewalNoticeFeature.generateNotice(renewalRes);
+            renewalSmsAndEmailService.sendSMSAndEmail(permitRenewal, reportOutput, BPAREJECTIONFILENAME + PDFEXTN);
             return "redirect:/application/permitrenewal/rejectionnotice/" + permitRenewal.getApplicationNumber();
         } else {
             message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
@@ -215,6 +223,11 @@ public class PermitRenewalController extends BpaGenericApplicationController {
                     permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale());
         }
         if (isNotBlank(wfBean.getWorkFlowAction()) && WF_GENERATE_RENEWAL_ORDER.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+        	PermitRenewalRejectionNoticeService renewalNoticeFeature = (PermitRenewalRejectionNoticeService) specificNoticeService
+                    .find(PermitRenewalRejectionNoticeService.class, specificNoticeService.getCityDetails());
+            ReportOutput reportOutput = renewalNoticeFeature
+                    .generateRenewalOrder(permitRenewalService.findByApplicationNumber(applicationNumber));
+            renewalSmsAndEmailService.sendSmsAndEmailOnRenewalOrderGeneration(permitRenewal, reportOutput);
             return "redirect:/application/renewal/generaterenewalorder/" + renewalRes.getApplicationNumber();
         }
         if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(permitRenewal.getStatus().getCode())) {
