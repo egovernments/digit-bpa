@@ -323,7 +323,7 @@
 					code="lbl.lic.no" /><span class="mandatory"></span></label>
 			<div class="col-sm-3 add-margin">
 				<form:input type="text" cssClass="form-control" path="licenceNumber"
-					maxlength="20" id="licenceNumber" required="required" />
+					maxlength="64" id="licenceNumber" required="required" />
 				<span class=""></span>
 				<form:errors path="licenceNumber" cssClass="error-msg" />
 			</div>

@@ -300,6 +300,9 @@ $(document).ready( function () {
         $('#emailId1').prop("disabled", true);
         $('#mobileNumber1').prop("disabled", true);
         $('#stakeHolderType').prop("disabled", true);
+        $('#licenceNumber').prop("disabled", true);
+        $('#buildingLicenceIssueDate').prop("disabled", true);
+        $('#buildingLicenceExpiryDate').prop("disabled", true);
         
     }
 
