@@ -51,9 +51,9 @@ $ cd ${HOME}/egovgithub/digit-bpa && make deploy
 #### Prerequisites
 
 * Install [maven v3.2.x][Maven]
-* Install [PostgreSQL v9.4][PostgreSQL]
+* Install [PostgreSQL v9.6][PostgreSQL]
 * Install [Elastic Search v2.3.5][Elastic Search]
-* Install [Jboss Wildfly v10.x][Wildfly Customized]
+* Install [Jboss Wildfly v11.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
 * Install [JDK 8 update 112 or higher][JDK8 build]
 #### Database Setup
@@ -274,7 +274,7 @@ Browser:-
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
 [Wildfly Customized]: https://devops.egovernments.org/Downloads/wildfly/wildfly-11.0.0.Final.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
-[Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.4.1.zip
+[Elastic Search]: https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/2.3.5/elasticsearch-2.3.5.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
 [eGov Tools Repository]: https://devops.egovernments.org/Downloads/
