@@ -51,7 +51,6 @@ package org.egov.infra.config.persistence.migration;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -142,17 +141,28 @@ public class DBMigrationConfiguration {
     }
 
     @Bean(name = "tenants", autowire = Autowire.BY_NAME)
-    public List<String> tenants() {
-        List<String> tenants = new ArrayList<>();
-        environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-            if (propertySource instanceof MapPropertySource)
-                ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                    if (key.startsWith("tenant."))
-                        tenants.add(value.toString());
-                });
-        });
-        Collections.reverse(tenants);
-        return tenants;
-    }
+	public List<String> tenants() {
+		List<String> tenants = new ArrayList<>();
+		environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
+			if (propertySource instanceof MapPropertySource)
+				((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+					if (key.startsWith("tenant.")) {
+						tenants.add(value.toString());
+					}
+				});
+		});
+		return orderedTenants(tenants);
+	}
+    //This API is to make sure always state schema created first if its available.
+	private List<String> orderedTenants(List<String> tenants) {
+		List<String> orderedTenants = new ArrayList<>();
+		for (String tenant : tenants) {
+			if (tenant.equalsIgnoreCase("state"))
+				orderedTenants.add(0, tenant);
+			else
+				orderedTenants.add(tenant);
+		}
+		return orderedTenants;
+	}
 
 }
