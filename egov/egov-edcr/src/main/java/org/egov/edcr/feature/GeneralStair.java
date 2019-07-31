@@ -130,10 +130,10 @@ public class GeneralStair extends FeatureProcess {
                                                 typicalFloorValues, generalStair, landings);
                                     } else {
                                         errors.put(
-                                                "General Stair landing not defined in blk " + block.getNumber() + " floor "
+                                                "General Stair landing not defined in block " + block.getNumber() + " floor "
                                                         + floor.getNumber()
                                                         + " stair " + generalStair.getNumber(),
-                                                "General Stair landing not defined in blk " + block.getNumber() + " floor "
+                                                "General Stair landing not defined in block " + block.getNumber() + " floor "
                                                         + floor.getNumber()
                                                         + " stair " + generalStair.getNumber());
                                         planDetail.addErrors(errors);
