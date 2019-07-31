@@ -372,14 +372,25 @@ public class OCNoticeUtil {
     }
 
     public String getApproverName(final OccupancyCertificate occupancyCertificate) {
+        String designation = bpaNoticeUtil.getApproverDesignation(
+                bpaWorkFlowService.getAmountRuleByServiceTypeForOc(occupancyCertificate).intValue());
         StateHistory<Position> stateHistory = occupancyCertificate.getStateHistory().stream()
-                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName()
-                        .equalsIgnoreCase(bpaNoticeUtil.getApproverDesignation(
-                                bpaWorkFlowService.getAmountRuleByServiceTypeForOc(occupancyCertificate).intValue())))
+                .filter(history -> designation
+                        .equalsIgnoreCase(history.getOwnerPosition().getDeptDesig().getDesignation().getName()))
                 .findAny().orElse(null);
-        return stateHistory == null ? N_A
+        Position ownerPos = null;
+        Date lastModifiedDate = null;
+        if (stateHistory == null && occupancyCertificate.getState() != null && designation
+                .equals(occupancyCertificate.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())) {
+            ownerPos = occupancyCertificate.getState().getOwnerPosition();
+            lastModifiedDate = occupancyCertificate.getState().getLastModifiedDate();
+        } else if (stateHistory != null) {
+            ownerPos = stateHistory.getOwnerPosition();
+            lastModifiedDate = stateHistory.getLastModifiedDate();
+        }
+        return ownerPos == null ? N_A
                 : bpaWorkFlowService
-                        .getApproverAssignmentByDate(stateHistory.getOwnerPosition(), stateHistory.getLastModifiedDate())
+                        .getApproverAssignmentByDate(ownerPos, lastModifiedDate)
                         .getEmployee().getName();
     }
 
