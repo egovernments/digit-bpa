@@ -96,7 +96,7 @@
 		<label class="col-sm-2 control-label text-right"><spring:message
 				code="lbl.emailid" /></label>
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control " maxlength="128" onblur=""
+			<form:input class="form-control emailId" maxlength="128" onblur=""
 				id="emailId" name="emailId" path="owner.emailId" />
 			<small class="text-info view-content"> <spring:message
 					code="lbl.email.send" /></small>

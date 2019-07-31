@@ -50,9 +50,8 @@ $(document).ready(
 				 $('#citytown').val($('#cityName').val());
 			
 			// email validation
-			$('input[id$="emailId"]')
-					.blur(
-							function() {
+			$(document).on('change', '.emailId', 
+					function() {
 								var pattern = new RegExp(
 										"^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 								var email = $(this).val();

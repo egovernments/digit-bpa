@@ -79,7 +79,7 @@
 							<td><form:input class="form-control patternvalidation name"
 									data-pattern="alphabetspecialcharacters" maxlength="99"
 									id="name" path="coApplicants[${counter.index}].name"
-									required="required" disabled="true" /></td>
+									disabled="true" /></td>
 							<td><form:input
 									class="form-control patternvalidation mobileNumber"
 									data-pattern="number" maxlength="10"
@@ -108,7 +108,7 @@
 						<td class="text-center"><span class="serialNo" id="slNoInsp">1</span></td>
 						<td><form:input class="form-control patternvalidation name"
 								data-pattern="alphabetspecialcharacters" maxlength="99"
-								id="name" path="coApplicants[0].name" required="required" /></td>
+								id="name" path="coApplicants[0].name" /></td>
 						<td><form:input
 								class="form-control patternvalidation mobileNumber"
 								data-pattern="number" maxlength="10"
