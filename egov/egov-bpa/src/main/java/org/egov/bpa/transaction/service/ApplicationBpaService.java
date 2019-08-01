@@ -1057,6 +1057,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 coApplicants.add(applicant);
             }
         }
+	if (coApplicants.isEmpty())
+            application.getCoApplicants().clear();
         return coApplicants;
     }
 
