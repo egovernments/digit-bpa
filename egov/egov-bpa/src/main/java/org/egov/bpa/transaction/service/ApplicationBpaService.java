@@ -454,7 +454,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                         subUsageDetails.setSubUsages(subUsageDetails.getSubUsagesTemp());
                     }
                 }
-
+        application.setCoApplicants(buildCoApplicantDetails(application));
         buildBuildingSubUsage(application);
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
