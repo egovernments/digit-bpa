@@ -1,1 +1,0 @@
-update state.eg_tenant set code='generic' where code='ulb';
