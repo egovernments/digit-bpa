@@ -45,6 +45,7 @@ import java.util.Optional;
 
 import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
@@ -101,6 +102,8 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     private Date planPermissionDate;
     private String occupancyCertificateNumber;
     private Boolean wfEnded;
+    private Boolean feeCollector;
+
 
     public String getRevocationNumber() {
         return revocationNumber;
@@ -199,6 +202,36 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         if(occupancyCertificate != null)
             setOccupancyCertificateNumber(occupancyCertificate.getApplicationNumber());
     }
+    
+    public SearchBpaApplicationForm(PermitRenewal renewal, String currentOwner, String pendingAction, Boolean feeCollector,
+            Boolean isFeeCollected) {
+        setId(renewal.getId());
+        setApplicationNumber(renewal.getApplicationNumber());
+        setApplicantName(renewal.getParent().getApplicantName());
+        setApplicationDate(renewal.getApplicationDate());
+        setAddress(renewal.getParent().getOwner().getAddress());
+        setApplicationType(renewal.getParent().getApplicationType() != null ? renewal.getParent().getApplicationType().getName() : "");
+        setOccupancy(renewal.getParent().getOccupanciesName());
+        setServiceType(renewal.getParent().getServiceType().getDescription());
+        setServiceCode(renewal.getParent().getServiceType().getCode());
+        setPlanPermissionNumber(renewal.getParent().getPlanPermissionNumber());
+        setPlanPermissionDate(renewal.getParent().getPlanPermissionDate());
+        setStakeHolderName(renewal.getParent().getStakeHolder().get(0).getStakeHolder().getName());
+        if (!renewal.getParent().getSiteDetail().isEmpty()) {
+            SiteDetail site = renewal.getParent().getSiteDetail().get(0);
+            setReSurveyNumber(site.getReSurveyNumber());
+            setZone(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getParent().getName());
+            setWard(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getName());
+            setElectionWard(site.getElectionBoundary() == null ? "" : site.getElectionBoundary().getName());
+            setLocality(site.getLocationBoundary() == null ? "" : site.getLocationBoundary().getName());
+        }
+        setStatus(renewal.getStatus().getCode());
+        setCurrentOwner(currentOwner);
+        setPendingAction(pendingAction);
+        setFeeCollected(isFeeCollected);
+        setFeeCollector(feeCollector);
+    }
+
 
     public Boolean getIsRescheduledByEmployee() {
         return isRescheduledByEmployee;
@@ -606,6 +639,14 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
 
 	public void setWfEnded(Boolean wfEnded) {
 		this.wfEnded = wfEnded;
+	}
+
+	public Boolean getFeeCollector() {
+		return feeCollector;
+	}
+
+	public void setFeeCollector(Boolean feeCollector) {
+		this.feeCollector = feeCollector;
 	}
     
 }

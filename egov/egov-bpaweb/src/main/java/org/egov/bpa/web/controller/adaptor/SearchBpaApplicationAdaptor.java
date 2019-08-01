@@ -48,20 +48,21 @@
 
 package org.egov.bpa.web.controller.adaptor;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.defaultString;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 
 public class SearchBpaApplicationAdaptor implements DataTableJsonAdapter<SearchBpaApplicationForm> {
 
@@ -99,6 +100,8 @@ public class SearchBpaApplicationAdaptor implements DataTableJsonAdapter<SearchB
             baseRegisterJson.addProperty("appointmentTime", defaultString(baseForm.getAppointmentTime(), "N/A"));
             baseRegisterJson.addProperty("id", baseForm.getId());
             baseRegisterJson.addProperty("revocationNumber", baseForm.getRevocationNumber());
+            baseRegisterJson.addProperty("feeCollector", baseForm.getFeeCollector());
+
 
             baseRegisterResultData.add(baseRegisterJson);
         });

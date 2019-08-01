@@ -45,6 +45,7 @@ import java.util.List;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.demand.model.EgDemand;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -52,7 +53,7 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public interface PermitRenewalRepository extends JpaRepository<PermitRenewal, Long> {
+public interface PermitRenewalRepository extends JpaRepository<PermitRenewal, Long>, JpaSpecificationExecutor<PermitRenewal>  {
 
     List<PermitRenewal> findByParentPlanPermissionNumberOrderByIdDesc(String permitNumber);
 

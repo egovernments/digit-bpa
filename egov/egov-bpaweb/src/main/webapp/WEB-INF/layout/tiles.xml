@@ -1176,4 +1176,11 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/lettertoparty/permitrenewal-ltp-update.jsp" />
 	</definition>
+	<definition name="search-permit-renewal"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.search.appln" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/permitRenewal/search-permit-renewal.jsp" />
+	</definition>
 </tiles-definitions>
