@@ -328,4 +328,5 @@ public class DxfFileConstants {
     
     public static final String OCCUPANCY_ALLOWED = "Only residential or commerical buildings will be scrutinized for now.";
     public static final String OCCUPANCY_ALLOWED_KEY = "occupancy_allowed";
+    public static final String RWH_DECLARED = "RWH_DECLARED";
 }
