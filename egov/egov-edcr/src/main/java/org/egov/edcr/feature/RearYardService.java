@@ -477,7 +477,7 @@ public class RearYardService extends GeneralRule {
 			Integer level, final Plot plot, final String rearYardFieldName, final BigDecimal min, final BigDecimal mean,
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			HashMap<String, String> errors) {
-		String subRule = RULE_36;
+		String subRule = RULE_35;
 		String rule = REAR_YARD_DESC;
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
@@ -589,7 +589,7 @@ public class RearYardService extends GeneralRule {
 			final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			BigDecimal buildingHeight) {
 		Boolean valid = false;
-		String subRule = RULE_35;
+		String subRule = RULE_36;
 		String rule = REAR_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;

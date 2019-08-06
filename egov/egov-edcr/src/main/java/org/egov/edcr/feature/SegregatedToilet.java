@@ -66,8 +66,8 @@ import org.springframework.stereotype.Service;
 public class SegregatedToilet extends FeatureProcess {
 
     private static final Logger LOG = Logger.getLogger(SegregatedToilet.class);
-    private static final String RULE_45 = "45";
-    public static final String SEGREGATEDTOILET_DESCRIPTION = "Num of segregated toilets";
+    private static final String RULE_59_10  = "59-10-i";
+    public static final String SEGREGATEDTOILET_DESCRIPTION = "Num. of segregated toilets";
     public static final String SEGREGATEDTOILET_DIMENSION_DESCRIPTION = "Segregated toilet distance from main entrance";
 
     @Override
@@ -88,7 +88,7 @@ public class SegregatedToilet extends FeatureProcess {
         scrutinyDetail.addColumnHeading(5, STATUS);
 
         Map<String, String> details = new HashMap<>();
-        details.put(RULE_NO, RULE_45);
+        details.put(RULE_NO, RULE_59_10);
 
         BigDecimal minDimension = BigDecimal.ZERO;
         BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;

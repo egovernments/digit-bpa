@@ -75,7 +75,7 @@ import org.springframework.stereotype.Service;
 public class FireStair extends FeatureProcess {
     private static final Logger LOG = Logger.getLogger(FireStair.class);
     private static final String FLOOR = "Floor";
-    private static final String RULE42_5_II = "42-5-ii-f";
+    private static final String RULE42_5_II = "42-5-iii-f";
     private static final String EXPECTED_NO_OF_RISE = "12";
     private static final String NO_OF_RISER_DESCRIPTION = "Maximum no of risers required per flight for fire stair %s flight %s";
     private static final String WIDTH_DESCRIPTION = "Minimum width for fire stair %s flight %s";
@@ -145,7 +145,7 @@ public class FireStair extends FeatureProcess {
                 scrutinyDetailAbutBltUp.addColumnHeading(3, DESCRIPTION);
                 scrutinyDetailAbutBltUp.addColumnHeading(4, PROVIDED);
                 scrutinyDetailAbutBltUp.addColumnHeading(5, STATUS);
-                scrutinyDetailAbutBltUp.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Abutting BuiltUp");
+                scrutinyDetailAbutBltUp.setKey("Block_" + block.getNumber() + "_" + "Fire Stair - Abutting External Wall");
 
                 // int spiralStairCount = 0;
                 OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding() != null ? planDetail.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
@@ -170,8 +170,8 @@ public class FireStair extends FeatureProcess {
                         if (!fireStairs.isEmpty()) {
                             for (org.egov.common.entity.edcr.FireStair fireStair : fireStairs) {
                                 setReportOutputDetailsBltUp(planDetail, RULE42_5_II, floor.getNumber().toString(),
-                                        "Fire stair should abut floor builtup",
-                                        fireStair.isAbuttingBltUp() ? "is abuting builtup" : "not abuting builtup",
+                                        "Fire stair should abut floor external wall",
+                                        fireStair.isAbuttingBltUp() ? "Is abuting external wall" : "Not abuting external wall",
                                         fireStair.isAbuttingBltUp() ? Result.Accepted.getResultVal()
                                                 : Result.Not_Accepted.getResultVal(),
                                         scrutinyDetailAbutBltUp);
@@ -395,7 +395,7 @@ public class FireStair extends FeatureProcess {
 
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
             minFlightWidth = Util.roundOffTwoDecimal(flightPolyLine);
-            BigDecimal minimumWidth = BigDecimal.valueOf(1);
+            BigDecimal minimumWidth = BigDecimal.valueOf(1.25);
 
             if (minFlightWidth.compareTo(minimumWidth) >= 0) {
                 valid = true;
