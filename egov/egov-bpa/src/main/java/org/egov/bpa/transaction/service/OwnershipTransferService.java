@@ -52,11 +52,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
+import org.egov.bpa.autonumber.impl.PlanPermissionNumberGeneratorImpl;
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.repository.OwnershipTransferRepository;
 import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,9 +83,9 @@ public class OwnershipTransferService {
     @Autowired
     private AppConfigValueService appConfigValueService;
     @Autowired
-    private PlanPermissionNumberGenerator planPermissionNumberGenerator;
-    @Autowired
     private BpaWorkflowRedirectUtility bpaWorkflowRedirectUtility;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @Transactional
     public OwnershipTransfer save(final OwnershipTransfer ownershipTransfer, final WorkflowBean wfBean) {
@@ -115,6 +117,8 @@ public class OwnershipTransferService {
 
     @Transactional
     public OwnershipTransfer update(OwnershipTransfer ownershipTransfer, final WorkflowBean wfBean) {
+    	 PlanPermissionNumberGenerator planPermissionNumber = (PlanPermissionNumberGenerator) specificNoticeService
+                 .find(PlanPermissionNumberGeneratorImpl.class, specificNoticeService.getCityDetails());
         if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
         	ownershipTransfer.setOwnershipApprovalDate(new Date());
         	if (Boolean.valueOf(appConfigValueService.getConfigValuesByModuleAndKey(EGMODULE_NAME,
@@ -122,7 +126,7 @@ public class OwnershipTransferService {
                ownershipTransfer.setOwnershipNumber(ownershipTransfer.getParent().getPlanPermissionNumber());
             }
         	else
-        	   ownershipTransfer.setOwnershipNumber(planPermissionNumberGenerator.generatePlanPermissionNumber(ownershipTransfer.getParent()));
+        	   ownershipTransfer.setOwnershipNumber(planPermissionNumber.generatePlanPermissionNumber(ownershipTransfer.getParent()));
         }
         
         OwnershipTransfer permitRenewalRes = ownershipTransferRepository.save(ownershipTransfer);
