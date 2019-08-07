@@ -40,6 +40,8 @@
 
 package org.egov.bpa.transaction.workflow;
 
+
+
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
@@ -76,6 +78,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
@@ -106,6 +109,8 @@ public class BpaWorkFlowService {
     private BpaUtils bpaUtils;
     @Autowired
     private SecurityUtils securityUtils;
+
+
 
     public Assignment getWorkFlowInitiator(final State<Position> state, final User createdBy) {
         Assignment wfInitiator;
@@ -447,4 +452,12 @@ public class BpaWorkFlowService {
 		return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
 				bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
 	}
+	
+    public Date calculateDueDate(int sla) {
+        Date dueDate;
+        Date currentDate = new Date();
+        dueDate = DateUtils.addDays(currentDate, sla);
+        return dueDate;
+    }
+
 }

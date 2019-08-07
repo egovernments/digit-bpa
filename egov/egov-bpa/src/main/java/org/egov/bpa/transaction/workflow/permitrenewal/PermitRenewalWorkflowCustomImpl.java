@@ -49,6 +49,7 @@ import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
+import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
@@ -94,6 +95,9 @@ public abstract class PermitRenewalWorkflowCustomImpl implements PermitRenewalWo
 
     @Autowired
     private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
+    
+    @Autowired
+    private BpaAppConfigUtil bpaAppConfigUtil;
 
     @Override
     @Transactional
@@ -126,6 +130,7 @@ public abstract class PermitRenewalWorkflowCustomImpl implements PermitRenewalWo
                 }
                 permitRenewal.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 permitRenewal.transition().start()
+                        .withSLA(bpaWorkFlowService.calculateDueDate(bpaAppConfigUtil.getSlaPermitRenewalApplication()))
                         .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                         .withComments(wfBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos).withOwner(ownerUser)

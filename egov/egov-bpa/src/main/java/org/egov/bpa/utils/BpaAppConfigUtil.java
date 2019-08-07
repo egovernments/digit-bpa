@@ -63,6 +63,11 @@ public class BpaAppConfigUtil {
     private static final String PR_ALLOWED_UPTO_AFTER_EXPIRY = "PERMIT_RENEWAL_ALLOWED_UPTO_AFTER_EXPIRY";
     private static final String PERMIT_EXTENSION_FEE = "PERMIT_EXTENSION_FEE_IN_PERCENTAGE";
     private static final String PERMIT_RENEWAL_FEE = "PERMIT_RENEWAL_FEE_IN_PERCENTAGE";
+    private static final String SLA_BPA_APPLICATION = "SLA_BPA_APPLICATION";
+    private static final String SLA_PERMIT_RENEWAL_APPLICATION = "SLA_PERMIT_RENEWAL_APPLICATION";
+    private static final String SLA_OC_APPLICATION = "SLA_OC_APPLICATION";
+   
+    
     @Autowired
     private AppConfigValueService appConfigValueService;
 
@@ -87,4 +92,15 @@ public class BpaAppConfigUtil {
     public BigDecimal getPermitRenewalFeeInPercentage() {
         return BigDecimal.valueOf(Double.valueOf(getAppconfigValueByKeyName(PERMIT_RENEWAL_FEE)));
     }
+    
+    public Integer getSlaBpaApplication(){
+        return Integer.valueOf(getAppconfigValueByKeyName(SLA_BPA_APPLICATION));
+    }
+    public Integer getSlaPermitRenewalApplication(){
+        return Integer.valueOf(getAppconfigValueByKeyName(SLA_PERMIT_RENEWAL_APPLICATION));
+    }
+    public Integer getSlaOcApplication(){
+        return Integer.valueOf(getAppconfigValueByKeyName(SLA_OC_APPLICATION));
+    }
+   
 }

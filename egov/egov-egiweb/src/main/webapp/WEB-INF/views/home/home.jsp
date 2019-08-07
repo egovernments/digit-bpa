@@ -258,7 +258,7 @@
 										<th>Nature of Work</th>
 										<th>Status</th>
 										<th>Details</th>
-										<th></th>
+									<th><spring:message code="lbl.elapsed.days"/></th>
 									</tr>
 								</thead>
 							</table>
@@ -285,6 +285,7 @@
 										<th>Nature of Work</th>
 										<th>Status</th>
 										<th>Details</th>
+										<th><spring:message code="lbl.elapsed.days"/></th>
 									</tr>
 								</thead>
 							</table>

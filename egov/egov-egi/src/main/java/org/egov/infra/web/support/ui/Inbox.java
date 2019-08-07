@@ -200,4 +200,7 @@ public class Inbox implements Serializable {
     public boolean isWithinSla() {
         return sla == null || sla.after(DateUtils.now());
     }
+    public int getElapsed() {
+        return DateUtils.daysBetween(createdDate, new Date());
+    }
 }

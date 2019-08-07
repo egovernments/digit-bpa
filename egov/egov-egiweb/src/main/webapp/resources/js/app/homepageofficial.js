@@ -186,18 +186,18 @@ $(document).ready(function () {
     });
 
     $("#official_inbox").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.dataTable().fnGetData(this, 7) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 7),
-                tableContainer1.dataTable().fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 8) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 8),
+                tableContainer1.dataTable().fnGetData(this, 7) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
     });
 
     $("#official_drafts").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.dataTable().fnGetData(this, 6) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 6),
-                tableContainer1.dataTable().fnGetData(this, 5) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 7) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 7),
+                tableContainer1.dataTable().fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
@@ -449,6 +449,10 @@ function worklist() {
             "url": "inbox",
             "dataSrc": ""
         },
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FA8072");
+        },
+        
         "deferRender": true,
         "columns": [
             {"data": "date", "width": "16%"},
@@ -456,6 +460,7 @@ function worklist() {
             {"data": "task", "width": "20%"},
             {"data": "status", "width": "24%"},
             {"data": "details", "width": "20%"},
+            {"data": "elapsed", "className": "text-center", "width": "12%"},
             {
                 "data": null,
                 "target": -1,
@@ -473,7 +478,7 @@ function worklist() {
             }
         ],
         "createdRow": function (row, data) {
-            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FA8072");
         },
         "fnInitComplete": function (oSettings, json) {
             response_json = JSON.stringify(json);
@@ -562,6 +567,9 @@ function drafts() {
             "url": "inbox/draft",
             "dataSrc": ""
         },
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+        },
         "deferRender": true,
         "columns": [
             {"data": "date", "width": "16%"},
@@ -569,6 +577,7 @@ function drafts() {
             {"data": "task", "width": "20%"},
             {"data": "status", "width": "24%"},
             {"data": "details", "width": "20%"},
+            {"data": "elapsed"},
             {"data": "id", "visible": false, "searchable": false},
             {"data": "link", "visible": false, "searchable": false}
         ],
@@ -621,6 +630,7 @@ function worklistwrtnow(json) {
             {"data": "task", "width": "20%"},
             {"data": "status", "width": "24%"},
             {"data": "details", "width": "20%"},
+            {"data": "elapsed", "className": "text-center", "width": "12%"},
             {
                 "data": null,
                 "target": -1,

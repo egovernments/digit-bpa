@@ -58,6 +58,7 @@ import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
+import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.OcConstants;
@@ -118,6 +119,9 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
     private WorkFlowMatrixService workFlowMatrixService;
     @Autowired
     private OccupancyCertificateUtils occupancyCertificateUtils;
+    @Autowired
+    private BpaAppConfigUtil bpaAppConfigUtil;
+
 
     @Autowired
     public OccupancyCertificateWorkflowCustomImpl() {
@@ -165,6 +169,7 @@ public abstract class OccupancyCertificateWorkflowCustomImpl implements Occupanc
                 }
                 oc.setStatus(getStatusByCurrentMatrixStatus(wfMatrix));
                 oc.transition().start()
+                        .withSLA(bpaWorkFlowService.calculateDueDate(bpaAppConfigUtil.getSlaOcApplication()))
                         .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                         .withOwner(ownerUser)
                         .withComments(wfBean.getApproverComments())

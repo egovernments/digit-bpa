@@ -47,6 +47,7 @@ import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
+import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.eis.entity.Assignment;
@@ -106,6 +107,8 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
     private LettertoPartyService lettertoPartyService;
     @Autowired
     private WorkFlowMatrixService workFlowMatrixService;
+    @Autowired
+    private BpaAppConfigUtil bpaAppConfigUtil;
 
     @Autowired
     public BpaApplicationWorkflowCustomImpl() {
@@ -157,6 +160,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
 
                 application.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
                 application.transition().start()
+                           .withSLA(bpaWorkFlowService.calculateDueDate(bpaAppConfigUtil.getSlaBpaApplication()))
                            .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                            .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
                            .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos).withOwner(ownerUser)
@@ -206,6 +210,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
 
         	if(application.getApplicationType().getName().equals(BpaConstants.LOWRISK))
         		application.transition().end()
+                .withSLA(bpaWorkFlowService.calculateDueDate(bpaAppConfigUtil.getSlaBpaApplication()))
                 .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
                 .withComments(approvalComent)
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())

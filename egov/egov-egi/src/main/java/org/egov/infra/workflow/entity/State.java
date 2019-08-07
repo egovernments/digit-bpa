@@ -55,7 +55,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -159,7 +158,6 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     private State<T> previousStateRef;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(updatable = false)
     private Date sla;
 
     protected State() {
