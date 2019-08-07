@@ -91,8 +91,8 @@
         <![endif]-->
         <script>
             var googleapikey = '${sessionScope.googleApiKey}';
-            var citylat = ${sessionScope.citylat};
-            var citylng = ${sessionScope.citylng};
+            const citylat = ${empty sessionScope.citylat ? 0 : sessionScope.citylat};
+            const citylng = ${empty sessionScope.citylng ? 0 : sessionScope.citylng};
         </script>
     </head>
     <body>

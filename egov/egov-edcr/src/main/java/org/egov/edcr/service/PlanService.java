@@ -56,7 +56,7 @@ public class PlanService {
         plan.setApplicationDate(dcrApplication.getApplicationDate());
         Map<String, String> cityDetails = specificRuleService.getCityDetails();
         plan = applyRules(plan, cityDetails);
-        
+
         InputStream reportStream = generateReport(plan, dcrApplication);
 
         saveOutputReport(dcrApplication, reportStream, plan);
@@ -66,8 +66,6 @@ public class PlanService {
 
     public void savePlanDetail(Plan plan, EdcrApplicationDetail detail) {
 
-        
-        
         /*
          * if (LOG.isInfoEnabled()) LOG.info("*************Before serialization******************"); File f = new
          * File("plandetail.txt"); try (FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new
@@ -76,18 +74,15 @@ public class PlanService {
          * LOG.error("Unable to serialize!!!!!!", e); } if (LOG.isInfoEnabled())
          * LOG.info("*************Completed serialization******************");
          */
-        
-        
-        
+
         if (LOG.isInfoEnabled())
             LOG.info("*************Before serialization******************");
         File f = new File("plandetail.txt");
         try (FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            //oos.writeObject(plan);
+            // oos.writeObject(plan);
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            mapper.writeValue(f,
-                    plan);
+            mapper.writeValue(f, plan);
             detail.setPlanDetailFileStore(fileStoreService.store(f, f.getName(), "text/plain",
                     DcrConstants.APPLICATION_MODULE_TYPE));
             oos.flush();
@@ -97,8 +92,7 @@ public class PlanService {
         }
         if (LOG.isInfoEnabled())
             LOG.info("*************Completed serialization******************");
-         
-         
+
     }
 
     private Plan applyRules(Plan plan, Map<String, String> cityDetails) {
@@ -108,7 +102,8 @@ public class PlanService {
             LOG.info("got bean :" + rule.getClass().getSimpleName() + " : " + new Date());
             rule.process(plan);
             LOG.info("Completed Process " + rule.getClass().getSimpleName() + "  " + new Date());
-            if (plan.getErrors().containsKey(DxfFileConstants.OCCUPANCY_ALLOWED_KEY) || plan.getErrors().containsKey("units not in meters"))
+            if (plan.getErrors().containsKey(DxfFileConstants.OCCUPANCY_ALLOWED_KEY)
+                    || plan.getErrors().containsKey("units not in meters"))
                 return plan;
         }
         return plan;
@@ -211,30 +206,31 @@ public class PlanService {
             savePlanDetail(plan, edcrApplicationDetail);
 
             ArrayList<org.egov.edcr.entity.EdcrPdfDetail> edcrPdfDetails = new ArrayList();
-           
+
             if (plan.getEdcrPdfDetails() != null && plan.getEdcrPdfDetails().size() > 0) {
                 for (EdcrPdfDetail edcrPdfDetail : plan.getEdcrPdfDetails()) {
-                	org.egov.edcr.entity.EdcrPdfDetail pdfDetail = new org.egov.edcr.entity.EdcrPdfDetail();
-                	pdfDetail.setLayer(edcrPdfDetail.getLayer());
-                	pdfDetail.setFailureReasons(edcrPdfDetail.getFailureReasons());
-                	pdfDetail.setStandardViolations(edcrPdfDetail.getStandardViolations());
-                	
-                	 File convertedPdf = edcrPdfDetail.getConvertedPdf();
-					if (convertedPdf != null) {
-                         FileStoreMapper fileStoreMapper = fileStoreService.store(convertedPdf, convertedPdf.getName(), "application/pdf", "Digit DCR");
-                         pdfDetail.setConvertedPdf(fileStoreMapper);
-                     }
+                    org.egov.edcr.entity.EdcrPdfDetail pdfDetail = new org.egov.edcr.entity.EdcrPdfDetail();
+                    pdfDetail.setLayer(edcrPdfDetail.getLayer());
+                    pdfDetail.setFailureReasons(edcrPdfDetail.getFailureReasons());
+                    pdfDetail.setStandardViolations(edcrPdfDetail.getStandardViolations());
+
+                    File convertedPdf = edcrPdfDetail.getConvertedPdf();
+                    if (convertedPdf != null) {
+                        FileStoreMapper fileStoreMapper = fileStoreService.store(convertedPdf, convertedPdf.getName(),
+                                "application/pdf", "Digit DCR");
+                        pdfDetail.setConvertedPdf(fileStoreMapper);
+                    }
                 }
             }
-            
+
             if (edcrPdfDetails != null && edcrPdfDetails.size() > 0) {
                 for (org.egov.edcr.entity.EdcrPdfDetail edcrPdfDetail : edcrPdfDetails) {
                     edcrPdfDetail.setEdcrApplicationDetail(edcrApplicationDetail);
                 }
 
                 edcrPdfDetailService.saveAll(edcrPdfDetails);
-            }           
-           
+            }
+
             edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         }
     }
