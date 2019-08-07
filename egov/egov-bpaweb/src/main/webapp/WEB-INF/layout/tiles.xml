@@ -1183,4 +1183,11 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/permitRenewal/search-permit-renewal.jsp" />
 	</definition>
+	<definition name="ownership-transfer-citizen-new"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.permit.renewal.apply" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-citizen-new.jsp" />
+	</definition>
 </tiles-definitions>

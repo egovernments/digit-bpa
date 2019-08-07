@@ -458,6 +458,13 @@ public class BpaConstants {
     public static final String RENEWALSTATUS_MODULETYPE = "RENEWAL";
     public static final String NATURE_OF_WORK_RENEWAL = "Permit Renewal";
     
+    //Ownership Transfer
+    public static final String OWNERSHIP_TRANSFER_WFTYPE = "OwnershipTransfer";
+    public static final String OWNERSHIPSTATUS_MODULETYPE = "OWNERSHIP";
+    public static final String NATURE_OF_WORK_OWNERSHIP = "Ownership Transfer";
+    public static final String AUTOGENERATE_OWNERSHIP_NUMBER = "AUTOGENERATE_OWNERSHIP_NUMBER";
+
+    
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {
         BUILDPERMIT.add(ST_CODE_01); // New Construction

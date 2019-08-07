@@ -53,6 +53,7 @@ import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
@@ -113,6 +114,42 @@ public class PushBpaApplicationToPortalUtil {
                 SERVICETYPE.concat(renewal.getParent().getServiceType().getDescription()), renewal.getApplicationNumber(),
                 renewal.getRenewalNumber(), renewal.getId(), SUCCESS, SUCCESS, url, isResolved,
                 status, new Date(), renewal.getState(), portalInboxUser);
+
+        final PortalInbox portalInbox = portalInboxBuilder.build();
+        portalInboxService.pushInboxMessage(portalInbox);
+    }
+    
+    
+    @Transactional
+    public void updatePortalUserinbox(final OwnershipTransfer ownershipTransfer, final User additionalPortalInboxUser) {
+        Module module = moduleService.getModuleByName(EGMODULE_NAME);
+        boolean isResolved = false;
+        String status = ownershipTransfer.getStatus().getDescription();
+
+        if (ownershipTransfer.getState() != null && (CLOSED.equals(ownershipTransfer.getState().getValue())
+                || WF_END_ACTION.equals(ownershipTransfer.getState().getValue()))
+                || ownershipTransfer.getStatus() != null
+                        && ownershipTransfer.getStatus().getCode().equals(APPLICATION_STATUS_REJECTED))
+            isResolved = true;
+        String url = "/bpa/citizen/application/ownership/update/" + ownershipTransfer.getApplicationNumber();
+        if (ownershipTransfer.getStatus() != null)
+            portalInboxService.updateInboxMessage(ownershipTransfer.getApplicationNumber(), module.getId(),
+                    status, isResolved, new Date(), ownershipTransfer.getState(),
+                    additionalPortalInboxUser, ownershipTransfer.getOwnershipNumber(), url);
+    }
+
+    @Transactional
+    public void createPortalUserinbox(final OwnershipTransfer ownershipTransfer, final List<User> portalInboxUser,
+            final String workFlowAction) {
+        String status = ownershipTransfer.getStatus().getDescription();
+
+        Module module = moduleService.getModuleByName(EGMODULE_NAME);
+        boolean isResolved = false;
+        String url = "/bpa/citizen/application/ownership/transfer/update/" + ownershipTransfer.getApplicationNumber();
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, ownershipTransfer.getParent().getOwner().getName(),
+                SERVICETYPE.concat(ownershipTransfer.getParent().getServiceType().getDescription()), ownershipTransfer.getApplicationNumber(),
+                ownershipTransfer.getOwnershipNumber(), ownershipTransfer.getId(), SUCCESS, SUCCESS, url, isResolved,
+                status, new Date(), ownershipTransfer.getState(), portalInboxUser);
 
         final PortalInbox portalInbox = portalInboxBuilder.build();
         portalInboxService.pushInboxMessage(portalInbox);

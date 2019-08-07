@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.WorkflowBean;
+import org.egov.bpa.transaction.workflow.ownershiptransfer.OwnershipTransferWorkflowCustomDefaultImpl;
 import org.egov.bpa.transaction.workflow.permitrenewal.PermitRenewalWorkflowCustomDefaultImpl;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -120,6 +122,14 @@ public class BpaWorkflowRedirectUtility {
                     .getBean("permitRenewalWorkflowCustomDefaultImpl");
         return applicationWorkflowCustomDefaultImpl;
     }
+    
+    private OwnershipTransferWorkflowCustomDefaultImpl getInitialisedWorkFlowBeanOfOwnershipTransfer() {
+        OwnershipTransferWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = null;
+        if (null != context)
+            applicationWorkflowCustomDefaultImpl = (OwnershipTransferWorkflowCustomDefaultImpl) context
+                    .getBean("ownershipTransferWorkflowCustomDefaultImpl");
+        return applicationWorkflowCustomDefaultImpl;
+    }
 
     public WorkFlowMatrix getWfMatrixByCurrentState(final Boolean isOneDayPermit, final String stateType,
             final String currentState, String applicationType) {
@@ -177,6 +187,21 @@ public class BpaWorkflowRedirectUtility {
             }
         }
         return workFlowBoundary;
+    }
+    
+    @Transactional
+    public void redirectToBpaWorkFlow(final OwnershipTransfer ownershipTransfer, final WorkflowBean wfBean) {
+        final WorkFlowMatrix wfMatrix = getWfMatrixByCurrentState(ownershipTransfer.getStateType(), wfBean.getCurrentState(),
+        		ownershipTransfer.getParent().getApplicationType().getName());
+        final OwnershipTransferWorkflowCustomDefaultImpl ownershipTransferWorkflowImpl = getInitialisedWorkFlowBeanOfOwnershipTransfer();
+        Long approvalPositionId = wfBean.getApproverPositionId();
+        if (wfBean.getApproverPositionId() == null)
+            approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    getBoundaryForWorkflow(ownershipTransfer.getParent().getSiteDetail().get(0)).getId());
+        wfBean.setAdditionalRule(ownershipTransfer.getParent().getApplicationType().getName());
+        wfBean.setApproverPositionId(approvalPositionId);
+        if (ownershipTransferWorkflowImpl != null)
+            	ownershipTransferWorkflowImpl.createCommonWorkflowTransition(ownershipTransfer, wfBean);
     }
 
 }
