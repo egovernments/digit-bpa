@@ -395,7 +395,7 @@ public class FireStair extends FeatureProcess {
 
         if (!(Boolean) typicalFloorValues.get("isTypicalRepititiveFloor")) {
             minFlightWidth = Util.roundOffTwoDecimal(flightPolyLine);
-            BigDecimal minimumWidth = BigDecimal.valueOf(1.25);
+            BigDecimal minimumWidth = BigDecimal.valueOf(1);
 
             if (minFlightWidth.compareTo(minimumWidth) >= 0) {
                 valid = true;
