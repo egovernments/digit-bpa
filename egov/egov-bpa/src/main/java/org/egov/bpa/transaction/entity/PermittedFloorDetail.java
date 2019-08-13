@@ -36,6 +36,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -58,6 +59,7 @@ public class PermittedFloorDetail extends AbstractAuditable {
     private Long id;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application")
     private BpaApplication application;
     private Integer floorNumber;
     @Length(min = 1, max = 128)
@@ -68,8 +70,10 @@ public class PermittedFloorDetail extends AbstractAuditable {
     private BigDecimal parking;
     private BigDecimal usagePermitted;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usageFrom")
     private ChangeOfUsage usageFrom;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usageTo")
     private ChangeOfUsage usageTo;
 
     @Override

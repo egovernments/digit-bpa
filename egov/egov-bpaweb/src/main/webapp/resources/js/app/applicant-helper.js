@@ -43,7 +43,7 @@ jQuery(document).ready(function() {
 	var table;
 	var tbody;
 	var row = '<tr>'+
-	'<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span></td>'+
+	'<td class="text-center"><span class="applcntSerialNo text-center">{{sno}}</span></td>'+
 	'<td><input type="etxt" name="coApplicants[{{idx}}].name" data-first-option="false" class="form-control name toggle-mandatory duplicate-clear" maxlength="99" /></td>'+
 	'<td><input type="text" class="form-control patternvalidation mobileNumber duplicate-clear" name="coApplicants[{{idx}}].mobileNumber" data-pattern="number" minlength="10" maxlength="10" /></td>'+
 	'<td><input type="text" class="form-control patternvalidation emailId duplicate-clear" name="coApplicants[{{idx}}].emailId" data-pattern="string" maxlength="120" /></td>'+
@@ -104,7 +104,7 @@ jQuery(document).ready(function() {
         if($(this).data('record-id'))
             deletedId.push($(this).data('record-id'));
 
-        $('#deletedFloorIds').val(deletedId);
+        $('#deletedCoApplicantIds').val(deletedId);
         $(this).closest('tr').remove();
 
         generateSno();
@@ -134,7 +134,7 @@ jQuery(document).ready(function() {
 
 function generateSno() {
 	var idx=1;
-	$('#coApplicantDetails tbody tr').find('.serialNo').each(function(){
+	$('#coApplicantDetails tbody tr').find('.applcntSerialNo').each(function(){
 		$(this).text(idx);
 		idx++;
 	});

@@ -75,7 +75,7 @@
 					<c:forEach items="${bpaApplication.coApplicants}" var="coap"
 						varStatus="counter">
 						<tr>
-							<td class="text-center"><span class="serialNo" id="slNoInsp">${counter.index+1}</span></td>
+							<td class="text-center"><span class="applcntSerialNo">${counter.index+1}</span></td>
 							<td><form:hidden path="coApplicants[${counter.index}].application" value="${bpaApplication.id}"/><form:input class="form-control patternvalidation name" data-pattern="alphabetspecialcharacters" maxlength="99"
 									id="name" path="coApplicants[${counter.index}].name"
 									disabled="true" /></td>
@@ -104,7 +104,7 @@
 				</c:when>
 				<c:otherwise>
 					<tr>
-						<td class="text-center"><span class="serialNo" id="slNoInsp">1</span></td>
+						<td class="text-center"><span class="applcntSerialNo">1</span></td>
 						<td><form:hidden path="coApplicants[0].application" value="${bpaApplication.id}"/>
 								<form:input class="form-control patternvalidation name"
 								data-pattern="alphabetspecialcharacters" maxlength="99"

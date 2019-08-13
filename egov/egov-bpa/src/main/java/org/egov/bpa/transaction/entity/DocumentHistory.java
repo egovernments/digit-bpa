@@ -39,6 +39,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -61,11 +62,13 @@ public class DocumentHistory extends AbstractAuditable {
     private Long id;
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "application")
     private BpaApplication application;
     @NotNull
     @Length(min = 1, max = 256)
     private String documentNum;
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "createdUser")
     private User createdUser;
     private BigDecimal docEnclosedNumber;
     private BigDecimal docEnclosedDate;
@@ -79,7 +82,7 @@ public class DocumentHistory extends AbstractAuditable {
     private Boolean wheatherFmsOrSketchCopyOfReg;
 
     @OneToMany(mappedBy = "docHistory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<DocumentHistoryDetail> documentHistoryDetail = new ArrayList<DocumentHistoryDetail>(0);
+    private final List<DocumentHistoryDetail> documentHistoryDetail = new ArrayList<>(0);
 
     @Override
     public Long getId() {

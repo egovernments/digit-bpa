@@ -160,7 +160,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
@@ -220,9 +219,6 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
-    private AutonumberServiceBeanResolver beanResolver;
-
-    @Autowired
     private EnvironmentSettings environmentSettings;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -267,6 +263,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private ServiceTypeService serviceTypeService;
     @Autowired
     private RevocationNumberGenerator revocationNumberGenerator;
+    @Autowired
+    private CoApplicantService coApplicantService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -472,11 +470,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     @Transactional
     public void saveAndFlushApplication(final BpaApplication application) {
-        if (Boolean.valueOf(appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                PDF_QR_ENBLD).get(0).getValue()) && application.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED)
-                && !bpaDemandService.checkAnyTaxIsPendingToCollect(application)) {
-            appendQrCodeWithDcrDocuments(application);
-        }
+        appendQrCodeWithDcrDocuments(application);
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
         // persistPostalAddress(application);
@@ -646,14 +640,18 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     private void appendQrCodeWithDcrDocuments(BpaApplication application) {
-        List<PermitDcrDocument> dcrDocuments = dcrDocumentRepository.findByApplication(application);
-        for (PermitDcrDocument dcrDocument : dcrDocuments) {
-            if (LOG.isInfoEnabled())
-                LOG.info("#### Dcr Document ####", dcrDocument.getId());
-            for (StoreDcrFiles file : dcrDocument.getDcrDocument().getDcrAttachments()) {
+        if (Boolean.valueOf(appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                PDF_QR_ENBLD).get(0).getValue()) && application.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED)
+                && !bpaDemandService.checkAnyTaxIsPendingToCollect(application)) {
+            List<PermitDcrDocument> dcrDocuments = dcrDocumentRepository.findByApplication(application);
+            for (PermitDcrDocument dcrDocument : dcrDocuments) {
                 if (LOG.isInfoEnabled())
-                    LOG.info("#### file ####", file.getId());
-                bpaUtils.addQrCodeToPdfDocuments(file.getFileStoreMapper(), application);
+                    LOG.info("#### Dcr Document ####", dcrDocument.getId());
+                for (StoreDcrFiles file : dcrDocument.getDcrDocument().getDcrAttachments()) {
+                    if (LOG.isInfoEnabled())
+                        LOG.info("#### file ####", file.getId());
+                    bpaUtils.addQrCodeToPdfDocuments(file.getFileStoreMapper(), application);
+                }
             }
         }
     }
@@ -1051,14 +1049,19 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     private List<CoApplicant> buildCoApplicantDetails(final BpaApplication application) {
         List<CoApplicant> coApplicants = new LinkedList<>();
+        List<CoApplicant> deleteCoApplicants = new LinkedList<>();
         for (CoApplicant applicant : application.getCoApplicants()) {
             if (applicant.getName() != null) {
                 applicant.setApplication(application);
                 coApplicants.add(applicant);
+            } else if (applicant.getId() != null) {
+                deleteCoApplicants.add(applicant);
             }
         }
-	if (coApplicants.isEmpty())
+        if (coApplicants.isEmpty())
             application.getCoApplicants().clear();
+        if (!deleteCoApplicants.isEmpty())
+            coApplicantService.delete(deleteCoApplicants);
         return coApplicants;
     }
 
