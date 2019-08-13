@@ -987,7 +987,7 @@ function checkDCRIsUsedWithAnyOccupancyCertificateAppln() {
         },
         contentType: 'application/json; charset=utf-8',
         success: function (response) {
-            if(response.isExists == 'true' && $('#applicationNumber').val() != response.applnNoUsedEdcr) {
+            if(response.isExists == 'true' || $('#applicationNumber').val() != response.applnNoUsedEdcr) {
                 bootbox.alert(response.message);
                 $('#ocEDcrNumber').val('');
                 $('.resetValues').val('');

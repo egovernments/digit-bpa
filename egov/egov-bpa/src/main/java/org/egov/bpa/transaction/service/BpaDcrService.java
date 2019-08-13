@@ -177,6 +177,10 @@ public class BpaDcrService {
         List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByEdcrNumber(eDcrNumber);
         if(occupancyCertificates.isEmpty()){
         	 String planpermissionno=dcrRestService.getEdcrPlanPermissionNo(eDcrNumber,request);
+        	 if(planpermissionno == null){
+        	 eDcrApplicationDetails.put("isExists", "true");
+        	 eDcrApplicationDetails.put("message", "Invalid Building Plan Scrutiny Number.");   
+        	 }
         	 if(StringUtils.isNotBlank(planpermissionno)){
         		 eDcrApplicationDetails=occupancyCertificateUtils.checkIsPermitNumberUsedWithAnyOCApplication(planpermissionno);
         	 String message = bpaMessageSource.getMessage("msg.dcr.exist.with.appln",
@@ -186,8 +190,8 @@ public class BpaDcrService {
         	 eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
         	 return eDcrApplicationDetails;
         	 }
-        	 eDcrApplicationDetails.put("isExists", "false");
-             eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
+        	 /*eDcrApplicationDetails.put("isExists", "false");
+             eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");*/
         }else if (!occupancyCertificates.isEmpty() && !isOCInProgress(occupancyCertificates.get(0))
                 || BpaConstants.APPLICATION_STATUS_CANCELLED.equals(occupancyCertificates.get(0).getStatus().getCode())) {
             eDcrApplicationDetails.put("isExists", "false");
