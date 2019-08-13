@@ -149,7 +149,7 @@
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="" id="existingPermitExpiryDate"
 								class="form-control existingPermitExpiryDate resetValues"
-								value="${existingPermitExpiryDate}" readonly="readonly">
+								value="${permitExpiryDate}" readonly="readonly">
 						</div>
 					</div>
 
