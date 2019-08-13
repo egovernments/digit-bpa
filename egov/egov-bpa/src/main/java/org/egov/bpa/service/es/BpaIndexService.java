@@ -47,7 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BpaIndexService {
 
-	private static final String APP_CONFIG_KEY = "SLAFORBPAAPPLICATION";
+	private static final String SLA_BPA_APPLICATION = "SLA_BPA_APPLICATION";
 	private static final String GOVERNMENT_TYPE_GOV = "Government";
 	private static final String GOVERNMENT_TYPE_QUASI_GOV = "Quasi Government";
 	private static final String CONSTRUCTION_STAGES_INPROGRESS = "In Progress";
@@ -319,7 +319,7 @@ public class BpaIndexService {
 		else {
 			String viewUrl = "/bpa/application/view/%s";
 			List<AppConfigValues> appConfigValue = appConfigValuesService
-					.getConfigValuesByModuleAndKey(BpaConstants.APPLICATION_MODULE_TYPE, APP_CONFIG_KEY);
+					.getConfigValuesByModuleAndKey(BpaConstants.APPLICATION_MODULE_TYPE, SLA_BPA_APPLICATION);
 			Date disposalDate = calculateDisposalDate(appConfigValue);
 			applicationIndex = ApplicationIndex.builder().withModuleName(BpaConstants.APPL_INDEX_MODULE_NAME)
 					.withApplicationNumber(bpaApplication.getApplicationNumber())

@@ -37,7 +37,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 @Transactional(readOnly = true)
 public class OccupancyCertificateIndexService {
 
-    private static final String APP_CONFIG_KEY = "SLAFORBPAAPPLICATION";
+    private static final String SLA_BPA_APPLICATION = "SLA_BPA_APPLICATION";
 
     @Autowired
     private CityService cityService;
@@ -95,7 +95,7 @@ public class OccupancyCertificateIndexService {
         else {
             String viewUrl = "/bpa/application/occupancy-certificate/view/%s";
             List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(BpaConstants.APPLICATION_MODULE_TYPE,
-                    APP_CONFIG_KEY);
+                    SLA_BPA_APPLICATION);
             Date disposalDate = calculateDisposalDate(appConfigValue);
             applicationIndex = ApplicationIndex.builder().withModuleName(BpaConstants.APPL_INDEX_MODULE_NAME)
                     .withApplicationNumber(occupancyCertificate.getApplicationNumber())
