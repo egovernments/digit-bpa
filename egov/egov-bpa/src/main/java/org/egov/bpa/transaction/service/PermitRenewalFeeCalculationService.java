@@ -49,8 +49,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.PermitRenewal;
+import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
 import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.infra.utils.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,25 +69,32 @@ public class PermitRenewalFeeCalculationService {
     private PermitRenewalService permitRenewalService;
     @Autowired
     private BpaAppConfigUtil appConfigUtil;
+    @Autowired
+    private BpaNoticeUtil bpaNoticeUtil;
 
     public Map<String, BigDecimal> calculateRenewalFee(final PermitRenewal permitRenewal) {
         Map<String, BigDecimal> demandReasonAndAmt = new ConcurrentHashMap<>();
         BigDecimal totalPermitRenewalFee = BigDecimal.ZERO;
         BigDecimal totalPermitFee = getPermitFee(permitRenewal);
         String demandReasonCode = "PEF";
+        Date permitExpiryDate = DateUtils.toDateUsingDefaultPattern(bpaNoticeUtil.calculateCertExpryDate(
+                new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
+                permitRenewal.getParent().getServiceType().getValidity()));
         Date minAllowedRenewalDate = DateUtils.toDateUsingDefaultPattern(
                 permitRenewalService.getMinAllowedDateForRenewalPriorExpiry(permitRenewal.getParent()));
         Date maxAllowedRenewalDate = DateUtils.toDateUsingDefaultPattern(
                 permitRenewalService.getMaxAllowedDateForRenewalAfterExpiry(permitRenewal.getParent()));
-        if (permitRenewal.getApplicationDate().before(minAllowedRenewalDate)) {
+        if (permitRenewal.getApplicationDate().after(minAllowedRenewalDate)
+                && permitRenewal.getApplicationDate().before(permitExpiryDate)) {
             BigDecimal permitExtensionFee = appConfigUtil.getPermitExtensionFeeInPercentage();
             totalPermitRenewalFee = totalPermitFee.multiply(permitExtensionFee)
                     .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             demandReasonCode = "PEF";
-        } else if (permitRenewal.getApplicationDate().before(maxAllowedRenewalDate)) {
+        } else if (permitRenewal.getApplicationDate().after(minAllowedRenewalDate)
+                && permitRenewal.getApplicationDate().before(maxAllowedRenewalDate)) {
             BigDecimal permitRenewalFeeInPercent = appConfigUtil.getPermitRenewalFeeInPercentage();
-            totalPermitRenewalFee = totalPermitFee.divide(permitRenewalFeeInPercent, 2, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100));
+            totalPermitRenewalFee = totalPermitFee.multiply(permitRenewalFeeInPercent)
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             demandReasonCode = "PRF";
         }
         demandReasonAndAmt.put(demandReasonCode, totalPermitRenewalFee.setScale(0, BigDecimal.ROUND_HALF_UP));
