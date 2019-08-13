@@ -54,7 +54,7 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<c:if test="${feePending eq true}">
+		<c:if test="${permitRenewal.status.code eq 'Approved' && feePending eq true}">
 			<div class="panel-heading custom_form_panel_heading">
 				<div class="panel-title text-center no-float">
 					<strong class="error-msg"><spring:message

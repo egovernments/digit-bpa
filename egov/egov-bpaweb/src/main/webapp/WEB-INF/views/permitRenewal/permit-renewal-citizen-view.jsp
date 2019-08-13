@@ -82,30 +82,30 @@
 	<div align="center">
 		<input type="hidden" id="onlinePaymentEnable"
 			value="${onlinePaymentEnable}">
-		<c:if test="${onlinePaymentEnable && feePending}">
+		<c:if
+			test="${permitRenewal.status.code eq 'Approved' && onlinePaymentEnable && feePending}">
 			<td><a
 				href="/bpa/application/permit/renewal/generate-bill/${permitRenewal.applicationNumber}"
 				class="btn btn-primary"> <spring:message
 						code='lbl.btn.pay.fee.online' />
 			</a>&nbsp;</td>
 		</c:if>
-		<c:if
-							test="${permitRenewal.status.code eq 'Rejected' && permitRenewal.state ne null}">
-							<td><a
-								href="/bpa/application/permitrenewal/rejectionnotice/${permitRenewal.applicationNumber}"
-								target="popup" class="btn btn-primary"
-								onclick="window.open('/bpa/application/permitrenewal/rejectionnotice/${permitRenewal.applicationNumber}','popup','width=1100,height=700'); return false;">
-									<spring:message code='lbl.btn.print.rejection.notice' />
-							</a>&nbsp;</td>
+		<c:if test="${permitRenewal.status.code eq 'Rejected'}">
+			<td><a
+				href="/bpa/application/permitrenewal/rejectionnotice/${permitRenewal.applicationNumber}"
+				target="popup" class="btn btn-primary"
+				onclick="window.open('/bpa/application/permitrenewal/rejectionnotice/${permitRenewal.applicationNumber}','popup','width=1100,height=700'); return false;">
+					<spring:message code='lbl.btn.print.rejection.notice' />
+			</a>&nbsp;</td>
 		</c:if>
 		<c:if
-							test="${permitRenewal.status.code eq 'Order Issued to Applicant'}">
-							<td><a
-								href="/bpa/application/renewal/generaterenewalorder/${permitRenewal.applicationNumber}"
-								target="popup" class="btn btn-primary"
-								onclick="window.open('/bpa/application/renewal/generaterenewalorder/${permitRenewal.applicationNumber}','popup','width=1100,height=700'); return false;">
-									<spring:message code='lbl.btn.print.renewal.order' />
-							</a>&nbsp;</td>
+			test="${permitRenewal.status.code eq 'Order Issued to Applicant'}">
+			<td><a
+				href="/bpa/application/renewal/generaterenewalorder/${permitRenewal.applicationNumber}"
+				target="popup" class="btn btn-primary"
+				onclick="window.open('/bpa/application/renewal/generaterenewalorder/${permitRenewal.applicationNumber}','popup','width=1100,height=700'); return false;">
+					<spring:message code='lbl.btn.print.renewal.order' />
+			</a>&nbsp;</td>
 		</c:if>
 		<input type="button" name="button2" value="Close"
 			class="btn btn-default" onclick="window.close();" />
