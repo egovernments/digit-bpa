@@ -65,7 +65,7 @@ public class PortalInboxUserService {
     private PortalInboxUserRepository portalInboxUserRepository;
 
     public List<PortalInboxUser> getPortalInboxByResolved(final Long userId, final boolean resolved) {
-        
+
         if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
             return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved);
         } else {
@@ -93,13 +93,23 @@ public class PortalInboxUserService {
         }
 
     }
-    
-    public Long getPortalInboxUserCountByResolved(final Long userId,boolean resolved) {
-    	if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
-    		return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, resolved);
-    	}else{
-    		return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, resolved, ApplicationThreadLocals.getTenantID());
-    	}
+
+    public Long getPortalInboxUserCountByResolved(final Long userId, boolean resolved) {
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, resolved);
+        } else {
+            return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, resolved,
+                    ApplicationThreadLocals.getTenantID());
+        }
+    }
+
+    public Long getPortalInboxUserCountByResolvedAndModule(final Long userId, boolean resolved, final String serviceContextRoot) {
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.getPortalInboxUserCountByResolvedAndModule(userId, resolved, serviceContextRoot);
+        } else {
+            return portalInboxUserRepository.getPortalInboxUserCountByResolvedAndModule(userId, resolved,
+                    ApplicationThreadLocals.getTenantID(), serviceContextRoot);
+        }
     }
 
 }

@@ -381,6 +381,7 @@ function initiateTable(tableData, serviceGroup, dataKey){
 	}
 	
 	var finalData = configureTableData(clonedTableData, dataKey);
+	resetServicesCount();
 	var datatable = $( "#bpa-home-table" ).DataTable();
 	datatable.clear();
 	datatable.rows.add(finalData);
@@ -429,7 +430,31 @@ function fetchDataAndInitiateTable(url, dataKey){
             console.log( errorThrown );
         }
     });
+}
 
+function resetServicesCount(){
+	$.ajax({
+        url: "/portal/rest/fetch/services/count/by-servicegroup",
+        type: "POST",
+        data: {
+        	id: parseFloat($('#userId').val()),
+        	serviceContextRoot: $('#serviceGroup').val()
+        },
+        cache : false,
+        async: false,
+        dataType: "json",
+        success: function (response) {
+        	$('#totalServicesAppliedSize').html('');
+        	$('#totalServicesPendingSize').html('');
+        	$('#totalServicesCompletedSize').html('');
+        	$('#totalServicesAppliedSize').html(response.totalServices);
+        	$('#totalServicesPendingSize').html(response.underScrutiny);
+        	$('#totalServicesCompletedSize').html(response.completedServices);
+        },
+        error: function (response) {
+            console.log("Error occurred while retrieving services!!!!!!!");
+        }
+    });
 }
 
 function epochToYmd(et) {

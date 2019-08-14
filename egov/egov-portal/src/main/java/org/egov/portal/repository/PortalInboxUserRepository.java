@@ -74,12 +74,20 @@ public interface PortalInboxUserRepository extends JpaRepository<PortalInboxUser
 
     @Query("select count(*) from PortalInboxUser piu where piu.user.id=:userId")
     Long getPortalInboxUserCount(@Param("userId") Long userId);
-    
+
     @Query("select count(*) from PortalInboxUser as piu where piu.user.id = :userId and piu.portalInbox.resolved = :resolved")
     Long getPortalInboxUserCountByResolved(@Param("userId") Long userId, @Param("resolved") boolean resolved);
-    
+
     @Query("select count(*) from PortalInboxUser as piu where piu.user.id = :userId and piu.tenantId=:tenantId and piu.portalInbox.resolved = :resolved")
     Long getPortalInboxUserCountByResolved(@Param("userId") Long userId, @Param("resolved") boolean resolved,
-    		@Param("tenantId") String tenantId);
+            @Param("tenantId") String tenantId);
+
+    @Query("select count(*) from PortalInboxUser as piu where piu.user.id = :userId and piu.tenantId=:tenantId and piu.portalInbox.resolved = :resolved and piu.portalInbox.module.contextRoot = :serviceContextRoot")
+    Long getPortalInboxUserCountByResolvedAndModule(@Param("userId") Long userId, @Param("resolved") boolean resolved,
+            @Param("tenantId") String tenantId, @Param("serviceContextRoot") String serviceContextRoot);
+
+    @Query("select count(*) from PortalInboxUser as piu where piu.user.id = :userId and piu.portalInbox.resolved = :resolved and piu.portalInbox.module.contextRoot = :serviceContextRoot")
+    Long getPortalInboxUserCountByResolvedAndModule(@Param("userId") Long userId, @Param("resolved") boolean resolved,
+            @Param("serviceContextRoot") String serviceContextRoot);
 
 }
