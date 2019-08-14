@@ -182,6 +182,7 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_REJECT_CLERK = "Rejection initiated by clerk";
     public static final String APPLICATION_APPROVAL_PENDING = "Secretary Application Approval Pending";
     public static final String RENEWAL_MODULE_TYPE = "RENEWAL";
+    public static final String WF_INIT_OWNERSHIP = "Initiated for ownership transfer";
     
     // Checklist document type constants
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
@@ -355,6 +356,8 @@ public class BpaConstants {
     public static final String REGULARIZATIONOTHERSFIILENAME = "regularization_others_permit";
     public static final String REGULARIZATIONBUILDINGDEVELOPMENTFIILENAME = "regularization_buildingdevelopment_permit";
     public static final String RENEWAL_ORDER_NOTICE_TYPE = "RenewalOrder";
+    public static final String OWNERSHIP_ORDER_NOTICE_TYPE = "OwnershipTransferOrder";
+
 
     // button name constants
     public static final String WF_APPROVE_BUTTON = "Approve";
@@ -375,6 +378,7 @@ public class BpaConstants {
     public static final String WF_AUTO_RESCHDLE_APPMNT_BUTTON = "Auto ReSchedule";
     public static final String GENERATE_OCCUPANCY_CERTIFICATE = "Generate Occupancy Certificate";
     public static final String WF_GENERATE_RENEWAL_ORDER = "Generate Permit Renewal Order";
+    public static final String WF_GENERATE_OWNERSHIP_ORDER = "Generate Ownership Transfer Order";
     // building details related constants
     public static final String TOTAL_PLINT_AREA = "totalPlintArea";
     public static final String BUILDINGHEIGHT_GROUND = "buildingheightGround";

@@ -200,7 +200,7 @@ public class BpaApplication extends StateAware<Position> {
 
     @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy(ORDER_BY_ID_ASC)
-    private List<CoApplicant> coApplicants = new ArrayList<>();
+    private List<PermitCoApplicant> coApplicants = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "egbpa_permit_occupancies", joinColumns = @JoinColumn(name = "application"), inverseJoinColumns = @JoinColumn(name = "occupancy"))
     private List<Occupancy> permitOccupancies = new ArrayList<>();
@@ -319,11 +319,13 @@ public class BpaApplication extends StateAware<Position> {
     public String getApplicantName() {
         StringBuilder nameSB = new StringBuilder();
         nameSB.append(owner == null ? "" : owner.getName());
-        if (!coApplicants.isEmpty())
-            nameSB.append(",").append(
-                    coApplicants.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
+        if (!coApplicants.isEmpty()) {
+            List<CoApplicant> coApps = coApplicants.stream().map(coapp -> coapp.getCoApplicant()).collect(Collectors.toList());
+        	nameSB.append(",").append(
+        			coApps.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
+        }
         return nameSB.toString();
-    }
+    } 
 
     public String getOccupanciesName() {
         return permitOccupancies.stream().map(Occupancy::getName).collect(Collectors.joining(","));
@@ -481,11 +483,11 @@ public class BpaApplication extends StateAware<Position> {
         this.groupDevelopment = groupDevelopment;
     }
 
-    public List<CoApplicant> getCoApplicants() {
+    public List<PermitCoApplicant> getCoApplicants() {
         return coApplicants;
     }
 
-    public void setCoApplicants(List<CoApplicant> coApplicants) {
+    public void setCoApplicants(List<PermitCoApplicant> coApplicants) {
         this.coApplicants = coApplicants;
     }
 

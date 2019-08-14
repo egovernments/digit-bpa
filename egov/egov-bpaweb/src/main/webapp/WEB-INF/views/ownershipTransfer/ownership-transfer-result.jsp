@@ -46,42 +46,40 @@
   ~
   --%>
 
-
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<div class="panel-body">
-	<div class="panel-heading custom_form_panel_heading">
-		<div class="panel-title">
-			<spring:message code="lbl.coapplicant.details" />
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title text-center no-float">
+		<c:if test="${not empty message}">
+			<strong>${message}</strong>
+		</c:if>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<input type="hidden" id="workFlowAction" name="workFlowAction" /> <input
+			type="hidden" id="wfstateDesc" value="${ownershipTransfer.state.value}" />
+		<input type="hidden" name="citizenOrBusinessUser"
+			value="${citizenOrBusinessUser}"> <input type="hidden"
+			id="applicationStatus" value="${ownershipTransfer.status.code}">
+		<div class="panel panel-primary" data-collapsed="0">
+			<jsp:include page="view-renewal-application-details.jsp"></jsp:include>
+		</div>
+		<div class="panel panel-primary" data-collapsed="0">
+			<jsp:include page="view-permit-application-details.jsp"></jsp:include>
+		</div>
+		<div class="panel panel-primary" data-collapsed="0">
+			<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
 		</div>
 	</div>
-	<table class="table table-striped table-bordered"
-		id="coApplicantDetails" style="width: 100%; margin: 0 auto;">
-		<thead>
-			<tr>
-				<th><spring:message code="lbl.srl.no" /></th>
-				<th><spring:message code="lbl.applicant.name" /></th>
-				<th><spring:message code="lbl.mobileNo" /></th>
-				<th><spring:message code="lbl.emailid" /></th>
-				<th><spring:message code="lbl.gender" /></th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach items="${coApplicants}" var="coap"
-				varStatus="counter">
-				<tr>
-					<td><c:out value="${counter.index+1}" default="N/A" /></td>
-					<td><c:out value="${coap.coApplicant.name}" default="N/A" /></td>
-					<td><c:out value="${coap.coApplicant.mobileNumber}" default="N/A" /></td>
-					<td><c:out value="${coap.coApplicant.emailId}" default="N/A" /></td>
-					<td><c:out value="${coap.coApplicant.gender}" default="N/A" /></td>
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
+	<div align="center">
+		<input type="button" name="button2" value="Close"
+			class="btn btn-default" onclick="window.close();" />
+	</div>
 </div>
+

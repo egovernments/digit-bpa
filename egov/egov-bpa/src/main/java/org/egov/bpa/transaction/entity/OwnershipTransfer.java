@@ -47,12 +47,14 @@
 
 package org.egov.bpa.transaction.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -105,6 +107,9 @@ public class OwnershipTransfer extends StateAware<Position> {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent", nullable = false)
     private BpaApplication parent;
+    
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Applicant owner;
 
     @Length(min = 1, max = 64)
     private String applicationNumber;
@@ -125,8 +130,17 @@ public class OwnershipTransfer extends StateAware<Position> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "status")
     private BpaStatus status;
+    
+    @Length(min = 1, max = 128)
+    private String remarks;
+    
+    private Boolean isActive;
+    
+    private BigDecimal admissionfeeAmount;
+    
+    private Boolean mailPwdRequired = false;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egbpa_ownership_transfer_documents", joinColumns = @JoinColumn(name = "ownershipTransfer"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> ownershipTransferDocs = Collections.emptySet();
 
@@ -139,7 +153,13 @@ public class OwnershipTransfer extends StateAware<Position> {
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OwnershipTransferConditions> additionalOwnershipConditions = new ArrayList<>(0);
-
+    
+    @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OwnershipTransferCoApplicant> coApplicants = new ArrayList<>();
+    @OrderBy(ORDER_BY_ID_ASC)
+    @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OwnershipTransferDocument> ownershipTransferDocuments = new ArrayList<>(0);
+    
     private transient MultipartFile[] files;
     private transient String workflowAction;
     private transient Long approvalDepartment;
@@ -184,6 +204,17 @@ public class OwnershipTransfer extends StateAware<Position> {
                         : DateUtils.toDefaultDateFormat(applicationDate),
                 parent.getServiceType().getDescription());
     }
+    
+    public String getApplicantName() {
+        StringBuilder nameSB = new StringBuilder();
+        nameSB.append(owner == null ? "" : owner.getName());
+        if (!coApplicants.isEmpty()) {
+            List<CoApplicant> coApps = coApplicants.stream().map(coapp -> coapp.getCoApplicant()).collect(Collectors.toList());
+        	nameSB.append(",").append(
+        			coApps.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
+        }
+        return nameSB.toString();
+    }
 
     public BpaApplication getParent() {
         return parent;
@@ -193,7 +224,15 @@ public class OwnershipTransfer extends StateAware<Position> {
         this.parent = parent;
     }
 
-    public String getApplicationNumber() {
+    public Applicant getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Applicant owner) {
+		this.owner = owner;
+	}
+
+	public String getApplicationNumber() {
         return applicationNumber;
     }
 
@@ -225,7 +264,31 @@ public class OwnershipTransfer extends StateAware<Position> {
         this.status = status;
     }
 
-    public MultipartFile[] getFiles() {
+    public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public Boolean getMailPwdRequired() {
+		return mailPwdRequired;
+	}
+
+	public void setMailPwdRequired(Boolean mailPwdRequired) {
+		this.mailPwdRequired = mailPwdRequired;
+	}
+	
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public MultipartFile[] getFiles() {
         return files;
     }
 
@@ -304,6 +367,10 @@ public class OwnershipTransfer extends StateAware<Position> {
 	public void setRejectionReasons(List<OwnershipTransferConditions> rejectionReasons) {
 		this.rejectionReasons = rejectionReasons;
 	}
+	
+	public void addOwnershipNotice(OwnershipTransferNotice ownershipNotice) {
+	     this.ownershipNotices.add(ownershipNotice);
+    }
 
 	public List<OwnershipTransferConditions> getAdditionalOwnershipConditions() {
 		return additionalOwnershipConditions;
@@ -352,4 +419,29 @@ public class OwnershipTransfer extends StateAware<Position> {
 	public void setAdditionalRejectReasonsTemp(List<OwnershipTransferConditions> additionalRejectReasonsTemp) {
 		this.additionalRejectReasonsTemp = additionalRejectReasonsTemp;
 	}
+
+	public List<OwnershipTransferCoApplicant> getCoApplicants() {
+		return coApplicants;
+	}
+
+	public void setCoApplicants(List<OwnershipTransferCoApplicant> coApplicants) {
+		this.coApplicants = coApplicants;
+	}
+
+	public List<OwnershipTransferDocument> getOwnershipTransferDocuments() {
+		return ownershipTransferDocuments;
+	}
+
+	public void setOwnershipTransferDocuments(List<OwnershipTransferDocument> ownershipTransferDocuments) {
+		this.ownershipTransferDocuments = ownershipTransferDocuments;
+	}
+
+	public BigDecimal getAdmissionfeeAmount() {
+		return admissionfeeAmount;
+	}
+
+	public void setAdmissionfeeAmount(BigDecimal admissionfeeAmount) {
+		this.admissionfeeAmount = admissionfeeAmount;
+	}
+
 }

@@ -47,21 +47,26 @@
 
 package org.egov.bpa.web.controller.transaction.citizen;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
+import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
+import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -70,6 +75,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -88,6 +94,8 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
     private static final String MESSAGE = "message";
     public static final String COMMON_ERROR = "common-error";
     private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String APPLICATION_HISTORY = "applicationHistory";
+
 
     @Autowired
     private OwnershipTransferService ownershipTransferService;
@@ -123,19 +131,79 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
                         bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getParent().getSiteDetail().get(0)).getId());
             wfBean.setApproverPositionId(approvalPosition);
         }
-        ownershipTransferService.save(ownershipTransfer, wfBean);
-        pushBpaApplicationToPortal.createPortalUserinbox(ownershipTransfer,
-                Arrays.asList(ownershipTransfer.getParent().getOwner().getUser(),
-                		ownershipTransfer.getParent().getStakeHolder().get(0).getStakeHolder()),
+        ownershipTransferService.processAndStoreOwnershipDocuments(ownershipTransfer);
+        if (ownershipTransfer.getOwner().getUser() != null && ownershipTransfer.getOwner().getUser().getId() == null)
+        	ownershipTransferService.buildOwnerDetails(ownershipTransfer);
+        OwnershipTransfer ownershipres = ownershipTransferService.save(ownershipTransfer, wfBean);
+        pushBpaApplicationToPortal.createPortalUserinbox(ownershipres,
+                Arrays.asList(ownershipres.getParent().getOwner().getUser(),
+                		ownershipres.getParent().getStakeHolder().get(0).getStakeHolder()),
                 wfBean.getWorkFlowAction());
         
         if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             model.addAttribute(MESSAGE, messageSource.getMessage("msg.ownership.transfer.save",
-                    new String[] { ownershipTransfer.getApplicationNumber() }, LocaleContextHolder.getLocale()));
+                    new String[] { ownershipres.getApplicationNumber() }, LocaleContextHolder.getLocale()));
         else
             model.addAttribute(MESSAGE, messageSource.getMessage("msg.ownership.transfer.submit",
-                    new String[] { ownershipTransfer.getApplicationNumber() }, LocaleContextHolder.getLocale()));
+                    new String[] { ownershipres.getApplicationNumber() }, LocaleContextHolder.getLocale()));
         return APPLICATION_SUCCESS;
+    }
+    
+    @GetMapping("/ownership/transfer/update/{applicationNumber}")
+    public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
+        OwnershipTransfer ownershipTransfer = ownershipTransferService.findByApplicationNumber(applicationNumber);
+        List<OwnershipTransfer> ownershipTransfers = ownershipTransferService.findByBpaApplication(ownershipTransfer.getParent());
+        if(ownershipTransfers.size()>1) {
+        	model.addAttribute("applicants",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getName());
+        	model.addAttribute("applicantAddress",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getAddress());
+        }
+        loadFormData(ownershipTransfer, model);
+        model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
+        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode()))
+            return "ownership-transfer-citizen-update";
+        else
+            return "ownership-transfer-view";
+    }
+    
+    @PostMapping("/ownership/transfer/update/{applicationNumber}")
+    public String updatePermitRenewalDetails(@ModelAttribute OwnershipTransfer ownershipTransfer, @PathVariable String applicationNumber,
+            final HttpServletRequest request,
+            final Model model, final BindingResult errors,
+            final RedirectAttributes redirectAttributes) {
+        Long approvalPosition = null;
+        WorkflowBean wfBean = new WorkflowBean();
+        wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
+        if (WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(
+                    false, ownershipTransfer.getStateType(), WF_NEW_STATE,
+                    ownershipTransfer.getParent().getApplicationType().getName());
+            if (wfMatrix != null)
+                approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                        bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getParent().getSiteDetail().get(0)).getId());
+            wfBean.setApproverPositionId(approvalPosition);
+        }
+        if (!ownershipTransfer.getOwnershipTransferDocuments().isEmpty())
+            ownershipTransferService.processAndStoreOwnershipDocuments(ownershipTransfer);
+        OwnershipTransfer ownershipRes = ownershipTransferService.save(ownershipTransfer, wfBean);
+        pushBpaApplicationToPortal.updatePortalUserinbox(ownershipTransfer, null);
+        if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.ownership.transfer.save",
+                    new String[] { ownershipRes.getApplicationNumber() }, LocaleContextHolder.getLocale()));
+        else
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.ownership.transfer.submit",
+                    new String[] { ownershipRes.getApplicationNumber() }, LocaleContextHolder.getLocale()));
+        return APPLICATION_SUCCESS;
+    }
+    
+    private void loadFormData(final OwnershipTransfer ownershipTransfer, final Model model) {
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        model.addAttribute("owner", ownershipTransfer.getOwner());
+        model.addAttribute("coApplicants", ownershipTransfer.getCoApplicants());
+        prepareWorkflow(model, ownershipTransfer, workflowContainer);
+        model.addAttribute("feePending", bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand()));
+        model.addAttribute(APPLICATION_HISTORY,
+                workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
+                		ownershipTransfer.getStateHistory()));
     }
 
 }

@@ -40,7 +40,12 @@
 
 package org.egov.bpa.transaction.repository;
 
+import java.util.Date;
+import java.util.List;
+
+import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
+import org.egov.demand.model.EgDemand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -49,5 +54,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OwnershipTransferRepository extends JpaRepository<OwnershipTransfer, Long>, JpaSpecificationExecutor<OwnershipTransfer>  {
+	
+    List<OwnershipTransfer> findByParentPlanPermissionNumberOrderByIdDesc(String permitNumber);
+    
+	List<OwnershipTransfer> findByParentOrderByIdDesc(BpaApplication bpaApplication);
+	
+	List<OwnershipTransfer> findByParentAndCreatedDateLessThanOrderByIdDesc(BpaApplication bpaApplication, Date createdDate);
+	
+	OwnershipTransfer findByApplicationNumber(String applicationNumber);
+
+	OwnershipTransfer findByDemand(EgDemand demand);
+	
+	OwnershipTransfer findByOwnershipNumberAndIsActiveTrue(String ownershipNumber);
 
 }

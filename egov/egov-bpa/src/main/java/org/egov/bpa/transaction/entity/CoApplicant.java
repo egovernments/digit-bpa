@@ -78,9 +78,6 @@ public class CoApplicant extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "application")
-    private BpaApplication application;
     private GenderTitle title;
     @NotNull
     @SafeHtml
@@ -121,14 +118,6 @@ public class CoApplicant extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public BpaApplication getApplication() {
-        return application;
-    }
-
-    public void setApplication(BpaApplication application) {
-        this.application = application;
     }
 
     public GenderTitle getTitle() {

@@ -1186,8 +1186,29 @@
 	<definition name="ownership-transfer-citizen-new"
 		extends="base_layout">
 		<put-attribute name="page-title"
-			value="title.permit.renewal.apply" cascade="true" />
+			value="title.ownership.change" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-citizen-new.jsp" />
+	</definition>
+	<definition name="ownership-transfer-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.ownership.change" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-view.jsp" />
+	</definition>
+	<definition name="ownership-transfer-citizen-update"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.ownership.change" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-citizen-update.jsp" />
+	</definition>
+	<definition name="ownership-transfer-update"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.ownership.change" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-update.jsp" />
 	</definition>
 </tiles-definitions>

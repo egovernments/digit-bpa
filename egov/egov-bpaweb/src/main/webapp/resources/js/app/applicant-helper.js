@@ -44,10 +44,10 @@ jQuery(document).ready(function() {
 	var tbody;
 	var row = '<tr>'+
 	'<td class="text-center"><span class="applcntSerialNo text-center">{{sno}}</span></td>'+
-	'<td><input type="etxt" name="coApplicants[{{idx}}].name" data-first-option="false" class="form-control name toggle-mandatory duplicate-clear" maxlength="99" /></td>'+
-	'<td><input type="text" class="form-control patternvalidation mobileNumber duplicate-clear" name="coApplicants[{{idx}}].mobileNumber" data-pattern="number" minlength="10" maxlength="10" /></td>'+
-	'<td><input type="text" class="form-control patternvalidation emailId duplicate-clear" name="coApplicants[{{idx}}].emailId" data-pattern="string" maxlength="120" /></td>'+
-	'<td><select name="coApplicants[{{idx}}].gender" data-first-option="false" class="form-control gender"> <option value="">Select</option></select></td>'+
+	'<td><input type="etxt" name="coApplicants[{{idx}}].coApplicant.name" data-first-option="false" class="form-control name toggle-mandatory duplicate-clear" maxlength="99" /></td>'+
+	'<td><input type="text" class="form-control patternvalidation mobileNumber duplicate-clear" name="coApplicants[{{idx}}].coApplicant.mobileNumber" data-pattern="number" minlength="10" maxlength="10" /></td>'+
+	'<td><input type="text" class="form-control patternvalidation emailId duplicate-clear" name="coApplicants[{{idx}}].coApplicant.emailId" data-pattern="string" maxlength="120" /></td>'+
+	'<td><select name="coApplicants[{{idx}}].coApplicant.gender" data-first-option="false" class="form-control gender"> <option value="">Select</option></select></td>'+
 	'<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-danger" id="deleteApplicantRow" ><i class="fa fa-trash"></i></a></td>'+
 	'</tr>';
 	
@@ -65,7 +65,7 @@ jQuery(document).ready(function() {
 			addRowFromObject(row);
 			patternvalidation();
 			generateSno();
-			loadGenders("coApplicants["+idx+"].gender");
+			loadGenders("coApplicants["+idx+"].coApplicant.gender");
 		}
 	});
 	

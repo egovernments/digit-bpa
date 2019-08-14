@@ -138,5 +138,20 @@
 		<constructor-arg name="type"
 			value="org.egov.bpa.transaction.entity.PermitRenewal" />
 	</bean>
+	
+		<bean id="ownershipTransferWorkflowCustomDefaultImpl"
+		class="org.egov.bpa.transaction.workflow.ownershiptransfer.OwnershipTransferWorkflowCustomDefaultImpl" />
+
+	<bean id="OwnershipTransferInboxRenderService"
+		class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0"
+			ref="OwnershipTransferPersistenceService" />
+	</bean>
+
+	<bean id="OwnershipTransferPersistenceService"
+		parent="abstractPersistenceService">
+		<constructor-arg name="type"
+			value="org.egov.bpa.transaction.entity.OwnershipTransfer" />
+	</bean>
 
 </beans>

@@ -77,6 +77,7 @@ public class PushBpaApplicationToPortalUtil {
     private static final String CLOSED = "Closed";
     private static final String WF_END_ACTION = "END";
     private static final String SERVICETYPE = "Permit Renewal - ";
+    private static final String OWNERSHIPTRANSFER = "Ownership Transfer - ";
 
     @Autowired
     private ModuleService moduleService;
@@ -131,7 +132,7 @@ public class PushBpaApplicationToPortalUtil {
                 || ownershipTransfer.getStatus() != null
                         && ownershipTransfer.getStatus().getCode().equals(APPLICATION_STATUS_REJECTED))
             isResolved = true;
-        String url = "/bpa/citizen/application/ownership/update/" + ownershipTransfer.getApplicationNumber();
+        String url = "/bpa/citizen/application/ownership/transfer/update/" + ownershipTransfer.getApplicationNumber();
         if (ownershipTransfer.getStatus() != null)
             portalInboxService.updateInboxMessage(ownershipTransfer.getApplicationNumber(), module.getId(),
                     status, isResolved, new Date(), ownershipTransfer.getState(),
@@ -147,7 +148,7 @@ public class PushBpaApplicationToPortalUtil {
         boolean isResolved = false;
         String url = "/bpa/citizen/application/ownership/transfer/update/" + ownershipTransfer.getApplicationNumber();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, ownershipTransfer.getParent().getOwner().getName(),
-                SERVICETYPE.concat(ownershipTransfer.getParent().getServiceType().getDescription()), ownershipTransfer.getApplicationNumber(),
+        		OWNERSHIPTRANSFER.concat(ownershipTransfer.getParent().getServiceType().getDescription()), ownershipTransfer.getApplicationNumber(),
                 ownershipTransfer.getOwnershipNumber(), ownershipTransfer.getId(), SUCCESS, SUCCESS, url, isResolved,
                 status, new Date(), ownershipTransfer.getState(), portalInboxUser);
 

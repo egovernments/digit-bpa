@@ -45,10 +45,36 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.bpa.transaction.entity.enums;
+package org.egov.bpa.transaction.service;
 
-public enum ConditionType {
-   /* STATIC_PERMITCONDITION, DYNAMIC_PERMITCONDITION, ADDITIONAL_PERMITCONDITION, REJECTION_REASON;*/
-	NOCCONDITIONS,GENERALCONDITIONS,REJECTIONREASONS,ADDITIONALREJECTIONREASONS,ADDITIONALCONDITIONS,
-	OCREJECTIONREASONS,PERMITDEFAULTCONDITIONS,RENEWALREJECTIONREASONS,RENEWALCONDITIONS,OWNERSHIPREJECTIONREASONS;
+import java.util.List;
+
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
+import org.egov.bpa.transaction.entity.OwnershipTransferConditions;
+import org.egov.bpa.transaction.entity.enums.ConditionType;
+import org.egov.bpa.transaction.repository.OwnershipTransferConditionsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class OwnershipTransferConditionsService {
+
+	@Autowired
+	private OwnershipTransferConditionsRepository ownershipConditionsRepository;
+
+	public List<OwnershipTransferConditions> findAllOwnershipConditionsByType(ConditionType type) {
+		return ownershipConditionsRepository.findByTypeOrderByOrderNumberAsc(type);
+	}
+
+	public List<OwnershipTransferConditions> findAllConditionsByOwnershipAndType(OwnershipTransfer ownershipTransfer, ConditionType type) {
+		return ownershipConditionsRepository.findByOwnershipAndTypeOrderByOrderNumberAsc(ownershipTransfer, type);
+	}
+
+	@Transactional
+	public void delete(List<OwnershipTransferConditions> ownershipNoticeConditions) {
+		ownershipConditionsRepository.deleteInBatch(ownershipNoticeConditions);
+	}
+
 }

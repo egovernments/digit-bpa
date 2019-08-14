@@ -62,13 +62,13 @@
 			<spring:message code="lbl.applicant.name" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.name}" default="N/A"></c:out>
+			<c:out value="${owner.name}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.owner.address" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.address}" default="N/A"></c:out>
+			<c:out value="${owner.address}" default="N/A"></c:out>
 		</div>
 	</div>
 
@@ -77,14 +77,14 @@
 			<spring:message code="lbl.mobileNo" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.showMobileNumber()}"
+			<c:out value="${owner.showMobileNumber()}"
 				default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.emailid" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.emailId}" default="N/A"></c:out>
+			<c:out value="${owner.emailId}" default="N/A"></c:out>
 		</div>
 	</div>
 	<div class="row add-border">
@@ -92,17 +92,17 @@
 			<spring:message code="lbl.gender" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.gender}" default="N/A"></c:out>
+			<c:out value="${owner.gender}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.aadhar" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.owner.showAadhaarNumber()}"
+			<c:out value="${owner.showAadhaarNumber()}"
 				default="N/A"></c:out>
 		</div>
 	</div>
 </div>
-<c:if test="${not empty bpaApplication.coApplicants}">
+<c:if test="${not empty coApplicants}">
 	<jsp:include page="view-co-applicant-details.jsp"></jsp:include>
 </c:if>

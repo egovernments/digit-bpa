@@ -120,7 +120,6 @@ jQuery(document).ready(function ($) {
 
     $('#buttonSave').click(function (e) {
         var button = $('#buttonSave').val();
-        $('#acceptance').removeAttr('required');
         if (validateFormOnSave(button, validator)) {
             bootbox
                 .dialog({
@@ -131,7 +130,7 @@ jQuery(document).ready(function ($) {
                             className: 'btn-primary',
                             callback: function (result) {
                                 removeDisabledAttribute();
-                                $('#permitRenewalInitiateForm').trigger('submit');
+                                $('#ownershipTransferForm').trigger('submit');
                             }
                         },
                         'cancel': {
@@ -153,7 +152,6 @@ jQuery(document).ready(function ($) {
 
     $('#buttonSubmit').click(function (e) {
         var button = $('#buttonSubmit').val();
-        $('#acceptance').attr('required', 'required');
         if (validateFormOnSubmit(button, validator)) {
             bootbox
                 .dialog({
@@ -164,7 +162,7 @@ jQuery(document).ready(function ($) {
                             className: 'btn-primary',
                             callback: function (result) {
                                 removeDisabledAttribute();
-                                $('#permitRenewalInitiateForm').trigger('submit');
+                                $('#ownershipTransferForm').trigger('submit');
                             }
                         },
                         'cancel': {
@@ -187,16 +185,15 @@ jQuery(document).ready(function ($) {
     $('#planPermissionNumber').change(function() {
     	var permitNo = $(this).val();
     	if(permitNo) {
-    		var isExist = getApplicationByPermitNo(permitNo);
-    		if(!isExist)
-    			bootbox.alert('For the entered plan permission number application details are not found. Please check the plan permission number is correct.');
+    		getApplicationByPermitNo(permitNo);
+            getDocumentList();
     	}
 	});
     
     function getApplicationByPermitNo(permitNo) {
 		var isExist = false;
 		$.ajax({
-	        url: "/bpa/application/findby-permit-number",
+	        url: "/bpa/application/getownershipapplication",
 	        type: "GET",
 	        data: {
 	            permitNumber : permitNo
@@ -206,23 +203,35 @@ jQuery(document).ready(function ($) {
 	        dataType: "json",
 	        success: function (response) {
 	            if(response) {
-	            	isExist = true;
-	            	$('#parent').val(response.id);
-	                $('#serviceTypeDesc').val(response.serviceTypeDesc);
-	                $('#serviceType').val(response.serviceTypeId);
-	                $('#serviceTypeCode').val(response.serviceTypeCode);
-	                $('#occupancy').val(response.occupancy);
-	                $('#applicationType').val(response.applicationType);
-	                $('.applicantName').val(response.applicantName);
-	                $('#bpaApplicationId').val(response.id);
-	                $('#applicationNumber').val(response.applicationNumber);
-	                $('#planPermissionNumber').val(response.planPermissionNumber);
-	                $('#planPermissionDate').val(response.planPermissionDate);
-	                $('#existingPermitExpiryDate').val(response.permitExpiryDate);
-	                $('#extentInSqmts').val(response.plotArea);
+	            	if(response.planPermissionNumber != null && response.planPermissionNumber != permitNo){
+	        			bootbox.alert('For the entered plan permission number ownership is changed. Please enter '+response.planPermissionNumber+
+	        					'to proceed');
+	            	}
+	            	else if(response.inProgress)
+	        			bootbox.alert('For the entered plan permission number ownership workflow is in progress. Hence cannot proceed.');
+	            	else if(response.isPermit && response.status!='Order Issued to Applicant'){
+	        			bootbox.alert('For the entered plan permission number permit workflow is in progress. Hence cannot proceed.');
+	            	}
+	            		else{
+		            	isExist = true;
+		            	$('#parent').val(response.id);
+		                $('#serviceTypeDesc').val(response.serviceTypeDesc);
+		                $('#serviceType').val(response.serviceTypeId);
+		                $('#serviceTypeCode').val(response.serviceTypeCode);
+		                $('#occupancy').val(response.occupancy);
+		                $('#applicationType').val(response.applicationType);
+		                $('.applicantName').val(response.applicantName);
+		                $('#address').val(response.applicantAddress);
+		                $('#bpaApplicationId').val(response.id);
+		                $('#applicationNumber').val(response.applicationNumber);
+		                $('#edcrApplicationNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + response.planPermissionNumber + '\')" href="javascript:void(0);">' + response.planPermissionNumber  + '</a>');
+		                $('#planPermissionNumber').val(response.planPermissionNumber);
+		                $('#planPermissionDate').val(response.planPermissionDate);
+		                $('#extentInSqmts').val(response.plotArea);
+	            	}
 	            } else {
 	            	$('.resetValues').val('');
-	               console.log("No application details available");
+	    			bootbox.alert('For the entered plan permission number application details are not found. Please check the plan permission number is correct.');
 	            }
 	        },
 	        error: function (response) {
@@ -232,6 +241,71 @@ jQuery(document).ready(function ($) {
 		return isExist;
 	}
 
+    
+			function getDocumentList() {
+				$
+						.ajax({
+							url : "/bpa/application/getdocumentlistbyservicetype",
+							type : "GET",
+							data : {
+								serviceType : $('#serviceType').val(),
+                                checklistType : 'OWNERSHIPDOCUMENTS'
+							},
+							dataType : "json",
+							success : function(response) {
+								$('#bpaDocumentsBody').empty();
+								$
+										.each(
+												response,
+												function(index, checklist) {
+													$('#bpaDocumentsBody')
+															.append(
+																	'<div class="form-group">'
+																			+ '<div class="col-sm-3 add-margin check-text"> <input type="hidden"  name="ownershipTransferDocuments['
+																			+ index
+																			+ '].document.serviceChecklist" value="'
+																			+ checklist.id
+																			+ '">'
+																			+ '<input type="hidden"  name="ownershipTransferDocuments['
+																			+ index
+																			+ '].document.serviceChecklist.isMandatory" value="'
+																			+ checklist.isMandatory
+																			+ '">'
+																			+ '<input type="hidden"  name="ownershipTransferDocuments['
+																			+ index
+																			+ '].document.serviceChecklist.description" value="'
+																			+ checklist.checklistDesc
+																			+ '">'
+																			+ checklist.checklistDesc
+																			+ (checklist.isMandatory ? '<span class="mandatory"></span>'
+																					: '')
+																			+ '</div>'
+																			+ '<div class="col-sm-2 add-margin "><input type="checkbox" name="ownershipTransferDocuments['
+																			+ index
+																			+ '].document.issubmitted" /></div>'
+																			+ '<div class="col-sm-3 add-margin "><div class="input-group"><textarea class="form-control patternvalidation" data-pattern="string" maxlength="256" name="ownershipTransferDocuments['
+																			+ index
+																			+ '].document.remarks" /></div></div>'
+																			+ '<div class="col-sm-4 add-margin "><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
+																			+ (checklist.isMandatory ? "required"
+																					: '')
+																			+ '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="ownershipTransferDocuments['
+																			+ index
+																			+ '].document.files"> <i class="fa fa-plus" aria-hidden="true"></i></a></div></div>'
+																			+ '</div>'
+																			+ '</div>');
+												})
+							},
+							error : function(response) {
 
+							}
+						});
+			}
 });
+
+function openPopup(url) {
+	window.open(url, 'window',
+			'scrollbars=1,resizable=yes,height=800,width=1100,status=yes');
+
+}
 	

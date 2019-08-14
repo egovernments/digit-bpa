@@ -44,11 +44,18 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.bpa.transaction.repository;
 
-package org.egov.bpa.transaction.entity.enums;
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
+import org.egov.bpa.transaction.entity.OwnershipTransferNotice;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-public enum ConditionType {
-   /* STATIC_PERMITCONDITION, DYNAMIC_PERMITCONDITION, ADDITIONAL_PERMITCONDITION, REJECTION_REASON;*/
-	NOCCONDITIONS,GENERALCONDITIONS,REJECTIONREASONS,ADDITIONALREJECTIONREASONS,ADDITIONALCONDITIONS,
-	OCREJECTIONREASONS,PERMITDEFAULTCONDITIONS,RENEWALREJECTIONREASONS,RENEWALCONDITIONS,OWNERSHIPREJECTIONREASONS;
+@Repository
+public interface OwnershipTransferNoticeRepository extends JpaRepository<OwnershipTransferNotice, Long> {
+
+    @Query("select otn from OwnershipTransferNotice otn where otn.ownershipTransfer = :ownershipTransfer and otn.noticeCommon.noticeType = :noticeType ")
+    OwnershipTransferNotice findByOwnershipAndNoticeType(@Param("ownershipTransfer") OwnershipTransfer ownershipTransfer, @Param("noticeType") String noticeType);
 }

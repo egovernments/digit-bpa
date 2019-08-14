@@ -65,10 +65,12 @@ import org.egov.bpa.transaction.notice.impl.DemandDetailsFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateDemandFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
+import org.egov.bpa.transaction.notice.impl.OwnershipTransferNoticeService;
 import org.egov.bpa.transaction.notice.impl.PermitOrderFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRejectionFormatImpl;
 import org.egov.bpa.transaction.notice.impl.PermitRenewalRejectionNoticeService;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.transaction.service.PermitRenewalService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.infra.custom.CustomImplProvider;
@@ -99,6 +101,8 @@ public class BpaNoticeController {
     private CustomImplProvider specificNoticeService;
     @Autowired
     private PermitRenewalService permitRenewalService;
+    @Autowired
+    private OwnershipTransferService ownershipTransferService;
 
     @GetMapping(value = "/application/demandnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
@@ -196,5 +200,27 @@ public class BpaNoticeController {
         ReportOutput reportOutput = renewalNoticeFeature
                 .generateRenewalOrder(permitRenewalService.findByApplicationNumber(applicationNumber));
         return getFileAsResponseEntity(applicationNumber, reportOutput, "permitrenewalorder");
+    }
+    
+    @GetMapping(value = "/application/ownership/transfer/rejectionnotice/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateOwnershipTransferRejectionNotice(@PathVariable final String applicationNumber,
+            HttpServletRequest request) throws IOException {
+    	OwnershipTransferNoticeService ownershipNoticeFeature = (OwnershipTransferNoticeService) specificNoticeService
+                .find(OwnershipTransferNoticeService.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = ownershipNoticeFeature
+                .generateNotice(ownershipTransferService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, "ownershiptransferrejectionnotice");
+    }
+    
+    @GetMapping(value = "/application/ownership/transfer/generateorder/{applicationNumber}", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateOwnershipTransferOrder(@PathVariable final String applicationNumber,
+            HttpServletRequest request) throws IOException {
+    	OwnershipTransferNoticeService ownershipNoticeFeature = (OwnershipTransferNoticeService) specificNoticeService
+                .find(OwnershipTransferNoticeService.class, specificNoticeService.getCityDetails());
+        ReportOutput reportOutput = ownershipNoticeFeature
+                .generateOwnershipOrder(ownershipTransferService.findByApplicationNumber(applicationNumber));
+        return getFileAsResponseEntity(applicationNumber, reportOutput, "ownershiptransferorder");
     }
 }

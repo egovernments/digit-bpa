@@ -1,8 +1,8 @@
 <%--
-  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,13 +26,6 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
-  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~            derived works should carry eGovernments Foundation logo on the top right corner.
-  ~
-  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~            For any further queries on attribution, including queries on brand guidelines,
-  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -43,45 +36,60 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  ~
   --%>
-
-
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<div class="panel-body">
-	<div class="panel-heading custom_form_panel_heading">
-		<div class="panel-title">
-			<spring:message code="lbl.coapplicant.details" />
-		</div>
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message code="lbl.encloseddocuments" />
 	</div>
-	<table class="table table-striped table-bordered"
-		id="coApplicantDetails" style="width: 100%; margin: 0 auto;">
+</div>
+<div class="panel-body">
+	<table class="table table-bordered  multiheadertbl">
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.srl.no" /></th>
-				<th><spring:message code="lbl.applicant.name" /></th>
-				<th><spring:message code="lbl.mobileNo" /></th>
-				<th><spring:message code="lbl.emailid" /></th>
-				<th><spring:message code="lbl.gender" /></th>
+				<th><spring:message code="lbl.documentname" /></th>
+				<%--<th><spring:message code="lbl.issubmitted" /></th>--%>
+				<th><spring:message code="lbl.remarks" /></th>
+				<th><spring:message code="lbl.files" /></th>
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach items="${coApplicants}" var="coap"
-				varStatus="counter">
-				<tr>
-					<td><c:out value="${counter.index+1}" default="N/A" /></td>
-					<td><c:out value="${coap.coApplicant.name}" default="N/A" /></td>
-					<td><c:out value="${coap.coApplicant.mobileNumber}" default="N/A" /></td>
-					<td><c:out value="${coap.coApplicant.emailId}" default="N/A" /></td>
-					<td><c:out value="${coap.coApplicant.gender}" default="N/A" /></td>
-				</tr>
-			</c:forEach>
+			<c:choose>
+				<c:when test="${not empty  ownershipTransfer.ownershipTransferDocuments}">
+					<c:forEach items="${ownershipTransfer.ownershipTransferDocuments}" var="docs"
+						varStatus="status">
+						<tr>
+							<td class="view-content text-center" style="font-size: 97%;"><c:out value="${status.index+1}" /></td>
+							<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${docs.document.serviceChecklist.checklist.description}"
+									default="N/A" /></td>
+							<%--<td><c:out value="${docs.issubmitted ? 'Yes' : 'No'}"
+									default="N/A"></c:out></td>--%>
+							<td class="view-content text-justify" style="font-size: 97%;"><c:out value="${docs.document.remarks}" default="N/A" /></td>
+							<td class="view-content" style="font-size: 97%;"><c:set value="false" var="isDocFound"></c:set> <c:forEach
+									var="bpadoc" items="${docs.document.getOrderedSupportDocs()}" varStatus="loop">
+									<c:if test="${bpadoc.fileStoreId ne null}">
+										<c:set value="true" var="isDocFound"></c:set>
+										<a target="_blank" href="/bpa/application/downloadfile/${bpadoc.fileStoreId}"
+											data-gallery>${loop.index +1} - ${bpadoc.fileName} </a>
+										<c:if test="${!loop.last}">,</c:if>&nbsp;
+									</c:if>
+								</c:forEach> <c:if test="${!isDocFound}">
+								N/A
+							</c:if></td>
+						</tr>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<div class="col-md-12 col-xs-6  panel-title">No documents
+						found</div>
+				</c:otherwise>
+			</c:choose>
 		</tbody>
 	</table>
 </div>

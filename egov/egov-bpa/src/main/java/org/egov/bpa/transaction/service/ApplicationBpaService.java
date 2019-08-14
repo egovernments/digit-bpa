@@ -116,8 +116,8 @@ import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.BuildingSubUsage;
 import org.egov.bpa.transaction.entity.BuildingSubUsageDetails;
-import org.egov.bpa.transaction.entity.CoApplicant;
 import org.egov.bpa.transaction.entity.ExistingBuildingFloorDetail;
+import org.egov.bpa.transaction.entity.PermitCoApplicant;
 import org.egov.bpa.transaction.entity.PermitDcrDocument;
 import org.egov.bpa.transaction.entity.PermitDocument;
 import org.egov.bpa.transaction.entity.PermitFee;
@@ -1010,7 +1010,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             if (!busUsersWithEmail.isEmpty() || !citizensWithEmail.isEmpty()) {
                 bpaApplication.getOwner().setEmailId(StringUtils.EMPTY);
             }
-            citizen = createApplicantAsCitizen(bpaApplication);
+            citizen = createApplicantAsCitizen(bpaApplication.getOwner());
             bpaApplication.setMailPwdRequired(true);
         } else {
             citizen = existingCitizen;
@@ -1047,23 +1047,19 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return citizen;
     }
 
-    private List<CoApplicant> buildCoApplicantDetails(final BpaApplication application) {
-        List<CoApplicant> coApplicants = new LinkedList<>();
-        List<CoApplicant> deleteCoApplicants = new LinkedList<>();
-        for (CoApplicant applicant : application.getCoApplicants()) {
-            if (applicant.getName() != null) {
+    private List<PermitCoApplicant> buildCoApplicantDetails(final BpaApplication application) {
+        List<PermitCoApplicant> coApplicants = new LinkedList<>();
+        for (PermitCoApplicant applicant : application.getCoApplicants()) {
+            if (applicant != null) {
                 applicant.setApplication(application);
                 coApplicants.add(applicant);
-            } else if (applicant.getId() != null) {
-                deleteCoApplicants.add(applicant);
             }
         }
         if (coApplicants.isEmpty())
             application.getCoApplicants().clear();
-        if (!deleteCoApplicants.isEmpty())
-            coApplicantService.delete(deleteCoApplicants);
         return coApplicants;
     }
+
 
     @Transactional
     public void saveBpaApplication(BpaApplication bpaApp) {
@@ -1145,6 +1141,34 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public boolean isOccupancyContains(final List<Occupancy> occupancies, final String occupancy) {
         Optional<Occupancy> occ = occupancies.stream().filter(o -> o.getCode().equalsIgnoreCase(occupancy)).findAny();
         return occ.isPresent();
+    }
+    
+    /**
+     * @param bpaApplication
+     * @return citizen
+     */
+    public Citizen createApplicantAsCitizen(Applicant owner) {
+        Citizen citizen = new Citizen();
+        citizen.setMobileNumber(owner.getUser().getMobileNumber());
+        citizen.setEmailId(owner.getEmailId());
+        citizen.setGender(owner.getGender());
+        citizen.setName(owner.getName());
+        String userName = bpaUtils.generateUserName(owner.getName());
+        User isUserExist = userService.getUserByUsername(userName);
+        if (isUserExist == null)
+            citizen.setUsername(userName);
+        else
+            citizen.setUsername(bpaUtils.generateUserName(owner.getName()));
+        citizen.setPassword(passwordEncoder.encode(owner.getUser().getMobileNumber()));
+        PermanentAddress address = new PermanentAddress();
+        address.setStreetRoadLine(owner.getAddress());
+        citizen.addAddress(address);
+        citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
+        citizen.setAadhaarNumber(owner.getAadhaarNumber());
+        citizen.setTenantId(ApplicationConstant.STATE_TENANTID);
+        citizen.setActive(true);
+        citizen.addRole(roleService.getRoleByName(ROLE_CITIZEN));
+        return citizen;
     }
 
 }
