@@ -83,7 +83,9 @@ public class SMSNotificationListener {
 		try {
 			final MapMessage emailMessage = (MapMessage) message;
 			prepareThreadLocal();
-			smsService = (SMSService) customImplProvider.find(SMSService.class, customImplProvider.getCityDetails());
+			if (clientId != null && !clientId.isEmpty())
+				smsService = (SMSService) customImplProvider.find(SMSService.class,
+						customImplProvider.getCityDetails());
 			smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
 					NotificationPriority.valueOf(emailMessage.getString(PRIORITY)));
 		} catch (final JMSException e) {
