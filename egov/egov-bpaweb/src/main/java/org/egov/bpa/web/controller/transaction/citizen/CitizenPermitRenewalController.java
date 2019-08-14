@@ -59,6 +59,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
@@ -122,14 +123,12 @@ public class CitizenPermitRenewalController extends BpaGenericApplicationControl
             final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
 
-        boolean isPermitExt = permitRenewalService.isPermitExtensionAllowed(permitRenewal.getParent().getPlanPermissionNumber());
-        if (!isPermitExt) {
-            boolean isRenewalAllowed = permitRenewalService
-                    .isPermitRenewalRequestCanAllowed(permitRenewal.getParent().getPlanPermissionNumber());
-            if (!isRenewalAllowed) {
-                model.addAttribute("errorMsg", messageSource.getMessage("msg.renewal.not.allowed",
-                        new String[] {}, LocaleContextHolder.getLocale()));
-            }
+        String isPermitExt = permitRenewalService
+                .permitExtensionAndRenewalNotAllowed(permitRenewal.getParent().getPlanPermissionNumber());
+        if (StringUtils.isNotBlank(isPermitExt)) {
+            model.addAttribute("errorMsg", isPermitExt);
+            prepareUpdateFormData(model, permitRenewal);
+            return PERMIT_RENEWAL_CITIZEN_UPDATE;
         }
         if (permitRenewal.getSource() == null)
             permitRenewal.setSource(Source.CITIZENPORTAL);
@@ -150,7 +149,7 @@ public class CitizenPermitRenewalController extends BpaGenericApplicationControl
                 Arrays.asList(permitRenewal.getParent().getOwner().getUser(),
                         permitRenewal.getParent().getStakeHolder().get(0).getStakeHolder()),
                 wfBean.getWorkFlowAction());
-        
+
         renewalSmsAndEmailService.sendSMSAndEmail(renewalRes, null, null);
 
         if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
@@ -194,16 +193,12 @@ public class CitizenPermitRenewalController extends BpaGenericApplicationControl
             final HttpServletRequest request,
             final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
-        boolean isPermitExt = permitRenewalService.isPermitExtensionAllowed(permitRenewal.getParent().getPlanPermissionNumber());
-        if (!isPermitExt) {
-            boolean isRenewalAllowed = permitRenewalService
-                    .isPermitRenewalRequestCanAllowed(permitRenewal.getParent().getPlanPermissionNumber());
-            if (!isRenewalAllowed) {
-                model.addAttribute("errorMsg", messageSource.getMessage("msg.renewal.not.allowed",
-                        new String[] {}, LocaleContextHolder.getLocale()));
-                prepareUpdateFormData(model, permitRenewal);
-                return PERMIT_RENEWAL_CITIZEN_UPDATE;
-            }
+        String isPermitExt = permitRenewalService
+                .permitExtensionAndRenewalNotAllowed(permitRenewal.getParent().getPlanPermissionNumber());
+        if (StringUtils.isNotBlank(isPermitExt)) {
+            model.addAttribute("errorMsg", isPermitExt);
+            prepareUpdateFormData(model, permitRenewal);
+            return PERMIT_RENEWAL_CITIZEN_UPDATE;
         }
         Long approvalPosition = null;
         WorkflowBean wfBean = new WorkflowBean();

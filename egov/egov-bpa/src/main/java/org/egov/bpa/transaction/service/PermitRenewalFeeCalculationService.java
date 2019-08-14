@@ -84,14 +84,14 @@ public class PermitRenewalFeeCalculationService {
                 permitRenewalService.getMinAllowedDateForRenewalPriorExpiry(permitRenewal.getParent()));
         Date maxAllowedRenewalDate = DateUtils.toDateUsingDefaultPattern(
                 permitRenewalService.getMaxAllowedDateForRenewalAfterExpiry(permitRenewal.getParent()));
-        if (permitRenewal.getApplicationDate().after(minAllowedRenewalDate)
-                && permitRenewal.getApplicationDate().before(permitExpiryDate)) {
+        if (permitRenewal.getApplicationDate().compareTo(minAllowedRenewalDate) >= 0
+                && permitRenewal.getApplicationDate().compareTo(permitExpiryDate) <= 0) {
             BigDecimal permitExtensionFee = appConfigUtil.getPermitExtensionFeeInPercentage();
             totalPermitRenewalFee = totalPermitFee.multiply(permitExtensionFee)
                     .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             demandReasonCode = "PEF";
-        } else if (permitRenewal.getApplicationDate().after(minAllowedRenewalDate)
-                && permitRenewal.getApplicationDate().before(maxAllowedRenewalDate)) {
+        } else if (permitRenewal.getApplicationDate().after(permitExpiryDate)
+                && permitRenewal.getApplicationDate().compareTo(maxAllowedRenewalDate) <= 0) {
             BigDecimal permitRenewalFeeInPercent = appConfigUtil.getPermitRenewalFeeInPercentage();
             totalPermitRenewalFee = totalPermitFee.multiply(permitRenewalFeeInPercent)
                     .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
