@@ -42,7 +42,9 @@
 jQuery(document).ready(function ($) {
 
 	
-	if($('#feePending').val() && $('#feePending').val() === 'true') {
+	if($('#applicationStatus').val() === 'Approved' 
+		&& $('#feePending').val() 
+		&& $('#feePending').val() === 'true') {
 		bootbox.alert($('#feePendingMsg').val());
 	}
     //toggle between multiple tab
