@@ -443,7 +443,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     @Transactional
     public void saveAndFlushApplication(final BpaApplication application, String workFlowAction) {
-
+        
         if (!application.getBuildingSubUsages().isEmpty())
             for (BuildingSubUsage subUsage : application.getBuildingSubUsages())
                 for (BuildingSubUsageDetails subUsageDetails : subUsage.getSubUsageDetails()) {
@@ -532,7 +532,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         // persistPostalAddress(application);
         buildSchemeLandUsage(application);
         // For one day permit
-
+        appendQrCodeWithDcrDocuments(application);
         if (workFlowAction.equals(BpaConstants.GENERATEREVOCATIONNOTICE)) {
             PermitRevocation permitRevocation = new PermitRevocation();
             permitRevocation.setRevocationNumber(revocationNumberGenerator.generatePermitRevocationNumber());
@@ -641,7 +641,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     private void appendQrCodeWithDcrDocuments(BpaApplication application) {
         if (Boolean.valueOf(appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                PDF_QR_ENBLD).get(0).getValue()) && application.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED)
+                PDF_QR_ENBLD).get(0).getValue())
+                && (application.getStatus().getCode().equals(APPLICATION_STATUS_APPROVED)
+                        || application.getStatus().getCode().equals(APPLICATION_STATUS_NOCUPDATED))
                 && !bpaDemandService.checkAnyTaxIsPendingToCollect(application)) {
             List<PermitDcrDocument> dcrDocuments = dcrDocumentRepository.findByApplication(application);
             for (PermitDcrDocument dcrDocument : dcrDocuments) {
