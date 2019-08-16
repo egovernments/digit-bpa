@@ -290,5 +290,9 @@
 				</c:if>
 			</div>
 		</div>
+		<div align="center">
+			<input type="button" name="button2" id="button2" value="Close"
+				class="btn btn-default" onclick="window.close();" />
+		</div>
 	</div>
 </div>
