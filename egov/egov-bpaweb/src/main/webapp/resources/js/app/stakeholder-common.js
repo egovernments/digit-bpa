@@ -47,6 +47,7 @@
  */
 
 var $type = "";
+var $typeValue = "";
 var $mode = "";
 $(document).ready( function () {
 	if($('#nextAction').val() == "END"){
@@ -59,12 +60,17 @@ $(document).ready( function () {
 	 $('#licenceGroup').hide();
 	
 	$type = $("#stakeHolderType option:selected").text();
+	$typeValue = $("#stakeHolderType option:selected").val();
 	
-	if($mode!="edit")
-		loadLicenceNumber($type);
+	if($typeValue!=null && $typeValue!="")
+		if($mode!="edit")
+			loadLicenceNumber($type);
 	
 	$('#stakeHolderType').change(function(e) {
-		loadLicenceNumber($("#stakeHolderType option:selected").text());
+		$typeValue = $("#stakeHolderType option:selected").val();
+		if($typeValue!=null && $typeValue!="")
+			loadLicenceNumber($("#stakeHolderType option:selected").text());
+		
 		if($("#stakeHolderType option:selected").text() == 'Architect'){
 			$('div.RGSTRTNCER').attr("required","true");
 			$('i.RGSTRTNCER').attr("required","true");
