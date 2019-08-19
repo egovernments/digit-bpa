@@ -89,14 +89,15 @@
 		  <div class="tab-content">
 				<div id="applicant-info" class="tab-pane fade in active">
 				   <div class="panel panel-primary" data-collapsed="0">
+				  
 						<div class="panel-heading custom_form_panel_heading">
 							<div class="panel-title">
 								<spring:message code="lbl.inspection.application" />
 							</div>
 						</div>
-						<div class="form-group">
-
-							<div class="col-sm-3 control-label text-right">
+						 <div class="panel-body">
+						<div class="row add-border">
+							 <div class="col-sm-3 add-margin">
 								<spring:message code="lbl.application.number" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
@@ -104,7 +105,7 @@
 									value="${inspectionApplication.applicationNumber}"
 									default="N/A"></c:out>
 							</div>
-							<div class="col-sm-3 control-label text-right">
+							 <div class="col-sm-3 add-margin">
 								<spring:message code="lbl.appln.date" />
 							</div>
 							<fmt:formatDate
@@ -114,9 +115,9 @@
 								<c:out value="${applicationDate}" default="N/A"></c:out>
 							</div>
 						</div>
-						<div class="form-group">
-
-							<div class="col-sm-3 control-label text-right">
+						
+						<div class="row add-border">
+							 <div class="col-sm-3 add-margin">
 								<spring:message code="lbl.status" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
@@ -125,7 +126,7 @@
 									default="N/A"></c:out>
 							</div>
 							
-							<div class="col-sm-3 control-label text-right">
+							 <div class="col-sm-3 add-margin">
 								<spring:message code="lbl.insp.bldngconststage" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
@@ -134,11 +135,9 @@
 									default="N/A"></c:out>
 							</div>
 						</div>
-						<div class="form-group">
-
 						
-							
-							<div class="col-sm-3 control-label text-right">
+						<div class="row add-border">
+							 <div class="col-sm-3 add-margin">
 								<spring:message code="lbl.applicant.remarks" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
@@ -146,7 +145,7 @@
 									value="${inspectionApplication.remarks}"
 									default="N/A"></c:out>
 							</div>
-						</div></div> 
+						</div></div> </div>
 		
 		
 		<div id="application-info" class="tab-pane fade in active">
@@ -190,8 +189,6 @@
 			    <input	type="hidden" id="applicationNumber" value="" /> 
 			    <input type="hidden" id="eDcrNumber" value="${eDcrNumber}"/>
 			    <input type="hidden" id="planPermissionNumber" value="${planPermissionNumber}"/>
-			    
-			    
 			    
 					<div class="buttonbottom" align="center">
 						<input type="button" name="button2" value="Close"

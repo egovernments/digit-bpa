@@ -55,33 +55,33 @@
     <div class="panel-title"><spring:message code="title.edcr.appln"/></div>
 </div>
 <div class="panel-body">
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right">
-            <spring:message code="lbl.edcr.appln.no"/>
-        </label>
-        <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="edcrApplicationNumber"></div>
-        </div>
-        <label class="col-sm-3 control-label text-right">
-            <spring:message code="lbl.edcr.appln.date"/>
-        </label>
-        <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="edcrUploadedDate"></div>
-        </div>
-    </div>
+	<div class="row add-border">
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.edcr.appln.no" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<div class="text-justify" id="edcrApplicationNumber"></div>
+		</div>
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.edcr.appln.date" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<div class="text-justify" id="edcrUploadedDate"></div>
+		</div>
+	</div>
 
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right">
-            <spring:message code="lbl.edcr.upload.file"/>
-        </label>
-        <div class="col-sm-3 add-margin">
-            <div class="text-center" id="edcrDxfFile"></div>
+	<div class="row add-border">
+          <div class="col-sm-3 add-margin">
+             <spring:message code="lbl.edcr.upload.file"/>
         </div>
-        <label class="col-sm-3 control-label text-right">
-            <spring:message code="lbl.edcr.report.output"/>
-        </label>
         <div class="col-sm-3 add-margin">
-            <div class="text-center" id="edcrPlanReportOutput"></div>
+            <div class="text-justify" id="edcrDxfFile"></div>
+        </div>
+         <div class="col-sm-3 add-margin">
+            <spring:message code="lbl.edcr.report.output"/>
+        </div>
+        <div class="col-sm-3 add-margin">
+            <div class="text-justify" id="edcrPlanReportOutput"></div>
         </div>
     </div>
 </div>

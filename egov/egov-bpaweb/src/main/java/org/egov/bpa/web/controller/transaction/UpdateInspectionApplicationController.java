@@ -215,9 +215,6 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
         String message;
        if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             message = messageSource.getMessage("msg.approve.inspection", new String[] {
-                    user == null ? ""
-                            : user.getUsername().concat("~")
-                                    .concat(getDesinationNameByPosition(pos)),
                                     inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
       
        else if(BpaConstants.WF_REVOKE_STATE.equalsIgnoreCase(wfBean.getWorkFlowAction())){

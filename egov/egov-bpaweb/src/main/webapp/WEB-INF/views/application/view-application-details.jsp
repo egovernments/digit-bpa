@@ -59,64 +59,64 @@
 <div class="panel-body">
 
 
-<div class="form-group">
-        <label class="col-sm-3 control-label text-right">
+ <div class="row add-border">
+       <div class="col-sm-3 add-margin">
             <spring:message code="lbl.plan.permission.no"/>
-        </label>
-        <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="permissionNumber"></div>
         </div>
-        <label class="col-sm-3 control-label text-right">
-            <spring:message code="lbl.edcr.number"/>
-        </label>
         <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="dcrNumber"></div>
+            <div class="text-justify" id="permissionNumber"></div>
+        </div>
+        <div class="col-sm-3 add-margin">
+            <spring:message code="lbl.edcr.number"/>
+        </div>
+        <div class="col-sm-3 add-margin view-content">
+            <div class="text-justify" id="dcrNumber"></div>
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right">
+     <div class="row add-border">
+        <div class="col-sm-3 add-margin">
             <spring:message code="lbl.applicant.name"/>
-        </label>
-        <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="ownerName"></div>
         </div>
-        <label class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 add-margin view-content">
+            <div class="text-justify" id="ownerName"></div>
+        </div>
+        <div class="col-sm-3 add-margin">
             <spring:message code="lbl.owner.address"/>
-        </label>
+        </div>
         <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="ownerAddress"></div>
+            <div class="text-justify" id="ownerAddress"></div>
         </div>
     </div>
     
     
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right">
+  <div class="row add-border">
+       <div class="col-sm-3 add-margin">
             <spring:message code="lbl.occupancy"/>
-        </label>
-        <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="occupancyName"></div>
         </div>
-        <label class="col-sm-3 control-label text-right">
-            <spring:message code="lbl.appln.date"/>
-        </label>
         <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="applicationDate"></div>
+            <div class="text-justify" id="occupancyName"></div>
+        </div>
+        <div class="col-sm-3 add-margin">
+            <spring:message code="lbl.appln.date"/>
+        </div>
+        <div class="col-sm-3 add-margin view-content">
+            <div class="text-justify" id="applicationDate"></div>
         </div>
     </div>
     
-     <div class="form-group">
-        <label class="col-sm-3 control-label text-right">
+    <div class="row add-border">
+       <div class="col-sm-3 add-margin">
             <spring:message code="lbl.service.type"/>
-        </label>
-        <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="serviceType"></div>
         </div>
-        <label class="col-sm-3 control-label text-right">
-            <spring:message code="lbl.re.survey.no"/>
-        </label>
         <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="resurveyNo"></div>
+            <div class="text-justify" id="serviceType"></div>
+        </div>
+        <div class="col-sm-3 add-margin">
+            <spring:message code="lbl.re.survey.no"/>
+        </div>
+        <div class="col-sm-3 add-margin view-content">
+            <div class="text-justify" id="resurveyNo"></div>
         </div>
     </div>
 </div>
