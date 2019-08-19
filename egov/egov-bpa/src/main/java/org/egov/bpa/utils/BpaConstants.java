@@ -157,6 +157,7 @@ public class BpaConstants {
     public static final String WF_INIT_AUTO_RESCHDLE = "Initiated For Auto Rescheduling Appointment";
     public static final String INSPECTION_MODULE_TYPE = "INSPECTION";
     public static final String WF_REVOKE_STATE ="Revoke";
+    public static final String WF_ASST_ENG_APPROVED = "Assiatant Engineer approved";
 
 
     // application status constants
@@ -467,6 +468,8 @@ public class BpaConstants {
     public static final String OWNERSHIPSTATUS_MODULETYPE = "OWNERSHIP";
     public static final String NATURE_OF_WORK_OWNERSHIP = "Ownership Transfer";
     public static final String AUTOGENERATE_OWNERSHIP_NUMBER = "AUTOGENERATE_OWNERSHIP_NUMBER";
+    public static final String OWNERSHIP_APPLN_FEE_REQUIRED = "OWNERSHIPAPPLNFEECOLLECTIONREQUIRED";
+    public static final String OWNERSHIP_FEE_REQUIRED = "OWNERSHIPFEECOLLECTIONREQUIRED";
 
     
     private static final List<String> BUILDPERMIT = new ArrayList<>();

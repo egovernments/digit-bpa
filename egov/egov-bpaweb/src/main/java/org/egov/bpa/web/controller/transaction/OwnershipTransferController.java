@@ -48,13 +48,11 @@
 package org.egov.bpa.web.controller.transaction;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SECTION_CLRK_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_ASST_ENG_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_INIT_OWNERSHIP;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -102,7 +100,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/application/ownership/transfer")
 public class OwnershipTransferController extends BpaGenericApplicationController {
-
+	
+    private static final String APPLICATION_SUCCESS = "application-success";
     private static final String OWNERSHIP_TRANSFER = "ownershipTransfer";
     private static final String MESSAGE = "message";
     public static final String COMMON_ERROR = "common-error";
@@ -214,7 +213,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
                 		ownershipTransfer.getStateHistory()));
-        return "ownership-transfer-result";
+        return APPLICATION_SUCCESS;
     }
     
     @GetMapping("/view/{applicationNumber}")
@@ -236,9 +235,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
 
     private void buildRejectionReasons(Model model, OwnershipTransfer ownershipTransfer) {
     	if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())
-              ||  (APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())
-                        && (APPLICATION_STATUS_SECTION_CLRK_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue()) || 
-                        WF_INIT_OWNERSHIP.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue())))) {           
+              || WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue())) {           
     		model.addAttribute("showRejectionReasons", true);
             List<ChecklistServiceTypeMapping> additionalRejectionReasonList = checklistServiceTypeService
                     .findByActiveChecklistAndServiceType(ownershipTransfer.getParent().getServiceType().getDescription(),

@@ -40,7 +40,7 @@
 package org.egov.bpa.master.entity.enums;
 
 public enum FeeApplicationType {
-	PERMIT_APPLICATION("Permit Application"), OCCUPANCY_CERTIFICATE("Occupancy Certificate");
+	PERMIT_APPLICATION("Permit Application"), OCCUPANCY_CERTIFICATE("Occupancy Certificate"), OWNERSHIP_TRANSFER("Ownership Transfer");
     
     private final String feeApplicationTypeVal;
 

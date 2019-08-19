@@ -125,13 +125,13 @@ public class OwnershipTransferService {
         ownershipTransfer.setStatus(bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE, APPLICATION_STATUS_CREATED));
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(ownershipTransfer, wfBean);
+    	ownershipTransfer.setCoApplicants(buildCoApplicantDetails(ownershipTransfer));
         OwnershipTransfer ownershipResponse = ownershipTransferRepository.saveAndFlush(ownershipTransfer);
         return ownershipResponse;
     }
 
     @Transactional
     public void saveOwnership(OwnershipTransfer ownershipTransfer) {
-    	ownershipTransfer.setCoApplicants(buildCoApplicantDetails(ownershipTransfer));
     	ownershipTransferRepository.saveAndFlush(ownershipTransfer);
      }   
     

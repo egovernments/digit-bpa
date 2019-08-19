@@ -60,7 +60,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
-import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
