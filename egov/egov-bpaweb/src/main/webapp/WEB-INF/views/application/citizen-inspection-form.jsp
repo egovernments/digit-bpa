@@ -84,7 +84,7 @@
 					
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.insp.bldngconststage" /></label>
-					<div class="col-sm-2 add-margin">
+					<div class="col-sm-3 add-margin">
 
 						<form:select
 							path="inspectionApplication.buildingConstructionStage"

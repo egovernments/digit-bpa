@@ -111,6 +111,7 @@
 						<jsp:include page="view-ownership-details.jsp"></jsp:include>
 					</div>
                     <div class="panel panel-primary" data-collapsed="0">
+                    	<c:set value="${ownershipTransfer.owner}" scope="request"  var="owner"></c:set>
 						<jsp:include page="../application/view-applicantdetails.jsp"></jsp:include>
 					</div>
 					

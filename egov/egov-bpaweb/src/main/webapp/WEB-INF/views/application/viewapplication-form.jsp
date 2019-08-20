@@ -116,6 +116,7 @@
                         </div>
                     </c:if>
                     <div class="panel panel-primary" data-collapsed="0">
+                    	<c:set value="${bpaApplication.owner}" scope="request" var="owner"></c:set>
                         <jsp:include page="view-applicantdetails.jsp"></jsp:include>
                     </div>
                     <div class="panel panel-primary" data-collapsed="0">
