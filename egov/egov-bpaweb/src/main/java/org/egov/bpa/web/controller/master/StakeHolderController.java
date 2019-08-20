@@ -299,10 +299,14 @@ public class StakeHolderController extends GenericWorkFlowController {
                             stakeHolderRes.getStakeHolderType().getName(), stakeHolderRes.getCode() },
                             null));
         }
+        System.out.println("return--------------------------1-------------------");
         return RDRCT_STKHLDR_RSLT + stakeHolderRes.getId();
         } catch (Exception e) {
+        	System.out.println("Exception---------------------------------------------");
+        	e.printStackTrace();
         	    model.addAttribute("error", e.getMessage());
                 prepareModel(model, stakeHolder);
+                System.out.println("return--------------------------2-------------------");
                 return STAKEHOLDER_NEW_BY_CITIZEN;
              
 		}
