@@ -66,6 +66,7 @@ public class BpaAppConfigUtil {
     private static final String SLA_BPA_APPLICATION = "SLA_BPA_APPLICATION";
     private static final String SLA_PERMIT_RENEWAL_APPLICATION = "SLA_PERMIT_RENEWAL_APPLICATION";
     private static final String SLA_OC_APPLICATION = "SLA_OC_APPLICATION";
+    private static final String SLA_OWNERSHIP_TRANSFER = "SLA_OWNERSHIP_TRANSFER";
    
     
     @Autowired
@@ -101,6 +102,9 @@ public class BpaAppConfigUtil {
     }
     public Integer getSlaOcApplication(){
         return Integer.valueOf(getAppconfigValueByKeyName(SLA_OC_APPLICATION));
+    }
+    public Integer getSlaOwnershipTransfer(){
+        return Integer.valueOf(getAppconfigValueByKeyName(SLA_OWNERSHIP_TRANSFER));
     }
    
 }
