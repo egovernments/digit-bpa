@@ -188,7 +188,8 @@ public class CollectionsWorkflowAction extends BaseFormAction {
             setWfAction(params[0]);
             setServiceCode(params[1]);
             setUserName(params[2]);
-            setCounterId(Long.valueOf(params[4]));
+            //TODO: Need to set counter ID when the collection workflow require, removing "Long.valueOf(params[4])" code and set to null
+            setCounterId(null);
             setReceiptDate(params[3]);
         }
         this.inboxItemDetails = inboxItemDetails;

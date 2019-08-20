@@ -174,7 +174,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             userName = params[2];
             counterId = Integer.valueOf(params[4]);
             receiptDate = params[3];
-            receiptType = params[5];
+            receiptType = params[4];
         }
         final boolean allCounters = counterId == null || counterId < 0;
         // final boolean allPositions = positionIds == null ||
@@ -186,11 +186,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date rcptDate = null;
         try {
+            receiptDate = params[3];
             rcptDate = formatter.parse(receiptDate);
         } catch (final ParseException e) {
             LOGGER.error("Exception while parsing ReceiptDate" + e.getMessage());
         }
-
+      
+        receiptType = params[4];
         // if (!allPositions)
         query.append(" and state.ownerPosition.id in :positionIds");
         if (!allCounters)
