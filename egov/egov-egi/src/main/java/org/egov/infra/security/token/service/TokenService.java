@@ -91,7 +91,9 @@ public class TokenService {
 
     @Transactional
     public boolean redeemToken(String tokenNumber, String tokenIdentity, String service) {
+    	System.out.println("TokenService---tokenNumber received----:"+tokenNumber);
         Token token = getToken(tokenNumber, tokenIdentity, service);
+        System.out.println("TokenService---tokenNumber fetched----:"+tokenNumber);
         if (token != null)
             tokenRepository.delete(token);
         return token != null && token.isRedeemable();

@@ -90,6 +90,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -267,10 +268,12 @@ public class StakeHolderController extends GenericWorkFlowController {
              errors.rejectValue("activationCode", "error.otp.verification.failed");
 
 
-        if (errors.hasErrors()) {
-            prepareModel(model, stakeHolder);
-            return STAKEHOLDER_NEW_BY_CITIZEN;
-        }
+		if (errors.hasErrors()) {
+			for (ObjectError oe : errors.getAllErrors())
+				System.out.println("Error---------------" + oe.getCode());
+			prepareModel(model, stakeHolder);
+			return STAKEHOLDER_NEW_BY_CITIZEN;
+		}
         try {
         stakeHolder.setStatus(StakeHolderStatus.SUBMITTED);
         stakeHolder.setSource(Source.ONLINE);
