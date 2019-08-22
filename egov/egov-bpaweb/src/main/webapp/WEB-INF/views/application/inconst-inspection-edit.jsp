@@ -86,9 +86,10 @@
 								<spring:message code="lbl.basic.info" />
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="panel-body">
+								<div class="row add-border">
 
-							<div class="col-sm-3 control-label text-right">
+							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.inspn.no" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
@@ -96,7 +97,7 @@
 									value="${inConstructionInspection.inspection.inspectionNumber}"
 									default="N/A"></c:out>
 							</div>
-							<div class="col-sm-3 control-label text-right">
+							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.inspn.date" />
 							</div>
 							<fmt:formatDate
@@ -106,15 +107,15 @@
 								<c:out value="${applicationDate}" default="N/A"></c:out>
 							</div>
 						</div>
-						<div class="form-group">
-							<div class="col-sm-3 control-label text-right">
+							<div class="row add-border">
+							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.ins.remarks" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
 								<c:out value="${inConstructionInspection.inspection.inspectionRemarks}" default="N/A"></c:out>
 							</div>
 						</div>
-
+                       </div>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 					    <div class="panel-body custom-form ">

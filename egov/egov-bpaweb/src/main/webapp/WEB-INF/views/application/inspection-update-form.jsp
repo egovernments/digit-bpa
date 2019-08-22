@@ -96,9 +96,10 @@
 								<spring:message code="lbl.inspection.application" />
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="panel-body">
+								<div class="row add-border">
 
-							<div class="col-sm-3 control-label text-right">
+							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.application.number" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
@@ -106,7 +107,7 @@
 									value="${inspectionApplication.applicationNumber}"
 									default="N/A"></c:out>
 							</div>
-							<div class="col-sm-3 control-label text-right">
+							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.appln.date" />
 							</div>
 							<fmt:formatDate
@@ -116,9 +117,9 @@
 								<c:out value="${applicationDate}" default="N/A"></c:out>
 							</div>
 						</div>
-						<div class="form-group">
+							<div class="row add-border">
 
-							<div class="col-sm-3 control-label text-right">
+							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.status" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
@@ -127,7 +128,7 @@
 									default="N/A"></c:out>
 							</div>
 							
-							<div class="col-sm-3 control-label text-right">
+							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.insp.bldngconststage" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
@@ -136,15 +137,15 @@
 									default="N/A"></c:out>
 							</div>
 						</div>
-						<div class="form-group">
-							<div class="col-sm-3 control-label text-right">
+						<div class="row add-border">
+							<div class="col-sm-3 add-margin">
 								<spring:message code="lbl.applicant.remarks" />
 							</div>
 							<div class="col-sm-3 add-margin view-content text-justify">
 								<c:out value="${inspectionApplication.remarks}" default="N/A"></c:out>
 							</div>
 						</div>
-
+                      </div>
 					</div>
 		
 		
