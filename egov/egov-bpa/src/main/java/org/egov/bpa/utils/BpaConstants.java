@@ -157,7 +157,9 @@ public class BpaConstants {
     public static final String WF_INIT_AUTO_RESCHDLE = "Initiated For Auto Rescheduling Appointment";
     public static final String INSPECTION_MODULE_TYPE = "INSPECTION";
     public static final String WF_REVOKE_STATE ="Revoke";
-    public static final String WF_ASST_ENG_APPROVED = "Assiatant Engineer approved";
+    public static final String WF_ASST_ENG_APPROVED = "Assistant Engineer approved";
+    public static final String WF_OWNERSHIP_FEE_PENDING = "Ownership transfer fee payment pending";
+    public static final String OWNERSHIP_FEE_COLLECTED = "Ownership transfer fee payment done";
 
 
     // application status constants
@@ -276,6 +278,7 @@ public class BpaConstants {
     public static final String LABOURCESS = "Labour cess";
     public static final String TP_DEPT = "TOWN PLANNING DEPARTMENT";
     public static final String DEV_PERMIT_FEE = "DPF";
+    public static final String OWNERSHIP_FEE = "Ownership Transfer Fees";
     
     //NOC integration related
     public static final String FIRENOCTYPE = "FIRE NOC"; 
@@ -467,9 +470,6 @@ public class BpaConstants {
     public static final String OWNERSHIP_TRANSFER_WFTYPE = "OwnershipTransfer";
     public static final String OWNERSHIPSTATUS_MODULETYPE = "OWNERSHIP";
     public static final String NATURE_OF_WORK_OWNERSHIP = "Ownership Transfer";
-    public static final String AUTOGENERATE_OWNERSHIP_NUMBER = "AUTOGENERATE_OWNERSHIP_NUMBER";
-    public static final String OWNERSHIP_APPLN_FEE_REQUIRED = "OWNERSHIPAPPLNFEECOLLECTIONREQUIRED";
-    public static final String OWNERSHIP_FEE_REQUIRED = "OWNERSHIPFEECOLLECTIONREQUIRED";
 
     
     private static final List<String> BUILDPERMIT = new ArrayList<>();

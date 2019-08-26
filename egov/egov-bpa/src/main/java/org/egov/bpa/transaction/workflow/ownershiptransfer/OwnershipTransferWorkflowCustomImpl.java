@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.transaction.workflow.ownershiptransfer;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -108,7 +109,9 @@ public abstract class OwnershipTransferWorkflowCustomImpl implements OwnershipTr
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Position pos = null;
-
+        Assignment wfInitiator = null;
+        if (ownershipTransfer.getCreatedBy() != null)
+            wfInitiator = bpaWorkFlowService.getWorkFlowInitiator(ownershipTransfer.getState(), ownershipTransfer.getCreatedBy());
         User ownerUser = null;
         if (wfBean.getApproverPositionId() != null && wfBean.getApproverPositionId() > 0)
             pos = positionMasterService.getPositionById(wfBean.getApproverPositionId());
@@ -116,26 +119,52 @@ public abstract class OwnershipTransferWorkflowCustomImpl implements OwnershipTr
             ownerUser = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date()).get(0).getEmployee();
         WorkFlowMatrix wfmatrix;
         if (null == ownershipTransfer.getState()) {
-            String pendingAction = "Ownership transfer application creation pending";
-            wfmatrix = ownershipWorkflowService.getWfMatrix(ownershipTransfer.getStateType(), null,
-                    null, wfBean.getAdditionalRule(), BpaConstants.WF_NEW_STATE, pendingAction);
+            String pendingAction = null;
+
+            if (bpaUtils.applicationInitiatedByNonEmployee(ownershipTransfer.getCreatedBy()) || 
+            		(ownershipTransfer.getAdmissionfeeAmount() != null && ownershipTransfer.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0))
+                wfmatrix = ownershipWorkflowService.getWfMatrix(ownershipTransfer.getStateType(), null,
+                        null, wfBean.getAdditionalRule(), BpaConstants.WF_NEW_STATE, pendingAction);
+            else
+                wfmatrix = ownershipWorkflowService.getWfMatrix(ownershipTransfer.getStateType(), null,
+                        null, wfBean.getAdditionalRule(), BpaConstants.WF_CREATED_STATE, pendingAction);
+
             if (wfmatrix != null) {
                 if (pos == null) {
                     SiteDetail siteDetail = ownershipTransfer.getParent().getSiteDetail().get(0);
-                    pos = bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),
-                            bpaUtils.getBoundaryForWorkflow(siteDetail).getId());
+					pos = bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),
+							bpaUtils.getBoundaryForWorkflow(siteDetail).getId());
                     List<Assignment> assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date());
-                    if (!assignments.isEmpty())
+                    if(!assignments.isEmpty())
                         ownerUser = assignments.get(0).getEmployee();
                 }
-                ownershipTransfer.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));
+
+                ownershipTransfer.setStatus(getStatusByCurrentMatrxiStatus(wfmatrix));                
                 ownershipTransfer.transition().start()
-                        .withSLA(bpaWorkFlowService.calculateDueDate(bpaAppConfigUtil.getSlaOwnershipTransfer()))
-                        .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
-                        .withComments(wfBean.getApproverComments())
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos).withOwner(ownerUser)
-                        .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_OWNERSHIP);
+	                .withSLA(bpaWorkFlowService.calculateDueDate(bpaAppConfigUtil.getSlaOwnershipTransfer()))
+	                .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+	                .withComments(wfBean.getApproverComments()).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+	                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos).withOwner(ownerUser)
+	                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK_OWNERSHIP);
             }
+
+        } else if (BpaConstants.WF_OWNERSHIP_FEE_PENDING.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            if (LOG.isInfoEnabled())
+                LOG.info("**********Ownership Transfer Fee Collection Pending******* Application Number---------->>>>>"+ownershipTransfer.getApplicationNumber());
+            wfmatrix = ownershipWorkflowService.getWfMatrix(ownershipTransfer.getStateType(), null, wfBean.getAmountRule(),
+                    wfBean.getAdditionalRule(), ownershipTransfer.getCurrentState().getValue(), ownershipTransfer.getState().getNextAction());
+            if (LOG.isInfoEnabled())
+                LOG.info(" *************workflow matrix**************"+wfmatrix);
+            if (LOG.isInfoEnabled())
+                LOG.info(" *************Date INFO*************"+currentDate);
+            if (LOG.isInfoEnabled())
+                LOG.info(" *************User INFO*************"+user);
+            ownershipTransfer.transition().progressWithStateCopy()
+                       .withSenderName(user.getUsername() + BpaConstants.COLON_CONCATE + user.getName())
+                       .withComments(wfBean.getApproverComments())
+                       .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                       .withOwner(pos).withOwner(ownerUser)
+                       .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(BpaConstants.NATURE_OF_WORK);
         } else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             wfmatrix = ownershipWorkflowService.getWfMatrix(ownershipTransfer.getStateType(), null,
                     null, wfBean.getAdditionalRule(), ownershipTransfer.getCurrentState().getValue(), null);

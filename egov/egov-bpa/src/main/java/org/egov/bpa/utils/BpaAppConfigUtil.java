@@ -41,6 +41,7 @@
 package org.egov.bpa.utils;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.YES;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -67,6 +68,9 @@ public class BpaAppConfigUtil {
     private static final String SLA_PERMIT_RENEWAL_APPLICATION = "SLA_PERMIT_RENEWAL_APPLICATION";
     private static final String SLA_OC_APPLICATION = "SLA_OC_APPLICATION";
     private static final String SLA_OWNERSHIP_TRANSFER = "SLA_OWNERSHIP_TRANSFER";
+    public static final String AUTOGENERATE_OWNERSHIP_NUMBER = "AUTOGENERATE_OWNERSHIP_NUMBER";
+    public static final String OWNERSHIP_APPLN_FEE_REQUIRED = "OWNERSHIPAPPLNFEECOLLECTIONREQUIRED";
+    public static final String OWNERSHIP_FEE_REQUIRED = "OWNERSHIPFEECOLLECTIONREQUIRED";
    
     
     @Autowired
@@ -106,5 +110,13 @@ public class BpaAppConfigUtil {
     public Integer getSlaOwnershipTransfer(){
         return Integer.valueOf(getAppconfigValueByKeyName(SLA_OWNERSHIP_TRANSFER));
     }
-   
+    public boolean autogenerateOwnershipNumber() {
+        return getAppconfigValueByKeyName(AUTOGENERATE_OWNERSHIP_NUMBER).equalsIgnoreCase(YES);
+    }    
+    public Boolean ownershipApplicationFeeCollectionRequired() {
+        return getAppconfigValueByKeyName(OWNERSHIP_APPLN_FEE_REQUIRED).equalsIgnoreCase(YES);
+    }    
+    public Boolean ownershipFeeCollectionRequired() {
+        return getAppconfigValueByKeyName(OWNERSHIP_FEE_REQUIRED).equalsIgnoreCase(YES);
+    }   
 }

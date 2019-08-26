@@ -42,9 +42,11 @@ package org.egov.bpa.web.controller.transaction;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.transaction.service.PermitRenewalService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
@@ -85,6 +87,8 @@ public class BpaCollectFeesController {
     private StakeHolderService stakeHolderService;
     @Autowired
     private PermitRenewalService permitRenewalService;
+    @Autowired
+    private OwnershipTransferService ownershipTransferService;
 
     @GetMapping("/bpageneratebill/{applicationCode}")
     public String showCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
@@ -136,6 +140,18 @@ public class BpaCollectFeesController {
         Boolean bpaDuePresent = bpaUtils.checkAnyTaxIsPendingToCollect(renewal.getDemand());
         if (bpaDuePresent) {
             return genericBillGeneratorService.generateBillAndRedirectToCollection(renewal, model);
+        } else {
+            model.addAttribute(MESSAGE, messageSource.getMessage(MSG_NOAMOUNT_TOCOLLECT, null, null));
+            return COLLECT_ERROR_PAGE;
+        }
+    }
+    
+    @GetMapping("/ownership/transfer/generate-bill/{applicationCode}")
+    public String showOwnershipTransferCollectForm(final Model model, @PathVariable final String applicationCode) {
+        OwnershipTransfer ownershipTransfer = ownershipTransferService.findByApplicationNumber(applicationCode);
+        Boolean bpaDuePresent = bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand());
+        if (bpaDuePresent) {
+            return genericBillGeneratorService.generateBillAndRedirectToCollection(ownershipTransfer, model);
         } else {
             model.addAttribute(MESSAGE, messageSource.getMessage(MSG_NOAMOUNT_TOCOLLECT, null, null));
             return COLLECT_ERROR_PAGE;

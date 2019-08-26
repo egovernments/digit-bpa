@@ -144,6 +144,9 @@ public class OwnershipTransfer extends StateAware<Position> {
     @JoinTable(name = "egbpa_ownership_transfer_documents", joinColumns = @JoinColumn(name = "ownershipTransfer"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> ownershipTransferDocs = Collections.emptySet();
 
+	@OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OwnershipFee> ownershipFee = new ArrayList<>();
+	
     @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OwnershipTransferNotice> ownershipNotices = new ArrayList<>(0);
 
@@ -368,6 +371,14 @@ public class OwnershipTransfer extends StateAware<Position> {
 		this.rejectionReasons = rejectionReasons;
 	}
 	
+	public List<OwnershipFee> getOwnershipFee() {
+		return ownershipFee;
+	}
+
+	public void setOwnershipFee(List<OwnershipFee> ownershipFee) {
+		this.ownershipFee = ownershipFee;
+	}
+
 	public void addOwnershipNotice(OwnershipTransferNotice ownershipNotice) {
 	     this.ownershipNotices.add(ownershipNotice);
     }

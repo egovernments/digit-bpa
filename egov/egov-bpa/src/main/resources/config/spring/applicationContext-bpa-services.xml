@@ -102,6 +102,9 @@
 	<bean id="PRCollectionsInterface"
 		class="org.egov.bpa.transaction.service.collection.PermitRenewalTaxCollection" />
 
+    <bean id="OTCollectionsInterface"
+		class="org.egov.bpa.transaction.service.collection.OwnershipTransferTaxCollection" />
+		
 	<bean id="bpaApplicationWorkflowCustomDefaultImpl"
 		class="org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl" />
 

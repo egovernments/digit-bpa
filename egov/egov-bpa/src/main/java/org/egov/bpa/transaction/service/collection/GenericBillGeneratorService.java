@@ -41,6 +41,7 @@ package org.egov.bpa.transaction.service.collection;
 
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;
@@ -72,6 +73,8 @@ public class GenericBillGeneratorService {
     private StakeHolderBpaBillService stakeHolderBpaBillService;
     @Autowired
     private PermitRenewalBillService permitRenewalBillService;
+    @Autowired
+    private OwnershipTransferBillService ownershipTransferBillService;
 
     @Transactional
     public String generateBillAndRedirectToCollection(final BpaApplication application, final Model model) {
@@ -89,6 +92,12 @@ public class GenericBillGeneratorService {
     public String generateBillAndRedirectToCollection(final PermitRenewal renewal, final Model model) {
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
         return buildAndRedirectToCollection(model, permitRenewalBillService.generateBill(renewal), enableOrDisablePayOnline);
+    }
+    
+    @Transactional
+    public String generateBillAndRedirectToCollection(final OwnershipTransfer ownershipTransfer, final Model model) {
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        return buildAndRedirectToCollection(model, ownershipTransferBillService.generateBill(ownershipTransfer), enableOrDisablePayOnline);
     }
 
     private String buildAndRedirectToCollection(Model model, String s, String onlineEnabled) {

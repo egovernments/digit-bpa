@@ -98,6 +98,7 @@
 			<form:hidden path="" id="scheduleType" name="scheduleType"
 						 value="${scheduleType}" />
 			<form:hidden path="" id="showPermitConditions" value="${showpermitconditions}" />
+			<form:hidden path="" id="onlinePaymentEnable" name="onlinePaymentEnable" value="${onlinePaymentEnable}" />
 			<input type="hidden" id="approveComments" value="${ownershipTransfer.state.comments}" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
@@ -113,6 +114,10 @@
                     <div class="panel panel-primary" data-collapsed="0">
                     	<c:set value="${ownershipTransfer.owner}" scope="request"  var="owner"></c:set>
 						<jsp:include page="../application/view-applicantdetails.jsp"></jsp:include>
+						<c:if test="${not empty ownershipTransfer.coApplicants}">
+							<c:set value="${ownershipTransfer.coApplicants}" scope="request" var="coApplicants"></c:set>						
+							<jsp:include page="../application/view-co-applicant-details.jsp"></jsp:include>							
+						</c:if>
 					</div>
 					
 					
@@ -217,6 +222,7 @@
 		<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
 	    <input type="hidden" id="revocationReasonMandatory" value="<spring:message code='msg.validate.onerevocation.reason.mandatory' />" />
 	    <input type="hidden" id="nocInProgress" value="<spring:message code='msg.nocinitiation.progress' />" />
+	    
 		
 		
 	</div>

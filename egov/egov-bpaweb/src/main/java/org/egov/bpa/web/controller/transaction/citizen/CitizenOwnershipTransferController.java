@@ -47,11 +47,14 @@
 
 package org.egov.bpa.web.controller.transaction.citizen;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -61,12 +64,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.WorkflowBean;
+import org.egov.bpa.transaction.service.OwnershipFeeCalculationService;
 import org.egov.bpa.transaction.service.OwnershipTransferService;
+import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.utils.BpaAppConfigUtil;
+import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.entity.Source;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -86,20 +97,33 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/citizen/application")
 public class CitizenOwnershipTransferController extends BpaGenericApplicationController {
-
+	
+    private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
+    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
     private static final String OWNERSHIP_CITIZEN_NEW = "ownership-transfer-citizen-new";
     private static final String APPLICATION_SUCCESS = "application-success";
     private static final String OWNERSHIP_TRANSFER = "ownershipTransfer";
     private static final String MESSAGE = "message";
     public static final String COMMON_ERROR = "common-error";
     private static final String WORK_FLOW_ACTION = "workFlowAction";
-    private static final String APPLICATION_HISTORY = "applicationHistory";
+    private static final String APPLICATION_HISTORY = "applicationHistory";   
+    private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
+    private static final String TRUE = "TRUE";
+
 
 
     @Autowired
     private OwnershipTransferService ownershipTransferService;
     @Autowired
     private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
+    @Autowired
+    private GenericBillGeneratorService genericBillGeneratorService;
+    @Autowired
+    private BpaWorkflowRedirectUtility bpaWorkflowRedirectUtility;
+    @Autowired
+    private BpaAppConfigUtil bpaAppConfigUtil;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
 
     @GetMapping("/ownership/transfer/apply")
     public String showPermitRenewalForm(final Model model) {
@@ -113,9 +137,7 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
     @PostMapping("/ownership/transfer/create")
     public String submitPermitRenewal(@ModelAttribute OwnershipTransfer ownershipTransfer, final HttpServletRequest request,
             final Model model, final BindingResult errors,
-            final RedirectAttributes redirectAttributes) {
-
-     
+            final RedirectAttributes redirectAttributes) {     
         if (ownershipTransfer.getSource() == null)
         	ownershipTransfer.setSource(Source.CITIZENPORTAL);
         Long approvalPosition = null;
@@ -130,16 +152,47 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
                         bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getParent().getSiteDetail().get(0)).getId());
             wfBean.setApproverPositionId(approvalPosition);
         }
+        Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
+                && request.getParameter(ONLINE_PAYMENT_ENABLE).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        OwnershipFeeCalculationService feeCalculation = (OwnershipFeeCalculationService) specificNoticeService
+                .find(OwnershipFeeCalculationService.class, specificNoticeService.getCityDetails());
+        if (bpaAppConfigUtil.ownershipApplicationFeeCollectionRequired())
+            ownershipTransfer.setAdmissionfeeAmount(feeCalculation.calculateAdmissionFeeAmount(ownershipTransfer.getParent().getServiceType().getId()));
+        else
+        	ownershipTransfer.setAdmissionfeeAmount(BigDecimal.valueOf(0));
         ownershipTransferService.processAndStoreOwnershipDocuments(ownershipTransfer);
         if (ownershipTransfer.getOwner().getUser() != null && ownershipTransfer.getOwner().getUser().getId() == null)
         	ownershipTransferService.buildOwnerDetails(ownershipTransfer);
-        OwnershipTransfer ownershipres = ownershipTransferService.save(ownershipTransfer, wfBean);
+        
+        OwnershipTransfer ownershipres = ownershipTransferService.createNewApplication(ownershipTransfer, wfBean);
+        
         pushBpaApplicationToPortal.createPortalUserinbox(ownershipres,
                 Arrays.asList(ownershipres.getParent().getOwner().getUser(),
                 		ownershipres.getParent().getStakeHolder().get(0).getStakeHolder()),
                 wfBean.getWorkFlowAction());
         
-        if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
+        if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable
+                && bpaUtils.checkAnyTaxIsPendingToCollect(ownershipres.getDemand()))
+            return genericBillGeneratorService.generateBillAndRedirectToCollection(ownershipres, model);
+        else if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)
+                && !bpaUtils.checkAnyTaxIsPendingToCollect(ownershipres.getDemand())) {           
+        	bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(ownershipres, wfBean);
+            List<Assignment> assignments;
+            if (null == approvalPosition)
+                assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(
+                		ownershipres.getCurrentState().getOwnerPosition().getId(), new Date());
+            else
+                assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(approvalPosition, new Date());
+            Position pos = assignments.get(0).getPosition();
+            User wfUser = assignments.get(0).getEmployee();
+            String message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION,
+                    new String[] {
+                            wfUser == null ? ""
+                                    : wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
+                                    ownershipres.getApplicationNumber() },
+                    LocaleContextHolder.getLocale());
+            model.addAttribute(MESSAGE, message);
+        } else if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             model.addAttribute(MESSAGE, messageSource.getMessage("msg.ownership.transfer.save",
                     new String[] { ownershipres.getApplicationNumber() }, LocaleContextHolder.getLocale()));
         else
@@ -196,10 +249,16 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
     
     private void loadFormData(final OwnershipTransfer ownershipTransfer, final Model model) {
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-        model.addAttribute("owner", ownershipTransfer.getOwner());
-        model.addAttribute("coApplicants", ownershipTransfer.getCoApplicants());
+        model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand()));
         prepareWorkflow(model, ownershipTransfer, workflowContainer);
-        model.addAttribute("feePending", bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand()));
+        if (APPLICATION_STATUS_SUBMITTED.equals(ownershipTransfer.getStatus().getCode())
+                || APPLICATION_STATUS_APPROVED.equals(ownershipTransfer.getStatus().getCode())) {
+            if (bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand())) {
+                model.addAttribute(COLLECT_FEE_VALIDATE,
+                        messageSource.getMessage("msg.payfees.toprocess.appln", null, null));
+            } else
+                model.addAttribute(COLLECT_FEE_VALIDATE, "");
+        }
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
                 		ownershipTransfer.getStateHistory()));

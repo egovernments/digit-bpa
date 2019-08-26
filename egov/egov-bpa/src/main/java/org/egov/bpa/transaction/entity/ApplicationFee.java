@@ -57,7 +57,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
@@ -86,12 +85,7 @@ public class ApplicationFee extends StateAware<Position> {
     @OrderBy("id ASC")
     @OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationFeeDetail> applicationFeeDetail = new ArrayList<>();
-    @OrderBy("id ASC")
-    @OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PermitFee> permitFee = new ArrayList<>();
-    @OrderBy("id ASC")
-    @OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OccupancyFee> occupancyFee = new ArrayList<>();
+  
     private Boolean isRevised = false;
     @Length(min = 1, max = 512)
     private String modifyFeeReason;
@@ -130,14 +124,6 @@ public class ApplicationFee extends StateAware<Position> {
         this.status = status;
     }
 
-    public List<OccupancyFee> getOccupancyFee() {
-		return occupancyFee;
-	}
-
-	public void setOccupancyFee(List<OccupancyFee> occupancyFee) {
-		this.occupancyFee = occupancyFee;
-	}
-
 	public String getChallanNumber() {
         return challanNumber;
     }
@@ -158,16 +144,7 @@ public class ApplicationFee extends StateAware<Position> {
     public void setApplicationFeeDetail(final List<ApplicationFeeDetail> applicationFeeDetail) {
         this.applicationFeeDetail = applicationFeeDetail;
     }
-    
-    public List<PermitFee> getPermitFee() {
-		return permitFee;
-	}
-
-	public void setPermitFee(final List<PermitFee> permitFee) {
-		this.permitFee = permitFee;
-	}
-
-
+   
     public Boolean getIsRevised() {
         return isRevised;
     }

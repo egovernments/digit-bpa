@@ -72,6 +72,7 @@ import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.notice.impl.OwnershipTransferNoticeService;
 import org.egov.bpa.transaction.service.OwnershipTransferConditionsService;
 import org.egov.bpa.transaction.service.OwnershipTransferService;
+import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.eis.entity.Assignment;
@@ -122,6 +123,8 @@ public class OwnershipTransferController extends BpaGenericApplicationController
     private OwnershipTransferConditionsService ownershipConditionsService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private BpaAppConfigUtil bpaAppConfigUtil;
 
     @GetMapping("/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber) {
@@ -131,8 +134,6 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         	model.addAttribute("applicants",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getName());
         	model.addAttribute("applicantAddress",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getAddress());
         }
-        model.addAttribute("owner", ownershipTransfer.getOwner());
-        model.addAttribute("coApplicants", ownershipTransfer.getCoApplicants());
         loadFormData(ownershipTransfer, model);
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
@@ -293,6 +294,16 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(ownershipTransfer.getParent().getApplicationType().getName());        
         workflowContainer.setPendingActions(ownershipTransfer.getState().getNextAction());
+        model.addAttribute("isOwnershipApplFeeReq", "NO");
+        model.addAttribute("ownershipApplFeeCollected", "NO");
+        if (bpaAppConfigUtil.ownershipApplicationFeeCollectionRequired()) {
+            model.addAttribute("isOwnershipApplFeeReq", "YES");
+        }
+        if (ownershipTransfer.getDemand() != null
+                && ownershipTransfer.getDemand().getAmtCollected().compareTo(ownershipTransfer.getAdmissionfeeAmount()) >= 0) {
+            model.addAttribute("ownershipApplFeeCollected", "YES");
+        }
+        model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand()));
         prepareWorkflow(model, ownershipTransfer, workflowContainer);
         buildRejectionReasons(model, ownershipTransfer);
         model.addAttribute("stateType", ownershipTransfer.getClass().getSimpleName());

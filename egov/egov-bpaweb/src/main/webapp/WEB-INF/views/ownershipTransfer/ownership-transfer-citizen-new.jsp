@@ -57,6 +57,7 @@
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 			<input type="hidden" name="parent" id="bpaApplicationId" />
+			<form:hidden path="" id="onlinePaymentEnable" name="onlinePaymentEnable" value="${onlinePaymentEnable}" />
 			<input type="hidden" name="serviceType" id="serviceType"
 				class="serviceType" />
 			<input type="hidden" name="serviceTypeCode" id="serviceTypeCode" />

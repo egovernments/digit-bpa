@@ -8,7 +8,6 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_INIT_REVOKE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECT_CLERK;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
-import static org.egov.bpa.utils.BpaConstants.AUTOGENERATE_OWNERSHIP_NUMBER;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
 import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
 import static org.egov.bpa.utils.BpaConstants.BPA_CITIZENACCEPTANCE_CHECK;
@@ -21,8 +20,6 @@ import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
 import static org.egov.bpa.utils.BpaConstants.LPREPLYRECEIVED;
 import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_APPLN_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.ONE_DAY_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
-import static org.egov.bpa.utils.BpaConstants.OWNERSHIP_APPLN_FEE_REQUIRED;
-import static org.egov.bpa.utils.BpaConstants.OWNERSHIP_FEE_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.PERMIT_APPLN_FEE_COLLECTION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.REGULAR_PERMIT_INSPECTION_SCHEDULE_INTEGRATION_REQUIRED;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
@@ -986,17 +983,4 @@ public class BpaUtils {
         else
             return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
     }
-    
-    public boolean autogenerateOwnershipNumber() {
-        return getAppconfigValueByKeyName(AUTOGENERATE_OWNERSHIP_NUMBER).equalsIgnoreCase(YES);
-    }
-    
-    public Boolean ownershipApplicationFeeCollectionRequired() {
-        return getAppconfigValueByKeyName(OWNERSHIP_APPLN_FEE_REQUIRED).equalsIgnoreCase(YES);
-    }
-    
-    public Boolean ownershipFeeCollectionRequired() {
-        return getAppconfigValueByKeyName(OWNERSHIP_FEE_REQUIRED).equalsIgnoreCase(YES);
-    }
-
 }

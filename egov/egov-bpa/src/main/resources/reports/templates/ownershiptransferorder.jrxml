@@ -33,7 +33,7 @@
 	<parameter name="permitConditions" class="java.lang.String"/>
 	<parameter name="additionalNotes" class="java.lang.String"/>
 	<parameter name="qrCode" class="java.io.File"/>
-	<parameter name="permitFeeDetails" class="java.util.List"/>
+	<parameter name="ownershipFeeDetails" class="java.util.List"/>
 	<parameter name="logoPath" class="java.io.InputStream"/>
 	<parameter name="permitOrderTitle" class="java.lang.String"/>
 	<parameter name="applicationNumber" class="java.lang.String"/>
@@ -59,7 +59,7 @@
 	<parameter name="dcrReport" class="java.io.ByteArrayInputStream"/>
 	<parameter name="cityNameLocal" class="java.lang.String"/>
 	<parameter name="nocDetails" class="java.util.Collection"/>
-	<parameter name="renewalNumber" class="java.lang.String"/>
+	<parameter name="ownershipNumber" class="java.lang.String"/>
 	<parameter name="expiryDate" class="java.lang.String"/>
 	<field name="parent" class="org.egov.bpa.transaction.entity.BpaApplication"/>
 	<variable name="SUB_REPORT_ROW_CNT" class="java.lang.Integer"/>
@@ -186,14 +186,14 @@
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Renewal No :]]></text>
+				<text><![CDATA[Ownership No :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="121" y="27" width="219" height="20" uuid="a972fda6-35d5-4314-a4d1-a8309332ea86"/>
 				<textElement>
 					<font fontName="Arial Unicode MS" size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{renewalNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{ownershipNumber}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="33" splitType="Stretch">
@@ -202,7 +202,7 @@
 				<textElement textAlignment="Justified">
 					<font fontName="Arial Unicode MS" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Permission is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Ownership transfer is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="135" splitType="Stretch">
@@ -744,7 +744,7 @@
 		<band height="36" splitType="Prevent">
 			<subreport>
 				<reportElement x="0" y="1" width="570" height="35" isRemoveLineWhenBlank="true" uuid="d3ebd9d8-02af-4302-afb9-3d0b794e5c27">
-					<printWhenExpression><![CDATA[new Boolean($P{permitFeeDetails}.size()!= 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($P{ownershipFeeDetails}.size()!= 0)]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="occupancy">
 					<subreportParameterExpression><![CDATA[$P{occupancy}]]></subreportParameterExpression>
@@ -767,15 +767,6 @@
 				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("buildingpermitnocdetailsSubreport.jasper")]]></subreportExpression>
 			</subreport>
-		</band>
-		<band height="24">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1" y="0" width="555" height="20" uuid="5f2c41f4-29bb-4054-a9e9-285cbfe3c517"/>
-				<textElement>
-					<font fontName="Arial Unicode MS" size="10" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Permit Renewal is valid up to" + $P{expiryDate} + "."]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 	<pageFooter>

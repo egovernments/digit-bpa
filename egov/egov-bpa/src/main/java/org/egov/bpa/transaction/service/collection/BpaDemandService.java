@@ -441,5 +441,20 @@ public class BpaDemandService {
 
         return feeCrit;
     }
+    
+    public Criteria createCriteriaforOTApplicationFeeAmount(Long serviceType, final String feeType,
+            final FeeSubType feeSubType) {
+
+        final Criteria feeCrit = getCurrentSession().createCriteria(BpaFeeMapping.class, "bpaFeeMap")
+                .createAlias("bpaFeeMap.bpaFeeCommon", "bpaFeeObj").createAlias("bpaFeeMap.serviceType", "servicetypeObj");
+        feeCrit.add(Restrictions.eq("servicetypeObj.id", serviceType));
+        if (feeType != null)
+            feeCrit.add(Restrictions.ilike("bpaFeeObj.name", feeType));
+
+        feeCrit.add(Restrictions.eq("bpaFeeMap.feeSubType", feeSubType));
+        feeCrit.add(Restrictions.eq("bpaFeeMap.applicationType", FeeApplicationType.OWNERSHIP_TRANSFER));
+
+        return feeCrit;
+    }
 
 }

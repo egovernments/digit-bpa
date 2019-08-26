@@ -224,6 +224,10 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<c:set value="${bpaApplication.owner}" scope="request"  var="owner"></c:set>
 						<jsp:include page="view-applicantdetails.jsp"></jsp:include>
+						<c:if test="${not empty bpaApplication.coApplicants}">
+							<c:set value="${bpaApplication.coApplicants}" scope="request" var="coApplicants"></c:set>						
+							<jsp:include page="view-co-applicant-details.jsp"></jsp:include>							
+						</c:if>
 					</div>
                     <div class="panel panel-primary" data-collapsed="0">
 	                    <jsp:include page="../common/generic-boundary-view.jsp">

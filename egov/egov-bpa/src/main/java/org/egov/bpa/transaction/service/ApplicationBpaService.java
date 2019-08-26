@@ -264,7 +264,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     @Autowired
     private RevocationNumberGenerator revocationNumberGenerator;
     @Autowired
-    private CoApplicantService coApplicantService;
+    private PermitCoApplicantService coApplicantService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -1051,14 +1051,19 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     private List<PermitCoApplicant> buildCoApplicantDetails(final BpaApplication application) {
         List<PermitCoApplicant> coApplicants = new LinkedList<>();
+        List<PermitCoApplicant> deleteCoApplicants = new LinkedList<>();
         for (PermitCoApplicant applicant : application.getCoApplicants()) {
-            if (applicant != null) {
+        	if (applicant.getCoApplicant().getName() != null) {
                 applicant.setApplication(application);
                 coApplicants.add(applicant);
+            } else if (applicant.getId() != null) {
+                deleteCoApplicants.add(applicant);
             }
         }
         if (coApplicants.isEmpty())
             application.getCoApplicants().clear();
+        if (!deleteCoApplicants.isEmpty())
+            coApplicantService.delete(deleteCoApplicants);
         return coApplicants;
     }
 

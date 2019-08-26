@@ -52,6 +52,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -67,12 +68,14 @@ import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.OwnershipTransferConditions;
 import org.egov.bpa.transaction.entity.OwnershipTransferNotice;
 import org.egov.bpa.transaction.entity.common.NoticeCommon;
+import org.egov.bpa.transaction.entity.dto.PermitFeeHelper;
 import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.repository.OwnershipTransferNoticeRepository;
 import org.egov.bpa.transaction.service.OwnershipTransferConditionsService;
 import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -142,7 +145,8 @@ public class OwnershipTransferNoticeUtil {
             reportParams.put("permitOrderTitle", "OWNERSHIP TRANSFER ORDER");
             reportParams.put("subHeaderTitle", "Building permit ownership transfer,");
             reportParams.put("ownershipNumber", ownershipTransfer.getOwnershipNumber());
-        
+            if (!ownershipTransfer.getOwnershipFee().isEmpty())
+                reportParams.put("ownershipFeeDetails", getOwnershipFeeDetails(ownershipTransfer));
             ReportRequest reportInput = new ReportRequest(rejectionfilename, ownershipTransfer, reportParams);
             reportOutput = reportService.createReport(reportInput);
             saveOwnershipNotice(ownershipTransfer, fileName, reportOutput, null, rejectionNoticeType);
@@ -152,6 +156,19 @@ public class OwnershipTransferNoticeUtil {
             reportOutput.setReportOutputData(Files.readAllBytes(path));
         }
         return reportOutput;
+    }
+    
+    private List<PermitFeeHelper> getOwnershipFeeDetails(final OwnershipTransfer ownershipTransfer) {
+        List<PermitFeeHelper> permitFeeDetails = new ArrayList<>();
+        for (EgDemandDetails demandDetails : ownershipTransfer.getDemand().getEgDemandDetails()) {
+            if (demandDetails.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                PermitFeeHelper feeHelper = new PermitFeeHelper();
+                feeHelper.setFeeDescription(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster());
+                feeHelper.setAmount(demandDetails.getAmount());
+                permitFeeDetails.add(feeHelper);
+            }
+        }
+        return permitFeeDetails;
     }
     
     

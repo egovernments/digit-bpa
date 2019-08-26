@@ -103,6 +103,3 @@
 		</div>
 	</div>
 </div>
-<c:if test="${not empty coApplicants}">
-	<jsp:include page="view-co-applicant-details.jsp"></jsp:include>
-</c:if>

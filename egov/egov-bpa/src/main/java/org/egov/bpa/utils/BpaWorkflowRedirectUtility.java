@@ -201,7 +201,11 @@ public class BpaWorkflowRedirectUtility {
         wfBean.setAdditionalRule(ownershipTransfer.getParent().getApplicationType().getName());
         wfBean.setApproverPositionId(approvalPositionId);
         if (ownershipTransferWorkflowImpl != null)
+            if (BpaConstants.WF_OWNERSHIP_FEE_PENDING.equals(wfBean.getCurrentState())) {
             	ownershipTransferWorkflowImpl.createCommonWorkflowTransition(ownershipTransfer, wfBean);
+            } else {
+            	ownershipTransferWorkflowImpl.createCommonWorkflowTransition(ownershipTransfer, wfBean);
+            }
     }
 
 }

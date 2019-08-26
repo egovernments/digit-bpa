@@ -112,6 +112,10 @@
                     <div class="panel panel-primary" data-collapsed="0">
                     	<c:set value="${ownershipTransfer.owner}" scope="request"  var="owner"></c:set>
 						<jsp:include page="../application/view-applicantdetails.jsp"></jsp:include>
+						<c:if test="${not empty ownershipTransfer.coApplicants}">
+							<c:set value="${ownershipTransfer.coApplicants}" scope="request" var="coApplicants"></c:set>						
+							<jsp:include page="../application/view-co-applicant-details.jsp"></jsp:include>							
+						</c:if>
 					</div>
 					
 					
