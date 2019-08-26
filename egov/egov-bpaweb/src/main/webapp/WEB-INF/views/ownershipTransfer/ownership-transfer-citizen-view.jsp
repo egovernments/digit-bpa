@@ -71,16 +71,8 @@
 				   id="viewBpaApplicationForm"
 				   cssClass="form-horizontal form-groups-bordered"
 				   enctype="multipart/form-data">
-			<c:if
-					test="${isFeeCollected && ownershipTransfer.status.code eq 'Approved'}">
-				<div data-collapsed="0">
-					<div class="panel-heading">
-						<div style="color: red; font-size: 16px;" align="center">
-							<spring:message code="lbl.collect.bpaFee" />
-						</div>
-					</div>
-				</div>
-			</c:if>
+			
+			<input type="hidden" id="onlinePaymentEnable" value="${onlinePaymentEnable}">
 			<input type="hidden" id="ownershipTransferId" name="ownershipTransfer"
 				   value="${bpaApplication.id}">
 			<input type="hidden" id="isFeeCollectionPending" value="${isFeeCollected}">
@@ -142,29 +134,20 @@
 					</div>
 				</div>
 				
-				<c:if
-					test="${ownershipTransfer.admissionfeeAmount > 0}">
-					<div id="view-fee" class="tab-pane fade">
-						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="../application/view-bpa-fee-details.jsp"></jsp:include>
-						</div>
-					</div>
-				</c:if>
 				
 			</div>
-			   
-							<div align="center">
-				<form:button type="submit" id="buttonSave" class="btn btn-primary"
-					value="Save">
-					<spring:message code="lbl.save" />
-				</form:button>
-				<form:button type="submit" id="buttonSubmit" class="btn btn-primary"
-					value="Submit">
-					<spring:message code="lbl.submit" />
-				</form:button>
-				<input type="button" name="button2" id="button2" value="Close"
-					class="btn btn-default" onclick="window.close();" />
+				<div align="center">
+				<c:if
+					test="${isFeeCollectionPending && onlinePaymentEnable && ownershipTransfer.status.code eq 'Approved'} ">
+			<td><a
+				href="/bpa/application/ownership/transfer/generate-bill/${ownershipTransfer.applicationNumber}"
+				class="btn btn-primary"> <spring:message
+						code='lbl.btn.pay.fee.online' />
+			</a>&nbsp;</td>
+		</c:if>
+					<input type="button" name="button2" value="Close"	class="btn btn-default" onclick="window.close();" />
 			</div>
+			   
 		</form:form>
 	</div>
 </div>

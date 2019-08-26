@@ -68,6 +68,7 @@ import org.egov.bpa.transaction.service.OwnershipFeeCalculationService;
 import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaAppConfigUtil;
+import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
@@ -214,7 +215,7 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
         if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode()))
             return "ownership-transfer-citizen-update";
         else
-            return "ownership-transfer-view";
+            return "ownership-transfer-citizen-view";
     }
     
     @PostMapping("/ownership/transfer/update/{applicationNumber}")
@@ -262,6 +263,8 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
                 		ownershipTransfer.getStateHistory()));
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
     }
 
 }

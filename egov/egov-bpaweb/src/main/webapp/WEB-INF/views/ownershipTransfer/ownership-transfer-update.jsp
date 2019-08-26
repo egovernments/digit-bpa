@@ -71,16 +71,7 @@
 				   id="updateOwnershipApplicationForm"
 				   cssClass="form-horizontal form-groups-bordered"
 				   enctype="multipart/form-data">
-			<c:if
-					test="${isFeeCollected && ownershipTransfer.status.code eq 'Approved'}">
-				<div data-collapsed="0">
-					<div class="panel-heading">
-						<div style="color: red; font-size: 16px;" align="center">
-							<spring:message code="lbl.collect.bpaFee" />
-						</div>
-					</div>
-				</div>
-			</c:if>
+			
 			<input type="hidden" id="ownershipTransferId" name="ownershipTransfer"
 				   value="${ownershipTransfer.id}">
 			<input type="hidden" id="isFeeCollectionPending" value="${isFeeCollected}">
