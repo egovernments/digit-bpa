@@ -48,12 +48,13 @@
 package org.egov.bpa.web.controller.transaction;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_ASST_ENG_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
-
+import static org.egov.bpa.utils.BpaConstants.OWNERSHIP_ORDER_NOTICE_TYPE;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -72,7 +73,11 @@ import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.notice.impl.OwnershipTransferNoticeService;
 import org.egov.bpa.transaction.service.OwnershipTransferConditionsService;
 import org.egov.bpa.transaction.service.OwnershipTransferService;
+
+
 import org.egov.bpa.utils.BpaAppConfigUtil;
+
+import org.egov.bpa.transaction.service.messaging.ownership.OwnershipTransferSmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
 import org.egov.eis.entity.Assignment;
@@ -114,6 +119,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
     private static final String AMOUNT_RULE = "amountRule";
     private static final String MSG_APPROVE_FORWARD_REGISTRATION = "msg.approve.success";
     private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
+    private static final String PDFEXTN = ".pdf";
 
     @Autowired
     private OwnershipTransferService ownershipTransferService;
@@ -125,8 +131,11 @@ public class OwnershipTransferController extends BpaGenericApplicationController
     private CustomImplProvider specificNoticeService;
     @Autowired
     private BpaAppConfigUtil bpaAppConfigUtil;
-
-    @GetMapping("/update/{applicationNumber}")
+    @Autowired
+    private  OwnershipTransferSmsAndEmailService ownershipTransferSmsAndEmailService;
+    
+    
+   @GetMapping("/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber) {
         final OwnershipTransfer ownershipTransfer = ownershipTransferService.findByApplicationNumber(applicationNumber);
         List<OwnershipTransfer> ownershipTransfers = ownershipTransferService.findByBpaApplication(ownershipTransfer.getParent());
@@ -182,6 +191,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         	OwnershipTransferNoticeService ownershipTransferNotice = (OwnershipTransferNoticeService) specificNoticeService
                     .find(OwnershipTransferNoticeService.class, specificNoticeService.getCityDetails());
         	ReportOutput reportOutput = ownershipTransferNotice.generateNotice(ownershipres);
+        	ownershipTransferSmsAndEmailService.sendSMSAndEmail(ownershipTransfer, null,null);
             return "redirect:/application/ownership/transfer/rejectionnotice/" + ownershipTransfer.getApplicationNumber();
         } else {
             message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
@@ -195,13 +205,14 @@ public class OwnershipTransferController extends BpaGenericApplicationController
                     .find(OwnershipTransferNoticeService.class, specificNoticeService.getCityDetails());
         	ReportOutput reportOutput = ownershipTransferNotice
                     .generateOwnershipOrder(ownershipTransferService.findByApplicationNumber(applicationNumber));
+                ownershipTransferSmsAndEmailService.sendSMSAndEmail(ownershipTransfer, reportOutput,OWNERSHIP_ORDER_NOTICE_TYPE +PDFEXTN);
             return "redirect:/application/ownership/transfer/generateorder/" + ownershipres.getApplicationNumber();
         }
         if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())) {
             if (isNotBlank(wfBean.getWorkFlowAction()) && GENERATEREJECTNOTICE.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             	
             }
-        }
+        }  
        
         redirectAttributes.addFlashAttribute(MESSAGE, message);
         return "redirect:/application/ownership/transfer/success/" + ownershipTransfer.getApplicationNumber();

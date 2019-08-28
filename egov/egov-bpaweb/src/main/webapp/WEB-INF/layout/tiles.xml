@@ -1190,6 +1190,13 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-citizen-new.jsp" />
 	</definition>
+	<definition name="ownership-transfer-citizen-view"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.ownership.change.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-citizen-view.jsp" />
+	</definition>
 	<definition name="ownership-transfer-view"
 		extends="base_layout">
 		<put-attribute name="page-title"
