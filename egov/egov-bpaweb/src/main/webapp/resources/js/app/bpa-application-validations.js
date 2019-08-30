@@ -1136,22 +1136,7 @@ function resetValuesForAmenitiesOfOneDayPermit() {
     $('#serviceType,.applicationAmenity').trigger('change');
 }
 
-$('#coApplicants[0].coApplicant.emailId').blur(function() {
-	var pattern = new RegExp("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-	var email = $.trim($(this).val());
-	if (email && !pattern.test(email) && $(this).val().length > 0) {
-		var span = $(this).siblings('span');
-    	$(span).addClass('error-msg');
-    	$(span).text('Please enter valid email..!');
-        $(this).focus();
-		$(this).show();
-		$(this).val("");
-	} else {
-		var span1 = $(this).siblings('span');
-		$(span1).removeClass('error-msg');
-    	$(span1).text('');
-	}
-});
+
 
 
 

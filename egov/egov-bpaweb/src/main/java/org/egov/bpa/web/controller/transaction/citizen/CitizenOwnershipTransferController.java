@@ -210,8 +210,8 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
         	model.addAttribute("applicants",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getName());
         	model.addAttribute("applicantAddress",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getAddress());
         }
-        loadFormData(ownershipTransfer, model);
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
+        loadFormData(ownershipTransfer, model);
         if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode()))
             return "ownership-transfer-citizen-update";
         else
@@ -257,14 +257,15 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
             if (bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand())) {
                 model.addAttribute(COLLECT_FEE_VALIDATE,
                         messageSource.getMessage("msg.payfees.toprocess.appln", null, null));
+                String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+                model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
             } else
                 model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
-                		ownershipTransfer.getStateHistory()));
-        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
-        model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+               		ownershipTransfer.getStateHistory()));
+       
     }
 
 }

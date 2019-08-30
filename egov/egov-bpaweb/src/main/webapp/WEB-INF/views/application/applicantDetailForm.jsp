@@ -100,6 +100,7 @@
 				id="emailId" name="emailId" path="owner.emailId" />
 			<small class="text-info view-content"> <spring:message
 					code="lbl.email.send" /></small>
+			<br><span></span>
 			<form:errors path="owner.emailId" cssClass="add-margin error-msg" />
 		</div>
 	</div>

@@ -116,7 +116,7 @@
 								path="coApplicants[0].coApplicant.mobileNumber" /></td>
 						<td><form:input class="form-control emailId" maxlength="120"
 								id="coApplicants[0].coApplicant.emailId" path="coApplicants[0].coApplicant.emailId" />
-								<span class=""></span>
+								<span></span>
 		                   	<form:errors path="coApplicants[0].coApplicant.emailId" cssClass="error-msg" /></td>
 						<td><form:select path="coApplicants[0].coApplicant.gender"
 								id="coApplicants[0].coApplicant.gender" cssClass="form-control gender"
