@@ -325,8 +325,7 @@ public class BpaNoticeUtil {
         reportParams.put("bpademandtitle", WordUtils.capitalize(BPADEMANDNOTICETITLE));
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         String approverName = getApproverName(bpaApplication);
-        String approverDesignation = getApproverDesignation(
-                bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue());
+        String approverDesignation = getApproverDesignation(bpaApplication.getApproverPosition());
 
         String lawAct;
         if (!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0).getIsappForRegularization()
@@ -592,7 +591,7 @@ public class BpaNoticeUtil {
         qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication) == null
                 ? qrCodeValue.append(APPROVED_BY).append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append(APPROVED_BY)
-                        .append(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()))
+                        .append(getApproverDesignation(bpaApplication.getApproverPosition()))
                         .append(ONE_NEW_LINE);
         qrCodeValue = bpaApplication.getPlanPermissionDate() == null
                 ? qrCodeValue.append(DATE_OF_ISSUE_OF_PERMIT).append(N_A).append(ONE_NEW_LINE)
@@ -629,7 +628,7 @@ public class BpaNoticeUtil {
         qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc) == null
                 ? qrCodeValue.append(APPROVED_BY).append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append(APPROVED_BY)
-                        .append(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()))
+                        .append(getApproverDesignation(oc.getApproverPosition()))
                         .append(ONE_NEW_LINE);
 
         qrCodeValue = isBlank(getOcApproverName(oc))
@@ -790,60 +789,57 @@ public class BpaNoticeUtil {
         return fmt.print(permissionDate.plusYears(noOfYears.intValue()).minusDays(1));
     }
 
-    public String getApproverDesignation(final Integer amountRule) {
-        String designation = EMPTY;
-        if (amountRule >= 0 && amountRule <= 300) {
-            designation = "Assistant engineer";
-        } else if (amountRule > 300 && amountRule <= 750) {
-            designation = "Assistant executive engineer";
-        } else if (amountRule > 750 && amountRule <= 1500) {
-            designation = "Executive engineer";
-        } else if (amountRule > 1500 && amountRule <= 2500) {
-            designation = "Corporation Engineer";
-        } else if (amountRule > 2500 && amountRule <= 1000000) {
-            designation = "Secretary";
+    public String getApproverDesignation(final Position position) {
+        String designation = "Assistant engineer";
+        if (position != null) {
+            designation = position.getDeptDesig().getDesignation().getName();
         }
         return designation;
     }
 
     public String getApproverName(final BpaApplication application) {
-        String desigName = getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue());
-        StateHistory<Position> stateHistory = application.getStateHistory().stream()
-                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName()
-                        .equalsIgnoreCase(desigName))
-                .findAny().orElse(null);
-        Assignment assignment = getAssignment(stateHistory);
-        if (assignment == null) {
-            Long positionId = bpaUtils.getUserPositionIdByZone(desigName,
-                    bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
-            List<Assignment> assign = bpaWorkFlowService.getAssignmentsByPositionAndDate(positionId,
-                    application.getCreatedDate());
-            return assign.isEmpty() ? N_A : assign.get(0).getEmployee().getName();
+        if (application.getApproverUser() == null) {
+            String desigName = getApproverDesignation(application.getApproverPosition());
+            StateHistory<Position> stateHistory = application.getStateHistory().stream()
+                    .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName()
+                            .equalsIgnoreCase(desigName))
+                    .findAny().orElse(null);
+            Assignment assignment = getAssignment(stateHistory);
+            if (assignment == null) {
+                Long positionId = bpaUtils.getUserPositionIdByZone(desigName,
+                        bpaUtils.getBoundaryForWorkflow(application.getSiteDetail().get(0)).getId());
+                List<Assignment> assign = bpaWorkFlowService.getAssignmentsByPositionAndDate(positionId,
+                        application.getCreatedDate());
+                return assign.isEmpty() ? N_A : assign.get(0).getEmployee().getName();
+            } else
+                return assignment.getEmployee().getName();
         } else
-            return assignment.getEmployee().getName();
+            return application.getApproverUser().getName();
     }
 
     public String getOcApproverName(final OccupancyCertificate oc) {
-        String designation = getApproverDesignation(
-                bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue());
-        StateHistory<Position> stateHistory = oc.getStateHistory().stream()
-                .filter(history -> designation
-                        .equalsIgnoreCase(history.getOwnerPosition().getDeptDesig().getDesignation().getName()))
-                .findAny().orElse(null);
-        Position ownerPos = null;
-        Date lastModifiedDate = null;
-        if (stateHistory == null && oc.getState() != null && designation
-                .equals(oc.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())) {
-            ownerPos = oc.getState().getOwnerPosition();
-            lastModifiedDate = oc.getState().getLastModifiedDate();
-        } else if (stateHistory != null) {
-            ownerPos = stateHistory.getOwnerPosition();
-            lastModifiedDate = stateHistory.getLastModifiedDate();
-        }
-        return ownerPos == null ? N_A
-                : bpaWorkFlowService
-                        .getApproverAssignmentByDate(ownerPos, lastModifiedDate)
-                        .getEmployee().getName();
+        if (oc.getApproverUser() == null) {
+            String designation = getApproverDesignation(oc.getApproverPosition());
+            StateHistory<Position> stateHistory = oc.getStateHistory().stream()
+                    .filter(history -> designation
+                            .equalsIgnoreCase(history.getOwnerPosition().getDeptDesig().getDesignation().getName()))
+                    .findAny().orElse(null);
+            Position ownerPos = null;
+            Date lastModifiedDate = null;
+            if (stateHistory == null && oc.getState() != null && designation
+                    .equals(oc.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())) {
+                ownerPos = oc.getState().getOwnerPosition();
+                lastModifiedDate = oc.getState().getLastModifiedDate();
+            } else if (stateHistory != null) {
+                ownerPos = stateHistory.getOwnerPosition();
+                lastModifiedDate = stateHistory.getLastModifiedDate();
+            }
+            return ownerPos == null ? N_A
+                    : bpaWorkFlowService
+                            .getApproverAssignmentByDate(ownerPos, lastModifiedDate)
+                            .getEmployee().getName();
+        } else
+            return oc.getApproverUser().getName();
     }
 
     private Assignment getAssignment(StateHistory<Position> stateHistory) {
@@ -927,10 +923,10 @@ public class BpaNoticeUtil {
         List<Map<String, String>> reviewerNameAndDesignation = new LinkedList<>();
         for (StateHistory<Position> stateHistory : bpaApplication.getStateHistory()) {
             Assignment assignment = getAssignment(stateHistory);
-            if (assignment != null && !assignment.getDesignation().getName().equals(SECTION_CLERK)
-                    && !assignment.getDesignation().getName().equals("Superintendent") &&
-                    !assignment.getDesignation().getName().equals(
-                            getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()))) {
+            if (assignment != null && !assignment.getDesignation().getName().equalsIgnoreCase(SECTION_CLERK)
+                    && !assignment.getDesignation().getName().equalsIgnoreCase("Superintendent") &&
+                    !assignment.getDesignation().getName().equalsIgnoreCase(
+                            getApproverDesignation(bpaApplication.getApproverPosition()))) {
                 Map<String, String> reviewerNameAndDesignationMap = new HashMap<>();
                 reviewerNameAndDesignationMap.put("name", assignment.getEmployee().getName());
                 reviewerNameAndDesignationMap.put(DESIGNATION, assignment.getDesignation().getName());
@@ -945,10 +941,10 @@ public class BpaNoticeUtil {
         List<Map<String, String>> reviewerNameAndDesignation = new LinkedList<>();
         for (StateHistory<Position> stateHistory : oc.getStateHistory()) {
             Assignment assignment = getAssignment(stateHistory);
-            if (assignment != null && !assignment.getDesignation().getName().equals(SECTION_CLERK)
-                    && !assignment.getDesignation().getName().equals("Superintendent") &&
-                    !assignment.getDesignation().getName().equals(
-                            getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()))) {
+            if (assignment != null && !assignment.getDesignation().getName().equalsIgnoreCase(SECTION_CLERK)
+                    && !assignment.getDesignation().getName().equalsIgnoreCase("Superintendent") &&
+                    !assignment.getDesignation().getName().equalsIgnoreCase(
+                            getApproverDesignation(oc.getApproverPosition()))) {
                 Map<String, String> reviewerNameAndDesignationMap = new HashMap<>();
                 reviewerNameAndDesignationMap.put("name", assignment.getEmployee().getName());
                 reviewerNameAndDesignationMap.put(DESIGNATION, assignment.getDesignation().getName());

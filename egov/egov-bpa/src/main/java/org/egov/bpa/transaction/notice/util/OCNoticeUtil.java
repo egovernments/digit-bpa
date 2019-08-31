@@ -202,7 +202,7 @@ public class OCNoticeUtil {
         reportParams.put("supervisedBy",
                 stakeholder.getName().concat(", ").concat(stakeholder.getStakeHolderType().getName()));
         reportParams.put("approverDesignation",
-                bpaNoticeUtil.getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()));
+                bpaNoticeUtil.getApproverDesignation(oc.getApproverPosition()));
         reportParams.put("serviceType", oc.getParent().getServiceType().getDescription());
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(oc.getApplicationDate()));
         reportParams.put("applicationNumber", oc.getApplicationNumber());
@@ -372,8 +372,7 @@ public class OCNoticeUtil {
     }
 
     public String getApproverName(final OccupancyCertificate occupancyCertificate) {
-        String designation = bpaNoticeUtil.getApproverDesignation(
-                bpaWorkFlowService.getAmountRuleByServiceTypeForOc(occupancyCertificate).intValue());
+        String designation = bpaNoticeUtil.getApproverDesignation(occupancyCertificate.getApproverPosition());
         StateHistory<Position> stateHistory = occupancyCertificate.getStateHistory().stream()
                 .filter(history -> designation
                         .equalsIgnoreCase(history.getOwnerPosition().getDeptDesig().getDesignation().getName()))
@@ -414,7 +413,7 @@ public class OCNoticeUtil {
                 ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Approved by : ")
                         .append(bpaNoticeUtil
-                                .getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()))
+                                .getApproverDesignation(oc.getApproverPosition()))
                         .append(ONE_NEW_LINE);
         qrCodeValue = oc.getApprovalDate() == null
                 ? qrCodeValue.append("Date of approval of oc : ").append(N_A).append(ONE_NEW_LINE)

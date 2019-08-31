@@ -145,10 +145,10 @@ public class OccupancyCertificateService {
 
     private static final String NOC_UPDATION_IN_PROGRESS = "NOC updation in progress";
     private static final String APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION = "Application Fees for Shutter or Door conversion";
-	private static final String APPLICATION_FEES_FOR_ROOF_CONVERSION = "Application Fees for Roof conversion";
-	private static final String APPLICATION_FEES_FOR_COMPOUND_WALL = "Application Fees for compound wall";
-	private static final String APPLICATION_FEES_FOR_WELL_CONSTURCTION = "Application Fees for Well consturction";
-	
+    private static final String APPLICATION_FEES_FOR_ROOF_CONVERSION = "Application Fees for Roof conversion";
+    private static final String APPLICATION_FEES_FOR_COMPOUND_WALL = "Application Fees for compound wall";
+    private static final String APPLICATION_FEES_FOR_WELL_CONSTURCTION = "Application Fees for Well consturction";
+
     @Autowired
     private BpaUtils bpaUtils;
     @Autowired
@@ -197,11 +197,11 @@ public class OccupancyCertificateService {
     private ServiceTypeService serviceTypeService;
     @Autowired
     protected OccupancyFeeService ocFeeService;
-    
+
     public List<OccupancyCertificate> findByEdcrNumber(String edcrNumber) {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
     }
-    
+
     public List<OccupancyCertificate> findByPermitNumber(String permitNumber) {
         return occupancyCertificateRepository.findByPermitNumber(permitNumber);
     }
@@ -248,8 +248,8 @@ public class OccupancyCertificateService {
                 currentState = WF_NEW_STATE;
             }
             if (wfMatrix != null)
-                                wfBean.setApproverPositionId(bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                                                bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId()));
+                wfBean.setApproverPositionId(bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                        bpaUtils.getBoundaryForWorkflow(oc.getParent().getSiteDetail().get(0)).getId()));
             wfBean.setCurrentState(currentState);
             bpaUtils.redirectToBpaWorkFlowForOC(oc, wfBean);
 
@@ -264,47 +264,48 @@ public class OccupancyCertificateService {
         occupancyCertificateIndexService.updateOccupancyIndex(oc);
         return ocResult;
     }
-    
+
     public BigDecimal setOCAdmissionFeeAmountWithAmenities(final Long serviceType, List<ServiceType> amenityList) {
         BigDecimal admissionfeeAmount = BigDecimal.ZERO;
         String feeType;
         if (serviceType != null && occupancyCertificateUtils.isApplicationFeeCollectionRequired()) {
-        	Criteria feeCrit = bpaDemandService.createCriteriaforOCApplicationFee(serviceType, BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
-        	final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
+            Criteria feeCrit = bpaDemandService.createCriteriaforOCApplicationFee(serviceType, BpaConstants.BPA_APP_FEE,
+                    FeeSubType.APPLICATION_FEE);
+            final List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
             for (final BpaFeeMapping feeMap : bpaFeeMap)
-            	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
-            for(ServiceType serviceTyp : amenityList) {
-        	String serviceName =serviceTypeService.findById(serviceTyp.getId()).getDescription();
-		    	if(serviceName.equals(WELL))
-		    		feeType=APPLICATION_FEES_FOR_WELL_CONSTURCTION;
-		    	else if(serviceName.equals(COMPOUND_WALL))
-		    		feeType=APPLICATION_FEES_FOR_COMPOUND_WALL;
-		    	else if(serviceName.equals(ROOF_CONVERSION))
-		    		feeType=APPLICATION_FEES_FOR_ROOF_CONVERSION;
-		    	else if(serviceName.equals(SHUTTER_DOOR_CONVERSION))
-		    		feeType=APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
-		    	else
-		    		feeType=BpaConstants.BPA_APP_FEE;
-		    	
-              Criteria amenityCrit = bpaDemandService.createCriteriaforOCApplicationFee(serviceTyp.getId(), feeType, FeeSubType.APPLICATION_FEE);
-              final List<BpaFeeMapping> amenityMap = amenityCrit.list();
-              for (final BpaFeeMapping feeMap : amenityMap)
-              	admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+                admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
+            for (ServiceType serviceTyp : amenityList) {
+                String serviceName = serviceTypeService.findById(serviceTyp.getId()).getDescription();
+                if (serviceName.equals(WELL))
+                    feeType = APPLICATION_FEES_FOR_WELL_CONSTURCTION;
+                else if (serviceName.equals(COMPOUND_WALL))
+                    feeType = APPLICATION_FEES_FOR_COMPOUND_WALL;
+                else if (serviceName.equals(ROOF_CONVERSION))
+                    feeType = APPLICATION_FEES_FOR_ROOF_CONVERSION;
+                else if (serviceName.equals(SHUTTER_DOOR_CONVERSION))
+                    feeType = APPLICATION_FEES_FOR_SHUTTER_OR_DOOR_CONVERSION;
+                else
+                    feeType = BpaConstants.BPA_APP_FEE;
+
+                Criteria amenityCrit = bpaDemandService.createCriteriaforOCApplicationFee(serviceTyp.getId(), feeType,
+                        FeeSubType.APPLICATION_FEE);
+                final List<BpaFeeMapping> amenityMap = amenityCrit.list();
+                for (final BpaFeeMapping feeMap : amenityMap)
+                    admissionfeeAmount = admissionfeeAmount.add(BigDecimal.valueOf(feeMap.getAmount()));
             }
-        }
-        else
+        } else
             admissionfeeAmount = BigDecimal.ZERO;
-        
+
         return admissionfeeAmount;
-        
-        
-        
+
     }
 
     @Transactional
     public OccupancyCertificate update(final OccupancyCertificate oc, final WorkflowBean wfBean) {
         if (WF_APPROVE_BUTTON.equals(wfBean.getWorkFlowAction())) {
             oc.setApprovalDate(new Date());
+            oc.setApproverPosition(oc.getState().getOwnerPosition());
+            oc.setApproverUser(oc.getState().getOwnerUser());
 
             /*
              * TODO: To be configurable, Need to generate new number or permit application plan permission number to be used as
@@ -325,7 +326,7 @@ public class OccupancyCertificateService {
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(oc.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(oc.getState().getValue())) {
-        	String feeCalculationMode = bpaUtils.getOCFeeCalculationMode();
+            String feeCalculationMode = bpaUtils.getOCFeeCalculationMode();
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
                     feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 OccupancyFee ocFee = new OccupancyFee();
@@ -592,7 +593,6 @@ public class OccupancyCertificateService {
             }
         }
     }
-    
 
     private OccupancyFee getOCFee(final OccupancyCertificate oc) {
         OccupancyFee ocFee = null;
@@ -616,9 +616,9 @@ public class OccupancyCertificateService {
         OccupancyFee ocFee = getOCFee(oc);
 
         if (ocFee.getApplicationFee().getApplicationFeeDetail().isEmpty()) {
-        	OccupancyCertificateFeeService ocFeeCalculationService = (OccupancyCertificateFeeService) specificNoticeService
+            OccupancyCertificateFeeService ocFeeCalculationService = (OccupancyCertificateFeeService) specificNoticeService
                     .find(OccupancyCertificateFeeService.class, specificNoticeService.getCityDetails());
-        	ocFeeCalculationService.calculateOCFees(oc, ocFee);
+            ocFeeCalculationService.calculateOCFees(oc, ocFee);
         }
 
         return ocFee;

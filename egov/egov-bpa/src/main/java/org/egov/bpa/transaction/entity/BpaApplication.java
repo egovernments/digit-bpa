@@ -87,6 +87,7 @@ import org.egov.common.entity.bpa.Occupancy;
 import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -142,6 +143,12 @@ public class BpaApplication extends StateAware<Position> {
     private String planPermissionNumber;
     @Temporal(value = TemporalType.DATE)
     private Date planPermissionDate;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "approverPosition")
+    private Position approverPosition;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "approverUser")
+    private User approverUser;
     @Length(min = 1, max = 128)
     private String oldApplicationNumber;
     @Length(min = 1, max = 128)
@@ -401,6 +408,22 @@ public class BpaApplication extends StateAware<Position> {
 
     public void setPlanPermissionDate(final Date planPermissionDate) {
         this.planPermissionDate = planPermissionDate;
+    }
+
+    public Position getApproverPosition() {
+        return approverPosition;
+    }
+
+    public void setApproverPosition(Position approverPosition) {
+        this.approverPosition = approverPosition;
+    }
+
+    public User getApproverUser() {
+        return approverUser;
+    }
+
+    public void setApproverUser(User approverUser) {
+        this.approverUser = approverUser;
     }
 
     public String getOldApplicationNumber() {

@@ -443,7 +443,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     @Transactional
     public void saveAndFlushApplication(final BpaApplication application, String workFlowAction) {
-        
+
         if (!application.getBuildingSubUsages().isEmpty())
             for (BuildingSubUsage subUsage : application.getBuildingSubUsages())
                 for (BuildingSubUsageDetails subUsageDetails : subUsage.getSubUsageDetails()) {
@@ -592,6 +592,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
                 application.setPlanPermissionDate(new Date());
             }
+            application.setApproverPosition(application.getState().getOwnerPosition());
+            application.setApproverUser(
+                    application.getState().getOwnerUser() == null ? securityUtils.getCurrentUser()
+                            : application.getState().getOwnerUser());
             PermitApplicationNoticesFormat bpaNoticeFeature = (PermitApplicationNoticesFormat) specificNoticeService.find(
                     DemandDetailsFormatImpl.class,
                     specificNoticeService.getCityDetails());
@@ -1053,7 +1057,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         List<PermitCoApplicant> coApplicants = new LinkedList<>();
         List<PermitCoApplicant> deleteCoApplicants = new LinkedList<>();
         for (PermitCoApplicant applicant : application.getCoApplicants()) {
-        	if (applicant.getCoApplicant().getName() != null) {
+            if (applicant.getCoApplicant().getName() != null) {
                 applicant.setApplication(application);
                 coApplicants.add(applicant);
             } else if (applicant.getId() != null) {
@@ -1066,7 +1070,6 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             coApplicantService.delete(deleteCoApplicants);
         return coApplicants;
     }
-
 
     @Transactional
     public void saveBpaApplication(BpaApplication bpaApp) {
@@ -1149,7 +1152,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         Optional<Occupancy> occ = occupancies.stream().filter(o -> o.getCode().equalsIgnoreCase(occupancy)).findAny();
         return occ.isPresent();
     }
-    
+
     /**
      * @param bpaApplication
      * @return citizen

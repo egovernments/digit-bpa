@@ -34,7 +34,6 @@ import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.notice.util.BpaNoticeUtil;
-import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -95,9 +94,6 @@ public class PdfQrCodeAppendService {
 
     @Autowired
     private BpaUtils bpautils;
-
-    @Autowired
-    private BpaWorkFlowService bpaWorkFlowService;
 
     @Autowired
     private CityService cityService;
@@ -229,7 +225,7 @@ public class PdfQrCodeAppendService {
 
         String approverName = bpaNoticeUtil.getApproverName(application).toUpperCase() + "("
                 + bpaNoticeUtil
-                        .getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())
+                        .getApproverDesignation(application.getApproverPosition())
                         .toUpperCase()
                 + ")";
         Phrase phrase7 = new Phrase(approverName, font);
@@ -355,7 +351,7 @@ public class PdfQrCodeAppendService {
 
             String approverName = bpaNoticeUtil.getApproverName(application) + "("
                     + bpaNoticeUtil
-                            .getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())
+                            .getApproverDesignation(application.getApproverPosition())
 
                     + ")";
             Phrase phrase7 = new Phrase(approverName, font1);
@@ -519,7 +515,7 @@ public class PdfQrCodeAppendService {
             ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase6, x1, y - 75, 0);
 
             String approverName = bpaNoticeUtil.getOcApproverName(oc) + "(" + bpaNoticeUtil
-                    .getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceTypeForOc(oc).intValue()) + ")";
+                    .getApproverDesignation(oc.getApproverPosition()) + ")";
             Phrase phrase7 = new Phrase(approverName, font1);
             x1 = x + (140 - (approverName.length() / 2f));
             ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, phrase7, x1, y - 90, 0);

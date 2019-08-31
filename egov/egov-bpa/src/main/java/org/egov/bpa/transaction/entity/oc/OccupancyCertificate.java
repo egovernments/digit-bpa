@@ -77,6 +77,7 @@ import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
@@ -114,6 +115,14 @@ public class OccupancyCertificate extends StateAware<Position> {
 
     @Temporal(value = TemporalType.DATE)
     private Date approvalDate;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "approverPosition")
+    private Position approverPosition;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "approverUser")
+    private User approverUser;
 
     @Enumerated(EnumType.STRING)
     private Source source;
@@ -594,6 +603,22 @@ public class OccupancyCertificate extends StateAware<Position> {
 
     public void setApprovalDate(Date approvalDate) {
         this.approvalDate = approvalDate;
+    }
+
+    public Position getApproverPosition() {
+        return approverPosition;
+    }
+
+    public void setApproverPosition(Position approverPosition) {
+        this.approverPosition = approverPosition;
+    }
+
+    public User getApproverUser() {
+        return approverUser;
+    }
+
+    public void setApproverUser(User approverUser) {
+        this.approverUser = approverUser;
     }
 
     public void addNotice(OCNotice ocNotice) {

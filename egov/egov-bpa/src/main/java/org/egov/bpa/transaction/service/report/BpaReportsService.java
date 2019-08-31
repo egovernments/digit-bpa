@@ -49,15 +49,15 @@ import static org.egov.bpa.utils.BpaConstants.BPA_ADDITIONAL_FEE;
 import static org.egov.bpa.utils.BpaConstants.BPA_OTHER_FEE;
 import static org.egov.bpa.utils.BpaConstants.CHANGE_IN_OCCUPANCY;
 import static org.egov.bpa.utils.BpaConstants.DEMOLITION;
+import static org.egov.bpa.utils.BpaConstants.DEV_PERMIT_FEE;
 import static org.egov.bpa.utils.BpaConstants.DIVISION_OF_PLOT;
+import static org.egov.bpa.utils.BpaConstants.LABOURCESS;
 import static org.egov.bpa.utils.BpaConstants.NEW_CONSTRUCTION;
 import static org.egov.bpa.utils.BpaConstants.PERM_FOR_HUT_OR_SHED;
 import static org.egov.bpa.utils.BpaConstants.POLE_STRUCTURES;
 import static org.egov.bpa.utils.BpaConstants.RECONSTRUCTION;
 import static org.egov.bpa.utils.BpaConstants.SHELTERFUND;
 import static org.egov.bpa.utils.BpaConstants.TOWER_CONSTRUCTION;
-import static org.egov.bpa.utils.BpaConstants.DEV_PERMIT_FEE;
-import static org.egov.bpa.utils.BpaConstants.LABOURCESS;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -288,9 +288,6 @@ public class BpaReportsService {
             final List<Long> userIds) {
         Set<BpaRegisterReportHelper> bpaRegisterReportHelperList = new HashSet<>();
         for (BpaApplication application : bpaApplications) {
-            /*
-             * for(Long userId : userIds) { if (checkUserInWorkFlow(application, userId)) {
-             */
             BpaRegisterReportHelper bpaRegister = new BpaRegisterReportHelper();
             bpaRegister.setId(application.getId());
             bpaRegister.setApplicationNumber(application.getApplicationNumber());
@@ -346,13 +343,13 @@ public class BpaReportsService {
                         additionalFee = appFeeDtl.getAmount();
                     else if (appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getDescription().equalsIgnoreCase(BPA_OTHER_FEE))
                         otherFee = appFeeDtl.getAmount();
-                    else if(SHELTERFUND.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())){
-                    	shelterFund = appFeeDtl.getAmount();
-                    }else if(LABOURCESS.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())){
-                    	labourcess = appFeeDtl.getAmount();
-                    }else if(DEV_PERMIT_FEE.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())){
-                    	developmentPermitFees = appFeeDtl.getAmount();
-                    }else {
+                    else if (SHELTERFUND.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())) {
+                        shelterFund = appFeeDtl.getAmount();
+                    } else if (LABOURCESS.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())) {
+                        labourcess = appFeeDtl.getAmount();
+                    } else if (DEV_PERMIT_FEE.equals(appFeeDtl.getBpaFeeMapping().getBpaFeeCommon().getName())) {
+                        developmentPermitFees = appFeeDtl.getAmount();
+                    } else {
                         permitFee = permitFee.add(appFeeDtl.getAmount());
                     }
                 }
@@ -413,12 +410,9 @@ public class BpaReportsService {
             } else {
                 bpaRegister.setFinalApprovalDate(application.getPlanPermissionDate());
                 bpaRegister.setApprvd_rejected_by(bpaNoticeUtil.getApproverName(application).concat(" :: ").concat(bpaNoticeUtil
-                        .getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())));
+                        .getApproverDesignation(application.getApproverPosition())));
             }
             bpaRegisterReportHelperList.add(bpaRegister);
-            /*
-             * } }
-             */
         }
         return bpaRegisterReportHelperList;
     }
