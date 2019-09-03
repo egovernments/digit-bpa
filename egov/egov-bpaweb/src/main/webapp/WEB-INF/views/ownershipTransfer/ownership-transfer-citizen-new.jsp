@@ -88,7 +88,7 @@
 			</div>			
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.edcr.number" /> <span class="mandatory"></span></label>
+								code="lbl.plan.permission.no" /> <span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input class="form-control patternvalidation resetValues"
 								maxlength="20" id="planPermissionNumber"
