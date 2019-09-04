@@ -101,14 +101,14 @@
 				<spring:message code="lbl.applicant.name" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${applicants}"
+				<c:out value="${ownershipTransfer.parent.owner.name}"
 					default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.owner.address" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">				
-				<c:out value="${applicantAddress}"
+				<c:out value="${ownershipTransfer.parent.owner.address}"
 					default="N/A"></c:out>
 			</div>
 		
