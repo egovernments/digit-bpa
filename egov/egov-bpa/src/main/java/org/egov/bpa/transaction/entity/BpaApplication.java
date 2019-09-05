@@ -303,6 +303,7 @@ public class BpaApplication extends StateAware<Position> {
     private transient String adminBoundary;
     private transient String revenueBoundary;
     private transient String locationBoundary;
+    private transient String currentStatus;
 
     @Override
     public Long getId() {
@@ -314,7 +315,16 @@ public class BpaApplication extends StateAware<Position> {
         this.id = id;
     }
 
-    @Override
+    
+	public String getCurrentStatus() {
+			return currentStatus;
+	}
+
+	public void setCurrentStatus(String currentStatus) {
+		this.currentStatus = currentStatus;
+	}
+
+	@Override
     public String myLinkId() {
         return applicationNumber == null ? planPermissionNumber : applicationNumber;
     }

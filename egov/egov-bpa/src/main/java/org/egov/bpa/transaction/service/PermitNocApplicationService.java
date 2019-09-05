@@ -228,11 +228,13 @@ public class PermitNocApplicationService {
         EdcrApplicationInfo edcrPlanInfo = drcRestService.getDcrPlanInfo(edcrNumber,
                 ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
         Map<String, String> nocTypeMap = new HashMap<>();
+        if(edcrPlanInfo.getPlan()!=null){
         nocTypeMap.put(BpaConstants.FIRENOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocFireDept());
         nocTypeMap.put(BpaConstants.AIRPORTNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocNearAirport());
         nocTypeMap.put(BpaConstants.NMANOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocNearMonument());
         nocTypeMap.put(BpaConstants.ENVNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocStateEnvImpact());
         nocTypeMap.put(BpaConstants.IRRNOCTYPE, edcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept());
+        }
         return nocTypeMap;
     }
 }

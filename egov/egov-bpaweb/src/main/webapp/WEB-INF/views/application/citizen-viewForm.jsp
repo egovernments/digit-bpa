@@ -62,6 +62,8 @@
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<form:hidden path="" id="wfstateDesc"
 				value="${bpaApplication.state.value}" />
+			<input type="hidden" id="currentStatus" name="currentStatus"
+				value="${bpaApplication.status.code}" />	 
 			<input type="hidden" id="appointmentDateRes"
 				value="${appointmentDateRes}" />
 			<input type="hidden" id="appointmentTimeRes"

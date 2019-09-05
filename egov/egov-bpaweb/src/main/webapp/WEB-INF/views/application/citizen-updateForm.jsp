@@ -68,6 +68,8 @@
 				value="${citizenDisclaimerAccepted}" />
 			<input type="hidden" id="isCitizen" name="isCitizen"
 				value="${isCitizen}" />
+			<input type="hidden" id="currentStatus" name="currentStatus"
+				value="${bpaApplication.status.code}" />	 
 			<input type="hidden" id="invalidStakeholder"
 				name="invalidStakeholder" value="${invalidStakeholder}" />
 			<input type="hidden" id="noJAORSAMessage" name="noJAORSAMessage"

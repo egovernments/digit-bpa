@@ -403,6 +403,14 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadViewdata(model, bpaApplication);
         }
+		if (bpaApplication.getStatus() != null  
+				&& !bpaApplication.getStatus().getCode().equalsIgnoreCase(bpaApplication.getCurrentStatus())) {
+			 model.addAttribute(MESSAGE,
+	                    messageSource.getMessage("msg.appln.invalid.request",
+	                            new String[] { ApplicationThreadLocals.getMunicipalityName() }, null));
+			return COMMON_ERROR;
+
+		}
         if (bpaApplication.getIsOneDayPermitApplication())
             bpaApplication.setApplicationType(
                     applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase()));
@@ -423,6 +431,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadViewdata(model, bpaApplication);
         }
+        
+       
         if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadViewdata(model, bpaApplication);
