@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingpermit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="576a1e58-ecb3-4d56-971a-5d1fe019af29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -66,7 +66,7 @@
 	<background>
 		<band height="802" splitType="Stretch">
 			<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
-				<reportElement x="10" y="50" width="534" height="570" uuid="696844a6-436b-49c9-97f6-ac7120c893b8">
+				<reportElement x="10" y="62" width="534" height="570" uuid="696844a6-436b-49c9-97f6-ac7120c893b8">
 					<printWhenExpression><![CDATA[$P{isBusinessUser}]]></printWhenExpression>
 				</reportElement>
 				<imageExpression><![CDATA[$P{duplicateWatermarkPath}]]></imageExpression>
@@ -76,7 +76,7 @@
 	<title>
 		<band height="127" splitType="Stretch">
 			<textField>
-				<reportElement x="88" y="64" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="121" y="64" width="319" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Unicode MS" size="11" isBold="true" isUnderline="false"/>
 				</textElement>
@@ -104,7 +104,7 @@
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="88" y="87" width="370" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
+				<reportElement x="121" y="87" width="282" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
 					<printWhenExpression><![CDATA[!$P{subHeaderTitle}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -122,7 +122,7 @@
 				<textFieldExpression><![CDATA[$P{subheader}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="121" y="40" width="332" height="24" uuid="9e5d7615-d58c-4141-8b84-edd1ff4281fb"/>
+				<reportElement x="140" y="40" width="290" height="24" uuid="9e5d7615-d58c-4141-8b84-edd1ff4281fb"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Unicode MS" size="12" isBold="true"/>
 				</textElement>
@@ -202,7 +202,8 @@
 				<textElement textAlignment="Justified">
 					<font fontName="Arial Unicode MS" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Ownership transfer is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Ownership transfer from " + $F{parent}.getApplicantName() + " to " + $P{applicantName}+
+"Ownership transfer is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="135" splitType="Stretch">
@@ -749,7 +750,7 @@
 				<subreportParameter name="occupancy">
 					<subreportParameterExpression><![CDATA[$P{occupancy}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{permitFeeDetails},false)]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{ownershipFeeDetails},false)]]></dataSourceExpression>
 				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("bpapermitfeedetails.jasper")]]></subreportExpression>
 			</subreport>
@@ -758,7 +759,7 @@
 		<band height="36">
 			<subreport>
 				<reportElement x="0" y="1" width="570" height="35" isRemoveLineWhenBlank="true" uuid="c010f16c-fa23-4f24-84de-712ff424e48e">
-					<printWhenExpression><![CDATA[new Boolean($P{permitFeeDetails}.size()!= 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($P{ownershipFeeDetails}.size()!= 0)]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="occupancy">
 					<subreportParameterExpression><![CDATA[$P{occupancy}]]></subreportParameterExpression>
@@ -767,6 +768,48 @@
 				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("buildingpermitnocdetailsSubreport.jasper")]]></subreportExpression>
 			</subreport>
+		</band>
+		<band height="19"/>
+		<band height="175">
+			<textField>
+				<reportElement x="2" y="10" width="170" height="19" uuid="115ce935-d92d-401a-b102-1944971cf195"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date : " + $P{currentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="30" width="170" height="20" uuid="0e2e51c6-8054-4657-8cdc-ee29fc996c70"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Place : " + $P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="41" width="553" height="20" uuid="94d88554-da9e-4a14-a02e-85a592abbdb2"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{certificateValidity}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="252" y="22" width="303" height="22" uuid="97fd0452-f3ac-4880-944b-39f310574a78"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Approved By " + $P{approverName} + ", " + $P{designation}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="81" width="59" height="14" uuid="1a05642a-ce36-450f-b7ed-92f86e4185aa"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Note : "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1" y="96" width="552" height="63" uuid="eb38379e-7360-4108-9fc6-b98ac5d1cd17"/>
+				<textFieldExpression><![CDATA[$P{additionalNotes}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
