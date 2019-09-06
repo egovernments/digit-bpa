@@ -61,6 +61,8 @@
 	<parameter name="nocDetails" class="java.util.Collection"/>
 	<parameter name="ownershipNumber" class="java.lang.String"/>
 	<parameter name="expiryDate" class="java.lang.String"/>
+	<parameter name="newownerName" class="java.lang.String"/>
+	<parameter name="feeTitle" class="java.lang.String"/>
 	<field name="parent" class="org.egov.bpa.transaction.entity.BpaApplication"/>
 	<variable name="SUB_REPORT_ROW_CNT" class="java.lang.Integer"/>
 	<background>
@@ -74,7 +76,7 @@
 		</band>
 	</background>
 	<title>
-		<band height="127" splitType="Stretch">
+		<band height="141" splitType="Stretch">
 			<textField>
 				<reportElement x="121" y="64" width="319" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
@@ -104,7 +106,7 @@
 				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="121" y="87" width="282" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
+				<reportElement x="130" y="87" width="300" height="20" uuid="59b6cc21-112d-42da-b7d2-4a8343e79723">
 					<printWhenExpression><![CDATA[!$P{subHeaderTitle}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -113,7 +115,7 @@
 				<textFieldExpression><![CDATA[$P{subHeaderTitle}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="1" y="107" width="553" height="20" uuid="16cedec8-4f3e-47e8-8ce1-eb3792a04df6">
+				<reportElement stretchType="RelativeToBandHeight" x="4" y="110" width="553" height="20" uuid="16cedec8-4f3e-47e8-8ce1-eb3792a04df6">
 					<printWhenExpression><![CDATA[!$P{subheader}.isEmpty()]]></printWhenExpression>
 				</reportElement>
 				<textElement>
@@ -134,79 +136,85 @@
 		<band height="113">
 			<staticText>
 				<reportElement x="0" y="7" width="121" height="20" uuid="6928eb55-27ad-4983-93f8-3539c289ba12"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Plan Permission No :]]></text>
+				<text><![CDATA[Plan Permission No. :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="121" y="7" width="222" height="20" uuid="6ac37b3a-7df1-4894-b648-4ad0500e0332"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Unicode MS" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{buildingPermitNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="390" y="7" width="68" height="20" uuid="24e6ae50-2511-4e25-a525-30ef00e5c88e"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dated : ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="456" y="7" width="98" height="20" uuid="48cf6e25-d5a5-495d-a90e-b683786a64e2"/>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="48" width="555" height="20" uuid="f7a1cee0-eb1e-4bed-a424-cc28aeaf926d"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Unicode MS" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Ref :-  Application number "+ $P{applicationNumber} + " dated " + $P{applicationDate} + "."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="74" width="100" height="20" uuid="824aa1a3-3bb8-4b86-a40b-d7c59d73b964"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["From, Smt/Sri "]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToBandHeight" x="110" y="73" width="442" height="38" uuid="9b393896-3050-4a52-8c24-70b65e1469b0"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Unicode MS" size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{applicantName} + " , " + "\n" + $P{applicantAddress} + " , " + "\n" + "Mobile number : " + $P{mobileNo} + " ."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="27" width="120" height="20" uuid="c57629f7-4dad-467c-867e-9d9eddccb712"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Ownership No :]]></text>
+				<text><![CDATA[Ownership No.  :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="121" y="27" width="219" height="20" uuid="a972fda6-35d5-4314-a4d1-a8309332ea86"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Unicode MS" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ownershipNumber}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="33" splitType="Stretch">
+		<band height="52" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="3" width="555" height="30" uuid="cfd11764-e10d-43b9-9f31-2192c95e330b"/>
+				<reportElement stretchType="RelativeToBandHeight" x="-2" y="20" width="555" height="30" uuid="cfd11764-e10d-43b9-9f31-2192c95e330b"/>
 				<textElement textAlignment="Justified">
 					<font fontName="Arial Unicode MS" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Ownership transfer from " + $F{parent}.getApplicantName() + " to " + $P{applicantName}+
-"Ownership transfer is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Ownership transfer is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-2" y="0" width="551" height="20" uuid="80465ab1-664f-4464-ae77-c662c53fd061"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Ownership is transfered from " +  $P{applicantName}  + " to " +  $P{newownerName}  + "."]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="135" splitType="Stretch">
+		<band height="125" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="152" y="22" width="250" height="14" uuid="35c0eb78-58ae-4429-8398-8ab10410815e"/>
 				<box>
@@ -372,26 +380,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Nearest Building Number"]]></textFieldExpression>
 			</textField>
-		</band>
-		<band height="47" splitType="Stretch">
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="10" y="16" width="545" height="31" uuid="d6a68517-dede-4535-9d26-4f422a495005">
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-				</reportElement>
-				<textElement textAlignment="Justified">
-					<font fontName="Arial Unicode MS" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{permitConditions}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="9" y="0" width="544" height="15" uuid="aee1c70b-fa27-410a-98cc-204521be33ef">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<textElement>
-					<font size="11" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Subject to the conditions stated below:]]></text>
-			</staticText>
 		</band>
 		<band height="35">
 			<printWhenExpression><![CDATA[new Boolean($F{parent}.getExistingBuildingDetails().size()!= 0)]]></printWhenExpression>
@@ -742,9 +730,9 @@
 				<text><![CDATA[Total Area :]]></text>
 			</staticText>
 		</band>
-		<band height="36" splitType="Prevent">
+		<band height="55" splitType="Prevent">
 			<subreport>
-				<reportElement x="0" y="1" width="570" height="35" isRemoveLineWhenBlank="true" uuid="d3ebd9d8-02af-4302-afb9-3d0b794e5c27">
+				<reportElement x="0" y="21" width="570" height="33" isRemoveLineWhenBlank="true" uuid="d3ebd9d8-02af-4302-afb9-3d0b794e5c27">
 					<printWhenExpression><![CDATA[new Boolean($P{ownershipFeeDetails}.size()!= 0)]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="occupancy">
@@ -754,23 +742,17 @@
 				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("bpapermitfeedetails.jasper")]]></subreportExpression>
 			</subreport>
+			<staticText>
+				<reportElement x="8" y="0" width="456" height="20" uuid="4e4071b9-e7b8-4827-96d3-bf5e6f1ef264"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ownership transfer fee details is as follows,]]></text>
+			</staticText>
 		</band>
 		<band splitType="Prevent"/>
-		<band height="36">
-			<subreport>
-				<reportElement x="0" y="1" width="570" height="35" isRemoveLineWhenBlank="true" uuid="c010f16c-fa23-4f24-84de-712ff424e48e">
-					<printWhenExpression><![CDATA[new Boolean($P{ownershipFeeDetails}.size()!= 0)]]></printWhenExpression>
-				</reportElement>
-				<subreportParameter name="occupancy">
-					<subreportParameterExpression><![CDATA[$P{occupancy}]]></subreportParameterExpression>
-				</subreportParameter>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{nocDetails},false)]]></dataSourceExpression>
-				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("buildingpermitnocdetailsSubreport.jasper")]]></subreportExpression>
-			</subreport>
-		</band>
-		<band height="19"/>
-		<band height="175">
+		<band height="153"/>
+		<band height="166">
 			<textField>
 				<reportElement x="2" y="10" width="170" height="19" uuid="115ce935-d92d-401a-b102-1944971cf195"/>
 				<textElement>
@@ -797,7 +779,7 @@
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Approved By " + $P{approverName} + ", " + $P{designation}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Approved By " + $P{approverName} + "\n " + $P{designation}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="81" width="59" height="14" uuid="1a05642a-ce36-450f-b7ed-92f86e4185aa"/>

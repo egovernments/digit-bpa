@@ -143,8 +143,9 @@ public class OwnershipTransferNoticeUtil {
             reportParams.put("rejectionReasons", buildRejectionReasons(ownershipTransfer));
             reportParams.put("approverName", getRejector(ownershipTransfer));
             reportParams.put("permitOrderTitle", "OWNERSHIP TRANSFER ORDER");
-            reportParams.put("subHeaderTitle", "Building permit ownership transfer,");
+            reportParams.put("subHeaderTitle", "Building permit ownership transfer");
             reportParams.put("ownershipNumber", ownershipTransfer.getOwnershipNumber());
+            reportParams.put("newownerName",ownershipTransfer.getOwner().getName());
             if (!ownershipTransfer.getOwnershipFee().isEmpty())
                 reportParams.put("ownershipFeeDetails", getOwnershipFeeDetails(ownershipTransfer));
             ReportRequest reportInput = new ReportRequest(rejectionfilename, ownershipTransfer, reportParams);

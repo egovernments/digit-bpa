@@ -136,28 +136,28 @@
 		<band height="92">
 			<staticText>
 				<reportElement x="0" y="7" width="121" height="20" uuid="6928eb55-27ad-4983-93f8-3539c289ba12"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Plan Permission No :]]></text>
+				<text><![CDATA[Plan Permission No. :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="121" y="7" width="222" height="20" uuid="6ac37b3a-7df1-4894-b648-4ad0500e0332"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font fontName="Arial Unicode MS" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{buildingPermitNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="390" y="7" width="68" height="20" uuid="24e6ae50-2511-4e25-a525-30ef00e5c88e"/>
-				<textElement textAlignment="Right">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dated : ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="456" y="7" width="98" height="20" uuid="48cf6e25-d5a5-495d-a90e-b683786a64e2"/>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
@@ -193,7 +193,7 @@
 				<textFieldExpression><![CDATA["Permission is granted for " + $P{serviceTypeDesc} + " with " + $P{occupancy}+ " occupancy with Total Built up area "+ ($P{totalBuiltUpArea} != null && $P{totalBuiltUpArea} != "" ? "is " + $P{totalBuiltUpArea} +  " in" : "(not applicable)")]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="135" splitType="Stretch">
+		<band height="133" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="152" y="22" width="250" height="14" uuid="35c0eb78-58ae-4429-8398-8ab10410815e"/>
 				<box>
@@ -729,9 +729,9 @@
 				<text><![CDATA[Total Area :]]></text>
 			</staticText>
 		</band>
-		<band height="36" splitType="Prevent">
+		<band height="66" splitType="Prevent">
 			<subreport>
-				<reportElement x="0" y="1" width="570" height="35" isRemoveLineWhenBlank="true" uuid="d3ebd9d8-02af-4302-afb9-3d0b794e5c27">
+				<reportElement x="0" y="30" width="570" height="35" isRemoveLineWhenBlank="true" uuid="d3ebd9d8-02af-4302-afb9-3d0b794e5c27">
 					<printWhenExpression><![CDATA[new Boolean($P{permitFeeDetails}.size()!= 0)]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="occupancy">
@@ -741,6 +741,13 @@
 				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("bpapermitfeedetails.jasper")]]></subreportExpression>
 			</subreport>
+			<staticText>
+				<reportElement x="9" y="9" width="455" height="20" uuid="cf38efb7-a068-456b-8821-8144becd60eb"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Permit fee details is as follows,]]></text>
+			</staticText>
 		</band>
 		<band splitType="Prevent"/>
 		<band height="36">
