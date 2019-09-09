@@ -3,7 +3,7 @@ package org.egov.portal.web.controller.common;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.TenantService;
+import org.egov.portal.utils.PortalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -18,15 +18,15 @@ public class CitySelectionController {
 
     @Value("${client.id}")
     private String clientId;
-    
+
     @Autowired
-    private TenantService tenantService;
+    private PortalUtils portalUtils;
 
     @GetMapping("/city/selection-form")
     public String showNewApplicationForm(@RequestParam(name = "url") final String url, final Model model,
             final HttpServletRequest request) {
-    	
-        model.addAttribute("tenants", tenantService.findAll());
+
+        model.addAttribute("tenants", portalUtils.tenantsMap());
         model.addAttribute("city", new City());
         model.addAttribute("url", url);
 

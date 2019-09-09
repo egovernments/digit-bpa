@@ -159,9 +159,6 @@ public class PortalInbox extends AbstractAuditable {
 	private String tenantId;
 
 	@Transient
-	private String ulbName;
-	
-	@Transient
 	private String domainUrl;
 
 	@Override
@@ -336,14 +333,6 @@ public class PortalInbox extends AbstractAuditable {
 
 	public void setPendingAction(String pendingAction) {
 		this.pendingAction = pendingAction;
-	}
-
-	public String getUlbName() {
-		return ulbName;
-	}
-
-	public void setUlbName(String ulbName) {
-		this.ulbName = ulbName;
 	}
 
 	public String getDomainUrl() {
