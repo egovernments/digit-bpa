@@ -992,6 +992,6 @@ public class BpaUtils {
     
     public Boolean feeCollector() {
         List<Role> collectorRole = securityUtils.getCurrentUser().getRoles().stream().filter(str -> str.getName().contains(BpaConstants.ROLE_BILLCOLLECTOR)).collect(Collectors.toList());
-        return collectorRole.size()>0 ? true : false;
+        return collectorRole.isEmpty() ? false : true;
     }
 }

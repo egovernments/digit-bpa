@@ -375,14 +375,9 @@ public class OwnershipTransferService {
 	   return new PageImpl<>(searchResults, pageable, ownershipApplications.getTotalElements());
 	 }
 	 
-	 private String getProcessOwner(OwnershipTransfer ownershipTransfer) {
-	   String processOwner;
-	   if (ownershipTransfer.getState() != null && ownershipTransfer.getState().getOwnerPosition() != null)
-	      processOwner = workflowHistoryService
-	                    .getUserPositionByPositionAndDate(ownershipTransfer.getState().getOwnerPosition().getId(),
-	                     ownershipTransfer.getState().getLastModifiedDate()).getName();
-	   else
-	      processOwner = ownershipTransfer.getLastModifiedBy().getName();
-	   return processOwner;
+	 private String getProcessOwner(OwnershipTransfer ownershipTransfer) {	  
+	   return ownershipTransfer.getState() != null && ownershipTransfer.getState().getOwnerPosition() != null 
+			  ? workflowHistoryService.getUserPositionByPositionAndDate(ownershipTransfer.getState().getOwnerPosition().getId(), ownershipTransfer.getState().getLastModifiedDate()).getName() 
+			  : ownershipTransfer.getLastModifiedBy().getName();
     } 
 }
