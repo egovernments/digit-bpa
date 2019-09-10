@@ -48,13 +48,14 @@
 package org.egov.bpa.web.controller.transaction;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.GENERATEREJECTNOTICE;
+import static org.egov.bpa.utils.BpaConstants.OWNERSHIPSTATUS_MODULETYPE;
+import static org.egov.bpa.utils.BpaConstants.OWNERSHIP_ORDER_NOTICE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_ASST_ENG_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.OWNERSHIP_ORDER_NOTICE_TYPE;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -69,25 +70,26 @@ import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.OwnershipTransferConditions;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.common.NoticeCondition;
+import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.bpa.transaction.notice.impl.OwnershipTransferNoticeService;
 import org.egov.bpa.transaction.service.OwnershipTransferConditionsService;
 import org.egov.bpa.transaction.service.OwnershipTransferService;
-
-
-import org.egov.bpa.utils.BpaAppConfigUtil;
-
 import org.egov.bpa.transaction.service.messaging.ownership.OwnershipTransferSmsAndEmailService;
+import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.PushBpaApplicationToPortalUtil;
+import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationAdaptor;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -97,6 +99,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -120,6 +123,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
     private static final String MSG_APPROVE_FORWARD_REGISTRATION = "msg.approve.success";
     private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
     private static final String PDFEXTN = ".pdf";
+    private static final String SEARCH_BPA_APPLICATION_FORM = "searchBpaApplicationForm";
 
     @Autowired
     private OwnershipTransferService ownershipTransferService;
@@ -244,6 +248,22 @@ public class OwnershipTransferController extends BpaGenericApplicationController
                 		ownershipTransfer.getStateHistory()));
         return "ownership-transfer-view";
     }
+    
+	@GetMapping("/search")
+    public String showSearchApprovedforFee(final Model model) {
+        prepareFormData(model);
+        model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType(OWNERSHIPSTATUS_MODULETYPE));
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
+        return "search-ownership-transfer";
+    }
+
+    @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchRegisterStatusMarriageRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+        return new DataTable<>(ownershipTransferService.pagedSearch(searchBpaApplicationForm),
+                searchBpaApplicationForm.draw())
+                .toJson(SearchBpaApplicationAdaptor.class);
+    }
 
     private void buildRejectionReasons(Model model, OwnershipTransfer ownershipTransfer) {
     	if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())
@@ -303,8 +323,6 @@ public class OwnershipTransferController extends BpaGenericApplicationController
     
     private void loadFormData(final OwnershipTransfer ownershipTransfer, final Model model) {
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-        workflowContainer.setAdditionalRule(ownershipTransfer.getParent().getApplicationType().getName());        
-        workflowContainer.setPendingActions(ownershipTransfer.getState().getNextAction());
         model.addAttribute("isOwnershipApplFeeReq", "NO");
         model.addAttribute("ownershipApplFeeCollected", "NO");
         if (bpaAppConfigUtil.ownershipApplicationFeeCollectionRequired()) {
@@ -316,17 +334,8 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         }
         model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand()));
         prepareWorkflow(model, ownershipTransfer, workflowContainer);
-        buildRejectionReasons(model, ownershipTransfer);
-        model.addAttribute("stateType", ownershipTransfer.getClass().getSimpleName());
-        model.addAttribute("pendingActions", workflowContainer.getPendingActions());
-        model.addAttribute("currentState", ownershipTransfer.getCurrentState().getValue());
-        model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
-        model.addAttribute(ADDITIONALRULE, workflowContainer.getAdditionalRule());
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
         model.addAttribute("feePending", bpaUtils.checkAnyTaxIsPendingToCollect(ownershipTransfer.getDemand()));
-        model.addAttribute(APPLICATION_HISTORY,
-                workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
-                		ownershipTransfer.getStateHistory()));
         model.addAttribute("workFlowBoundary",
                 bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getParent().getSiteDetail().get(0)).getId());
         model.addAttribute("electionBoundary", ownershipTransfer.getParent().getSiteDetail().get(0).getElectionBoundary() != null
@@ -338,6 +347,19 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         model.addAttribute("revenueBoundaryName", ownershipTransfer.getParent().getSiteDetail().get(0).getAdminBoundary() != null
                 ? ownershipTransfer.getParent().getSiteDetail().get(0).getAdminBoundary().getName()
                 : "");
+        if(ownershipTransfer.getState()!=null) {
+        	workflowContainer.setAdditionalRule(ownershipTransfer.getParent().getApplicationType().getName());        
+            workflowContainer.setPendingActions(ownershipTransfer.getState().getNextAction());
+            model.addAttribute(APPLICATION_HISTORY,
+                    workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
+                    		ownershipTransfer.getStateHistory()));
+            model.addAttribute("stateType", ownershipTransfer.getClass().getSimpleName());
+            model.addAttribute("pendingActions", workflowContainer.getPendingActions());
+            model.addAttribute("currentState", ownershipTransfer.getCurrentState().getValue());
+            model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
+            model.addAttribute(ADDITIONALRULE, workflowContainer.getAdditionalRule());
+            buildRejectionReasons(model, ownershipTransfer);
+        }
         if (ownershipTransfer.getDemand() != null)
             buildReceiptDetails(ownershipTransfer.getDemand().getEgDemandDetails(), ownershipTransfer.getReceipts());
     }

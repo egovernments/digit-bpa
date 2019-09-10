@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,11 +50,8 @@ import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.repository.PermitRenewalRepository;
 import org.egov.bpa.transaction.repository.specs.SearchPermitRenewalFormSpec;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -77,8 +73,6 @@ public class SearchPermitRenewalService {
     private EntityManager entityManager;
     @Autowired
     private BpaUtils bpaUtils;
-    @Autowired
-    private SecurityUtils securityUtils;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -117,7 +111,7 @@ public class SearchPermitRenewalService {
             String pendingAction = renewal.getState() == null ? "N/A" : renewal.getState().getNextAction();
             Boolean hasCollectionPending = bpaUtils.checkAnyTaxIsPendingToCollect(renewal.getDemand());
             searchResults.add(
-                    new SearchBpaApplicationForm(renewal, getProcessOwner(renewal), pendingAction, feeCollector(), hasCollectionPending));
+                    new SearchBpaApplicationForm(renewal, getProcessOwner(renewal), pendingAction, bpaUtils.feeCollector(), hasCollectionPending));
         }
         return new PageImpl<>(searchResults, pageable, renewalApplications.getTotalElements());
     }
@@ -133,10 +127,6 @@ public class SearchPermitRenewalService {
             processOwner = renewal.getLastModifiedBy().getName();
         return processOwner;
     }
+}   
     
-    private Boolean feeCollector() {
-    List<Role> collectorRole = securityUtils.getCurrentUser().getRoles().stream().filter(str -> str.getName().contains(BpaConstants.ROLE_BILLCOLLECTOR)).collect(Collectors.toList());
-    return collectorRole.size()>0 ? true : false;
-    }
-
-}
+    

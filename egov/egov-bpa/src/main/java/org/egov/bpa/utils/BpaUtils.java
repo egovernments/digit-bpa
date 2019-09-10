@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.RandomStringGenerator;
@@ -77,6 +78,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -986,5 +988,10 @@ public class BpaUtils {
             return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
         else
             return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+    }
+    
+    public Boolean feeCollector() {
+        List<Role> collectorRole = securityUtils.getCurrentUser().getRoles().stream().filter(str -> str.getName().contains(BpaConstants.ROLE_BILLCOLLECTOR)).collect(Collectors.toList());
+        return collectorRole.size()>0 ? true : false;
     }
 }

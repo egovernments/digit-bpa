@@ -46,7 +46,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -57,8 +57,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
 import org.egov.bpa.autonumber.impl.PlanPermissionNumberGeneratorImpl;
-import org.egov.bpa.master.entity.BpaFeeMapping;
-import org.egov.bpa.master.entity.enums.FeeSubType;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.transaction.entity.Applicant;
 import org.egov.bpa.transaction.entity.ApplicationFee;
@@ -70,15 +68,19 @@ import org.egov.bpa.transaction.entity.OwnershipTransferCoApplicant;
 import org.egov.bpa.transaction.entity.OwnershipTransferDocument;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
+import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.repository.OwnershipFeeRepository;
 import org.egov.bpa.transaction.repository.OwnershipTransferRepository;
+import org.egov.bpa.transaction.repository.specs.SearchOwnershipTransferFormSpec;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.utils.BpaAppConfigUtil;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.BpaWorkflowRedirectUtility;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -86,8 +88,11 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
-import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -130,6 +135,12 @@ public class OwnershipTransferService {
     private OwnershipFeeRepository ownershipFeeRepository;
     @Autowired
     private OwnershipCoApplicantService coApplicantService;
+    @Autowired
+	private WorkflowHistoryService workflowHistoryService;
+	@Autowired
+	private OwnershipTransferRepository ownershipRepository;
+	@Autowired
+	private BpaUtils bpaUtils;
     
     @Transactional
     public OwnershipTransfer createNewApplication(final OwnershipTransfer ownershipTransfer, WorkflowBean wfBean) {
@@ -345,4 +356,33 @@ public class OwnershipTransferService {
             commonDoc.setSubmitted(true);
         }
     }
+    
+    @ReadOnly
+	 public Page<SearchBpaApplicationForm> pagedSearch(SearchBpaApplicationForm searchRequest) {
+
+	   final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
+	         searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
+
+	   Page<OwnershipTransfer> ownershipApplications = ownershipRepository
+	          .findAll(SearchOwnershipTransferFormSpec.searchSpecification(searchRequest), pageable);
+	   List<SearchBpaApplicationForm> searchResults = new ArrayList<>();
+	   for (OwnershipTransfer ownership : ownershipApplications) {
+	       String pendingAction = ownership.getState() == null ? "N/A" : ownership.getState().getNextAction();
+	       Boolean hasCollectionPending = bpaUtils.checkAnyTaxIsPendingToCollect(ownership.getDemand());
+	       searchResults.add(
+	                    new SearchBpaApplicationForm(ownership, getProcessOwner(ownership), pendingAction, bpaUtils.feeCollector(), hasCollectionPending));
+	   }
+	   return new PageImpl<>(searchResults, pageable, ownershipApplications.getTotalElements());
+	 }
+	 
+	 private String getProcessOwner(OwnershipTransfer ownershipTransfer) {
+	   String processOwner;
+	   if (ownershipTransfer.getState() != null && ownershipTransfer.getState().getOwnerPosition() != null)
+	      processOwner = workflowHistoryService
+	                    .getUserPositionByPositionAndDate(ownershipTransfer.getState().getOwnerPosition().getId(),
+	                     ownershipTransfer.getState().getLastModifiedDate()).getName();
+	   else
+	      processOwner = ownershipTransfer.getLastModifiedBy().getName();
+	   return processOwner;
+    } 
 }

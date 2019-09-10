@@ -152,7 +152,10 @@
 				</c:if>
 				
 			</div>
-			   
+			<div class="text-center">
+				<a href='javascript:void(0)' class='btn btn-default'
+					onclick='self.close()'><spring:message code='lbl.close' /></a>
+			</div>   
 		</form:form>
 	</div>
 </div>
@@ -173,7 +176,6 @@
 		</div>
 		
 		<input type="hidden" id="feeAmount" value="<spring:message code='msg.validation.feeamount'/>"/>
-		<input type="hidden" id="incrFeeamtTopOfsysCalcFee" value="<spring:message code='msg.validation.incrontopof.systemcalc.feeamount'/>"/>
 	    <input type="hidden" id="uploadMsg" value="<spring:message code='msg.upload' />" />
         <input type="hidden" id="docNameLength" value="<spring:message code='msg.validate.docname.length' />" />
 	    <input type="hidden" id="fileSizeLimit" value="<spring:message code='msg.validate.filesize.limit' />" />
@@ -181,34 +183,18 @@
 	    <input type="hidden" id="floorareaValidate" value="<spring:message code='msg.validate.floorarea' />"/>
 		<input type="hidden" id="carpetareaValidate" value="<spring:message code='msg.validate.carpetarea' />"/>
 		<input type="hidden" id="typeOfMsg" value="<spring:message code='msg.vlaidate.typeof' />"/>
-		<input type="hidden" id="permissibleAreaForFloor1" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor1' />"/>
-		<input type="hidden" id="permissibleAreaForFloor2" value="<spring:message code='msg.vlaidate.permissibleAreaForFloor2' />"/>
-		<input type="hidden" id="builtupAndCarpetDetails" value="<spring:message code='msg.tittle.builtup.carpet.details' />"/>
-		<input type="hidden" id="blockMsg" value="<spring:message code='msg.tittle.blockmsg' />"/>
-		<input type="hidden" id="buildScrutinyNumber" value="<spring:message code='msg.validate.building.scrutiny.number' />"/>
-		<input type="hidden" id="buildingPlanApplnForServiceType" value="<spring:message code='msg.validate.buildingplan.applnfor.servicetype' />"/>
-		<input type="hidden" id="buildServiceType" value="<spring:message code='msg.validate.building.servicetype' />"/>
-		<input type="hidden" id="forBuildScrutinyNumber" value="<spring:message code='msg.validate.forbuilding.scrutiny.number' />"/>
-		<input type="hidden" id="floorDetailsNotExtracted" value="<spring:message code='msg.validate.floordetsil.not.extracted' />"/>
-		<input type="hidden" id="existingBuildDetailsNotPresent" value="<spring:message code='msg.validate.existing.building.details.notpresent' />"/>
 		<input type="hidden" id="rejectAppln" value="<spring:message code='msg.confirm.reject.appln' />" />
 		<input type="hidden" id="sendBackApplnPreOfficial" value="<spring:message code='msg.confirm.sendback.previous.approved.official' />" />
 		<input type="hidden" id="approveAppln" value="<spring:message code='msg.confirm.approve.appln' />" />
 		<input type="hidden" id="forwardAppln" value="<spring:message code='msg.confirm.forward.application' />" />
-		<input type="hidden" id="generatePermitOrder" value="<spring:message code='msg.confirm.generate.permitorder' />" />
 		<input type="hidden" id="permitRequired" value="<spring:message code='msg.validate.permit.mandatory' />" />
 		<input type="hidden" id="generateRejectNotice" value="<spring:message code='msg.confirm.generate.rejection.notice' />" />
-		<input type="hidden" id="townsurvFieldInspeRequest" value="<spring:message code='msg.validate.townsurveyor.filedinspec.request' />" />
-		<input type="hidden" id="townsurvFieldInspeRequired" value="<spring:message code='msg.validate.townsurveyor.fieldinspec.required' />" />
-		<input type="hidden" id="townsurvCommentsRequired" value="<spring:message code='msg.validate.comments.reqfor.townsurveyor' />" />
 		<input type="hidden" id="rejectionReasonMandatory" value="<spring:message code='msg.validate.onerejection.reason.mandatory' />" />
 		<input type="hidden" id="rejectionCommentsRequired" value="<spring:message code='msg.validate.enter.rejection.comments' />" />
 		<input type="hidden" id="applnSendbackCommentsRequired" value="<spring:message code='msg.validate.comments.required.toappln.sentback' />" />
-		<input type="hidden" id="revokePermitCommentsRequired" value="<spring:message code='msg.validate.comments.required.revoke.permit' />" />
 		<input type="hidden" id="intiateRejectionAppln" value="<spring:message code='msg.confirm.intiate.rejection.forappln' />" />
 		<input type="hidden" id="valuesCannotEmpty" value="<spring:message code='msg.validate.values.cannot.empty' />" />
-	    <input type="hidden" id="revocationReasonMandatory" value="<spring:message code='msg.validate.onerevocation.reason.mandatory' />" />
-	    <input type="hidden" id="nocInProgress" value="<spring:message code='msg.nocinitiation.progress' />" />
+
 		
 		
 	</div>
