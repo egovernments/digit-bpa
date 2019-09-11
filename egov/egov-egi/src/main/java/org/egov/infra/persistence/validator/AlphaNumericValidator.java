@@ -49,7 +49,7 @@
 package org.egov.infra.persistence.validator;
 
 import org.egov.infra.persistence.validator.annotation.AlphaNumeric;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -59,12 +59,12 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 public class AlphaNumericValidator implements ConstraintValidator<AlphaNumeric, String> {
 
     @Override
-    public void initialize(final AlphaNumeric alphaNumeric) {
+    public void initialize(AlphaNumeric alphaNumeric) {
         // Unused
     }
 
     @Override
-    public boolean isValid(final String value, final ConstraintValidatorContext constraintValidatorCtxt) {
-        return isBlank(value) || value.trim().matches(Constants.ALPHANUMERIC_WITHSPACE);
+    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorCtxt) {
+        return isBlank(value) || value.trim().matches(ValidationRegex.ALPHANUMERIC_WITH_SPACE);
     }
 }

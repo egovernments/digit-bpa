@@ -48,9 +48,14 @@
 
 package org.egov.infra.admin.master.entity;
 
+import org.egov.infra.cache.impl.LRUCache;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -66,39 +71,84 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.admin.master.entity.Action.SEQ_ACTION;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
 
 @Entity
 @Table(name = "eg_action")
+@Unique(fields = "name", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_ACTION, sequenceName = SEQ_ACTION, allocationSize = 1)
 @Cacheable
 public class Action extends AbstractAuditable {
 
-    public static final String SEQ_ACTION = "SEQ_EG_ACTION";
+    protected static final String SEQ_ACTION = "SEQ_EG_ACTION";
     private static final long serialVersionUID = -5459067787684736822L;
+    private static final LRUCache<String, java.util.regex.Pattern> QUERY_PARAM_PATTERN_CACHE = new LRUCache<>(0, 100);
+
     @Id
     @GeneratedValue(generator = SEQ_ACTION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(unique = true)
+    @SafeHtml
+    @NotBlank
+    @Length(max = 100)
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String name;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 150)
+    @URL
     private String url;
+
+    @SafeHtml
+    @Length(max = 150)
     private String queryParams;
 
+    @SafeHtml
+    @Length(max = 50)
+    private String queryParamRegex;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_roleaction", joinColumns = @JoinColumn(name = "actionid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
+    @JoinTable(name = "eg_roleaction", joinColumns = @JoinColumn(name = "actionid"),
+            inverseJoinColumns = @JoinColumn(name = "roleid"))
     @Fetch(FetchMode.SUBSELECT)
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parentModule")
+    @NotNull
     private Module parentModule;
+
+    @Min(0)
     private Integer orderNumber;
+
+    @SafeHtml
+    @Length(max = 80)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String displayName;
+
     private boolean enabled;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 32)
+    @Pattern(regexp = ALPHABETS, message = INVALID_ALPHABETS)
     private String contextRoot;
 
     @Override
@@ -133,6 +183,14 @@ public class Action extends AbstractAuditable {
 
     public void setQueryParams(String queryParams) {
         this.queryParams = queryParams;
+    }
+
+    public String getQueryParamRegex() {
+        return queryParamRegex;
+    }
+
+    public void setQueryParamRegex(String queryParamRegex) {
+        this.queryParamRegex = queryParamRegex;
     }
 
     public Set<Role> getRoles() {
@@ -195,5 +253,26 @@ public class Action extends AbstractAuditable {
 
     public boolean hasRole(Role role) {
         return this.getRoles().contains(role);
+    }
+
+    public boolean queryParamMatches(String queryParams) {
+        return isBlank(queryParamRegex) || QUERY_PARAM_PATTERN_CACHE
+                .computeIfAbsent(queryParamRegex, val -> java.util.regex.Pattern.compile(queryParamRegex))
+                .matcher(queryParams).matches();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Action))
+            return false;
+        Action action = (Action) other;
+        return Objects.equals(getName(), action.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

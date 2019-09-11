@@ -61,9 +61,9 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.model.brs.AutoReconcileBean;
+import org.egov.services.brs.AutoReconcileService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -92,8 +92,6 @@ public class AutoReconciliationAction extends BaseFormAction {
 
    
     private static final long serialVersionUID = -4207341983597707193L;
-    private static final Logger LOGGER = Logger.getLogger(AutoReconciliationAction.class);
-   
     private List<Bankbranch> branchList = Collections.EMPTY_LIST;
     private final List<Bankaccount> accountList = Collections.EMPTY_LIST;
     private Integer accountId;
@@ -136,7 +134,7 @@ public class AutoReconciliationAction extends BaseFormAction {
     private BigDecimal notInStatementNet;
     private BigDecimal bankBookBalance;
     @Autowired
-    private AutoReconcileHelper autoReconcileHelper;
+    private AutoReconcileService autoReconcileHelper;
     
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
@@ -188,7 +186,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         {
             branchList = persistenceService
                     .findAllBy(
-                            "select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
+                            "select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=?1 and ba.bankbranch=bb and bb.isactive=true",
                             bankId);
             dropdownData.put("branchList", branchList);
 
@@ -196,7 +194,7 @@ public class AutoReconciliationAction extends BaseFormAction {
         if (accountId != null)
         {
             final List<Bankaccount> accountList = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode", branchId);
+                    "from Bankaccount ba where ba.bankbranch.id=?1 and isactive=true order by ba.chartofaccounts.glcode", branchId);
             dropdownData.put("accountList", accountList);
         }
       

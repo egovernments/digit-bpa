@@ -47,6 +47,7 @@
  */
 package org.egov.services.report;
 
+import com.kenai.jffi.Array;
 import org.apache.log4j.Logger;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
@@ -55,26 +56,26 @@ import org.egov.egf.model.Statement;
 import org.egov.egf.model.StatementEntry;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.type.CharacterType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class IncomeExpenditureScheduleService extends ScheduleService {
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
-
     private static final String IE = "IE";
     private static final String I = "I";
-    private IncomeExpenditureService incomeExpenditureService;
     private static final Logger LOGGER = Logger.getLogger(IncomeExpenditureScheduleService.class);
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+    private IncomeExpenditureService incomeExpenditureService;
 
     public void populateDataForLedgerSchedule(final Statement statement, final String majorCode) {
         if (LOGGER.isInfoEnabled())
@@ -83,9 +84,11 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         minorCodeLength = Integer.valueOf(incomeExpenditureService.getAppConfigValueFor(Constants.EGF, "coa_minorcode_length"));
         final Date fromDate = incomeExpenditureService.getFromDate(statement);
         final Date toDate = incomeExpenditureService.getToDate(statement);
-        final String filterQuery = incomeExpenditureService.getFilterQuery(statement);
-        final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where glcode=?", majorCode);
-        populateCurrentYearAmountForDetail(statement, toDate, fromDate, majorCode, coa.getType(), filterQuery);
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = incomeExpenditureService.getFilterQuery(statement).entrySet().iterator().next();
+        final String filterQuery = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        final CChartOfAccounts coa = (CChartOfAccounts) find("from CChartOfAccounts where glcode=?1", majorCode);
+        populateCurrentYearAmountForDetail(statement, toDate, fromDate, majorCode, coa.getType(), filterQuery, queryParams);
         incomeExpenditureService.removeFundsWithNoDataIE(statement);
         computeAndAddScheduleTotals(statement);
     }
@@ -96,42 +99,44 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         final Date fromDate = incomeExpenditureService.getFromDate(statement);
         final Date toDate = incomeExpenditureService.getToDate(statement);
         final List<Fund> fundList = statement.getFunds();
-        populateCurrentYearAmountForAllSchedules(statement, fundList,
-                amountPerFundQueryForAllSchedules(incomeExpenditureService.getFilterQuery(statement), toDate, fromDate, IE));
-        populatePreviousYearTotalsForAllSchedules(statement, incomeExpenditureService.getFilterQuery(statement), toDate, fromDate);
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = incomeExpenditureService.getFilterQuery(statement).entrySet().iterator().next();
+        final String filterQuery = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        populateCurrentYearAmountForAllSchedules(statement, fundList, amountPerFundQueryForAllSchedules(filterQuery, queryParams, toDate, fromDate, IE));
+        populatePreviousYearTotalsForAllSchedules(statement, filterQuery, queryParams, toDate, fromDate);
         incomeExpenditureService.removeFundsWithNoData(statement);
         incomeExpenditureService.computeCurrentYearTotals(statement, Constants.LIABILITIES, Constants.ASSETS);
         computeAndAddTotals(statement);
     }
 
     private Query populatePreviousYearTotals(final Statement statement, final Date toDate, final Date fromDate,
-            final String majorCode,
-            final String filterQuery, final String fundId) {
-        String formattedToDate = "";
+                                             final String majorCode,
+                                             final String filterQuery,final Map<String, Object> queryParams, final List<Integer> fundId) {
+        Date formattedToDate;
         final String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
         String majorCodeQuery = "";
         if (!(majorCodeQuery.equals("") || majorCodeQuery.isEmpty()))
-            majorCodeQuery = " and c.majorcode = '" + majorCode + "' ";
+            majorCodeQuery = " and c.majorcode = :majorCode ";
 
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting previous year Details");
         if ("Yearly".equalsIgnoreCase(statement.getPeriod()))
-            formattedToDate = incomeExpenditureService.getFormattedDate(fromDate);
+            formattedToDate = fromDate;
         else
-            formattedToDate = incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(toDate));
+            formattedToDate = incomeExpenditureService.getPreviousYearFor(toDate);
         final Query query = persistenceService.getSession()
-                .createSQLQuery(
-                        "select c.glcode,c.name ,sum(g.debitamount)-sum(g.creditamount),v.fundid ,c.type ,c.majorcode  from "
-                                +
-                                "generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where v.id=mis.voucherheaderid and  v.fundid in"
-                                + fundId +
-                                " and v.id=g.voucherheaderid " +
-                                " and c.id=g.glcodeid and v.status not in(" + voucherStatusToExclude + ")  AND v.voucherdate < '"
-                                + formattedToDate + "' and v.voucherdate >='" +
-                                incomeExpenditureService.getFormattedDate(incomeExpenditureService.getPreviousYearFor(fromDate))
-                                + "'" + majorCodeQuery +
-                                filterQuery
-                                + " group by c.glcode, v.fundid,c.name ,c.type ,c.majorcode order by c.glcode,v.fundid,c.type");
+                .createNativeQuery(new StringBuilder("select c.glcode,c.name ,sum(g.debitamount)-sum(g.creditamount),v.fundid ,c.type ,c.majorcode  from ")
+                        .append("generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis where v.id=mis.voucherheaderid and  v.fundid in (:fundId)")
+                        .append(" and v.id=g.voucherheaderid and c.id=g.glcodeid and v.status not in(").append(voucherStatusToExclude)
+                        .append(")  AND v.voucherdate < :voucherFromDate and v.voucherdate >= :voucherToDate").append(majorCodeQuery)
+                        .append(filterQuery)
+                        .append(" group by c.glcode, v.fundid,c.name ,c.type ,c.majorcode order by c.glcode,v.fundid,c.type").toString());
+        if (!(majorCodeQuery.equals("") || majorCodeQuery.isEmpty()))
+            query.setParameter("majorCode", majorCode, StringType.INSTANCE);
+        query.setParameterList("fundId", fundId, IntegerType.INSTANCE)
+                .setParameter("voucherFromDate", formattedToDate, DateType.INSTANCE)
+                .setParameter("voucherToDate", incomeExpenditureService.getPreviousYearFor(fromDate), DateType.INSTANCE);
+        queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(),entry.getValue()));
         if (LOGGER.isInfoEnabled())
             LOGGER.info("prevoius year to Date=" + formattedToDate + " and from Date="
                     + incomeExpenditureService.getPreviousYearFor(fromDate));
@@ -144,7 +149,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         // List<Fund> fundList = statement.getFunds();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("preparing list to load all detailcode");
-        populateAmountForAllSchedules(statement, toDate, fromDate, "('I','E')");
+        populateAmountForAllSchedules(statement, toDate, fromDate, Arrays.asList("I","E"));
         incomeExpenditureService.removeFundsWithNoDataIE(statement);
 
     }
@@ -156,9 +161,9 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         return false;
     }
 
-    @SuppressWarnings({ "unused", "unchecked" })
+    @SuppressWarnings({"unused", "unchecked"})
     private void populateAmountForAllSchedules(final Statement statement, final Date toDate, final Date fromDate,
-            final String reportType) {
+                                               final List<String> reportType) {
         boolean addrow = false;
         final BigDecimal divisor = statement.getDivisor();
         BigDecimal amount = BigDecimal.ZERO;
@@ -176,13 +181,14 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
 
         boolean addschedulerow = false;
         final String forAllCOA = "";
-        final String filterQuery = incomeExpenditureService.getFilterQuery(statement);
-        final String fundId = incomeExpenditureService.getfundList(statement.getFunds());
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = incomeExpenditureService.getFilterQuery(statement).entrySet().iterator().next();
+        final String filterQuery = queryMapEntry.getKey();
+        final Map<String, Object> queryParams = queryMapEntry.getValue();
+        final List<Integer> fundId = incomeExpenditureService.getfundList(statement.getFunds());
         majorCodeLength = Integer.valueOf(incomeExpenditureService.getAppConfigValueFor(Constants.EGF, "coa_majorcode_length"));
         final List<Object[]> previousLedgerBalance = populatePreviousYearTotals(statement, toDate, fromDate, forAllCOA,
-                filterQuery,
-                fundId).list();
-        final List<Object[]> CurrentYearLedgerDetail = getAllLedgerTransaction(forAllCOA, toDate, fromDate, fundId, filterQuery); // current
+                filterQuery, queryParams, fundId).list();
+        final List<Object[]> CurrentYearLedgerDetail = getAllLedgerTransaction(forAllCOA, toDate, fromDate, fundId, filterQuery, queryParams); // current
         // year
         // transaction
         // detail
@@ -209,15 +215,15 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         if (cur[0].toString().equals(row[0].toString())) {
                             addrow = true;
                             if (I.equalsIgnoreCase(cur[4].toString()))
-                                amount = ((BigDecimal)cur[2]).multiply(NEGATIVE);
-                            /*
-                             * if(currentYearTotalIncome.containsKey(fundnm) && currentYearTotalIncome.get(fundnm)!=null)
-                             * currentYearTotalIncome .put(fundnm,currentYearTotalIncome.get(fundnm).add(incomeExpenditureService
-                             * .divideAndRound(amount, divisor))); else
-                             * currentYearTotalIncome.put(fundnm,incomeExpenditureService.divideAndRound(amount, divisor));
-                             */
+                                amount = ((BigDecimal) cur[2]).multiply(NEGATIVE);
+                                /*
+                                 * if(currentYearTotalIncome.containsKey(fundnm) && currentYearTotalIncome.get(fundnm)!=null)
+                                 * currentYearTotalIncome .put(fundnm,currentYearTotalIncome.get(fundnm).add(incomeExpenditureService
+                                 * .divideAndRound(amount, divisor))); else
+                                 * currentYearTotalIncome.put(fundnm,incomeExpenditureService.divideAndRound(amount, divisor));
+                                 */
                             else
-                                amount = (BigDecimal)cur[2] ;
+                                amount = (BigDecimal) cur[2];
                             /*
                              * if(currentYearTotalExpense.containsKey(fundnm))
                              * currentYearTotalExpense.put(fundnm,currentYearTotalExpense
@@ -241,15 +247,15 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                                     Integer.valueOf(pre[3].toString()));
                             addrow = true;
                             if (I.equalsIgnoreCase(pre[4].toString()))
-                                preAmount = ((BigDecimal)pre[2]).multiply(NEGATIVE);
-                            /*
-                             * if(previousYearTotalIncome.containsKey(fundnm))
-                             * previousYearTotalIncome.put(fundnm,previousYearTotalIncome
-                             * .get(fundnm).add(incomeExpenditureService.divideAndRound(preAmount, divisor))); else
-                             * previousYearTotalIncome.put(fundnm,incomeExpenditureService.divideAndRound(preAmount, divisor));
-                             */
+                                preAmount = ((BigDecimal) pre[2]).multiply(NEGATIVE);
+                                /*
+                                 * if(previousYearTotalIncome.containsKey(fundnm))
+                                 * previousYearTotalIncome.put(fundnm,previousYearTotalIncome
+                                 * .get(fundnm).add(incomeExpenditureService.divideAndRound(preAmount, divisor))); else
+                                 * previousYearTotalIncome.put(fundnm,incomeExpenditureService.divideAndRound(preAmount, divisor));
+                                 */
                             else
-                                preAmount = (BigDecimal)pre[2] ;
+                                preAmount = (BigDecimal) pre[2];
                             /*
                              * if(previousYearTotalExpense.containsKey(fundnm))
                              * previousYearTotalExpense.get(fundnm).add(incomeExpenditureService.divideAndRound(preAmount,
@@ -264,7 +270,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                                                 zeroOrValue(incomeExpenditureService.divideAndRound(preAmount, divisor))));
                             else
                                 previousYearScheduleTotal
-                                .put(fundnm, incomeExpenditureService.divideAndRound(preAmount, divisor));
+                                        .put(fundnm, incomeExpenditureService.divideAndRound(preAmount, divisor));
                             ieEntry.getPreviousYearAmount().put(fundnm,
                                     incomeExpenditureService.divideAndRound(preAmount, divisor));
                         }
@@ -283,7 +289,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
 
         }
         final int lastIndex = statement.getIeEntries().size();
-        if (statement.getIE(lastIndex-1 ).getGlCode().contains("Schedule")
+        if (statement.getIE(lastIndex - 1).getGlCode().contains("Schedule")
                 && !statement.getIE(lastIndex - 1).getGlCode().contains("Schedule Total"))
             statement.getIeEntries().remove(lastIndex - 1);
     }
@@ -341,25 +347,27 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
 
     @SuppressWarnings("unused")
     private void populateCurrentYearAmountForDetail(final Statement statement, final Date toDate, final Date fromDate,
-            final String majorCode,
-            final Character type, final String filterQuery) {
+                                                    final String majorCode,
+                                                    final Character type, final String filterQuery, final Map<String, Object> queryParams) {
         boolean addrow = false;
         final BigDecimal divisor = statement.getDivisor();
         BigDecimal amount = BigDecimal.ZERO;
         BigDecimal preAmount = BigDecimal.ZERO;
-        final String fundId = incomeExpenditureService.getfundList(statement.getFunds());
+        final List<Integer> fundId = incomeExpenditureService.getfundList(statement.getFunds());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting All ledger codes ..");
         final List<Object[]> AllLedger = persistenceService.getSession()
-                .createSQLQuery(
-                        "select coa.glcode,coa.name from chartofaccounts coa where coa.majorcode='" + majorCode
-                        + "' and coa.classification=4 and coa.type='" + type + "'  order by coa.glcode").list();
+                .createNativeQuery(new StringBuilder("select coa.glcode,coa.name from chartofaccounts coa where coa.majorcode=:majorCode and coa.classification=4")
+                        .append(" and coa.type=:type order by coa.glcode").toString())
+                .setParameter("majorCode", majorCode, StringType.INSTANCE)
+                .setParameter("type", type, CharacterType.INSTANCE)
+                .list();
         final List<Object[]> previousLedgerBalance = populatePreviousYearTotals(statement, toDate, fromDate, majorCode,
-                filterQuery,
+                filterQuery,queryParams,
                 fundId).list();
         final List<Object[]> allGlCodes = getAllGlCodesForSubSchedule(majorCode, type, IE); // for schedule name AND MINOR code
 
-        final List<Object[]> CurrentYearLedgerDetail = getAllLedgerTransaction(majorCode, toDate, fromDate, fundId, filterQuery); // current
+        final List<Object[]> CurrentYearLedgerDetail = getAllLedgerTransaction(majorCode, toDate, fromDate, fundId, filterQuery, queryParams); // current
         // year
         // transaction
         // detail
@@ -373,13 +381,13 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         if (cur[0].toString().equals(row[0].toString())) {
                             addrow = true;
                             if (I.equalsIgnoreCase(type.toString()))
-                                amount = ((BigDecimal)cur[2]).multiply(NEGATIVE);
+                                amount = ((BigDecimal) cur[2]).multiply(NEGATIVE);
                             else
-                                amount =(BigDecimal)cur[2];
+                                amount = (BigDecimal) cur[2];
                             ieEntry.getNetAmount()
-                            .put(incomeExpenditureService.getFundNameForId(statement.getFunds(),
-                                    Integer.valueOf(cur[3].toString())),
-                                    incomeExpenditureService.divideAndRound(amount, divisor));
+                                    .put(incomeExpenditureService.getFundNameForId(statement.getFunds(),
+                                            Integer.valueOf(cur[3].toString())),
+                                            incomeExpenditureService.divideAndRound(amount, divisor));
 
                         }
                 if (ieContains(previousLedgerBalance, row[0].toString()))
@@ -387,7 +395,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         if (pre[0].toString().equals(row[0].toString())) {
                             addrow = true;
                             if (I.equalsIgnoreCase(type.toString()))
-                                preAmount = ((BigDecimal)pre[2]) .multiply(NEGATIVE);
+                                preAmount = ((BigDecimal) pre[2]).multiply(NEGATIVE);
                             else
                                 preAmount = (BigDecimal) pre[2];
                             ieEntry.getPreviousYearAmount().put(incomeExpenditureService.getFundNameForId(statement.getFunds(),
@@ -405,7 +413,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
     }
 
     private void populateCurrentYearAmountForAllSchedules(final Statement statement, final List<Fund> fundList,
-            final List<Object[]> currentYearAmounts) {
+                                                          final List<Object[]> currentYearAmounts) {
         final BigDecimal divisor = statement.getDivisor();
         final Map<String, Schedules> scheduleToGlCodeMap = getScheduleToGlCodeMap(IE, "('I','E')");
         for (final Entry<String, Schedules> entry : scheduleToGlCodeMap.entrySet()) {
@@ -420,7 +428,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                     if (!statement.containsBalanceSheetEntry(glCode)) {
                         final StatementEntry balanceSheetEntry = new StatementEntry();
                         if (row[0] != null && row[1] != null) {
-                            BigDecimal total = (BigDecimal)row[0];
+                            BigDecimal total = (BigDecimal) row[0];
                             if (I.equalsIgnoreCase(type))
                                 total = total.multiply(NEGATIVE);
                             balanceSheetEntry.getFundWiseAmount().put(
@@ -432,7 +440,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         statement.add(balanceSheetEntry);
                     } else
                         for (int index = 0; index < statement.size(); index++) {
-                            BigDecimal amount = incomeExpenditureService.divideAndRound((BigDecimal)row[0], divisor);
+                            BigDecimal amount = incomeExpenditureService.divideAndRound((BigDecimal) row[0], divisor);
                             if (I.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (statement.get(index).getGlCode() != null
@@ -441,21 +449,21 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                                         new Integer(row[1].toString()));
                                 if (statement.get(index).getFundWiseAmount().get(fundNameForId) == null)
                                     statement
-                                    .get(index)
-                                    .getFundWiseAmount()
-                                    .put(incomeExpenditureService.getFundNameForId(fundList,
-                                            new Integer(row[1].toString())), amount);
-                                else
-                                    statement
-                                    .get(index)
-                                    .getFundWiseAmount()
-                                    .put(incomeExpenditureService.getFundNameForId(fundList,
-                                            new Integer(row[1].toString())),
-                                            statement
                                             .get(index)
                                             .getFundWiseAmount()
-                                            .get(incomeExpenditureService.getFundNameForId(fundList, new Integer(
-                                                    row[1].toString()))).add(amount));
+                                            .put(incomeExpenditureService.getFundNameForId(fundList,
+                                                    new Integer(row[1].toString())), amount);
+                                else
+                                    statement
+                                            .get(index)
+                                            .getFundWiseAmount()
+                                            .put(incomeExpenditureService.getFundNameForId(fundList,
+                                                    new Integer(row[1].toString())),
+                                                    statement
+                                                            .get(index)
+                                                            .getFundWiseAmount()
+                                                            .get(incomeExpenditureService.getFundNameForId(fundList, new Integer(
+                                                                    row[1].toString()))).add(amount));
                             }
                         }
             }
@@ -476,16 +484,15 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         return false;
     }
 
-    private void populatePreviousYearTotalsForAllSchedules(final Statement statement, final String filterQuery,
-            final Date toDate, final Date fromDate) {
+    private void populatePreviousYearTotalsForAllSchedules(final Statement statement, final String filterQuery, final Map<String, Object> queryParams,
+                                                           final Date toDate, final Date fromDate) {
         Date formattedToDate = null;
         final BigDecimal divisor = statement.getDivisor();
         if ("Yearly".equalsIgnoreCase(statement.getPeriod()))
             formattedToDate = fromDate;
         else
             formattedToDate = incomeExpenditureService.getPreviousYearFor(toDate);
-        final List<Object[]> resultMap = amountPerFundQueryForAllSchedules(filterQuery, formattedToDate,
-                incomeExpenditureService.getPreviousYearFor(fromDate), IE);
+        final List<Object[]> resultMap = amountPerFundQueryForAllSchedules(filterQuery, queryParams, formattedToDate, incomeExpenditureService.getPreviousYearFor(fromDate), IE);
         final List<Object[]> allGlCodes = getAllGlCodesForAllSchedule(IE, "('I','E')");
         for (final Object[] obj : allGlCodes)
             for (final Object[] row : resultMap) {
@@ -496,7 +503,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
                         addRowToStatement(statement, row, glCode);
                     else
                         for (int index = 0; index < statement.size(); index++) {
-                            BigDecimal amount = incomeExpenditureService.divideAndRound(((BigDecimal)row[0] ) , divisor);
+                            BigDecimal amount = incomeExpenditureService.divideAndRound(((BigDecimal) row[0]), divisor);
                             if (I.equalsIgnoreCase(type))
                                 amount = amount.multiply(NEGATIVE);
                             if (statement.get(index).getGlCode() != null

@@ -80,7 +80,7 @@ import org.egov.pims.model.ServiceHistory;
 import org.egov.pims.utils.EisManagersUtill;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
@@ -944,7 +944,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
             String mainStr = "";
             mainStr = " select 	id  from EG_EIS_EMPLOYEEINFO ev  where ev.POS_ID = :pos and ((ev.to_Date is null and ev.from_Date <= SYSDATE ) OR (ev.from_Date <= SYSDATE AND ev.to_Date > SYSDATE))";
-            Query qry = getCurrentSession().createSQLQuery(mainStr).addScalar("id", IntegerType.INSTANCE);
+            Query qry = getCurrentSession().createNativeQuery(mainStr).addScalar("id", IntegerType.INSTANCE);
             ;
 
             if (pos != null) {
@@ -974,7 +974,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
             String mainStr = "";
             mainStr = " select 	POS_ID  from EG_EIS_EMPLOYEEINFO ev  where ev.ID = :empId and ((ev.to_Date is null and ev.from_Date <= SYSDATE ) OR (ev.from_Date <= SYSDATE AND ev.to_Date >= SYSDATE))";
-            Query qry = getCurrentSession().createSQLQuery(mainStr).addScalar("POS_ID", IntegerType.INSTANCE);
+            Query qry = getCurrentSession().createNativeQuery(mainStr).addScalar("POS_ID", IntegerType.INSTANCE);
 
             if (empId != null) {
                 qry.setInteger("empId", empId);
@@ -984,7 +984,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
                 for (Iterator iter = qry.list().iterator(); iter.hasNext();) {
                     Integer id = (Integer) iter.next();
                     if (id != null)
-                        position = EisManagersUtill.getEisCommonsService().getPositionById(id);
+                        position = EisManagersUtill.getEisCommonsService().getPositionById(Long.valueOf(id.toString()));
                 }
             }
         } catch (HibernateException he) {
@@ -1269,7 +1269,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
 
         Integer id = Integer.valueOf(0);
         try {
-            Query qry = getCurrentSession().createSQLQuery("SELECT SEQ_DIS_APP.nextval as id from dual").addScalar(
+            Query qry = getCurrentSession().createNativeQuery("SELECT SEQ_DIS_APP.nextval as id from dual").addScalar(
                     "id", IntegerType.INSTANCE);
 
             if (qry.list() != null && !qry.list().isEmpty()) {
@@ -1298,7 +1298,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
         Integer id = Integer.valueOf(0);
         try {
             Query qry = getCurrentSession()
-                    .createSQLQuery(
+                    .createNativeQuery(
                             "SELECT CODE AS id FROM EG_EMPLOYEE emp  WHERE emp.CODE =(SELECT MAX(code) FROM EG_EMPLOYEE )  FOR UPDATE ")
                     .addScalar("id", IntegerType.INSTANCE);
             if (qry.list() != null && !qry.list().isEmpty()) {
@@ -1808,7 +1808,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             } else {
                 stringbuffer.append(" and  ev.from_Date <= :givenDate AND ev.to_Date >= :givenDate");
             }
-            query = getCurrentSession().createSQLQuery(stringbuffer.toString())
+            query = getCurrentSession().createNativeQuery(stringbuffer.toString())
                     .addScalar("ASS_ID", IntegerType.INSTANCE);
 
             if (query.getQueryString().contains(":givenDate")) {
@@ -1841,7 +1841,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
     public List<Position> getPositionsForUser(User user, Date date) throws ApplicationException {
 
         List<Position> positionList = new ArrayList<Position>();
-        Integer pos = null;
+        Long pos = null;
         try {
             String mainStr = "";
 
@@ -1863,7 +1863,7 @@ public class EmployeeServiceImpl implements EmployeeServiceOld {
             if (qry.list() != null && !qry.list().isEmpty()) {
 
                 for (Iterator iter = qry.list().iterator(); iter.hasNext();) {
-                    pos = (Integer) iter.next();
+                    pos = (Long) iter.next();
                     Position position = EisManagersUtill.getEisCommonsService().getPositionById(pos);
                     positionList.add(position);
                 }

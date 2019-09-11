@@ -48,7 +48,7 @@
 package com.exilant.exility.common;
 
 import org.apache.log4j.Logger;
-import org.egov.infstr.utils.EGovConfig;
+import org.egov.utils.EGovConfig;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -169,7 +169,7 @@ public class Messages {
         } catch (final Exception e) {
             LOGGER.error("Error in getting Message" + e.getMessage());
             messageToReturn.sevirity = Messages.UNDEFINED;
-            messageToReturn.text = code + " is not a valid message code"; // what
+            messageToReturn.text = code.concat(" is not a valid message code"); // what
             // about
             // language??
             // To

@@ -110,6 +110,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private static final String EGOV_REMITTANCE_VOUCHER = "EGOV_REMITTANCE_VOUCHER";
     private static final String EGOV_REMITTANCE_DATE = "EGOV_REMITTANCE_DATE";
     private static final String PRINT_BANK_CHALLAN_TEMPLATE = "collection_remittance_bankchallan_report";
+    private static final String PRINT_CHEQUE_BANK_CHALLAN_TEMPLATE = "collection_cheque_remittance_bankchallan_report";
+    private static final String PRINT_CASH_BANK_CHALLAN_TEMPLATE = "collection_cash_remittance_bankchallan_report";
     private static final String EGOV_BANKCOLL_BANKBRANCH_ID = "EGOV_BANKCOLL_BANKBRANCH_ID";
     private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     @Autowired
@@ -158,10 +160,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final List<Boundary> boundaryList = new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
         if (employee != null)
-            for (final Jurisdiction element : employee.getJurisdictions()){
-             if(element.getBoundary()!=null)
-            	boundaryList.add(element.getBoundary());
-            }
+            for (final Jurisdiction element : employee.getJurisdictions())
+                boundaryList.add(element.getBoundary());
         addDropdownData("boundaryList", boundaryList);
         return INDEX;
     }
@@ -177,8 +177,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final Integer bounaryId = getDeptId();
 
         final StringBuilder jurValuesId = new StringBuilder();
-        if(bounaryId!=null)
-         jurValuesId.append(bounaryId);
+
+        jurValuesId.append(bounaryId);
         new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
 
@@ -186,12 +186,11 @@ public class RemittanceStatementReportAction extends ReportFormAction {
             for (final Jurisdiction element : employee.getJurisdictions()) {
                 if (jurValuesId.length() > 0)
                     jurValuesId.append(',');
-				if (element.getBoundary() != null) {
-					jurValuesId.append(element.getBoundary().getId());
-					for (final Boundary boundary : element.getBoundary().getChildren()) {
-						jurValuesId.append(',');
-						jurValuesId.append(boundary.getId());
-					}
+                jurValuesId.append(element.getBoundary().getId());
+
+                for (final Boundary boundary : element.getBoundary().getChildren()) {
+                    jurValuesId.append(',');
+                    jurValuesId.append(boundary.getId());
                 }
             }
         if (null == jurValuesId.toString() || StringUtils.isEmpty(jurValuesId.toString())
@@ -227,7 +226,44 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
+    public void buildReportParams() {
+        critParams.put(EGOV_CASH_AMOUNT, totalCashAmount);
+        critParams.put(EGOV_CHEQUE_AMOUNT, totalChequeAmount);
+        critParams.put(EGOV_BANK, bank);
+        critParams.put(EGOV_BANK_ACCOUNT, bankAccount);
+        critParams.put(EGOV_REMITTANCE_DATE, remittanceDate == null ? new Date() : remittanceDate);
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
+        bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
+        critParams.put(EGOV_REMITTANCE_VOUCHER,
+                bankRemittanceList.isEmpty() ? "" : bankRemittanceList.get(0).getVoucherNumber());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
+    }
+    @SuppressWarnings("unchecked")
+    @Action(value = "/reports/remittanceStatementReport-printChequeBankChallan")
+    public String printChequeBankChallan() {
+        buildReportParams();
+        final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
+        bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
+        collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
+        final ReportRequest reportInput = new ReportRequest(PRINT_CHEQUE_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        return REPORT;
+    }
+    @SuppressWarnings("unchecked")
+    @Action(value = "/reports/remittanceStatementReport-printCashBankChallan")
+    public String printCashBankChallan() {
+        buildReportParams();
+        final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
+        bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
+        collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
+        final ReportRequest reportInput = new ReportRequest(PRINT_CASH_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        reportId = reportViewerUtil.addReportToTempCache(reportOutput);
+        return REPORT;
+    }
 
+ 
     @Action(value = "/reports/remittanceStatementReport-reportPrintBankChallan")
     public String reportPrintBankChallan() {
         final Remittance remittanceObj = (Remittance) persistenceService
@@ -265,7 +301,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
 
     public AccountCodePurpose getAccountCodePurpose(final String purposeName) {
         final AccountCodePurpose acctCodePurposeObj = (AccountCodePurpose) getPersistenceService()
-                .find(" from AccountCodePurpose" + " where name = ? ", purposeName);
+                .find(" from AccountCodePurpose" + " where name = ?1 ", purposeName);
         return acctCodePurposeObj;
     }
 

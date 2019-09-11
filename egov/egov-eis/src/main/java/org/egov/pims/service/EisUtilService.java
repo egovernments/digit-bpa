@@ -61,7 +61,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -100,10 +100,10 @@ public class EisUtilService implements OwnerGroupService<Position> {
 
         List<Position> positionList;
         try {
-            String mainStr = "select distinct(a.position) from Assignment a where a.employee.id =?";
+            String mainStr = "select distinct(a.position) from Assignment a where a.employee.id =?1";
             Date givenDate = date == null ? new Date() : date;
 
-            mainStr += " and ((a.toDate is null and a.fromDate<= ?) or (a.fromDate <= ? and a.toDate >= ?))";
+            mainStr += " and ((a.toDate is null and a.fromDate<= ?2) or (a.fromDate <= ?3 and a.toDate >= ?4))";
             positionList = (List) persistenceService.findAllBy(mainStr, user, givenDate, givenDate, givenDate);
 
         } catch (Exception e) {
@@ -123,13 +123,13 @@ public class EisUtilService implements OwnerGroupService<Position> {
             String mainStr = "select a.position from Assignment a where a.primary=true";
 
             if (userId != null && userId != 0) {
-                mainStr += " and a.oldEmployee.userMaster.id =?";
+                mainStr += " and a.oldEmployee.userMaster.id =?1";
 
             }
 
             Date givenDate = date == null ? new Date() : date;
 
-            mainStr += " and ((a.toDate is null and a.fromDate<= ?) or (a.fromDate <= ? and a.toDate >= ?))";
+            mainStr += " and ((a.toDate is null and a.fromDate<= ?2) or (a.fromDate <= ?3 and a.toDate >= ?4))";
             position = (Position) persistenceService.find(mainStr, userId, givenDate, givenDate, givenDate);
 
         } catch (Exception e) {
@@ -138,24 +138,6 @@ public class EisUtilService implements OwnerGroupService<Position> {
 
         }
         return position;
-
-    }
-
-    public User getUserForPosition(Long positionId, Date date) {
-        User user;
-        try {
-            String mainStr = "select emp.userMaster from EmployeeView emp where emp.position.id = ?";
-
-            Date givenDate = date == null ? new Date() : date;
-
-            mainStr += " and ((emp.toDate is null and emp.fromDate<= ?) or (emp.fromDate <= ? and emp.toDate >= ?))";
-            user = (User) persistenceService.find(mainStr, positionId, givenDate, givenDate, givenDate);
-        } catch (Exception e) {
-            LOGGER.error("Exception while getting the getUserForPosition=" + e.getMessage());
-            throw new ApplicationRuntimeException(e.getMessage(), e);
-
-        }
-        return user;
 
     }
 
@@ -369,7 +351,7 @@ public class EisUtilService implements OwnerGroupService<Position> {
             qry.append(" and do.id=:doId ");
         }
         qry.append(" order by eee.name ");
-        Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+        Query query = persistenceService.getSession().createNativeQuery(qry.toString());
         query.setDate("enteredDate", assignDate);
         if (null != desigList && !desigList.isEmpty()) {
             query.setParameterList("desList", desigList);

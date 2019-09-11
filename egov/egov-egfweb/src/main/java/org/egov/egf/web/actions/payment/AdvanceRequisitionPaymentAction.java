@@ -56,10 +56,12 @@ import org.egov.commons.Fund;
 import org.egov.commons.Fundsource;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.voucher.BaseVoucherAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
@@ -67,7 +69,6 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.advance.EgAdvanceReqPayeeDetails;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
@@ -110,7 +111,9 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
     private Fund fund;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
+    @Autowired
+    private DepartmentService departmentService;
     
     @Override
     public void prepare() {
@@ -122,14 +125,14 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
         addDropdownData("userList", Collections.EMPTY_LIST);
         addDropdownData("bankList", egovCommon.getActiveBankBranchForActiveBanks());
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         loadApproverUser();
     }
 
     @Override
     public String execute() {
         if (advanceRequisition != null && advanceRequisition.getId() != null) {
-            advanceRequisition = (EgAdvanceRequisition) persistenceService.find("from EgAdvanceRequisition where id=?",
+            advanceRequisition = (EgAdvanceRequisition) persistenceService.find("from EgAdvanceRequisition where id=?1",
                     advanceRequisition.getId());
             populateFund();
         }
@@ -147,9 +150,9 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
             if (bankaccount.getId() == null || bankaccount.getId() == -1)
                 throw new ValidationException(Arrays.asList(new ValidationError("invalid.bank", "invalid.bank")));
             if (advanceRequisition != null && advanceRequisition.getId() != null)
-                advanceRequisition = (EgAdvanceRequisition) persistenceService.find("from EgAdvanceRequisition where id=?",
+                advanceRequisition = (EgAdvanceRequisition) persistenceService.find("from EgAdvanceRequisition where id=?1",
                         advanceRequisition.getId());
-            bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount.getId());
+            bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", bankaccount.getId());
             final List<HashMap<String, Object>> accountcodedetails = new ArrayList<HashMap<String, Object>>();
             final List<HashMap<String, Object>> subledgerdetails = new ArrayList<HashMap<String, Object>>();
             final HashMap<String, Object> headerdetails = new HashMap<String, Object>();
@@ -178,17 +181,17 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
             addActionMessage(getText("payment.transaction.success", new String[] { paymentheader.getVoucherheader()
                     .getVoucherNumber() }));
         } catch (final ValidationException e) {
-            LOGGER.error("ERROR" + e.getMessage(), e);
+            LOGGER.error("ERROR" , e);
             populateData();
             throw new ValidationException(e.getErrors());
         } catch (final ApplicationRuntimeException e) {
-            LOGGER.error("ERROR" + e.getMessage(), e);
+            LOGGER.error("ERROR" , e);
             populateData();
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exception", e.getMessage()));
             throw new ValidationException(errors);
         } catch (final ParseException e) {
-            LOGGER.error("ERROR" + e.getMessage(), e);
+            LOGGER.error("ERROR" , e);
             populateData();
 
         }
@@ -216,16 +219,14 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
 
     private void populateBanks() {
         if (bankaccount.getId() != null)
-            addDropdownData("bankList", persistenceService.findAllBy("from Bankbranch bb where " +
-                    "bb.isactive=true and bb.bank.isactive=true order by bb.bank.name"));
+            addDropdownData("bankList", persistenceService.findAllBy("from Bankbranch bb where bb.isactive=true and bb.bank.isactive=true order by bb.bank.name"));
     }
 
     private void populateBankAccounts() {
+        StringBuilder queryString = new StringBuilder("from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 ")
+                .append("and ba.isactive=true order by ba.chartofaccounts.glcode");
         if (bankaccount.getId() != null)
-            addDropdownData("accNumList", persistenceService.findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? " +
-                            "and ba.isactive=true order by ba.chartofaccounts.glcode", bankaccount.getBankbranch().getId(),
-                            bankaccount.getFund().getId()));
+            addDropdownData("accNumList", persistenceService.findAllBy(queryString.toString(),bankaccount.getBankbranch().getId(),bankaccount.getFund().getId()));
     }
 
     void loadApproverUser() {
@@ -237,7 +238,7 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
                     .getVoucherDate(), paymentheader);
         else
             map = voucherService.getDesgByDeptAndTypeAndVoucherDate(type, scriptName, new Date(), paymentheader);
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
         final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
         String strDesgId = "", dName = "";
         final List<Map<String, Object>> designationList = new ArrayList<Map<String, Object>>();
@@ -292,50 +293,50 @@ public class AdvanceRequisitionPaymentAction extends BaseVoucherAction {
         final EgAdvanceRequisitionMis egAdvanceReqMises = advanceRequisition.getEgAdvanceReqMises();
         if (egAdvanceReqMises != null) {
             if (egAdvanceReqMises.getFund() != null && egAdvanceReqMises.getFund().getId() != null) {
-                voucherHeader.setFundId((Fund) persistenceService.find("from Fund where id=?", egAdvanceReqMises.getFund()
+                voucherHeader.setFundId((Fund) persistenceService.find("from Fund where id=?1", egAdvanceReqMises.getFund()
                         .getId()));
                 headerdetails.put(VoucherConstant.FUNDCODE, egAdvanceReqMises.getFund().getCode());
             }
             if (egAdvanceReqMises.getEgDepartment() != null && egAdvanceReqMises.getEgDepartment().getId() != null) {
                 voucherHeader.getVouchermis().setDepartmentid(
-                        (Department) persistenceService.find("from Department where id=?", egAdvanceReqMises.getEgDepartment()
+                        (Department) persistenceService.find("from Department where id=?1", egAdvanceReqMises.getEgDepartment()
                                 .getId()));
                 headerdetails.put(VoucherConstant.DEPARTMENTCODE, egAdvanceReqMises.getEgDepartment().getCode());
             }
             if (egAdvanceReqMises.getFundsource() != null && egAdvanceReqMises.getFundsource().getId() != null) {
                 voucherHeader.getVouchermis().setFundsource(
-                        (Fundsource) persistenceService.find("from Fundsource where id=?", egAdvanceReqMises.getFundsource()
+                        (Fundsource) persistenceService.find("from Fundsource where id=?1", egAdvanceReqMises.getFundsource()
                                 .getId()));
                 headerdetails.put(VoucherConstant.FUNDSOURCECODE, egAdvanceReqMises.getFundsource().getCode());
             }
             if (egAdvanceReqMises.getScheme() != null && egAdvanceReqMises.getScheme().getId() != null) {
                 voucherHeader.getVouchermis().setSchemeid(
-                        (Scheme) persistenceService.find("from Scheme where id=?", egAdvanceReqMises.getScheme().getId()));
+                        (Scheme) persistenceService.find("from Scheme where id=?1", egAdvanceReqMises.getScheme().getId()));
                 headerdetails.put(VoucherConstant.SCHEMECODE, egAdvanceReqMises.getScheme().getCode());
             }
             if (egAdvanceReqMises.getSubScheme() != null && egAdvanceReqMises.getSubScheme().getId() != null) {
                 voucherHeader.getVouchermis().setSubschemeid(
                         (SubScheme) persistenceService
-                        .find("from SubScheme where id=?", egAdvanceReqMises.getSubScheme().getId()));
+                        .find("from SubScheme where id=?1", egAdvanceReqMises.getSubScheme().getId()));
                 headerdetails.put(VoucherConstant.SUBSCHEMECODE, egAdvanceReqMises.getSubScheme().getCode());
             }
             if (egAdvanceReqMises.getFunctionaryId() != null && egAdvanceReqMises.getFunctionaryId().getId() != null) {
                 voucherHeader.getVouchermis().setFunctionary(
-                        (Functionary) persistenceService.find("from Functionary where id=?", egAdvanceReqMises.getFunctionaryId()
+                        (Functionary) persistenceService.find("from Functionary where id=?1", egAdvanceReqMises.getFunctionaryId()
                                 .getId()));
                 headerdetails.put(VoucherConstant.FUNCTIONARYCODE, egAdvanceReqMises.getFunctionaryId().getCode());
             }
             if (egAdvanceReqMises.getFunction() != null && egAdvanceReqMises.getFunction().getId() != null) {
                 voucherHeader.getVouchermis()
                 .setFunction(
-                        (CFunction) persistenceService.find("from CFunction where id=?", egAdvanceReqMises.getFunction()
+                        (CFunction) persistenceService.find("from CFunction where id=?1", egAdvanceReqMises.getFunction()
                                 .getId()));
                 headerdetails.put(VoucherConstant.FUNCTIONCODE, egAdvanceReqMises.getFunction().getCode());
             }
             if (egAdvanceReqMises.getSubFieldId() != null && egAdvanceReqMises.getSubFieldId().getId() != null) {
                 voucherHeader.getVouchermis()
                 .setDivisionid(
-                        (Boundary) persistenceService.find("from Boundary where id=?", egAdvanceReqMises.getSubFieldId()
+                        (Boundary) persistenceService.find("from Boundary where id=?1", egAdvanceReqMises.getSubFieldId()
                                 .getId()));
                 headerdetails.put(VoucherConstant.DIVISIONID, egAdvanceReqMises.getSubFieldId().getId());
             }

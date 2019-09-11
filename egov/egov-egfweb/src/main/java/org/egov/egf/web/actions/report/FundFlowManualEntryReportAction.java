@@ -58,19 +58,19 @@ import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.Fund;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.ReportSearch;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.report.FundFlowBean;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -78,13 +78,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -122,8 +116,9 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
+
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+ private FundRepository fundRepository;
     
     @Override
     public Object getModel() {
@@ -134,9 +129,9 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
     }
@@ -179,7 +174,6 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
             LOGGER.error("Error in parsing Date ");
         }
         final Criteria critQuery = persistenceService.getSession().createCriteria(FundFlowBean.class)
-
                 .add(Restrictions.between("reportDate", startdt, enddt))
                 .add(Restrictions.ne("currentReceipt", BigDecimal.ZERO))
                 .add(Restrictions.eq("bankAccountId", BigDecimal.valueOf(reportSearch.getBankAccount().getId())))
@@ -231,7 +225,7 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
         heading.append("Manual Entry Report for ");
         if (reportSearch.getBankAccount() != null && reportSearch.getBankAccount().getId() != null
                 && reportSearch.getBankAccount().getId() != 0) {
-            reportSearch.setBankAccount((Bankaccount) getPersistenceService().find("from Bankaccount where id=?",
+            reportSearch.setBankAccount((Bankaccount) getPersistenceService().find("from Bankaccount where id=?1",
                     Integer.parseInt(reportSearch.getBankAccount().getId().toString())));
             heading.append(" Bank Name -" + reportSearch.getBankAccount().getBankbranch().getBank().getName());
             heading.append(" Account Number-" + reportSearch.getBankAccount().getAccountnumber());
@@ -249,7 +243,7 @@ public class FundFlowManualEntryReportAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

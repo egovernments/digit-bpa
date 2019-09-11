@@ -52,24 +52,35 @@
 
     <display-name>e-governments portal web</display-name>
 
-    <!-- The definition of the Root Spring Container shared by all Servlets
-        and Filters -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:config/spring/applicationContext-portalweb.xml</param-value>
     </context-param>
+
     <context-param>
         <param-name>locatorFactorySelector</param-name>
         <param-value>classpath*:config/spring/applicationContext-erp.xml</param-value>
     </context-param>
+
     <context-param>
         <param-name>parentContextKey</param-name>
         <param-value>erpApplicationContext</param-value>
     </context-param>
+
+    <context-param>
+        <param-name>defaultHtmlEscape</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <!-- Creates the Spring Container shared by all Servlets and Filters -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
+    <listener>
+        <listener-class>org.egov.infra.web.listener.MDCLoggingCorrelationIDAssigner</listener-class>
+    </listener>
+
     <filter>
         <filter-name>CacheControlFilter</filter-name>
         <filter-class>org.egov.infra.web.filter.CacheControlFilter</filter-class>
@@ -114,6 +125,11 @@
     </filter>
 
     <filter>
+        <filter-name>multipartFilter</filter-name>
+        <filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
+    </filter>
+
+    <filter>
         <filter-name>securityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
@@ -137,28 +153,39 @@
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>gzipFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>springSessionRepositoryFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>applicationTenantResolverFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>openEntityManagerInViewFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>multipartFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>securityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <filter-mapping>
         <filter-name>applicationCoreFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -179,6 +206,11 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
+        <multipart-config>
+            <location>/tmp</location>
+            <max-file-size>20848820</max-file-size>
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
     </servlet>
 
     <servlet-mapping>
@@ -222,12 +254,7 @@
     </welcome-file-list>
 
     <error-page>
-        <location>/error/500</location>
-    </error-page>
-
-    <error-page>
-        <error-code>404</error-code>
-        <location>/error/404</location>
+        <location>/error</location>
     </error-page>
 
 </web-app>

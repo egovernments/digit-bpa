@@ -134,9 +134,7 @@
 			value="org.egov.infstr.models.ServiceCategory" />
 	</bean>
 
-	<bean id="serviceDetailsService" parent="abstractPersistenceService">
-		<constructor-arg name="type"
-			value="org.egov.infstr.models.ServiceDetails" />
+	<bean class="org.egov.collection.service.ServiceDetailsService" id="serviceDetailsService" >
 	</bean>
 
 	<bean id="remittancePersistService" parent="abstractPersistenceService"
@@ -161,10 +159,6 @@
 	<bean id="SBIMOPSPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.SbimopsAdaptor" />
 		
 	<bean id="ATOMPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AtomAdaptor" />
-	
-	<bean id="PNBPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.PnbAdaptor" />
-
-	<bean id="HDFCPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.HdfcAdaptor" />
 
 	<bean id="challanPersistenceService" class="org.egov.infstr.services.PersistenceService">
 		<constructor-arg index="0"

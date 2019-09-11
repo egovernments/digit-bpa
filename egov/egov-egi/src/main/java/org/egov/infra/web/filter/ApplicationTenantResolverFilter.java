@@ -48,7 +48,6 @@
 
 package org.egov.infra.web.filter;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -61,6 +60,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.clearValues;
+import static org.egov.infra.config.core.ApplicationThreadLocals.setDomainName;
+import static org.egov.infra.config.core.ApplicationThreadLocals.setDomainURL;
+import static org.egov.infra.config.core.ApplicationThreadLocals.setTenantID;
 import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
 import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 
@@ -72,16 +75,20 @@ public class ApplicationTenantResolverFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
-        String domainName = extractRequestedDomainName(domainURL);
-        ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
-        ApplicationThreadLocals.setDomainName(domainName);
-        ApplicationThreadLocals.setDomainURL(domainURL);
-        chain.doFilter(request, response);
+        try {
+            String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
+            String domainName = extractRequestedDomainName(domainURL);
+            setTenantID(environmentSettings.schemaName(domainName));
+            setDomainName(domainName);
+            setDomainURL(domainURL);
+            chain.doFilter(request, response);
+        } finally {
+            clearValues();
+        }
     }
 
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) {
         //Nothing to be initialized
     }
 

@@ -57,13 +57,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.CChartOfAccountDetail;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CGeneralLedgerDetail;
-import org.egov.commons.EgfAccountcodePurpose;
+import org.egov.commons.*;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.service.AccountdetailtypeService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -73,16 +69,13 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.utils.Constants;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -111,6 +104,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private PersistenceService<CChartOfAccountDetail, Long> chartOfAccountDetailService;
     CChartOfAccounts model = new CChartOfAccounts();
     List<String> accountDetailTypeList = new ArrayList<String>();
+    List<Accountdetailtype> mappedAccountDetailTypeList = new ArrayList<>();
     List<Accountdetailtype> accountDetailType = new ArrayList<Accountdetailtype>();
     private static final Logger LOGGER = Logger.getLogger(ChartOfAccountsAction.class);
  
@@ -141,6 +135,9 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     @Autowired
     private GeneralLedgerService generalLedgerService;
+    
+    @Autowired
+    private AccountdetailtypeService accountdetailtypeService;
 
     @Override
     public Object getModel() {
@@ -162,19 +159,27 @@ public class ChartOfAccountsAction extends BaseFormAction {
         populateCodeLength();
         parentForDetailedCode = getAppConfigValueFor("EGF", "parent_for_detailcode");
         populateGlCodeLengths();
-        allChartOfAccounts = chartOfAccountsService.findAllBy("from CChartOfAccounts where classification=?",
+        allChartOfAccounts = chartOfAccountsService.findAllBy("from CChartOfAccounts where classification=?1",
                 Long.valueOf(parentForDetailedCode));
         if (model != null)
             if (accountcodePurpose != null && accountcodePurpose.getId() != null)
                 accountcodePurpose = getPurposeCode(Integer.valueOf(accountcodePurpose.getId()));
         dropdownData.put("purposeList", persistenceService.findAllBy("from EgfAccountcodePurpose order by name"));
-        dropdownData.put("accountDetailTypeList", persistenceService.findAllBy("from Accountdetailtype order by name"));
+        dropdownData.put("accountDetailTypeList", accountdetailtypeService.findAll());
     }
 
     private void populateAccountDetailTypeList() {
-        if (model.getChartOfAccountDetails() != null)
-            for (final CChartOfAccountDetail entry : model.getChartOfAccountDetails())
-                accountDetailTypeList.add(entry.getDetailTypeId().getId().toString());
+        if (model.getChartOfAccountDetails() != null && !model.getChartOfAccountDetails().isEmpty())
+            for (final CChartOfAccountDetail entry : model.getChartOfAccountDetails()) {
+                mappedAccountDetailTypeList.add(entry.getDetailTypeId());
+            }
+        dropdownData.put("mappedAccountDetailTypeList", mappedAccountDetailTypeList);
+        List<Accountdetailtype> detailTypeList = accountdetailtypeService.findAll();
+        for (Accountdetailtype detailType : mappedAccountDetailTypeList) {
+            detailTypeList.remove(detailType);
+        }
+        dropdownData.put("accountDetailTypeList", detailTypeList);
+
     }
 
     void populateGlCodeLengths() {
@@ -188,7 +193,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     private EgfAccountcodePurpose getPurposeCode(final Integer id) {
-        return (EgfAccountcodePurpose) persistenceService.find("from EgfAccountcodePurpose where id=?", id);
+        return (EgfAccountcodePurpose) persistenceService.find("from EgfAccountcodePurpose where id=?1", id);
     }
 
     private void populateChartOfAccounts() {
@@ -257,8 +262,10 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model.setIsActiveForPosting(activeForPosting);
         model.setFunctionReqd(functionRequired);
         model.setBudgetCheckReq(budgetCheckRequired);
+        dropdownData.put("mappedAccountDetailTypeList", accountDetailType);
         chartOfAccountsService.persist(model);
         saveCoaDetails(model);
+        populateAccountDetailTypeList();
         addActionMessage(getText("chartOfAccount.modified.successfully"));
         clearCache();
         coaId = model.getId();
@@ -275,7 +282,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     private void populateAccountDetailType() {
         //persistenceService.setType(Accountdetailtype.class);
         for (final String row : accountDetailTypeList)
-            accountDetailType.add((Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?",
+            accountDetailType.add((Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?1",
                     Integer.valueOf(row)));
     }
 
@@ -283,7 +290,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         String accountDetail = "";
         if (accounts.getChartOfAccountDetails() == null)
             return;
-        chartOfAccountsService.getSession().flush();
+        //chartOfAccountsService.getSession().flush();
         //persistenceService.setType(CChartOfAccountDetail.class);
         try {
             for (final Accountdetailtype row : accountDetailType) {
@@ -294,7 +301,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     if (next == null || next.getDetailTypeId().getId().equals(row.getId())) {
                         iterator.remove();
                         chartOfAccountDetailService.delete(chartOfAccountDetailService.findById(next.getId(), false));
-                        persistenceService.getSession().flush();
+                        //persistenceService.getSession().flush();
                     }
                 }
             }
@@ -307,10 +314,12 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     boolean hasReference(final Integer id, final String glCode) {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(
-                "select * from chartofaccounts c,generalledger gl,generalledgerdetail gd " +
-                        "where c.glcode='" + glCode + "' and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID="
-                        + id);
+        StringBuilder queryString = new StringBuilder("select * from chartofaccounts c,generalledger gl,generalledgerdetail gd ")
+                .append("where c.glcode=:glCode")
+                .append(" and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID=:id");
+        final NativeQuery query = persistenceService.getSession().createNativeQuery(queryString.toString())
+                .setParameter("glCode", glCode, StringType.INSTANCE)
+                .setParameter("id", id, IntegerType.INSTANCE);
         final List list = query.list();
         if (list != null && list.size() > 0)
             return true;
@@ -320,12 +329,13 @@ public class ChartOfAccountsAction extends BaseFormAction {
     boolean validAddtition(final String glCode) {
         boolean flag=true;
         final StringBuffer strQuery = new StringBuffer();
-        strQuery.append("select bd.billid from  eg_billdetails bd, chartofaccounts coa,  eg_billregistermis brm where coa.glcode = '"
-                + glCode + "' and bd.glcodeid = coa.id and brm.billid = bd.billid and brm.voucherheaderid is null ");
-        strQuery.append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode = '"
-                + glCode + "' AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
+        strQuery.append("select bd.billid from  eg_billdetails bd, chartofaccounts coa,  eg_billregistermis brm where coa.glcode =:glCode")
+                .append(" and bd.glcodeid = coa.id and brm.billid = bd.billid and brm.voucherheaderid is null ")
+                .append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode =:glCode")
+                .append(" AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
         strQuery.append(" and sts.id not in (select id from egw_status where upper(moduletype) like '%BILL%' and upper(description) like '%CANCELLED%') ");
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(strQuery.toString());
+        final NativeQuery query = persistenceService.getSession().createNativeQuery(strQuery.toString())
+                .setParameter("glCode", glCode, StringType.INSTANCE);
         final List list = query.list();
         if (!list.isEmpty())
             flag = false;
@@ -395,12 +405,12 @@ public class ChartOfAccountsAction extends BaseFormAction {
             }
         }
 
-        chartOfAccountsService.getSession().flush();
+        //chartOfAccountsService.getSession().flush();
     }
 
     List<Accountdetailtype> getAccountDetailTypeToBeDeleted(final List<Accountdetailtype> accountDetailType,
             final CChartOfAccounts accounts) {
-        final List<Accountdetailtype> rowsToBeDeleted = new ArrayList<Accountdetailtype>();
+        final List<Accountdetailtype> rowsToBeDeleted = new ArrayList<>();
         for (final CChartOfAccountDetail entry : accounts.getChartOfAccountDetails())
             if (accountDetailType != null && accountDetailType.isEmpty())
                 rowsToBeDeleted.add(entry.getDetailTypeId());
@@ -469,7 +479,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     private Long findNextGlCode(final CChartOfAccounts parentCoa) {
-        final String glcode = (String) persistenceService.find("select max(glcode) from CChartOfAccounts where parentId=?",
+        final String glcode = (String) persistenceService.find("select max(glcode) from CChartOfAccounts where parentId=?1",
                 parentCoa.getId());
         return glcode != null ? Long.valueOf(glcode) : null;
     }
@@ -513,7 +523,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             addActionMessage(getText("chartOfAccount.invalid.glcode"));
             return NEW;
         }
-        final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
+        final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1",
                 generatedGlcode.concat(newGlcode));
         if (coa != null) {
             addActionMessage(getText("chartOfAccount.glcode.already.exists"));
@@ -592,7 +602,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-modifySearch")
     public String modifySearch() throws Exception {
         if (glCode != null) {
-            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?",
+            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?1",
                     glCode.split("-")[0]);
             if (model == null) {
                 addActionMessage(getText("charOfAccount.no.record"));
@@ -612,7 +622,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-viewSearch")
     public String viewSearch() throws Exception {
         if (glCode != null) {
-            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?",
+            model = chartOfAccountsService.find("from CChartOfAccounts where classification=4 and glcode=?1",
                     glCode.split("-")[0]);
             if (model == null) {
                 addActionMessage(getText("charOfAccount.no.record"));
@@ -639,7 +649,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     @Action(value = "/masters/chartOfAccounts-create")
     public String create() throws Exception {
         if (glCode != null) {
-            final CChartOfAccounts parent = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
+            final CChartOfAccounts parent = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1",
                     glCode.split("-")[0]);
             if (parent == null) {
                 addActionMessage(getText("chartOfAccount.no.data"));
@@ -649,7 +659,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                 addActionMessage(getText("chartOfAccount.invalid.glcode"));
                 return "detailed";
             }
-            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
+            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1",
                     generatedGlcode.concat(newGlcode));
             if (coa != null) {
                 addActionMessage(getText("chartOfAccount.glcode.already.exists"));
@@ -695,7 +705,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
     public String ajaxNextGlCode() {
         final String parentGlcode = parameters.get("parentGlcode")[0];
         if (parentGlcode != null || !StringUtils.isBlank(parentGlcode)) {
-            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?", parentGlcode);
+            final CChartOfAccounts coa = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1", parentGlcode);
             final Long glCode = findNextGlCode(coa);
             if (glCode == null) {
                 populateGlcode(coa.getClassification());
@@ -811,6 +821,14 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     public void setModel(final CChartOfAccounts model) {
         this.model = model;
+    }
+
+    public List<Accountdetailtype> getMappedAccountDetailTypeList() {
+        return mappedAccountDetailTypeList;
+    }
+
+    public void setMappedAccountDetailTypeList(List<Accountdetailtype> mappedAccountDetailTypeList) {
+        this.mappedAccountDetailTypeList = mappedAccountDetailTypeList;
     }
 
 }

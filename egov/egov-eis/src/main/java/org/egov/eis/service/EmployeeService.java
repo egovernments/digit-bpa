@@ -71,14 +71,13 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.StateHistoryService;
 import org.egov.infra.workflow.service.StateService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -220,13 +219,12 @@ public class EmployeeService implements EntityTypeService {
             jurisdiction.setBoundary(jurisdiction.getBoundary());
         }
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
-        employee.setTenantId(ApplicationThreadLocals.getTenantID());
+
         employeeRepository.save(employee);
     }
 
     @Transactional
     public void createEmployeeData(final Employee employee) {
-        employee.setTenantId(ApplicationThreadLocals.getTenantID());
         employee.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));

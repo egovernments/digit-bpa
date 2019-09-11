@@ -57,21 +57,18 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.commons.Vouchermis;
+import org.egov.commons.*;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.egf.model.BillRegisterReportBean;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -81,27 +78,22 @@ import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author manoranjan
@@ -122,7 +114,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     private final List<String> headerFields = new ArrayList<String>();
     private final List<String> mandatoryFields = new ArrayList<String>();
     private CVoucherHeader voucherHeader = new CVoucherHeader();
-    private static Map<String, List<String>> netAccountCode = new HashMap<String, List<String>>(); // have list of all net payable
+    private static Map<String, List<Long>> netAccountCode = new HashMap<String, List<Long>>(); // have list of all net payable
     // accounts codes based on the
     // expenditure type.
     private Date fromDate;
@@ -133,7 +125,17 @@ public class BillRegisterReportAction extends SearchFormAction {
  private PersistenceService persistenceService;
  @Autowired	
     private  AppConfigValueService appConfigValueService;
-    
+
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FundSourceHibernateDAO fundSourceHibernateDAO;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
    
 
 	private Date toDate;
@@ -151,9 +153,6 @@ public class BillRegisterReportAction extends SearchFormAction {
 
     private static boolean errorState = false;
 
-    @Autowired
-    private EgovMasterDataCaching masterDataCache;
-    
     public BillRegisterReportAction() {
         voucherHeader.setVouchermis(new Vouchermis());
         addRelatedEntity("vouchermis.departmentid", Department.class);
@@ -170,10 +169,10 @@ public class BillRegisterReportAction extends SearchFormAction {
 
         
 
-        getRemiitPaymentVoucherQry.append("select  distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl  " +
-                "where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?" +
-                "and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?" +
-                " and rm.voucherheader.status!=?")
+        getRemiitPaymentVoucherQry.append("select  distinct rm from EgRemittance rm join rm.egRemittanceDetail rdtl  ")
+                .append(" where rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.voucherNumber =?1")
+                .append(" and rdtl.egRemittanceGldtl.generalledgerdetail.generalLedgerId.voucherHeaderId.status!=?2" )
+                .append(" and rm.voucherheader.status!=?3")
                 .append(" order by rm.voucherheader.id");
 
     }
@@ -182,12 +181,14 @@ public class BillRegisterReportAction extends SearchFormAction {
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillRegisterReportAction | prepare | start");
-        String query = getQuery();
+        Map<String, Object> map = getQuery();
+        String query = String.valueOf(map.get("query"));
+        List<Object> params = (List<Object>) map.get("params");
         if (null != sortField)
-            query = query + " order by " + sortField + " " + sortOrder;
+            query = new StringBuilder(query).append(" order by ").append(sortField).append(" ").append(sortOrder).toString();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillRegisterReportAction | prepare | query >> " + query);
-        return new SearchQuerySQL(query, "select count(*) from ( " + query + " ) as count", null);
+        return new SearchQuerySQL(query, new StringBuilder("select count(*) from ( ").append(query).append(" ) as count").toString(), params);
     }
 
     @Override
@@ -199,7 +200,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     @Action(value = "/report/billRegisterReport-newform")
     public String newform() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         isCompleteBillRegisterReport = false;
         loadDropdownData();
         toDate = fromDate = null;
@@ -213,7 +214,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     @Action(value = "/report/billRegisterReport-searchform")
     public String searchform() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         isCompleteBillRegisterReport = true;
         loadDropdownData();
         toDate = fromDate = null;
@@ -227,7 +228,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     @ValidationErrorPage(value = "new")
     public String list() throws Exception {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillRegisterReportAction | list | start");
         setPageSize(50);
@@ -246,7 +247,7 @@ public class BillRegisterReportAction extends SearchFormAction {
     @Action(value = "/report/billRegisterReport-billSearch")
     public String billSearch() throws Exception {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("BillRegisterReportAction | completeBill | start");
         isCompleteBillRegisterReport = true;
@@ -311,8 +312,7 @@ public class BillRegisterReportAction extends SearchFormAction {
                 billRegReport.setBillDate(DDMMYYYYFORMATS.format((Date) object[6]));
                 if (!StringUtils.isEmpty(billRegReport.getVoucherNumber())) {
                     final List<Miscbilldetail> miscBillList = persistenceService.findAllBy(
-                            " from Miscbilldetail mis where mis.billnumber=? " +
-                                    " and mis.billVoucherHeader.voucherNumber=?", billRegReport.getBillNumber(),
+                            " from Miscbilldetail mis where mis.billnumber=?1 and mis.billVoucherHeader.voucherNumber=?2", billRegReport.getBillNumber(),
                                     billRegReport.getVoucherNumber());
                     if (null != miscBillList && miscBillList.size() > 0) {
                         BigDecimal paidAmount = null;
@@ -330,13 +330,12 @@ public class BillRegisterReportAction extends SearchFormAction {
                                             miscbilldetail.getPayVoucherHeader().getVoucherNumber());
                                     paidAmount = paidAmount.add(miscbilldetail.getPaidamount()).setScale(2,BigDecimal.ROUND_HALF_EVEN);
                                     final Paymentheader paymentMode = (Paymentheader) persistenceService.find(
-                                            "from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
+                                            "from Paymentheader where voucherheader=?1", miscbilldetail.getPayVoucherHeader());
                                     if (!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)) {
-                                        final Query qry = persistenceService.getSession().createQuery(
-                                                "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                                                " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
-                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
+                                        final Query qry = persistenceService.getSession().createQuery(new StringBuilder("from InstrumentVoucher iv")
+                                                .append(" where iv.voucherHeaderId.id=:vhId and iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)").toString());
+                                        qry.setParameter("vhId", miscbilldetail.getPayVoucherHeader().getId(), LongType.INSTANCE);
+                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus, IntegerType.INSTANCE);
                                         final List<InstrumentVoucher> instrumentVoucherList = qry.list();
                                         if (instrumentVoucherList.size() > 0)
                                             for (final InstrumentVoucher inst : instrumentVoucherList)
@@ -365,11 +364,10 @@ public class BillRegisterReportAction extends SearchFormAction {
                                                 .append(DDMMYYYYFORMATS.format(inst.getInstrumentHeaderId()
                                                         .getInstrumentDate()));
                                     } else {
-                                        final Query qry = persistenceService.getSession().createQuery(
-                                                "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                                                " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
-                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
+                                        final Query qry = persistenceService.getSession().createQuery(new StringBuilder("from InstrumentVoucher iv")
+                                                .append(" where iv.voucherHeaderId.id=:vhId and iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)").toString());
+                                        qry.setParameter("vhId", miscbilldetail.getPayVoucherHeader().getId(), LongType.INSTANCE);
+                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus, StringType.INSTANCE);
                                         final List<InstrumentVoucher> instrumentVoucherList = qry.list();
                                         if (instrumentVoucherList.size() > 0)
                                             for (final InstrumentVoucher inst : instrumentVoucherList)
@@ -408,16 +406,15 @@ public class BillRegisterReportAction extends SearchFormAction {
                                     paidAmount = miscbilldetail.getPaidamount().setScale(2,BigDecimal.ROUND_HALF_EVEN);
                                     payMentVoucherNumber.append(miscbilldetail.getPayVoucherHeader().getVoucherNumber());
                                     final Paymentheader paymentMode = (Paymentheader) persistenceService.find(
-                                            "from Paymentheader where voucherheader=?", miscbilldetail.getPayVoucherHeader());
+                                            "from Paymentheader where voucherheader=?1", miscbilldetail.getPayVoucherHeader());
                                     if (!paymentMode.getType().equals(FinancialConstants.MODEOFPAYMENT_RTGS)) {
                                         // List<InstrumentVoucher>
                                         // instrumentVoucherList=(List<InstrumentVoucher>)persistenceService.findAllBy(" from InstrumentVoucher where voucherHeaderId=?",
                                         // miscbilldetail.getPayVoucherHeader());
-                                        final Query qry = persistenceService.getSession().createQuery(
-                                                "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                                                " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
-                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
+                                        final Query qry = persistenceService.getSession().createQuery(new StringBuilder("from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId")
+                                                .append(" and iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)").toString());
+                                        qry.setParameter("vhId", miscbilldetail.getPayVoucherHeader().getId(), LongType.INSTANCE);
+                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus, IntegerType.INSTANCE);
                                         final List<InstrumentVoucher> instrumentVoucherList = qry.list();
                                         if (instrumentVoucherList.size() > 0)
                                             for (final InstrumentVoucher inst : instrumentVoucherList)
@@ -445,11 +442,10 @@ public class BillRegisterReportAction extends SearchFormAction {
                                                             .format(inst.getInstrumentHeaderId().getInstrumentDate())
                                                             : "");
                                     } else {
-                                        final Query qry = persistenceService.getSession().createQuery(
-                                                "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                                                " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                                        qry.setLong("vhId", miscbilldetail.getPayVoucherHeader().getId());
-                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
+                                        final Query qry = persistenceService.getSession().createQuery(new StringBuilder("from InstrumentVoucher iv")
+                                                .append(" where iv.voucherHeaderId.id=:vhId and iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)").toString());
+                                        qry.setParameter("vhId", miscbilldetail.getPayVoucherHeader().getId(), LongType.INSTANCE);
+                                        qry.setParameterList("cancelledChequeList", cancelledChequeStatus, IntegerType.INSTANCE);
                                         final List<InstrumentVoucher> instrumentVoucherList = qry.list();
                                         if (instrumentVoucherList.size() > 0)
                                             for (final InstrumentVoucher inst : instrumentVoucherList)
@@ -539,11 +535,10 @@ public class BillRegisterReportAction extends SearchFormAction {
 
                     // if(remittancePaymentItem.get(i).getVoucherheader().getStatus())
                     remmitPaymentVoucherNumber.append(remittancePaymentItem.get(i).getVoucherheader().getVoucherNumber() + "|");
-                    final Query qry = persistenceService.getSession().createQuery(
-                            "from InstrumentVoucher iv where iv.voucherHeaderId.id=:vhId and" +
-                            " iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)");
-                    qry.setLong("vhId", remittancePaymentItem.get(i).getVoucherheader().getId());
-                    qry.setParameterList("cancelledChequeList", cancelledChequeStatus);
+                    final Query qry = persistenceService.getSession().createQuery(new StringBuilder("from InstrumentVoucher iv")
+                            .append(" where iv.voucherHeaderId.id=:vhId and iv.instrumentHeaderId.statusId.id not in(:cancelledChequeList)").toString());
+                    qry.setParameter("vhId", remittancePaymentItem.get(i).getVoucherheader().getId(), LongType.INSTANCE);
+                    qry.setParameterList("cancelledChequeList", cancelledChequeStatus, IntegerType.INSTANCE);
                     instrumentVoucherList = qry.list();
 
                     if (instrumentVoucherList.size() > 0)
@@ -587,72 +582,72 @@ public class BillRegisterReportAction extends SearchFormAction {
                     getConfigValuesByModuleAndKey("EGF", "contingencyBillPurposeIds");
             
         	
-        	final List<String> cBillNetPayCodeList = new ArrayList<String>();
+        	final List<Long> cBillNetPayCodeList = new ArrayList<>();
             String coaQuery;
             for (final AppConfigValues appConfigValues : cBillNetPurpose) {
-                coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
+                coaQuery = "from CChartOfAccounts where purposeId in (:value)";
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    cBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    cBillNetPayCodeList.add(chartOfAccounts.getId());
             }
             netAccountCode.put("Expense", cBillNetPayCodeList);
 
             // setting net pay account codes for purchase type.
-            final List<String> pBillNetPayCodeList = new ArrayList<String>();
+            final List<Long> pBillNetPayCodeList = new ArrayList<>();
             final List<AppConfigValues> purchBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "purchaseBillPurposeIds");
             
             for (final AppConfigValues appConfigValues : purchBillNetPurpose) {
-                coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
+                coaQuery = "from CChartOfAccounts where purposeId in (:value)";
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    pBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    pBillNetPayCodeList.add(chartOfAccounts.getId());
             }
             netAccountCode.put("Purchase", pBillNetPayCodeList);
 
             // setting net pay account codes for salary type.
-            final List<String> sBillNetPayCodeList = new ArrayList<String>();
+            final List<Long> sBillNetPayCodeList = new ArrayList<>();
             final List<AppConfigValues> sBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "salaryBillPurposeIds");
             
            if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Number of salary purpose ids - " + sBillNetPurpose.size());
             for (final AppConfigValues appConfigValues : sBillNetPurpose) {
-                coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
+                coaQuery = "from CChartOfAccounts where purposeId in (:value)";
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Querying CChartOfAccounts -  " + coaQuery);
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    sBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    sBillNetPayCodeList.add(chartOfAccounts.getId());
 
             }
             netAccountCode.put("Salary", sBillNetPayCodeList);
 
             // setting net pay account codes for works type.
 
-            final List<String> wBillNetPayCodeList = new ArrayList<String>();
+            final List<Long> wBillNetPayCodeList = new ArrayList<>();
             
             final List<AppConfigValues> wBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "worksBillPurposeIds");
 
             for (final AppConfigValues appConfigValues : wBillNetPurpose) {
-                coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
+                coaQuery = "from CChartOfAccounts where purposeId in (:value)";
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    wBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    wBillNetPayCodeList.add(chartOfAccounts.getId());
             }
             netAccountCode.put("Works", wBillNetPayCodeList);
 
             // setting the netpayable code for pension type
-            final List<String> penBillNetPayCodeList = new ArrayList<String>();
+            final List<Long> penBillNetPayCodeList = new ArrayList<>();
             final List<AppConfigValues> pensionBillNetPurpose = appConfigValueService.
                     getConfigValuesByModuleAndKey("EGF", "pensionBillPurposeIds");
             
             for (final AppConfigValues appConfigValues : pensionBillNetPurpose) {
-                coaQuery = "from CChartOfAccounts where purposeId in ( " + appConfigValues.getValue() + " )";
-                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).list();
+                coaQuery = "from CChartOfAccounts where purposeId in (:value)";
+                final List<CChartOfAccounts> coaList = session.createQuery(coaQuery).setParameter("value", Long.valueOf(appConfigValues.getValue()), LongType.INSTANCE).list();
                 for (final CChartOfAccounts chartOfAccounts : coaList)
-                    penBillNetPayCodeList.add(chartOfAccounts.getId().toString());
+                    penBillNetPayCodeList.add(chartOfAccounts.getId());
             }
 
             netAccountCode.put("Pension", penBillNetPayCodeList);
@@ -669,133 +664,159 @@ public class BillRegisterReportAction extends SearchFormAction {
         }
     }
 
-    protected String getQuery() {
+    protected Map<String, Object> getQuery() {
         final StringBuffer query = new StringBuffer(1000);
-        final StringBuffer whereQuery = new StringBuffer(200);
-        new StringBuffer(50);
-
+        final List<Object> params = new ArrayList<>();
+        int index = 1;
         /*
          * if(null != voucherHeader.getVoucherNumber() && !StringUtils.isEmpty(voucherHeader.getVoucherNumber())){
          * whereQuery.append(" and vh.vouchernumber like '%"+voucherHeader.getVoucherNumber()+"%'"); }
          */
-
-        if (null != voucherHeader.getFundId())
-            whereQuery.append(" and mis.fundid=" + voucherHeader.getFundId().getId());
-        if (null != voucherHeader.getVouchermis().getDepartmentid())
-            whereQuery.append(" and mis.departmentid=" + voucherHeader.getVouchermis().getDepartmentid().getId());
-        if (null != voucherHeader.getVouchermis().getSchemeid())
-            whereQuery.append(" and mis.schemeid=" + voucherHeader.getVouchermis().getSchemeid().getId());
-        if (null != voucherHeader.getVouchermis().getSubschemeid())
-            whereQuery.append(" and mis.subschemeid=" + voucherHeader.getVouchermis().getSubschemeid().getId());
-        if (null != voucherHeader.getVouchermis().getFunctionary())
-            whereQuery.append(" and mis.functionaryid=" + voucherHeader.getVouchermis().getFunctionary().getId());
-        if (null != voucherHeader.getVouchermis().getFundsource())
-            whereQuery.append(" and mis.fundsourceid=" + voucherHeader.getVouchermis().getFundsource().getId());
-        if (null != voucherHeader.getVouchermis().getDivisionid())
-            whereQuery.append(" and mis.fieldid=" + voucherHeader.getVouchermis().getDivisionid().getId());
-        if (!StringUtils.isEmpty(billType))
-            whereQuery.append(" and  b.billtype='" + billType + "'");
-        if (null != fromDate)
-            whereQuery.append(" and b.billdate >= to_date('" + DDMMYYYYFORMATS.format(fromDate) + "','dd/MM/yyyy')");
-        if (null != toDate)
-            whereQuery.append(" and b.billdate <= to_date('" + DDMMYYYYFORMATS.format(toDate) + "','dd/MM/yyyy')");
-        if (null != billNumber && !StringUtils.isEmpty(billNumber))
-            whereQuery.append(" and b.billnumber like '%" + billNumber + "%'");
-
         if (StringUtils.isEmpty(exptype)) {
             final List<String> expndtrList = dropdownData.get("expenditureList");
             for (final String expenditure : expndtrList) {
                 if (!StringUtils.isEmpty(query.toString()))
                     query.append(" UNION ");
-                query.append(getQueryByExpndType(expenditure, whereQuery.toString()));
-
+              index =  getQueryByExpndType(query,expenditure, params,index);
             }
         } else
-            query.append(getQueryByExpndType(exptype, whereQuery.toString()));
+            index = getQueryByExpndType(query,exptype, params,index);
 
-        return query.toString();
+        Map<String, Object> map = new HashMap<>();
+        map.put("query", query);
+        map.put("params", params);
+        return map;
     }
 
-    protected String getQueryByExpndType(final String expndType, final String whereQuery) {
+    private int prepareCriteria(StringBuffer whereQuery, List<Object> params, int index) {
+        if (null != voucherHeader.getFundId()) {
+            whereQuery.append(" and mis.fundid=?").append(index++);
+            params.add(Long.valueOf(voucherHeader.getFundId().getId()));
+        }
+        if (null != voucherHeader.getVouchermis().getDepartmentid()) {
+            whereQuery.append(" and mis.departmentid=?").append(index++);
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getDepartmentid().getId()));
+        }
+        if (null != voucherHeader.getVouchermis().getSchemeid()) {
+            whereQuery.append(" and mis.schemeid=?").append(index++);
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getSchemeid().getId()));
+        }
+        if (null != voucherHeader.getVouchermis().getSubschemeid()) {
+            whereQuery.append(" and mis.subschemeid=?").append(index++);
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getSubschemeid().getId()));
+        }
+        if (null != voucherHeader.getVouchermis().getFunctionary()) {
+            whereQuery.append(" and mis.functionaryid=?").append(index++);
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getFunctionary().getId()));
+        }
+        if (null != voucherHeader.getVouchermis().getFundsource()) {
+            whereQuery.append(" and mis.fundsourceid=?").append(index++);
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getFundsource().getId()));
+        }
+        if (null != voucherHeader.getVouchermis().getDivisionid()) {
+            whereQuery.append(" and mis.fieldid=?").append(index++);
+            params.add(Long.valueOf(voucherHeader.getVouchermis().getDivisionid().getId()));
+        }
+        if (!StringUtils.isEmpty(billType)) {
+            whereQuery.append(" and  b.billtype=?").append(index++);
+            params.add(billType);
+        }
+        if (null != fromDate) {
+            whereQuery.append(" and b.billdate >= to_date(?").append(index++).append(",'dd/MM/yyyy')");
+            params.add(fromDate);
+        }
+        if (null != toDate) {
+            whereQuery.append(" and b.billdate <= to_date(?").append(index++).append(",'dd/MM/yyyy')");
+            params.add(toDate);
+        }
+        if (null != billNumber && !StringUtils.isEmpty(billNumber)) {
+            whereQuery.append(" and b.billnumber like ?").append(index++);
+            params.add("%" + billNumber + "%");
+        }
+        return index;
+    }
 
-    	netAccountCodeValue();
-        final List<String> listOfNetPayGlIds = netAccountCode.get(expndType);
-        final StringBuffer netPayCodes = new StringBuffer(30);
-        String voucherQry = "";
-        for (final String netCode : listOfNetPayGlIds)
-            if (!StringUtils.isEmpty(netPayCodes.toString()))
-                netPayCodes.append(",").append(netCode);
-            else
-                netPayCodes.append(netCode);
-        // voucher header condition for complete bill register report
-        if (voucherHeader.getVoucherNumber() != null && !StringUtils.isEmpty(voucherHeader.getVoucherNumber()))
-            voucherQry = " and vh.vouchernumber like '%" + voucherHeader.getVoucherNumber() + "%'";
-        final StringBuffer query = new StringBuffer(500);
+    protected int getQueryByExpndType(final StringBuffer query,final String expndType, final List<Object> params,int index) {
+        netAccountCodeValue();
+        final List<Long> listOfNetPayGlIds = netAccountCode.get(expndType);
+
         // query to get bills for which vouchers are approved.
-        query.append(
-                " select b.billnumber ,vh.vouchernumber as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
-                .
-                append(" from eg_billregister b, eg_billdetails bd, voucherheader vh,eg_billregistermis mis , egw_status s ")
-                .
-                append(" where b.id= bd.billid and b.id=mis.billid and mis.voucherheaderid =vh.id  and s.id= b.statusid and bd.creditamount > 0")
-                .
-                append(voucherQry).
-                append("  and bd.glcodeid in(").append(netPayCodes.toString()).append(")").append(" and b.expendituretype='")
-                .append(expndType).append("'").
-                append("  and vh.status IN (0,5) ").append(whereQuery)
+        query.append(" select b.billnumber ,vh.vouchernumber as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
+                .append(" from eg_billregister b, eg_billdetails bd, voucherheader vh,eg_billregistermis mis , egw_status s ")
+                .append(" where b.id= bd.billid and b.id=mis.billid and mis.voucherheaderid =vh.id  and s.id= b.statusid and bd.creditamount > 0");
+                index = prepareCriteria(query, params, index);
+                index = prepareVoucherFilter(query, params, index);
+                if(listOfNetPayGlIds != null && !listOfNetPayGlIds.isEmpty()){
+                    query.append("  and bd.glcodeid in(?").append(index++).append(")");
+                    params.add(listOfNetPayGlIds);
+                }
+                query.append(" and b.expendituretype=?").append(index++)
+                .append("  and vh.status IN (0,5) ")
                 .append(" group by b.billnumber, vh.vouchernumber,mis.payto, b.passedamount, s.description,b.billdate");
 
+        params.add(expndType);
         query.append(" UNION ");
 
         // query to get bills for which vouchers are Cancelled.
-        query.append(
-                " select b.billnumber ,'' as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
-                .
-                append(" from eg_billregister b, eg_billdetails bd, voucherheader vh,eg_billregistermis mis , egw_status s ")
-                .
-                append(" where b.id= bd.billid and b.id=mis.billid and mis.voucherheaderid =vh.id  and s.id= b.statusid and bd.creditamount > 0")
-                .
-                append(voucherQry).
-                append("  and bd.glcodeid in(").append(netPayCodes.toString()).append(")").append(" and b.expendituretype='")
-                .append(expndType).append("'").
-                append("  and vh.status = 4").append(whereQuery)
+        query.append(" select b.billnumber ,'' as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
+                .append(" from eg_billregister b, eg_billdetails bd, voucherheader vh,eg_billregistermis mis , egw_status s ")
+                .append(" where b.id= bd.billid and b.id=mis.billid and mis.voucherheaderid =vh.id  and s.id= b.statusid and bd.creditamount > 0");
+                index = prepareCriteria(query, params, index);
+                index = prepareVoucherFilter(query, params, index);
+                if(listOfNetPayGlIds != null && !listOfNetPayGlIds.isEmpty()){
+                    query.append("  and bd.glcodeid in(?").append(index++).append(")");
+                    params.add(listOfNetPayGlIds);
+                }
+                query.append(" and b.expendituretype=?").append(index++)
+                .append("  and vh.status = 4")
                 .append(" group by b.billnumber,vouchernumber, mis.payto, b.passedamount, s.description,b.billdate");
-
+        params.add(expndType);
         if (voucherHeader.getVoucherNumber() == null || StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
             query.append(" UNION ");
 
             // query to get bills for voucher is not created
-            query.append(
-                    " select b.billnumber ,'' as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
-                    .
-                    append(" from eg_billregister b, eg_billdetails bd,eg_billregistermis mis , egw_status s ")
-                    .
-                    append(" where b.id= bd.billid and b.id=mis.billid  and s.id= b.statusid and  mis.voucherheaderid is null and bd.creditamount > 0")
-                    .
-                    append("  and bd.glcodeid in(").append(netPayCodes.toString()).append(")").append(" and b.expendituretype='")
-                    .append(expndType).append("'").
-                    append(whereQuery).append(" group by b.billnumber, vouchernumber,mis.payto, b.passedamount, s.description,b.billdate");
+            query.append(" select b.billnumber ,'' as vouchernumber, mis.payto,b.passedamount, sum(bd.creditamount) as netpay, s.description,b.billdate as billdate")
+                    .append(" from eg_billregister b, eg_billdetails bd,eg_billregistermis mis , egw_status s ")
+                    .append(" where b.id= bd.billid and b.id=mis.billid  and s.id= b.statusid and  mis.voucherheaderid is null and bd.creditamount > 0");
+                    index = prepareCriteria(query, params, index);
+                    if(listOfNetPayGlIds != null && !listOfNetPayGlIds.isEmpty()){
+                        query.append("  and bd.glcodeid in(?").append(index++).append(")");
+                        params.add(listOfNetPayGlIds);
+                    }
+                    query.append(" and b.expendituretype=?").append(index++)
+                    .append(" group by b.billnumber, vouchernumber,mis.payto, b.passedamount, s.description,b.billdate");
+            params.add(expndType);
         }
 
-        return query.toString();
+        return index;
+    }
+
+    private int prepareVoucherFilter(StringBuffer voucherQry, List<Object> params, int index) {
+        // voucher header condition for complete bill register report
+        if (voucherHeader.getVoucherNumber() != null && !StringUtils.isEmpty(voucherHeader.getVoucherNumber())) {
+            voucherQry.append(" and vh.vouchernumber like ?").append(index++);
+            params.add("%" + voucherHeader.getVoucherNumber() + "%");
+
+        }
+        return index;
     }
 
     protected void loadDropdownData() {
-        final Query query = persistenceService.getSession().createQuery("select status.id from EgwStatus status where " +
-                "status.description in (:surrenderedList) and status.moduletype='Instrument'");
-        query.setParameterList("surrenderedList", chequeStatusCheckList);
+        final Query query = persistenceService.getSession().createQuery(new StringBuilder("select status.id from EgwStatus status")
+                .append(" where status.description in (:surrenderedList) and status.moduletype='Instrument'").toString());
+        query.setParameterList("surrenderedList", chequeStatusCheckList, StringType.INSTANCE);
         cancelledChequeStatus = query.list();
         getHeaderFields();
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
+            addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", masterDataCache.get("egi-fund"));
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (headerFields.contains("fundsource"))
-            addDropdownData("fundsourceList", masterDataCache.get("egi-fundSource"));
+            addDropdownData("fundsourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+            addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.EMPTY_LIST);
         if (headerFields.contains("subscheme"))
@@ -827,9 +848,8 @@ public class BillRegisterReportAction extends SearchFormAction {
     }
 
     public EgwStatus getStatusId(final String statusString) {
-        final String statusQury = "from EgwStatus where upper(moduletype)=upper('instrument') and  upper(description)=upper('"
-                + statusString + "')";
-        final EgwStatus egwStatus = (EgwStatus) persistenceService.find(statusQury);
+        final String statusQury = "from EgwStatus where upper(moduletype)=upper('instrument') and  upper(description)=upper(?1)";
+        final EgwStatus egwStatus = (EgwStatus) persistenceService.find(statusQury, statusString);
         return egwStatus;
 
     }
@@ -908,11 +928,11 @@ public class BillRegisterReportAction extends SearchFormAction {
         this.isCompleteBillRegisterReport = isCompleteBillRegisterReport;
     }
 
-    public static Map<String, List<String>> getNetAccountCode() {
+    public static Map<String, List<Long>> getNetAccountCode() {
 		return netAccountCode;
 	}
 
-	public static void setNetAccountCode(Map<String, List<String>> netAccountCode) {
+	public static void setNetAccountCode(Map<String, List<Long>> netAccountCode) {
 		BillRegisterReportAction.netAccountCode = netAccountCode;
 	}
 

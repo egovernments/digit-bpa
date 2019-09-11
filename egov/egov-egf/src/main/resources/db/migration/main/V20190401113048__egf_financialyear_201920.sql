@@ -1,1 +1,0 @@
-INSERT INTO financialyear (id, financialyear, startingdate, endingdate, isactive, createddate, lastmodifieddate,lastmodifiedby,createdby,version, isactiveforposting, isclosed, transferclosingbalance) VALUES (nextval('seq_financialyear'), '2019-20', '2019-04-01 00:00:00', '2020-03-31 00:00:00', true, now(), now(), 1,1,0, true, false, false);

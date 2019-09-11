@@ -51,7 +51,7 @@ import org.egov.commons.Relation;
 import org.egov.commons.utils.EntityType;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class RelationService extends PersistenceService<Relation, Integer> imple
 	 */
 	public List<EntityType> getAllActiveEntities(Integer accountDetailTypeId) {
       List<EntityType> entities=new ArrayList<EntityType>();
-		entities.addAll(findAllBy("from Relation r where r.isactive=?",true));
+		entities.addAll(findAllBy("from Relation r where r.isactive=?1",true));
        return entities;
 	}
 
@@ -89,7 +89,7 @@ public class RelationService extends PersistenceService<Relation, Integer> imple
 		Integer pageSize = (maxRecords > 0 ? maxRecords : null);
 		  List<EntityType> entities=new ArrayList<EntityType>();
 		  filterKey="%"+filterKey+"%";
-			String qry="from Relation r where upper(code) like upper(?) or upper(name) like upper(?) and r.isactive=? order by code,name";
+			String qry="from Relation r where upper(code) like upper(?1) or upper(name) like upper(?2) and r.isactive=?3 order by code,name";
 			entities.addAll((List<EntityType>)findPageBy(qry, 0, pageSize,filterKey,filterKey,true).getList());
 	       return entities;
 	}
@@ -103,7 +103,7 @@ public class RelationService extends PersistenceService<Relation, Integer> imple
 	
 	public List<EntityType> getAllActiveEntities() {
 	      List<EntityType> entities=new ArrayList<EntityType>();
-			entities.addAll(findAllBy("from Relation r where r.isactive=?",true));
+			entities.addAll(findAllBy("from Relation r where r.isactive=?1",true));
 	       return entities;
 		}
 	public List<Relation> validateEntityForRTGS(List<Long> idsList) throws ValidationException {

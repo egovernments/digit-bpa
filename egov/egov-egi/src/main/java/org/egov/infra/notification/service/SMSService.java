@@ -72,7 +72,7 @@ import static org.egov.infra.config.core.LocalizationSettings.countryCode;
 import static org.egov.infra.config.core.LocalizationSettings.encoding;
 import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
 
-@Service (value="smsService")
+@Service
 public class SMSService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SMSService.class);
 
@@ -138,9 +138,11 @@ public class SMSService {
             post.setEntity(new UrlEncodedFormEntity(urlParameters, encoding()));
             HttpResponse response = client.execute(post);
             String responseCode = IOUtils.toString(response.getEntity().getContent(), encoding());
+            if (LOGGER.isInfoEnabled())
+                LOGGER.info("SMS :- Mobile Number : {} Response : {}", mobileNumber, responseCode);
             return smsErrorCodes.parallelStream().noneMatch(responseCode::startsWith);
         } catch (UnsupportedOperationException | IOException e) {
-            LOGGER.error("Error occurred while sending SMS [%s]", e);
+            LOGGER.error("Error occurred while sending SMS [{}]", mobileNumber, e);
         }
         return false;
     }

@@ -47,29 +47,17 @@
  */
 package org.egov.portal.web.controller.citizen;
 
-import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
-import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationConstant;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.PortalInboxUser;
+import org.egov.portal.entity.PortalLink;
 import org.egov.portal.service.CitizenInboxService;
 import org.egov.portal.service.PortalInboxUserService;
+import org.egov.portal.service.PortalLinkService;
 import org.egov.portal.service.PortalServiceTypeService;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,150 +65,102 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
+import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
+import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS;
+
 @Controller
 @RequestMapping(value = "/home")
 public class HomeController {
 
-	public static final String BPA_FIRE_NOC_ROLE = "BPA_FIRE_NOC_ROLE";
-	public static final String BPA_AIPORT_AUTH_NOC_ROLE = "BPA_AIPORT_AUTH_NOC_ROLE";
-	public static final String BPA_NMA_NOC_ROLE = "BPA_NMA_NOC_ROLE";
-	public static final String BPA_ENVIRONMENT_NOC_ROLE = "BPA_ENVIRONMENT_NOC_ROLE";
+    @Autowired
+    private CitizenInboxService citizenInboxService;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SecurityUtils securityUtils;
 
-	@Autowired
-	private CitizenInboxService citizenInboxService;
+    @Autowired
+    private PortalInboxUserService portalInboxUserService;
 
-	@Autowired
-	private SecurityUtils securityUtils;
+    @Autowired
+    private PortalServiceTypeService portalServiceTypeService;
 
-	@Autowired
-	private PortalInboxUserService portalInboxUserService;
+    @Autowired
+    private CityService cityService;
 
-	@Autowired
-	private PortalServiceTypeService portalServiceTypeService;
+    @Autowired
+    private PortalLinkService portalLinkService;
 
-	@Autowired
-	private CityService cityService;
+    @RequestMapping(method = RequestMethod.GET)
+    public String showHomePage(ModelMap modelData) {
+        return setupHomePage(modelData);
+    }
 
-	@Value("${dev.mode}")
-	private boolean devMode;
+    @RequestMapping(value = "/refreshInbox", method = RequestMethod.GET)
+    public @ResponseBody
+    Integer refreshInbox(@RequestParam final Long citizenInboxId) {
+        final CitizenInbox citizenInbox = citizenInboxService.getInboxMessageById(citizenInboxId);
+        citizenInbox.setRead(true);
+        citizenInboxService.updateMessage(citizenInbox);
+        return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
+    }
 
-	@Value("${client.id}")
-	private String clientId;
+    private String setupHomePage(final ModelMap modelData) {
+        String moduleName = "moduleNames";
+        String services = "services";
+        final User user = securityUtils.getCurrentUser();
+        modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
+        modelData.addAttribute("inboxMessages", getAllInboxMessages());
+        modelData.addAttribute("myAccountMessages", getMyAccountMessages());
+        modelData.addAttribute("cityLogo", cityService.getCityLogoURL());
+        modelData.addAttribute("cityName", cityService.getMunicipalityName());
+        modelData.addAttribute("userName", defaultIfBlank(user.getName(), ANONYMOUS));
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String showHomePage(ModelMap modelData) {
-		return setupHomePage(modelData);
-	}
+        if (null != user) {
 
-	@RequestMapping(value = "/refreshInbox", method = RequestMethod.GET)
-	public @ResponseBody Integer refreshInbox(@RequestParam final Long citizenInboxId) {
-		final CitizenInbox citizenInbox = citizenInboxService.getInboxMessageById(citizenInboxId);
-		citizenInbox.setRead(true);
-		citizenInboxService.updateMessage(citizenInbox);
-		return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
-	}
+            if (user.getType().equals(BUSINESS)) {
+                modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNamesForBusinessUser());
+                modelData.addAttribute(services, portalServiceTypeService.findAllServiceTypesForBusinessUser());
+            } else if (user.getType().equals(CITIZEN)) {
+                modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNamesForCitizen());
+                modelData.addAttribute(services, portalServiceTypeService.findAllServiceTypesForCitizenUser());
+            } else {
+                modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNames());
+                modelData.addAttribute(services, portalServiceTypeService.getAllPortalService());
+            }
+        }
 
-	private String setupHomePage(final ModelMap modelData) {
-		String moduleName = "moduleNames";
-		String services = "services";
-		final User user = securityUtils.getCurrentUser();
-		modelData.addAttribute("currentUser", user);
-		modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
-		modelData.addAttribute("inboxMessages", getAllInboxMessages());
-		modelData.addAttribute("myAccountMessages", getMyAccountMessages());
-		modelData.addAttribute("cityLogo", cityService.getCityLogoURL());
-		modelData.addAttribute("cityName", cityService.getMunicipalityName());
-		modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
-		// modelData.addAttribute("userType", user.getType());
-		boolean isState = false;
-		if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
-			isState = true;
-		}
-		modelData.addAttribute("isState", isState);
+        modelData.addAttribute("distinctModuleNames", portalServiceTypeService.getAllModules());
+        modelData.addAttribute("userId", user.getId());
 
-		if (!devMode) {
-			modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPasswordResetRequired(user));
-			int daysToExpirePwd = daysToExpirePassword(user);
-			modelData.addAttribute("pwd_expire_in_days", daysToExpirePwd);
-			modelData.addAttribute("warn_pwd_expire", daysToExpirePwd <= 5);
-		}
+        List<PortalInboxUser> totalServicesApplied = portalInboxUserService.getPortalInboxByUserId(user.getId());
+        List<PortalInboxUser> totalServicesCompleted = portalInboxUserService.getPortalInboxByResolved(user.getId(), true);
+        List<PortalInboxUser> totalServicesPending = portalInboxUserService.getPortalInboxByResolved(user.getId(), false);
+        List<PortalLink> totalServicesLinked = portalLinkService.findByUser(user);
+        modelData.addAttribute("totalServicesLinked", totalServicesLinked);
+        modelData.addAttribute("totalServicesPending", totalServicesPending);
+        modelData.addAttribute("totalServicesApplied", totalServicesApplied);
+        modelData.addAttribute("totalServicesCompleted", totalServicesCompleted);
 
-		if (null != user) {
+        modelData.addAttribute("totalServicesPendingSize", totalServicesPending.size());
+        modelData.addAttribute("totalServicesAppliedSize", totalServicesApplied.size());
+        modelData.addAttribute("totalServicesCompletedSize", totalServicesCompleted.size());
+        return "citizen-home";
+    }
 
-			if (isNOCDepartmentUser(user)) {
-				modelData.addAttribute(moduleName, new ArrayList<String>());
-				modelData.addAttribute(services, portalServiceTypeService.getAllPortalService());
-			} else if (user.getType().equals(BUSINESS)) {
+    private List<CitizenInbox> getMyAccountMessages() {
+        return citizenInboxService.findMyAccountMessages(securityUtils.getCurrentUser());
+    }
 
-				List<String> businessUserModules = portalServiceTypeService.getDistinctModuleNamesForBusinessUser()
-						.stream().map(md -> md.getDisplayName()).collect(Collectors.toList());
-				modelData.addAttribute(moduleName, businessUserModules);
-				modelData.addAttribute(services, portalServiceTypeService.findAllServiceTypesForBusinessUser());
-			} else if (user.getType().equals(CITIZEN)) {
-				List<String> citizenUserModules = portalServiceTypeService.getDistinctModuleNamesForCitizen().stream()
-						.map(md -> md.getDisplayName()).collect(Collectors.toList());
+    private List<CitizenInbox> getAllInboxMessages() {
+        return citizenInboxService.findAllInboxMessage(securityUtils.getCurrentUser());
+    }
 
-				modelData.addAttribute(moduleName, citizenUserModules);
-				modelData.addAttribute(services, portalServiceTypeService.findAllServiceTypesForCitizenUser());
-			} else {
-				modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNames());
-				modelData.addAttribute(services, portalServiceTypeService.getAllPortalService());
-			}
-		}
-
-		modelData.addAttribute("distinctModuleNames", portalServiceTypeService.getAllModules());
-		modelData.addAttribute("userId", user.getId());
-
-		List<PortalInboxUser> totalServicesApplied = portalInboxUserService.getPortalInboxByUserId(user.getId());
-		List<PortalInboxUser> totalServicesCompleted = portalInboxUserService.getPortalInboxByResolved(user.getId(),
-				true);
-		List<PortalInboxUser> totalServicesPending = portalInboxUserService.getPortalInboxByResolved(user.getId(),
-				false);
-
-		modelData.addAttribute("totalServicesPending", totalServicesPending);
-		modelData.addAttribute("totalServicesApplied", totalServicesApplied);
-		modelData.addAttribute("totalServicesCompleted", totalServicesCompleted);
-
-		modelData.addAttribute("totalServicesPendingSize", totalServicesPending.size());
-		modelData.addAttribute("totalServicesAppliedSize", totalServicesApplied.size());
-		modelData.addAttribute("totalServicesCompletedSize", totalServicesCompleted.size());
-		modelData.addAttribute("clientId", clientId);
-		return "citizen-home";
-	}
-
-	private boolean isNOCDepartmentUser(User user) {
-		Boolean check = false;
-		for (Role r : user.getRoles()) {
-			if (BPA_FIRE_NOC_ROLE.equals(r.getName()) || BPA_AIPORT_AUTH_NOC_ROLE.equals(r.getName())
-					|| BPA_NMA_NOC_ROLE.equals(r.getName()) || BPA_ENVIRONMENT_NOC_ROLE.equals(r.getName())) {
-				check = true;
-			}
-		}
-		return check;
-	}
-
-	private List<CitizenInbox> getMyAccountMessages() {
-		return citizenInboxService.findMyAccountMessages(securityUtils.getCurrentUser());
-	}
-
-	private List<CitizenInbox> getAllInboxMessages() {
-		return citizenInboxService.findAllInboxMessage(securityUtils.getCurrentUser());
-	}
-
-	private Integer getUnreadMessageCount() {
-		return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
-	}
-
-	private boolean checkDefaultPasswordResetRequired(User user) {
-		return passwordEncoder.matches("12345678", user.getPassword())
-				|| passwordEncoder.matches("demo", user.getPassword());
-	}
-
-	private int daysToExpirePassword(User user) {
-		return Days.daysBetween(new LocalDate(), user.getPwdExpiryDate().toLocalDate()).getDays();
-	}
+    private Integer getUnreadMessageCount() {
+        return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
+    }
 
 }

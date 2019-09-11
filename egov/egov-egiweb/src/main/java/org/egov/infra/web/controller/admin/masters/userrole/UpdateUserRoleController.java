@@ -48,10 +48,12 @@
 
 package org.egov.infra.web.controller.admin.masters.userrole;
 
+import org.egov.infra.admin.master.contracts.UserRole;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -62,23 +64,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping(value = "/userrole/update/{userId}")
 public class UpdateUserRoleController {
-    private final UserService userService;
-    private final RoleService roleService;
 
     @Autowired
-    public UpdateUserRoleController(UserService userService, RoleService roleService) {
-        this.userService = userService;
-        this.roleService = roleService;
-    }
+    private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private BeanMapperConfiguration beanMapperConfiguration;
 
     @ModelAttribute
-    public User user(@PathVariable Long userId) {
-        return userService.getUserById(userId);
+    public UserRole userRole(@PathVariable String userId) {
+        return beanMapperConfiguration.map(userService.getUserByUID(userId), UserRole.class);
     }
 
     @ModelAttribute("roles")
@@ -92,13 +96,16 @@ public class UpdateUserRoleController {
     }
 
     @PostMapping
-    public String updateUserRoles(@ModelAttribute User user, BindingResult errors, RedirectAttributes redirectAttrs) {
-        if (errors.hasErrors())
-            return "/userrole/update/" + user.getId();
-        userService.updateUser(user);
-        redirectAttrs.addFlashAttribute("message", "msg.usr.role.update.success");
-        return "redirect:/userrole/view/" + user.getId();
+    public String updateUserRoles(@Valid @ModelAttribute UserRole userRole, BindingResult bindResult, RedirectAttributes redirectAttrs) {
+        if (userRole.hasAnyInternalRole())
+            bindResult.rejectValue("roles", "err.internal.roles.found");
+        if (bindResult.hasErrors())
+            return "userrole-update";
 
+        userService.updateUserRoles(userRole);
+        redirectAttrs.addFlashAttribute("message", "msg.usr.role.update.success");
+        redirectAttrs.addFlashAttribute("fromUpdate", true);
+        return "redirect:/userrole/view/" + userRole.getUid();
     }
 
 }

@@ -57,7 +57,7 @@ public interface EgDemandReasonMasterDao {
 
 	public List<EgDemandReasonMaster> findAll();
 
-	public void create(EgDemandReasonMaster egDemandReasonMaster);
+	public EgDemandReasonMaster create(EgDemandReasonMaster egDemandReasonMaster);
 
 	public void delete(EgDemandReasonMaster egDemandReasonMaster);
 

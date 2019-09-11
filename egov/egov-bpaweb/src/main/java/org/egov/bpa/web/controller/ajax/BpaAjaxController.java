@@ -742,7 +742,7 @@ public class BpaAjaxController {
                 odcrPlanInfo.getPlan().getPlanInformation().getNocIrrigationDept().equals("YES"));
 
         checklistServicetypeMappingService.findByActiveByServiceTypeAndChecklist(serviceType, checklistType).stream()
-                .forEach(servicecklst -> {
+                .forEach(servicecklst -> {                     
                     final JsonObject jsonObj = new JsonObject();
                     jsonObj.addProperty("id", servicecklst.getId());
                     jsonObj.addProperty("checklistId", servicecklst.getChecklist().getId());
@@ -752,8 +752,14 @@ public class BpaAjaxController {
                     if (servicecklst.getChecklist().getChecklistType().getCode().equalsIgnoreCase("OCNOC")) {
                         NocConfiguration nocConfig = nocConfigService
                                 .findByDepartmentAndType(servicecklst.getChecklist().getCode(), BpaConstants.OC);
-                        jsonObj.addProperty("documentMandatory", nocConfig.getIntegrationType().equals("MANUAL"));
-                        jsonObj.addProperty(MANDATORY, nocTypeMap.get(servicecklst.getChecklist().getCode()));
+                        if (nocConfig != null) {
+                            jsonObj.addProperty("documentMandatory", nocConfig.getIntegrationType().equals("MANUAL"));
+                            jsonObj.addProperty(MANDATORY, nocTypeMap.get(servicecklst.getChecklist().getCode()));
+                        }
+                        if (nocTypeMap.get(servicecklst.getChecklist().getCode()) == null) {
+                            jsonObj.addProperty(MANDATORY, servicecklst.isMandatory());
+                        }     
+                            
                     } else {
                         jsonObj.addProperty(MANDATORY, servicecklst.isMandatory());
                     }

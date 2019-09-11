@@ -47,35 +47,19 @@
  */
 package org.egov.portal.entity;
 
-import static org.egov.portal.entity.PortalInbox.SEQ_PORTALINBOX;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.State;
 import org.egov.portal.entity.enums.Priority;
 import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.portal.entity.PortalInbox.SEQ_PORTALINBOX;
 
 /**
  * PortalInbox class
@@ -83,263 +67,219 @@ import org.hibernate.validator.constraints.Length;
  * @author Pradeep
  */
 @Entity
-@Table(name = "egp_inbox", schema = "state")
-@SequenceGenerator(name = SEQ_PORTALINBOX, sequenceName = SEQ_PORTALINBOX, allocationSize = 1, schema = "state")
+@Table(name = "egp_inbox")
+@SequenceGenerator(name = SEQ_PORTALINBOX, sequenceName = SEQ_PORTALINBOX, allocationSize = 1)
 public class PortalInbox extends AbstractAuditable {
 
-	public static final String SEQ_PORTALINBOX = "seq_egp_inbox";
-	private static final long serialVersionUID = -2303996521024126504L;
-	@Id
-	@GeneratedValue(generator = SEQ_PORTALINBOX, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    public static final String SEQ_PORTALINBOX = "seq_egp_inbox";
+    private static final long serialVersionUID = -2303996521024126504L;
+    @Id
+    @GeneratedValue(generator = SEQ_PORTALINBOX, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "MODULEID")
-	private Module module;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MODULEID")
+    private Module module;
 
-	@NotNull
-	@Length(max = 128)
-	private String serviceType;
+    @NotNull
+    @Length(max = 128)
+    private String serviceType;
 
-	@Length(max = 100)
-	private String applicantName;
+    @Length(max = 50)
+    private String applicationNumber;
 
-	@Length(max = 50)
-	private String applicationNumber;
+    @Length(max = 50)
+    private String entityRefNumber;
 
-	@Length(max = 50)
-	private String entityRefNumber;
+    private Long entityRefId;
 
-	private Long entityRefId;
+    @Length(max = 256)
+    private String headerMessage;
 
-	@Length(max = 256)
-	private String headerMessage;
+    @NotNull
+    @Length(max = 2048)
+    private String detailedMessage;
 
-	@NotNull
-	@Length(max = 2048)
-	private String detailedMessage;
+    @Length(max = 256)
+    private String link;
 
-	@Length(max = 256)
-	private String link;
+    private boolean read;
 
-	private boolean read;
+    private boolean resolved;
 
-	private boolean resolved;
+    private Date resolvedDate;
 
-	private Date resolvedDate;
+    private Date slaEndDate;
 
-	@Column(name = "slaenddate")
-	private Date slaEndDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    private Date applicationDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@NotNull
-	private Date applicationDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STATE_ID")
+    private State state;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "STATE_ID")
-	private State state;
+    @OrderBy("id")
+    @OneToMany(mappedBy = "portalInbox", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final List<PortalInboxUser> portalInboxUsers = new ArrayList<>(0);
 
-	@OrderBy("id")
-	@OneToMany(mappedBy = "portalInbox", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private final List<PortalInboxUser> portalInboxUsers = new ArrayList<>(0);
+    @Transient
+    private List<PortalInboxUser> tempPortalInboxUser = new ArrayList<>(0);
 
-	@Transient
-	private List<PortalInboxUser> tempPortalInboxUser = new ArrayList<>(0);
+    @Length(max = 20)
+    private Priority priority;
 
-	@Length(max = 20)
-	private Priority priority;
+    @Length(max = 100)
+    private String status;
 
-	@Length(max = 100)
-	private String status;
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Length(max = 255)
-	private String pendingAction;
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	@Length(max = 250)
-	private String tenantId;
+    public Module getModule() {
+        return module;
+    }
 
-	@Transient
-	private String domainUrl;
+    public void setModule(final Module module) {
+        this.module = module;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    public void setServiceType(final String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public Module getModule() {
-		return module;
-	}
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
 
-	public void setModule(final Module module) {
-		this.module = module;
-	}
+    public void setApplicationNumber(final String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public String getEntityRefNumber() {
+        return entityRefNumber;
+    }
 
-	public void setServiceType(final String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setEntityRefNumber(final String entityRefNumber) {
+        this.entityRefNumber = entityRefNumber;
+    }
+
+    public Long getEntityRefId() {
+        return entityRefId;
+    }
+
+    public void setEntityRefId(final Long entityRefId) {
+        this.entityRefId = entityRefId;
+    }
+
+    public String getDetailedMessage() {
+        return detailedMessage;
+    }
 
-	public String getApplicationNumber() {
-		return applicationNumber;
-	}
-
-	public void setApplicationNumber(final String applicationNumber) {
-		this.applicationNumber = applicationNumber;
-	}
-
-	public String getEntityRefNumber() {
-		return entityRefNumber;
-	}
-
-	public void setEntityRefNumber(final String entityRefNumber) {
-		this.entityRefNumber = entityRefNumber;
-	}
-
-	public Long getEntityRefId() {
-		return entityRefId;
-	}
-
-	public void setEntityRefId(final Long entityRefId) {
-		this.entityRefId = entityRefId;
-	}
-
-	public String getDetailedMessage() {
-		return detailedMessage;
-	}
-
-	public void setDetailedMessage(final String detailedMessage) {
-		this.detailedMessage = detailedMessage;
-	}
-
-	public String getLink() {
-		return link;
-	}
-
-	public void setLink(final String link) {
-		this.link = link;
-	}
-
-	public boolean isRead() {
-		return read;
-	}
-
-	public void setRead(final boolean read) {
-		this.read = read;
-	}
-
-	public Date getSlaEndDate() {
-		return slaEndDate;
-	}
-
-	public void setSlaEndDate(final Date slaEndDate) {
-		this.slaEndDate = slaEndDate;
-	}
-
-	public State getState() {
-		return state;
-	}
-
-	public void setState(final State state) {
-		this.state = state;
-	}
-
-	public Priority getPriority() {
-		return priority;
-	}
-
-	public void setPriority(final Priority priority) {
-		this.priority = priority;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(final String status) {
-		this.status = status;
-	}
-
-	public List<PortalInboxUser> getPortalInboxUsers() {
-		return portalInboxUsers;
-	}
-
-	public boolean isResolved() {
-		return resolved;
-	}
-
-	public void setResolved(final boolean resolved) {
-		this.resolved = resolved;
-	}
-
-	public String getHeaderMessage() {
-		return headerMessage;
-	}
-
-	public void setHeaderMessage(final String headerMessage) {
-		this.headerMessage = headerMessage;
-	}
-
-	public Date getApplicationDate() {
-		return applicationDate;
-	}
-
-	public void setApplicationDate(final Date applicationDate) {
-		this.applicationDate = applicationDate;
-	}
-
-	public List<PortalInboxUser> getTempPortalInboxUser() {
-		return tempPortalInboxUser;
-	}
-
-	public void setTempPortalInboxUser(final List<PortalInboxUser> tempPortalInboxUser) {
-		this.tempPortalInboxUser = tempPortalInboxUser;
-	}
-
-	public Date getResolvedDate() {
-		return resolvedDate;
-	}
-
-	public void setResolvedDate(final Date resolvedDate) {
-		this.resolvedDate = resolvedDate;
-	}
-
-	public String getApplicantName() {
-		return applicantName;
-	}
-
-	public void setApplicantName(String applicantName) {
-		this.applicantName = applicantName;
-	}
-
-	public String getTenantId() {
-		return tenantId;
-	}
-
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
-
-	public String getPendingAction() {
-		return pendingAction;
-	}
-
-	public void setPendingAction(String pendingAction) {
-		this.pendingAction = pendingAction;
-	}
-
-	public String getDomainUrl() {
-		return domainUrl;
-	}
-
-	public void setDomainUrl(String domainUrl) {
-		this.domainUrl = domainUrl;
-	}
+    public void setDetailedMessage(final String detailedMessage) {
+        this.detailedMessage = detailedMessage;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(final String link) {
+        this.link = link;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(final boolean read) {
+        this.read = read;
+    }
+
+    public Date getSlaEndDate() {
+        return slaEndDate;
+    }
+
+    public void setSlaEndDate(final Date slaEndDate) {
+        this.slaEndDate = slaEndDate;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(final State state) {
+        this.state = state;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(final Priority priority) {
+        this.priority = priority;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(final String status) {
+        this.status = status;
+    }
+
+    public List<PortalInboxUser> getPortalInboxUsers() {
+        return portalInboxUsers;
+    }
+
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    public void setResolved(final boolean resolved) {
+        this.resolved = resolved;
+    }
+
+    public String getHeaderMessage() {
+        return headerMessage;
+    }
+
+    public void setHeaderMessage(final String headerMessage) {
+        this.headerMessage = headerMessage;
+    }
+
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(final Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public List<PortalInboxUser> getTempPortalInboxUser() {
+        return tempPortalInboxUser;
+    }
+
+    public void setTempPortalInboxUser(final List<PortalInboxUser> tempPortalInboxUser) {
+        this.tempPortalInboxUser = tempPortalInboxUser;
+    }
+
+    public Date getResolvedDate() {
+        return resolvedDate;
+    }
+
+    public void setResolvedDate(final Date resolvedDate) {
+        this.resolvedDate = resolvedDate;
+    }
+
 }

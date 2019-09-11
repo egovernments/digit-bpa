@@ -1,7 +1,0 @@
-ALTER TABLE egcl_servicemodule_mapping DROP CONSTRAINT fk_egcl_servicemodule_map_createdby;
-ALTER TABLE egcl_servicemodule_mapping DROP CONSTRAINT fk_egcl_servicemodule_map_modifiedby;
-ALTER TABLE egcl_branchuser_map DROP CONSTRAINT fk_egcl_branchuser_map_mfdby;
-ALTER TABLE egcl_dishonorcheque DROP CONSTRAINT fk_egcl_dishchq_lastmodby;
-ALTER TABLE egcl_branchuser_map DROP CONSTRAINT fk_egcl_branchuser_map_crtby;
-ALTER TABLE egcl_dishonorcheque DROP CONSTRAINT fk_egcl_dishchq_crtdby;
-ALTER TABLE egcl_branchuser_map DROP CONSTRAINT fk_egcl_branchuser_map_bankuser;

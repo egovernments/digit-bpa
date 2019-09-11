@@ -60,6 +60,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -135,23 +136,32 @@ public class FundingAgencyAction extends BaseFormAction {
     @Action(value = "/masters/fundingAgency-search")
     public String search() {
         final StringBuffer query = new StringBuffer();
+        final List params = new ArrayList();
+        int i = 1;
         query.append("From FundingAgency");
-        if (!fundingAgency.getCode().equals("") && !fundingAgency.getName().equals(""))
-            query.append(" where code like '%" + fundingAgency.getCode() + "%' and name like '%" + fundingAgency.getName() + "%'");
-        else {
-            if (!fundingAgency.getCode().isEmpty())
-                query.append(" where code like '%" + fundingAgency.getCode() + "%'");
-            if (!fundingAgency.getName().isEmpty())
-                query.append(" where name like '%" + fundingAgency.getName() + "%'");
+        if (!fundingAgency.getCode().equals("") && !fundingAgency.getName().equals("")) {
+            query.append(" where code like ?").append(i++).append(" and name like ?").append(i++);
+            params.add(new StringBuilder("%").append(fundingAgency.getCode()).append("%").toString());
+            params.add(new StringBuilder("%").append(fundingAgency.getName()).append("%").toString());
         }
-        fundingAgencyList = persistenceService.findAllBy(query.toString());
+        else {
+            if (!fundingAgency.getCode().isEmpty()) {
+                query.append(" where code like ?").append(i++);
+                params.add(new StringBuilder("%").append(fundingAgency.getName()).append("%").toString());
+            }
+            if (!fundingAgency.getName().isEmpty()) {
+                query.append(" where name like ?").append(i++);
+                params.add(new StringBuilder("%").append(fundingAgency.getName()).append("%"));
+            }
+        }
+        fundingAgencyList = persistenceService.findAllBy(query.toString(), params.toArray());
         return "search";
     }
 
     @SkipValidation
     @Action(value = "/masters/fundingAgency-beforeEdit")
     public String beforeEdit() {
-        fundingAgency = (FundingAgency) persistenceService.find("from FundingAgency where id=?", fundingAgency.getId());
+        fundingAgency = (FundingAgency) persistenceService.find("from FundingAgency where id=?1", fundingAgency.getId());
 
         return EDIT;
     }
@@ -167,7 +177,7 @@ public class FundingAgencyAction extends BaseFormAction {
         final Accountdetailtype adt = (Accountdetailtype) persistenceService
                 .find("From Accountdetailtype where name='FundingAgency'");
         final Accountdetailkey ac = (Accountdetailkey) persistenceService.find(
-                "from Accountdetailkey where accountdetailtype=? and detailkey=?", adt, fundingAgency.getId().intValue());
+                "from Accountdetailkey where accountdetailtype=?1 and detailkey=?2", adt, fundingAgency.getId().intValue());
         ac.setDetailname(fundingAgency.getName());
         //persistenceService.setType(Accountdetailkey.class);
         persistenceService.persist(ac);
@@ -214,10 +224,10 @@ public class FundingAgencyAction extends BaseFormAction {
         FundingAgency fa = null;
         boolean isDuplicate = false;
         if (!fundingAgency.getCode().equals("") && fundingAgency.getId() != null)
-            fa = (FundingAgency) persistenceService.find("from FundingAgency where code=? and id!=?",
+            fa = (FundingAgency) persistenceService.find("from FundingAgency where code=?1 and id!=?2",
                     fundingAgency.getCode(), fundingAgency.getId());
         else if (!fundingAgency.getCode().equals(""))
-            fa = (FundingAgency) persistenceService.find("from FundingAgency where code=?", fundingAgency.getCode());
+            fa = (FundingAgency) persistenceService.find("from FundingAgency where code=?1", fundingAgency.getCode());
         if (fa != null)
             isDuplicate = true;
         return isDuplicate;

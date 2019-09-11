@@ -56,6 +56,7 @@ import org.egov.portal.entity.es.PortalInboxIndex;
 import org.egov.portal.firm.service.FirmUserService;
 import org.egov.portal.repository.es.PortalInboxIndexRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,9 @@ public class PortalInboxIndexService {
 
     @Autowired
     private CityService cityService;
+
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
     private FirmUserService firmUserService;

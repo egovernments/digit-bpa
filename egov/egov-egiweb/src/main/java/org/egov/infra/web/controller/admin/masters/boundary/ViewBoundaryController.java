@@ -48,14 +48,15 @@
 
 package org.egov.infra.web.controller.admin.masters.boundary;
 
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("boundary/view")
@@ -69,9 +70,14 @@ public class ViewBoundaryController {
         return "boundary-view";
     }
 
-    @GetMapping(value = "{boundaryId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String viewBoundaries(@PathVariable Long boundaryId, Model model) {
-        model.addAttribute("boundary", boundaryService.getBoundaryById(boundaryId));
+    @GetMapping("{boundaryId}")
+    public String viewBoundaries(@PathVariable Long boundaryId, Model model, RedirectAttributes attribs) {
+        Boundary boundary = boundaryService.getBoundaryById(boundaryId);
+        if (boundary == null) {
+            attribs.addFlashAttribute("error", "err.boundary.not.found");
+            return "redirect:/boundary/view";
+        }
+        model.addAttribute("boundary", boundary);
         return "boundary-view";
     }
 }

@@ -54,6 +54,7 @@ import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
@@ -61,11 +62,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This service class provides API(s) which are required by modules depending on EIS
@@ -110,7 +107,7 @@ public class EisCommonService {
      */
     @Deprecated
     public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,
-            final String objectSubType, final Long posId) {
+                                                                               final String objectSubType, final Long posId) {
         return positionHierarchyService.getPosHirByPosAndObjectTypeAndObjectSubType(posId, objectId, objectSubType)
                 .getToPosition();
     }
@@ -124,11 +121,10 @@ public class EisCommonService {
      */
     public User getUserForPosition(final Long posId, final Date givenDate) {
         try {
-            return assignmentService.getAssignmentsForPosition(posId, givenDate).get(0).getEmployee();
-        } catch (final NullPointerException e) {
-            throw new ApplicationRuntimeException("User Not Found");
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(posId, givenDate);
+            return assignments.isEmpty() ? null : assignments.get(0).getEmployee();
         } catch (final Exception e) {
-            throw new ApplicationRuntimeException(e.getMessage());
+            throw new ApplicationRuntimeException("User Not Found", e);
         }
     }
 
@@ -189,7 +185,8 @@ public class EisCommonService {
 
     public Assignment getLatestAssignmentForEmployeeByDate(final Long empId, final Date toDate) {
         return assignmentService.findByEmployeeAndGivenDate(empId, toDate).get(0);
-     }
+    }
+
     /**
      * Refer to Position master service for the same API
      *
@@ -254,11 +251,25 @@ public class EisCommonService {
      * @return List of active users
      */
     public List<User> getAllActiveUsersByGivenDesig(final Long designationId) {
-        final Set<User> users = new HashSet<User>();
+        final Set<User> users = new HashSet<>();
         final List<Assignment> assignments = assignmentService.getAllActiveAssignments(designationId);
         for (final Assignment assign : assignments)
             users.add(assign.getEmployee());
-        return new ArrayList<User>(users);
+        return new ArrayList<>(users);
+    }
+
+    /**
+     * Validates whether the position is valid as per the workflow matrix.
+     * 
+     * @param workFlowMatrix - Matrix for the current state
+     * @param position - Approver position
+     * @return
+     */
+    public Boolean isValidAppover(WorkFlowMatrix workFlowMatrix, Position position) {
+        if (workFlowMatrix.getNextDesignation() != null) {
+            return Arrays.asList(workFlowMatrix.getNextDesignation().split(",")).contains(position.getDeptDesig().getDesignation().getName());
+        }
+        return Boolean.FALSE;
     }
 
 }

@@ -64,15 +64,11 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.masters.SubSchemeService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @ParentPackage("egov")
 
@@ -101,8 +97,6 @@ public class SubSchemeAction extends BaseFormAction {
     private boolean uniqueCode = false;
     private String code;
 	private String name;
-	@Autowired
-	private EgovMasterDataCaching egovMasterDataCaching;
     @Override
     public Object getModel() {
         return subScheme;
@@ -161,7 +155,6 @@ public class SubSchemeAction extends BaseFormAction {
         clearValues = true;
         addActionMessage(getText("subscheme.saved.successfully"));
         showMode = "new";
-        egovMasterDataCaching.removeFromCache(" egi-subscheme");
         return VIEW;
     }
 
@@ -190,7 +183,6 @@ public class SubSchemeAction extends BaseFormAction {
         clearValues = true;
         addActionMessage(getText("subscheme.modified.successfully"));
         showMode = "";
-        egovMasterDataCaching.removeFromCache("egi-subscheme");
         return VIEW;
     }
 
@@ -198,7 +190,7 @@ public class SubSchemeAction extends BaseFormAction {
     @Action(value = "/masters/subScheme-beforeEdit")
     public String beforeEdit()
     {
-        subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
+        subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?1", subScheme.getId());
         if (subScheme!=null && subScheme.getIsactive())
         	isactive = true;
         return NEW;
@@ -220,30 +212,32 @@ public class SubSchemeAction extends BaseFormAction {
     @Action(value = "/masters/subScheme-search")
     public String search() {
         final StringBuffer query = new StringBuffer(500);
-        new StringBuffer(100);
+        final List params = new ArrayList();
+        int i = 1;
         query.append("From SubScheme s ");
         if (fundId != 0) {
-            query.append("where s.scheme.fund.id= " + fundId);
-            // params.append(""+fundId);
+            query.append("where s.scheme.fund.id=?").append(i++);
+            params.add(fundId);
 
             if (schemeId != -1) {
-                query.append("and  s.scheme.id= " + schemeId);
-                // params.append(","+schemeId);
+                query.append("and  s.scheme.id=?").append(i++);
+                params.add(schemeId);
 
-                if (subScheme.getId() != -1)
-                    query.append("and s.id=" + subScheme.getId());
-                // params.append(","+subSchemeId);
+                if (subScheme.getId() != -1) {
+                    query.append("and s.id=?").append(i++);
+                    params.add(subScheme.getId());
+                }
             }
         }
         loadDropDowns();
-        subSchemeList = persistenceService.findAllBy(query.toString());
+        subSchemeList = persistenceService.findAllBy(query.toString(), params.toArray());
         return SEARCH;
     }
 
     @SkipValidation
     @Action(value = "/masters/subScheme-viewSubScheme")
     public String viewSubScheme() {
-        subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subScheme.getId());
+        subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?1", subScheme.getId());
         showMode = "view";
         return VIEW;
     }
@@ -256,17 +250,15 @@ public class SubSchemeAction extends BaseFormAction {
 
         if (fundId != 0) {
 
-            st.append("from Scheme where isactive=true and fund.id=");
-            st.append(fundId);
-            dropdownData.put("schemeList", persistenceService.findAllBy(st
-                    .toString()));
+            st.append("from Scheme where isactive=true and fund.id=?1");
+            dropdownData.put("schemeList", persistenceService.findAllBy(st.toString(), fundId));
             st.delete(0, st.length() - 1);
 
         } else
             dropdownData.put("schemeList", Collections.emptyList());
         if (schemeId != -1)
             dropdownData.put("subSchemeList",
-                    persistenceService.findAllBy("from SubScheme where isactive=true and scheme.id=?", schemeId));
+                    persistenceService.findAllBy("from SubScheme where isactive=true and scheme.id=?1", schemeId));
         else
             dropdownData.put("subSchemeList", Collections.emptyList());
 
@@ -280,16 +272,16 @@ public class SubSchemeAction extends BaseFormAction {
         
         if (uniqueCode) {
             if (!subScheme.getCode().equals("") && subScheme.getId() != null)
-            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=? and id!=?",
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?1 and id!=?2",
                 		subScheme.getCode().toLowerCase(), subScheme.getId());
             else if (!subScheme.getCode().equals(""))
-            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?", subScheme.getCode().toLowerCase());
+            	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where code=?1", subScheme.getCode().toLowerCase());
             uniqueCode = false;
         } else if (!subScheme.getName().equals("") && subScheme.getId() != null)
-        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=? and id!=?", subScheme.getName().toLowerCase(),
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?1 and id!=?2", subScheme.getName().toLowerCase(),
             		subScheme.getId());
         else if (!subScheme.getName().equals(""))
-        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?", subScheme.getName().toLowerCase());
+        	subScheme_validate = (SubScheme) persistenceService.find("from SubScheme where name=?1", subScheme.getName().toLowerCase());
         if (subScheme_validate != null)
             isDuplicate = true;
         

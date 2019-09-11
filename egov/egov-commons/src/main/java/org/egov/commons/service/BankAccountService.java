@@ -53,6 +53,8 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -156,31 +158,31 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 final String[] strArray = typeOfAccount.split(",");
                 if (fundId != null) {
                     bankaccounts = findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.bankbranch.bank.id=?3 and isactive=true and type in (?4, ?5) order by ba.chartofaccounts.glcode",
                             branchId, fundId, bankId, BankAccountType.valueOf(strArray[0].toUpperCase()),
                             BankAccountType.valueOf(strArray[1].toUpperCase()));
                 } else {
                     bankaccounts = findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and  ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
+                            "from Bankaccount ba where ba.bankbranch.id=?1 and  ba.bankbranch.bank.id=?2 and isactive=true and type in (?3, ?4) order by ba.chartofaccounts.glcode",
                             branchId, bankId, BankAccountType.valueOf(strArray[0]),
                             BankAccountType.valueOf(strArray[1]));
                 }
             } else if (fundId != null) {
                 bankaccounts = findAllBy(
-                        "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
+                        "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.bankbranch.bank.id=?3 and isactive=true and type in (?4) order by ba.chartofaccounts.glcode",
                         branchId, fundId, bankId, typeOfAccount);
             } else {
                 bankaccounts = findAllBy(
-                        "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
+                        "from Bankaccount ba where ba.bankbranch.id=?1  and ba.bankbranch.bank.id=?2 and isactive=true and type in (?3) order by ba.chartofaccounts.glcode",
                         branchId, bankId, typeOfAccount);
             }
         } else if (fundId != null) {
             bankaccounts = findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                    "from Bankaccount ba where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.bankbranch.bank.id=?3 and isactive=true order by ba.chartofaccounts.glcode",
                     branchId, fundId, bankId);
         } else {
             bankaccounts = findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                    "from Bankaccount ba where ba.bankbranch.id=?1  and ba.bankbranch.bank.id=?2 and isactive=true order by ba.chartofaccounts.glcode",
                     branchId, bankId);
         }
         return bankaccounts;
@@ -197,7 +199,7 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ").
                 append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=:branchId").
                 append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-        return getSession().createSQLQuery(queryString.toString()).
+        return getSession().createNativeQuery(queryString.toString()).
                 setDate("asOnDate", asOnDate).
                 setInteger(BRANCH_ID, branchId).
                 list();
@@ -215,7 +217,7 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=:branchId").
                 append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate").
                 append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-        return getSession().createSQLQuery(queryString.toString()).
+        return getSession().createNativeQuery(queryString.toString()).
                 setDate("asOnDate", asOnDate).
                 setInteger(BRANCH_ID, branchId).
                 setString("type", isBlank(chequeType) ? "CHEQUE" : chequeType).
@@ -248,9 +250,9 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
         if (fundId != null && fundId > 0)
                 queryString.append(" and bankaccount.fundid=:fundId");
 
-        return getSession().createSQLQuery(queryString.toString()).
-                setInteger("fundId", fundId).
-                setInteger(BRANCH_ID, branchId).
+        return getSession().createNativeQuery(queryString.toString()).
+                setParameter("fundId", Long.valueOf(fundId), LongType.INSTANCE).
+                setParameter(BRANCH_ID, Long.valueOf(branchId), LongType.INSTANCE).
                 list();
     }
 

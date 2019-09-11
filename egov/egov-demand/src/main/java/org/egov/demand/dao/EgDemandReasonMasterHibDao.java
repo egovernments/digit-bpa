@@ -80,9 +80,9 @@ public class EgDemandReasonMasterHibDao implements EgDemandReasonMasterDao {
 	}
 
 	@Override
-	@Transactional
-	public void create(EgDemandReasonMaster egDemandReasonMaster) {
-	        getCurrentSession().save(egDemandReasonMaster);
+	public EgDemandReasonMaster create(EgDemandReasonMaster egDemandReasonMaster) {
+
+		return null;
 	}
 
 	@Override

@@ -55,6 +55,8 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -68,9 +70,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Feature.SEQ_FEATURE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
 @Entity
@@ -80,16 +87,22 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 @Audited
 public class Feature extends AbstractPersistable<Long> {
 
-    public static final String SEQ_FEATURE = "SEQ_EG_FEATURE";
+    protected static final String SEQ_FEATURE = "SEQ_EG_FEATURE";
     private static final long serialVersionUID = -5308237250026445794L;
     @Id
     @GeneratedValue(generator = SEQ_FEATURE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotAudited
+    @NotBlank
+    @Length(max = 100)
+    @SafeHtml
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String name;
 
     @NotAudited
+    @Length(max = 200)
+    @SafeHtml
     private String description;
 
     @ManyToOne
@@ -109,6 +122,9 @@ public class Feature extends AbstractPersistable<Long> {
     @Audited(targetAuditMode = NOT_AUDITED)
     @AuditJoinTable
     private Set<Role> roles;
+
+    @NotAudited
+    private boolean enabled;
 
     @Override
     public Long getId() {
@@ -160,6 +176,14 @@ public class Feature extends AbstractPersistable<Long> {
         this.roles = roles;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public boolean hasRole(Role role) {
         return this.roles.contains(role);
     }
@@ -172,5 +196,20 @@ public class Feature extends AbstractPersistable<Long> {
     public void removeRole(Role role) {
         if (hasRole(role))
             this.getRoles().remove(role);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Feature))
+            return false;
+        Feature feature = (Feature) other;
+        return Objects.equals(getName(), feature.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

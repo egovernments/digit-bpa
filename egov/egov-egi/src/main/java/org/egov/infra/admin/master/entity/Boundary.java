@@ -52,17 +52,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompareDates;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -70,27 +69,34 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Boundary.SEQ_BOUNDARY;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NAME_WITH_SPECIAL_CHARS;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.NAME_WITH_SPECIAL_CHARS;
 
 @Entity
+@Table(name = "EG_BOUNDARY")
+@SequenceGenerator(name = SEQ_BOUNDARY, sequenceName = SEQ_BOUNDARY, allocationSize = 1)
 @CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
 @Unique(fields = "code", enableDfltMsg = true)
-@Table(name = "EG_BOUNDARY")
-@NamedQuery(name = "Boundary.findBoundariesByBoundaryType",
-        query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")
-@SequenceGenerator(name = SEQ_BOUNDARY, sequenceName = SEQ_BOUNDARY, allocationSize = 1)
+@CompareDates
 public class Boundary extends AbstractAuditable {
 
-    public static final String SEQ_BOUNDARY = "seq_eg_boundary";
+    protected static final String SEQ_BOUNDARY = "seq_eg_boundary";
     private static final long serialVersionUID = 3054956514161912026L;
+
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_BOUNDARY, strategy = GenerationType.SEQUENCE)
@@ -99,13 +105,24 @@ public class Boundary extends AbstractAuditable {
     @Length(max = 512)
     @SafeHtml
     @NotBlank
+    @Pattern(regexp = NAME_WITH_SPECIAL_CHARS, message = INVALID_NAME_WITH_SPECIAL_CHARS)
     private String name;
 
     @Length(max = 25)
     @SafeHtml
     @NotBlank
+    @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
+    @SafeHtml
+    @Length(max = 10)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
+    private String lgdCode;
+
+    @Positive
+    @NotNull
+    @Column(updatable = false)
     private Long boundaryNum;
 
     @ManyToOne
@@ -123,24 +140,29 @@ public class Boundary extends AbstractAuditable {
     @JsonIgnore
     private Set<Boundary> children = new HashSet<>();
 
-    @DateFormat
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    @NotNull
     private Date fromDate;
 
     private Date toDate;
 
     private boolean active;
 
+    @Positive
     private Long bndryId;
 
     @SafeHtml
+    @Length(max = 256)
+    @Pattern(regexp = NAME_WITH_SPECIAL_CHARS, message = INVALID_NAME_WITH_SPECIAL_CHARS)
     private String localName;
 
+    @Positive
     private Float longitude;
 
+    @Positive
     private Float latitude;
 
     @Length(max = 32)
+    @SafeHtml
     private String materializedPath;
 
     @Override
@@ -191,6 +213,14 @@ public class Boundary extends AbstractAuditable {
 
     public void setCode(final String code) {
         this.code = code;
+    }
+
+    public String getLgdCode() {
+        return lgdCode;
+    }
+
+    public void setLgdCode(final String lgdCode) {
+        this.lgdCode = lgdCode;
     }
 
     public boolean isLeaf() {
@@ -281,13 +311,13 @@ public class Boundary extends AbstractAuditable {
         if (!(other instanceof Boundary))
             return false;
         Boundary boundary = (Boundary) other;
-        return Objects.equal(boundaryNum, boundary.boundaryNum) &&
-                Objects.equal(boundaryType, boundary.boundaryType);
+        return Objects.equal(getBoundaryNum(), boundary.getBoundaryNum()) &&
+                Objects.equal(getBoundaryType(), boundary.getBoundaryType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(boundaryNum, boundaryType);
+        return Objects.hashCode(getBoundaryNum(), getBoundaryType());
     }
 
 }

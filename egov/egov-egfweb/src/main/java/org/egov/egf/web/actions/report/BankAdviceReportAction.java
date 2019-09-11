@@ -53,11 +53,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.Bank;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.Bankbranch;
-import org.egov.commons.CFinancialYear;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.model.BankAdviceReportInfo;
@@ -75,7 +71,8 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -83,14 +80,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -148,47 +138,41 @@ public class BankAdviceReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         addDropdownData(
                 "bankList",
                 persistenceService
-                        .findAllBy("select distinct b from Bank b , Bankbranch bb , Bankaccount ba WHERE bb.bank=b and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and b.isactive=true order by b.name"));
+                        .findAllBy(new StringBuilder("select distinct b from Bank b , Bankbranch bb , Bankaccount ba")
+                                .append(" WHERE bb.bank=b and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and b.isactive=true order by b.name").toString()));
         if (bankbranch == null)
             addDropdownData("bankBranchList", Collections.EMPTY_LIST);
         else
             addDropdownData(
                     "bankBranchList",
                     persistenceService
-                            .findAllBy(
-                                    "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.isactive=true",
+                            .findAllBy(new StringBuilder("select distinct bb from Bankbranch bb,Bankaccount ba")
+                                    .append(" where bb.bank.id=?1 and ba.bankbranch=bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.isactive=true").toString(),
                                     bank.getId()));
         if (bankaccount == null)
             addDropdownData("bankAccountList", Collections.EMPTY_LIST);
         else
             addDropdownData("bankAccountList",
-                    persistenceService.findAllBy("from Bankaccount where bankbranch.id=? and isactive=true", bankbranch.getId()));
+                    persistenceService.findAllBy("from Bankaccount where bankbranch.id=?1 and isactive=true", bankbranch.getId()));
         if (instrumentnumber == null)
             addDropdownData("chequeNumberList", Collections.EMPTY_LIST);
         else {
             List<Object[]> resultList = new ArrayList<Object[]>();
             final List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>();
-            resultList = getPersistenceService()
-                    .findAllBy(
-                            ""
-                                    +
-                                    "SELECT ih.id, ih.instrumentNumber FROM InstrumentHeader ih, InstrumentVoucher iv, Paymentheader ph "
-                                    +
-                                    "WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ? AND ih.statusId.description in ('New')"
-                                    +
-                                    " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null "
-                                    +
-                                    "AND iv.voucherHeaderId     = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '"
-                                    + FinancialConstants.MODEOFPAYMENT_RTGS + "' " +
-                                    "GROUP BY ih.instrumentNumber,ih.id", bankaccount.getId());
+            StringBuilder queryString = new StringBuilder("SELECT ih.id, ih.instrumentNumber FROM InstrumentHeader ih, InstrumentVoucher iv, Paymentheader ph ")
+                    .append("WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ?1 AND ih.statusId.description in ('New')")
+                    .append(" AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null ")
+                    .append("AND iv.voucherHeaderId = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type =?2 ")
+                    .append("GROUP BY ih.instrumentNumber,ih.id");
+            resultList = getPersistenceService().findAllBy(queryString.toString(),bankaccount.getId(),FinancialConstants.MODEOFPAYMENT_RTGS );
             for (final Object[] obj : resultList) {
                 InstrumentHeader ih = new InstrumentHeader();
-                ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", (Long) obj[0]);
+                ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1", (Long) obj[0]);
 
                 instrumentHeaderList.add(ih);
             }
@@ -215,35 +199,28 @@ public class BankAdviceReportAction extends BaseFormAction {
         Map<Object, BigDecimal> tempMap = new HashMap<Object, BigDecimal>();
         BigDecimal detailKeyAmt = BigDecimal.ZERO;
         // Getting net payable
-        final String query = " SELECT gld.detailtypeid, gld.detailkeyid, sum(gld.amount) " +
-                " FROM egf_instrumentvoucher ivh, generalledger gl, generalledgerdetail gld " +
-                " WHERE ivh.instrumentheaderid = ? AND ivh.voucherheaderid = gl.voucherheaderid " +
-                " AND gl.debitamount != 0 AND gl.id = gld.generalledgerid " +
-                " group by gld.detailkeyid, gld.detailtypeid ";
+        final StringBuilder query = new StringBuilder(" SELECT gld.detailtypeid, gld.detailkeyid, sum(gld.amount) ")
+                .append(" FROM egf_instrumentvoucher ivh, generalledger gl, generalledgerdetail gld ")
+                .append(" WHERE ivh.instrumentheaderid = :instHeaderId AND ivh.voucherheaderid = gl.voucherheaderid ")
+                .append(" AND gl.debitamount != 0 AND gl.id = gld.generalledgerid ")
+                .append(" group by gld.detailkeyid, gld.detailtypeid ");
 
         // Get without subledger one
-        final String withNoSubledgerQry = " SELECT gld.DETAILTYPEID,gld.DETAILKEYID , sum(gld.amount) FROM   ( (SELECT voucherheaderid "
-                +
-                "  FROM egf_instrumentvoucher   WHERE instrumentheaderid =?   ) except   (SELECT DISTINCT payvhid  FROM miscbilldetail mb,"
-                +
-                " voucherheader vh ,    generalledger gl  LEFT JOIN chartofaccountdetail dtl  ON gl.glcodeid    =dtl.glcodeid  "
-                +
-                " WHERE mb.payvhid  =vh.id "
-                +
-                " AND vh.id =gl.voucherheaderid  AND dtl.glcodeid IS NOT NULL  AND vh.id  IN (SELECT voucherheaderid FROM egf_instrumentvoucher "
-                +
-                " WHERE instrumentheaderid =? ))) p ,  miscbilldetail m, generalledger gl, generalledgerdetail gld WHERE p.voucherheaderid=m.payvhid "
-                +
-                " AND gl.voucherheaderid =m.billvhid AND gl.id=gld.generalledgerid AND gl.debitamount!=0 " +
-                " group by gld.detailtypeid ,gld.detailkeyid  ";
+        final StringBuilder withNoSubledgerQry = new StringBuilder(" SELECT gld.DETAILTYPEID,gld.DETAILKEYID , sum(gld.amount) FROM   ( (SELECT voucherheaderid ")
+                .append("  FROM egf_instrumentvoucher   WHERE instrumentheaderid =:instHeaderId ) except (SELECT DISTINCT payvhid  FROM miscbilldetail mb,")
+                .append(" voucherheader vh , generalledger gl  LEFT JOIN chartofaccountdetail dtl ON gl.glcodeid =dtl.glcodeid  ")
+                .append(" WHERE mb.payvhid  =vh.id ")
+                .append(" AND vh.id =gl.voucherheaderid  AND dtl.glcodeid IS NOT NULL  AND vh.id  IN (SELECT voucherheaderid FROM egf_instrumentvoucher ")
+                .append(" WHERE instrumentheaderid =:instHeaderId ))) p ,  miscbilldetail m, generalledger gl, generalledgerdetail gld WHERE p.voucherheaderid=m.payvhid ")
+                .append(" AND gl.voucherheaderid =m.billvhid AND gl.id=gld.generalledgerid AND gl.debitamount!=0 ")
+                .append(" group by gld.detailtypeid ,gld.detailkeyid  ");
 
-        final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createSQLQuery(query);
-        WithNetPayableSubledgerQuery.setParameter(0, instrumentHeader.getId());
+        final Query WithNetPayableSubledgerQuery = persistenceService.getSession().createNativeQuery(query.toString());
+        WithNetPayableSubledgerQuery.setParameter("instHeaderId", instrumentHeader.getId(), LongType.INSTANCE);
 
         // Get without subledger one
-        final Query getDebitsideSubledgerQuery = persistenceService.getSession().createSQLQuery(withNoSubledgerQry);
-        getDebitsideSubledgerQuery.setParameter(0, instrumentHeader.getId());
-        getDebitsideSubledgerQuery.setParameter(1, instrumentHeader.getId());
+        final Query getDebitsideSubledgerQuery = persistenceService.getSession().createNativeQuery(withNoSubledgerQry.toString());
+        getDebitsideSubledgerQuery.setParameter("instHeaderId", instrumentHeader.getId());
 
         final List<Object[]> retList = WithNetPayableSubledgerQuery.list();
         retList.addAll(getDebitsideSubledgerQuery.list());
@@ -291,20 +268,18 @@ public class BankAdviceReportAction extends BaseFormAction {
     @SkipValidation
     public String TNEBsearch() {
 
-        final String query = "select distinct ih " +
-                "from EBDetails d, EgBillregister br, Miscbilldetail mbd, " +
-                "InstrumentVoucher iv inner join iv.instrumentHeaderId ih " +
-                "where d.receiptNo is null " +
-                "and d.egBillregister = br " +
-                "and br.billnumber = mbd.billnumber " +
-                "and mbd.payVoucherHeader = iv.voucherHeaderId " +
-                "and ih.statusId.code in ('"
-                + FinancialConstants.INSTRUMENT_CREATED_STATUS + "', '"
-                + FinancialConstants.INSTRUMENT_RECONCILED_STATUS + "') " +
-                "and month(ih.transactionDate) = ? " +
-                "and year(ih.transactionDate) between  ? and ?";
+        final StringBuilder query = new StringBuilder("select distinct ih ")
+                .append("from EBDetails d, EgBillregister br, Miscbilldetail mbd, ")
+                .append("InstrumentVoucher iv inner join iv.instrumentHeaderId ih ")
+                .append("where d.receiptNo is null ")
+                .append("and d.egBillregister = br ")
+                .append("and br.billnumber = mbd.billnumber ")
+                .append("and mbd.payVoucherHeader = iv.voucherHeaderId ")
+                .append("and ih.statusId.code in ('?1,?2') ")
+                .append("and month(ih.transactionDate) = ?3 ")
+                .append("and year(ih.transactionDate) between  ?4 and ?5");
 
-        final CFinancialYear financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?",
+        final CFinancialYear financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?1",
                 financialYearId);
 
         final Calendar calendar = Calendar.getInstance();
@@ -315,7 +290,8 @@ public class BankAdviceReportAction extends BaseFormAction {
         calendar.setTime(financialYear.getEndingDate());
         final Integer endingYear = calendar.get(Calendar.YEAR);
 
-        instrumentHeaderList = persistenceService.findAllBy(query, month, startingYear, endingYear);
+        instrumentHeaderList = persistenceService.findAllBy(query.toString(),FinancialConstants.INSTRUMENT_CREATED_STATUS,
+                FinancialConstants.INSTRUMENT_RECONCILED_STATUS, month, startingYear, endingYear);
         mode = "search";
         monthMap = DateUtils.getAllMonths();
         heading = "List of RTGS Bank advice generated for ";
@@ -330,7 +306,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         final List<BankAdviceReportInfo> subLedgerList = new ArrayList<BankAdviceReportInfo>();
 
         for (final Object[] obj : retList) {
-            final Accountdetailtype adt = (Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?",
+            final Accountdetailtype adt = (Accountdetailtype) persistenceService.find("from Accountdetailtype where id=?1",
                     ((BigInteger) obj[0]).intValue());
 
             EntityType subDetail = null;
@@ -342,17 +318,17 @@ public class BankAdviceReportAction extends BaseFormAction {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("data Type = " + dataType);
                 if (dataType.equals("Long"))
-                    subDetail = (EntityType) persistenceService.find("from " + adt.getFullQualifiedName() + " where id=?",
+                    subDetail = (EntityType) persistenceService.find(String.format("from %s where id=?1", adt.getFullQualifiedName()),
                             ((BigInteger) obj[1]).longValue());
                 else
-                    subDetail = (EntityType) persistenceService.find("from " + adt.getFullQualifiedName() + " where id=?",
+                    subDetail = (EntityType) persistenceService.find(String.format("from %s where id=?1", adt.getFullQualifiedName()),
                             ((BigInteger) obj[1]).intValue());
 
             } catch (final ClassCastException e) {
                 LOGGER.error(e);
             } catch (final Exception e)
             {
-                LOGGER.error("Exception to get EntityType=" + e.getMessage());
+                LOGGER.error("Exception to get EntityType=" , e);
             }
             final BankAdviceReportInfo bankAdviceReportInfo = new BankAdviceReportInfo();
             bankAdviceReportInfo.setPartyName(subDetail.getName().toUpperCase());
@@ -435,28 +411,28 @@ public class BankAdviceReportAction extends BaseFormAction {
     }
 
     private String getBankName(final Integer bankId) {
-        final Bank bank = (Bank) persistenceService.find("from Bank where id=?", bankId);
+        final Bank bank = (Bank) persistenceService.find("from Bank where id=?1", bankId);
         return bank.getName();
     }
 
     private String getBankBranchName(final Integer bankBranchId) {
-        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?", bankBranchId);
+        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?1", bankBranchId);
         return bankBranch.getBranchname();
     }
 
     private String getBankAccountNumber(final Long bankAccountId) {
-        final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankAccountId);
+        final Bankaccount bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", bankAccountId);
         return bankAccount.getAccountnumber();
     }
 
     private String getInstrumentNumber(final Long instrumentHeaderId) {
-        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1",
                 instrumentHeaderId);
         return instrumentHeader.getTransactionNumber();
     }
 
     private String getInstrumentDate(final Long instrumentHeaderId) {
-        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1",
                 instrumentHeaderId);
         return Constants.DDMMYYYYFORMAT2.format(instrumentHeader.getTransactionDate());
     }
@@ -467,7 +443,7 @@ public class BankAdviceReportAction extends BaseFormAction {
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         final StringBuffer letterContext = new StringBuffer();
         letterContext
-                .append("             I request you to transfer the amount indicated below through RTGS duly debiting from the")
+                .append(" I request you to transfer the amount indicated below through RTGS duly debiting from the")
                 .append("  Current Account No: ")
                 .append(getBankAccountNumber(bankaccount.getId()) != null ? getBankAccountNumber(bankaccount.getId()) : " ")
                 .append("  under your bank to the following bank accounts:");

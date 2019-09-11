@@ -53,6 +53,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Fund;
+import org.egov.commons.repository.FundRepository;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -63,13 +64,13 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.report.FundFlowBean;
 import org.egov.services.report.FundFlowService;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -78,12 +79,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 
@@ -122,8 +118,8 @@ public class FundFlowAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    @Autowired
+    private FundRepository fundRepository;
     
     @Override
     public Object getModel() {
@@ -132,7 +128,7 @@ public class FundFlowAction extends BaseFormAction {
 
     @Override
     public void prepare() {
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
     }
 
     @Action(value = "/report/fundFlow-beforeSearch")
@@ -156,13 +152,14 @@ public class FundFlowAction extends BaseFormAction {
     @Action(value = "/report/fundFlow-search")
     public String search() {
         final StringBuffer alreadyExistsQryStr = new StringBuffer(100);
-        alreadyExistsQryStr
-        .append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
-                + sqlformat.format(asOnDate) + "' ");
+        alreadyExistsQryStr.append("select openingBalance")
+                .append(" From egf_fundflow ff,bankaccount ba")
+                .append(" where ba.id=ff.bankaccountid and to_date(reportdate)=:reportDate");
         if (fund != null && fund != -1)
             alreadyExistsQryStr.append(" and ba.fundId=" + fund + " ");
         final Query alreadyExistsQry = persistenceService.getSession()
-                .createSQLQuery(alreadyExistsQryStr.toString());
+                .createNativeQuery(alreadyExistsQryStr.toString())
+                .setParameter("reportDate", sqlformat.format(asOnDate), StringType.INSTANCE);
         final List existsList = alreadyExistsQry.list();
         if (existsList.size() > 0) {
             paymentList = null;
@@ -435,13 +432,15 @@ public class FundFlowAction extends BaseFormAction {
     public String create() {
         // merge two list to get sigle without duplicates
         final StringBuffer alreadyExistsQryStr = new StringBuffer(100);
-        alreadyExistsQryStr
-        .append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
-                + sqlformat.format(asOnDate) + "' ");
-        if (fund != null && fund != -1)
-            alreadyExistsQryStr.append("and ba.fundId=" + fund + " ");
-        final Query alreadyExistsQry = persistenceService.getSession()
-                .createSQLQuery(alreadyExistsQryStr.toString());
+        alreadyExistsQryStr.append("select openingBalance From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)=:asOnDate ");
+        if (fund != null && fund != -1) {
+            alreadyExistsQryStr.append("and ba.fundId=:fund ");
+        }
+        final Query alreadyExistsQry = persistenceService.getSession().createNativeQuery(alreadyExistsQryStr.toString())
+                .setParameter("asOnDate",sqlformat.format(asOnDate),StringType.INSTANCE);
+        if (fund != null && fund != -1){
+            alreadyExistsQry.setParameter("fund", fund, StringType.INSTANCE);
+        }
         final List existsList = alreadyExistsQry.list();
         if (existsList.size() > 0)
             throw new ValidationException(
@@ -601,26 +600,26 @@ public class FundFlowAction extends BaseFormAction {
                                 "parser exception")));
             }
             final StringBuffer openingBalanceQryStr = new StringBuffer(100);
-            openingBalanceQryStr
-            .append("select ba.id as bankAccountId,ba.accountnumber as accountNumber,ff.openingBalance+ff.currentReceipt as openingBalance from egf_fundflow ff,bankaccount ba   "
-                    + "   where ff.bankaccountid=ba.id ");
+            openingBalanceQryStr.append("select ba.id as bankAccountId,ba.accountnumber as accountNumber,ff.openingBalance+ff.currentReceipt as openingBalance")
+                        .append(" from egf_fundflow ff,bankaccount ba ")
+                        .append(" where ff.bankaccountid=ba.id ");
             if (fundId != null && fundId != -1)
-                openingBalanceQryStr.append("and ba.fundid=" + fundId);
-            openingBalanceQryStr.append(" and to_date(reportdate)='"
-                    + sqlformat.format(reportDate) + "'");
+                openingBalanceQryStr.append("and ba.fundid=:fundId ");
+            openingBalanceQryStr.append(" and to_date(reportdate)=:reportDate ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("getting Opening Balance for " + reportDate
-                        + "    sqlformat.format(reportDate)"
+                        + " sqlformat.format(reportDate)"
                         + sqlformat.format(reportDate));
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Opening Balance Qry "
                         + openingBalanceQryStr.toString());
-            final Query openingBalanceQry = persistenceService.getSession()
-                    .createSQLQuery(openingBalanceQryStr.toString()).addScalar(
-                            "bankAccountId").addScalar("accountNumber")
-                            .addScalar("openingBalance").setResultTransformer(
-                                    Transformers.aliasToBean(FundFlowBean.class));
+            final Query openingBalanceQry = persistenceService.getSession().createNativeQuery(openingBalanceQryStr.toString())
+                            .addScalar("bankAccountId").addScalar("accountNumber")
+                            .addScalar("openingBalance").setResultTransformer(Transformers.aliasToBean(FundFlowBean.class));
+            if (fundId != null && fundId != -1)
+                openingBalanceQry.setParameter("fundId", fundId, LongType.INSTANCE);
+            openingBalanceQry.setParameter("reportDate", sqlformat.format(reportDate), StringType.INSTANCE);
             openingBalnaceList = openingBalanceQry.list();
             i++;
             if (i >= 100) {
@@ -657,18 +656,24 @@ public class FundFlowAction extends BaseFormAction {
     private List<FundFlowBean> getCurrentDayOpeningBalance(final Date asOnDate2, final Long fund2) {
 
         final StringBuffer currentOpbAndRcptQryStr = new StringBuffer(100);
-        currentOpbAndRcptQryStr
-        .append("select ff.openingBalance as openingBalance,ff.currentreceipt as currentReceipt,ff.id as id ,ba.accountNumber as accountNumber,ff.bankAccountId as bankAccountId From egf_fundflow ff,bankaccount ba where ba.id=ff.bankaccountid and to_date(reportdate)='"
-                + sqlformat.format(asOnDate2) + "' ");
+        currentOpbAndRcptQryStr.append("select ff.openingBalance as openingBalance,ff.currentreceipt as currentReceipt,ff.id as id , ")
+                .append(" ba.accountNumber as accountNumber,ff.bankAccountId as bankAccountId")
+                .append(" From egf_fundflow ff,bankaccount ba ")
+                .append(" where ba.id=ff.bankaccountid and to_date(reportdate)=:asOnDate2 ");
         if (fund2 != null && fund2 != -1)
-            currentOpbAndRcptQryStr.append(" and ba.fundId=" + fund2 + " ");
+            currentOpbAndRcptQryStr.append(" and ba.fundId=:fund2 ");
 
         final Query currentOpbAndRcptQry = persistenceService.getSession()
-                .createSQLQuery(currentOpbAndRcptQryStr.toString()).addScalar(
-                        "openingBalance").addScalar("currentReceipt")
-                        .addScalar("id", LongType.INSTANCE).addScalar("accountNumber")
-                        .addScalar("bankAccountId").setResultTransformer(
-                                Transformers.aliasToBean(FundFlowBean.class));
+                .createNativeQuery(currentOpbAndRcptQryStr.toString()).addScalar("openingBalance")
+                        .addScalar("currentReceipt")
+                        .addScalar("id", LongType.INSTANCE)
+                        .addScalar("accountNumber")
+                        .addScalar("bankAccountId").setResultTransformer(Transformers.aliasToBean(FundFlowBean.class));
+        currentOpbAndRcptQry.setParameter("asOnDate2", sqlformat.format(asOnDate2), StringType.INSTANCE);
+        if (fund2 != null && fund2 != -1) {
+            currentOpbAndRcptQry.setParameter("fund2", fund2, StringType.INSTANCE);
+        }
+
         return currentOpbAndRcptQry.list();
 
     }
@@ -790,8 +795,7 @@ public class FundFlowAction extends BaseFormAction {
         paramMap.put("receiptList", receiptList);
         paramMap.put("paymentList", paymentList);
         if (fund != null && fund != -1) {
-            final Fund fundObj = (Fund) persistenceService.find("from Fund where id="
-                    + fund);
+            final Fund fundObj = (Fund) persistenceService.find("from Fund where id=?1", fund);
             paramMap.put("fundName", fundObj.getName());
         } else
             paramMap.put("fundName", "");
@@ -925,7 +929,7 @@ public class FundFlowAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     private String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery(
+        final NativeQuery query = persistenceService.getSession().createNativeQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

@@ -60,17 +60,19 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.eis.service.EisCommonService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.voucher.VoucherDetails;
@@ -84,27 +86,28 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
-        @Result(name = "editVoucher", location = "journalVoucherModify-editVoucher.jsp"),
+        @Result(name = JournalVoucherModifyAction.EDIT_VOUCHER, location = "journalVoucherModify-editVoucher.jsp"),
         @Result(name = "view", location = "journalVoucherModify-view.jsp"),
-        @Result(name = "message", location = "journalVoucherModify-message.jsp")
+        @Result(name = "message", location = "journalVoucherModify-message.jsp"),
+        @Result(name = JournalVoucherModifyAction.UNAUTHORIZED, location = "../workflow/unauthorized.jsp")
 })
 public class JournalVoucherModifyAction extends BaseVoucherAction {
 
+    protected static final String EDIT_VOUCHER = "editVoucher";
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(JournalVoucherModifyAction.class);
+    private static final String INVALID_APPROVER = "invalid.approver";
+    protected static final String UNAUTHORIZED = "unuthorized";
     private VoucherService voucherService;
     private List<VoucherDetails> billDetailslist;
     private List<VoucherDetails> subLedgerlist;
@@ -114,23 +117,19 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private String message = "";
     private VoucherTypeBean voucherTypeBean;
     public static final String EXEPMSG = "Exception occured in voucher service while updating voucher ";
-    private Integer departmentId;
     private String wfitemstate;
     private VoucherHelper voucherHelper;
-    // private boolean isRejectedVoucher=false;
 
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
-    private ChartOfAccounts chartOfAccounts;
-    private ChartOfAccounts engine;
     private static final String ACTIONNAME = "actionName";
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
     private String methodName = "";
     private static final String VHID = "vhid";
     protected EisCommonService eisCommonService;
-    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?";
+    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?1";
     private String worksVoucherRestrictedDate;
     private FinancialYearDAO financialYearDAO;
 
@@ -145,7 +144,13 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private JournalVoucherActionHelper journalVoucherActionHelper;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private CommonsUtil commonsUtil;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -173,6 +178,8 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, Long.valueOf(voucherHeaderId));
         final Map<String, Object> vhInfoMap = voucherService.getVoucherInfo(voucherHeader.getId());
         voucherHeader = (CVoucherHeader) vhInfoMap.get(Constants.VOUCHERHEADER);
+        if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), voucherHeader))
+            return UNAUTHORIZED;
         try {
             if (voucherHeader != null && voucherHeader.getState() != null)
                 if (voucherHeader.getState().getValue().contains("Rejected")) {
@@ -202,10 +209,10 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             return "view";
         }
 
-        return "editVoucher";
+        return EDIT_VOUCHER;
     }
 
-    @ValidationErrorPage(value = "editVoucher")
+    @ValidationErrorPage(value = EDIT_VOUCHER)
     public String saveAndPrint() throws Exception {
         try {
             saveMode = "saveprint";
@@ -262,12 +269,22 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
 
     }
 
-    @ValidationErrorPage(value = "editVoucher")
+    @ValidationErrorPage(value = EDIT_VOUCHER)
     @SuppressWarnings("deprecation")
     @Action(value = "/voucher/journalVoucherModify-update")
     public String update() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalVoucherModifyAction | updateVoucher | Start");
+        populateWorkflowBean();
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (!commonsUtil.isValidApprover(voucherHeader, workflowBean.getApproverPositionId())) {
+                if (voucherHeader.getId() == null)
+                    voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
+                setOneFunctionCenterValue();
+                addActionError(getText(INVALID_APPROVER));
+                return EDIT_VOUCHER;
+            }
+        }
         target = "";
         loadSchemeSubscheme();
 
@@ -276,7 +293,6 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             voucherHeader.setId(Long.valueOf(parameters.get(VHID)[0]));
         validateBeforeEdit(voucherHeader);
         CVoucherHeader oldVh = voucherHeader;
-        populateWorkflowBean();
         if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             voucherHeader = (CVoucherHeader) voucherService.findById(Long.parseLong(parameters.get(VHID)[0]), false);
             sendForApproval();
@@ -336,19 +352,19 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     private void cancelBill(final Long vhId) {
         final StringBuffer billQuery = new StringBuffer();
         final String statusQuery = "(select stat.id from  egw_status  stat where stat.moduletype=:module and stat.description=:description)";
-        final String cancelQuery = "Update eg_billregister set billstatus=:billstatus , statusid =" + statusQuery
-                + " where  id=:billId";
+        final String cancelQuery = new StringBuilder("Update eg_billregister set billstatus=:billstatus , statusid =").append(statusQuery)
+                .append(" where  id=:billId").toString();
         String moduleType = "", description = "", billstatus = "";
         final EgBillregistermis billMis = (EgBillregistermis) persistenceService.find(
-                "from  EgBillregistermis  mis where voucherHeader.id=?", vhId);
+                "from  EgBillregistermis  mis where voucherHeader.id=?1", vhId);
 
         if (billMis != null && billMis.getEgBillregister().getState() == null) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("....Cancelling Bill Associated with the Voucher....");
             billQuery.append(
                     "select bill.expendituretype,bill.id from CVoucherHeader vh,EgBillregister bill ,EgBillregistermis mis")
-                    .append(" where vh.id=mis.voucherHeader and bill.id=mis.egBillregister and vh.id=" + vhId);
-            final Object[] bill = (Object[]) persistenceService.find(billQuery.toString()); // bill[0] contains expendituretype
+                    .append(" where vh.id=mis.voucherHeader and bill.id=mis.egBillregister and vh.id=?1");
+            final Object[] bill = (Object[]) persistenceService.find(billQuery.toString(), vhId); // bill[0] contains expendituretype
                                                                                             // and
             // bill[1] contaons billid
 
@@ -376,11 +392,11 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
                 moduleType = FinancialConstants.CONTRACTORBILL;
             }
 
-            final Query billQry = persistenceService.getSession().createSQLQuery(cancelQuery.toString());
-            billQry.setString("module", moduleType);
-            billQry.setString("description", description);
-            billQry.setString("billstatus", billstatus);
-            billQry.setLong("billId", (Long) bill[1]);
+            final Query billQry = persistenceService.getSession().createNativeQuery(cancelQuery.toString());
+            billQry.setParameter("module", moduleType, StringType.INSTANCE)
+                    .setParameter("description", description, StringType.INSTANCE)
+                    .setParameter("billstatus", billstatus, StringType.INSTANCE)
+                    .setParameter("billId", (Long) bill[1], LongType.INSTANCE);
             billQry.executeUpdate();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bill Cancelled Successfully" + bill[1]);
@@ -409,7 +425,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
             if ("invalid".equals(s))
                 break;
             final WorkflowAction action = (WorkflowAction) getPersistenceService().find(
-                    " from WorkflowAction where type='CVoucherHeader' and name=?", s.toString());
+                    " from WorkflowAction where type='CVoucherHeader' and name=?1", s.toString());
             validButtons.add(action);
         }
         return validButtons;
@@ -418,14 +434,13 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
     @SuppressWarnings("unchecked")
     private void loadApproverUser(final String type) {
         final String scriptName = "billvoucher.nextDesg";
-        departmentId = voucherService.getCurrentDepartment().getId().intValue();
         final Map<String, Object> map = voucherService.getDesgByDeptAndType(type, scriptName);
         if (null == map.get("wfitemstate")) {
             // If the department is mandatory show the logged in users assigned department only.
             if (mandatoryFields.contains("department"))
                 addDropdownData("approvaldepartmentList", voucherHelper.getAllAssgnDeptforUser());
             else
-                addDropdownData("approvaldepartmentList", masterDataCache.get("egi-department"));
+                addDropdownData("approvaldepartmentList", departmentService.getAllDepartments());
             addDropdownData("designationList", (List<Designation>) map.get("designationList"));
             wfitemstate = "";
         } else
@@ -437,7 +452,7 @@ public class JournalVoucherModifyAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalVoucherModify | getBillInfo | Start");
         final EgBillregister billRegister = (EgBillregister) persistenceService
-                .find("from EgBillregister br where br.egBillregistermis.voucherHeader.id=" + voucherHeader.getId());
+                .find("from EgBillregister br where br.egBillregistermis.voucherHeader.id=?1", voucherHeader.getId());
         /**
          * If its not General JV.
          */

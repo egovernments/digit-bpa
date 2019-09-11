@@ -1,1 +1,0 @@
-drop view view_egeis_employee;

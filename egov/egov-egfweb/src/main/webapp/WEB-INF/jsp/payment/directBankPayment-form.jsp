@@ -51,13 +51,14 @@
 <script type="text/javascript"
 	src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
+<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <tr>
 	<td class="greybox"></td>
 	<td class="greybox"><s:text name="bank" /> <span class="greybox"><span
 			class="mandatory1">*</span></span></td>
 	<egov:ajaxdropdown id="bankId" fields="['Text','Value']"
 		dropdownId="bankId"
-		url="/voucher/common-ajaxLoadBanksByFundAndType.action" />
+		url="voucher/common-ajaxLoadBanksByFundAndType.action"/>
 	<td class="greybox"><s:select name="commonBean.bankId" id="bankId"
 			list="dropdownData.bankList" listKey="bankBranchId"
 			listValue="bankBranchName" headerKey="" headerValue="----Choose----"
@@ -72,7 +73,7 @@
 <tr>
 	<td class="bluebox" width="10%"></td>
 	<egov:ajaxdropdown id="accountNumber" fields="['Text','Value']"
-		dropdownId="accountNumber"
+		dropdownId="accountNumber" afterSuccess="setBankAccount"
 		url="voucher/common-ajaxLoadBankAccounts.action" />
 	<td class="bluebox" width="22%"><s:text name="account.number" /><span
 		class="bluebox"><span class="mandatory1">*</span></span></td>
@@ -85,7 +86,7 @@
 		<s:textfield name="accnumnar" id="accnumnar"
 			value="%{commonBean.accnumnar}" readonly="true" tabindex="-1" /></td>
 	<egov:updatevalues id="availableBalance" fields="['Text']"
-		url="/payment/payment-ajaxGetAccountBalance.action" />
+		url="payment/payment-ajaxGetAccountBalance.action" />
 	<td class="bluebox" id="balanceText"><s:text
 			name="balance.available" /></td>
 	<td class="bluebox" id="balanceAvl"><s:textfield
@@ -124,7 +125,7 @@
 	<td class="greybox"><s:text name="document.number" /><span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="commonBean.documentNumber"
-			id="commonBean.documentNumber" size="25" /></td>
+			id="commonBean.documentNumber" size="25" maxlength="50" onkeyup="isSpecialChar();" onchange="isSpecialChar();" /></td>
 	<td class="greybox"><s:text name="document.date" /><span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<s:date name='commonBean.documentDate' var="commonBean.documentDateId"
@@ -225,4 +226,10 @@
 	</div>
 </div>
 
-
+<script type="application/javascript">
+    function isSpecialChar(){
+        var documentNoEntered = document.getElementById('commonBean.documentNumber').value;
+        var replacedDocNo = documentNoEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        document.getElementById('commonBean.documentNumber').value = replacedDocNo;
+    }
+</script>

@@ -68,11 +68,14 @@ import static java.lang.String.format;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainName;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_MODULE;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_EMAIL_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_LGD_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LGD_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_FS_UUID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
 
@@ -167,10 +170,18 @@ public class CityService {
         return format(CITY_LOGO_URL, getDomainURL());
     }
 
+    public String getCityLGDCode() {
+        return (String) cityDataForKey(CITY_LGD_CODE_KEY);
+    }
+
+    public String getDistrictLGDCode() {
+        return (String) cityDataForKey(CITY_DIST_LGD_CODE_KEY);
+    }
+
     public byte[] getCityLogoAsBytes() {
         byte[] cityLogo = (byte[]) cityLogoCache.get(cityLogoCacheKey(), CITY_LOGO_HASH_KEY);
         if (cityLogo == null || cityLogo.length < 1) {
-            cityLogo = fileStoreUtils.fileAsByteArray(getCityLogoFileStoreId(), getCityCode());
+            cityLogo = fileStoreUtils.fileAsByteArray(getCityLogoFileStoreId(), ADMIN_MODULE);
             cityLogoCache.put(cityLogoCacheKey(), CITY_LOGO_HASH_KEY, cityLogo);
         }
         return cityLogo;

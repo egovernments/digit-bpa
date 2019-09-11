@@ -54,7 +54,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "eg_permanent_address", schema = "state")
+@Table(name = "eg_permanent_address")
 public class PermanentAddress extends Address {
 
     private static final long serialVersionUID = 904354449098564364L;

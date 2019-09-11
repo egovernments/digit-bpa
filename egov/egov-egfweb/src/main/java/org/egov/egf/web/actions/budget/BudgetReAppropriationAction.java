@@ -55,31 +55,24 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
+import org.egov.commons.*;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.model.BudgetReAppropriationView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.egov.model.budget.Budget;
-import org.egov.model.budget.BudgetDetail;
-import org.egov.model.budget.BudgetGroup;
-import org.egov.model.budget.BudgetReAppropriation;
-import org.egov.model.budget.BudgetReAppropriationMisc;
+import org.egov.model.budget.*;
 import org.egov.pims.commons.Position;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetReAppropriationService;
@@ -87,18 +80,13 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -110,15 +98,16 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
     private static final String BERE = "beRe";
     private static final Logger LOGGER = Logger.getLogger(BudgetReAppropriationAction.class);
-    private List<BudgetReAppropriationView> budgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
-    private List<BudgetReAppropriationView> newBudgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
+    private static final String ACTIONNAME = "actionName";
     @Autowired
     protected BudgetDetailConfig budgetDetailConfig;
-    private BudgetDetail budgetDetail;
     protected Budget budget;
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> gridFields = new ArrayList<String>();
     protected List<String> mandatoryFields = new ArrayList<String>();
+    private List<BudgetReAppropriationView> budgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
+    private List<BudgetReAppropriationView> newBudgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
+    private BudgetDetail budgetDetail;
     @Autowired
     private BudgetDetailHelper budgetDetailHelper;
     @Autowired
@@ -144,16 +133,22 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     private List<BudgetReAppropriation> reAppropriationList = null;
     private String type = "";
     private String finalStatus = "";
-    private static final String ACTIONNAME = "actionName";
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
+    @Autowired
+    private FunctionRepository functionRepository;
 
     @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
     private String message = "";
+
+    public BudgetReAppropriationAction() {
+    }
 
     public BudgetReAppropriationMisc getAppropriationMisc() {
         return appropriationMisc;
@@ -167,13 +162,13 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return beRe;
     }
 
+    public void setBeRe(final String beRe) {
+        this.beRe = beRe;
+    }
+
     public void setBudgetReAppropriationService(
             final BudgetReAppropriationService budgetReAppropriationService) {
         this.budgetReAppropriationService = budgetReAppropriationService;
-    }
-
-    public void setBeRe(final String beRe) {
-        this.beRe = beRe;
     }
 
     public void setBudgetService(final BudgetService budgetService) {
@@ -186,10 +181,6 @@ public class BudgetReAppropriationAction extends BaseFormAction {
 
     public List<BudgetReAppropriationView> getNewBudgetReAppropriationList() {
         return newBudgetReAppropriationList;
-    }
-
-    public void setFinancialYear(final CFinancialYear financialYear) {
-        this.financialYear = financialYear;
     }
 
     public BudgetDetail getBudgetDetail() {
@@ -206,6 +197,10 @@ public class BudgetReAppropriationAction extends BaseFormAction {
 
     public CFinancialYear getFinancialYear() {
         return financialYear;
+    }
+
+    public void setFinancialYear(final CFinancialYear financialYear) {
+        this.financialYear = financialYear;
     }
 
     public List<BudgetReAppropriationView> getBudgetReAppropriationList() {
@@ -228,9 +223,6 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return mandatoryFields;
     }
 
-    public BudgetReAppropriationAction() {
-    }
-
     protected void setupDropdownsInHeader() {
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
         finalStatus = getFinalStatus();
@@ -243,13 +235,13 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
+            dropdownData.put("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterDataCache.get("egi-function"));
+            dropdownData.put("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true, false));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         if (shouldShowField(Constants.FUND))
             dropdownData
                     .put("fundList",
@@ -306,7 +298,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (financialYear != null && financialYear.getId() != 0L && budgetService.hasApprovedReForYear(financialYear.getId()))
             beRe = Constants.RE;
         setupDropdownsInHeader();
-        dropdownData.put("departmentList", masterDataCache.get("egi-department"));
+        dropdownData.put("departmentList", departmentService.getAllDepartments());
         dropdownData.put("designationList", Collections.EMPTY_LIST);
         dropdownData.put("userList", Collections.EMPTY_LIST);
     }
@@ -347,13 +339,13 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         boolean reAppForNewBudgetCreated = false;
         BudgetReAppropriationMisc misc = null;
         if (financialYear != null && financialYear.getId() != 0)
-            financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?", financialYear.getId());
+            financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?1", financialYear.getId());
         try {
             misc = budgetReAppropriationService.createBudgetReAppropriationMisc(parameters.get(ACTIONNAME)[0] + "|" + userId,
                     beRe, financialYear, appropriationMisc, getPosition());
             removeEmptyReAppropriation(budgetReAppropriationList);
             reAppropriationCreated = budgetReAppropriationService.createReAppropriation(parameters.get(ACTIONNAME)[0] + "|"
-                    + userId,
+                            + userId,
                     budgetReAppropriationList, getPosition(), financialYear, beRe, misc,
                     parameters.get("appropriationMisc.reAppropriationDate")[0]);
             removeEmptyReAppropriation(newBudgetReAppropriationList);
@@ -415,7 +407,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     }
 
     public void removeEmptyReAppropriation(final List<BudgetReAppropriationView> reAppropriationList) {
-        for (final Iterator<BudgetReAppropriationView> detail = reAppropriationList.iterator(); detail.hasNext();)
+        for (final Iterator<BudgetReAppropriationView> detail = reAppropriationList.iterator(); detail.hasNext(); )
             if (detail.next() == null)
                 detail.remove();
     }
@@ -498,19 +490,17 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (!ids.isEmpty()) {
             query = persistenceService.getSession()
                     .createQuery("from CFinancialYear where id in (:ids) order by finYearRange desc")
-                    .setParameterList("ids", ids);
+                    .setParameterList("ids", ids, LongType.INSTANCE);
             return query.list();
         }
         return new ArrayList();
     }
 
     protected List getApprovedBudgetsForFY(final Long id, final String finalStatus) {
+        StringBuilder queryString = new StringBuilder("from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = true")
+                .append(" and status.moduletype='BUDGET' and status.code=?1 and financialYear.id=?2 and isbere=?3 order by name");
         if (id != null && id != 0L)
-            return budgetService
-                    .findAllBy(
-                            "from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = true and status.moduletype='BUDGET' and status.code='"
-                                    + finalStatus + "' and financialYear.id=? and isbere=? order by name",
-                            id, beRe);
+            return budgetService.findAllBy(queryString.toString(), finalStatus, id, beRe);
         return new ArrayList();
     }
 
@@ -526,36 +516,58 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/budget/budgetReAppropriation-search")
     public String search() {
-        String sql = " ba.budgetDetail.budget.financialYear=" + financialYear.getId() + " and ba.budgetDetail.budget.isbere='"
-                + budgetDetail.getBudget().getIsbere() + "' ";
-        if (budgetDetail.getFund().getId() != null && budgetDetail.getFund().getId() != 0)
-            sql = sql + " and ba.budgetDetail.fund=" + budgetDetail.getFund().getId();
-        if (budgetDetail.getExecutingDepartment() != null && budgetDetail.getExecutingDepartment().getId() != 0)
-            sql = sql + " and ba.budgetDetail.executingDepartment=" + budgetDetail.getExecutingDepartment().getId();
-        if (budgetDetail.getFunction() != null && budgetDetail.getFunction().getId() != 0)
-            sql = sql + " and ba.budgetDetail.function=" + budgetDetail.getFunction().getId();
-        if (budgetDetail.getFunctionary() != null && budgetDetail.getFunctionary().getId() != 0)
-            sql = sql + " and ba.budgetDetail.functionary=" + budgetDetail.getFunctionary().getId();
-        if (budgetDetail.getScheme() != null && budgetDetail.getScheme().getId() != 0)
-            sql = sql + " and ba.budgetDetail.scheme=" + budgetDetail.getScheme().getId();
-        if (budgetDetail.getSubScheme() != null && budgetDetail.getSubScheme().getId() != 0)
-            sql = sql + " and ba.budgetDetail.subScheme=" + budgetDetail.getSubScheme().getId();
-        if (budgetDetail.getBoundary() != null && budgetDetail.getBoundary().getId() != 0)
-            sql = sql + " and ba.budgetDetail.boundary=" + budgetDetail.getBoundary().getId();
-        if (budgetDetail.getBudgetGroup().getId() != null && budgetDetail.getBudgetGroup().getId() != 0)
-            sql = sql + " and ba.budgetDetail.budgetGroup=" + budgetDetail.getBudgetGroup().getId();
+        final StringBuilder sql = new StringBuilder();
+        final Map<String, Object> params = new HashMap<>();
+        sql.append(" ba.budgetDetail.budget.financialYear=:finYear and ba.budgetDetail.budget.isbere=:isBere");
+        params.put("finYear", financialYear.getId());
+        params.put("isBere", budgetDetail.getBudget().getIsbere());
+        if (budgetDetail.getFund().getId() != null && budgetDetail.getFund().getId() != 0) {
+            sql.append(" and ba.budgetDetail.fund=:fundId");
+            params.put("fundId", budgetDetail.getFund().getId());
+        }
+        if (budgetDetail.getExecutingDepartment() != null && budgetDetail.getExecutingDepartment().getId() != 0) {
+            sql.append(" and ba.budgetDetail.executingDepartment=:deptId");
+            params.put("deptId", budgetDetail.getExecutingDepartment().getId());
+        }
+        if (budgetDetail.getFunction() != null && budgetDetail.getFunction().getId() != 0) {
+            sql.append(" and ba.budgetDetail.function=:functionId");
+            params.put("functionId", budgetDetail.getFunction().getId());
+        }
+        if (budgetDetail.getFunctionary() != null && budgetDetail.getFunctionary().getId() != 0) {
+            sql.append(" and ba.budgetDetail.functionary=:functionary");
+            params.put("functionary", budgetDetail.getFunctionary().getId());
+        }
+        if (budgetDetail.getScheme() != null && budgetDetail.getScheme().getId() != 0) {
+            sql.append(" and ba.budgetDetail.scheme=:schemeId");
+            params.put("schemeId", budgetDetail.getScheme().getId());
+        }
+        if (budgetDetail.getSubScheme() != null && budgetDetail.getSubScheme().getId() != 0) {
+            sql.append(" and ba.budgetDetail.subScheme=:subSchemeId");
+            params.put("subSchemeId", budgetDetail.getSubScheme().getId());
+        }
+        if (budgetDetail.getBoundary() != null && budgetDetail.getBoundary().getId() != 0) {
+            sql.append(" and ba.budgetDetail.boundary=:boundaryId");
+            params.put("boundaryId", budgetDetail.getBoundary().getId());
+        }
+        if (budgetDetail.getBudgetGroup().getId() != null && budgetDetail.getBudgetGroup().getId() != 0) {
+            sql.append(" and ba.budgetDetail.budgetGroup=:budgetGroup");
+            params.put("budgetGroup", budgetDetail.getBudgetGroup().getId());
+        }
         if (type.equals("A"))
-            sql = sql + " and ba.additionAmount is not null and ba.additionAmount!=0 ";
+            sql.append(" and ba.additionAmount is not null and ba.additionAmount!=0 ");
         else if (type.equals("R"))
-            sql = sql + " and ba.deductionAmount is not null and ba.deductionAmount!=0 ";
+            sql.append(" and ba.deductionAmount is not null and ba.deductionAmount!=0 ");
 
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("search query==" + sql);
-        reAppropriationList = getPersistenceService()
-                .findAllBy(
-                        " from BudgetReAppropriation ba where ba.status.code='Approved' and "
-                                + sql
-                                + " order by ba.budgetDetail.fund,ba.budgetDetail.executingDepartment,ba.budgetDetail.function,ba.reAppropriationMisc.sequenceNumber");
+            LOGGER.info("search query==" + sql.toString());
+        StringBuilder queryString = new StringBuilder(" from BudgetReAppropriation ba where ba.status.code='Approved' and ")
+                .append(sql)
+                .append(" order by ba.budgetDetail.fund,ba.budgetDetail.executingDepartment,ba.budgetDetail.function,ba.reAppropriationMisc.sequenceNumber");
+
+        final Query query = getPersistenceService().getSession().createQuery(queryString.toString());
+        params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
+        reAppropriationList = query.list();
+
         return "search";
     }
 
@@ -567,6 +579,10 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return reAppropriationList;
     }
 
+    public void setReAppropriationList(final List<BudgetReAppropriation> reAppropriationList) {
+        this.reAppropriationList = reAppropriationList;
+    }
+
     public String getType() {
         return type;
     }
@@ -575,16 +591,12 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         this.type = type;
     }
 
-    public void setReAppropriationList(final List<BudgetReAppropriation> reAppropriationList) {
-        this.reAppropriationList = reAppropriationList;
+    public String getMessage() {
+        return message;
     }
 
     public void setMessage(final String message) {
         this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public void setBudgetReAppropriationWorkflowService(

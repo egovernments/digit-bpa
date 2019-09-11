@@ -48,7 +48,9 @@
 package org.egov.services.bills;
 
 import org.egov.commons.CVoucherHeader;
+import org.egov.dao.billpayment.BillAndPaymentDetailsDAO;
 import org.egov.dao.bills.EgBillRegisterHibernateDAO;
+import org.egov.egf.model.BillPaymentDetails;
 import org.egov.model.bills.EgBillregister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,35 +59,37 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public class BillsService {
-    
+
     @Autowired
     private EgBillRegisterHibernateDAO egBillRegisterHibernateDAO;
-    public EgBillregister createBillRegister(final EgBillregister billregister)
-    {
+    @Autowired
+    private BillAndPaymentDetailsDAO billAndPaymentDetailsDAO;
+
+    public EgBillregister createBillRegister(final EgBillregister billregister) {
         return (EgBillregister) egBillRegisterHibernateDAO.create(billregister);
     }
 
-    public EgBillregister updateBillRegister(final EgBillregister billregister)
-    {
+    public EgBillregister updateBillRegister(final EgBillregister billregister) {
         return (EgBillregister) egBillRegisterHibernateDAO.update(billregister);
     }
 
-    public EgBillregister getBillRegisterById(final Integer billid)
-    {
+    public EgBillregister getBillRegisterById(final Integer billid) {
         return (EgBillregister) egBillRegisterHibernateDAO.findById(new Long(billid), false);
     }
 
-    public List<String> getDistExpType()
-    {
+    public List<String> getDistExpType() {
         return egBillRegisterHibernateDAO.getDistinctEXpType();
     }
 
-    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader)
-    {
+    public String getBillTypeforVoucher(final CVoucherHeader voucherHeader) {
         return egBillRegisterHibernateDAO.getBillTypeforVoucher(voucherHeader);
     }
 
     public String getBillSubTypeforVoucher(final CVoucherHeader voucherHeader) {
         return egBillRegisterHibernateDAO.getBillSubTypeforVoucher(voucherHeader);
+    }
+
+    public List<BillPaymentDetails> getBillAndPaymentDetails(String billNo) {
+        return billAndPaymentDetailsDAO.getBillAndPaymentDetails(billNo);
     }
 }

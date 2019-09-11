@@ -45,6 +45,7 @@ import java.util.Optional;
 
 import org.egov.bpa.master.entity.PermitRevocation;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.SlotDetail;
@@ -226,6 +227,35 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
             setLocality(site.getLocationBoundary() == null ? "" : site.getLocationBoundary().getName());
         }
         setStatus(renewal.getStatus().getCode());
+        setCurrentOwner(currentOwner);
+        setPendingAction(pendingAction);
+        setFeeCollected(isFeeCollected);
+        setFeeCollector(feeCollector);
+    }
+    
+    public SearchBpaApplicationForm(OwnershipTransfer ownershipTransfer, String currentOwner, String pendingAction, Boolean feeCollector,
+            Boolean isFeeCollected) {
+        setId(ownershipTransfer.getId());
+        setApplicationNumber(ownershipTransfer.getApplicationNumber());
+        setApplicantName(ownershipTransfer.getParent().getApplicantName());
+        setApplicationDate(ownershipTransfer.getApplicationDate());
+        setAddress(ownershipTransfer.getParent().getOwner().getAddress());
+        setApplicationType(ownershipTransfer.getParent().getApplicationType() != null ? ownershipTransfer.getParent().getApplicationType().getName() : "");
+        setOccupancy(ownershipTransfer.getParent().getOccupanciesName());
+        setServiceType(ownershipTransfer.getParent().getServiceType().getDescription());
+        setServiceCode(ownershipTransfer.getParent().getServiceType().getCode());
+        setPlanPermissionNumber(ownershipTransfer.getParent().getPlanPermissionNumber());
+        setPlanPermissionDate(ownershipTransfer.getParent().getPlanPermissionDate());
+        setStakeHolderName(ownershipTransfer.getParent().getStakeHolder().get(0).getStakeHolder().getName());
+        if (!ownershipTransfer.getParent().getSiteDetail().isEmpty()) {
+            SiteDetail site = ownershipTransfer.getParent().getSiteDetail().get(0);
+            setReSurveyNumber(site.getReSurveyNumber());
+            setZone(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getParent().getName());
+            setWard(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getName());
+            setElectionWard(site.getElectionBoundary() == null ? "" : site.getElectionBoundary().getName());
+            setLocality(site.getLocationBoundary() == null ? "" : site.getLocationBoundary().getName());
+        }
+        setStatus(ownershipTransfer.getStatus().getCode());
         setCurrentOwner(currentOwner);
         setPendingAction(pendingAction);
         setFeeCollected(isFeeCollected);

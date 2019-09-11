@@ -76,17 +76,13 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Results(value = {
@@ -103,14 +99,14 @@ import java.util.Map;
 public class BillPaymentVoucherPrintAction extends BaseFormAction {
     public static final String PRINT = "print";
     private static final long serialVersionUID = 1L;
-    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?1";
     private static final String JASPERPATH = "/reports/templates/billPaymentVoucherReport.jasper";
     private static final String MULTIPLE = "MULTIPLE";
 
     private String chequeNumber = "";
     private transient InstrumentHeader instrumentHeader = null;
     private String cashModePartyName = "";                // Also used as a flag to check if the mode of payment is Cash
-    private String chequeDate = "";
+    private String chequeDate = "N/A";
     private String rtgsRefNo = "";
     private String rtgsDate = "";
     private String paymentMode = "";
@@ -147,13 +143,23 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         }
 
         paramMap.put("amountInWords", getAmountInWords());
-        paramMap.put("chequeNumber", chequeNumber);
+        if(StringUtils.isNotEmpty(chequeNumber)){
+            paramMap.put("chequeNumber", chequeNumber);
+        }else{
+            paramMap.put("chequeNumber", "N/A");
+        }
+
         paramMap.put("chequeDate", chequeDate);
         paramMap.put("rtgsRefNo", rtgsRefNo);
         paramMap.put("paymentMode", paymentMode);
         paramMap.put("rtgsDate", rtgsDate);
         paramMap.put("ulbName", ReportUtil.getCityName());
-        paramMap.put("narration", getPaymentNarration());
+        if(StringUtils.isNotBlank(getPaymentNarration()) || StringUtils.isNotEmpty(getPaymentNarration())){
+            paramMap.put("narration", getPaymentNarration());
+        }else{
+            paramMap.put("narration", "N/A");
+        }
+
 
         return paramMap;
     }
@@ -255,7 +261,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
 
     private void populateVoucher() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
 
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
             chequeNosList = new ArrayList<>();
@@ -266,7 +272,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                 voucher = paymentHeader.getVoucherheader();
                 if (voucher != null) {
                     final List<InstrumentVoucher> instrumentVoucherList = persistenceService.findAllBy(
-                            "from InstrumentVoucher where voucherHeaderId.id=?", voucher.getId());
+                            "from InstrumentVoucher where voucherHeaderId.id=?1", voucher.getId());
                     if (instrumentVoucherList != null && !instrumentVoucherList.isEmpty()) {
                         final InstrumentHeader instrumentHeader = instrumentVoucherList.get(0).getInstrumentHeaderId();
                         rtgsRefNo = instrumentHeader.getTransactionNumber();
@@ -279,7 +285,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                                 .concat(bankAccount.getBankbranch().getBranchname());
                         bankAccountNumber = bankAccount.getAccountnumber();
                     }
-                    miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?",
+                    miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?1",
                             voucher.getId());
                 }
                 return;
@@ -291,7 +297,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                 excludeChequeStatusses.add(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS);
                 excludeChequeStatusses.add(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS);
                 final List<InstrumentVoucher> instrumentVoucherList = persistenceService.findAllBy(
-                        "from InstrumentVoucher where voucherHeaderId.id=?", voucher.getId());
+                        "from InstrumentVoucher where voucherHeaderId.id=?1", voucher.getId());
                 if (instrumentVoucherList != null && !instrumentVoucherList.isEmpty())
                     for (final InstrumentVoucher instrumentVoucher : instrumentVoucherList)
                         try {
@@ -323,7 +329,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                         && instrumentHeader != null && instrumentHeader.getPayTo() != null)
                     cashModePartyName = instrumentHeader.getPayTo();
             }
-            miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?", voucher.getId());
+            miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?1", voucher.getId());
         }
         Collections.sort(chequeNoList);
         chequeNumber = "";
@@ -347,7 +353,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
 
     private boolean isInstrumentMultiVoucherMapped(final Long instrumentHeaderId) {
         final List<InstrumentVoucher> instrumentVoucherList = persistenceService.findAllBy(
-                "from InstrumentVoucher where instrumentHeaderId.id=?", instrumentHeaderId);
+                "from InstrumentVoucher where instrumentHeaderId.id=?1", instrumentHeaderId);
         boolean rep = false;
         if (!instrumentVoucherList.isEmpty()) {
             final Long voucherId = instrumentVoucherList.get(0).getVoucherHeaderId().getId();
@@ -380,7 +386,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     }
 
     String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery("SELECT name FROM companydetail");
+        final NativeQuery query = persistenceService.getSession().createNativeQuery("SELECT name FROM companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

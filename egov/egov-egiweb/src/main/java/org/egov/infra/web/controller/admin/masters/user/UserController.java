@@ -71,16 +71,22 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = "username-like/{name}", produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "name-like/{name}", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public String userNames(@PathVariable String name) {
+    public String getUserByName(@PathVariable String name) {
         return toJson(userService.getUsersByNameLike(name));
     }
 
     @GetMapping(value = "employee-name-like/", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public String users(@RequestParam String employeeName) {
-        return toJson(userService.getAllEmployeeNameLike(employeeName));
+    public String getEmployeesByName(@RequestParam String name) {
+        return toJson(userService.getAllEmployeeNameLike(name));
+    }
+
+    @GetMapping(value = "employee-username-like/", produces = APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String getEmployeeRolesByUserName(@RequestParam String userName) {
+        return toJson(userService.getAllEmployeeUsernameLike(userName));
     }
 
     private String toJson(List<User> users) {
@@ -90,8 +96,8 @@ public class UserController {
             userInfo.addProperty("name", user.getName());
             userInfo.addProperty("userName", user.getUsername());
             userInfo.addProperty("id", user.getId());
+            userInfo.addProperty("uid", user.getUid());
             userInfos.add(userInfo);
-
         });
         return userInfos.toString();
     }

@@ -52,14 +52,10 @@ import com.opensymphony.xwork2.util.ValueStack;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
+import org.egov.commons.*;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.egf.model.BudgetAmountView;
 import org.egov.eis.entity.Assignment;
@@ -71,6 +67,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -78,10 +75,10 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.WorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.service.BudgetingGroupService;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.services.budget.BudgetDetailActionHelper;
@@ -96,15 +93,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     private static final String EGF_BUDGET_GROUP = "egf-budgetGroup";
@@ -113,83 +102,76 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     private static final String EGI_DEPARTMENT = "egi-department";
     private static final String HOD_NOT_FOUND = "hod.not.found";
     private static final long serialVersionUID = 1L;
-    protected BudgetDetail budgetDetail = new BudgetDetail();
-    protected List<BudgetDetail> budgetDetailList = new ArrayList<BudgetDetail>();
-    protected List<BudgetDetail> savedbudgetDetailList = new ArrayList<BudgetDetail>();
-
-    @Autowired
-    @Qualifier("budgetDetailService")
-    protected BudgetDetailService budgetDetailService;
-
-    @Autowired
-    @Qualifier("budgetService")
-    protected BudgetService budgetService;
-
-    protected List<String> headerFields = new ArrayList<String>();
-    protected List<String> gridFields = new ArrayList<String>();
-    protected List<String> mandatoryFields = new ArrayList<String>();
-    public WorkflowBean workflowBean = new WorkflowBean();
-    protected WorkflowService<Budget> budgetWorkflowService;
-    protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
-    protected boolean headerDisabled = false;
-    protected List<BudgetAmountView> budgetAmountView = new ArrayList<BudgetAmountView>();
-    protected String currentYearRange;
-    protected String previousYearRange;
-    private String nextYearRange;
-    protected String lastButOneYearRange;
-    protected List<Scheme> subSchemes;
-    protected Integer schemeId;
-    protected Date asOnDate;
-
-    @Autowired
-    private EisCommonService eisCommonService;
-    protected BudgetDetailHelper budgetDetailHelper;
-    protected boolean addNewDetails = false;
-
-    @Autowired
-    private BudgetDetailActionHelper budgetDetailActionHelper;
-
     private static final String NEWRE = "new-re";
     private static final String BUDGETLIST = "budgetList";
     private static final String RE = "RE";
     private static final String SAVE = "budgetdetail.save";
     private static final String BUDGETRE = "budgetDetail.re.amount";
     private static final String BUDGETBE = "budgetDetail.be.amount";
+    private static final String BUDGETMANDATORY = "budgetDetail.budget.mandatory";
+    private static Logger LOGGER = Logger.getLogger(BaseBudgetDetailAction.class);
+    public WorkflowBean workflowBean = new WorkflowBean();
+    public Long budgetDocumentNumber;
+    protected BudgetDetail budgetDetail = new BudgetDetail();
+    protected List<BudgetDetail> budgetDetailList = new ArrayList<BudgetDetail>();
+    protected List<BudgetDetail> savedbudgetDetailList = new ArrayList<BudgetDetail>();
+    @Autowired
+    @Qualifier("budgetDetailService")
+    protected BudgetDetailService budgetDetailService;
+    @Autowired
+    @Qualifier("budgetService")
+    protected BudgetService budgetService;
+    protected List<String> headerFields = new ArrayList<String>();
+    protected List<String> gridFields = new ArrayList<String>();
+    protected List<String> mandatoryFields = new ArrayList<String>();
+    protected WorkflowService<Budget> budgetWorkflowService;
+    protected WorkflowService<BudgetDetail> budgetDetailWorkflowService;
+    protected boolean headerDisabled = false;
+    protected List<BudgetAmountView> budgetAmountView = new ArrayList<BudgetAmountView>();
+    protected String currentYearRange;
+    protected String previousYearRange;
+    protected String lastButOneYearRange;
+    protected List<Scheme> subSchemes;
+    protected Integer schemeId;
+    protected Date asOnDate;
+    protected BudgetDetailHelper budgetDetailHelper;
+    protected boolean addNewDetails = false;
+    @Autowired
+    protected BudgetDetailConfig budgetDetailConfig;
+    protected boolean re = false;
+    protected List<BigDecimal> beAmounts = new ArrayList<BigDecimal>();
+    protected List<Budget> budgetList = new ArrayList<Budget>();
+    protected boolean showRe;
+    protected boolean showDetails;
+    protected Long searchfunctionid;
+    protected Long searchbudgetGroupid;
+    private String nextYearRange;
+    @Autowired
+    private EisCommonService eisCommonService;
+    @Autowired
+    private BudgetDetailActionHelper budgetDetailActionHelper;
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
-    protected BudgetDetailConfig budgetDetailConfig;
-
-    private static final String BUDGETMANDATORY = "budgetDetail.budget.mandatory";
-
-    @Autowired
     private CFinancialYearService financialYearService;
-
     @Autowired
     private AppConfigValueService appConfigValueService;
-
     @Autowired
     private AssignmentService assignmentService;
-
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
-
-    protected boolean re = false;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
+    @Autowired
+    private BudgetingGroupService budgetingGroupService;
+    @Autowired
+    private FunctionRepository functionRepository;
     private boolean showMessage = false;
-    protected List<BigDecimal> beAmounts = new ArrayList<BigDecimal>();
     private Budget referenceBudget;
     private CFinancialYear financialYear;
-    protected List<Budget> budgetList = new ArrayList<Budget>();
-    protected boolean showRe;
-    public Long budgetDocumentNumber;
-    protected boolean showDetails;
-    protected Long searchfunctionid;
-    protected Long searchbudgetGroupid;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
-    private static Logger LOGGER = Logger.getLogger(BaseBudgetDetailAction.class);
 
     public abstract void populateSavedbudgetDetailListFor(Budget budget);
 
@@ -198,7 +180,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     protected abstract void saveAndStartWorkFlow(BudgetDetail detail, WorkflowBean workflowBean);
 
     protected abstract void saveAndStartWorkFlowForRe(BudgetDetail detail, int index, CFinancialYear finYear,
-            Budget refBudget, WorkflowBean workflowBean);
+                                                      Budget refBudget, WorkflowBean workflowBean);
 
     protected abstract void approve();
 
@@ -319,7 +301,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
 
     private void setAsOnDateOnSelectedBudget() {
         if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getId() != null) {
-            final Budget selectedBudget = (Budget) getPersistenceService().find("from Budget where id=?",
+            final Budget selectedBudget = (Budget) getPersistenceService().find("from Budget where id=?1",
                     budgetDetail.getBudget().getId());
             selectedBudget.setAsOnDate(getAsOnDate());
             budgetService.update(selectedBudget);
@@ -328,17 +310,19 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
 
     public void loadBudgets(final String bere) {
         budgetList = new ArrayList<Budget>();
+        StringBuilder query1 = new StringBuilder("from Budget where id not in (select parent from Budget where parent is not null) ")
+                .append("and isactivebudget = true  and isbere=?1")
+                .append(" and status.code!='Approved' and financialYear.id = ?2")
+                .append(" order by name");
+
+        StringBuilder query2 = new StringBuilder("from Budget where id not in (select parent from Budget where parent is not null) ")
+                .append("and isactivebudget = true  and isbere=?1")
+                .append(" and financialYear.id = ?2")
+                .append(" order by name");
         if (!addNewDetails)
-            budgetList.addAll(persistenceService
-                    .findAllBy("from Budget where id not in (select parent from Budget where parent is not null) "
-                            + "and isactivebudget = true  and isbere='" + bere.toUpperCase()
-                            + "' and status.code!='Approved' and financialYear.id = " + getFinancialYear().getId()
-                            + " order by name"));
+            budgetList.addAll(persistenceService.findAllBy(query1.toString(), bere.toUpperCase(), getFinancialYear().getId()));
         else
-            budgetList.addAll(persistenceService
-                    .findAllBy("from Budget where id not in (select parent from Budget where parent is not null) "
-                            + "and isactivebudget = true  and isbere='" + bere.toUpperCase()
-                            + "'  and financialYear.id = " + getFinancialYear().getId() + " order by name"));
+            budgetList.addAll(persistenceService.findAllBy(query2.toString(), bere.toUpperCase(), getFinancialYear().getId()));
 
     }
 
@@ -373,26 +357,26 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     private void setupDropdownsInHeader() {
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
         setBudgetDropDown();
-        dropdownData.put("budgetGroupList", masterDataCache.get(EGF_BUDGET_GROUP));
+        dropdownData.put("budgetGroupList", budgetingGroupService.getActiveBudgetGroups());
         if (shouldShowField(Constants.SUB_SCHEME))
             dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
         if (shouldShowField(Constants.FUNCTIONARY))
-            dropdownData.put("functionaryList", masterDataCache.get(EGI_FUNCTIONARY));
+            dropdownData.put("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (shouldShowField(Constants.FUNCTION))
-            dropdownData.put("functionList", masterDataCache.get(EGI_FUNCTION));
+            dropdownData.put("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true, false));
         if (shouldShowField(Constants.SCHEME))
             dropdownData.put("schemeList",
                     persistenceService.findAllBy("from Scheme where isActive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-            dropdownData.put("executingDepartmentList", masterDataCache.get(EGI_DEPARTMENT));
+            dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         if (shouldShowField(Constants.FUND))
             dropdownData.put("fundList",
                     persistenceService.findAllBy("from Fund where isNotLeaf=false and isActive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
         addDropdownData("financialYearList", getPersistenceService()
-                .findAllBy("from CFinancialYear where isActive=true order by " + "finYearRange desc "));
-        dropdownData.put("departmentList", masterDataCache.get(EGI_DEPARTMENT));
+                .findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
+        dropdownData.put("departmentList", departmentService.getAllDepartments());
         dropdownData.put("designationList", Collections.emptyList());
         dropdownData.put("userList", Collections.emptyList());
     }
@@ -505,16 +489,17 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     protected void setBudgetDropDown() {
         if (addNewDetails) {
             if (getFinancialYear() != null && getFinancialYear().getId() != null) {
-                budgetList.addAll(persistenceService
-                        .findAllBy("from Budget where id not in (select parent from Budget where parent is not null) "
-                                + "and isactivebudget = true and state.type='Budget' and isbere='RE' and financialYear.id = "
-                                + getFinancialYear().getId() + " order by name"));
+                StringBuilder queryString = new StringBuilder("from Budget where id not in (select parent from Budget where parent is not null) ")
+                        .append("and isactivebudget = true and state.type='Budget' and isbere='RE' and financialYear.id = ?1")
+                        .append(" order by name");
+                budgetList.addAll(persistenceService.findAllBy(queryString.toString(), getFinancialYear().getId()));
                 dropdownData.put(BUDGETLIST, budgetList);
             } else
                 dropdownData.put(BUDGETLIST, Collections.emptyList());
         } else
-            dropdownData.put(BUDGETLIST, persistenceService.findAllBy(
-                    "from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = true and state.type='Budget' and (state.value='NEW' or lower(state.value) like lower('Forwarded by SMADMIN%')) order by name"));
+            dropdownData.put(BUDGETLIST, persistenceService.findAllBy(new StringBuilder("from Budget where id not in (select parent from Budget where parent is not null)")
+                    .append(" and isactivebudget = true and state.type='Budget' and (state.value='NEW'")
+                    .append(" or lower(state.value) like lower('Forwarded by SMADMIN%')) order by name").toString()));
     }
 
     public List<BudgetDetail> getSavedbudgetDetailList() {
@@ -534,7 +519,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     }
 
     protected User getUser() {
-        return (User) persistenceService.find("from User where id=?", ApplicationThreadLocals.getUserId());
+        return (User) persistenceService.find("from User where id=?1", ApplicationThreadLocals.getUserId());
     }
 
     protected Position getPosition() {
@@ -584,8 +569,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
 
     protected void getDetailsFilterdBy() {
         final StringBuilder mainQry = new StringBuilder(100);
-
-        mainQry.append("from BudgetDetail where budget.id=? and status.code = 'NEW' order by function.name,budgetGroup.name ");
+        mainQry.append("from BudgetDetail where budget.id=?1 and status.code = 'NEW' order by function.name,budgetGroup.name ");
         if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getId() != 0)
             savedbudgetDetailList = budgetDetailService.findAllBy(mainQry.toString(), budgetDetail.getBudget().getId());
 
@@ -602,7 +586,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
         }
         final Budget referenceBudgetFor = budgetService.getReferenceBudgetFor(savedbudgetDetailList.get(0).getBudget());
         if (referenceBudgetFor != null) {
-            final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?",
+            final List<BudgetDetail> result = budgetDetailService.findAllBy("from BudgetDetail where budget.id=?1",
                     referenceBudgetFor.getId());
 
             if (!savedbudgetDetailList.isEmpty())
@@ -725,7 +709,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
 
     public String ajaxLoadSubSchemes() {
         subSchemes = getPersistenceService()
-                .findAllBy("from SubScheme where scheme.id=? and isActive=true order by name", schemeId);
+                .findAllBy("from SubScheme where scheme.id=?1 and isActive=true order by name", schemeId);
         return Constants.SUBSCHEMES;
     }
 
@@ -742,7 +726,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     }
 
     public List<BudgetAmountView> populateAmountData(final List<BudgetDetail> budgetDetails, final Date asOnDate,
-            final CFinancialYear finYear) {
+                                                     final CFinancialYear finYear) {
         final List<BudgetAmountView> list = new ArrayList<BudgetAmountView>();
         Map<String, Object> paramMap;
         final Long finYearId = finYear.getId();
@@ -785,52 +769,52 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
         return list;
     }
 
-    public void setShowMessage(final boolean showMessage) {
-        this.showMessage = showMessage;
-    }
-
     public boolean isShowMessage() {
         return showMessage;
     }
 
-    public void setBeAmounts(final List<BigDecimal> beAmounts) {
-        this.beAmounts = beAmounts;
+    public void setShowMessage(final boolean showMessage) {
+        this.showMessage = showMessage;
     }
 
     public List<BigDecimal> getBeAmounts() {
         return beAmounts;
     }
 
-    public void setNextYearRange(final String nextYearRange) {
-        this.nextYearRange = nextYearRange;
+    public void setBeAmounts(final List<BigDecimal> beAmounts) {
+        this.beAmounts = beAmounts;
     }
 
     public String getNextYearRange() {
         return nextYearRange;
     }
 
-    public void setReferenceBudget(final Budget referenceBudget) {
-        this.referenceBudget = referenceBudget;
+    public void setNextYearRange(final String nextYearRange) {
+        this.nextYearRange = nextYearRange;
     }
 
     public Budget getReferenceBudget() {
         return referenceBudget;
     }
 
-    public void setFinancialYear(final CFinancialYear financialYear) {
-        this.financialYear = financialYear;
+    public void setReferenceBudget(final Budget referenceBudget) {
+        this.referenceBudget = referenceBudget;
     }
 
     public CFinancialYear getFinancialYear() {
         return financialYear;
     }
 
-    public void setBudgetList(final List<Budget> budgetList) {
-        this.budgetList = budgetList;
+    public void setFinancialYear(final CFinancialYear financialYear) {
+        this.financialYear = financialYear;
     }
 
     public List<Budget> getBudgetList() {
         return budgetList;
+    }
+
+    public void setBudgetList(final List<Budget> budgetList) {
+        this.budgetList = budgetList;
     }
 
     public void setBudgetWorkflowService(final WorkflowService<Budget> budgetWorkflowService) {
@@ -839,7 +823,7 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
 
     public void removeEmptyBudgetDetails(final List<BudgetDetail> budgetDetailList) {
         int i = 0;
-        for (final Iterator<BudgetDetail> detail = budgetDetailList.iterator(); detail.hasNext();) {
+        for (final Iterator<BudgetDetail> detail = budgetDetailList.iterator(); detail.hasNext(); ) {
             if (detail.next() == null)
                 detail.remove();
             if (beAmounts.get(i) == null)
@@ -896,12 +880,12 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
         addNewDetails = addDetails;
     }
 
-    public void setBudgetDocumentNumber(final Long documentNumber) {
-        budgetDocumentNumber = documentNumber;
-    }
-
     public Long getBudgetDocumentNumber() {
         return budgetDocumentNumber;
+    }
+
+    public void setBudgetDocumentNumber(final Long documentNumber) {
+        budgetDocumentNumber = documentNumber;
     }
 
     public boolean isRe() {

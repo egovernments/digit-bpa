@@ -57,13 +57,13 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
+import org.egov.commons.repository.FundRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.masters.SchemeService;
 import org.egov.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +96,7 @@ public class SchemeAction extends BaseFormAction {
     @Qualifier("schemeService")
     private SchemeService schemeService;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
     
     @Override
     public Object getModel() {
@@ -112,7 +112,7 @@ public class SchemeAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
 
     }
 
@@ -137,7 +137,7 @@ public class SchemeAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/masters/scheme-beforeEdit")
     public String beforeEdit() {
-        scheme = (Scheme) persistenceService.find("from Scheme where id=?", scheme.getId());
+        scheme = (Scheme) persistenceService.find("from Scheme where id=?1", scheme.getId());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("..Inside Before Edit Method..");
         mode = EDIT;
@@ -149,7 +149,7 @@ public class SchemeAction extends BaseFormAction {
     public String beforeView() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("..Inside Before View Method..");
-        scheme = (Scheme) persistenceService.find("from Scheme where id=?", scheme.getId());
+        scheme = (Scheme) persistenceService.find("from Scheme where id=?1", scheme.getId());
         mode = VIEW;
         return VIEW;
     }
@@ -160,20 +160,28 @@ public class SchemeAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside Search |Search scheme Action Starts");
         final StringBuffer query = new StringBuffer();
+        final List params = new ArrayList();
+        int i = 1;
         schemeList = new ArrayList<Scheme>();
         query.append("From Scheme scheme");
-
-        if (scheme.getFund().getId() != null)
-            query.append(" where scheme.fund=" + scheme.getFund().getId());
-        if (scheme.getValidfrom() != null && scheme.getValidto() != null)
-            query.append(" and scheme.validfrom>='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidfrom()) + "'")
-            .append("and scheme.validto<='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidto()) + "'");
-        else if (scheme.getValidfrom() != null)
-            query.append(" and scheme.validfrom>='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidfrom()) + "'");
-        else if (scheme.getValidto() != null)
-            query.append("and scheme.validto<='" + Constants.DDMMYYYYFORMAT1.format(scheme.getValidto()) + "'");
-        query.append("order by scheme.name");
-        schemeList = persistenceService.findAllBy(query.toString());
+        if (scheme.getFund().getId() != null) {
+            query.append(" where scheme.fund.id =?").append(i++);
+            params.add(Integer.valueOf(scheme.getFund().getId()));
+        }
+        if (scheme.getValidfrom() != null && scheme.getValidto() != null) {
+            query.append(" and scheme.validfrom>=?").append(i++)
+                    .append(" and scheme.validto<=?").append(i++);
+            params.add(scheme.getValidfrom());
+            params.add(scheme.getValidto());
+        } else if (scheme.getValidfrom() != null) {
+            query.append(" and scheme.validfrom>=?").append(i++);
+            params.add(scheme.getValidfrom());
+        } else if (scheme.getValidto() != null) {
+            query.append(" and scheme.validto<=?").append(i++);
+            params.add(scheme.getValidto());
+        }
+        query.append(" order by scheme.name");
+        schemeList = persistenceService.findAllBy(query.toString(), params.toArray());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme List Size is" + schemeList.size());
         return SEARCH;
@@ -193,10 +201,10 @@ public class SchemeAction extends BaseFormAction {
         	scheme.setLastModifiedBy((User)schemeService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
-            LOGGER.error("ValidationException in creating Scheme" + e.getMessage());
+            LOGGER.error("ValidationException in creating Scheme" ,e);
             throw e;
         } catch (final Exception e) {
-            LOGGER.error("Exception while creating Scheme" + e.getMessage());
+            LOGGER.error("Exception while creating Scheme" ,e);
             throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator",
                     "An error occured contact Administrator")));
         }
@@ -218,10 +226,10 @@ public class SchemeAction extends BaseFormAction {
         	scheme.setCreatedBy((User)schemeService.getSession().load(User.class, ApplicationThreadLocals.getUserId()));
             schemeService.persist(scheme);
         } catch (final ValidationException e) {
-            LOGGER.error("ValidationException in create Scheme" + e.getMessage());
+            LOGGER.error("ValidationException in create Scheme" ,e);
             throw e;
         } catch (final Exception e) {
-            LOGGER.error("Exception while creating Scheme" + e.getMessage());
+            LOGGER.error("Exception while creating Scheme" ,e);
             throw new ValidationException(Arrays.asList(new ValidationError("An error occured contact Administrator",
                     "An error occured contact Administrator")));
         }
@@ -241,16 +249,16 @@ public class SchemeAction extends BaseFormAction {
             LOGGER.debug("......Scheme Unique check Begins......");
         if (uniqueCode) {
             if (!scheme.getCode().equals("") && scheme.getId() != null)
-                scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(code)=? and id!=?",
+                scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(code)=?1 and id!=?2",
                         scheme.getCode().toLowerCase(), scheme.getId());
             else if (!scheme.getCode().equals(""))
-                scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(code)=?", scheme.getCode().toLowerCase());
+                scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(code)=?1", scheme.getCode().toLowerCase());
             uniqueCode = false;
         } else if (!scheme.getName().equals("") && scheme.getId() != null)
-            scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(name)=? and id!=?", scheme.getName().toLowerCase(),
+            scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(name)=?1 and id!=?2", scheme.getName().toLowerCase(),
                     scheme.getId());
         else if (!scheme.getName().equals(""))
-            scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(name)=?", scheme.getName().toLowerCase());
+            scheme_validate = (Scheme) persistenceService.find("from Scheme where lower(name)=?1", scheme.getName().toLowerCase());
         if (scheme_validate != null)
             isDuplicate = true;
         if (LOGGER.isDebugEnabled())

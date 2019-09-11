@@ -1,4 +1,3 @@
-INSERT INTO eg_module (id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (nextval('seq_eg_module'), 'Dashboard', true, 'dashboard', NULL, 'Dashboard', 10);
 
 INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES  (nextval('seq_eg_action'), 'ERP-Reports', '/erpReports', NULL, (select id from eg_module where name='Dashboard' and parentmodule is null), 1, 'ERP Reports', true, 'dashboard', 0, 1, now(), 1, now(), (select id from eg_module where name='Dashboard' and parentmodule is null));
 

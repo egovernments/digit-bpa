@@ -2,8 +2,6 @@ INSERT into eg_module values (nextval('SEQ_EG_ACTION'),'CommonUOMCategory',true,
 
 INSERT into eg_module values (nextval('SEQ_EG_ACTION'),'Common-Masters',true,'common',(select id from eg_module where name='Common' and parentmodule is null),'Masters',1);
 
-INSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (nextval('SEQ_EG_MODULE'), 'Common', true, 'common', null, 'Common',(select max(ordernumber)+1 from eg_module where parentmodule is null));
-
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application,createdby, createddate, lastmodifiedby, lastmodifieddate) values(nextval('SEQ_EG_ACTION'),'New-UOMCategory','/uomcategory/new',(select id from eg_module where name='Common-Masters' ),1,'Create UOM Category',true,'common',(select id from eg_module where name='Common' and parentmodule is null),1,now(),1,now());
 Insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='New-UOMCategory'));
 

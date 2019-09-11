@@ -107,7 +107,7 @@ public class OpeningBalanceReportAction extends BaseFormAction {
     public void prepareNewForm() {
         super.prepare();
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         addDropdownData("fundList", persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
         addDropdownData("financialYearList", persistenceService.findAllBy("from CFinancialYear order by finYearRange desc "));
@@ -144,7 +144,7 @@ public class OpeningBalanceReportAction extends BaseFormAction {
             LOGGER.debug("OpeningBalanceReportAction | list | End");
         heading = getGLHeading();
         prepareNewForm();
-        persistenceService.getSession().setFlushMode(FlushMode.AUTO);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.AUTO);
         return "result";
     }
 
@@ -155,18 +155,18 @@ public class OpeningBalanceReportAction extends BaseFormAction {
         Fund fund = new Fund();
         Department dept = new Department();
         if (checkNullandEmpty(openingBalanceReport.getFinYear())) {
-            finYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?",
+            finYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id = ?1",
                     Long.parseLong(openingBalanceReport.getFinYear()));
             heading = heading + finYear.getFinYearRange();
         }
         if (checkNullandEmpty(openingBalanceReport.getObFund_id())) {
             fund = (Fund) persistenceService
-                    .find("from Fund where id = ?", Integer.parseInt(openingBalanceReport.getObFund_id()));
+                    .find("from Fund where id = ?1", Integer.parseInt(openingBalanceReport.getObFund_id()));
             heading = heading + " under " + fund.getName();
         }
 
         if (checkNullandEmpty(openingBalanceReport.getDeptId())) {
-            dept = (Department) persistenceService.find("from Department where id = ?",
+            dept = (Department) persistenceService.find("from Department where id = ?1",
                     Long.parseLong(openingBalanceReport.getDeptId()));
             heading = heading + " and " + dept.getName() + " Department ";
         }

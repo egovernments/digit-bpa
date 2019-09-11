@@ -57,6 +57,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.DepartmentwiseExpenditureReport;
 import org.egov.egf.model.DepartmentwiseExpenditureResult;
 import org.egov.infra.admin.master.entity.Department;
@@ -65,12 +66,11 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.DEReportService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,12 +78,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 
@@ -122,17 +117,18 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
+
+    @Autowired
+    private FundRepository fundRepository;
     
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
-        addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
-        addDropdownData("financialYearList", getPersistenceService().findAllBy("from CFinancialYear where isActive=true " +
-                "  and startingDate >='01-Apr-2010' order by finYearRange desc  "));
+        addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+        addDropdownData("financialYearList", getPersistenceService().findAllBy(
+                "from CFinancialYear where isActive=true and startingDate >='01-Apr-2010' order by finYearRange desc  "));
     }
 
     @Override
@@ -485,12 +481,12 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
         if (deptReport.getFinancialYearId() != null
                 && !(deptReport.getFinancialYearId().toString().equals("0") || deptReport.getFinancialYearId().equals(" ") || deptReport
                         .getFinancialYearId() == 0))
-            deptReport.setFinyearObj((CFinancialYear) getPersistenceService().find(" from CFinancialYear where id=?",
+            deptReport.setFinyearObj((CFinancialYear) getPersistenceService().find(" from CFinancialYear where id=?1",
                     deptReport.getFinancialYearId()));
         else
             deptReport.setFinyearObj(deService.getFinancialYearDAO().getFinancialYearByDate(deptReport.getFromDate()));
         if (deptReport.getFundId() != null && deptReport.getFundId() != 0)
-            deptReport.setFund((Fund) getPersistenceService().find("from Fund where id=?", deptReport.getFundId()));
+            deptReport.setFund((Fund) getPersistenceService().find("from Fund where id=?1", deptReport.getFundId()));
         if (deptReport.getReportType() != null && deptReport.getReportType().equals("Month")) {
             deptReport.setFromDate(deService.getStartDayOfMonth(deptReport));
             deptReport.setToDate(deService.getLastDayOfMonth(deptReport));
@@ -544,7 +540,7 @@ public class DepartmentwiseExpenditureReportAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

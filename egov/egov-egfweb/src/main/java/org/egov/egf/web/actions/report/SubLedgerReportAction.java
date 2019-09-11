@@ -111,7 +111,7 @@ public class SubLedgerReportAction extends BaseFormAction {
                     "subLedgerTypeList",
                     persistenceService
                     .findAllBy(
-                            "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ? and cad.detailTypeId = adt ",
+                            "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ?1 and cad.detailTypeId = adt ",
                             subLedgerReport.getGlCode1()));
         else
             addDropdownData("subLedgerTypeList", Collections.EMPTY_LIST);
@@ -163,15 +163,15 @@ public class SubLedgerReportAction extends BaseFormAction {
         CChartOfAccounts glCode = new CChartOfAccounts();
         Fund fund = new Fund();
         if (checkNullandEmpty(subLedgerReport.getGlCode1()) && checkNullandEmpty(subLedgerReport.getGlCode1())) {
-            glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?",
+            glCode = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where glcode = ?1",
                     subLedgerReport.getGlCode1());
-            fund = (Fund) persistenceService.find("from Fund where id = ?",
+            fund = (Fund) persistenceService.find("from Fund where id = ?1",
                     Integer.parseInt(subLedgerReport.getFund_id()));
         }
         heading = "Sub Ledger Report for " + subLedgerReport.getEntityName() + " in " + glCode.getName() + " under "
                 + fund.getName() + " from " + subLedgerReport.getStartDate() + " to " + subLedgerReport.getEndDate();
         if (checkNullandEmpty(subLedgerReport.getDepartmentId())) {
-            final Department dept = (Department) persistenceService.find("from Department where id = ?",
+            final Department dept = (Department) persistenceService.find("from Department where id = ?1",
                     Long.parseLong(subLedgerReport.getDepartmentId()));
             heading = heading + " under " + dept.getName() + " ";
         }

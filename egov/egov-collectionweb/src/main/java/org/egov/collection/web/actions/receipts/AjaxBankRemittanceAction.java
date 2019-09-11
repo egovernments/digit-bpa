@@ -47,10 +47,16 @@
  */
 package org.egov.collection.web.actions.receipts;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.egov.collection.service.ServiceDetailsService;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -66,17 +72,11 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 @ParentPackage("egov")
-@Results({
-        @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),
+@Results({ @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),
         @Result(name = AjaxBankRemittanceAction.ACCOUNTLIST, location = "ajaxBankRemittance-accountList.jsp"),
         @Result(name = AjaxBankRemittanceAction.USERLIST, location = "ajaxBankRemittance-userList.jsp"),
         @Result(name = AjaxBankRemittanceAction.DESIGNATIONLIST, location = "ajaxBankRemittance-designationList.jsp"),
@@ -101,7 +101,8 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     private BankBranchHibernateDAO bankBranchHibernateDAO;
     @Autowired
     private BankaccountHibernateDAO bankaccountHibernateDAO;
-    private PersistenceService<ServiceDetails, Long> serviceDetailsService;
+    @Autowired
+    private ServiceDetailsService serviceDetailsService;  
 
     /**
      * A <code>Long</code> representing the fund id. The fund id is arriving from the miscellanoeus receipt screen
@@ -118,24 +119,26 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchList")
     public String bankBranchList() {
         if (getFundId() != null) {
-            final Fund fund = (Fund) persistenceService.find("from Fund where id=?", fundId);
+            final Fund fund = (Fund) persistenceService.find("from Fund where id=?1", fundId);
             if (fund == null)
-                throw new ValidationException(Arrays.asList(new ValidationError("fund.not.found",
-                        "Fund information not available")));
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError("fund.not.found", "Fund information not available")));
             setFundName(fund.getName());
         }
         if (serviceName == null && serviceId != null && serviceId != -1) {
-            final ServiceDetails serviceDetails = (ServiceDetails) persistenceService.find(
-                    "from ServiceDetails where id=?", serviceId);
+            final ServiceDetails serviceDetails = (ServiceDetails) persistenceService
+                    .find("from ServiceDetails where id=?1", serviceId);
             setServiceName(serviceDetails.getName());
         }
-        final String bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
-                + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
-                + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID and fd.ID=ba.FUNDID and sd.NAME='"
-                + serviceName
-                + "' and fd.NAME='" + getFundName() + "'";
-
-        final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString);
+        final StringBuilder bankBranchQueryString = new StringBuilder(
+                "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,");
+        bankBranchQueryString.append(
+                "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and ");
+        bankBranchQueryString.append("ba.BRANCHID=bb.ID and bb.BANKID=b.ID and fd.ID=ba.FUNDID and sd.NAME='");
+        bankBranchQueryString.append(serviceName);
+        bankBranchQueryString.append("' and fd.NAME='").append(getFundName()).append("'");
+        final Query bankBranchQuery = persistenceService.getSession()
+                .createNativeQuery(bankBranchQueryString.toString());
         final List<Object[]> queryResults = bankBranchQuery.list();
 
         for (int i = 0; i < queryResults.size(); i++) {
@@ -150,18 +153,21 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchListOfService")
     public String bankBranchListOfService() {
-        String bankBranchQueryString;
+        StringBuilder bankBranchQueryString = new StringBuilder();
         if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser()))
-            bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
-                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd,EGCL_BRANCHUSER_MAP bu where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
-                    + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID and  bu.isActive=true and bb.id=bu.bankbranch and bu.bankuser="
-                    + collectionsUtil.getLoggedInUser().getId();
+            bankBranchQueryString
+                    .append("select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,")
+                    .append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd,EGCL_BRANCHUSER_MAP bu where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and ")
+                    .append("ba.BRANCHID=bb.ID and bb.BANKID=b.ID and  bu.isActive=true and bb.id=bu.bankbranch and bu.bankuser=")
+                    .append(collectionsUtil.getLoggedInUser().getId());
         else
-            bankBranchQueryString = "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,"
-                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and "
-                    + "ba.BRANCHID=bb.ID and bb.BANKID=b.ID";
+            bankBranchQueryString
+                    .append("select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb, BANKACCOUNT ba,")
+                    .append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and ")
+                    .append("ba.BRANCHID=bb.ID and bb.BANKID=b.ID");
 
-        final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString);
+        final Query bankBranchQuery = persistenceService.getSession()
+                .createNativeQuery(bankBranchQueryString.toString());
         final List<Object[]> queryResults = bankBranchQuery.list();
 
         for (int i = 0; i < queryResults.size(); i++) {
@@ -182,22 +188,22 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxBankRemittance-accountList")
     public String accountList() {
         if (fundId != null && fundId != -1) {
-            final Fund fund = (Fund) persistenceService.find("from Fund where id=?", fundId);
+            final Fund fund = (Fund) persistenceService.find("from Fund where id=?1", fundId);
             if (fund == null)
-                throw new ValidationException(Arrays.asList(new ValidationError("fund.not.found",
-                        "Fund information not available")));
+                throw new ValidationException(
+                        Arrays.asList(new ValidationError("fund.not.found", "Fund information not available")));
             setFundName(fund.getName());
         }
         if (serviceName == null && serviceId != null && serviceId != -1) {
-            final ServiceDetails serviceDetails = (ServiceDetails) persistenceService.find(
-                    "from ServiceDetails where id=?", serviceId);
+            final ServiceDetails serviceDetails = (ServiceDetails) persistenceService
+                    .find("from ServiceDetails where id=?1", serviceId);
             setServiceName(serviceDetails.getName());
         }
         final String bankAccountQueryString = "select ba.id as accountid,ba.accountnumber as accountnumber from BANKACCOUNT ba,"
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                 + "ba.BRANCHID=" + branchId + " and sd.NAME='" + serviceName + "' and fd.NAME='" + fundName + "'";
 
-        final Query bankAccountQuery = persistenceService.getSession().createSQLQuery(bankAccountQueryString);
+        final Query bankAccountQuery = persistenceService.getSession().createNativeQuery(bankAccountQueryString);
         final List<Object[]> queryResults = bankAccountQuery.list();
 
         bankAccountArrayList = new ArrayList<Bankaccount>();
@@ -219,7 +225,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
                 + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
                 + "ba.BRANCHID=" + branchId;
 
-        final Query bankAccountQuery = persistenceService.getSession().createSQLQuery(bankAccountQueryString);
+        final Query bankAccountQuery = persistenceService.getSession().createNativeQuery(bankAccountQueryString);
         final List<Object[]> queryResults = bankAccountQuery.list();
 
         bankAccountArrayList = new ArrayList<Bankaccount>();
@@ -239,7 +245,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     public String serviceListOfAccount() {
         final String serviceAccountQueryString = "select sd.id as serviceid,sd.name as servicename from EGCL_SERVICEDETAILS sd,EGCL_BANKACCOUNTSERVICEMAPPING asm where sd.id=asm.servicedetails and asm.bankaccount="
                 + bankAccountId;
-        final Query serviceListQuery = persistenceService.getSession().createSQLQuery(serviceAccountQueryString);
+        final Query serviceListQuery = persistenceService.getSession().createNativeQuery(serviceAccountQueryString);
         final List<Object[]> queryResults = serviceListQuery.list();
 
         serviceNameList = new ArrayList<ServiceDetails>();
@@ -270,9 +276,9 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/ajaxBankRemittance-serviceListNotMappedToAccount")
     public String serviceListNotMappedToAccount() {
-        final String serviceAccountQueryString = "select distinct sd from ServiceDetails sd where sd.isEnabled='true' and sd.serviceCategory.id=? ";
+        final String serviceAccountQueryString = "select distinct sd from ServiceDetails sd where sd.isEnabled='true' and sd.serviceCategory.id=:categoryId ";
         final Query serviceListQuery = persistenceService.getSession().createQuery(serviceAccountQueryString);
-        serviceListQuery.setParameter(0, serviceId);
+        serviceListQuery.setParameter("categoryId", serviceId);
         serviceNameList = serviceListQuery.list();
         return SERVICENAMELIST;
     }
@@ -422,9 +428,5 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     public void setBankId(final Integer bankId) {
         this.bankId = bankId;
-    }
-
-    public void setServiceDetailsService(PersistenceService<ServiceDetails, Long> serviceDetailsService) {
-        this.serviceDetailsService = serviceDetailsService;
     }
 }

@@ -49,7 +49,9 @@
 package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.NotBlank;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -59,30 +61,50 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import java.util.Objects;
 
 import static org.egov.infra.admin.common.entity.Favourites.SEQ_FAVOURITES;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
 
 @Entity
 @Table(name = "eg_favourites", uniqueConstraints = @UniqueConstraint(columnNames = {"userId", "actionId"}))
+@CompositeUnique(fields = {"userId", "actionId"})
 @SequenceGenerator(name = SEQ_FAVOURITES, sequenceName = SEQ_FAVOURITES, allocationSize = 1)
+@Immutable
 public class Favourites extends AbstractPersistable<Long> {
 
-    public static final String SEQ_FAVOURITES = "SEQ_EG_FAVOURITES";
+    protected static final String SEQ_FAVOURITES = "SEQ_EG_FAVOURITES";
     private static final long serialVersionUID = 8966137226966715994L;
+
     @Id
     @GeneratedValue(generator = SEQ_FAVOURITES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Positive
+    @NotNull
     private Long userId;
 
+    @Positive
+    @NotNull
     private Integer actionId;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 100)
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String name;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 50)
+    @Pattern(regexp = ALPHABETS, message = INVALID_ALPHABETS)
     private String contextRoot;
 
     public Long getId() {
@@ -126,52 +148,18 @@ public class Favourites extends AbstractPersistable<Long> {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (actionId == null ? 0 : actionId.hashCode());
-        result = prime * result + (contextRoot == null ? 0 : contextRoot.hashCode());
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        result = prime * result + (userId == null ? 0 : userId.hashCode());
-        return result;
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Favourites))
+            return false;
+        Favourites that = (Favourites) other;
+        return Objects.equals(getUserId(), that.getUserId()) &&
+                Objects.equals(getActionId(), that.getActionId());
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Favourites other = (Favourites) obj;
-        if (actionId == null) {
-            if (other.actionId != null)
-                return false;
-        } else if (!actionId.equals(other.actionId))
-            return false;
-        if (contextRoot == null) {
-            if (other.contextRoot != null)
-                return false;
-        } else if (!contextRoot.equals(other.contextRoot))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getUserId(), getActionId());
     }
-
 }

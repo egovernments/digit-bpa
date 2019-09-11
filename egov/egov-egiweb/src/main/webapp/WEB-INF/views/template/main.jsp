@@ -46,19 +46,33 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
+    <c:if test="${empty maxFileSize}">
+        <spring:eval expression="@environment.getProperty('admin.max.file.size')" scope="application" var="maxFileSize"/>
+        <spring:eval expression="@environment.getProperty('admin.allowed.file.ext')" scope="application" var="allowedFileExt"/>
+    </c:if>
+    <c:if test="${empty analyticsEnabled}">
+        <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application" var="analyticsConfig"/>
+    </c:if>
+    <c:if test="${analyticsEnabled}">
+        <c:out value="${analyticsConfig}" escapeXml="false"/>
+    </c:if>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="eGov ERP"/>
     <meta name="author" content="eGovernments Foundation"/>
-
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <title><tiles:insertAttribute name="title"/></title>
     <link rel="icon" href="<cdn:url  value='/resources/global/images/favicon.png'/>" sizes="32x32">
     <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/bootstrap/bootstrap.css'/>">
@@ -75,6 +89,7 @@
     <script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js'/>"></script>
     <script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
     <script src="<cdn:url  value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"></script>
+    <script src="<cdn:url  value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}'/>"></script>
     <script src="<cdn:url  value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}'/>"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -83,9 +98,10 @@
     <script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js'/>"></script>
     <![endif]-->
     <script>
-        var googleapikey = '${sessionScope.googleApiKey}';
         const citylat = ${empty sessionScope.citylat ? 0 : sessionScope.citylat};
         const citylng = ${empty sessionScope.citylng ? 0 : sessionScope.citylng};
+        const tokenVal = '${_csrf.token}';
+        const tokenName = '${_csrf.parameterName}';
     </script>
 
 </head>
@@ -93,7 +109,7 @@
 <div class="page-container">
     <tiles:insertAttribute name="header"/>
     <div class="main-content">
-        <spring:htmlEscape defaultHtmlEscape="true" />
+        <spring:htmlEscape defaultHtmlEscape="true"/>
         <tiles:insertAttribute name="body"/>
     </div>
     <tiles:insertAttribute name="footer"/>

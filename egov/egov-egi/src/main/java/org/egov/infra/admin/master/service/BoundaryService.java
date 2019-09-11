@@ -84,6 +84,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+
 @Service
 @Transactional(readOnly = true)
 public class BoundaryService {
@@ -139,14 +141,25 @@ public class BoundaryService {
     }
 
     public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) {
-        List<Boundary> boundaryList = new ArrayList<>();
-        final Boundary bndry = getBoundaryById(boundaryId);
-        if (bndry != null) {
-            boundaryList.add(bndry);
-            if (bndry.getParent() != null)
-                boundaryList = getParentBoundariesByBoundaryId(bndry.getParent().getId());
+        List<Boundary> boundaries = new ArrayList<>();
+        final Boundary boundary = getBoundaryById(boundaryId);
+        if (boundary != null) {
+            boundaries.add(boundary);
+            if (boundary.getParent() != null)
+                boundaries = getParentBoundariesByBoundaryId(boundary.getParent().getId());
         }
-        return boundaryList;
+        return boundaries;
+    }
+
+    public List<Boundary> getBoundaryWithItsAncestors(Long boundaryId) {
+        List<Boundary> boundaries = new ArrayList<>();
+        Boundary boundary = getBoundaryById(boundaryId);
+        if (boundary != null) {
+            boundaries.add(boundary);
+            if (boundary.getParent() != null)
+                boundaries.addAll(getBoundaryWithItsAncestors(boundary.getParent().getId()));
+        }
+        return boundaries;
     }
 
     public List<Boundary> getActiveBoundariesByBoundaryTypeId(final Long boundaryTypeId) {
@@ -203,10 +216,14 @@ public class BoundaryService {
                 hierarchyTypeName, name);
     }
 
+    public List<Boundary> getBoundaryByBoundaryTypeName(String boundaryTypeName) {
+        return boundaryRepository.findByBoundaryTypeNameIgnoreCaseOrderByName(boundaryTypeName);
+    }
+
     public List<Map<String, Object>> getBoundaryDataByNameLike(final String name) {
         final List<Map<String, Object>> list = new ArrayList<>();
 
-        crossHierarchyService.getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration",
+        crossHierarchyService.getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", ADMIN_HIERARCHY_TYPE,
                 '%' + name + '%').stream().forEach(location -> {
             final Map<String, Object> res = new HashMap<>();
             res.put("id", location.getId());
@@ -222,10 +239,6 @@ public class BoundaryService {
 
     public List<Boundary> findActiveBoundariesForMpath(final Set<String> mpath) {
         return boundaryRepository.findActiveBoundariesForMpath(mpath);
-    }
-    
-    public List<Boundary> findActiveImmediateChildrenWithOutParent(Long parentId){
-    	return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentId);
     }
 
     public String getMaterializedPath(final Boundary child, final Boundary parent) {
@@ -290,12 +303,12 @@ public class BoundaryService {
     public Optional<Boundary> getBoundaryByNumberAndType(Long boundaryNum, String boundaryTypeName) {
         if (boundaryNum != null && StringUtils.isNotBlank(boundaryTypeName)) {
             final BoundaryType boundaryType = boundaryTypeService
-                    .getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeName, "ADMINISTRATION");
+                    .getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeName, ADMIN_HIERARCHY_TYPE);
             final Boundary boundary = this.getBoundaryByTypeAndNo(boundaryType,
                     boundaryNum);
             if (boundary == null) {
                 final BoundaryType cityBoundaryType = boundaryTypeService
-                        .getBoundaryTypeByNameAndHierarchyTypeName("City", "ADMINISTRATION");
+                        .getBoundaryTypeByNameAndHierarchyTypeName("City", ADMIN_HIERARCHY_TYPE);
                 return Optional.ofNullable(this.getAllBoundariesByBoundaryTypeId(cityBoundaryType.getId()).get(0));
             }
             return Optional.of(boundary);

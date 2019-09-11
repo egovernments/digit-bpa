@@ -49,9 +49,13 @@
 package org.egov.infra.web.spring.handler;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.FlashMap;
@@ -61,18 +65,53 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice(annotations = Controller.class)
-public class GlobalExceptionHandler {
+public final class GlobalExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     private static final String DEFAULT_ERROR_VIEW = "/error/500";
+    private static final String ERROR_MESSAGE = "An error occurred while processing the request : {}";
+    private static final String VALIDATION_ERROR_MESSAGE = "Validation failed on request : {}";
+    private static final String INVALID_REQUEST = "Invalid request : {}";
 
     @ExceptionHandler({Exception.class, ApplicationRuntimeException.class})
-    public RedirectView handleGenericException(HttpServletRequest request, Exception e) {
-        LOG.error("An error occurred while processing the request", e);
+    public RedirectView handleGenericException(HttpServletRequest request, Exception exp) {
+        LOG.error(ERROR_MESSAGE, request.getRequestURL(), exp);
+        return errorView(request, exp.getMessage());
+    }
+
+    @ExceptionHandler(ApplicationValidationException.class)
+    public RedirectView handleValidationException(HttpServletRequest request, ApplicationValidationException ave) {
+        if (LOG.isWarnEnabled())
+            LOG.warn(VALIDATION_ERROR_MESSAGE, request.getRequestURL(), ave);
+        return errorView(request, ave.getMessage());
+    }
+
+    @ExceptionHandler(HttpMediaTypeException.class)
+    public RedirectView handleMediaTypeException(HttpServletRequest request, HttpMediaTypeException hmte) {
+        if (LOG.isWarnEnabled())
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), hmte);
+        return errorView(request, hmte.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public RedirectView handleMessageConversionException(HttpServletRequest request, HttpMessageConversionException hmce) {
+        if (LOG.isWarnEnabled())
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), hmce);
+        return errorView(request, hmce.getMessage());
+    }
+
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public RedirectView handleRequestBindingException(HttpServletRequest request, ServletRequestBindingException srbe) {
+        if (LOG.isWarnEnabled())
+            LOG.warn(INVALID_REQUEST, request.getRequestURL(), srbe);
+        return errorView(request, srbe.getMessage());
+    }
+
+    public RedirectView errorView(HttpServletRequest request, String message) {
         RedirectView rw = new RedirectView(DEFAULT_ERROR_VIEW, true);
         FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
         if (outputFlashMap != null) {
-            outputFlashMap.put("error", e.getMessage());
+            outputFlashMap.put("error", message);
             outputFlashMap.put("url", request.getRequestURL());
         }
         return rw;

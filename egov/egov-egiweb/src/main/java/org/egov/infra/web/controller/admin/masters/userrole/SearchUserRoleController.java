@@ -48,28 +48,53 @@
 
 package org.egov.infra.web.controller.admin.masters.userrole;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import org.egov.infra.admin.master.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 @Controller
-@RequestMapping("/userrole/search")
+@RequestMapping("/userrole")
 public class SearchUserRoleController {
 
-    @GetMapping
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/search")
     public String viewSearch() {
         return "userrole-search";
     }
 
-    @GetMapping(params = {"userId"})
-    public String searchUserRole(@RequestParam Long userId, Model model) {
-        if (userId < 1) {
+    @PostMapping("/search")
+    public String searchUserRoleByUserId(@RequestParam String userId, Model model) {
+        if (isBlank(userId)) {
             model.addAttribute("error", "invalid.user.entered");
             return "userrole-search";
         }
         return "redirect:/userrole/update/" + userId;
+    }
 
+    @PostMapping(value = "/employee", produces = APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String getEmployeeRolesByUserName(@RequestParam String userName) {
+        JsonArray roleInfos = new JsonArray();
+        userService.getEmployeeRolesByUsername(userName).forEach(user -> {
+            JsonObject roleInfo = new JsonObject();
+            roleInfo.addProperty("name", user.getName());
+            roleInfo.addProperty("id", user.getId());
+            roleInfos.add(roleInfo);
+
+        });
+        return roleInfos.toString();
     }
 }

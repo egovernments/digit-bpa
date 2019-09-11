@@ -47,12 +47,9 @@
  */
 package org.egov.portal.repository;
 
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.portal.entity.Citizen;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface CitizenRepository extends JpaRepository<Citizen, Long> {
@@ -60,6 +57,4 @@ public interface CitizenRepository extends JpaRepository<Citizen, Long> {
     Citizen findByEmailId(String emailId);
 
     Citizen findByUsername(String userName);
-
-    List<Citizen> findByMobileNumberAndTypeOrderById(String mobileNumber, UserType type);
 }

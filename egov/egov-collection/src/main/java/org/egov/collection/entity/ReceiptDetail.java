@@ -47,13 +47,14 @@
  */
 package org.egov.collection.entity;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.CFunction;
+import org.hibernate.validator.constraints.SafeHtml;
 
 public class ReceiptDetail implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
@@ -77,6 +78,7 @@ public class ReceiptDetail implements java.io.Serializable {
     /**
      * A <code>String</code> representing the glcode description sent from billing system
      */
+    @SafeHtml
     private String description;
     private CFunction function;
 
@@ -89,7 +91,10 @@ public class ReceiptDetail implements java.io.Serializable {
 
     private CFinancialYear financialYear;
 
+    @SafeHtml
     private String purpose;
+
+    private Long groupId;
 
     public ReceiptDetail() {
     }
@@ -108,6 +113,23 @@ public class ReceiptDetail implements java.io.Serializable {
         this.isActualDemand = isActualDemand;
         this.receiptHeader = receiptHeader;
         this.purpose = purpose;
+    }
+
+    public ReceiptDetail(final CChartOfAccounts accounthead, final CFunction function, final BigDecimal cramountToBePaid,
+            final BigDecimal dramount, final BigDecimal cramount, final Long ordernumber, final String description,
+            final Boolean isActualDemand,
+            final ReceiptHeader receiptHeader, final String purpose, final Long groupId) {
+        this.accounthead = accounthead;
+        this.function = function;
+        this.cramountToBePaid = cramountToBePaid;
+        this.dramount = dramount;
+        this.cramount = cramount;
+        this.ordernumber = ordernumber;
+        this.description = description;
+        this.isActualDemand = isActualDemand;
+        this.receiptHeader = receiptHeader;
+        this.purpose = purpose;
+        this.groupId = groupId;
     }
 
     @Override
@@ -257,5 +279,13 @@ public class ReceiptDetail implements java.io.Serializable {
      */
     public void setPurpose(final String purpose) {
         this.purpose = purpose;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 }

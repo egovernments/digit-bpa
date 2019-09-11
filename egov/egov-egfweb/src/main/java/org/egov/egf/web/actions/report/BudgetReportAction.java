@@ -59,13 +59,14 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.model.BudgetReportView;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.service.BudgetingGroupService;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailHelper;
@@ -77,13 +78,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
@@ -116,8 +111,11 @@ public class BudgetReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
+
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+ private DepartmentService departmentService;
+ @Autowired
+ private BudgetingGroupService budgetingGroupService;
     
     public void setFinancialYearDAO(final FinancialYearDAO financialYearDAO) {
         this.financialYearDAO = financialYearDAO;
@@ -159,22 +157,18 @@ public class BudgetReportAction extends BaseFormAction {
         final String isbere = budgetDetail.getBudget().getIsbere();
         if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getFinancialYear() != null && isbere != null) {
             final Long finYearId = budgetDetail.getBudget().getFinancialYear().getId();
-            setBudgetList(getPersistenceService()
-                    .findAllBy(
-                            "from Budget where isbere=? and financialYear.id=? and isPrimaryBudget=1 "
-                                    +
-                                    "and isActiveBudget=1 and id not in (select parent from Budget where parent is not null and isbere=? and "
-                                    +
-                                    "financialYear.id=? and isPrimaryBudget=1) order by name", isbere, finYearId, isbere,
-                                    finYearId));
+            StringBuilder queryString = new StringBuilder("from Budget where isbere=?1 and financialYear.id=?2 and isPrimaryBudget=1 ")
+                                            .append("and isActiveBudget=1 and id not in (select parent from Budget where parent is not null and isbere=?3 and ")
+                                            .append("financialYear.id=?4 and isPrimaryBudget=1) order by name");
+            setBudgetList(getPersistenceService().findAllBy(queryString.toString(), isbere, finYearId, isbere,finYearId));
         }
         return "budgets";
     }
 
     private void setupDropdownsInHeader() {
         setupDropdownDataExcluding(Constants.SUB_SCHEME);
-        dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
-        dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+        dropdownData.put("budgetGroupList", budgetingGroupService.getActiveBudgetGroups());
+        dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         addDropdownData("financialYearList", budgetService.getFYForNonApprovedBudgets());
         final List<String> isbereList = new ArrayList<String>();
         isbereList.add("BE");
@@ -230,7 +224,7 @@ public class BudgetReportAction extends BaseFormAction {
     @ValidationErrorPage(value = "form")
     public String generateReport() {
         showResults = true;
-        final CFinancialYear finYear = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId())
+        final CFinancialYear finYear = budgetService.find("from Budget where id=?1", budgetDetail.getBudget().getId())
                 .getFinancialYear();
         List<BudgetDetail> currentYearBeList = new ArrayList<BudgetDetail>();
         List<BudgetDetail> nextYearBeList = new ArrayList<BudgetDetail>();
@@ -241,11 +235,11 @@ public class BudgetReportAction extends BaseFormAction {
             final CFinancialYear previousYear = budgetDetailHelper.getPreviousYearFor(finYear);
             if (previousYear != null) {
                 lastYearBe = budgetDetailService.findAllBy(
-                        "from BudgetDetail where budget.financialYear.id=? and budget.isPrimaryBudget=1 and " +
-                                "budget.isActiveBudget=1 and budget.isbere='BE'", previousYear.getId());
+                        new StringBuilder("from BudgetDetail where budget.financialYear.id=?1 and budget.isPrimaryBudget=1 and ")
+                                .append("budget.isActiveBudget=1 and budget.isbere='BE'").toString(), previousYear.getId());
                 lastYearRe = budgetDetailService.findAllBy(
-                        "from BudgetDetail where budget.financialYear.id=? and budget.isPrimaryBudget=1 and " +
-                                "budget.isActiveBudget=1 and budget.isbere='RE'", previousYear.getId());
+                        new StringBuilder("from BudgetDetail where budget.financialYear.id=?1 and budget.isPrimaryBudget=1 and ")
+                                .append("budget.isActiveBudget=1 and budget.isbere='RE'").toString(), previousYear.getId());
             }
         } else
             nextYearBeList = populateNextYearBe(finYear);
@@ -359,7 +353,7 @@ public class BudgetReportAction extends BaseFormAction {
 
     private void populatePreviousYearActuals(final List<BudgetDetail> budgetDetails, CFinancialYear financialYear) {
         if (financialYear != null && financialYear.getId() != null)
-            financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?", financialYear.getId());
+            financialYear = (CFinancialYear) persistenceService.find("from CFinancialYear where id=?1", financialYear.getId());
         Map<String, Object> paramMap;
         for (final BudgetDetail detail : budgetDetails) {
             paramMap = budgetDetailHelper.constructParamMap(getValueStack(), detail);

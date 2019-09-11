@@ -58,16 +58,16 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFunction;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,8 +77,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({
@@ -98,7 +97,7 @@ public class JournalBookReportAction extends BaseFormAction {
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FunctionRepository functionRepository;
     String heading = "";
 
     public JournalBookReportAction() {
@@ -117,7 +116,7 @@ public class JournalBookReportAction extends BaseFormAction {
         addDropdownData("fundsourceList",
                 persistenceService.findAllBy(" from Fundsource where isactive=true order by name"));
         addDropdownData("departmentList", persistenceService.findAllBy("from Department order by name"));
-        addDropdownData("functionList", masterDataCache.get("egi-function"));
+        addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
 
         addDropdownData("voucherNameList", VoucherHelper.VOUCHER_TYPE_NAMES.get(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL));
         if (LOGGER.isDebugEnabled())
@@ -158,9 +157,9 @@ public class JournalBookReportAction extends BaseFormAction {
     }
 
     private void prepareResultList() {
+        final Map.Entry<String, Map<String, Object>> queryMapEntry = getQuery().entrySet().iterator().next();
         String voucherDate = "", voucherNumber = "", voucherName = "", narration = "";
-        Query query = null;
-        query = persistenceService.getSession().createSQLQuery(getQuery())
+        final Query query = persistenceService.getSession().createNativeQuery(queryMapEntry.getKey())
                 .addScalar("voucherdate", StringType.INSTANCE)
                 .addScalar("vouchernumber", StringType.INSTANCE)
                 .addScalar("code", StringType.INSTANCE)
@@ -171,6 +170,7 @@ public class JournalBookReportAction extends BaseFormAction {
                 .addScalar("voucherName", StringType.INSTANCE)
                 .addScalar("vhId", StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(GeneralLedgerBean.class));
+        queryMapEntry.getValue().entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         journalBookDisplayList = query.list();
         for (GeneralLedgerBean bean : journalBookDisplayList) {
             bean.setDebitamount(new BigDecimal(bean.getDebitamount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
@@ -203,37 +203,49 @@ public class JournalBookReportAction extends BaseFormAction {
         }
     }
 
-    private String getQuery() {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
-        String startDate = "", endDate = "";
+    private Map<String, Map<String, Object>> getQuery() {
+        final Map<String, Map<String, Object>> queryMap = new HashMap<>();
+        final Map<String, Object> params = new HashMap<>();
+        Date startDate = null;
+        Date endDate = null;
         try {
-            startDate = formatter.format(sdf.parse(journalBookReport.getStartDate()));
-            endDate = formatter.format(sdf.parse(journalBookReport.getEndDate()));
+            final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            startDate = sdf.parse(journalBookReport.getStartDate());
+            endDate = sdf.parse(journalBookReport.getEndDate());
         } catch (ParseException e) {
 
         }
-        String query = "", subQuery = "";
-        if (journalBookReport.getFund_id() != null && !journalBookReport.getFund_id().equals(""))
-            subQuery = subQuery + " and f.id= " + journalBookReport.getFund_id() + " ";
-        if (journalBookReport.getVoucher_name() != null && !journalBookReport.getVoucher_name().equals(""))
-            subQuery = subQuery + " and vh.Name='" + journalBookReport.getVoucher_name() + "' ";
-        if (journalBookReport.getDept_name() != null && !journalBookReport.getDept_name().equals(""))
-            subQuery = subQuery + " and vmis.departmentid=" + journalBookReport.getDept_name() + " ";
-        if (journalBookReport.getFunctionId() != null && !journalBookReport.getFunctionId().equals(""))
-            subQuery = subQuery + " and vmis.functionid  =" + journalBookReport.getFunctionId() + " ";
-        query = "SELECT TO_CHAR(vh.voucherdate,'dd-Mon-yyyy') AS voucherdate,vh.vouchernumber AS vouchernumber,f.name AS fund,gl.glcode AS code,coa.name AS accName,"
-                + "vh.description AS narration,vh.isconfirmed AS isconfirmed,gl.debitamount AS debitamount, gl.creditamount AS creditamount,vh.name AS voucherName,vh.id AS vhId "
-                + " FROM voucherheader vh, generalledger gl,fund f,function fn ,vouchermis vmis,chartofaccounts coa WHERE vh.id = gl.voucherheaderid AND gl.glcodeid = coa.id AND vh.fundid = f.id"
-                + " AND vmis.functionid = fn.id AND vmis.voucherheaderid=vh.id AND vh.status NOT IN (4,5)"
-                + subQuery
-                + " and vh.voucherdate >='"
-                + startDate
-                + "' "
-                + " and vh.voucherdate<='"
-                + endDate + "'";
-        return query;
+        StringBuilder subQuery = new StringBuilder();
+        if (journalBookReport.getFund_id() != null && !journalBookReport.getFund_id().equals("")) {
+            subQuery.append(" and f.id=:fundId ");
+            params.put("fundId", Long.valueOf(journalBookReport.getFund_id()));
+        }
+        if (journalBookReport.getVoucher_name() != null && !journalBookReport.getVoucher_name().equals("")) {
+            subQuery.append(" and vh.Name=:voucherName ");
+            params.put("voucherName", journalBookReport.getVoucher_name());
+        }
+        if (journalBookReport.getDept_name() != null && !journalBookReport.getDept_name().equals("")) {
+            subQuery.append(" and vmis.departmentid=:departmentName");
+            params.put("departmentName", journalBookReport.getDept_name());
+        }
+        if (journalBookReport.getFunctionId() != null && !journalBookReport.getFunctionId().equals("")) {
+            subQuery.append(" and vmis.functionid =:functionId");
+            params.put("functionId", journalBookReport.getFunctionId());
+        }
 
+        StringBuilder query = new StringBuilder("SELECT TO_CHAR(vh.voucherdate,'dd-Mon-yyyy') AS voucherdate,vh.vouchernumber AS vouchernumber,f.name AS fund, ")
+                            .append(" gl.glcode AS code,coa.name AS accName,vh.description AS narration,vh.isconfirmed AS isconfirmed, ")
+                .append("gl.debitamount AS debitamount, gl.creditamount AS creditamount,vh.name AS voucherName,vh.id AS vhId ")
+                .append(" FROM voucherheader vh, generalledger gl,fund f,function fn ,vouchermis vmis,chartofaccounts coa")
+                .append(" WHERE vh.id = gl.voucherheaderid AND gl.glcodeid = coa.id AND vh.fundid = f.id")
+                .append(" AND vmis.functionid = fn.id AND vmis.voucherheaderid=vh.id AND vh.status NOT IN (4,5)")
+                .append(subQuery.toString())
+                .append(" and vh.voucherdate >=:startDate ")
+                .append(" and vh.voucherdate<=:endDate ");
+        params.put("startDate", startDate);
+        params.put("endDate", endDate);
+        queryMap.put(query.toString(), params);
+        return queryMap;
     }
 
     private String getGLHeading() {
@@ -244,12 +256,12 @@ public class JournalBookReportAction extends BaseFormAction {
         Department dept = new Department();
         CFunction function = new CFunction();
         if (checkNullandEmpty(journalBookReport.getDept_name())) {
-            dept = (Department) persistenceService.find("from Department where  id = ?",
+            dept = (Department) persistenceService.find("from Department where  id = ?1",
                     Long.parseLong(journalBookReport.getDept_name()));
             heading = heading + " and Department : " + dept.getName();
         }
         if (checkNullandEmpty(journalBookReport.getFunctionId())) {
-            function = (CFunction) persistenceService.find("from CFunction where  id = ?",
+            function = (CFunction) persistenceService.find("from CFunction where  id = ?1",
                     Long.parseLong(journalBookReport.getFunctionId()));
             heading = heading + " and Financing Source :" + function.getName();
         }

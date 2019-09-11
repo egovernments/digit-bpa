@@ -147,17 +147,4 @@ public interface BillingIntegrationService {
     default ReceiptCancellationInfo validateCancelReceipt(String receiptNumber,String consumerCode) {
         return new ReceiptCancellationInfo();
     }
-
-    /**
-     * Collection system invokes billing system to validate payment amount
-     * @param billReferenceNumber
-     * @param actualAmountPaid
-     * @param receiptDetailsArray
-     * @throws ApplicationRuntimeException
-     */
-    default void validatePayment(String billReferenceNumber, BigDecimal actualAmountPaid,
-                                 ArrayList<ReceiptDetail> receiptDetailsArray){
-
-    }
-
 }

@@ -91,12 +91,6 @@
             </key>
             <one-to-many class="org.egov.demand.model.EgDemandDetails" />
         </set>
-        <set name="egDemandReasonDetails" table="EG_DEMAND_REASON_DETAILS">
-            <key>
-                <column name="ID_DEMAND_REASON"  not-null="true" />
-            </key>
-            <one-to-many class="org.egov.demand.model.EgDemandReasonDetails" />
-        </set>
         
          <!-- <many-to-one name="purposeCode" class="org.egov.commons.EgfAccountcodePurpose" >
             <column name="PURPOSEID"  />
@@ -109,6 +103,6 @@
          </class>
          
         <query name="DEMANDREASONBY_CODE_AND_INSTALLMENTID">
-           <![CDATA[select dr from org.egov.demand.model.EgDemandReason dr where dr.egDemandReasonMaster.code = ? and dr.egInstallmentMaster.id = ?]]></query>
+           <![CDATA[select dr from org.egov.demand.model.EgDemandReason dr where dr.egDemandReasonMaster.code = ?1 and dr.egInstallmentMaster.id = ?2]]></query>
          
 </hibernate-mapping>

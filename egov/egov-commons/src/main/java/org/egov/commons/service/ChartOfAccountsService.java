@@ -54,7 +54,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,7 +96,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
     @Transactional
     public void updateActiveForPostingByMaterializedPath(final String materializedPath) {
         getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "update chartofaccounts set isactiveforposting = true where isactiveforposting = false and id in (select distinct bg.mincode from egf_budgetgroup bg,egf_budgetdetail bd where bd.budgetgroup = bg.id  and bd.materializedpath like'"
                                 + materializedPath + "%') ")
                 .executeUpdate();

@@ -47,6 +47,20 @@
  */
 
 $(document).ready(function () {
+    $.fn.preventDoubleSubmission = function () {
+        $(this).on('submit', function (e) {
+            var $form = $(this);
+            if ($form.data('submitted') === true) {
+                e.preventDefault();
+            } else {
+                $form.data('submitted', true);
+            }
+        });
+        return this;
+    };
+
+    $('form').preventDoubleSubmission();
+
     $('#new-pass').popover({trigger: "focus", placement: "bottom"});
 
     $(document).on("keydown", disableRefresh);
@@ -65,17 +79,22 @@ $(document).ready(function () {
         });
 
     $('#feedback-form').on('submit', function (e) {
-        e.preventDefault();
         $.ajax({
             url: 'home/feedback/sent',
-            type: 'GET',
-            data: {'subject': $("#subject").val(), 'message': $("#comment").val()},
+            type: 'POST',
+            data: {'subject': $("#subject").val(), 'message': $("#message").val()},
             success: function (data) {
                 bootbox.alert("Your feedback successfully submitted.");
             },
-            error: function () {
-
+            error: function (xhr) {
+                try {
+                    showValidationMessage(xhr.responseJSON);
+                } catch (e) {
+                    bootbox.alert("Could not send the feedback");
+                }
             }, complete: function () {
+                $("#subject").val('');
+                $("#message").val('')
                 $('.add-feedback').modal('hide');
             }
         });
@@ -83,48 +102,59 @@ $(document).ready(function () {
     });
 
     $('#password-form').on('submit', function (e) {
-        e.preventDefault();
-        $.ajax({
-            url: 'home/password/update',
-            type: 'GET',
-            data: {
-                'currentPwd': $("#old-pass").val(),
-                'newPwd': $("#new-pass").val(),
-                'retypeNewPwd': $("#retype-pass").val()
-            },
-            success: function (data) {
-                var msg = "";
-                if (data == "SUCCESS") {
-                    $("#old-pass").val("");
-                    $("#new-pass").val("");
-                    $("#retype-pass").val("");
-                    $('.change-password').modal('hide');
-                    bootbox.alert("Your password has been updated.");
-                    $('.pass-cancel').removeAttr('disabled');
-                    $('#pass-alert').hide();
-                } else if (data == "NEWPWD_UNMATCH") {
-                    msg = "New password you have entered does not match with retyped password.";
-                    $("#new-pass").val("");
-                    $("#retype-pass").val("");
-                    $('.change-password').modal('show');
-                } else if (data == "CURRPWD_UNMATCH") {
-                    msg = "Old password you have entered is incorrect.";
-                    $("#old-pass").val("");
-                    $('.change-password').modal('show');
-                } else if (data == "NEWPWD_INVALID") {
-                    msg = $('.password-error-msg').html();
-                    $("#new-pass").val("");
-                    $("#retype-pass").val("");
-                    $('.change-password').modal('show');
+        if ($("#currentPwd").val() !== '' && $("#newPwd").val() !== '' && $("#retypeNewPwd").val() !== '') {
+            $.ajax({
+                url: 'home/password/update',
+                async: false,
+                type: 'POST',
+                data: {
+                    'currentPwd': $("#currentPwd").val(),
+                    'newPwd': $("#newPwd").val(),
+                    'retypeNewPwd': $("#retypeNewPwd").val()
+                },
+                success: function (data) {
+                    var msg = "";
+                    if (data == "SUCCESS") {
+                        $("#currentPwd").val("");
+                        $("#newPwd").val("");
+                        $("#retypeNewPwd").val("");
+                        $('.change-password').modal('hide');
+                        bootbox.alert("Your password has been updated.");
+                        $('.pass-cancel').removeAttr('disabled');
+                        $('#pass-alert').hide();
+                    } else if (data == "NEWPWD_UNMATCH") {
+                        msg = "New password you have entered does not match with retyped password.";
+                        $("#newPwd").val("");
+                        $("#retypeNewPwd").val("");
+                        $('.change-password').modal('show');
+                    } else if (data == "CURRPWD_UNMATCH") {
+                        msg = "Old password you have entered is incorrect.";
+                        $("#currentPwd").val("");
+                        $('.change-password').modal('show');
+                    } else if (data == "NEWPWD_INVALID") {
+                        msg = $('.password-error-msg').html();
+                        $("#newPwd").val("");
+                        $("#retypeNewPwd").val("");
+                        $('.change-password').modal('show');
+                    } else if (data == 'NEW_AND_CURR_PWD_SAME') {
+                        msg = "New Password cannot be same as your Old Password, try a different one.";
+                        $("#newPwd").val("");
+                        $("#retypeNewPwd").val("");
+                        $('.change-password').modal('show');
+                    }
+
+                    $('.password-error').html(msg).show();
+
+                },
+                error: function (xhr) {
+                    try {
+                        showValidationMessage(xhr.responseJSON);
+                    } catch (e) {
+                        bootbox.alert("Could not change the password");
+                    }
                 }
-                $('.password-error').html(msg).show();
-
-            },
-            error: function () {
-                bootbox.alert("Internal server error occurred, please try after sometime.");
-            }
-        });
-
+            });
+        }
     });
 
     worklist();
@@ -134,7 +164,7 @@ $(document).ready(function () {
         historyTableContainer = $("#historyTable");
         historyTableContainer.DataTable({
             "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-6 col-xs-12'i>" +
-            "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+                "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "autoWidth": false,
             "paging": false,
@@ -144,9 +174,10 @@ $(document).ready(function () {
                 "sInfo": ""
             },
             "ajax": {
-                "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 6),
+                "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 7),
                 "dataSrc": ""
             },
+
             "columns": [
                 {"data": "date", "width": "20%"},
                 {"data": "sender", "width": "15%"},
@@ -224,8 +255,7 @@ $(document).ready(function () {
         if (!$(this).data('now')) {
             taskName = $(this).data('task') ? unescape($(this).data('task')) : "";
             moduleName = $(this).data('module') ? unescape($(this).data('module')) : "";
-        }
-        else
+        } else
             taskName = unescape($(this).data('now'));
 
         now_json = [];
@@ -366,8 +396,7 @@ $(document).ready(function () {
             for (var i = 0; i < theObject.length; i++) {
                 result = getObject(theObject[i], searchkey);
             }
-        }
-        else {
+        } else {
             for (var prop in theObject) {
                 if (prop == 'name') {
                     if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0) {
@@ -450,20 +479,21 @@ function worklist() {
             "dataSrc": ""
         },
         "createdRow": function (row, data) {
-            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FA8072");
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
         },
-        
         "deferRender": true,
         "columns": [
-            {"data": "date", "width": "16%"},
+            {"data": "date", "width": "15%"},
             {"data": "sender", "width": "15%"},
-            {"data": "task", "width": "20%"},
-            {"data": "status", "width": "24%"},
+            {"data": "task", "width": "15%"},
+            {"data": "status", "width": "20%"},
             {"data": "details", "width": "20%"},
             {"data": "elapsed", "className": "text-center", "width": "12%"},
             {
                 "data": null,
+                "width": "0%",
                 "target": -1,
+                "sortable": false,
                 "defaultContent": '<i class="fa fa-history inbox-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'
             },
             {"data": "id", "visible": false, "searchable": false},
@@ -477,9 +507,6 @@ function worklist() {
                 "targets": 4
             }
         ],
-        "createdRow": function (row, data) {
-            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FA8072");
-        },
         "fnInitComplete": function (oSettings, json) {
             response_json = JSON.stringify(json);
             if (JSON.parse(response_json).length != 0) {
@@ -496,8 +523,7 @@ function worklist() {
 
                     if (taskItem) {
                         taskItem[Object.keys(taskItem)[0]] += 1;
-                    }
-                    else {
+                    } else {
                         var task = item.task;
                         var moduleValJson = {};
                         moduleValJson[task] = 1;
@@ -558,7 +584,7 @@ function drafts() {
     tableContainer1 = $("#official_drafts");
     tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
-        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+            "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         "aaSorting": [],
@@ -572,10 +598,10 @@ function drafts() {
         },
         "deferRender": true,
         "columns": [
-            {"data": "date", "width": "16%"},
-            {"data": "sender", "width": "15%"},
-            {"data": "task", "width": "20%"},
-            {"data": "status", "width": "24%"},
+            {"data": "date"},
+            {"data": "sender"},
+            {"data": "task"},
+            {"data": "status"},
             {"data": "details", "width": "20%"},
             {"data": "elapsed"},
             {"data": "id", "visible": false, "searchable": false},
@@ -590,10 +616,7 @@ function drafts() {
                 },
                 "targets": 4
             }
-        ],
-        "createdRow": function (row, data) {
-            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
-        },
+        ]
     });
 }
 
@@ -601,7 +624,7 @@ function notifications() {
     tableContainer1 = $("#official_notify");
     tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
-        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+            "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         /* Disable initial sort */
@@ -615,7 +638,7 @@ function worklistwrtnow(json) {
     tableContainer1 = $("#official_inbox");
     tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
-        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+            "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         "aaSorting": [],
@@ -625,15 +648,17 @@ function worklistwrtnow(json) {
             $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
         },
         "columns": [
-            {"data": "date", "width": "16%"},
+            {"data": "date", "width": "15%"},
             {"data": "sender", "width": "15%"},
-            {"data": "task", "width": "20%"},
-            {"data": "status", "width": "24%"},
+            {"data": "task", "width": "15%"},
+            {"data": "status", "width": "20%"},
             {"data": "details", "width": "20%"},
             {"data": "elapsed", "className": "text-center", "width": "12%"},
             {
                 "data": null,
+                "width": "0%",
                 "target": -1,
+                "sortable": false,
                 "defaultContent": '<i class="fa fa-history inbox-history history-size" class="tooltip-secondary" data-toggle="tooltip" title="History"></i>'
             },
             {"data": "id", "visible": false, "searchable": false},

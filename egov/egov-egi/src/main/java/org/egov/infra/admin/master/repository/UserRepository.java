@@ -48,13 +48,6 @@
 
 package org.egov.infra.admin.master.repository;
 
-import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.QueryHint;
-
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.Gender;
@@ -66,14 +59,20 @@ import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.QueryHint;
+import java.util.List;
+import java.util.Set;
+
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, RevisionRepository<User, Long, Integer> {
 
-    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
+    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
     User findByUsername(String userName);
 
-    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
-    User findByUsernameAndTenantId(String userName, String tenantId);
+    @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
+    User findByUid(String uid);
 
     List<User> findByNameContainingIgnoreCase(String userName);
 
@@ -88,41 +87,24 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
 
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
 
-    @Query("select distinct usr from User usr where upper(usr.username) like :usrName and usr.type = :type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId)")
-    List<User> findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(@Param("usrName") String usrName,
-            @Param("type") UserType type, @Param("tenantId") String tenantId, @Param("stateTenantId") String stateTenantId);
-
     List<User> findByNameContainingIgnoreCaseAndTypeAndActiveTrue(String name, UserType type);
 
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName ")
     Set<User> findUsersByRoleName(@Param("roleName") String roleName);
 
+    @Query("select distinct usr from User usr, IN (usr.roles) role where role.name IN (:roleName)")
+    Set<User> findUsersByRoleNames(@Param("roleName") String [] roleName);
+
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName and usr.username = :usrName ")
     List<User> findUsersByUserAndRoleName(@Param("usrName") String userName, @Param("roleName") String roleName);
 
-    @Query(" select count(*) from User usr where usr.username like :name||'%' ")
+    @Query(" select count(id) from User usr where usr.username like :name||'%' ")
     Integer getUserSerialNumberByName(@Param("name") final String name);
 
     User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
 
-    List<User> findByNameAndMobileNumberAndGenderAndTypeOrderByIdDesc(String name, String mobileNumber, Gender gender,
-            UserType type);
+    List<User> findByMobileNumberAndType(String mobileNumber, UserType type);
 
-    List<User> findByMobileNumberAndTypeOrderById(String mobileNumber, UserType type);
-
-    List<User> findByTypeAndActiveTrue(UserType type);
-
-    List<User> findByTypeAndActiveTrueOrderByUsername(UserType type);
-
-    List<User> findByEmailIdAndTypeOrderById(String emailId, UserType type);
-
-    User findByPan(String pan);
-    
-    @Query("select distinct usr from User usr where usr.type=:type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId) and usr.active=true")
-    List<User> findUsersByTypeAndTenants(@Param("type") UserType type, @Param("tenantId") String tenantId, @Param("stateTenantId") String stateTenantId);
-
-    
-    @Query("select distinct usr from User usr where usr.type=:type and usr.tenantId = :tenant and usr.active=true")
-    List<User> findUsersByTypeAndTenantId(@Param("type") UserType type, @Param("tenant") String tenant);
-
+    @Query("select distinct usr.roles from User usr where usr.username = :usrName and usr.type = :type")
+    Set<Role> findUserRolesByUserNameAndType(@Param("usrName") String userName, @Param("type") UserType type);
 }

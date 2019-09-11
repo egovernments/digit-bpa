@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -48,7 +48,9 @@
 
 package org.egov.infra.workflow.matrix.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
@@ -59,7 +61,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -67,6 +69,7 @@ import static org.egov.infra.workflow.matrix.entity.WorkFlowMatrix.SEQ_WF_MATRIX
 
 @Entity
 @Table(name = "EG_WF_MATRIX")
+@Immutable
 @SequenceGenerator(name = SEQ_WF_MATRIX, sequenceName = SEQ_WF_MATRIX, allocationSize = 1)
 public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneable {
 
@@ -77,40 +80,52 @@ public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneab
     private Long id;
 
     @SafeHtml
+    @Length(max = 30)
     private String department;
 
-    @NotNull
+    @NotBlank
+    @Length(max = 30)
     @SafeHtml
     private String objectType;
 
     @SafeHtml
+    @Length(max = 100)
     private String currentState;
 
+    @Length(max = 30)
     @SafeHtml
     private String currentStatus;
 
     @SafeHtml
+    @Length(max = 512)
     private String pendingActions;
 
     @SafeHtml
+    @Length(max = 2048)
     private String currentDesignation;
 
     @SafeHtml
+    @Length(max = 50)
     private String additionalRule;
 
     @SafeHtml
+    @Length(max = 100)
     private String nextState;
 
     @SafeHtml
+    @Length(max = 100)
     private String nextAction;
 
     @SafeHtml
+    @Length(max = 20148)
     private String nextDesignation;
 
     @SafeHtml
+    @Length(max = 100)
     private String nextStatus;
 
     @SafeHtml
+    @Length(max = 512)
     private String validActions;
 
     private BigDecimal fromQty;
@@ -123,6 +138,8 @@ public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneab
     @Temporal(TemporalType.DATE)
     private Date toDate;
 
+    @SafeHtml
+    @Length(max = 200)
     private String enableFields;
 
     private Boolean forwardEnabled;
@@ -329,7 +346,7 @@ public class WorkFlowMatrix extends AbstractPersistable<Long> implements Cloneab
     }
 
     public Boolean isRejectEnabled() {
-        return rejectEnabled;
+        return rejectEnabled != null && rejectEnabled;
     }
 
     public void setRejectEnabled(Boolean rejectEnabled) {

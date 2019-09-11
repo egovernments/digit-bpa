@@ -48,25 +48,37 @@
 
 package org.egov.infra.admin.master.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
+import org.egov.infra.admin.master.contracts.UserRole;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
-import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.utils.ApplicationConstant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
+import static org.egov.infra.persistence.entity.enums.UserType.EMPLOYEE;
 
 @Service
 @Transactional(readOnly = true)
 public class UserService {
+
+    @Value("${user.pwd.expiry.days}")
+    private Integer userPasswordExpiryInDays;
 
     @Autowired
     private UserRepository userRepository;
@@ -74,29 +86,69 @@ public class UserService {
     @Autowired
     private MicroserviceUtils microserviceUtils;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource messageSource;
+
+    @Transactional
+    public User createUser(User user) {
+        user.generateUID();
+        User savedUser = userRepository.save(user);
+        microserviceUtils.createUserMicroservice(user);
+        return savedUser;
+    }
+
     @Transactional
     public User updateUser(User user) {
         return userRepository.saveAndFlush(user);
     }
 
     @Transactional
-    public User createUser(User user) {
-        user.setTenantId(ApplicationThreadLocals.getTenantID());
-        User savedUser = userRepository.save(user);
-        microserviceUtils.createUserMicroservice(user);
-        return savedUser;
+    public User updateUserRoles(UserRole userRole) {
+        User user = getUserByUID(userRole.getUid());
+        user.setRoles(userRole.getRoles());
+        return userRepository.saveAndFlush(user);
+    }
+
+    @Transactional
+    public User updateUserPassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.updateNextPwdExpiryDate(userPasswordExpiryInDays);
+        updateUser(user);
+        User currentUser = getCurrentUser();
+        if (!currentUser.equals(user)) {
+            String passwordResetMessage = messageSource.getMessage("msg.password.reset",
+                    new String[]{user.getName(), currentUser.getName(), getMunicipalityName()}, Locale.getDefault());
+            notificationService.sendEmail(user.getEmailId(), "Password Reset", passwordResetMessage);
+            notificationService.sendSMS(user.getMobileNumber(), passwordResetMessage);
+        }
+        return user;
     }
 
     public Set<Role> getRolesByUsername(String userName) {
         return userRepository.findUserRolesByUserName(userName);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findOne(id);
+    public Set<Role> getEmployeeRolesByUsername(String userName) {
+        return getRolesByUsernameAndType(userName, EMPLOYEE);
     }
 
-    public User getUserRefById(Long id) {
-        return userRepository.getOne(id);
+    public Set<Role> getRolesByUsernameAndType(String userName, UserType type) {
+        return userRepository.findUserRolesByUserNameAndType(userName, type);
+    }
+
+    public User getUserByUID(String uid) {
+        return userRepository.findByUid(uid);
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findOne(id);
     }
 
     public User getCurrentUser() {
@@ -104,22 +156,7 @@ public class UserService {
     }
 
     public User getUserByUsername(String userName) {
-        if (ApplicationConstant.ANONYMOUS_USERNAME.equals(userName))
-            return userRepository.findByUsernameAndTenantId(userName, ApplicationConstant.STATE_TENANTID);
-        else
-            return userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
-    }
-
-    public User getUserByUsernameAndTenantIdForLogin(String userName) {
-        User user = null;
-        user = userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
-        if (user == null)
-            user = userRepository.findByUsernameAndTenantId(userName, ApplicationConstant.STATE_TENANTID);
-        return user;
-    }
-
-    public User getUserByUsernameAndTenantId(String userName) {
-        return userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
+        return userRepository.findByUsername(userName);
     }
 
     public List<User> getUsersByNameLike(String userName) {
@@ -146,61 +183,27 @@ public class UserService {
         return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(username, type);
     }
 
-    public List<User> findAllByMatchingUserNameAndTenantIdForType(String username, UserType type) {
-        return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(
-                "%" + username.toUpperCase() + "%", type, ApplicationThreadLocals.getTenantID(),
-                ApplicationConstant.STATE_TENANTID);
-    }
-    
-    public List<User> getUsersByTypeAndTenants(UserType type) {
-        return userRepository.findUsersByTypeAndTenants(type, ApplicationThreadLocals.getTenantID(),
-                ApplicationConstant.STATE_TENANTID);
-    }
-    
-    public List<User> getUsersByTypeAndTenantId(UserType type, String tenantId) {
-        return userRepository.findUsersByTypeAndTenantId(type, tenantId);
-    }
-
-
     public Set<User> getUsersByRoleName(String roleName) {
         return userRepository.findUsersByRoleName(roleName);
     }
 
+    public Set<User> getUsersByRoleNames(String [] roleName) {
+        return userRepository.findUsersByRoleNames(roleName);
+    }
+
     public List<User> getAllEmployeeNameLike(String name) {
-        return userRepository.findByNameContainingIgnoreCaseAndTypeAndActiveTrue(name, UserType.EMPLOYEE);
+        return userRepository.findByNameContainingIgnoreCaseAndTypeAndActiveTrue(name, EMPLOYEE);
+    }
+
+    public List<User> getAllEmployeeUsernameLike(String name) {
+        return findAllByMatchingUserNameForType(name, EMPLOYEE);
     }
 
     public List<User> getUsersByUsernameAndRolename(String userName, String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
     }
 
-    public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender) {
-        return userRepository.findByNameAndMobileNumberAndGender(name, mobileNumber, gender);
+    public List<User> findByMobileNumberAndType(String mobileNumber, UserType type) {
+        return userRepository.findByMobileNumberAndType(mobileNumber, type);
     }
-
-    public List<User> getUserByNameAndMobileNumberAndGenderForUserType(final String name, final String mobileNumber,
-            final Gender gender, final UserType type) {
-        return userRepository.findByNameAndMobileNumberAndGenderAndTypeOrderByIdDesc(name, mobileNumber, gender, type);
-    }
-
-    public List<User> getUserByMobileNumberAndType(final String mobileNumber, final UserType type) {
-        return userRepository.findByMobileNumberAndTypeOrderById(mobileNumber, type);
-    }
-
-    public List<User> getUserByType(final UserType type) {
-        return userRepository.findByTypeAndActiveTrue(type);
-    }
-
-    public List<User> getUserByTypeInOrder(final UserType type) {
-        return userRepository.findByTypeAndActiveTrueOrderByUsername(type);
-    }
-
-    public List<User> getUsersByTypeAndEmailId(final String emailId, final UserType type) {
-        return userRepository.findByEmailIdAndTypeOrderById(emailId, type);
-    }
-
-    public User getUserByPan(String panNumber) {
-        return userRepository.findByPan(panNumber);
-    }
-
 }

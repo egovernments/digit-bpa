@@ -92,7 +92,7 @@
 						<div class="headingsmallbg">
 							<td class="bluebgheadtd" width="100%" colspan="5"><strong
 								style="font-size: 15px;">Bank Details</strong></td>
-						</div
+						</div>
 					</tr>
 				</table>
 				</br>
@@ -247,6 +247,13 @@
 				document.getElementById("lblError").innerHTML = "Please click on add new cheque or unselect required fields";
 			else {
 				document.chequeMaster.action = '/EGF/masters/accountCheque-save.action';
+                $(document.chequeMaster).append(
+                    $('<input>', {
+                        type: 'hidden',
+                        name: '${_csrf.parameterName}',
+                        value: '${_csrf.token}'
+                    })
+                );
 				document.chequeMaster.submit();
 			}
 

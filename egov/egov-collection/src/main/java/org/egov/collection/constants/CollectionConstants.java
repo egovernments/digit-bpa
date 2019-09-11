@@ -88,6 +88,7 @@ public final class CollectionConstants {
     public static final String INSTRUMENTTYPE_CARD = FinancialConstants.INSTRUMENT_TYPE_CARD;
     public static final String INSTRUMENTTYPE_BANK = FinancialConstants.INSTRUMENT_TYPE_BANK;
     public static final String INSTRUMENTTYPE_ONLINE = FinancialConstants.INSTRUMENT_TYPE_ONLINE;
+    public static final String INSTRUMENTTYPE_ATM = FinancialConstants.INSTRUMENT_TYPE_ATM;
 
     // Receipt types
     public static final char RECEIPT_TYPE_ADHOC = 'A';
@@ -125,6 +126,7 @@ public final class CollectionConstants {
     public static final String RECEIPT_STATUS_CODE_FAILED = "FAILED";
     public static final String RECEIPT_STATUS_CODE_PENDING = "PENDING";
     public static final String RECEIPT_STATUS_CODE_REMITTED = "REMITTED";
+    public static final String RECEIPT_STATUS_CODE_PARTIAL_REMITTED = "PARTIAL_REMITTED";
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_CREATED = "CANCELLATION_CREATED";
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_CHECKED = "CANCELLATION_CHECKED";
     public static final String RECEIPT_STATUS_CODE_CANCELLATION_REJECTED = "CANCELLATION_REJECTED";
@@ -165,6 +167,7 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_COLLECTIONSOURCEDEBITACCOUNTHEAD = "COLLECTIONSOURCEDEBITACCOUNTHEAD";
     public static final String APPCONFIG_VALUE_ROLES_CREATERECEIPT_APPROVEDSTATUS = "ROLES_CREATERECEIPT_APPROVEDSTATUS";
     public static final String APPCONFIG_VALUE_COLLECTIONCREATORRECEIPTCANCELROLE = "COLLECTIONCREATORRECEIPTCANCELROLE";
+    public static final String APPCONFIG_VALUE_ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY = "ISVOUCHERCREATIONONRECEIPTANDSTATUSDISPLAY";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
@@ -191,7 +194,6 @@ public final class CollectionConstants {
     public static final String QUERY_ACTIVE_SERVICES_BY_CODES = "getActiveServiceByCodes";
     public static final String QUERY_ACTIVE_SERVICES_BY_TYPE = "getActiveServiceByType";
     public static final String QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE";
-    public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE";
     public static final String QUERY_RECEIPTS_BY_DATE_AND_SERVICECODE = "RECEIPTS_BY_DATE_AND_SERVICECODE";
     public static final String QUERY_SERVICE_CATEGORY_FOR_TYPE = "getServiceCategoryForType";
     public static final String QUERY_SERVICE_DETAIL_BY_CATEGORY = "getServiceDetailsByCategory";
@@ -199,6 +201,8 @@ public final class CollectionConstants {
     public static final String QUERY_SERVICE_CATEGORY_BY_CODE = "SERVICE_CATEGORY_BY_CODE";
     public static final String QUERY_SERVICE_BY_CATEGORY_FOR_TYPE = "SERVICE_BY_CATEGORY_FOR_TYPE";
     public static final String QUERY_RECEIPT_BY_ID_AND_STATUSNOTCANCELLED = "RECEIPT_BY_ID_AND_STATUSNOTCANCELLED";
+    public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE";
+    public static final String QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE = "QUERY_PENDING_RECEIPT_BY_ID_AND_CITYCODE";
 
     // named queries (other modules)
     public static final String QUERY_ACTIVE_COUNTERS = "getAllActiveCounters";
@@ -212,6 +216,7 @@ public final class CollectionConstants {
     public static final String QUERY_INSTRUMENTTYPE_BY_TYPE = "getInstrumentTypeByType";
     public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE = "getChartofAccountByInstrumentType";
     public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE = "getCOAByInstrumentTypeAndService";
+    public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE_BILLSERVICE = "getCOAByInstrumentTypeAndServiceAndBillservice";
     public static final String QUERY_ALLCOUNTERS = "getAllCounters";
     public static final String QUERY_ZONE_OF_RECEIPTS = "getAllReceiptBoundary";
     public static final String QUERY_SERVICE_BY_NAME = "getServicesByName";
@@ -292,11 +297,11 @@ public final class CollectionConstants {
     public static final String FINANCIAL_CONTRATVOUCHER_VOUCHERNAME = FinancialConstants.CONTRAVOUCHER_NAME_PAYIN;
 
     public static final String SESSION_VAR_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
-    public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
 
     // Separators
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_UNDERSCORE = "_";
+    public static final String SEPARATOR_COMMA = ",";
     public static final String ZERO_INT = "0";
     public static final String ZERO_DOUBLE = "0.0";
 
@@ -337,6 +342,7 @@ public final class CollectionConstants {
     public static final String PURPOSE_NAME_ATM_ACCOUNTCODE = "ATM ACCOUNT CODE";
     public static final String PURPOSE_NAME_INTERUNITACCOUNT = "Inter-Unit Transfer Account";
     public static final String PURPOSE_NAME_REBATE = "REBATE";
+    public static final String PURPOSE_NAME_THIRD_PARTY_COLLECTION = "Third Party Receivable";
 
     // Bank Remittance
     public static final String BANKREMITTANCE_SERVICETOTALCASHAMOUNT = "SERVICETOTALCASHAMOUNT";
@@ -351,6 +357,12 @@ public final class CollectionConstants {
     public static final String BANKREMITTANCE_DEPARTMENTNAME = "DEPARTMENTNAME";
     public static final String BANKREMITTANCE_FUNDCODE = "FUNDCODE";
     public static final String BANKREMITTANCE_DEPARTMENTCODE = "DEPARTMENTCODE";
+    public static final String BANKREMITTANCE_RECEIPTNUMBER = "RECEIPTNUMBER";
+    public static final String BANKREMITTANCE_CHEQUEDD_NUMBER = "CHEQUEDDNUMBER";
+    public static final String BANKREMITTANCE_CHEQUEDD_DATE = "CHEQUEDDDATE";
+    public static final String BANKREMITTANCE_DRAWEE_BANK = "DRAWEEBANK";
+    public static final String BANKREMITTANCE_DRAWEE_BANKBRANCH = "DRAWEEBANKBRANCH";
+    public static final String BANKREMITTANCE_INSTRUMENTID = "INSTRUMENTID";
 
     // Key entries in maps
     public static final String MAP_KEY_EGOVCOMMON_CASHINHAND = "cashInHand";
@@ -402,6 +414,9 @@ public final class CollectionConstants {
     public static final String CHALLAN_STATUS_DESC_CANCELLED = "Cancelled";
 
     public static final String PGI_AUTHORISATION_CODE_SUCCESS = "0300";
+    public static final String PGI_AUTHORISATION_CODE_FAILED = "FAILED";
+    public static final String PGI_AUTHORISATION_CODE_PENDING = "PENDING";
+    public static final String PGI_AUTHORISATION_CODE_ABORTED = "ABORTED";
 
     // Bill desk waiting for response from payment gateway.
     public static final String PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE = "0002";
@@ -465,6 +480,9 @@ public final class CollectionConstants {
     public static final String COLLECTIONSAMOUNTTPE_DEBIT = "debit";
     public static final String COLLECTIONSAMOUNTTPE_BOTH = "both";
 
+    //Page size and number
+    public static final Integer PAGENUM = 1;
+    public static final Integer PAGESIZE = 20;
     // Constants related to number formatting
     public static final int AMOUNT_PRECISION_DEFAULT = 2;
 
@@ -536,21 +554,7 @@ public final class CollectionConstants {
     public static final String AXIS_CHECK_DR_EXISTS = "vpc_DRExists";
     public static final String AXIS_ABORTED_AUTH_STATUS = "A";
 
-    // SBIMOPS payment gateway variables
-    public static final String SBIMOPS_DEPTCODE = "deptcode";
-    public static final String SBIMOPS_DDCODE = "ddocode";
-    public static final String SBIMOPS_HOA = "hoa";
-    public static final String SBIMOPS_DEPTTRANSID = "depttransid";
-    public static final String SBIMOPS_REMITTER_NAME = "remittersname";
-    public static final String SBIMOPS_TAMOUNT = "tamount";
-    public static final String SBIMOPS_MD = "MD";
-    public static final String SBIMOPS_DRU = "dru";
-    public static final String SBIMOPS_BANKSTATUS = "bankstatus";
-    public static final String SBIMOPS_BANK_DATE = "bankdate";
-    public static final String SBIMOPS_BANK_AMOUNT = "bankamount";
-    public static final String SBIMOPS_BANK_NAME = "bankname";
-    public static final String SBIMOPS_UAMOUNT = "uamount";
-    
+    public static final String UTF_ENCODING = "UTF-8";
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
             'B', 'C', 'D', 'E', 'F' };
@@ -578,7 +582,6 @@ public final class CollectionConstants {
     public static final String USER_TYPE_FOR_CITIZEN = "CITIZEN";
     public static final String DEPT_CODE_FOR_ACCOUNTS = "ACC";
 
-    public static final String INSTRUMENTTYPE_ATM = "atm";
     public static final String REPORT_TEMPLATE_REMITTANCE_STATEMENT = "collection_remittanc_statement_report";
     public static final String REMITTANCEVOUCHERREPORT_BRV = "BRV";
     public static final String REMITTANCEVOUCHERREPORT_CSL = "CSL";
@@ -608,9 +611,12 @@ public final class CollectionConstants {
     public static final char[] REVENUEHEADS = new char[] { 'I', 'A', 'L' };
     public static final Integer DEFAULT_PAGE_SIZE = 30;
     public static final Integer QUARTZ_BULKBILL_JOBS = 2;
+    public static final Integer QUARTZ_ATOM_RECONCILE_BULK_JOBS = 5;
 
     public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
     public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+    public static final String DATE_FORMAT_DDMMYYYY = "dd/MM/yyyy";
+    public static final SimpleDateFormat DATEFORMATTER_DD_MM_YYYY = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY);
 
     public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
     public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
@@ -661,44 +667,16 @@ public final class CollectionConstants {
             add("Failure");
             add("INITIALIZED");
             add("F");
-            add("C"); 
-        } 
+            add("C");
+        }
+    };
+    public static final String ATOM_AUTHORISATION_CODE_REFUNDED = "AUTO REVERSAL";
+    public static final ArrayList<String> AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE = new ArrayList<String>() {
+        {
+            add("6");
+            add("D");
+            add("P");
+        }
     };
 
-    public static final String PNB_MERCHANT_REQUEST = "merchantRequest";
-    public static final String PNB_MID = "MID";
-    public static final String PNB_TRANSACTION_REFERENCE_NO = "Transaction Reference No";
-    public static final String PNB_ORDER_ID = "Order ID";
-    public static final String PNB_AMOUNT = "Amount";
-    public static final String PNB_STATUS_CODE = "Status Code";
-    public static final String PNB_STATUS_DESCRIPTION = "Status Description";
-    public static final String PNB_RESPONSE_CODE = "Response code";
-    public static final String PNB_TRANSACTION_DATE = "Transaction Date Time";
-    public static final String PNB_ADDL_FIELD_ONE  = "Addl Field 1";
-    public static final String PNB_ADDL_FIELD_TWO = "Addl Field 2";
-    public static final String PNB_TRANSACTION_STATUS_DESC = "Success";
-    public static final String PNB_SERVICECODE = "PNB";
-    public static final String HDFC_SERVICECODE = "HDFC";
-
-
-    //HDFC payment gateway  variables name
-    public static final String HDFC_KEY = "key";
-    public static final String HDFC_TXNID = "txnid";
-    public static final String HDFC_AMOUNT = "amount";
-    public static final String HDFC_PRODUCT_INFO = "productinfo";
-    public static final String HDFC_FIRSTNAME = "firstname";
-    public static final String HDFC_EMAIL = "email";
-    public static final String HDFC_PHONE = "phone";
-    public static final String HDFC_SURL = "surl";
-    public static final String HDFC_FURL = "furl";
-    public static final String HDFC_CURL = "curl";
-    public static final String HDFC_HASH = "hash";
-    public static final String HDFC_PG = "pg";
-    public static final String HDFC_COMMAND = "command";
-    public static final String HDFC_VARIABLE = "var1";
-    public static final String CITRUS_RETURNURL     = "returnUrl";
-
-    public static final String SIX_DELIMITER = "||||||";
-    public static final String SINGLE_DELIMITER = "|";
-    
 }

@@ -51,7 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReport;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReportResult;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.DoubleType;
@@ -93,6 +93,7 @@ public class CollectionReportHeadWiseService {
                         +
                         " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='card' THEN count(distinct(EGCL_COLLECTIONHEADER.id)) END) AS cardCount, "
                         +
+                        " count(distinct(EGCL_COLLECTIONHEADER.id)) as totalReceiptCount, " +
                         " EGCL_COLLECTIONHEADER.SOURCE AS source,CAO.NAME || '-' || CAO.GLCODE AS GLCODE,");
         final StringBuilder revSelectQueryStr = new StringBuilder(selectQueryStr).append(
                 " (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN SUM(EGCL_COLLECTIONDETAILS.CRAMOUNT) END) AS cashAmount, " +
@@ -124,7 +125,7 @@ public class CollectionReportHeadWiseService {
         final StringBuilder queryStrGroup = new StringBuilder(" GROUP BY source,CAO.NAME,CAO.GLCODE,EGF_INSTRUMENTTYPE.TYPE ");
         final StringBuilder finalSelectQueryStr = new StringBuilder(
                 "SELECT sum(cashCount) AS cashCount,sum(chequeddCount) AS chequeddCount,sum(onlineCount) AS onlineCount,SOURCE,glCode,sum(cashAmount) AS cashAmount, sum(chequeddAmount) AS chequeddAmount,  "
-                        + "  sum(cardCount) AS cardCount, sum(cardAmount) AS cardAmount, sum(COALESCE(cashCount,0))+sum(COALESCE(chequeddCount,0))+sum(COALESCE(onlineCount,0))+sum(COALESCE(cardCount,0)) as totalReceiptCount,sum(onlineAmount) AS onlineAmount  FROM (");
+                        + "  sum(cardCount) AS cardCount, sum(cardAmount) AS cardAmount, cast(sum(totalReceiptCount) AS NUMERIC) as totalReceiptCount,sum(onlineAmount) AS onlineAmount  FROM (");
         final StringBuilder finalGroupQuery = new StringBuilder(
                 " ) AS RESULT GROUP BY RESULT.SOURCE,RESULT.glCode order by source, glCode");
 
@@ -183,7 +184,7 @@ public class CollectionReportHeadWiseService {
         final StringBuilder finalRebateQueryStr = new StringBuilder(finalSelectQueryStr).append(rebateQueryStr)
                 .append(finalGroupQuery);
 
-        final SQLQuery aggrQuery = (SQLQuery) getCurrentSession().createSQLQuery(finalRevQueryStr.toString())
+        final NativeQuery aggrQuery = (NativeQuery) getCurrentSession().createNativeQuery(finalRevQueryStr.toString())
                 .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", DoubleType.INSTANCE)
                 .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("chequeddAmount", DoubleType.INSTANCE)
@@ -194,7 +195,7 @@ public class CollectionReportHeadWiseService {
                 .addScalar("totalReceiptCount", org.hibernate.type.StringType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryHeadWiseReport.class));
 
-        final SQLQuery rebateQuery = (SQLQuery) getCurrentSession().createSQLQuery(finalRebateQueryStr.toString())
+        final NativeQuery rebateQuery = (NativeQuery) getCurrentSession().createNativeQuery(finalRebateQueryStr.toString())
                 .addScalar("cashCount", org.hibernate.type.StringType.INSTANCE).addScalar("cashAmount", DoubleType.INSTANCE)
                 .addScalar("chequeddCount", org.hibernate.type.StringType.INSTANCE)
                 .addScalar("chequeddAmount", DoubleType.INSTANCE)

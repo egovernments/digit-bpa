@@ -46,12 +46,11 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
     <div class="col-md-12">
@@ -77,7 +76,7 @@
                                             <span class="mandatory"></span>
                                         </label>
                                         <div class="col-sm-6 add-margin">
-                                            <select id="hierarchyTypeSelect" class="form-control" onchange="populateBoundaryTypes(this);" required="required">
+                                            <select id="hierarchyType" class="form-control boundarytype-auto" required="required">
                                                 <option value=""><spring:message code="lbl.select"/></option>
                                                 <c:forEach items="${hierarchyTypes}" var="hierarchyType">
                                                     <option value="${hierarchyType.id}">${hierarchyType.name}</option>
@@ -89,8 +88,6 @@
                                         <label class="col-sm-3 control-label"><spring:message
                                                 code="lbl.boundaryType"/><span class="mandatory"></span></label>
                                         <div class="col-sm-6 add-margin">
-                                            <egov:ajaxdropdown id="boundaryTypeAjax" fields="['Text','Value']"
-                                                               dropdownId="boundaryType" url="boundarytype/ajax/boundarytypelist-for-hierarchy"/>
                                             <select id="boundaryType" class="form-control" required="required">
                                                 <option value=""><spring:message code="lbl.select"/></option>
                                             </select>
@@ -120,7 +117,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType"/></label>
                                         <div class="col-sm-6" style="padding-top: 7px">
-                                            <strong><c:out value="${boundaryType.hierarchyType.name}"/></strong>
+                                            <strong><c:out value="${boundaryType.hierarchyType.name}" escapeXml="true"/></strong>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -128,7 +125,7 @@
                                             <spring:message code="lbl.boundaryType"/>
                                         </label>
                                         <div class="col-sm-6" style="padding-top: 7px">
-                                            <strong><c:out value="${boundaryType.name}"/></strong>
+                                            <strong><c:out value="${boundaryType.name}" escapeXml="true"/></strong>
                                             <input type="hidden" name="boundaryType" value="<c:out value="${boundaryType.id}" />"/>
                                         </div>
                                     </div>
@@ -155,8 +152,7 @@
                                                         <spring:message code="lbl.parent.boundary.name"/>
                                                     </label>
                                                     <div class="col-sm-6 add-margin">
-                                                        <form:select path="parent"
-                                                                     id="hierarchyTypeSelect" cssClass="form-control" cssErrorClass="form-control error">
+                                                        <form:select path="parent" id="hierarchyTypeSelect" cssClass="form-control" cssErrorClass="form-control error">
                                                             <form:option value=""> <spring:message code="lbl.select"/> </form:option>
                                                             <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
                                                         </form:select>
@@ -170,7 +166,8 @@
                                                 <spring:message code="lbl.name"/><span class="mandatory"></span>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="name" id="name" type="text" class="form-control low-width patternvalidation" data-pattern="specialName" placeholder="" autocomplete="off" required="required"/>
+                                                <form:input path="name" id="name" type="text" class="form-control low-width patternvalidation"
+                                                            data-pattern="specialName" placeholder="" autocomplete="off" required="required" maxlength="512"/>
                                                 <form:errors path="name" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
@@ -179,7 +176,8 @@
                                                 <spring:message code="lbl.code"/><span class="mandatory"></span>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="code" id="code" type="text" class="form-control low-width patternvalidation" data-pattern="masterCode" placeholder="" autocomplete="off"  maxlength="25"/>
+                                                <form:input path="code" id="code" type="text" class="form-control low-width patternvalidation"
+                                                            data-pattern="masterCode" placeholder="" autocomplete="off" maxlength="25"/>
                                                 <form:errors path="code" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
@@ -188,7 +186,8 @@
                                                 <spring:message code="lbl.local.name"/>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="localName" id="name" type="text" class="form-control low-width patternvalidation" data-pattern="specialName" placeholder="" autocomplete="off"/>
+                                                <form:input path="localName" id="name" type="text" class="form-control low-width patternvalidation"
+                                                            data-pattern="specialName" placeholder="" autocomplete="off" maxlength="256"/>
                                                 <form:errors path="localName" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
@@ -198,7 +197,8 @@
                                                 <spring:message code="lbl.boundary.number"/><span class="mandatory"></span>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="boundaryNum" id="name" type="text" class="form-control low-width is_valid_number" placeholder="" autocomplete="off" required="required"/>
+                                                <form:input path="boundaryNum" id="name" type="number" class="form-control low-width patternvalidation"
+                                                            data-pattern="positiveNumber" placeholder="" autocomplete="off" required="required" maxlength="9"/>
                                                 <form:errors path="boundaryNum" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
@@ -207,7 +207,8 @@
                                                 <spring:message code="lbl.fromDate"/><span class="mandatory"></span>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="fromDate" id="boundaryFromDate" type="text" class="form-control low-width datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="" autocomplete="off" required="required"/>
+                                                <form:input path="fromDate" id="boundaryFromDate" type="text" class="form-control low-width datepicker"
+                                                            data-inputmask="'mask': 'd/m/y'" placeholder="" autocomplete="off" required="required" maxlength="12"/>
                                                 <form:errors path="fromDate" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
@@ -216,7 +217,8 @@
                                                 <spring:message code="lbl.toDate"/>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="toDate" id="boundaryToDate" type="text" class="form-control low-width datepicker" data-inputmask="'mask': 'd/m/y'" placeholder="" autocomplete="off"/>
+                                                <form:input path="toDate" id="boundaryToDate" type="text" class="form-control low-width datepicker"
+                                                            data-inputmask="'mask': 'd/m/y'" placeholder="" autocomplete="off" maxlength="12"/>
                                                 <form:errors path="toDate" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
@@ -245,4 +247,5 @@
         </div>
     </div>
 </div>
+<script src="<cdn:url  value='/resources/js/app/admin-generic.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/boundary-create.js?rnd=${app_release_no}'/>"></script>

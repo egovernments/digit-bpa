@@ -139,34 +139,34 @@ INSERT INTO egeis_employee (id, code, dateofappointment, dateofretirement, emplo
 -------------------END---------------
 
 -----------------START--------------------
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Super User'), 18);
+INSERT INTO eg_userrole (roleid, userid) VALUES (4, 18);
 
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Citizen'), 1);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Citizen'), 18);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Super User'), 1);
+INSERT INTO eg_userrole (roleid, userid) VALUES (7, 1);
+INSERT INTO eg_userrole (roleid, userid) VALUES (7, 18);
+INSERT INTO eg_userrole (roleid, userid) VALUES (4, 1);
 
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='CSC Operator'), 40);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='CSC Operator'), 47);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='ULB Operator'), 35);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='ULB Operator'), 26);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='ULB Operator'), 27);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='ULB Operator'), 30);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='ULB Operator'), 34);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='ULB Operator'), 38);
+INSERT INTO eg_userrole (roleid, userid) VALUES (5, 40);
+INSERT INTO eg_userrole (roleid, userid) VALUES (5, 47);
+INSERT INTO eg_userrole (roleid, userid) VALUES (16, 35);
+INSERT INTO eg_userrole (roleid, userid) VALUES (16, 26);
+INSERT INTO eg_userrole (roleid, userid) VALUES (16, 27);
+INSERT INTO eg_userrole (roleid, userid) VALUES (16, 30);
+INSERT INTO eg_userrole (roleid, userid) VALUES (16, 34);
+INSERT INTO eg_userrole (roleid, userid) VALUES (16, 38);
 
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='CSC Operator'), 16);
+INSERT INTO eg_userrole (roleid, userid) VALUES (5, 16);
 
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 18);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 16);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 26);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 27);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 30);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 34);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 35);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 38);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 40);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 47);
-INSERT INTO eg_userrole (roleid, userid) VALUES ((select id from eg_role where name='Employee'), 1);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 18);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 16);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 26);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 27);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 30);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 34);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 35);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 38);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 40);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 47);
+INSERT INTO eg_userrole (roleid, userid) VALUES (15, 1);
  
  
 

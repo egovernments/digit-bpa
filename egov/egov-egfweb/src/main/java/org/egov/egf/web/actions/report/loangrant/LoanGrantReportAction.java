@@ -64,7 +64,7 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.report.LoanGrantService;
 import org.egov.utils.ReportHelper;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
@@ -367,20 +367,20 @@ public class LoanGrantReportAction extends LoanGrantBaseAction {
             reportByStr = "Loan OutStainding Report for ";
         if (schemeId != null)
         {
-            final String schemeName = (String) persistenceService.find("select name from Scheme where id=?", getSchemeId());
+            final String schemeName = (String) persistenceService.find("select name from Scheme where id=?1", getSchemeId());
             paramMap.put("reportBy", reportByStr + schemeName);
             paramMap.put("schemeName", schemeName);
         }
         if (getSubSchemeId() != null)
         {
-            final String subSchemeName = (String) persistenceService.find("select name from SubScheme where id=?",
+            final String subSchemeName = (String) persistenceService.find("select name from SubScheme where id=?1",
                     getSubSchemeId());
             paramMap.put("reportBy", reportByStr + subSchemeName);
             paramMap.put("subSchemeName", subSchemeName);
         }
         if (fundId != null)
         {
-            final String fundName = (String) persistenceService.find("select name from Fund where id=?", fundId);
+            final String fundName = (String) persistenceService.find("select name from Fund where id=?1", fundId);
             paramMap.put("fundName", fundName);
         }
         paramMap.put("fromDate", fromDate);
@@ -391,7 +391,7 @@ public class LoanGrantReportAction extends LoanGrantBaseAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final NativeQuery query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

@@ -61,6 +61,7 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
@@ -68,7 +69,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.WorkflowAction;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherTypeBean;
 import org.egov.pims.service.EisUtilService;
@@ -79,12 +79,7 @@ import org.egov.utils.VoucherHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ParentPackage("egov")
 @Results({ @Result(name = JournalVoucherAction.NEW, location = "billVoucher-new.jsp") })
@@ -103,8 +98,9 @@ public class BillVoucherAction extends BaseVoucherAction {
     private EisUtilService eisUtilService;
     @Autowired
     private ScriptService scriptService;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
     @Autowired
     private AppConfigValueService appConfigValueService;
     
@@ -121,7 +117,7 @@ public class BillVoucherAction extends BaseVoucherAction {
         super.prepare();
         // If the department is mandatory show the logged in users assigned department only.
         if (mandatoryFields.contains("department")) {
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
         }
     }
 
@@ -144,24 +140,32 @@ public class BillVoucherAction extends BaseVoucherAction {
         final StringBuffer query = new StringBuffer(300);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Expenditure Type selected :=" + expType);
-
+        int index = 1;
+        final List<Object> params = new ArrayList<>();
         try {
             final String statusid = getApprovalStatusForBills();
-            query.append("from EgBillregister br where br.status.id in(")
-                    .append(statusid)
-                    .append(")and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =? ))");
-            if (null != billNumber && StringUtils.isNotEmpty(billNumber))
-                query.append(" and br.billnumber='").append(billNumber).append("'");
-            if (null != voucherHeader.getVouchermis().getDepartmentid())
-                query.append(" and br.egBillregistermis.egDepartment.id=").append(
-                        voucherHeader.getVouchermis().getDepartmentid().getId());
-            if (null != voucherTypeBean.getVoucherDateFrom() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateFrom()))
-                query.append(" and br.billdate>='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
-                        parse(voucherTypeBean.getVoucherDateFrom()))).append("'");
-            if (null != voucherTypeBean.getVoucherDateTo() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateTo()))
-                query.append(" and br.billdate<='").append(Constants.DDMMYYYYFORMAT1.format(Constants.DDMMYYYYFORMAT2.
-                        parse(voucherTypeBean.getVoucherDateTo()))).append("'");
-            preApprovedVoucherList = persistenceService.findAllBy(query.toString(), 4);
+            query.append("from EgBillregister br where br.status.id in(?").append(index++)
+                    .append(") and ( br.egBillregistermis.voucherHeader is null or br.egBillregistermis.voucherHeader in (from CVoucherHeader vh where vh.status =?")
+                    .append(index++).append(" ))");
+            params.add(Integer.valueOf(statusid));
+            params.add(4);
+            if (null != billNumber && StringUtils.isNotEmpty(billNumber)) {
+                query.append(" and br.billnumber=?").append(index++);
+                params.add(billNumber);
+            }
+            if (null != voucherHeader.getVouchermis().getDepartmentid()) {
+                query.append(" and br.egBillregistermis.egDepartment.id=?").append(index++);
+                params.add(voucherHeader.getVouchermis().getDepartmentid().getId());
+            }
+            if (null != voucherTypeBean.getVoucherDateFrom() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateFrom())) {
+                query.append(" and br.billdate>=?").append(index++);
+                params.add(Constants.DDMMYYYYFORMAT2.parse(voucherTypeBean.getVoucherDateFrom()));
+            }
+            if (null != voucherTypeBean.getVoucherDateTo() && StringUtils.isNotEmpty(voucherTypeBean.getVoucherDateTo())) {
+                query.append(" and br.billdate<=?").append(index++);
+                params.add(Constants.DDMMYYYYFORMAT2.parse(voucherTypeBean.getVoucherDateTo()));
+            }
+            preApprovedVoucherList = persistenceService.findAllBy(query.toString(), params.toArray());
             if(preApprovedVoucherList.size()==0)
             {
             	addActionError("No records found.");
@@ -189,7 +193,7 @@ public class BillVoucherAction extends BaseVoucherAction {
             if ("invalid".equals(s))
                 break;
             final WorkflowAction action = (WorkflowAction) getPersistenceService().find(
-                    " from WorkflowAction where type='CVoucherHeader' and name=?", s.toString());
+                    " from WorkflowAction where type='CVoucherHeader' and name=?1", s.toString());
             validButtons.add(action);
         }
         return validButtons;

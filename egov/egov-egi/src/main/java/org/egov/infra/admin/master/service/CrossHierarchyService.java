@@ -162,11 +162,13 @@ public class CrossHierarchyService {
         }
         return boundaryTypes;
     }
-    
-    public List<Boundary> findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(
-            String parentBoundaryTypeName,
-            String parentHierarchyTypeName, String childBoundaryTypeName, Long parentId) {
-        return crossHierarchyRepository.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(
-                parentBoundaryTypeName, parentHierarchyTypeName, childBoundaryTypeName, parentId);
+
+    public List<Boundary> findChildBoundariesByBoundaryTypeAndHierarchyAndParentBoundary(String childBoundaryType,
+                                                                                         String childHierarchyType,
+                                                                                         String parentBoundaryType,
+                                                                                         String parentHierarchyType,
+                                                                                         String parentBoundary) {
+        return crossHierarchyRepository.findChildBoundariesByBoundarytypeAndHierarchyTypeAndParentBoundary(childBoundaryType, childHierarchyType,
+                parentBoundaryType, parentHierarchyType, parentBoundary);
     }
 }

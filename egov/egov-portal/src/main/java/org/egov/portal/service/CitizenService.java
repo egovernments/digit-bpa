@@ -48,12 +48,9 @@
 package org.egov.portal.service;
 
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.notification.service.NotificationService;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.token.service.TokenService;
-import org.egov.infra.utils.ApplicationConstant;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +60,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Locale;
 
 import static java.lang.Boolean.TRUE;
@@ -109,7 +105,7 @@ public class CitizenService {
         citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActive(true);
-        citizen.setTenantId(ApplicationConstant.STATE_TENANTID);
+        citizen.generateUID();
         citizenRepository.saveAndFlush(citizen);
         notificationService.sendSMS(citizen.getMobileNumber(), getMessage("citizen.reg.sms"));
         notificationService.sendEmail(citizen.getEmailId(), getMessage("citizen.reg.mail.subject"),
@@ -122,11 +118,6 @@ public class CitizenService {
         citizenRepository.save(citizen);
     }
 
-    @Transactional
-    public Citizen save(Citizen citizen) {
-        return citizenRepository.saveAndFlush(citizen);
-    }
-
     public Citizen getCitizenByEmailId(String emailId) {
         return citizenRepository.findByEmailId(emailId);
     }
@@ -135,30 +126,16 @@ public class CitizenService {
         return citizenRepository.findByUsername(userName);
     }
 
-    public List<Citizen> getCitizenByMobileNumberAndType(final String mobileNumber, final UserType type) {
-        return citizenRepository.findByMobileNumberAndTypeOrderById(mobileNumber, type);
-    }
-
     @Transactional
     public boolean isValidOTP(String otp, String mobileNumber) {
         return tokenService.redeemToken(otp, mobileNumber, CITIZEN_REG_SERVICE);
     }
+
     @Transactional
     public boolean sendOTPMessage(String mobileNumber) {
         String otp = randomNumeric(5);
         tokenService.generate(otp, mobileNumber, CITIZEN_REG_SERVICE);
         notificationService.sendSMS(mobileNumber, getMessage("citizen.reg.otp.sms", otp), HIGH);
-        return TRUE;
-    }
-
-    @Transactional
-    public boolean sendOTPMessage(String mobileNumber,String emailId) {
-        String otp = randomNumeric(5);
-        tokenService.generate(otp, mobileNumber, CITIZEN_REG_SERVICE);
-        notificationService.sendSMS(mobileNumber, getMessage("citizen.reg.otp.sms", otp), HIGH);
-        if(emailId != null) {
-            notificationService.sendEmail(emailId, getMessage("citizen.reg.otp.email.sub"), getMessage("citizen.reg.otp.email.body",otp));
-        }
         return TRUE;
     }
 

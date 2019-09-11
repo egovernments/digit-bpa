@@ -1,1 +1,0 @@
-UPDATE EGP_PORTALSERVICE set isactive=false where code='Apply For Occupancy Certificate';

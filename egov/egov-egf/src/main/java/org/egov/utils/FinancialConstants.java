@@ -47,8 +47,6 @@
  */
 package org.egov.utils;
 
-import org.egov.infstr.utils.EGovConfig;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -421,4 +419,8 @@ public interface FinancialConstants {
     public static final String FILESTORE_MODULECODE = "EGF";
     public static final String FILESTORE_MODULEOBJECT = "egBillRegister";
     public static final String BANK_STATEMET_OBJECT = "bankStatement";
+    
+    public static final String BUDGETTYPE_CREDIT = "credit";
+    public static final String BUDGETTYPE_DEBIT = "debit";
+    public static final String BUDGETTYPE_ALL = "all";
 }

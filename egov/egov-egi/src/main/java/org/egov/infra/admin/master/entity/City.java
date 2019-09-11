@@ -48,36 +48,18 @@
 
 package org.egov.infra.admin.master.entity;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.infra.admin.master.entity.City.QUERY_CITY_BY_URL;
-import static org.egov.infra.admin.master.entity.City.SEQ_CITY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CAPTCHA_PRIV_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CAPTCHA_PUB_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_ADDRESS_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_CALLCENTER_NO_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_CONTACT_NO_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_EMAIL_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_FB_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GOOGLE_MAP_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_TWITTER_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_CODE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_GOOGLE_API_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LAT_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LNG_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOCAL_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_FS_UUID_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_URL_KEY;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -88,68 +70,103 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.admin.master.entity.City.QUERY_CITY_BY_URL;
+import static org.egov.infra.admin.master.entity.City.SEQ_CITY;
+import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PRIV_KEY;
+import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PUB_KEY;
+import static org.egov.infra.utils.ApplicationConstant.*;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
 
 @Entity
-@Unique(fields = "domainURL", enableDfltMsg = true)
+@Unique(fields = {"code", "domainURL"}, enableDfltMsg = true)
 @Table(name = "eg_city")
 @NamedQuery(name = QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
 @SequenceGenerator(name = SEQ_CITY, sequenceName = SEQ_CITY, allocationSize = 1)
 @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 public class City extends AbstractAuditable {
 
-    public static final String SEQ_CITY = "SEQ_EG_CITY";
     public static final String QUERY_CITY_BY_URL = "CITY_BY_URL";
+    protected static final String SEQ_CITY = "SEQ_EG_CITY";
     private static final long serialVersionUID = -6267923687226233397L;
+
     @Id
     @GeneratedValue(generator = SEQ_CITY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 256)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @SafeHtml
-    @NotBlank
+    @Length(max = 256)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String localName;
 
     private boolean active;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 128)
     private String domainURL;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 4)
+    @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 10)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
+    private String lgdCode;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 10)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String districtCode;
 
     @SafeHtml
     @NotBlank
+    @Length(max = 10)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
+    private String districtLGDCode;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 50)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String districtName;
 
     @SafeHtml
+    @Length(max = 50)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String regionName;
 
     @SafeHtml
+    @Length(max = 50)
     private String grade;
 
+    @Positive
     private Float longitude;
 
+    @Positive
     private Float latitude;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -158,9 +175,6 @@ public class City extends AbstractAuditable {
     @Fetch(FetchMode.JOIN)
     @Valid
     private CityPreferences preferences;
-
-    @Transient
-    private String tenantId;
 
     @Override
     public Long getId() {
@@ -212,6 +226,14 @@ public class City extends AbstractAuditable {
         this.code = code;
     }
 
+    public String getLgdCode() {
+        return lgdCode;
+    }
+
+    public void setLgdCode(final String lgdCode) {
+        this.lgdCode = lgdCode;
+    }
+
     public Float getLongitude() {
         return longitude;
     }
@@ -234,6 +256,14 @@ public class City extends AbstractAuditable {
 
     public void setDistrictCode(final String districtCode) {
         this.districtCode = districtCode;
+    }
+
+    public String getDistrictLGDCode() {
+        return districtLGDCode;
+    }
+
+    public void setDistrictLGDCode(final String districtLGDCode) {
+        this.districtLGDCode = districtLGDCode;
     }
 
     public String getDistrictName() {
@@ -268,14 +298,6 @@ public class City extends AbstractAuditable {
         this.preferences = preferences;
     }
 
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
     public Map<String, Object> toMap() {
         final Map<String, Object> cityPrefs = new HashMap<>();
         cityPrefs.put(CITY_URL_KEY, domainURL);
@@ -283,15 +305,16 @@ public class City extends AbstractAuditable {
         cityPrefs.put(CITY_CORP_NAME_KEY, name);
         cityPrefs.put(CITY_LOCAL_NAME_KEY, localName);
         cityPrefs.put(CITY_CODE_KEY, code);
+        cityPrefs.put(CITY_LGD_CODE_KEY, lgdCode);
         cityPrefs.put(CITY_LAT_KEY, latitude);
         cityPrefs.put(CITY_LNG_KEY, longitude);
         cityPrefs.put(CITY_DIST_NAME_KEY, districtName);
         cityPrefs.put(CITY_DIST_CODE_KEY, districtCode);
+        cityPrefs.put(CITY_DIST_LGD_CODE_KEY, districtLGDCode);
         cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
         cityPrefs.put(CITY_REGION_NAME_KEY, regionName);
         if (preferences != null) {
-            cityPrefs.put(CITY_LOGO_FS_UUID_KEY,
-                    preferences.logoExist() ? preferences.getMunicipalityLogo().getFileStoreId() : EMPTY);
+            cityPrefs.put(CITY_LOGO_FS_UUID_KEY, preferences.logoExist() ? preferences.getMunicipalityLogo().getFileStoreId() : EMPTY);
             cityPrefs.put(CITY_CORP_NAME_KEY, preferences.getMunicipalityName());
             cityPrefs.put(CITY_CORP_ADDRESS_KEY, preferences.getMunicipalityAddress());
             cityPrefs.put(CITY_CORP_CALLCENTER_NO_KEY, preferences.getMunicipalityCallCenterNo());
@@ -308,33 +331,18 @@ public class City extends AbstractAuditable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (domainURL == null ? 0 : domainURL.hashCode());
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        return result;
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof City))
+            return false;
+        City city = (City) other;
+        return Objects.equals(getDomainURL(), city.getDomainURL()) &&
+                Objects.equals(getCode(), city.getCode());
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final City other = (City) obj;
-        if (domainURL == null) {
-            if (other.domainURL != null)
-                return false;
-        } else if (!domainURL.equals(other.domainURL))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getDomainURL(), getCode());
     }
 }

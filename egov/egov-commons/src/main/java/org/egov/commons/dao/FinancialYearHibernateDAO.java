@@ -50,7 +50,7 @@ package org.egov.commons.dao;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -326,6 +326,19 @@ public class FinancialYearHibernateDAO implements FinancialYearDAO {
         Query query = getCurrentSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <:sDate and isActive=true order by finYearRange desc ");
+        query.setDate("sDate", date);
+        return query.list();
+    }
+    
+    /**
+     * returns active FY from the given date
+     * example: 01-04-2016 is given then it will return 2016-17,2017-18 and so on till current financial year
+     */
+    
+    public List<CFinancialYear> getFinancialYearsAfterFromDate(Date date) {
+        Query query = getCurrentSession()
+                .createQuery(
+                        " from CFinancialYear cfinancialyear where cfinancialyear.startingDate >=:sDate and isActive=true order by finYearRange desc ");
         query.setDate("sDate", date);
         return query.list();
     }

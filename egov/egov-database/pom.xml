@@ -126,6 +126,12 @@
                                     <directory>../egov-portal/src/main/resources/db/migration</directory>
                                 </resource>
                                 <resource>
+                                    <directory>../egov-eventnotification/src/main/resources/db/migration</directory>
+                                </resource>
+                                <resource>
+                                    <directory>../egov-pushbox/src/main/resources/db/migration</directory>
+                                </resource>
+                                <resource>
                                     <directory>../egov-ptis/src/main/resources/db/migration</directory>
                                 </resource>
                                 <resource>
@@ -151,12 +157,6 @@
                                 </resource>
                                  <resource>
                                     <directory>../egov-mrs/src/main/resources/db/migration</directory>
-                                </resource>
-                                 <resource>
-                                    <directory>../egov-bpa/src/main/resources/db/migration</directory>
-                                </resource>
-                                <resource>
-                                    <directory>../egov-edcr/src/main/resources/db/migration</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -185,7 +185,6 @@
                                             [3.2.1,)
                                         </versionRange>
                                         <goals>
-                                        	<goal>state-migrate</goal>
                                             <goal>migrate</goal>
                                         </goals>
                                     </pluginExecutionFilter>
@@ -226,49 +225,6 @@
                                 <phase>process-resources</phase>
                                 <goals>
                                     <goal>clean</goal>
-                                    <goal>migrate</goal>
-                                </goals>
-                                <configuration>
-                                    <configFile>src/main/resources/flyway.properties</configFile>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>state-migrate</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.flywaydb</groupId>
-                        <artifactId>flyway-maven-plugin</artifactId>
-                        <version>${flyway-core-version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.postgresql</groupId>
-                                <artifactId>postgresql</artifactId>
-                                <version>${postgres-version}</version>
-                            </dependency>
-                        </dependencies>
-                        <configuration>
-                       		<schemas>
-					            <schema>state</schema>
-					        </schemas>
-                            <skip>false</skip>
-                            <cleanDisabled>true</cleanDisabled>
-                            <validateOnMigrate>${validateOnMigrate}</validateOnMigrate>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>migrate-database</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>repair</goal>
                                     <goal>migrate</goal>
                                 </goals>
                                 <configuration>

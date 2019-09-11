@@ -52,7 +52,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -65,6 +64,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
@@ -79,8 +79,9 @@ import static org.egov.infra.admin.master.entity.AppConfigValues.SEQ_APPCONFIG_V
 @SequenceGenerator(name = SEQ_APPCONFIG_VALUE, sequenceName = SEQ_APPCONFIG_VALUE, allocationSize = 1)
 public class AppConfigValues extends AbstractAuditable {
 
-    public static final String SEQ_APPCONFIG_VALUE = "SEQ_EG_APPCONFIG_VALUES";
-    private static final long serialVersionUID = 1L;
+    protected static final String SEQ_APPCONFIG_VALUE = "SEQ_EG_APPCONFIG_VALUES";
+    private static final long serialVersionUID = 7572304323306975487L;
+
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_APPCONFIG_VALUE, strategy = SEQUENCE)
@@ -89,16 +90,15 @@ public class AppConfigValues extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 4000)
-    @Column(name = "value")
     private String value;
 
     @NotNull
     @Temporal(DATE)
-    @Column(name = "effective_from", updatable = false)
+    @Column(updatable = false)
     private Date effectiveFrom;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "key_id", nullable = false)
+    @ManyToOne(fetch = LAZY, optional = false)
+    @JoinColumn(name = "config", nullable = false, updatable = false)
     @JsonIgnore
     private AppConfig config;
 
@@ -148,18 +148,17 @@ public class AppConfigValues extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof AppConfigValues))
+        if (!(other instanceof AppConfigValues))
             return false;
-        final AppConfigValues that = (AppConfigValues) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(value, that.value);
+        AppConfigValues that = (AppConfigValues) other;
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value);
+        return Objects.hash(getId());
     }
 }

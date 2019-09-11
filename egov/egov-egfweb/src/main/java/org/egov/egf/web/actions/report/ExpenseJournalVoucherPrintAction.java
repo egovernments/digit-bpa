@@ -97,7 +97,7 @@ import java.util.Map;
 public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
     protected static final String PRINT = "print";
     private static final long serialVersionUID = 1L;
-    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?1";
     private static final String JASPERPATH = "/reports/templates/expenseJournalVoucherReport.jasper";
     private transient List<Object> voucherReportList = new ArrayList<>();
 
@@ -152,17 +152,17 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
 
     private void populateVoucher() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
             final Long id = Long.valueOf(parameters.get("id")[0]);
             final CVoucherHeader voucherHeader = persistenceService.getSession().get(CVoucherHeader.class, id);
             if (voucherHeader != null) {
                 voucher = voucherHeader;
-                billRegistermis = (EgBillregistermis) persistenceService.find("from EgBillregistermis where voucherHeader.id=?",
+                billRegistermis = (EgBillregistermis) persistenceService.find("from EgBillregistermis where voucherHeader.id=?1",
                         voucherHeader.getId());
                 if (billRegistermis != null)
                     persistenceService.findAllBy(
-                            "from EgBillPayeedetails where egBilldetailsId.egBillregister.id=?", billRegistermis
+                            "from EgBillPayeedetails where egBilldetailsId.egBillregister.id=?1", billRegistermis
                                     .getEgBillregister().getId());
                 generateVoucherReportList();
             }

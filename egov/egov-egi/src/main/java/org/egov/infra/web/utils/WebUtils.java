@@ -48,17 +48,27 @@
 
 package org.egov.infra.web.utils;
 
-import org.egov.infra.admin.master.entity.User;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import static java.net.URLDecoder.decode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT_HEADER;
+import static org.egov.infra.security.utils.SecurityConstants.X_FORWARDED_FOR_HEADER;
 import static org.egov.infra.utils.ApplicationConstant.COLON;
+import static org.egov.infra.utils.ApplicationConstant.COMMA;
 import static org.egov.infra.utils.ApplicationConstant.SLASH;
+import static org.egov.infra.utils.ApplicationConstant.UNKNOWN;
 
 public final class WebUtils {
 
@@ -94,7 +104,7 @@ public final class WebUtils {
     }
 
     /**
-     * This will return full domain name including http scheme and optionally with contextroot depends on 'withContext' value eg:
+     * This will return full domain name including http/s scheme and optionally with contextroot depends on 'withContext' value eg:
      * http://www.domain.com/cxt/xyz withContext value as true will return http://www.domain.com/cxt/ <br/>
      * http://www.domain.com/cxt/xyz withContext value as false will return http://www.domain.com
      **/
@@ -106,7 +116,7 @@ public final class WebUtils {
     }
 
     public static String extractQueryParamsFromUrl(String url) {
-        return url.substring(url.indexOf(QUESTION_MARK) + 1, url.length());
+        return url.substring(url.indexOf(QUESTION_MARK) + 1);
     }
 
     public static String extractURLWithoutQueryParams(String url) {
@@ -117,8 +127,32 @@ public final class WebUtils {
         return request.getServletContext().getContextPath().replace(SLASH, EMPTY);
     }
 
-    public static void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {
-        LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-        localeResolver.setLocale(request, response, user.locale());
+    public static String extractOriginIPAddress(HttpServletRequest request) {
+        String ipAddress = request.getRemoteAddr();
+        String proxiedIPAddress = request.getHeader(X_FORWARDED_FOR_HEADER);
+        if (isNotBlank(proxiedIPAddress)) {
+            String[] ipAddresses = proxiedIPAddress.split(COMMA);
+            ipAddress = ipAddresses[ipAddresses.length - 1].trim();
+        }
+        return ipAddress;
+    }
+
+    public static String extractUserAgent(HttpServletRequest request) {
+        return defaultIfBlank(request.getHeader(USER_AGENT_HEADER), UNKNOWN);
+    }
+
+    public static Map<String, String> bindErrorToMap(BindingResult bindingResult) {
+        return bindingResult.getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(FieldError::getField,
+                        FieldError::getDefaultMessage, (a, b) -> b, HashMap::new));
+    }
+
+    public static String decodeQueryString(String queryString) {
+        try {
+            return decode(queryString, UTF_8.name());
+        } catch (UnsupportedEncodingException usee) {
+            return queryString;
+        }
     }
 }

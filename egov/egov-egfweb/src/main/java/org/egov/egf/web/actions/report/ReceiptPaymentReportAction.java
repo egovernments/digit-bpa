@@ -57,17 +57,17 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.Statement;
 import org.egov.egf.model.StatementEntry;
 import org.egov.egf.model.StatementResultObject;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.RPService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -116,8 +116,9 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
+
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+ private FundRepository fundRepository;
     
     @Override
     public Object getModel() {
@@ -162,7 +163,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     }
 
     private void loadDropDownData() {
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         addDropdownData("financialYearList",
                 getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
     }
@@ -381,12 +382,12 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     protected void setRelatedEntitesOn() {
         setTodayDate(new Date());
         if (receiptPayment.getFinancialYear() != null && receiptPayment.getFinancialYear().getId() != null) {
-            receiptPayment.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?",
+            receiptPayment.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?1",
                     receiptPayment.getFinancialYear().getId()));
             header.append(" for the Financial Year " + receiptPayment.getFinancialYear().getFinYearRange());
         }
         if (receiptPayment.getFund() != null && receiptPayment.getFund().getId() != null && receiptPayment.getFund().getId() != 0) {
-            receiptPayment.setFund((Fund) getPersistenceService().find("from Fund where id=?", receiptPayment.getFund().getId()));
+            receiptPayment.setFund((Fund) getPersistenceService().find("from Fund where id=?1", receiptPayment.getFund().getId()));
             // receiptPayment.setFunds(list)
             header.append(" for " + receiptPayment.getFund().getName());
         } else {
@@ -842,7 +843,7 @@ public class ReceiptPaymentReportAction extends BaseFormAction {
     }
 
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

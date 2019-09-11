@@ -59,7 +59,6 @@
 	href="${pageContext.request.contextPath}/resources/css/collectionspublic.css?rnd=${app_release_no}" />
 <script type="text/javascript">
 
-jQuery.noConflict();
 jQuery(document).ready(function() {
   	 
      jQuery(" form ").submit(function( event ) {
@@ -121,6 +120,14 @@ function populateapportioningamountnew(){
 		document.getElementById("receipt_error_area").innerHTML+='<s:text name="onlineReceipts.greatercollectioamounterror.errormessage" />' + '<br>';
 		dom.get("receipt_error_area").style.display="block";
 		return false;
+	}
+	if(collectiontotal < billingtotal && checkpartpaymentvalue=='true'){
+		 var minimumAmt=document.forms[0].totalAmountToBeCollected.value;
+		 if(collectiontotal < minimumAmt){
+	     	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.paytlessthanmin.errormessage" />'+': ' + minimumAmt+ '<br>';
+	     	dom.get("receipt_error_area").style.display="block";
+	     	return false;
+	     }
 	}
 	if(dom.get("callbackForApportioning").value=="false")
 	{
@@ -247,8 +254,15 @@ function calculateCreditTotal(){
 }
 
 function validateOnlineReceipt(){
-	populateapportioningamountnew();
-	var amount=dom.get("paymentAmount").value;
+	 var validation=populateapportioningamountnew();
+     if(validation==false){
+    	 if(validation==false &&  document.getElementById("receipt_error_area").innerHTML!=''){
+    			document.getElementById("receipt_error_area").style.display="block";
+    			window.scroll(0,0);
+    		}
+            return false;
+        }  
+ 	var amount=dom.get("paymentAmount").value;
 	var billingtotal=dom.get("totalAmountToBeCollected").value;
 	document.getElementById("receipt_error_area").innerHTML='';
 	dom.get("receipt_error_area").style.display="none";
@@ -385,7 +399,7 @@ function callAjax(paymentServiceId){
 
 function onLoad(){
 	if(dom.get("isTransactionPending").value == "true")
-		document.getElementById("button2").disabled = true; // If any  transactions in pending statu then Disable the Pay Online button.
+	    document.getElementById("button2").disabled = true; // If any  transactions in pending statu then Disable the Pay Online button.
 }
  </script>
 <style type="text/css">
@@ -403,19 +417,11 @@ function onLoad(){
 </head>
 
 <body onload="onLoad();">
-	<s:if test="%{hasActionMessages()}">
-	    <div class="errorstyle">
-	      <s:actionmessage/>
-	    </div>
-	</s:if>
-
-	<s:if test="%{hasErrors()}">
-		<div class="error-block" style="color: red; align: left">
-			<s:actionerror/>
-			<s:fielderror/>
-		</div>
-	</s:if>
-
+<s:if test="%{hasActionMessages()}">
+    <div class="errorstyle">
+      <s:actionmessage/>
+    </div>
+</s:if>  
 
 	<div class="maincontainer">
 		<s:form theme="simple" name="collDetails"
@@ -426,7 +432,7 @@ function onLoad(){
 
 				<div class="subheadnew">
 					<span class="complaintmsg"><s:text
-							name="onlineReceipts.payfeetext" /></span>
+							name="onlineReceipts.payyourtax" /></span>
 					<div class="dottedgridlarge2"></div>
 				</div>
 
@@ -435,9 +441,9 @@ function onLoad(){
 						<div class="rbcontent4">
 							<div class="containerformsg1">
 
-								<%-- <div class="text-left margin-5">
-									<s:text name="onlineReceipts.payfeetext" />
-								</div> --%>
+								<div class="text-left margin-5">
+									<s:text name="onlineReceipts.paytaxtext" />
+								</div>
 								<table width="100%" border="0" cellspacing="0" cellpadding="0"
 									id="billsheaderinfotable">
 									<s:hidden name="collectXML" id="collectXML"
@@ -488,8 +494,6 @@ function onLoad(){
 											<div class="switchgroup1"
 												id="bobcontent<s:property value="#receiptheaderrowstatus.index + 1" />">
 
-
-
 												<table width="100%" border="0" cellpadding="0"
 													cellspacing="0" id="accountdetailtable<%=i%>"
 													name="accountdetailtable<%=i%>" class="tbl-medium">
@@ -499,7 +503,7 @@ function onLoad(){
 														</td>
 														<th class="bluebgheadtd" width="10%"><div
 																align="right">
-																<s:text name="onlineReceipts.amount" />
+																<s:text name="onlineReceipts.demand" />
 															</div>
 														</td>
 														<!--td class="head" width="19%" ><s:text name="onlineReceipts.collectedamount"/></td-->
@@ -508,7 +512,6 @@ function onLoad(){
 													<s:iterator value="%{receiptDetailList}"
 														status="rowreceiptdetailstatus">
 														<tr>
-
 
 															<td class="blueborderfortd"><s:property
 																	value="%{description}" /></td>
@@ -577,7 +580,7 @@ function onLoad(){
 																class="mandatory1">*</span></span></td>
 														<td class="blueborderfortd text-right bg-gray"><s:textfield
 																label="paymentAmount" id="paymentAmount" maxlength="12"
-																name="paymentAmount" size="12" value="%{totalAmountToBeCollected}"
+																name="paymentAmount" size="12"
 																cssClass="form-control patternvalidation text-right"
 																data-pattern="number" placeholder="0"
 																onkeyup="populateapportioningamountnew()"

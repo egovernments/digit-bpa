@@ -61,37 +61,27 @@ import org.egov.egf.model.BankAdviceReportInfo;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = { @Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),
         @Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -123,8 +113,9 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     private String ulbName = "";
     private String bank;
     private static final Logger LOGGER = Logger.getLogger(ChequeIssueRegisterReportAction.class);
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
     private boolean chequePrintingEnabled;
     private String chequePrintAvailableAt;
     private boolean chequeFormatExists;
@@ -139,12 +130,12 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
             addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
             addDropdownData("bankAccountList", Collections.EMPTY_LIST);
-            dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+            dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
         }
         populateUlbName();
     }
@@ -162,7 +153,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("----Inside generateReport---- ");
 
-        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
+        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", accountNumber.getId());
         if (accountNumber.getChequeformat() != null && !accountNumber.getChequeformat().equals("")) {
             chequeFormat = accountNumber.getChequeformat().getId().toString();
         }
@@ -180,22 +171,23 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         for (final AppConfigValues appConfigVal : printAvailConfig)
             chequePrintAvailableAt = appConfigVal.getValue();
 
-        final Query query = persistenceService
-                .getSession()
-                .createSQLQuery(
-                        "select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,"
-                                + "ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,"
-                                + "mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,egf_instrumentvoucher iv,EGW_STATUS es,"
-                                + "voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <'"
-                                + getFormattedDate(getNextDate(toDate))
-                                + "' and ih.instrumentDate>='"
-                                + getFormattedDate(fromDate)
-                                + "' and ih.isPayCheque='1' "
-                                + "and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in ("
-                                + getExcludeVoucherStatues() + ") and vh.id=iv.voucherheaderid and  bankAccountId="
-                                + accountNumber.getId() + " and ih.id=iv.instrumentheaderid and ih.id_status=es.id "
-                                + " and vmis.voucherheaderid=vh.id " + createQuery()
-                                + " order by ih.instrumentDate,ih.instrumentNumber ")
+        StringBuilder queryString = new StringBuilder("select ih.instrumentnumber as chequeNumber,ih.instrumentdate as chequeDate,")
+                .append(" ih.instrumentamount as chequeAmount,vh.vouchernumber as voucherNumber,vh.id as vhId,ih.serialno as serialNo,vh.voucherdate as voucherDate,")
+                .append(" vh.name as voucherName,ih.payto as payTo,mbd.billnumber as billNumber,")
+                .append(" mbd.billDate as billDate,vh.type as type,es.DESCRIPTION as chequeStatus,ih.id as instrumentheaderid from egf_instrumentHeader ih,")
+                .append(" egf_instrumentvoucher iv,EGW_STATUS es,")
+                .append(" voucherheader vh left outer join miscbilldetail mbd on  vh.id=mbd.PAYVHID ,vouchermis vmis where ih.instrumentDate <:toDate ")
+                .append(" and ih.instrumentDate>=:fromDate ")
+                .append(" and ih.isPayCheque='1' ")
+                .append(" and ih.INSTRUMENTTYPE=(select id from egf_instrumenttype where TYPE='cheque' ) and vh.status not in (:voucherStatus)")
+                .append(" and vh.id=iv.voucherheaderid and  bankAccountId=:bankAccountId")
+                .append(" and ih.id=iv.instrumentheaderid and ih.id_status=es.id ")
+                .append(" and vmis.voucherheaderid=vh.id ");
+        if (department != null && department.getId() != 0)
+            queryString.append(" and vmis.departmentid=:deptId");
+        queryString.append(" order by ih.instrumentDate,ih.instrumentNumber ");
+
+        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
                 .addScalar("chequeNumber").addScalar("chequeDate", StandardBasicTypes.DATE)
                 .addScalar("chequeAmount", BigDecimalType.INSTANCE).addScalar("voucherNumber")
                 .addScalar("voucherDate", StandardBasicTypes.DATE).addScalar("voucherName").addScalar("payTo")
@@ -203,6 +195,13 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
                 .addScalar("vhId", BigDecimalType.INSTANCE).addScalar("serialNo", LongType.INSTANCE)
                 .addScalar("chequeStatus").addScalar("instrumentHeaderId", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
+
+        query.setParameter("toDate", getNextDate(toDate), DateType.INSTANCE)
+                .setParameter("fromDate", fromDate, DateType.INSTANCE)
+                .setParameterList("voucherStatus", getExcludeVoucherStatues(), IntegerType.INSTANCE)
+                .setParameter("bankAccountId", accountNumber.getId(), LongType.INSTANCE);
+        if (department != null && department.getId() != 0)
+            query.setParameter("deptId", department.getId());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Search query" + query.getQueryString());
         chequeIssueRegisterList = query.list();
@@ -241,13 +240,6 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
             else
                 row.remove();
         }
-    }
-
-    String createQuery() {
-        String query = "";
-        if (department != null && department.getId() != 0)
-            query = query.concat(" and vmis.departmentid=" + department.getId());
-        return query;
     }
 
     private void updateBillNumber() {
@@ -325,7 +317,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     @Action(value = "/report/chequeIssueRegisterReport-bankAdviceExcel")
     public String bankAdviceExcel() throws JRException, IOException {
         BankAdviceReportInfo bankAdvice = new BankAdviceReportInfo();
-        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?",
+        final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1",
                 instrumentHeaderId);
         bankAdvice.setPartyName(instrumentHeader.getPayTo());
         bankAdvice.setAmount(instrumentHeader.getInstrumentAmount());
@@ -376,7 +368,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
     }
 
     protected Map<String, Object> getParamMap() {
-        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
+        accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", accountNumber.getId());
         final Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("bank", getFormattedBankName());
         paramMap.put("accountNumber", accountNumber.getAccountnumber());
@@ -384,7 +376,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         paramMap.put("toDate", Constants.DDMMYYYYFORMAT1.format(toDate));
         paramMap.put("ulbName", ulbName);
         if (department != null && department.getId() != null && department.getId() != 0) {
-            final Department dept = (Department) persistenceService.find("from Department where id=?",
+            final Department dept = (Department) persistenceService.find("from Department where id=?1",
                     department.getId());
             paramMap.put("departmentName", dept.getName());
         }
@@ -393,8 +385,8 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 
     public String getFormattedBankName() {
         final String[] bankData = bank.split("-");
-        final Bank bank = (Bank) persistenceService.find("from Bank where id=?", Integer.valueOf(bankData[0]));
-        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?",
+        final Bank bank = (Bank) persistenceService.find("from Bank where id=?1", Integer.valueOf(bankData[0]));
+        final Bankbranch bankBranch = (Bankbranch) persistenceService.find("from Bankbranch where id=?1",
                 Integer.valueOf(bankData[1]));
         String name = "";
         if (bank != null && bankBranch != null)
@@ -426,11 +418,18 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
         this.egovCommon = egovCommon;
     }
 
-    private String getExcludeVoucherStatues() {
+    private List<Integer> getExcludeVoucherStatues() {
         final List<AppConfigValues> appList = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "statusexcludeReport");
-        String statusExclude = "-1";
-        statusExclude = appList.get(0).getValue();
+        List<Integer> statusExclude = new ArrayList<>();
+        String strArray[] = appList.get(0).getValue().split(",");
+        int intArray[] = new int[strArray.length];
+        for (int count = 0; count < intArray.length ; count++) {
+            intArray[count] = Integer.parseInt(strArray[count]);
+        }
+        for (int s : intArray) {
+            statusExclude.add(s);
+        }
         return statusExclude;
     }
 

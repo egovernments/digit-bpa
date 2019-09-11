@@ -176,6 +176,13 @@ function check()
 		}	
        addSelectedToForm2();   
 		document.form2.action='${pageContext.request.contextPath}/payment/payment-save.action';
+        $(document.form2).append(
+            $('<input>', {
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            })
+        );
 		document.form2.submit();
 	}	             
 	if(document.getElementById('miscount').value==0)
@@ -187,6 +194,13 @@ function check()
 		document.getElementById('vouchermis.departmentid').disabled=false;
     addSelectedToForm2();  
 	document.form2.action='${pageContext.request.contextPath}/payment/payment-save.action';
+    $(document.form2).append(
+        $('<input>', {
+            type: 'hidden',
+            name: '${_csrf.parameterName}',
+            value: '${_csrf.token}'
+        })
+    );
 	document.form2.submit();
 	return true;
 }
@@ -204,6 +218,13 @@ function search()
 		document.getElementById("search").innerHTML=document.getElementById("searchtab").innerHTML;
 		setSelectedValues();
 		document.form2.action='${pageContext.request.contextPath}/payment/payment-search.action';
+        $(document.form2).append(
+            $('<input>', {
+                type: 'hidden',
+                name: '${_csrf.parameterName}',
+                value: '${_csrf.token}'
+            })
+        );
 		document.form2.submit();  
 		
 	}
@@ -320,6 +341,28 @@ function selectAllContingent(element){
 	else
 		uncheckAll('contingentList',length);
 	calculatePaymentTotal();
+
+}
+function selectAllCheckboxMark(){
+    var length = 0;
+    var count = 0;
+    <s:if test="%{contingentList!=null}">
+    	length = <s:property value="%{contingentList.size()}"/>;
+    </s:if>
+
+    var totalCount = document.getElementsByClassName('case').length;
+    var inputElems=document.getElementsByClassName("case");
+
+    for (var i = 0; i < inputElems.length; i++) {
+        if (inputElems[i].type === "checkbox" && inputElems[i].checked === true){
+            count++;
+        }
+    }
+	if(totalCount == count){
+        document.getElementById("expSelectAll").checked = true;
+    }else{
+        document.getElementById("expSelectAll").checked = false;
+    }
 }
 function calculatePaymentTotal(){
 	jQuery("#totalPaymentAmount").html('0');
@@ -1099,8 +1142,8 @@ function checkContingentForSameMisAttribs(obj,len)
 																						name="contingentList[%{#s.index}].csBillId"
 																						id="csBillId%{#s.index}" value="%{csBillId}" /> <s:checkbox
 																						name="contingentList[%{#s.index}].isSelected"
-																						id="isSelected%{#s.index}"
-																						onclick="checkMiscAttributes(this)"></s:checkbox></td>
+																						id="isSelected%{#s.index}" class="case"
+																						onclick="checkMiscAttributes(this);selectAllCheckboxMark();"></s:checkbox></td>
 																				<td align="left" class="blueborderfortdnew" />
 																				<s:property value="#s.index+1" />
 																				</td>

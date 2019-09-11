@@ -59,10 +59,11 @@
 	</td>
 </tr>
 <%@include file="../voucher/vouchertrans-filter-new.jsp"%>
+<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 <tr>
 	<td class="greybox"></td>
 	<egov:ajaxdropdown id="fromBankId" fields="['Text','Value']"
-		dropdownId="fromBankId" url="/voucher/common-ajaxLoadBanks.action" />
+		dropdownId="fromBankId" url="voucher/common-ajaxLoadBanks.action" />
 	<td class="greybox"><s:text name="contra.fromBank" /> <span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<s:hidden name="temp" value="contraBean.fromBankId" />
@@ -71,7 +72,7 @@
 			headerValue="----Choose----" onChange="loadFromAccNum(this);" /></td>
 	<egov:ajaxdropdown id="fromAccountNumber" fields="['Text','Value']"
 		dropdownId="fromAccountNumber"
-		url="/voucher/common-ajaxLoadAccountNumbers.action" />
+		url="voucher/common-ajaxLoadAccountNumbers.action" />
 	<td class="greybox"><s:text name="contra.fromBankAccount" /> <span
 		class="greybox"><span class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:select name="contraBean.fromBankAccountId"
@@ -86,7 +87,7 @@
 <tr>
 	<td class="bluebox"></td>
 	<egov:updatevalues id="fromBankBalance" fields="['Text']"
-		url="/payment/payment-ajaxGetAccountBalance.action" />
+		url="payment/payment-ajaxGetAccountBalance.action" />
 	<td class="bluebox"><s:text name="contra.fromBankBalance" />
 		(Rs.) <span class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:textfield name="contraBean.fromBankBalance"
@@ -133,7 +134,7 @@
 <tr>
 	<td class="bluebox"></td>
 	<egov:ajaxdropdown id="toBankId" fields="['Text','Value']"
-		dropdownId="toBankId" url="/voucher/common-ajaxLoadBanks.action" />
+		dropdownId="toBankId" url="voucher/common-ajaxLoadBanks.action" />
 
 	<td class="bluebox"><s:text name="contra.toBank" /> <span
 		class="bluebox"><span class="mandatory1">*</span></span></td>
@@ -142,7 +143,7 @@
 			headerValue="----Choose----" onChange="loadToAccNum(this);" /></td>
 	<egov:ajaxdropdown id="toAccountNumber" fields="['Text','Value']"
 		dropdownId="toAccountNumber"
-		url="/voucher/common-ajaxLoadAccountNumbers.action" />
+		url="voucher/common-ajaxLoadAccountNumbers.action" />
 	<td class="bluebox"><s:text name="contra.toBankAccount" /> <span
 		class="bluebox"><span class="mandatory1">*</span></span></td>
 	<td class="bluebox"><s:select name="contraBean.toBankAccountId"
@@ -156,7 +157,7 @@
 <tr>
 	<td class="greybox"></td>
 	<egov:updatevalues id="toBankBalance" fields="['Text']"
-		url="/payment/payment-ajaxGetAccountBalance.action" />
+		url="payment/payment-ajaxGetAccountBalance.action" />
 	<td class="greybox"><s:text name="contra.toBankBalance" /> (Rs.)
 		<span class="greybox"><span class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="contraBean.toBankBalance"
@@ -199,7 +200,8 @@
 				name="contra.refNumber" /></span> <span class="greybox"><span
 			class="mandatory1">*</span></span></td>
 	<td class="greybox"><s:textfield name="contraBean.chequeNumber"
-			id="chequeNum" value="%{contraBean.chequeNumber}" /></td>
+			id="chequeNum" value="%{contraBean.chequeNumber}" onkeypress="return replaceSpecialChar(event)" onkeyup="isSpecialChar()"
+									 onblur="isSpecialChar()" /></td>
 	<td class="greybox"><span id="mdcDate"><s:text
 				name="contra.refDate" /></span></td>
 	<td class="greybox"><s:textfield id="chequeDate"
@@ -234,7 +236,18 @@
 	var i=0;
 	<s:iterator var="f" value="%{dropdownData.fundList}" status="stat">
 		fund_map[i++]= '<s:property value="%{id}"/>'+"_"+'<s:property value="%{chartofaccountsByPayglcodeid.glcode}"/>';
-	</s:iterator>	
+	</s:iterator>
+
+    function replaceSpecialChar(e) {
+        var k;
+        document.all ? k = e.keyCode : k = e.which;
+        return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+    }
+    function isSpecialChar(){
+        var valueEntered = document.getElementById('chequeNum').value;
+        var replacedValue = valueEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        document.getElementById('chequeNum').value = replacedValue;
+    }
 	
-	</script>
+</script>
 

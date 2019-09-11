@@ -47,12 +47,7 @@
  */
 package org.egov.egf.web.actions.report;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
+import org.egov.commons.*;
 import org.egov.egf.model.ReportSearch;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -112,7 +107,7 @@ public class ReportAction extends BaseFormAction
     public void prepare()
     {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         getHeaderFields();
         if (headerFields.contains(Constants.DEPARTMENT))
@@ -181,13 +176,13 @@ public class ReportAction extends BaseFormAction
 
     public String ajaxLoadSchemes()
     {
-        schemeList = persistenceService.findAllBy(" from Scheme where fund=?", reportSearch.getFund());
+        schemeList = persistenceService.findAllBy(" from Scheme where fund=?1", reportSearch.getFund());
         return "schemes";
     }
 
     public String ajaxLoadSubSchemes()
     {
-        schemeList = persistenceService.findAllBy(" from SubScheme where scheme=?", reportSearch.getScheme());
+        schemeList = persistenceService.findAllBy(" from SubScheme where scheme=?1", reportSearch.getScheme());
         return "schemes";
     }
 

@@ -130,7 +130,7 @@ public class DishonoredChequeReportAction extends BaseFormAction {
     public String ajaxSearch() throws TaskFailedException {
 
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("DishonoredChequeAction | Search | start");
         try {
@@ -156,7 +156,7 @@ public class DishonoredChequeReportAction extends BaseFormAction {
         if (checkNullandEmpty(dishonoredChequeReport.getEndDate()))
             heading = heading + " to " + dishonoredChequeReport.getEndDate();
         if (checkNullandEmpty(dishonoredChequeReport.getFundLst())) {
-            fund = (Fund) persistenceService.find("from Fund where  id = ?",
+            fund = (Fund) persistenceService.find("from Fund where  id = ?1",
                     Integer.parseInt(dishonoredChequeReport.getFundLst()));
             heading = heading + " and Fund :" + fund.getName();
         }

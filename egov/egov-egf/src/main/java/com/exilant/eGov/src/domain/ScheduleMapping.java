@@ -59,12 +59,12 @@ import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -72,14 +72,21 @@ import java.util.Locale;
 
 /**
  * @author Lakshmi
- *
+ * <p>
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
 @Transactional(readOnly = true)
 public class ScheduleMapping {
     private static final Logger LOGGER = Logger
             .getLogger(ScheduleMapping.class);
+    private static TaskFailedException taskExc;
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
+            .getDefault());
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
+            Locale.getDefault());
     Query pstmt = null;
+    @Autowired
+    EGovernCommon eGovernCommon;
     private String id = null;
     private String reportType = null;
     private String schedule = "0";
@@ -90,27 +97,20 @@ public class ScheduleMapping {
     private String lastModifiedDate = "";
     private String repSubType = null;
     private String isRemission = null;
-    private static TaskFailedException taskExc;
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired EGovernCommon eGovernCommon;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale
-            .getDefault());
-    private final SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy",
-            Locale.getDefault());
-
-    public void setId(final String aId) {
-        id = aId;
-    }
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
 
     public int getId() {
         return Integer.valueOf(id).intValue();
     }
 
+    public void setId(final String aId) {
+        id = aId;
+    }
+
     @Transactional
-    public void insert() throws SQLException, TaskFailedException {
+    public void insert() throws TaskFailedException {
 
         setId(String.valueOf(PrimaryKeyGenerator.getNextKey("schedulemapping")));
         try {
@@ -122,99 +122,96 @@ public class ScheduleMapping {
             setCreatedDate(createdDate);
             setLastModifiedDate(lastModifiedDate);
 
-            // scheduleName=common.formatString(scheduleName);
-            final String insertQuery = "INSERT INTO schedulemapping (id, reportType,schedule, scheduleName, createdBy, createdDate, "
-                    + "lastModifiedBy,lastModifiedDate,repSubType,isRemission) "
-                    + "values(?,?,?,?,?,?,?,?,?,?)";
+            final StringBuilder insertQuery = new StringBuilder("INSERT INTO schedulemapping (id, reportType, schedule, scheduleName, createdBy, createdDate,")
+                    .append(" lastModifiedBy, lastModifiedDate, repSubType, isRemission)")
+                    .append(" values(:id, :reportType, :schedule, :scheduleName, :createdBy, :createdDate, :lastModifiedBy, :lastModifiedDate, :repSubType, :isRemission)");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(insertQuery);
-            pstmt = persistenceService.getSession().createSQLQuery(insertQuery);
-            pstmt.setString(0, id);
-            pstmt.setString(1, reportType);
-            pstmt.setString(2, schedule);
-            pstmt.setString(3, scheduleName);
-            pstmt.setString(4, createdBy);
-            pstmt.setString(5, createdDate);
-            pstmt.setString(6, lastModifiedBy);
-            pstmt.setString(7, lastModifiedDate);
-            pstmt.setString(8, repSubType);
-            pstmt.setString(9, isRemission);
+            pstmt = persistenceService.getSession().createNativeQuery(insertQuery.toString());
+            pstmt.setParameter("id", id, StringType.INSTANCE);
+            pstmt.setParameter("reportType", reportType, StringType.INSTANCE);
+            pstmt.setParameter("schedule", schedule, StringType.INSTANCE);
+            pstmt.setParameter("scheduleName", scheduleName, StringType.INSTANCE);
+            pstmt.setParameter("createdBy", createdBy, StringType.INSTANCE);
+            pstmt.setParameter("createdDate", createdDate, StringType.INSTANCE);
+            pstmt.setParameter("lastModifiedBy", lastModifiedBy, StringType.INSTANCE);
+            pstmt.setParameter("lastModifiedDate", lastModifiedDate, StringType.INSTANCE);
+            pstmt.setParameter("repSubType", repSubType, StringType.INSTANCE);
+            pstmt.setParameter("isRemission", isRemission, StringType.INSTANCE);
             pstmt.executeUpdate();
         } catch (final Exception e) {
-            LOGGER.error("ERROR" + e.getMessage(), e);
+            LOGGER.error("ERROR", e);
             throw taskExc;
         }
 
     }
 
     @Transactional
-    public void update() throws SQLException, TaskFailedException {
+    public void update() {
         try {
             newUpdate();
         } catch (final Exception e) {
-            LOGGER.error("Error inside update" + e.getMessage(), e);
+            LOGGER.error("Error inside update", e);
         }
     }
 
-    public void newUpdate() throws TaskFailedException,
-    SQLException {
+    public void newUpdate() throws TaskFailedException {
         lastModifiedDate = eGovernCommon.getCurrentDate();
         Query pstmt = null;
         try {
             lastModifiedDate = formatter.format(sdf.parse(lastModifiedDate));
         } catch (final ParseException parseExp) {
-            LOGGER.error("error inside newUpdate" + parseExp.getMessage(), parseExp);
+            LOGGER.error("error inside newUpdate" , parseExp);
         }
         setLastModifiedDate(lastModifiedDate);
-        final StringBuilder query = new StringBuilder(500);
+        final StringBuilder query = new StringBuilder();
         query.append("update schedulemapping set ");
         if (reportType != null)
-            query.append("REPORTTYPE=?,");
+            query.append("REPORTTYPE = :reportType,");
         if (schedule != null)
-            query.append("SCHEDULE=?,");
+            query.append("SCHEDULE = :schedule,");
         if (scheduleName != null)
-            query.append("SCHEDULENAME=?,");
+            query.append("SCHEDULENAME = :scheduleName,");
         if (createdBy != null)
-            query.append("CREATEDBY=?,");
+            query.append("CREATEDBY = :createdBy,");
         if (createdDate != null && !createdDate.isEmpty())
-            query.append("CREATEDDATE=?,");
+            query.append("CREATEDDATE = :createdDate,");
         if (lastModifiedBy != null)
-            query.append("LASTMODIFIEDBY=?,");
+            query.append("LASTMODIFIEDBY = :lastModifiedBy,");
         if (lastModifiedDate != null)
-            query.append("LASTMODIFIEDDATE=?,");
+            query.append("LASTMODIFIEDDATE = :lastModifiedDate,");
         if (repSubType != null)
-            query.append("REPSUBTYPE=?,");
+            query.append("REPSUBTYPE = :repSubType,");
         if (isRemission != null)
-            query.append("ISREMISSION=?,");
+            query.append("ISREMISSION = :isRemission,");
         final int lastIndexOfComma = query.lastIndexOf(",");
         query.deleteCharAt(lastIndexOfComma);
-        query.append(" where id=?");
+        query.append(" where id = :id");
         try {
-            int i = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
             if (reportType != null)
-                pstmt.setString(i++, reportType);
+                pstmt.setParameter("reportType", reportType, StringType.INSTANCE);
             if (schedule != null)
-                pstmt.setString(i++, schedule);
+                pstmt.setParameter("schedule", schedule, StringType.INSTANCE);
             if (scheduleName != null)
-                pstmt.setString(i++, scheduleName);
+                pstmt.setParameter("scheduleName", scheduleName, StringType.INSTANCE);
             if (createdBy != null)
-                pstmt.setString(i++, createdBy);
+                pstmt.setParameter("createdBy", createdBy, StringType.INSTANCE);
             if (createdDate != null && !createdDate.isEmpty())
-                pstmt.setString(i++, createdDate);
+                pstmt.setParameter("createdDate", createdDate, StringType.INSTANCE);
             if (lastModifiedBy != null)
-                pstmt.setString(i++, lastModifiedBy);
+                pstmt.setParameter("lastModifiedBy", lastModifiedBy, StringType.INSTANCE);
             if (lastModifiedDate != null)
-                pstmt.setString(i++, lastModifiedDate);
+                pstmt.setParameter("lastModifiedDate", lastModifiedDate, StringType.INSTANCE);
             if (repSubType != null)
-                pstmt.setString(i++, repSubType);
+                pstmt.setParameter("repSubType", repSubType, StringType.INSTANCE);
             if (isRemission != null)
-                pstmt.setString(i++, isRemission);
-            pstmt.setString(i++, id);
+                pstmt.setParameter("isRemission", isRemission, StringType.INSTANCE);
+            pstmt.setParameter("id", id, StringType.INSTANCE);
 
             pstmt.executeUpdate();
         } catch (final Exception e) {
-            LOGGER.error("Exp in update: " + e.getMessage(), e);
+            LOGGER.error("Exp in update: ", e);
             throw taskExc;
         }
     }

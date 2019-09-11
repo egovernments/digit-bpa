@@ -49,31 +49,54 @@
 package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Locale;
+import java.util.Objects;
 
 import static org.egov.infra.admin.common.entity.MessageTemplate.SEQ_MESSAGETEMPLATE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
 
 @Entity
 @Table(name = "eg_messagetemplate")
-@Cacheable
+@Unique(fields = "templateName", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_MESSAGETEMPLATE, sequenceName = SEQ_MESSAGETEMPLATE, allocationSize = 1)
+@Cacheable
 public class MessageTemplate extends AbstractPersistable<Long> {
-    public static final String SEQ_MESSAGETEMPLATE = "SEQ_EG_MESSAGETEMPLATE";
+    protected static final String SEQ_MESSAGETEMPLATE = "SEQ_EG_MESSAGETEMPLATE";
     private static final long serialVersionUID = 3650406178933970435L;
+
     @Id
     @GeneratedValue(generator = SEQ_MESSAGETEMPLATE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotBlank
+    @Length(max = 100)
+    @SafeHtml
+    @Column(updatable = false)
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String templateName;
+
+    @NotBlank
+    @SafeHtml
     private String template;
+
+    @NotBlank
+    @Length(max = 10)
+    @SafeHtml
     private String locale;
 
     public Long getId() {
@@ -106,5 +129,20 @@ public class MessageTemplate extends AbstractPersistable<Long> {
 
     public void setLocale(final String locale) {
         this.locale = locale;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof MessageTemplate))
+            return false;
+        MessageTemplate that = (MessageTemplate) other;
+        return Objects.equals(getTemplateName(), that.getTemplateName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTemplateName());
     }
 }

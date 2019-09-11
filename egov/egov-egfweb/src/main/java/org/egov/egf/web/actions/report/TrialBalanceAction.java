@@ -58,24 +58,30 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.report.ReportBean;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -86,16 +92,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = {
         @Result(name = "new", location = "trialBalance-new.jsp"),
@@ -158,7 +155,15 @@ public class TrialBalanceAction extends BaseFormAction {
     private Date endDate = new Date();
     final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
 
     @Override
     public Object getModel() {
@@ -169,14 +174,14 @@ public class TrialBalanceAction extends BaseFormAction {
     public void prepare()
     {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
 
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
-        addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
-        addDropdownData("fieldList", masterDataCache.get("egi-ward"));
-        addDropdownData("functionList", masterDataCache.get("egi-function"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
+        addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
+        addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
+        addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
 
     }
 
@@ -273,11 +278,11 @@ public class TrialBalanceAction extends BaseFormAction {
         else
         {
             if (rb.getFundId() == null)
-                fundList = masterDataCache.get("egi-fund");
+                fundList = fundRepository.findByIsactiveAndIsnotleaf(true,false);
             else
             {
                 fundList = new ArrayList<Fund>();
-                fundList.add((Fund) persistenceService.find("from Fund where id=?", rb.getFundId()));
+                fundList.add((Fund) persistenceService.find("from Fund where id=?1", rb.getFundId()));
             }
             gererateReportForAsOnDate();
         }
@@ -297,41 +302,50 @@ public class TrialBalanceAction extends BaseFormAction {
         String voucherMisTable = "";
         String misClause = "";
         String misDeptCond = "";
+        final Map<String, Object> deptQueryParams = new HashMap<>();
         String tsDeptCond = "";
         String functionaryCond = "";
+        final Map<String, Object> functionaryQueryParams = new HashMap<>();
         String tsfunctionaryCond = "";
         String functionIdCond = "";
+        final Map<String, Object> functionQueryParams = new HashMap<>();
         String tsFunctionIdCond = "";
         String fieldIdCond = "";
         String tsFieldIdCond = "";
         String fundcondition = "";
+        final Map<String, Object> fundQueryParams = new HashMap<>();
+        final Map<String, Object> divisionQueryParams = new HashMap<>();
         List<TrialBalanceBean> forAllFunds = new ArrayList<TrialBalanceBean>();
 
-        if (rb.getFundId() != null)
+        if (rb.getFundId() != null) {
             fundcondition = " and fundid=:fundId";
-        else
+            fundQueryParams.put("fundId", rb.getFundId());
+        } else
             fundcondition = " and fundid in (select id from fund where isactive=true and isnotleaf!=true )";
-        // if(LOGGER.isInfoEnabled()) LOGGER.info("fund cond query  "+fundcondition);
         if (null != rb.getDepartmentId() || null != rb.getFunctionaryId()) {
             voucherMisTable = ",vouchermis mis ";
             misClause = " and mis.voucherheaderid=vh.id ";
         }
 
         if (null != rb.getDepartmentId()) {
-            misDeptCond = " and mis.DEPARTMENTID= :departmentId";
-            tsDeptCond = " and DEPARTMENTID= :departmentId";
+            misDeptCond = " and mis.DEPARTMENTID=:departmentId";
+            tsDeptCond = " and DEPARTMENTID=:departmentId";
+            deptQueryParams.put("departmentId", rb.getDepartmentId());
         }
         if (null != rb.getFunctionaryId()) {
-            functionaryCond = " and mis.FUNCTIONARYID= :functionaryId";
-            tsfunctionaryCond = " and FUNCTIONARYID= :functionaryId";
+            functionaryCond = " and mis.FUNCTIONARYID=:functionaryId";
+            tsfunctionaryCond = " and FUNCTIONARYID=:functionaryId";
+            functionaryQueryParams.put("functionaryId", rb.getFunctionaryId());
         }
         if (null != rb.getFunctionId()) {
-            functionIdCond = " and gl.voucherheaderid in (select distinct(voucherheaderid) from generalledger where functionid =:functionId)";
-            tsFunctionIdCond = " and FUNCTIONID= functionId";
+            functionIdCond = " and gl.voucherheaderid in (select distinct(voucherheaderid) from generalledger gl where gl.functionid=:functionId)";
+            tsFunctionIdCond = " and FUNCTIONID=:functionId";
+            functionQueryParams.put("functionId", rb.getFunctionId());
         }
         if (null != rb.getDivisionId()) {
-            fieldIdCond = " and mis.divisionId= :divisionId";
-            tsFieldIdCond = " and divisionId= :divisionId";
+            fieldIdCond = " and mis.divisionId=:divisionId";
+            tsFieldIdCond = " and divisionId=:divisionId";
+            divisionQueryParams.put("divisionId", rb.getDivisionId());
         }
         String defaultStatusExclude = null;
         final List<AppConfigValues> listAppConfVal = appConfigValuesService.
@@ -340,142 +354,143 @@ public class TrialBalanceAction extends BaseFormAction {
             defaultStatusExclude = listAppConfVal.get(0).getValue();
         else
             throw new ApplicationRuntimeException("Exlcude statusses not  are not defined for Reports");
-        final String query = " SELECT gl.glcode AS \"accCode\" ,coa.name AS \"accName\" ,vh.fundid AS \"fundId\",(SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE)  is null  then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE"
-                + " financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)"
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid"
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + "))/COUNT(*))-"
-                + " (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)  is null  then 0 else SUM(OPENINGCREDITBALANCE) end FROM"
-                + " transactionsummary WHERE financialyearid=(SELECT id FROM financialyear  WHERE startingdate<=:toDate AND endingdate>=:toDate)"
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid"
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + "))/COUNT(*) ) as \"amount\" "
-                + " FROM generalledger gl,chartofaccounts   coa,voucherheader vh "
-                + voucherMisTable
-                + " WHERE coa.glcode=gl.glcode AND gl.voucherheaderid=vh.id"
-                + misClause
-                + " AND vh.status not in ("
-                + defaultStatusExclude
-                + ") "
-                + " AND  vh.voucherdate<=:toDate AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) "
-                + fundcondition
-                + " "
-                + misDeptCond
-                + functionaryCond
-                + functionIdCond
-                + fieldIdCond
-                + " GROUP BY gl.glcode,coa.name,vh.fundid    HAVING (SUM(debitamount)>0 OR SUM(creditamount)>0)    And"
-                + " (SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM"
-                + " transactionsummary WHERE  financialyearid=(SELECT id FROM financialyear       WHERE startingdate <=:toDate"
-                + " AND endingdate >=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + "))/COUNT(*))-"
-                + " (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM"
-                + " transactionsummary WHERE financialyearid=(SELECT id FROM financialyear    WHERE startingdate<=:toDate AND endingdate>=:toDate) "
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode)  "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + "))/COUNT(*) )<>0"
-                + " union"
-                + " SELECT coa.glcode AS \"accCode\" ,coa.name AS \"accName\" , fu.id as \"fundId\", SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end "
-                + " FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE  startingdate<=:toDate AND endingdate>=:toDate)"
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE  glcode=coa.glcode) AND fundid= (select id from fund where id=fu.id)"
-                + " "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + ")) - SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end as \"amount\" FROM transactionsummary WHERE"
-                + " financialyearid=(SELECT id FROM financialyear       WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts"
-                + " WHERE glcode=coa.glcode)AND fundid= (select id from fund where id=fu.id)"
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + ")) "
-                + " FROM chartofaccounts  coa, fund fu  WHERE  fu.id IN(SELECT fundid from transactionsummary WHERE financialyearid = (SELECT id FROM financialyear WHERE startingdate<=:toDate "
-                + " AND endingdate>=:toDate) "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + " AND glcodeid =(SELECT id   FROM chartofaccounts WHERE  glcode=coa.glcode) ) AND coa.id NOT IN(SELECT glcodeid FROM generalledger gl,voucherheader vh "
-                + voucherMisTable
-                + " WHERE "
-                + " vh.status not in ("
-                + defaultStatusExclude
-                + ") "
-                + misClause
-                + misDeptCond
-                + functionaryCond
-                + functionIdCond
-                + fieldIdCond
-                + " AND vh.id=gl.voucherheaderid AND vh.fundid=fu.id AND vh.voucherdate<=:toDate AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) "
-                + fundcondition
-                + ")"
-                + " GROUP BY coa.glcode,coa.name, fu.id"
-                + " HAVING((SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE"
-                + " financialyearid=(SELECT id FROM financialyear       WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode) "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond
-                + tsFunctionIdCond
-                + tsFieldIdCond
-                + " )) >0 )"
-                + " OR (SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)"
-                + " AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode)     "
-                + fundcondition
-                + tsDeptCond
-                + tsfunctionaryCond + tsFunctionIdCond + tsFieldIdCond + "))>0 ))  ORDER BY \"accCode\"";
+        final StringBuffer query = new StringBuffer(" SELECT gl.glcode AS \"accCode\" ,coa.name AS \"accName\" ,vh.fundid AS \"fundId\",")
+                .append("(SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE)  is null  then 0 else SUM(OPENINGDEBITBALANCE) end")
+                .append(" FROM transactionsummary")
+                .append(" WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append("))/COUNT(*))-")
+                .append(" (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE)  is null  then 0 else SUM(OPENINGCREDITBALANCE) end FROM")
+                .append(" transactionsummary WHERE financialyearid=(SELECT id FROM financialyear  WHERE startingdate<=:toDate AND endingdate>=:toDate)")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) AND fundid=vh.fundid")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append("))/COUNT(*) ) as \"amount\" ")
+                .append(" FROM generalledger gl,chartofaccounts   coa,voucherheader vh ")
+                .append(voucherMisTable)
+                .append(" WHERE coa.glcode=gl.glcode AND gl.voucherheaderid=vh.id")
+                .append(misClause)
+                .append(" AND vh.status not in (")
+                .append(defaultStatusExclude)
+                .append(") ")
+                .append(" AND  vh.voucherdate<=:toDate AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) ")
+                .append(fundcondition)
+                .append( " ")
+                .append(misDeptCond)
+                .append(functionaryCond)
+                .append(functionIdCond)
+                .append(fieldIdCond)
+                .append(" GROUP BY gl.glcode,coa.name,vh.fundid    HAVING (SUM(debitamount)>0 OR SUM(creditamount)>0) And")
+                .append(" (SUM(debitamount)+SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM")
+                .append(" transactionsummary WHERE  financialyearid=(SELECT id FROM financialyear WHERE startingdate <=:toDate")
+                .append(" AND endingdate >=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode) ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append("))/COUNT(*))-")
+                .append(" (SUM(creditamount)+SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end FROM")
+                .append(" transactionsummary WHERE financialyearid=(SELECT id FROM financialyear    WHERE startingdate<=:toDate AND endingdate>=:toDate) ")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=gl.glcode)  ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append("))/COUNT(*) )<>0")
+                .append(" union")
+                .append(" SELECT coa.glcode AS \"accCode\" ,coa.name AS \"accName\" , fu.id as \"fundId\", SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0")
+                .append(" else SUM(OPENINGDEBITBALANCE) end ")
+                .append(" FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE  startingdate<=:toDate AND endingdate>=:toDate)")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE  glcode=coa.glcode) AND fundid= (select id from fund where id=fu.id)")
+                .append(" ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append(")) - SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end as \"amount\" FROM transactionsummary WHERE")
+                .append(" financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =(SELECT id FROM chartofaccounts")
+                .append(" WHERE glcode=coa.glcode)AND fundid= (select id from fund where id=fu.id)")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append(")) ")
+                .append(" FROM chartofaccounts  coa, fund fu  WHERE  fu.id IN(SELECT fundid from transactionsummary WHERE financialyearid =")
+                .append(" (SELECT id FROM financialyear WHERE startingdate<=:toDate ")
+                .append(" AND endingdate>=:toDate) ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE  glcode=coa.glcode) ) AND coa.id NOT IN(SELECT glcodeid FROM generalledger gl,voucherheader vh ")
+                .append(voucherMisTable)
+                .append(" WHERE ")
+                .append(" vh.status not in (")
+                .append(defaultStatusExclude)
+                .append(") ")
+                .append(misClause)
+                .append(misDeptCond)
+                .append(functionaryCond)
+                .append(functionIdCond)
+                .append(fieldIdCond)
+                .append(" AND vh.id=gl.voucherheaderid AND vh.fundid=fu.id AND vh.voucherdate<=:toDate AND vh.voucherdate>=")
+                .append("(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) ")
+                .append(fundcondition)
+                .append( ")")
+                .append(" GROUP BY coa.glcode,coa.name, fu.id")
+                .append(" HAVING((SUM((SELECT case when SUM(OPENINGDEBITBALANCE) IS NULL then 0 else SUM(OPENINGDEBITBALANCE) end FROM transactionsummary WHERE")
+                .append(" financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate) AND glcodeid =")
+                .append("(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode) ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsFieldIdCond)
+                .append(" )) >0 )")
+                .append(" OR (SUM((SELECT  case when SUM(OPENINGCREDITBALANCE) IS NULL then 0 else SUM(OPENINGCREDITBALANCE) end")
+                .append(" FROM transactionsummary WHERE financialyearid=(SELECT id FROM financialyear WHERE startingdate<=:toDate AND endingdate>=:toDate)")
+                .append(" AND glcodeid =(SELECT id FROM chartofaccounts WHERE glcode=coa.glcode) ")
+                .append(fundcondition)
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond).append(tsFunctionIdCond).append(tsFieldIdCond).append("))>0 ))  ORDER BY \"accCode\"");
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("&&&query  " + query);
+            LOGGER.debug("&&&query  " + query.toString());
         try
         {
             new Double(0);
-            final SQLQuery SQLQuery = persistenceService.getSession().createSQLQuery(query);
-            SQLQuery.addScalar("accCode")
+            final NativeQuery nativeQuery = persistenceService.getSession().createNativeQuery(query.toString());
+            nativeQuery.addScalar("accCode")
                     .addScalar("accName")
                     .addScalar("fundId", StringType.INSTANCE)
                     .addScalar("amount", BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
-            if (null != rb.getFundId())
-                SQLQuery.setInteger("fundId", rb.getFundId());
-            if (null != rb.getDepartmentId())
-                SQLQuery.setInteger("departmentId", rb.getDepartmentId());
-            if (null != rb.getFunctionaryId())
-                SQLQuery.setInteger("functionaryId", rb.getFunctionaryId());
-            if (null != rb.getFunctionId())
-                SQLQuery.setInteger("functionId", rb.getFunctionId());
-            if (null != rb.getDivisionId())
-                SQLQuery.setInteger("divisionId", rb.getDivisionId());
-            if (null != rb.getFromDate())
-                SQLQuery.setDate("fromDate", rb.getFromDate());
-            SQLQuery.setDate("toDate", rb.getToDate());
+            nativeQuery.setParameter("toDate", rb.getToDate(), DateType.INSTANCE);
+            deptQueryParams.entrySet().forEach(entry -> nativeQuery.setParameter(entry.getKey(), entry.getValue()));
+            functionaryQueryParams.entrySet().forEach(entry -> nativeQuery.setParameter(entry.getKey(), entry.getValue()));
+            functionQueryParams.entrySet().forEach(entry -> nativeQuery.setParameter(entry.getKey(), entry.getValue()));
+            fundQueryParams.entrySet().forEach(entry -> nativeQuery.setParameter(entry.getKey(), entry.getValue()));
+            divisionQueryParams.entrySet().forEach(entry -> nativeQuery.setParameter(entry.getKey(), entry.getValue()));
+
             if (LOGGER.isInfoEnabled())
-                LOGGER.info("query ---->" + SQLQuery);
-            forAllFunds = SQLQuery.list();
+                LOGGER.info("query ---->" + nativeQuery);
+            forAllFunds = nativeQuery.list();
 
         } catch (final Exception e)
         {
-            LOGGER.error("Error in getReport" + e.getMessage(), e);
+            LOGGER.error("Error in getReport" , e);
 
         }
 
@@ -613,33 +628,41 @@ public class TrialBalanceAction extends BaseFormAction {
         String voucherMisTable = "";
         String misClause = "";
         String misDeptCond = "";
+        final Map<String, Object> deptQuertParams = new HashMap<>();
         String tsDeptCond = "";
         String functionaryCond = "";
+        final Map<String, Object> functionaryQueryParams = new HashMap<>();
         String tsfunctionaryCond = "";
         String functionIdCond = "";
+        final Map<String, Object> functionQueryParams = new HashMap<>();
         String tsFunctionIdCond = "";
         String tsdivisionIdCond = "";
         String misdivisionIdCond = "";
+        final Map<String, Object> divisionQueryParams = new HashMap<>();
         if (null != rb.getDepartmentId() || null != rb.getFunctionaryId() || null != rb.getDivisionId()) {
             voucherMisTable = ",vouchermis mis ";
             misClause = " and mis.voucherheaderid=vh.id ";
         }
 
         if (null != rb.getDepartmentId()) {
-            misDeptCond = " and mis.DepartmentId= :departmentId";
-            tsDeptCond = " and ts.DepartmentId= :departmentId";
+            misDeptCond = " and mis.DepartmentId=:departmentId";
+            tsDeptCond = " and ts.DepartmentId=:departmentId";
+            deptQuertParams.put("departmentId", rb.getDepartmentId());
         }
         if (null != rb.getFunctionaryId()) {
-            functionaryCond = " and mis.FunctionaryId= :functionaryId";
-            tsfunctionaryCond = " and ts.FunctionaryId= :functionaryId";
+            functionaryCond = " and mis.FunctionaryId=:functionaryId";
+            tsfunctionaryCond = " and ts.FunctionaryId=:functionaryId";
+            functionaryQueryParams.put("functionaryId", rb.getFunctionaryId());
         }
         if (null != rb.getFunctionId()) {
-            functionIdCond = " and gl.functionid =:functionId";
-            tsFunctionIdCond = " and ts.FUNCTIONID= :functionId";
+            functionIdCond = " and gl.functionid=:functionId";
+            tsFunctionIdCond = " and ts.FUNCTIONID=:functionId";
+            functionQueryParams.put("functionId", rb.getFunctionId());
         }
         if (null != rb.getDivisionId()) {
-            misdivisionIdCond = " and mis.divisionId= :divisionId";
-            tsdivisionIdCond = " and ts.divisionId= :divisionId";
+            misdivisionIdCond = " and mis.divisionId=:divisionId";
+            tsdivisionIdCond = " and ts.divisionId=:divisionId";
+            divisionQueryParams.put("divisionId", rb.getDivisionId());
         }
         String defaultStatusExclude = null;
         final List<AppConfigValues> listAppConfVal = appConfigValuesService.
@@ -651,38 +674,36 @@ public class TrialBalanceAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get Opening balance for all account codes");
         // get Opening balance for all account codes
-        final String openingBalanceStr = "SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(ts.openingcreditbalance) as creditOPB,"
-                +
-                "sum(ts.openingdebitbalance) as debitOPB" +
-                " FROM transactionsummary ts,chartofaccounts coa,financialyear fy " +
-                " WHERE ts.glcodeid=coa.id  AND ts.financialyearid=fy.id and ts.FundId=:fundId " +
-                tsDeptCond + tsfunctionaryCond + tsFunctionIdCond + tsdivisionIdCond +
-                " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate " +
-                " GROUP BY ts.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
+        final StringBuffer openingBalanceStr = new StringBuffer("SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(ts.openingcreditbalance) as creditOPB,")
+                .append("sum(ts.openingdebitbalance) as debitOPB" )
+                .append(" FROM transactionsummary ts,chartofaccounts coa,financialyear fy ")
+                .append(" WHERE ts.glcodeid=coa.id  AND ts.financialyearid=fy.id and ts.FundId=:fundId ")
+                .append(tsDeptCond)
+                .append(tsfunctionaryCond)
+                .append(tsFunctionIdCond)
+                .append(tsdivisionIdCond)
+                .append(" AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate ")
+                .append(" GROUP BY ts.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC");
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Query Str" + openingBalanceStr);
-        final Query openingBalanceQry = persistenceService.getSession().createSQLQuery(openingBalanceStr)
+            LOGGER.debug("Query Str" + openingBalanceStr.toString());
+        final Query openingBalanceQry = persistenceService.getSession().createNativeQuery(openingBalanceStr.toString())
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("creditOPB", BigDecimalType.INSTANCE)
                 .addScalar("debitOPB", BigDecimalType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
+        openingBalanceQry.setParameter("fundId", rb.getFundId(), IntegerType.INSTANCE)
+                .setParameter("fromDate", rb.getFromDate(), DateType.INSTANCE)
+                .setParameter("toDate", rb.getToDate(), DateType.INSTANCE);
 
-        openingBalanceQry.setInteger("fundId", rb.getFundId());
+        deptQuertParams.entrySet().forEach(entry -> openingBalanceQry.setParameter(entry.getKey(), entry.getValue()));
+        functionaryQueryParams.entrySet().forEach(entry -> openingBalanceQry.setParameter(entry.getKey(), entry.getValue()));
+        functionQueryParams.entrySet().forEach(entry -> openingBalanceQry.setParameter(entry.getKey(), entry.getValue()));
+        divisionQueryParams.entrySet().forEach(entry -> openingBalanceQry.setParameter(entry.getKey(), entry.getValue()));
 
-        if (null != rb.getDepartmentId())
-            openingBalanceQry.setInteger("departmentId", rb.getDepartmentId());
-        if (null != rb.getFunctionaryId())
-            openingBalanceQry.setInteger("functionaryId", rb.getFunctionaryId());
-        if (null != rb.getFunctionId())
-            openingBalanceQry.setInteger("functionId", rb.getFunctionId());
-        if (null != rb.getDivisionId())
-            openingBalanceQry.setInteger("divisionId", rb.getDivisionId());
-        openingBalanceQry.setDate("fromDate", rb.getFromDate());
-        openingBalanceQry.setDate("toDate", rb.getToDate());
         final List<TrialBalanceBean> openingBalanceList = openingBalanceQry.list();
         if (LOGGER.isInfoEnabled())
-            LOGGER.info("Opening balance query ---->" + openingBalanceQry);
+            LOGGER.info("Opening balance query ---->" + openingBalanceQry.toString());
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get Opening balance for all account codes reulted in " + openingBalanceList.size());
@@ -690,81 +711,82 @@ public class TrialBalanceAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get till date balance for all account codes");
         // get till date balance for all account codes
-        final String tillDateOPBStr = "SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(gl.creditAmount) as tillDateCreditOPB,sum(gl.debitAmount) as tillDateDebitOPB"
-                +
-                " FROM generalledger  gl,chartofaccounts coa,financialyear fy,Voucherheader vh "
-                + voucherMisTable
-                +
-                " WHERE gl.glcodeid=coa.id and vh.id=gl.voucherheaderid  and vh.fundid=:fundId "
-                + misClause
-                + misDeptCond
-                + functionaryCond + functionIdCond + misdivisionIdCond +
-                " AND vh.voucherdate>=fy.startingdate AND vh.voucherdate<=:fromDateMinus1 " +
-                " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate" +
-                " AND vh.status not in (" + defaultStatusExclude + ")" +
-                " GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
-        final Query tillDateOPBQry = persistenceService.getSession().createSQLQuery(tillDateOPBStr)
+        final StringBuffer tillDateOPBStr = new StringBuffer("SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(gl.creditAmount) as tillDateCreditOPB,")
+                .append("sum(gl.debitAmount) as tillDateDebitOPB")
+                .append(" FROM generalledger  gl,chartofaccounts coa,financialyear fy,Voucherheader vh ")
+                .append(voucherMisTable)
+                .append( " WHERE gl.glcodeid=coa.id and vh.id=gl.voucherheaderid  and vh.fundid=:fundId ")
+                .append(misClause)
+                .append(misDeptCond)
+                .append(functionaryCond)
+                .append(functionIdCond)
+                .append(misdivisionIdCond )
+                .append(" AND vh.voucherdate>=fy.startingdate AND vh.voucherdate<=:fromDateMinus1 ")
+                .append(" AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate")
+                .append(" AND vh.status not in (" )
+                .append(defaultStatusExclude)
+                .append(")")
+                .append(" GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC");
+        final Query tillDateOPBQry = persistenceService.getSession().createNativeQuery(tillDateOPBStr.toString())
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("tillDateCreditOPB", BigDecimalType.INSTANCE)
                 .addScalar("tillDateDebitOPB", BigDecimalType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
-        tillDateOPBQry.setInteger("fundId", rb.getFundId());
+        tillDateOPBQry.setParameter("fundId", rb.getFundId(), IntegerType.INSTANCE);
 
-        if (null != rb.getDepartmentId())
-            tillDateOPBQry.setInteger("departmentId", rb.getDepartmentId());
-        if (null != rb.getFunctionaryId())
-            tillDateOPBQry.setInteger("functionaryId", rb.getFunctionaryId());
-        if (null != rb.getFunctionId())
-            tillDateOPBQry.setInteger("functionId", rb.getFunctionId());
-        if (null != rb.getDivisionId())
-            tillDateOPBQry.setInteger("divisionId", rb.getDivisionId());
+        deptQuertParams.entrySet().forEach(entry -> tillDateOPBQry.setParameter(entry.getKey(), entry.getValue()));
+        functionaryQueryParams.entrySet().forEach(entry -> tillDateOPBQry.setParameter(entry.getKey(), entry.getValue()));
+        functionQueryParams.entrySet().forEach(entry -> tillDateOPBQry.setParameter(entry.getKey(), entry.getValue()));
+        divisionQueryParams.entrySet().forEach(entry -> tillDateOPBQry.setParameter(entry.getKey(), entry.getValue()));
 
-        tillDateOPBQry.setDate("fromDate", rb.getFromDate());
-        // tillDateOPBQry.setDate("fromDate",rb.getFromDate());
-        tillDateOPBQry.setDate("toDate", rb.getToDate());
+        tillDateOPBQry.setParameter("fromDate", rb.getFromDate(), DateType.INSTANCE)
+                .setParameter("toDate", rb.getToDate(), DateType.INSTANCE);
         final Calendar cal = Calendar.getInstance();
         cal.setTime(rb.getFromDate());
         cal.add(Calendar.DATE, -1);
-        tillDateOPBQry.setDate("fromDateMinus1", cal.getTime());
+        tillDateOPBQry.setParameter("fromDateMinus1", cal.getTime(), DateType.INSTANCE);
         final List<TrialBalanceBean> tillDateOPBList = tillDateOPBQry.list();
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get till date balance for all account codes reulted in " + tillDateOPBList.size());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("get current debit and credit sum for all account codes  ");
         // get current debit and credit sum for all account codes
-        final String currentDebitCreditStr = "SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(gl.creditAmount) as creditAmount,sum(gl.debitAmount) as debitAmount"
-                +
-                " FROM generalledger gl,chartofaccounts coa,financialyear fy,Voucherheader vh "
-                + voucherMisTable
-                +
-                " WHERE gl.glcodeid=coa.id and vh.id= gl.voucherheaderid AND  vh.fundid=:fundId "
-                + misClause
-                + misDeptCond
-                + functionaryCond + functionIdCond + misdivisionIdCond +
-                " AND vh.voucherdate>=:fromDate AND vh.voucherdate<=:toDate " +
-                " AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate" +
-                " AND vh.status not in (" + defaultStatusExclude + ") " +
-                " GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC";
-        final Query currentDebitCreditQry = persistenceService.getSession().createSQLQuery(currentDebitCreditStr)
+        final StringBuffer currentDebitCreditStr = new StringBuffer("SELECT coa.glcode AS accCode ,coa.name  AS accName, SUM(gl.creditAmount) as creditAmount,")
+                .append("sum(gl.debitAmount) as debitAmount")
+                .append(" FROM generalledger gl,chartofaccounts coa,financialyear fy,Voucherheader vh ")
+                .append(voucherMisTable)
+                .append(" WHERE gl.glcodeid=coa.id and vh.id= gl.voucherheaderid AND  vh.fundid=:fundId ")
+                .append(misClause)
+                .append(misDeptCond)
+                .append(functionaryCond)
+                .append(functionIdCond)
+                .append(misdivisionIdCond)
+                .append(" AND vh.voucherdate>=:fromDate AND vh.voucherdate<=:toDate ")
+                .append(" AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate")
+                .append(" AND vh.status not in (")
+                .append(defaultStatusExclude)
+                .append(") ")
+                .append(" GROUP BY gl.glcodeid,coa.glcode,coa.name ORDER BY coa.glcode ASC");
+        final Query currentDebitCreditQry = persistenceService.getSession().createNativeQuery(currentDebitCreditStr.toString())
                 .addScalar("accCode")
                 .addScalar("accName")
                 .addScalar("creditAmount", BigDecimalType.INSTANCE)
                 .addScalar("debitAmount", BigDecimalType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
-        currentDebitCreditQry.setInteger("fundId", rb.getFundId());
-        if (null != rb.getDepartmentId())
-            currentDebitCreditQry.setInteger("departmentId", rb.getDepartmentId());
-        if (null != rb.getFunctionaryId())
-            currentDebitCreditQry.setInteger("functionaryId", rb.getFunctionaryId());
-        if (null != rb.getFunctionId())
-            currentDebitCreditQry.setInteger("functionId", rb.getFunctionId());
-        if (null != rb.getDivisionId())
-            currentDebitCreditQry.setInteger("divisionId", rb.getDivisionId());
-        currentDebitCreditQry.setDate("fromDate", rb.getFromDate());
-        currentDebitCreditQry.setDate("toDate", rb.getToDate());
+        currentDebitCreditQry.setParameter("fundId", rb.getFundId(), IntegerType.INSTANCE);
+
+        deptQuertParams.entrySet().forEach(entry -> currentDebitCreditQry.setParameter(entry.getKey(), entry.getValue()));
+        functionaryQueryParams.entrySet().forEach(entry -> currentDebitCreditQry.setParameter(entry.getKey(), entry.getValue()));
+        functionQueryParams.entrySet().forEach(entry -> currentDebitCreditQry.setParameter(entry.getKey(), entry.getValue()));
+        divisionQueryParams.entrySet().forEach(entry -> currentDebitCreditQry.setParameter(entry.getKey(), entry.getValue()));
+
+        currentDebitCreditQry.setParameter("fromDate", rb.getFromDate(), DateType.INSTANCE)
+                .setParameter("toDate", rb.getToDate(), DateType.INSTANCE);
 
         final List<TrialBalanceBean> currentDebitCreditList = currentDebitCreditQry.list();
+
         if (LOGGER.isInfoEnabled())
             LOGGER.info("closing balance query ---->" + currentDebitCreditQry);
         if (LOGGER.isDebugEnabled())
@@ -967,7 +989,7 @@ public class TrialBalanceAction extends BaseFormAction {
         if (rb.getFundId() != null)
         {
             heading.append(" For ");
-            final String name = (String) persistenceService.find("select name from Fund where id=?", rb.getFundId());
+            final String name = (String) persistenceService.find("select name from Fund where id=?1", rb.getFundId());
             heading.append(name);
         } else
             heading.append(" For All Funds ");
@@ -997,7 +1019,7 @@ public class TrialBalanceAction extends BaseFormAction {
         if (rb.getFunctionId() != null)
         {
             heading.append(" in ");
-            final String code = (String) persistenceService.find("select name from CFunction where id=?",
+            final String code = (String) persistenceService.find("select name from CFunction where id=?1",
                     Long.valueOf(rb.getFunctionId()));
             heading.append(code);
             rb.setFunctionName(code);
@@ -1005,15 +1027,15 @@ public class TrialBalanceAction extends BaseFormAction {
 
         if (rb.getDepartmentId() != null)
             heading.append(" For  "
-                    + (String) persistenceService.find("select name from Department where id=?",
+                    + (String) persistenceService.find("select name from Department where id=?1",
                             (rb.getDepartmentId()).longValue()));
 
         if (rb.getFunctionaryId() != null)
             heading.append(" For  "
-                    + (String) persistenceService.find("select name from Functionary where id=?", rb.getFunctionaryId()));
+                    + (String) persistenceService.find("select name from Functionary where id=?1", rb.getFunctionaryId()));
         if (rb.getDivisionId() != null)
             heading.append(" For  "
-                    + (String) persistenceService.find("select name from Boundary where id=?", rb.getDivisionId()));
+                    + (String) persistenceService.find("select name from Boundary where id=?1", rb.getDivisionId()));
         return heading.toString();
     }
 

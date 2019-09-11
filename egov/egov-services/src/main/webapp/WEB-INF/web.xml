@@ -68,6 +68,11 @@
         <param-name>parentContextKey</param-name>
         <param-value>erpApplicationContext</param-value>
     </context-param>
+
+    <context-param>
+        <param-name>defaultHtmlEscape</param-name>
+        <param-value>true</param-value>
+    </context-param>
     <!-- Context Params Ends -->
 
     <!-- Filter Declaration Starts -->
@@ -197,13 +202,11 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-
+    <listener>
+        <listener-class>org.egov.infra.web.listener.MDCLoggingCorrelationIDAssigner</listener-class>
+    </listener>
     <listener>
         <listener-class>org.egov.services.zuulproxy.listeners.ZuulProxyStartServerListener</listener-class>
-    </listener>
-
-    <listener>
-        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
     </listener>
 
     <!-- Listeners Ends -->

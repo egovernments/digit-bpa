@@ -53,7 +53,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
@@ -65,10 +64,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +82,8 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.SEQUENCE;
 import static org.egov.infra.admin.master.entity.AppConfig.FETCH_WITH_VALUES;
 import static org.egov.infra.admin.master.entity.AppConfig.SEQ_APPCONFIG;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE;
 import static org.hibernate.annotations.FetchMode.JOIN;
 
 @Entity
@@ -88,21 +93,23 @@ import static org.hibernate.annotations.FetchMode.JOIN;
 @NamedEntityGraph(name = FETCH_WITH_VALUES, attributeNodes = @NamedAttributeNode("confValues"))
 public class AppConfig extends AbstractAuditable {
 
-    public static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
     public static final String FETCH_WITH_VALUES = "AppConfig.values";
+    protected static final String SEQ_APPCONFIG = "SEQ_EG_APPCONFIG";
     private static final long serialVersionUID = 8904645810221559541L;
+
     @Expose
     @Id
     @GeneratedValue(generator = SEQ_APPCONFIG, strategy = SEQUENCE)
     private Long id;
 
-    @NotBlank
     @SafeHtml
+    @NotBlank
     @Length(max = 250)
-    @Column(name = "key_name", updatable = false)
+    @Column(updatable = false)
+    @Pattern(regexp = ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHANUMERIC_UNDERSCORE_HYPHEN_SPACE)
     private String keyName;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, optional = false)
     @JoinColumn(name = "module", nullable = false, updatable = false)
     @NotNull
     private Module module;
@@ -110,12 +117,13 @@ public class AppConfig extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 250)
-    @Column(name = "description")
     private String description;
 
     @Valid
     @OneToMany(cascade = ALL, fetch = EAGER, mappedBy = "config", orphanRemoval = true)
     @Fetch(JOIN)
+    @NotEmpty
+    @OrderBy("effectiveFrom")
     private List<AppConfigValues> confValues = new ArrayList<>();
 
     @Override
@@ -162,18 +170,18 @@ public class AppConfig extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof AppConfig))
+        if (!(other instanceof AppConfig))
             return false;
-        final AppConfig appConfig = (AppConfig) o;
-        return Objects.equals(keyName, appConfig.keyName) &&
-                Objects.equals(module, appConfig.module);
+        AppConfig appConfig = (AppConfig) other;
+        return Objects.equals(getKeyName(), appConfig.getKeyName()) &&
+                Objects.equals(getModule(), appConfig.getModule());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(keyName, module);
+        return Objects.hash(getKeyName(), getModule());
     }
 }

@@ -55,13 +55,7 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
-import org.egov.egf.masters.model.FundingAgency;
-import org.egov.egf.masters.model.LoanGrantBean;
-import org.egov.egf.masters.model.LoanGrantDetail;
-import org.egov.egf.masters.model.LoanGrantHeader;
-import org.egov.egf.masters.model.LoanGrantReceiptDetail;
-import org.egov.egf.masters.model.SchemeBankaccount;
-import org.egov.egf.masters.model.SubSchemeProject;
+import org.egov.egf.masters.model.*;
 import org.egov.egf.web.actions.masters.loangrant.LoanGrantBaseAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -70,20 +64,15 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.masters.BankService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 
@@ -143,21 +132,21 @@ public class LoanGrantAction extends LoanGrantBaseAction {
     public void prepareBeforeEdit()
     {
 
-        loanGrantHeader = (LoanGrantHeader) persistenceService.find("from LoanGrantHeader where id=?",
+        loanGrantHeader = (LoanGrantHeader) persistenceService.find("from LoanGrantHeader where id=?1",
                 ((LoanGrantHeader) getModel()).getId());
-        final SchemeBankaccount account = (SchemeBankaccount) persistenceService.find("from SchemeBankaccount where subScheme=?",
+        final SchemeBankaccount account = (SchemeBankaccount) persistenceService.find("from SchemeBankaccount where subScheme=?1",
                 loanGrantHeader.getSubScheme());
         setFundId(loanGrantHeader.getSubScheme().getScheme().getFund().getId());
         setBank_branch(account.getBankAccount().getBankbranch().getId());
         final List<Bankaccount> accNumList = persistenceService.findAllBy(
-                "from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                "from Bankaccount ba where ba.bankbranch.id=?1 and fund.id=?2 and isactive=true order by ba.chartofaccounts.glcode",
                 bank_branch, fundId);
         setBankaccount(account.getBankAccount().getId().intValue());
 
         addDropdownData("bankaccountList", accNumList);
         final List<Bankbranch> branchList = persistenceService
                 .findAllBy(
-                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? ) and br.isactive=true order by br.bank.name asc",
+                        "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=?1 ) and br.isactive=true order by br.bank.name asc",
                         fundId);
         addDropdownData("bankbranchList", branchList);
         fundingAgencyList = new ArrayList<FundingAgency>();
@@ -165,10 +154,12 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         schemeId = loanGrantHeader.getSubScheme().getScheme().getId();
         subSchemeId = loanGrantHeader.getSubScheme().getId();
         projectCodeList = new ArrayList<LoanGrantBean>();
-        final String strQuery = "select pc.id as id , pc.code as code, pc.name as name from egw_projectcode pc," +
-                " egf_subscheme_project sp where pc.id= sp.projectcodeid and sp.subschemeid=" + subSchemeId;
-        query = persistenceService.getSession().createSQLQuery(strQuery)
+        final String strQuery = new StringBuilder("select pc.id as id , pc.code as code, pc.name as name")
+                .append(" from egw_projectcode pc, egf_subscheme_project sp")
+                .append(" where pc.id= sp.projectcodeid and sp.subschemeid=:subSchemeId").toString();
+        query = persistenceService.getSession().createNativeQuery(strQuery)
                 .addScalar("id", LongType.INSTANCE).addScalar("code").addScalar("name")
+                .setParameter("subSchemeId", subSchemeId, IntegerType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
         projectCodeList = query.list();
         final List<LoanGrantDetail> lgDetailList = loanGrantHeader.getDetailList();
@@ -230,10 +221,10 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         loanGrantHeaderList = new ArrayList<LoanGrantHeader>();
         if (schemeId != null && subSchemeId == null)
             loanGrantHeaderList.addAll(persistenceService.findAllBy(
-                    "from LoanGrantHeader where subScheme.scheme.id=? order by subScheme.name ", schemeId));
+                    "from LoanGrantHeader where subScheme.scheme.id=?1 order by subScheme.name ", schemeId));
         if (schemeId != null && subSchemeId != null)
             loanGrantHeaderList.addAll(persistenceService.findAllBy(
-                    "from LoanGrantHeader where subScheme.id=? order by subScheme.name ", subSchemeId));
+                    "from LoanGrantHeader where subScheme.id=?1 order by subScheme.name ", subSchemeId));
         return "search";
     }
 
@@ -286,10 +277,10 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         LoanGrantHeader header = null;
         boolean isDuplicate = false;
         if (subSchemeId != null && loanGrantHeader.getId() != null)
-            header = (LoanGrantHeader) persistenceService.find("from LoanGrantHeader where subScheme.id=? and id!=?",
+            header = (LoanGrantHeader) persistenceService.find("from LoanGrantHeader where subScheme.id=?1 and id!=?2",
                     subSchemeId, loanGrantHeader.getId());
         else if (subSchemeId != null)
-            header = (LoanGrantHeader) persistenceService.find("from LoanGrantHeader where subScheme.id=?", subSchemeId);
+            header = (LoanGrantHeader) persistenceService.find("from LoanGrantHeader where subScheme.id=?1", subSchemeId);
         if (header != null)
             isDuplicate = true;
         return isDuplicate;
@@ -335,8 +326,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         if (!getFieldErrors().isEmpty())
             return NEW;
         try {
-            final Scheme scheme = (Scheme) persistenceService.find(" from Scheme where id=?", getSchemeId());
-            final SubScheme subScheme = (SubScheme) persistenceService.find(" from SubScheme where id=?", getSubSchemeId());
+            final Scheme scheme = (Scheme) persistenceService.find(" from Scheme where id=?1", getSchemeId());
+            final SubScheme subScheme = (SubScheme) persistenceService.find(" from SubScheme where id=?1", getSubSchemeId());
             loanGrantHeader.setSubScheme(subScheme);
             if (loanGrantHeader.getRevisedCost() == null)
                 loanGrantHeader.setRevisedCost(BigDecimal.ZERO);
@@ -349,7 +340,7 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                 subSchemeProject.setProjectCode(bean.getId());
                 persistenceService.persist(subSchemeProject);
             }
-            final Bankaccount bankaccObj = (Bankaccount) persistenceService.find(" from Bankaccount where id=?", bankaccount);
+            final Bankaccount bankaccObj = (Bankaccount) persistenceService.find(" from Bankaccount where id=?1", bankaccount);
             final SchemeBankaccount schemeBankaccount = new SchemeBankaccount();
             schemeBankaccount.setBankAccount(bankaccObj);
             schemeBankaccount.setScheme(scheme);
@@ -376,9 +367,9 @@ public class LoanGrantAction extends LoanGrantBaseAction {
         if (!getFieldErrors().isEmpty())
             return EDIT;
         try {
-            final SubScheme subScheme = (SubScheme) persistenceService.find(" from SubScheme where id=?", getSubSchemeId());
+            final SubScheme subScheme = (SubScheme) persistenceService.find(" from SubScheme where id=?1", getSubSchemeId());
             loanGrantHeader.setSubScheme(subScheme);
-            final User user = (User) persistenceService.find("from User where id=?", ApplicationThreadLocals.getUserId());
+            final User user = (User) persistenceService.find("from User where id=?1", ApplicationThreadLocals.getUserId());
             final Date currDate = new Date();
             loanGrantHeader.setCreatedBy(user);
             loanGrantHeader.setModifiedBy(user);
@@ -403,8 +394,9 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                     lgRecptDetail.setCreatedDate(currDate);
                     lgRecptDetail.setModifiedDate(currDate);
                 }
-            query = persistenceService.getSession().createSQLQuery(
-                    "delete from egf_subscheme_project where subschemeid= " + getSubSchemeId());
+            query = persistenceService.getSession().createNativeQuery(
+                    "delete from egf_subscheme_project where subschemeid= :subSchemeId")
+                    .setParameter("subSchemeId", getSubSchemeId(), IntegerType.INSTANCE);
             query.executeUpdate();
             SubSchemeProject subSchemeProject;
             //persistenceService.setType(SubSchemeProject.class);
@@ -416,8 +408,8 @@ public class LoanGrantAction extends LoanGrantBaseAction {
                 persistenceService.persist(subSchemeProject);
             }
             final SchemeBankaccount schemeBankaccount = (SchemeBankaccount) persistenceService.find(
-                    "from SchemeBankaccount where scheme.id=?", getSchemeId());
-            final Bankaccount accountObj = (Bankaccount) persistenceService.find("from Bankaccount where id=?", bankaccount);
+                    "from SchemeBankaccount where scheme.id=?1", getSchemeId());
+            final Bankaccount accountObj = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", bankaccount);
             schemeBankaccount.setBankAccount(accountObj);
             //persistenceService.setType(LoanGrantHeader.class);
             persistenceService.persist(loanGrantHeader);

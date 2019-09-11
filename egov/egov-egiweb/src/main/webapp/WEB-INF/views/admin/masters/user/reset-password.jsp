@@ -52,7 +52,9 @@
 <div class="row">
     <div class="col-md-12">
         <c:if test="${not empty message}">
-            <div class="alert alert-success" role="alert"><spring:message code="${message}" arguments="${name}"/></div>
+            <div class="alert alert-success" role="alert">
+                <spring:message code="${message}" arguments="${name}" htmlEscape="false"/>
+            </div>
         </c:if>
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
@@ -60,7 +62,6 @@
             </div>
             <div class="panel-body custom-form">
                 <form:form id="password-form" cssClass="form-horizontal form-groups-bordered">
-                    <input style="display:none" type="text">
                     <input style="display:none" type="password"/>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">
@@ -76,7 +77,10 @@
                             <spring:message code="lbl.new.pwd"/><span class="mandatory"></span>
                         </label>
                         <div class="col-sm-6 add-margin">
-                            <input type="password" name="password" class="form-control" id="password" value="demo" autocomplete="off" required="required" maxlength="32"/>
+                            <input style="display:none" type="password"/>
+                            <input type="password" name="password" class="form-control readonly-pwd" id="password" value="demo"
+                                   autocomplete="off" required="required" maxlength="32"
+                                   onfocus="this.removeAttribute('readonly');" readonly="true"/>
                         </div>
                     </div>
                     <div class="form-group text-center">
@@ -86,7 +90,7 @@
                         </div>
                     </div>
                 </form:form>
-                <span class="mandatory"></span> <spring:message code="lbl.user.reset.pwd.info"/>
+                <span class="mandatory"></span> <spring:message code="lbl.user.reset.pwd.info" htmlEscape="false"/>
             </div>
         </div>
     </div>
@@ -107,7 +111,7 @@
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             limit: 10,
             remote: {
-                url: 'employee-name-like/?employeeName=',
+                url: 'employee-name-like/?name=',
                 replace: function (url, query) {
                     if ($('#username').val()) {
                         url += encodeURIComponent($('#username').val());

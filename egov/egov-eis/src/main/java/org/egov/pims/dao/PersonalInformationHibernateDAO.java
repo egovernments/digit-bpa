@@ -58,7 +58,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -129,7 +129,7 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 	
 	public void deleteLangKnownForEmp(PersonalInformation personalInformation)
 	{
-		Query qry = getCurrentSession().createSQLQuery("delete  from EGEIS_LANG_KNOWN B where B.id = :id ");
+		Query qry = getCurrentSession().createNativeQuery("delete  from EGEIS_LANG_KNOWN B where B.id = :id ");
 		qry.setInteger("id", personalInformation.getIdPersonalInformation());
 		
 	}

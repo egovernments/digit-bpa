@@ -49,7 +49,7 @@ package org.egov.demand.model;
 
 import org.egov.demand.interfaces.Billable;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
@@ -71,7 +71,7 @@ public abstract class AbstractBillable implements Billable {
     @Override
     public String getReferenceNumber() {
         try {
-            Query q = entityManager.unwrap(Session.class).createSQLQuery(NEXT_BILL_NUM_FROM_SEQ);
+            Query q = entityManager.unwrap(Session.class).createNativeQuery(NEXT_BILL_NUM_FROM_SEQ);
             return q.uniqueResult().toString();
         } catch (Exception e) {
             throw new ApplicationRuntimeException("Could not generate new bill no", e);

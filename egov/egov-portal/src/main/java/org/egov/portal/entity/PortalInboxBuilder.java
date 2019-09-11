@@ -49,12 +49,13 @@ package org.egov.portal.entity;
 
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -103,47 +104,14 @@ public class PortalInboxBuilder {
                 if (UserType.BUSINESS.toString().equalsIgnoreCase(userObject.getType().toString()) || UserType.CITIZEN
                         .toString().equalsIgnoreCase(userObject.getType().toString())) {
                     PortalInboxUser portalInboxUser = new PortalInboxUser();
-                    portalInboxUser.setTenantId(ApplicationThreadLocals.getTenantID());
                     portalInboxUser.setUser(userObject);
                     portalInboxUser.setPortalInbox(portalInbox);
-                    portalInbox.getTempPortalInboxUser().add(portalInboxUser);
-                } 
-            }
-        }
-    }
-    public PortalInboxBuilder(final Module module, final String applicantName, final String serviceType, final String applicationNumber,
-                              final String consumerNumber, final Long entityId, final String headerMsg, final String detailedMessage,
-                              final String link, final boolean isResolved, final String status, final Date slaEndDate, final State state,
-                              final List<User> user) {
-        portalInbox = new PortalInbox();
-        portalInbox.setModule(module);
-        portalInbox.setApplicantName(applicantName);
-        portalInbox.setServiceType(serviceType);
-        portalInbox.setApplicationNumber(applicationNumber);
-        portalInbox.setEntityRefNumber(consumerNumber);
-        portalInbox.setEntityRefId(entityId);
-        portalInbox.setHeaderMessage(headerMsg);
-        portalInbox.setResolved(isResolved);
-        portalInbox.setDetailedMessage(detailedMessage);
-        portalInbox.setLink(link);
-        portalInbox.setRead(false);
-        portalInbox.setStatus(status);
-        portalInbox.setSlaEndDate(slaEndDate);
-        portalInbox.setState(state);
-        portalInbox.setApplicationDate(DateUtils.now());
-        if (user != null && !user.isEmpty()) {
-            for (User userObject : user) {
-                if (UserType.BUSINESS.toString().equalsIgnoreCase(userObject.getType().toString()) || UserType.CITIZEN
-                        .toString().equalsIgnoreCase(userObject.getType().toString())) {
-                    PortalInboxUser portalInboxUser = new PortalInboxUser();
-                    portalInboxUser.setTenantId(ApplicationThreadLocals.getTenantID());
-                    portalInboxUser.setUser(userObject);
-                    portalInboxUser.setPortalInbox(portalInbox);
-                    portalInbox.getTempPortalInboxUser().add(portalInboxUser);
+                    portalInbox.setTempPortalInboxUser(new ArrayList<PortalInboxUser>(Arrays.asList(portalInboxUser)));
                 }
             }
         }
     }
+
     public PortalInbox build() throws ApplicationRuntimeException {
         validate();
         return portalInbox;

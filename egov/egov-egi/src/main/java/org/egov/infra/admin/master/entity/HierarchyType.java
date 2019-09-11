@@ -53,25 +53,31 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import static org.egov.infra.admin.master.entity.HierarchyType.SEQ_HIERARCHY_TYPE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
 
 @Entity
-@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @Table(name = "eg_hierarchy_type")
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_HIERARCHY_TYPE, sequenceName = SEQ_HIERARCHY_TYPE, allocationSize = 1)
 public class HierarchyType extends AbstractAuditable {
 
-    public static final String SEQ_HIERARCHY_TYPE = "SEQ_EG_HIERARCHY_TYPE";
+    protected static final String SEQ_HIERARCHY_TYPE = "SEQ_EG_HIERARCHY_TYPE";
     private static final long serialVersionUID = -7131667806935923935L;
     @Expose
     @Id
@@ -81,15 +87,19 @@ public class HierarchyType extends AbstractAuditable {
     @NotBlank
     @Length(max = 128)
     @SafeHtml
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String name;
 
     @NotBlank
     @Length(max = 25)
     @SafeHtml
+    @Column(updatable = false)
+    @Pattern(regexp = MASTER_DATA_CODE, message = INVALID_MASTER_DATA_CODE)
     private String code;
 
     @Length(max = 256)
     @SafeHtml
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String localName;
 
     @Override
@@ -127,18 +137,18 @@ public class HierarchyType extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (!(o instanceof HierarchyType))
+        if (!(other instanceof HierarchyType))
             return false;
-        HierarchyType that = (HierarchyType) o;
-        return Objects.equal(name, that.name) &&
-                Objects.equal(code, that.code);
+        HierarchyType that = (HierarchyType) other;
+        return Objects.equal(getName(), that.getName()) &&
+                Objects.equal(getCode(), that.getCode());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, code);
+        return Objects.hashCode(getName(), getCode());
     }
 }

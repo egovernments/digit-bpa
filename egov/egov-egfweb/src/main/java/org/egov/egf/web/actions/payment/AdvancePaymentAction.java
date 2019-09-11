@@ -47,16 +47,6 @@
  */
 package org.egov.egf.web.actions.payment;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -71,6 +61,7 @@ import org.egov.commons.Vouchermis;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -83,7 +74,6 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.advance.EgAdvanceReqPayeeDetails;
 import org.egov.model.advance.EgAdvanceRequisition;
 import org.egov.model.advance.EgAdvanceRequisitionDetails;
@@ -98,6 +88,9 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 @Results({ @Result(name = AdvancePaymentAction.NEW, location = "advancePayment-" + AdvancePaymentAction.NEW + ".jsp"),
         @Result(name = "view", location = "advancePayment-view.jsp") })
@@ -141,13 +134,13 @@ public class AdvancePaymentAction extends BasePaymentAction {
     private ScriptService scriptService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
 
     @Override
     public void prepare() {
         super.prepare();
         if (advanceRequisitionId != null) {
-            advanceRequisition = (EgAdvanceRequisition) persistenceService.find("from EgAdvanceRequisition where id=?",
+            advanceRequisition = (EgAdvanceRequisition) persistenceService.find("from EgAdvanceRequisition where id=?1",
                     advanceRequisitionId);
             populateFund();
             loadBankBranch(fund);
@@ -185,14 +178,11 @@ public class AdvancePaymentAction extends BasePaymentAction {
     }
 
     private void loadBankBranch(final Fund fund) {
-        addDropdownData(
-                "bankBranchList",
-                persistenceService
-                        .findAllBy(
-                                "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund=? and isactive = true and type in (?,?) ) "
-                                        + " and br.isactive=true and br.bank.isactive = true order by br.bank.name asc",
-                                fund, FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
-                                FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
+        StringBuilder queryString = new StringBuilder("from Bankbranch br")
+                .append(" where br.id in (select bankbranch.id from Bankaccount where fund=?1 and isactive = true and type in (?2,?3) ) ")
+                .append(" and br.isactive=true and br.bank.isactive = true order by br.bank.name asc");
+        addDropdownData("bankBranchList", persistenceService.findAllBy(queryString.toString(),fund,FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
+                FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
     }
 
     @ValidationErrorPage(value = NEW)
@@ -296,10 +286,10 @@ public class AdvancePaymentAction extends BasePaymentAction {
     private void prepareForView() {
         voucherHeader = (CVoucherHeader) persistenceService.getSession().load(CVoucherHeader.class,
                 voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                 voucherHeader);
         advanceRequisition = (EgAdvanceRequisition) persistenceService.find(
-                "from EgAdvanceRequisition where egAdvanceReqMises.voucherheader = ?", voucherHeader);
+                "from EgAdvanceRequisition where egAdvanceReqMises.voucherheader = ?1", voucherHeader);
         advanceRequisitionId = advanceRequisition.getId();
         commonBean.setAmount(paymentheader.getPaymentAmount());
         commonBean.setAccountNumberId(paymentheader.getBankaccount().getId().toString());
@@ -309,7 +299,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
         commonBean.setBankId(bankBranchId);
         commonBean.setModeOfPayment(paymentheader.getType().toUpperCase());
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService.find(
-                " from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                " from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
 
         commonBean.setPaidTo(miscbillDetail.getPaidto());
         loadAjaxedDropDowns();
@@ -325,10 +315,11 @@ public class AdvancePaymentAction extends BasePaymentAction {
     }
 
     private void populateBankAccounts(final Integer bankBranchId, final Integer fundId) {
-        addDropdownData("accountNumberList", persistenceService.findAllBy(
-                "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.type in (?,?) "
-                        + "and ba.isactive=true order by ba.chartofaccounts.glcode", bankBranchId, fundId,
-                FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
+        StringBuilder queryString = new StringBuilder("from Bankaccount ba")
+                .append(" where ba.bankbranch.id=?1 and ba.fund.id=?2 and ba.type in (?3,?4) ")
+                .append("and ba.isactive=true order by ba.chartofaccounts.glcode");
+        addDropdownData("accountNumberList", persistenceService.findAllBy(queryString.toString(),bankBranchId,fundId,FinancialConstants.TYPEOFACCOUNT_PAYMENTS,
+                FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
     }
 
     @SuppressWarnings("unchecked")
@@ -528,7 +519,7 @@ public class AdvancePaymentAction extends BasePaymentAction {
                     .getVoucherDate(), paymentheader);
         else
             map = voucherService.getDesgByDeptAndTypeAndVoucherDate(atype, scriptName, new Date(), paymentheader);
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
 
         final List<Map<String, Object>> desgList = (List<Map<String, Object>>) map.get("designationList");
         String strDesgId = "", dName = "";
@@ -558,8 +549,8 @@ public class AdvancePaymentAction extends BasePaymentAction {
         addDropdownData("designationList", (List<Designation>) map.get("designationList"));
 
         if (bDefaultDeptId && !dName.equals("")) {
-            final Department dept = (Department) persistenceService.find("from Department where deptName like '%"
-                    + dName + "' ");
+            final Department dept = (Department) persistenceService.find("from Department where deptName like ?1",
+                    "%".concat(dName));
             departmentId = dept.getId().intValue();
         }
         wfitemstate = map.get("wfitemstate") != null ? map.get("wfitemstate").toString() : "";

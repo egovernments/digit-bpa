@@ -54,7 +54,6 @@ import org.springframework.stereotype.Component;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-
 @Component
 public class EnvironmentSettings {
 
@@ -107,5 +106,9 @@ public class EnvironmentSettings {
 
     public String schemaName(String domainName) {
         return environment.getProperty("tenant." + domainName, defaultSchemaName());
+    }
+
+    public String getProperty(String keyPrefix, String keySuffix) {
+        return environment.getProperty(keyPrefix.toLowerCase() + keySuffix.toLowerCase());
     }
 }

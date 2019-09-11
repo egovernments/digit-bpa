@@ -1,1 +1,0 @@
-update egp_portalservice set userservice =false where module in (select id from eg_module  where name in ('BPA','EDCR'));

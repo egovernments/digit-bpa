@@ -63,7 +63,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "egp_citizen",schema="state")
+@Table(name = "egp_citizen")
 public class Citizen extends User {
 
     private static final long serialVersionUID = -521416613072970524L;
@@ -72,7 +72,7 @@ public class Citizen extends User {
     private String activationCode;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userdevice", schema="state", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "deviceid"))
+    @JoinTable(name = "eg_userdevice", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "deviceid"))
     private Set<Device> devices = new HashSet<>();
 
     public Citizen() {

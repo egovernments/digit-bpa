@@ -1,0 +1,10 @@
+{
+	"resources": [
+		{
+			"url": "/v1.0/property/**"
+		},
+		{
+			"url": "/v1.0/watercharges/**"
+		}
+	]
+}

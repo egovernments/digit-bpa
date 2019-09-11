@@ -53,19 +53,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <c:if test="${empty analyticsEnabled}">
+        <spring:eval expression="@environment.getProperty('analytics.enabled')" scope="application" var="analyticsEnabled"/>
+        <spring:eval expression="@environment.getProperty('analytics.config')" scope="application" var="analyticsConfig"/>
+    </c:if>
+    <c:if test="${analyticsEnabled}">
+        <c:out value="${analyticsConfig}" escapeXml="false"/>
+    </c:if>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="eGov Urban Portal"/>
     <meta name="author" content="eGovernments Foundation"/>
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
-    <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg"/>
+    <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="false"/>
     <title>Citizen Signup</title>
     <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-    <link rel="stylesheet"
-          href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
     <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>" type="text/javascript"></script>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -73,6 +81,10 @@
     <script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
     <script src="<cdn:url value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
     <![endif]-->
+    <script>
+        const tokenVal = '${_csrf.token}';
+        const tokenName = '${_csrf.parameterName}';
+    </script>
 </head>
 <body class="page-body">
 <div class="page-container">
@@ -91,7 +103,7 @@
                     <ul class="hr-menu text-right">
                         <li class="ico-menu">
                             <a href="http://www.egovernments.org" data-strwindname="egovsite" class="open-popup">
-                                <img src="<cdn:url value='/resources/global/images/digit-logo-black.png' context='/egi'/>" title="Powered by eGovernments" height="35px" style="opacity: 0.8">
+                                <img src="<cdn:url value='/resources/global/images/egov_logo_tr_h.png' context='/egi'/>" title="Powered by eGovernments" height="37" alt="">
                             </a>
                         </li>
                     </ul>
@@ -102,7 +114,18 @@
     <div class="main-content">
         <div class="login-content login-content-margin signup-section">
             <c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+                <div class="alert alert-success" role="alert">
+                    <spring:message code="${message}"/> <br/>
+                </div>
+                <script>
+                    setTimeout(function () {
+                        if (window.opener && window.opener.document.getElementById("username")) {
+                            window.opener.document.getElementById("username").value = '${mobileNo}';
+                        }
+                        window.close();
+                    }, 5000)
+
+                </script>
             </c:if>
             <div class="login-body">
                 <form:form method="post" role="form" id="signupform" modelAttribute="citizen" autocomplete="off">
@@ -116,7 +139,9 @@
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-mobile fa-fw theme-color style-color"></i>
                             </div>
-                            <form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="mobileNumber" placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10" autocomplete="off" required="required"/>
+                            <form:input path="mobileNumber" cssClass="form-control style-form is_valid_number" id="mobileNumber"
+                                        placeholder="Mobile number" title="Enter valid mobile number!" minlength="10" maxlength="10"
+                                        autocomplete="off" required="required"/>
                             <span class="mandatory set-mandatory"></span>
                             <form:hidden path="username" id="username"/>
                             <div class="text-right error-msg display-hide mobile-error" style="margin:0;">
@@ -127,13 +152,16 @@
                             </div>
                         </div>
                     </div>
-                    <input style="display:none" type="password">
+                    <input style="display:none" type="password"/>
                     <div class="form-group overflow" id="wrap">
                         <div class="input-group">
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-key fa-fw theme-color style-color"></i>
                             </div>
-                            <form:password path="password" cssClass="form-control style-form check-password" id="password" placeholder="Password" maxlength="32" autocomplete="new-password" required="required" data-container="#wrap" data-toggle="popover" data-content='${pwdmsg}'/>
+                            <form:password path="password" cssClass="form-control style-form check-password readonly-pwd"
+                                           id="password" placeholder="Password" maxlength="32" autocomplete="new-password"
+                                           required="required" data-container="#wrap" data-toggle="popover"
+                                           data-content='${pwdmsg}' onfocus="this.removeAttribute('readonly');" readonly="true"/>
                             <span class="mandatory set-mandatory"></span>
                             <div class="input-group-addon" style="background:#fff;border:none;border-bottom:1px solid #D0D2D7;cursor:default;">
                                 <i class="fa fa-eye show password-view" data-view="show" aria-hidden="true"></i>
@@ -143,15 +171,19 @@
                         <label class="text-right align-top add-margin error-msg display-hide password-invalid" style="margin:0;">
                                 ${pwdmsg}
                         </label>
-                        <div class="text-right" style="margin:0;"><form:errors path="password" cssClass="error-check add-margin error-msg font-12"/></div>
+                        <div class="text-right" style="margin:0;">
+                            <form:errors path="password" cssClass="error-check add-margin error-msg font-12"/>
+                        </div>
                     </div>
                     <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-key fa-fw theme-color style-color"></i>
                             </div>
-                            <input type="password" class="form-control style-form check-password" name="con-password" id="con-password" placeholder="Confirm password"
-                                   autocomplete="new-password" required="required" maxlength="32"/>
+                            <input style="display:none" type="password"/>
+                            <input type="password" class="form-control style-form check-password readonly-pwd" name="con-password" id="con-password"
+                                   placeholder="Confirm password" autocomplete="new-password" required="required" maxlength="32"
+                                   onfocus="this.removeAttribute('readonly');" readonly="true"/>
                             <span class="mandatory set-mandatory"></span>
                             <label id="con-password-error" class="error pull-right display-hide" for="con-password">Required</label>
                             <div class="text-right add-margin error-msg display-hide password-error" style="margin:0;">
@@ -184,7 +216,7 @@
                             <div class="input-group-addon style-label">
                                 <i class="fa fa-key fa-fw theme-color style-color"></i>
                             </div>
-                            <form:password path="activationCode" id="activationcode" cssClass="form-control style-form" placeholder="OTP" minlength="5" maxlength="5" autocomplete="off" required="required"/>
+                            <form:password path="activationCode" id="activationcode" cssClass="form-control style-form" placeholder="Enter OTP" minlength="5" maxlength="5" autocomplete="off" required="required"/>
                             <span class="mandatory set-mandatory"></span>
                             <div class="input-group-addon" style="background:#fff;border:none;border-bottom:1px solid #D0D2D7;cursor:default;">
                                 <i class="fa fa-eye show otp-view" data-view="show" aria-hidden="true"></i>
@@ -399,5 +431,6 @@
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>" type="text/javascript"></script>
 <script src="<cdn:url value='/resources/js/signup.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>						

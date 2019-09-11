@@ -51,7 +51,7 @@ import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.commons.Position;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -104,12 +104,12 @@ public class PositionMasterDAO
         }
     }
 
-    public Position getPosition(int posId)
+    public Position getPosition(Long posId)
     {
         try
         {
         	Position desig = null;
-            desig = (Position)getCurrentSession().get(Position.class, Integer.valueOf(posId));
+            desig = (Position)getCurrentSession().get(Position.class, posId);
             return desig;
         }
         catch(Exception e)

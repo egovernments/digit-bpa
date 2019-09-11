@@ -62,6 +62,8 @@ import org.egov.commons.Fund;
 import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
 import org.egov.egf.model.BudgetAmountView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -69,15 +71,16 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.service.BudgetingGroupService;
 import org.egov.pims.commons.Position;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.services.budget.BudgetService;
@@ -153,9 +156,15 @@ public class BudgetSearchAction extends BaseFormAction {
     protected BudgetService budgetService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+
     @Autowired
-    @Qualifier("masterDataCache")
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private BudgetingGroupService budgetingGroupService;
 
     public String getMessage() {
         return message;
@@ -267,7 +276,7 @@ public class BudgetSearchAction extends BaseFormAction {
             headerFields = budgetDetailConfig.getHeaderFields();
             gridFields = budgetDetailConfig.getGridFields();
             // setupDropdownDataExcluding(Constants.SUB_SCHEME);
-            dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
+            dropdownData.put("budgetGroupList", budgetingGroupService.getActiveBudgetGroups());
             dropdownData.put("budgetList", budgetDetailService.findApprovedBudgetsForFY(getFinancialYear()));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("done findApprovedBudgetsForFY");
@@ -276,13 +285,13 @@ public class BudgetSearchAction extends BaseFormAction {
             if (shouldShowField(Constants.SUB_SCHEME))
                 dropdownData.put("subSchemeList", Collections.EMPTY_LIST);
             if (shouldShowField(Constants.FUNCTIONARY))
-                dropdownData.put("functionaryList", masterDataCache.get("egi-functionary"));
+                dropdownData.put("functionaryList", functionaryDAO.findAllActiveFunctionary());
             if (shouldShowField(Constants.FUNCTION))
-                dropdownData.put("functionList", masterDataCache.get("egi-function"));
+                dropdownData.put("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
             if (shouldShowField(Constants.SCHEME))
                 dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
             if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
-                dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
+                dropdownData.put("executingDepartmentList", departmentService.getAllDepartments());
             if (shouldShowField(Constants.BOUNDARY))
                 dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
             if (shouldShowField(Constants.FUND))
@@ -307,15 +316,15 @@ public class BudgetSearchAction extends BaseFormAction {
             persistenceService.getSession().refresh(budgetDetail.getBudget());
 
             if (budgetDetail.getBudget().getFinancialYear() == null)
-                budgetDetail.setBudget(budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId()));
+                budgetDetail.setBudget(budgetService.find("from Budget where id=?1", budgetDetail.getBudget().getId()));
             financialYear = budgetDetail.getBudget().getFinancialYear().getId();
             if (isApproveAction == true)
                 budgetList.add(budgetService.find(
-                        "select budget from Budget budget  join budget.state as state where budget.id=? and state.owner=? ",
+                        "select budget from Budget budget  join budget.state as state where budget.id=?1 and state.owner=?2 ",
                         budgetDetail.getBudget().getId(), getPosition()));
             else
                 budgetList.add(budgetService.find(
-                        "select budget from Budget budget  join budget.state as state where budget.id=? and state.value=? ",
+                        "select budget from Budget budget  join budget.state as state where budget.id=?1 and state.value=?2 ",
                         budgetDetail.getBudget().getId(), "NEW"));
 
         } else {
@@ -427,7 +436,7 @@ public class BudgetSearchAction extends BaseFormAction {
          */
         Budget budget = budgetDetail.getBudget();
         if (budget != null && budget.getId() != null) {
-            budget = (Budget) persistenceService.find("from Budget where id=?", budget.getId());
+            budget = (Budget) persistenceService.find("from Budget where id=?1", budget.getId());
             currentfinYearRange = budget.getFinancialYear().getFinYearRange();
             computePreviousYearRange();
             computeTwopreviousYearRange();
@@ -558,7 +567,7 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     protected User getUser() {
-        final User user = (User) persistenceService.find("from User where id_user=?", ApplicationThreadLocals.getUserId());
+        final User user = (User) persistenceService.find("from User where id_user=?1", ApplicationThreadLocals.getUserId());
         return user;
     }
 
@@ -698,17 +707,9 @@ public class BudgetSearchAction extends BaseFormAction {
         return appConfigValuesService;
     }
 
-    public EgovMasterDataCaching getMasterDataCache() {
-        return masterDataCache;
-    }
-
     public void setAppConfigValuesService(
             AppConfigValueService appConfigValuesService) {
         this.appConfigValuesService = appConfigValuesService;
-    }
-
-    public void setMasterDataCache(EgovMasterDataCaching masterDataCache) {
-        this.masterDataCache = masterDataCache;
     }
 
     public BudgetDetail getBudgetDetail() {

@@ -46,13 +46,6 @@
  *
  */
 
-function populateBoundary(dropdown) {
-    populateboundarySelect({
-        boundaryTypeId: dropdown.value
-    });
-
-}
-
 $(document).ready(function () {
 
     $('#crosshierarchysave').unbind('click').bind('click', function (e) {
@@ -61,7 +54,7 @@ $(document).ready(function () {
 
         bootbox.confirm("Existing Cross hierarchy mapping will be overridden, Are you sure?", function (result) {
             if (result) {
-                document.forms["crossHierarchyForm"].submit();
+                $("#crossHierarchyForm").submit();
             }
         });
 

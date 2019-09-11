@@ -72,6 +72,7 @@
 
 	<s:form action="journalVoucher" theme="simple" name="jvcreateform">
 		<s:token />
+		<input type="hidden" id="csrfTokenValue" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		<jsp:include page="../budget/budgetHeader.jsp">
 			<jsp:param name="heading" value="Journal voucher Create" />
 		</jsp:include>
@@ -275,7 +276,7 @@
 		
 		if(vhType =='-1' )	{
 			document.getElementById('lblError').innerHTML = "Please select voucher sub type ";
-			document.getElementById('voucherDate').focus();
+			document.getElementById('vType').focus();
 			return false;
 		}
 		if(vhDate == '' )	{
@@ -297,6 +298,12 @@
 		if(vVoucherSubType != 'JVGeneral' && vVoucherSubType != '-1' )	{
 			if(document.getElementById('voucherTypeBean.partyName').value == '' ) {
 				document.getElementById('lblError').innerHTML = "Please enter a Party Name ";
+				document.getElementById('voucherTypeBean.partyName').focus();
+				return false;
+			}
+			var partyName = document.getElementById('voucherTypeBean.partyName').value;
+			if(partyName.trim().length == 0){
+				document.getElementById('lblError').innerHTML = "Only empty spaces are not allowed";
 				document.getElementById('voucherTypeBean.partyName').focus();
 				return false;
 			}

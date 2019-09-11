@@ -49,7 +49,6 @@
 package org.egov.demand.dao;
 
 import org.egov.demand.model.EgDemandReason;
-import org.egov.demand.model.EgDemandReasonMaster;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,9 +82,9 @@ public class EgDemandReasonHibDao implements EgDemandReasonDao {
 	}
 
 	@Override
-	public void create(EgDemandReason egDemandReason) {
+	public EgDemandReason create(EgDemandReason egDemandReason) {
 
-	       getCurrentSession().save(egDemandReason);
+		return null;
 	}
 
 	@Override

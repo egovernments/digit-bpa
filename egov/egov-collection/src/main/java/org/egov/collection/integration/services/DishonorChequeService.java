@@ -157,12 +157,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
             else
                 createDishonorChequeWithoutVoucher(chequeForm, instrumentHeader);
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -188,13 +188,13 @@ public class DishonorChequeService implements FinancialIntegrationService {
         final Set<DishonorChequeDetails> dishonorChequeDetailsSet = new HashSet<>();
         CGeneralLedger ledger = new CGeneralLedger();
         for (final String gl : receiptGeneralLedger) {
-            ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
+            ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ?1 and glcode = ?2",
                     originalVoucher.getId(), gl.split("-")[0].trim());
             final List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService.findAllBy(
-                    "from CGeneralLedgerDetail where generalLedgerId.id=?", ledger.getId());
+                    "from CGeneralLedgerDetail where generalLedgerId.id=?1 ", ledger.getId());
             final DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
             dishonourChqDetails.setHeader(dishonorChq);
-            final CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
+            final CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1",
                     ledger.getGlcode());
             dishonourChqDetails.setGlcodeId(glCode);
             if (ledger.getFunctionId() != null)
@@ -220,13 +220,13 @@ public class DishonorChequeService implements FinancialIntegrationService {
             final CVoucherHeader remittanceVoucher = voucherHeaderService
                     .find("select gl.voucherHeaderId from CGeneralLedger gl ,InstrumentOtherDetails iod where gl.voucherHeaderId.id = iod.payinslipId.id and iod.instrumentHeaderId.id   in ("
                             + chequeForm.getInstHeaderIds() + ") ");
-            ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
+            ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ?1 and glcode = ?2",
                     remittanceVoucher.getId(), gl.split("-")[0].trim());
             final List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService.findAllBy(
-                    "from CGeneralLedgerDetail where generalLedgerId.id=?", ledger.getId());
+                    "from CGeneralLedgerDetail where generalLedgerId.id=?1", ledger.getId());
             final DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
             dishonourChqDetails.setHeader(dishonorChq);
-            final CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
+            final CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?1",
                     ledger.getGlcode());
             dishonourChqDetails.setGlcodeId(glCode);
             if (ledger.getFunctionId() != null)
@@ -281,12 +281,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
             persistenceService.applyAuditing(dishonorChq);
             persistenceService.persist(dishonorChq);
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e.getMessage());
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e.getMessage());
+            LOGGER.error("Error in DishonorCheque >>>>" + e);
             final List<ValidationError> errors = new ArrayList<>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -296,13 +296,13 @@ public class DishonorChequeService implements FinancialIntegrationService {
 
     public CollectionDishonorChequeDetails populateDischonourChequedetails(final DishonoredChequeBean chequeForm,
             final CollectionDishonorCheque dishonorChq, final String[] receiptGeneralLedger)
-                    throws NumberFormatException {
+            throws NumberFormatException {
         CollectionDishonorChequeDetails dishonourChqDetails = new CollectionDishonorChequeDetails();
         CollectionDishonorChequeSubLedgerDetails dishonourChqSLDetails;
         ReceiptDetail ledger = new ReceiptDetail();
         for (final String gl : receiptGeneralLedger) {
             ledger = (ReceiptDetail) persistenceService.find(
-                    "from ReceiptDetail where collectionheader = ? and accounthead.glcode = ?",
+                    "from ReceiptDetail where collectionheader = ?1 and accounthead.glcode = ?2",
                     Long.valueOf(chequeForm.getReceiptHeaderIds().split(",")[0]), gl.split("-")[0].trim());
             final Set<AccountPayeeDetail> ledgerDetailSet = ledger.getAccountPayeeDetails();
             dishonourChqDetails = new CollectionDishonorChequeDetails();
@@ -352,12 +352,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 updateCollectionsOnInstrumentDishonor(Long.valueOf(instHeadId));
 
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -401,12 +401,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
             voucherHeaderService.applyAuditing(reversalVoucher);
             voucherHeaderService.persist(reversalVoucher);
         } catch (final ValidationException e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
             throw new ValidationException(errors);
         } catch (final Exception e) {
-            LOGGER.error("Error in DishonorCheque >>>>" + e);
+            LOGGER.error("Error in DishonorCheque >>>>", e);
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             errors.add(new ValidationError("exp", e.getMessage()));
             throw new ValidationException(errors);
@@ -425,7 +425,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
         headerdetails.put(VoucherConstant.VOUCHERDATE, voucherHeader.getVoucherDate());
         headerdetails.put(
                 VoucherConstant.DESCRIPTION,
-                " Reversal Voucher Entry for receipt number " + voucherHeader.getVoucherNumber() + ", Cheque Number "
+                " Reversal Voucher Entry for Voucher number " + voucherHeader.getVoucherNumber() + ", Cheque Number "
                         + instrumentHeader.getInstrumentNumber() + " Cheque Dated :"
                         + instrumentHeader.getInstrumentDate());
 
@@ -460,7 +460,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 .getReceiptStatusForCode(CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
         final ReceiptHeader receiptHeader = (ReceiptHeader) persistenceService
                 .find("select DISTINCT (receipt) from ReceiptHeader receipt "
-                        + "join receipt.receiptInstrument as instruments where instruments.id=? and instruments.statusId.code not in (?,?)",
+                        + "join receipt.receiptInstrument as instruments where instruments.id=?1 and instruments.statusId.code not in (?2,?3)",
                         Long.valueOf(instrumentHeaderId), receiptInstrumentBounceStatus.getCode(),
                         receiptCancellationStatus.getCode());
         final InstrumentHeader instrumentHeader = (InstrumentHeader) persistenceService.findByNamedQuery(

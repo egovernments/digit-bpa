@@ -48,10 +48,10 @@
 
 package org.egov.infra.filestore.entity;
 
-import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
-
-import java.util.Date;
-import java.util.Objects;
+import jdk.nashorn.internal.ir.annotations.Immutable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,20 +60,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import java.util.Objects;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_FILE_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.FILE_NAME;
 
 @Table(name = "eg_filestoremap")
 @Entity
 @SequenceGenerator(name = SEQ_FILESTOREMAPPER, sequenceName = SEQ_FILESTOREMAPPER, allocationSize = 1)
-public class FileStoreMapper extends AbstractPersistable<Long> {
-    public static final String SEQ_FILESTOREMAPPER = "SEQ_EG_FILESTOREMAP";
+@Immutable
+public class FileStoreMapper extends AbstractAuditable {
+    protected static final String SEQ_FILESTOREMAPPER = "SEQ_EG_FILESTOREMAP";
     private static final long serialVersionUID = -2997164207274266823L;
+
     @Id
     @GeneratedValue(generator = SEQ_FILESTOREMAPPER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -84,16 +86,14 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
     private String fileStoreId;
 
     @NotBlank
-    @Length(max = 100)
+    @Length(max = 255)
     @SafeHtml
+    @Pattern(regexp = FILE_NAME, message = INVALID_FILE_NAME)
     private String fileName;
 
     @Length(max = 100)
     @SafeHtml
     private String contentType;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate = new Date();
 
     protected FileStoreMapper() {
         // For JPA
@@ -138,21 +138,13 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
         this.contentType = contentType;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
     @Override
     public boolean equals(Object other) {
         if (this == other)
             return true;
         if (!(other instanceof FileStoreMapper))
             return false;
-        final FileStoreMapper that = (FileStoreMapper) other;
+        FileStoreMapper that = (FileStoreMapper) other;
         return that.id != null && Objects.equals(id, that.id);
     }
 

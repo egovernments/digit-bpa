@@ -51,7 +51,7 @@ package org.egov.demand.dao;
 import org.egov.commons.Installment;
 import org.egov.demand.model.DepreciationMaster;
 import org.egov.infra.admin.master.entity.Module;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -169,8 +169,7 @@ public class DepreciationMasterHibDao implements DepreciationMasterDao {
 
 	@Override
 	public List<DepreciationMaster> findAll() {
-
-		return null;
+		return getCurrentSession().createQuery("from DepreciationMaster").getResultList();
 	}
 
 	@Override
@@ -189,6 +188,14 @@ public class DepreciationMasterHibDao implements DepreciationMasterDao {
 	public DepreciationMaster update(DepreciationMaster depreciationMaster) {
 
 		return null;
+	}
+
+	@Override
+	public DepreciationMaster findByName(String name) {
+		Query qry = getCurrentSession().createQuery(
+				"from DepreciationMaster DM where DM.depreciationName=:name ");
+		qry.setParameter("name", name);
+		return (DepreciationMaster) qry.uniqueResult();
 	}
 
 }

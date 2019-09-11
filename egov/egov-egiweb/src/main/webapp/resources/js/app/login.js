@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,138 +46,112 @@
  *
  */
 
-$(document).ready(function()
-{
-	
-	localStorage.clear();
-	$('.recovrbtn').click(function(){
-		if($('#emailOrMobileNum').val()===""){
-			$('#emailOrMobileNoReq').show();
-		}else{
-			$('#originURL').val(location.origin);
-			if($(this).attr("id") == "recoveryotpbtn")
-				$("#byOtp").val(true);
+$(document).ready(function () {
+
+    localStorage.clear();
+    $('.recovrbtn').click(function () {
+        if ($('#emailOrMobileNum').val() === "") {
+            $('#emailOrMobileNoReq').show();
+        } else {
+            $('#originURL').val(location.origin);
+            if ($(this).attr("id") == "recoveryotpbtn")
+                $("#byOtp").val(true);
             else
                 $("#byOtp").val(false);
-			$('#forgotPasswordForm').attr('action', '/egi/login/password/recover').trigger('submit');
-		}
-		return false;
-	});
+            $('#forgotPasswordForm').attr('action', '/egi/login/password/recover').trigger('submit');
+        }
+        return false;
+    });
 
-    $("#otprecoverybtn").click( function () {
+    $("#otprecoverybtn").click(function () {
             if ($("#token").val() != "") {
-                window.location = '/egi/login/password/reset?token='+$("#token").val();
+                $('#otpForm').attr('action', '/egi/login/password/reset').trigger('submit');
             }
         }
     );
 
-	$('#compsearch').click(function() {
-		var compnum=$('#compsearchtxt').val();
-		if (compnum !== "") {
-			$('.search-error-msg').addClass('display-hide');
-			window.open("/pgr/complaint/citizen/anonymous/search?crn="+compnum,"_blank");
-		}else{
-			$('.search-error-msg').removeClass('display-hide');
-		}
-	});
-	
-	var checklocation = false;
-	
-	$('#j_username').blur(function(){
-		$('#locationId').empty();
-		if(!$.trim($(this).val())){
-			//console.log('Trimmed - value is not there');
-		}else{
-			$.ajax({
-			      url: "requiredlocations?username="+this.value,
-			      dataType: "json",
-			      success: function(data) { 
-			    	  checklocation = true;
-			    	  //console.log(JSON.stringify(data));
-			    	  if(data.length > 0){
-			    		  $('#locationId').append('<option value="">select location</option>');
-			    		  $.each(data, function (key,value) {
-							  console.log(value.id+"<-->"+value.name);
-							  var opt = "<option value=" + value.id + ">" + value.name + "</option>";
-							  $('#locationId').append(opt);
-							  $("#locationId").attr('required', true);
-						  });	
-			    		  $('#counter-section').removeClass('display-hide');
-			    		  loaddpdown_value();
-			    	  }else{
-			    		  $('#locationId').empty();
-			    		  $('#locationId').attr('required', false);
-			    		  $('#counter-section').addClass('display-hide');
-			    	  }
-		    	  },
-		    	  error: function() {
-	    	         console.log('Error method');
-		          }
-			});
-		}
-		//ajax call to load counter
-		
-	});
-	
-	function loaddpdown_value(){
-		$("#locationId").each(function() { 
-			console.log($(this).children('option').length);
-			if($(this).children('option').length == 2)
-			{
-			  $(this).find('option').eq(1).prop('selected', true);
-			}
-		});
-	}
-	
-	$("#signin-action").click(function(e){
-		if($('#signform').valid()){
-			//console.log('Form valid');
-			if(!checklocation){
-				$('#j_username').trigger('blur');
-				e.preventDefault();
-			}
-		}else{
-			//console.log('Form not valid');
-			e.preventDefault();
-		}
-	});
-	
-	$("#signform").validate({
-	    rules: {
-	    	j_username: "required",
-	    	j_password: "required"
-	    },
-	    messages: {
-	    	j_username: "Please enter your Mobile Number / Login ID",
-	    	j_password: "Please enter your password"
-	    }
-	});
-	
-	if(navigator.cookieEnabled){
-		
-	}else{
-		$('#cookieornoscript').modal('show', {backdrop: 'static'});
-	}
-	
-	$('#appsearch').click(function() {
-		var applnum=$('#appsearchtxt').val();
-		if (applnum) {
-			$('.search-error-msg').addClass('display-hide');
-			$('#appsearchtxt').val("");
-			window.open("/bpa/application/citizen/check-status/"+applnum,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes')
-		}else{
-			$('.search-error-msg').removeClass('display-hide');
-		}
-	});
-	
-	$('#stkhldrregfeesearch').click(function() {
-		var acknum=$('#stkhldrregfeetxt').val();
-		if (acknum) {
-			$('.search-stkhldr-error-msg').addClass('display-hide');
-			$('#stkhldrregfeetxt').val("");
-			window.open("/bpa/stakeholder/payregfee/"+acknum,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes')
-		}else{
-			$('.search-stkhldr-error-msg').removeClass('display-hide');
-		}
-	});
+    $('#compsearch').click(function () {
+        var compnum = $('#compsearchtxt').val();
+        if (compnum !== "") {
+            $('.search-error-msg').addClass('display-hide');
+            window.open("/pgr/grievance/search?crn=" + compnum, "_blank");
+        } else {
+            $('.search-error-msg').removeClass('display-hide');
+        }
+    });
+
+    var checklocation = false;
+
+    $('#username').blur(function () {
+        $('#location').find('option:gt(0)').remove();
+        if ($.trim($(this).val())) {
+            $.ajax({
+                url: "preauth-check",
+                type: 'POST',
+                data: {"username": this.value},
+                dataType: "json",
+                success: function (preAuthCheckResponse) {
+                    preAuthCheck = true;
+                    if (preAuthCheckResponse.locationRequired) {
+                        $("#location").attr('required', true);
+                        $('#counter-section').removeClass('display-hide');
+                        $.each(preAuthCheckResponse.locations, function (key, value) {
+                            var opt = "<option value=" + value.id + ">" + value.name + "</option>";
+                            $('#location').append(opt);
+                        });
+                        if ($('#location > option').length = 2)
+                            $("#location").prop('selectedIndex', 1);
+                    } else {
+                        $('#location').attr('required', false);
+                        $('#counter-section').addClass('display-hide');
+                    }
+
+                    if (preAuthCheckResponse.otpAuthRequired) {
+                        $('#otp').attr('required', true);
+                        $('#otp-section').removeClass('display-hide');
+                        $('#otp-msg').show();
+                    } else {
+                        $('#otp').attr('required', false);
+                        $('#otp-section').addClass('display-hide');
+                        $('#otp-msg').hide();
+                    }
+                },
+                error: function () {
+                    console.log('Error while loading locations');
+                }
+            });
+        } else {
+            $('#password').val('');
+            $('#location').attr('required', false);
+            $('#counter-section').addClass('display-hide');
+            $('#otp').attr('required', false);
+            $('#otp-section').addClass('display-hide');
+        }
+    });
+
+    $("#signin-action").click(function (e) {
+        if ($('#signform').valid()) {
+            if (!preAuthCheck) {
+                $('#username').trigger('blur');
+                e.preventDefault();
+            }
+        } else {
+            e.preventDefault();
+        }
+    });
+
+    $("#signform").validate({
+        rules: {
+            username: "required",
+            password: "required"
+        },
+        messages: {
+            username: "Please enter your Username",
+            password: "Please enter your Password"
+        }
+    });
+
+    if (!navigator.cookieEnabled) {
+        $('#cookieornoscript').modal('show', {backdrop: 'static'});
+    }
 });

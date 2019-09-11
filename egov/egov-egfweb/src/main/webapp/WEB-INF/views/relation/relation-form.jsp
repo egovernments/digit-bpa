@@ -60,15 +60,17 @@
 								code="lbl.code" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="code"
-								class="form-control text-left patternvalidation"
+								class="form-control text-left patternvalidation enteredValue" onkeypress="return replaceSpecialChar(event)"
+										onkeyup="isSpecialChar()" onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="name"
-								class="form-control text-left patternvalidation"
+							<form:input path="name" onkeypress="return replaceSpecialChar(event)"
+								class="form-control text-left patternvalidation enteredValue" onkeyup="isSpecialChar()"
+										onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="50" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
@@ -85,9 +87,10 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.mobile" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="mobile" id="mobile"
+							<form:input path="mobile" id="mobile" onchange="checkLength();"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" maxlength="10"   />
+								data-pattern="number" maxlength="10" />
+								<p id="errorForMobileNo" style="color:red;font-size:14px;display:none;">Please enter 10 digit mobile number</p>
 							<form:errors path="mobile" cssClass="error-msg" />
 						</div>
 					</div>
@@ -95,9 +98,10 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.email" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="email"
+							<form:input path="email" id="emailId" onchange="isvalidEmail()"
 								class="form-control text-left patternvalidation"
 								data-pattern="alphanumeric" maxlength="25" />
+								<p id="errorForEmailId" style="color:red;font-size:14px;display:none;">Please enter valid email id</p>
 							<form:errors path="email" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
@@ -119,8 +123,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.panno" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="panno"
-								class="form-control text-left patternvalidation"
+							<form:input path="panno" onkeypress="return replaceSpecialChar(event)" id="panno"
+								class="form-control text-left patternvalidation enteredValue" onkeyup="isSpecialChar()"
+										onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="10" />
 							<form:errors path="panno" cssClass="error-msg" />
 						</div>
@@ -129,8 +134,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.tinno" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="tinno"
-								class="form-control text-left patternvalidation"
+							<form:input path="tinno" onkeypress="return replaceSpecialChar(event)"
+								class="form-control text-left patternvalidation enteredValue" onkeyup="isSpecialChar()"
+										onblur="isSpecialChar()"
 								data-pattern="alphanumeric" maxlength="20" />
 							<form:errors path="tinno" cssClass="error-msg" />
 						</div>
@@ -159,8 +165,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.bankaccount" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="bankaccount"
-								class="form-control text-left patternvalidation"
+							<form:input path="bankaccount" onkeypress="return replaceSpecialChar(event)" onkeyup="isSpecialChar()"
+										onblur="isSpecialChar()"
+								class="form-control text-left patternvalidation enteredValue"
 								data-pattern="alphanumeric" maxlength="25" />
 							<form:errors path="bankaccount" cssClass="error-msg" />
 						</div>
@@ -169,14 +176,29 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.ifsccode" /> </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="ifsccode"
-								class="form-control text-left patternvalidation"
+							<form:input path="ifsccode" onkeypress="return replaceSpecialChar(event)" onkeyup="isSpecialChar()"
+										onblur="isSpecialChar()"
+								class="form-control text-left patternvalidation enteredValue"
 								data-pattern="alphanumeric" maxlength="12" />
 							<form:errors path="ifsccode" cssClass="error-msg" />
 						</div>
 					</div>
 					<input type="hidden" name="relation" value="${relation.id}" />
 
-                    <script type="text/javascript"
-                            src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
+<script type="text/javascript">
+
+function replaceSpecialChar(e) {
+    var k;
+    document.all ? k = e.keyCode : k = e.which;
+    return ((k > 64 && k < 91) || (k > 96 && k < 123) || k == 8 || k == 32 || (k >= 48 && k <= 57));
+}
+function isSpecialChar(){
+    $('.enteredValue').each(function(){
+        var valueEntered = $(this).val();
+        var replacedValue = valueEntered.replace(/[!$%^&*()_+|~=`{}\[\]":'\;<>?,.@#]/gi, '');
+        $(this).val(replacedValue);
+    });
+}
+</script>
+<script type="text/javascript" src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
 					

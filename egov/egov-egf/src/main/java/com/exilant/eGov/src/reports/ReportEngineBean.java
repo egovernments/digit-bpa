@@ -47,10 +47,12 @@
  */
 package com.exilant.eGov.src.reports;
 
+import jnr.ffi.annotations.In;
 import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
 import java.util.List;
+import java.util.Map;
 
 public class ReportEngineBean {
     private static final Logger LOGGER = Logger.getLogger(ReportEngineBean.class);
@@ -68,9 +70,11 @@ public class ReportEngineBean {
     private String schemeId;
     private String subSchemeId;
     private String functionId;
-    private List<String> excludeStatuses;
-    private List<String> includeStatuses;
+    private List<Integer> excludeStatuses;
+    private List<Integer> includeStatuses;
     private int filtersCount = 0;
+    private String query;
+    private Map<String, Object> params;
 
     public String getFundId() {
         return fundId;
@@ -200,20 +204,20 @@ public class ReportEngineBean {
         filtersCount += 1;
     }
 
-    public List<String> getExcludeStatuses() {
+    public List<Integer> getExcludeStatuses() {
         return excludeStatuses;
     }
 
-    public void setExcludeStatuses(final List<String> excludeStatuses) {
+    public void setExcludeStatuses(final List<Integer> excludeStatuses) {
         this.excludeStatuses = excludeStatuses;
 
     }
 
-    public List<String> getIncludeStatuses() {
+    public List<Integer> getIncludeStatuses() {
         return includeStatuses;
     }
 
-    public void setIncludeStatuses(final List<String> includeStatuses) {
+    public void setIncludeStatuses(final List<Integer> includeStatuses) {
         this.includeStatuses = includeStatuses;
     }
 
@@ -221,19 +225,15 @@ public class ReportEngineBean {
         return filtersCount;
     }
 
-    public String getCommaSeperatedValues(final List<String> list) throws ApplicationRuntimeException
-    {
+    public String getCommaSeperatedValues(final List<String> list) throws ApplicationRuntimeException {
         final StringBuffer commaSeperatedValues = new StringBuffer("");
-        if (!list.isEmpty())
-        {
+        if (!list.isEmpty()) {
             if (list.size() == 1)
                 commaSeperatedValues.append(list.get(0).toString());
-            else
-            {
+            else {
 
                 String comma = "";
-                for (int i = 0; i < list.size(); i++)
-                {
+                for (int i = 0; i < list.size(); i++) {
                     commaSeperatedValues.append(comma + list.get(i).toString());
                     comma = ",";
                 }
@@ -247,4 +247,19 @@ public class ReportEngineBean {
         return commaSeperatedValues.toString();
     }
 
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public Map<String, Object> getParams() {
+        return params;
+    }
+
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
+    }
 }

@@ -54,13 +54,12 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CVoucherHeader;
-import org.egov.egf.budget.service.BudgetControlTypeService;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -88,9 +87,9 @@ import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = JournalVoucherAction.NEW, location = "journalVoucher-new.jsp") })
-public class JournalVoucherAction extends BaseVoucherAction
-{
+public class JournalVoucherAction extends BaseVoucherAction {
     private static final Logger LOGGER = Logger.getLogger(JournalVoucherAction.class);
+    private static final String INVALID_APPROVER = "invalid.approver";
     private static final long serialVersionUID = 1L;
     private List<VoucherDetails> billDetailslist;
     private List<VoucherDetails> subLedgerlist;
@@ -105,13 +104,9 @@ public class JournalVoucherAction extends BaseVoucherAction
     private VoucherTypeBean voucherTypeBean;
     private String buttonValue;
     private String message = "";
-    private Integer departmentId;
     private String wfitemstate;
     private VoucherHelper voucherHelper;
-    private static final String VOUCHERQUERY = " from CVoucherHeader where id=?";
-    private static final String ACTIONNAME = "actionName";
     private SimpleWorkflowService<CVoucherHeader> voucherWorkflowService;
-    private static final String VHID = "vhid";
     protected EisCommonService eisCommonService;
     @Autowired
     protected AppConfigValueService appConfigValuesService;
@@ -122,12 +117,8 @@ public class JournalVoucherAction extends BaseVoucherAction
     SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
     Date date;
     @Autowired
-    private BudgetControlTypeService budgetCheckConfigService;
+    private CommonsUtil commonsUtil;
 
-    @Autowired
-    private ScriptService scriptService;
-
-    @SuppressWarnings("unchecked")
     @Override
     public void prepare() {
         super.prepare();
@@ -192,6 +183,13 @@ public class JournalVoucherAction extends BaseVoucherAction
     public String create() throws Exception {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("VoucherAction | create Method | Start");
+        populateWorkflowBean();
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (!commonsUtil.isValidApprover(voucherHeader, workflowBean.getApproverPositionId())) {
+                addActionError(getText(INVALID_APPROVER));
+                return NEW;
+            }
+        }
         String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
         String cutOffDate1 = null;
         removeEmptyRowsAccoutDetail(billDetailslist);
@@ -211,10 +209,8 @@ public class JournalVoucherAction extends BaseVoucherAction
                 if (!"JVGeneral".equalsIgnoreCase(voucherTypeBean.getVoucherName())) {
                     voucherTypeBean.setTotalAmount(parameters.get("totaldbamount")[0]);
                 }
-                populateWorkflowBean();
                 voucherHeader = journalVoucherActionHelper.createVoucher(billDetailslist, subLedgerlist, voucherHeader,
                         voucherTypeBean, workflowBean);
-
                 if (!cutOffDate.isEmpty() && cutOffDate!=null )
                 {
                     try {
@@ -323,7 +319,7 @@ public class JournalVoucherAction extends BaseVoucherAction
         List<String> validActions = Collections.emptyList();
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty())
         {
-            if (null == voucherHeader || null == voucherHeader.getId()
+            if (null == voucherHeader || null == voucherHeader.getId() || null == voucherHeader.getCurrentState()
                     || voucherHeader.getCurrentState().getValue().endsWith("NEW")) {
                 validActions = Arrays.asList(FinancialConstants.BUTTONFORWARD, FinancialConstants.CREATEANDAPPROVE);
             } else {

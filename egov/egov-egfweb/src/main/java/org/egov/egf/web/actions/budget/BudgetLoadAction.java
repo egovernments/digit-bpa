@@ -66,6 +66,7 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationValidationException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.validation.exception.ValidationError;
@@ -76,7 +77,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetUpload;
 import org.egov.services.budget.BudgetDetailService;
 import org.egov.utils.FinancialConstants;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.multipart.MultipartFile;
@@ -104,7 +106,7 @@ import java.util.Map;
 public class BudgetLoadAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BudgetLoadAction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BudgetLoadAction.class);
     private File budgetInXls;
     private String budgetInXlsFileName;
     private String budgetInXlsContentType;
@@ -169,10 +171,7 @@ public class BudgetLoadAction extends BaseFormAction {
     @Action(value = "/budget/budgetLoad-beforeUpload")
     public String beforeUpload()
     {
-        originalFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
-                "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
-        outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
-                "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
+        loadFiles();
         return "upload";
     }
 
@@ -198,7 +197,8 @@ public class BudgetLoadAction extends BaseFormAction {
                 throw new ValidationException(Arrays.asList(new ValidationError(
                         getText("be.year.is.not.immediate.next.fy.year.of.re.year"),
                         getText("be.year.is.not.immediate.next.fy.year.of.re.year"))));
-            timeStamp = new Timestamp((new Date()).getTime()).toString().replace(".", "_");
+            timeStamp = new Timestamp((new Date()).getTime()).toString().replace(".", "_").replace(":", "_");
+            budgetInXlsFileName = budgetInXlsFileName.replace("-", "_");
             if (budgetInXlsFileName.contains("_budget_original_")) {
                 budgetOriginalFileName = budgetInXlsFileName.split("_budget_original_")[0] + "_budget_original_"
                         + timeStamp + "."
@@ -221,7 +221,7 @@ public class BudgetLoadAction extends BaseFormAction {
             final FileStoreMapper originalFileStore = fileStoreService.store(budgetInXls,
                     budgetOriginalFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG,false);
-
+            persistenceService.applyAuditing(originalFileStore);
             persistenceService.persist(originalFileStore);
             originalFileStoreId = originalFileStore.getFileStoreId();
 
@@ -245,26 +245,29 @@ public class BudgetLoadAction extends BaseFormAction {
 
             addActionMessage(getText("budget.load.sucessful"));
 
-        } catch (final ValidationException e)
-        {
-            originalFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
-                    "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
-            outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
-                    "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
+        } catch (final ValidationException e) {
+            loadFiles();
             throw new ValidationException(Arrays.asList(new ValidationError(e.getErrors().get(0).getMessage(),
                     e.getErrors().get(0).getMessage())));
-        } catch (final Exception e)
-        {
-            originalFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
-                    "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
-            outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
-                    "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
+        } catch (final ApplicationValidationException e) {
+            loadFiles();
+            throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(),
+                    e.getMessage())));
+        } catch (final Exception e) {
+            loadFiles();
             throw new ValidationException(Arrays.asList(new ValidationError(budgetUploadError,
                     budgetUploadError)));
-
         }
 
         return "result";
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadFiles() {
+        originalFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
+                "from FileStoreMapper where fileName like '%budget_original%' order by id desc ").setMaxResults(5).list();
+        outPutFiles = (List<FileStoreMapper>) persistenceService.getSession().createQuery(
+                "from FileStoreMapper where fileName like '%budget_output%' order by id desc ").setMaxResults(5).list();
     }
 
     private void prepareOutPutFileWithErrors(List<BudgetUpload> budgetUploadList) {
@@ -320,6 +323,7 @@ public class BudgetLoadAction extends BaseFormAction {
                     budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
 
+            persistenceService.applyAuditing(outPutFileStore);
             persistenceService.persist(outPutFileStore);
 
             outPutFileStoreId = outPutFileStore.getFileStoreId();
@@ -386,6 +390,7 @@ public class BudgetLoadAction extends BaseFormAction {
             final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
                     budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
+            persistenceService.applyAuditing(outPutFileStore);
             persistenceService.persist(outPutFileStore);
 
             outPutFileStoreId = outPutFileStore.getFileStoreId();

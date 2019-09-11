@@ -53,19 +53,19 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
+import org.egov.commons.*;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.Statement;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.IncomeExpenditureScheduleService;
 import org.egov.services.report.IncomeExpenditureService;
 import org.egov.utils.Constants;
@@ -127,7 +127,15 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
  @Autowired
-    private EgovMasterDataCaching masterDataCache;
+ private DepartmentService departmentService;
+ @Autowired
+ private FunctionRepository functionRepository;
+ @Autowired
+ private FunctionaryDAO functionaryDAO;
+ @Autowired
+ private FundRepository fundRepository;
+ @Autowired
+ private BoundaryService boundaryService;
     
     public void setIncomeExpenditureService(final IncomeExpenditureService incomeExpenditureService) {
         this.incomeExpenditureService = incomeExpenditureService;
@@ -161,14 +169,14 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
-            addDropdownData("functionList", masterDataCache.get("egi-function"));
-            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
-            addDropdownData("fundDropDownList", masterDataCache.get("egi-fund"));
-            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
+            addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
+            addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
+            addDropdownData("fundDropDownList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+            addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
             addDropdownData("financialYearList",
                     getPersistenceService().findAllBy("from CFinancialYear where isActive=true  order by finYearRange desc "));
         }
@@ -178,13 +186,13 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
         setTodayDate(new Date());
         if (incomeExpenditureStatement.getFund() != null && incomeExpenditureStatement.getFund().getId() != null
                 && incomeExpenditureStatement.getFund().getId() != 0) {
-            incomeExpenditureStatement.setFund((Fund) getPersistenceService().find("from Fund where id=?",
+            incomeExpenditureStatement.setFund((Fund) getPersistenceService().find("from Fund where id=?1",
                     incomeExpenditureStatement.getFund().getId()));
             heading.append(" in " + incomeExpenditureStatement.getFund().getName());
         }
         if (incomeExpenditureStatement.getDepartment() != null && incomeExpenditureStatement.getDepartment().getId() != null
                 && incomeExpenditureStatement.getDepartment().getId() != 0) {
-            incomeExpenditureStatement.setDepartment((Department) getPersistenceService().find("from Department where id=?",
+            incomeExpenditureStatement.setDepartment((Department) getPersistenceService().find("from Department where id=?1",
                     incomeExpenditureStatement.getDepartment().getId()));
             heading.append(" in " + incomeExpenditureStatement.getDepartment().getName() + " Department");
         } else
@@ -193,25 +201,25 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
                 && incomeExpenditureStatement.getFinancialYear().getId() != null
                 && incomeExpenditureStatement.getFinancialYear().getId() != 0) {
             incomeExpenditureStatement.setFinancialYear((CFinancialYear) getPersistenceService().find(
-                    "from CFinancialYear where id=?", incomeExpenditureStatement.getFinancialYear().getId()));
+                    "from CFinancialYear where id=?1", incomeExpenditureStatement.getFinancialYear().getId()));
             heading.append(" for the Financial Year " + incomeExpenditureStatement.getFinancialYear().getFinYearRange());
         }
         if (incomeExpenditureStatement.getFunction() != null && incomeExpenditureStatement.getFunction().getId() != null
                 && incomeExpenditureStatement.getFunction().getId() != 0) {
-            incomeExpenditureStatement.setFunction((CFunction) getPersistenceService().find("from CFunction where id=?",
+            incomeExpenditureStatement.setFunction((CFunction) getPersistenceService().find("from CFunction where id=?1",
                     incomeExpenditureStatement.getFunction().getId()));
             heading.append(" in Function Code " + incomeExpenditureStatement.getFunction().getName());
         }
         if (incomeExpenditureStatement.getField() != null && incomeExpenditureStatement.getField().getId() != null
                 && incomeExpenditureStatement.getField().getId() != 0) {
-            incomeExpenditureStatement.setField((Boundary) getPersistenceService().find("from Boundary where id=?",
+            incomeExpenditureStatement.setField((Boundary) getPersistenceService().find("from Boundary where id=?1",
                     incomeExpenditureStatement.getField().getId()));
             heading.append(" in the field value" + incomeExpenditureStatement.getField().getName());
         }
 
         if (incomeExpenditureStatement.getFunctionary() != null && incomeExpenditureStatement.getFunctionary().getId() != null
                 && incomeExpenditureStatement.getFunctionary().getId() != 0) {
-            incomeExpenditureStatement.setFunctionary((Functionary) getPersistenceService().find("from Functionary where id=?",
+            incomeExpenditureStatement.setFunctionary((Functionary) getPersistenceService().find("from Functionary where id=?1",
                     incomeExpenditureStatement.getFunctionary().getId()));
             heading.append(" and " + incomeExpenditureStatement.getFunctionary().getName() + " Functionary");
         }
@@ -373,7 +381,7 @@ public class IncomeExpenditureReportAction extends BaseFormAction {
     }
 
    /* public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

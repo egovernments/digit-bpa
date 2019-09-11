@@ -63,19 +63,14 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.report.LoanGrantService;
 import org.egov.utils.ReportHelper;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 
@@ -155,7 +150,7 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
 
         // used to identify subschemes
         String temp = "";
-        final String pcQryStr = "from " + table + " where  id=?";
+        final String pcQryStr = String.format("from %s where  id=?1", table);
         BigDecimal grandTotal = BigDecimal.ZERO;
         // sub scheme wise total
         final Map<String, BigDecimal> ssTotalMap = new LinkedHashMap<String, BigDecimal>();
@@ -314,20 +309,20 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
 
         if (schemeId != null)
         {
-            final String schemeName = (String) persistenceService.find("select name from Scheme where id=?", getSchemeId());
+            final String schemeName = (String) persistenceService.find("select name from Scheme where id=?1", getSchemeId());
             paramMap.put("reportBy", "Scheme Utilization Report for " + schemeName);
             paramMap.put("schemeName", schemeName);
         }
         if (getSubSchemeId() != null)
         {
-            final String subSchemeName = (String) persistenceService.find("select name from SubScheme where id=?",
+            final String subSchemeName = (String) persistenceService.find("select name from SubScheme where id=?1",
                     getSubSchemeId());
             paramMap.put("reportBy", "Scheme Utilization Report for " + subSchemeName);
             paramMap.put("subSchemeName", subSchemeName);
         }
         if (fundId != null)
         {
-            final String fundName = (String) persistenceService.find("select name from Fund where id=?", fundId);
+            final String fundName = (String) persistenceService.find("select name from Fund where id=?1", fundId);
             paramMap.put("fundName", fundName);
         }
         paramMap.put("fromDate", fromDate);
@@ -340,7 +335,7 @@ public class SchemeUtilizationReportAction extends LoanGrantBaseAction {
     }
 
     private String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final NativeQuery query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

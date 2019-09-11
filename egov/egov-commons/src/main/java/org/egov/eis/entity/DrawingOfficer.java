@@ -185,7 +185,7 @@ public class DrawingOfficer extends AbstractAuditable implements EntityType {
 
     @Override
     public Integer getEntityId() {
-        return getId().intValue();
+        return null;
     }
 
     @Override

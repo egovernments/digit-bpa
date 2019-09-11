@@ -144,7 +144,7 @@ public class OccupancyCertificateNocService {
 		List<User> userList = new ArrayList<>();
 		NocConfiguration nocConfig = nocConfigurationService
 				.findByDepartmentAndType(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode(), BpaConstants.OC);
-		if (nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+		if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
 				&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
 				&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
 			List<User> nocUsers = new ArrayList<User>(userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));

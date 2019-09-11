@@ -48,25 +48,15 @@
 package org.egov.egf.web.actions.report;
 
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
-import org.apache.log4j.Logger;
+import net.sf.jasperreports.engine.JRException;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgModules;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.commons.Vouchermis;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.model.VoucherReportView;
-import org.egov.egf.web.actions.voucher.VoucherSearchAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -78,81 +68,61 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Results(value = {
-        @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/pdf", "contentDisposition", "no-cache;filename=VoucherStatusReport.pdf" }),
+        @Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "application/pdf", "contentDisposition", "no-cache;filename=VoucherStatusReport.pdf"}),
         @Result(name = "search", location = "voucherStatusReport-search.jsp"),
-        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/xls", "contentDisposition", "no-cache;filename=VoucherStatusReport.xls" })
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=VoucherStatusReport.xls"})
 })
 @ParentPackage("egov")
-@Validation
-public class VoucherStatusReportAction extends BaseFormAction
-{
-    private static final Logger LOGGER = Logger.getLogger(VoucherSearchAction.class);
-    public List<Map<String, Object>> voucherList;
+public class VoucherStatusReportAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
-    public CVoucherHeader voucherHeader = new CVoucherHeader();
-    public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
-    public Date fromDate = new Date();
-    public Date toDate = null;
-    private final List<String> headerFields = new ArrayList<String>();
-    private final List<String> mandatoryFields = new ArrayList<String>();
-    InputStream inputStream;
     private static final String JASPERPATH = "/reports/templates/voucherStatusReport.jasper";
-    ReportHelper reportHelper;
-    List<Object> voucherReportList = new ArrayList<Object>();
-    List<CVoucherHeader> voucherDisplayList = new ArrayList<CVoucherHeader>();
-    private Map<Integer, String> statusMap;
-    private final Map<String, Object> paramMap = new HashMap<String, Object>();
-    private Map<String, String> nameMap;
-    private HashMap<Long, String> voucherIDOwnerNameMap;
+    private static final String SCHEME = "scheme";
+    private static final String SCHEME_LIST = "schemeList";
+    private static final String SUBSCHEME = "subscheme";
+    private final List<String> headerFields = new ArrayList<>();
+    private final List<String> mandatoryFields = new ArrayList<>();
+    private final transient Map<String, Object> paramMap = new HashMap<>();
+    private transient CVoucherHeader voucherHeader = new CVoucherHeader();
+    private Date fromDate = new Date();
+    private Date toDate = null;
+    private transient InputStream inputStream;
+    private transient ReportHelper reportHelper;
+    private transient List<Object> voucherReportList = new ArrayList<>();
+    private transient List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
+    private transient Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
+    private transient Map<Integer, String> statusMap;
+    private transient Map<String, String> nameMap;
     private Integer page = 1;
     private Integer pageSize = 30;
-    private EgovPaginatedList pagedResults;
+    private transient EgovPaginatedList pagedResults;
     private String countQry;
+    private List<Object> countParams;
     private String modeOfPayment;
-   @Autowired 
-    private AppConfigValueService appConfigValueService;
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
-    private FinancialYearDAO financialYearDAO;
+    @Autowired
+    private transient AppConfigValueService appConfigValueService;
+    @Autowired
+    private transient FinancialYearDAO financialYearDAO;
 
-    List<String> voucherTypes = VoucherHelper.VOUCHER_TYPES;
-    Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
-
-    @Override
-    public Object getModel() {
-        return voucherHeader;
-    }
-
-    public VoucherStatusReportAction()
-    {
+    public VoucherStatusReportAction() {
         voucherHeader.setVouchermis(new Vouchermis());
         addRelatedEntity("vouchermis.departmentid", Department.class);
         addRelatedEntity("fundId", Fund.class);
@@ -164,29 +134,29 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     }
 
+    @Override
+    public Object getModel() {
+        return voucherHeader;
+    }
+
     public void finYearDate() {
 
         final String financialYearId = financialYearDAO.getCurrYearFiscalId();
-        if (financialYearId == null || financialYearId.equals(""))
+        if (isBlank(financialYearId))
             fromDate = new Date();
         else
-            fromDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?",
+            fromDate = (Date) persistenceService.find("select startingDate  from CFinancialYear where id=?1",
                     Long.parseLong(financialYearId));
         toDate = null;
 
     }
 
     @Override
-    public void prepare()
-    {
+    public void prepare() {
         super.prepare();
         getHeaderFields();
         loadDropDowns();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of  MIS attributes are :" + headerFields.size());
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of mandate MIS attributes are :" + mandatoryFields.size());
-        statusMap = new HashMap<Integer, String>();
+        statusMap = new HashMap<>();
         statusMap.put(FinancialConstants.CREATEDVOUCHERSTATUS, "Approved");
         statusMap.put(FinancialConstants.REVERSEDVOUCHERSTATUS, "Reversed");
         statusMap.put(FinancialConstants.REVERSALVOUCHERSTATUS, "Reversal");
@@ -208,31 +178,27 @@ public class VoucherStatusReportAction extends BaseFormAction
         if (headerFields.contains("field"))
             addDropdownData("fieldList",
                     persistenceService.findAllBy(" from Boundary b where lower(b.boundaryType.name)='ward' "));
-        if (headerFields.contains("scheme"))
-            addDropdownData("schemeList", Collections.EMPTY_LIST);
-        if (headerFields.contains("subscheme"))
-            addDropdownData("subschemeList", Collections.EMPTY_LIST);
-        // addDropdownData("typeList",
-        // persistenceService.findAllBy(" select distinct vh.type from CVoucherHeader vh  order by vh.type")); //where
-        // vh.status!=4
+        if (headerFields.contains(SCHEME))
+            addDropdownData(SCHEME_LIST, Collections.emptyList());
+        if (headerFields.contains(SUBSCHEME))
+            addDropdownData("subschemeList", Collections.emptyList());
         addDropdownData("typeList", VoucherHelper.VOUCHER_TYPES);
         addDropdownData("modeOfPaymentList", persistenceService.findAllBy(" select DISTINCT upper(type) from Paymentheader "));
-        nameMap = new LinkedHashMap<String, String>();
+        nameMap = new LinkedHashMap<>();
     }
 
-    protected void getHeaderFields()
-    {
-        final List<AppConfigValues> appConfigList = appConfigValueService.getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULT_SEARCH_MISATTRRIBUTES");
+    protected void getHeaderFields() {
+        final List<AppConfigValues> appConfigList = appConfigValueService
+                .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, "DEFAULT_SEARCH_MISATTRRIBUTES");
 
-            for (final AppConfigValues appConfigVal : appConfigList)
-            {
-                final String value = appConfigVal.getValue();
-                final String header = value.substring(0, value.indexOf('|'));
-                headerFields.add(header);
-                final String mandate = value.substring(value.indexOf('|') + 1);
-                if (mandate.equalsIgnoreCase("M"))
-                    mandatoryFields.add(header);
-            }
+        for (final AppConfigValues appConfigVal : appConfigList) {
+            final String value = appConfigVal.getValue();
+            final String header = value.substring(0, value.indexOf('|'));
+            headerFields.add(header);
+            final String mandate = value.substring(value.indexOf('|') + 1);
+            if (mandate.equalsIgnoreCase("M"))
+                mandatoryFields.add(header);
+        }
 
     }
 
@@ -250,16 +216,9 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     @SkipValidation
     @Action(value = "/report/voucherStatusReport-beforeSearch")
-    public String beforeSearch()
-    {
+    public String beforeSearch() {
         voucherHeader.reset();
         finYearDate();
-
-        /*
-         * try { Thread.sleep(30000); } catch (InterruptedException e) {   }
-         */
-        //
-        // LOGGER.errorpersistenceService.getSession().getFlushMode());
         return "search";
     }
 
@@ -267,22 +226,20 @@ public class VoucherStatusReportAction extends BaseFormAction
     @ReadOnly
     @ValidationErrorPage(value = "search")
     @Action(value = "/report/voucherStatusReport-search")
-    public String search() throws ApplicationException, ParseException
-    {
-        voucherList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> voucherMap = null;
-        voucherIDOwnerNameMap = new HashMap<Long, String>();
+    public String search() throws ApplicationException {
+        List<Map<String, Object>> voucherList = new ArrayList<>();
+        Map<String, Object> voucherMap;
+        HashMap<Long, String> voucherIDOwnerNameMap = new HashMap<>();
         Long voucherHeaderId;
         String voucherOwner;
         final Query qry = voucherSearchQuery();
-        final Long count = (Long) persistenceService.find(countQry);
+        final Long count = (Long) persistenceService.find(countQry, countParams.toArray());
         final Page resPage = new Page(qry, page, pageSize);
         pagedResults = new EgovPaginatedList(resPage, count.intValue());
-        final List<CVoucherHeader> list = pagedResults != null ? pagedResults.getList() : null;
-        for (final CVoucherHeader voucherheader : list)
-        {
-            voucherMap = new HashMap<String, Object>();
-            Double amt = new Double(0);
+        final List<CVoucherHeader> list = pagedResults.getList();
+        for (final CVoucherHeader voucherheader : list) {
+            voucherMap = new HashMap<>();
+            Double amt = Double.valueOf(0);
             voucherHeaderId = voucherheader.getId();
             voucherMap.put("id", voucherHeaderId);
             voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
@@ -291,7 +248,7 @@ public class VoucherStatusReportAction extends BaseFormAction
             voucherMap.put("voucherdate", voucherheader.getVoucherDate());
             voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentid().getName());
             for (final CGeneralLedger detail : voucherheader.getGeneralledger())
-                amt = amt+detail.getDebitAmount();
+                amt = amt + detail.getDebitAmount();
             voucherMap.put("amount", amt);
             voucherMap.put("status", getVoucherStatus(voucherheader.getStatus()));
             voucherMap.put("source", getVoucherModule(voucherheader.getModuleId()));
@@ -307,22 +264,21 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     private void loadAjaxedData() {
         getVoucherNameMap(voucherHeader.getType());
-        if (headerFields.contains("scheme"))
+        if (headerFields.contains(SCHEME))
             if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != -1) {
-                final StringBuffer st = new StringBuffer();
-                st.append("from Scheme where isactive=true and fund.id=");
-                st.append(voucherHeader.getFundId().getId());
-                dropdownData.put("schemeList", persistenceService.findAllBy(st.toString()));
+                final StringBuilder st = new StringBuilder(50);
+                st.append("from Scheme where isactive=true and fund.id=?1");
+                dropdownData.put(SCHEME_LIST, persistenceService.findAllBy(st.toString(), voucherHeader.getFundId().getId()));
                 st.delete(0, st.length() - 1);
 
             } else
-                dropdownData.put("schemeList", Collections.emptyList());
-        if (headerFields.contains("subscheme"))
+                dropdownData.put(SCHEME_LIST, Collections.emptyList());
+        if (headerFields.contains(SUBSCHEME))
             if (voucherHeader.getVouchermis() != null
                     && voucherHeader.getVouchermis().getSchemeid() != null
                     && voucherHeader.getVouchermis().getSchemeid().getId() != -1)
                 dropdownData.put("subSchemeList", persistenceService.findAllBy(
-                        "from SubScheme where isactive=true and scheme.id=?",
+                        "from SubScheme where isactive=true and scheme.id=?1",
                         voucherHeader.getVouchermis().getSchemeid().getId()));
             else
                 dropdownData.put("subSchemeList", Collections.emptyList());
@@ -330,8 +286,8 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     public Map<String, String> getVoucherNameMap(final String type) {
         final List<Object> voucherNameList = persistenceService.findAllBy(
-                "select  distinct name from  CVoucherHeader where type=?", type);
-        nameMap = new LinkedHashMap<String, String>();
+                "select  distinct name from  CVoucherHeader where type=?1", type);
+        nameMap = new LinkedHashMap<>();
 
         for (final Object voucherName : voucherNameList)
             nameMap.put((String) voucherName, (String) voucherName);
@@ -339,55 +295,83 @@ public class VoucherStatusReportAction extends BaseFormAction
     }
 
     private Query voucherSearchQuery() {
-        String sql = "";
-
-        if (!modeOfPayment.equals("-1"))
-            sql = sql + " from CVoucherHeader vh,Paymentheader ph where vh.id = ph.voucherheader.id and";
+        StringBuilder sql = new StringBuilder(500);
+        int index = 1;
+        List<Object> params = new ArrayList<>();
+        if (modeOfPayment.equals("-1"))
+            sql.append(" from CVoucherHeader vh where ");
         else
-            sql = sql + " from CVoucherHeader vh where ";
+            sql.append(" from CVoucherHeader vh,Paymentheader ph where vh.id = ph.voucherheader.id and");
 
-        if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != -1)
-            sql = sql + "  vh.fundId=" + voucherHeader.getFundId().getId();
+        if (voucherHeader.getFundId() != null && voucherHeader.getFundId().getId() != -1) {
+            sql.append("  vh.fundId=?").append(index++);
+            params.add(voucherHeader.getFundId());
+        }
+        if (voucherHeader.getType() != null && !voucherHeader.getType().equals("-1")) {
+            sql.append(" and vh.type=?").append(index++);
+            params.add(voucherHeader.getType());
+        }
+        if (voucherHeader.getName() != null && !voucherHeader.getName().equalsIgnoreCase("-1")
+                && !voucherHeader.getName().equalsIgnoreCase("0")) {
+            sql.append(" and vh.name=?").append(index++);
+            params.add(voucherHeader.getName());
+        }
+        if (fromDate != null) {
+            sql.append(" and vh.voucherDate>=?").append(index++);
+            params.add(fromDate);
+        }
+        if (toDate != null) {
+            sql.append(" and vh.voucherDate<=?").append(index++);
+            params.add(toDate);
+        }
+        if (voucherHeader.getStatus() != -1) {
+            sql.append(" and vh.status=?").append(index++);
+            params.add(voucherHeader.getStatus());
 
-        if (voucherHeader.getType() != null && !voucherHeader.getType().equals("-1"))
-            sql = sql + " and vh.type='" + voucherHeader.getType() + "'";
-        if (voucherHeader.getName() != null && !voucherHeader.getName().equalsIgnoreCase("-1") && !voucherHeader.getName().equalsIgnoreCase("0"))
-            sql = sql + " and vh.name='" + voucherHeader.getName() + "'";
-        if (fromDate != null)
-            sql = sql + " and vh.voucherDate>='" + Constants.DDMMYYYYFORMAT1.format(fromDate) + "'";
-        if (toDate != null)
-            sql = sql + " and vh.voucherDate<='" + Constants.DDMMYYYYFORMAT1.format(toDate) + "'";
-        if (voucherHeader.getStatus() != -1)
-            sql = sql + " and vh.status=" + voucherHeader.getStatus();
-
+        }
         if (voucherHeader.getVouchermis().getDepartmentid() != null
-                && voucherHeader.getVouchermis().getDepartmentid().getId() != -1)
-            sql = sql + " and vh.vouchermis.departmentid=" + voucherHeader.getVouchermis().getDepartmentid().getId();
+                && voucherHeader.getVouchermis().getDepartmentid().getId() != -1) {
+            sql.append(" and vh.vouchermis.departmentid=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getDepartmentid());
+        }
 
-        if (voucherHeader.getVouchermis().getSchemeid() != null)
-            sql = sql + " and vh.vouchermis.schemeid=" + voucherHeader.getVouchermis().getSchemeid().getId();
-        if (voucherHeader.getVouchermis().getSubschemeid() != null)
-            sql = sql + " and vh.vouchermis.subschemeid=" + voucherHeader.getVouchermis().getSubschemeid().getId();
-        if (voucherHeader.getVouchermis().getFunctionary() != null)
-            sql = sql + " and vh.vouchermis.functionary=" + voucherHeader.getVouchermis().getFunctionary().getId();
-        if (voucherHeader.getVouchermis().getDivisionid() != null)
-            sql = sql + " and vh.vouchermis.divisionid=" + voucherHeader.getVouchermis().getDivisionid().getId();
-        if (!modeOfPayment.equals("-1"))
-            sql = sql + " and upper(ph.type) ='" + getModeOfPayment() + "'";
+        if (voucherHeader.getVouchermis().getSchemeid() != null) {
+            sql.append(" and vh.vouchermis.schemeid=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getSchemeid());
+        }
+        if (voucherHeader.getVouchermis().getSubschemeid() != null) {
+            sql.append(" and vh.vouchermis.subschemeid=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getSubschemeid());
+        }
+        if (voucherHeader.getVouchermis().getFunctionary() != null) {
+            sql.append(" and vh.vouchermis.functionary=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getFunctionary());
+        }
+        if (voucherHeader.getVouchermis().getDivisionid() != null) {
+            sql.append(" and vh.vouchermis.divisionid=?").append(index++);
+            params.add(voucherHeader.getVouchermis().getDivisionid());
+        }
+        if (!modeOfPayment.equals("-1")) {
+            sql.append(" and upper(ph.type) =?").append(index++);
+            params.add(getModeOfPayment());
+        }
         countQry = "select count(*) " + sql;
-        sql = "select vh " + sql + " order by vh.vouchermis.departmentid.name ,vh.voucherDate, vh.voucherNumber";
-        final Query query = persistenceService.getSession().createQuery(sql);
+        countParams = params;
+        final Query query = persistenceService.getSession()
+                .createQuery(new StringBuilder().append("select vh ").append(sql)
+                        .append(" order by vh.vouchermis.departmentid.name ,vh.voucherDate, vh.voucherNumber").toString());
+        index = 1;
+        for (Object param : params) {
+            query.setParameter(index++, param);
+        }
         return query;
     }
 
-    private String getVoucherModule(final Integer vchrModuleId) throws ApplicationException
-    {
+    private String getVoucherModule(final Integer vchrModuleId) throws ApplicationException {
         if (vchrModuleId == null)
             return "Internal";
-        else
-        {
-            EgModules egModuleObj;
-            egModuleObj = (EgModules) persistenceService.find("from EgModules m where m.id=?", vchrModuleId);
+        else {
+            EgModules egModuleObj = (EgModules) persistenceService.find("from EgModules m where m.id=?1", vchrModuleId);
             if (egModuleObj == null)
                 throw new ApplicationException("INCORRECT MODULE ID");
             else
@@ -404,9 +388,9 @@ public class VoucherStatusReportAction extends BaseFormAction
         checkMandatoryField("fundId", "fund", voucherHeader.getFundId(), "voucher.fund.mandatory");
         checkMandatoryField("vouchermis.departmentid", "department", voucherHeader.getVouchermis().getDepartmentid(),
                 "voucher.department.mandatory");
-        checkMandatoryField("vouchermis.schemeid", "scheme", voucherHeader.getVouchermis().getSchemeid(),
+        checkMandatoryField("vouchermis.schemeid", SCHEME, voucherHeader.getVouchermis().getSchemeid(),
                 "voucher.scheme.mandatory");
-        checkMandatoryField("vouchermis.subschemeid", "subscheme", voucherHeader.getVouchermis().getSubschemeid(),
+        checkMandatoryField("vouchermis.subschemeid", SUBSCHEME, voucherHeader.getVouchermis().getSubschemeid(),
                 "voucher.subscheme.mandatory");
         checkMandatoryField("vouchermis.functionary", "functionary", voucherHeader.getVouchermis().getFunctionary(),
                 "voucher.functionary.mandatory");
@@ -416,13 +400,11 @@ public class VoucherStatusReportAction extends BaseFormAction
                 "voucher.field.mandatory");
     }
 
-    @SuppressWarnings("unchecked")
-    private void populateData() throws ParseException, ApplicationException {
+    private void populateData() throws ApplicationException {
         final List<CVoucherHeader> list = new ArrayList();
         list.addAll(voucherSearchQuery().list());
         BigDecimal amt = BigDecimal.ZERO;
-        for (final CVoucherHeader cVchrHdr : list)
-        {
+        for (final CVoucherHeader cVchrHdr : list) {
             final VoucherReportView vhcrRptView = new VoucherReportView();
             vhcrRptView.setDeptName(cVchrHdr.getVouchermis().getDepartmentid().getName());
             vhcrRptView.setVoucherNumber(cVchrHdr.getVoucherNumber());
@@ -442,8 +424,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         setParamMap();
     }
 
-    protected void checkMandatoryField(final String objectName, final String fieldName, final Object value, final String errorKey)
-    {
+    protected void checkMandatoryField(final String objectName, final String fieldName, final Object value, final String errorKey) {
         if (mandatoryFields.contains(fieldName) && (value == null || value.equals(-1)))
             addFieldError(objectName, getText(errorKey));
     }
@@ -452,8 +433,7 @@ public class VoucherStatusReportAction extends BaseFormAction
         return mandatoryFields.contains(field);
     }
 
-    private String getVoucherStatus(final int status)
-    {
+    private String getVoucherStatus(final int status) {
         if (FinancialConstants.CREATEDVOUCHERSTATUS.equals(status))
             return "Approved";
         if (FinancialConstants.REVERSEDVOUCHERSTATUS.equals(status))
@@ -467,19 +447,17 @@ public class VoucherStatusReportAction extends BaseFormAction
         return "";
     }
 
-    private String getVoucherOwner(final CVoucherHeader voucherHeader)
-    {
+    private String getVoucherOwner(final CVoucherHeader voucherHeader) {
         final String dash = "-";
         final Integer voucherStatus = voucherHeader.getStatus();
         final String voucherType = voucherHeader.getType();
-        State voucherState = null;
+        State voucherState;
         if (voucherStatus.longValue() == FinancialConstants.CANCELLEDVOUCHERSTATUS.longValue()
                 || voucherStatus.longValue() == FinancialConstants.CREATEDVOUCHERSTATUS.longValue())
             return dash;
-        else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA))
-        {
+        else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA)) {
             final ContraJournalVoucher contraJV = (ContraJournalVoucher) persistenceService.find(
-                    "from ContraJournalVoucher cj where cj.voucherHeaderId=?", voucherHeader);
+                    "from ContraJournalVoucher cj where cj.voucherHeaderId=?1", voucherHeader);
             if (contraJV == null)
                 return dash;
             else
@@ -490,9 +468,7 @@ public class VoucherStatusReportAction extends BaseFormAction
                 return dash;
             else
                 return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
-        }
-        else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL))
-        {
+        } else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL)) {
             voucherState = voucherHeader.getState();
             if (voucherState == null)
                 return dash;
@@ -500,11 +476,9 @@ public class VoucherStatusReportAction extends BaseFormAction
                 return dash;
             else
                 return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
-        }
-        else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT))
-        {
+        } else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT)) {
             final Paymentheader paymentHeader = (Paymentheader) persistenceService.find(
-                    "from Paymentheader ph where ph.voucherheader=?", voucherHeader);
+                    "from Paymentheader ph where ph.voucherheader=?1", voucherHeader);
             if (paymentHeader == null)
                 return dash;
             else
@@ -515,40 +489,16 @@ public class VoucherStatusReportAction extends BaseFormAction
                 return dash;
             else
                 return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
-        }
-        
-        //no need to find owner of receipt
-       /* else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT))
-        { 
-            final ReceiptVoucher receiptVoucher = (ReceiptVoucher) persistenceService.find(
-                    "from ReceiptVoucher rv where rv.voucherHeader=?", voucherHeader);
-            if (receiptVoucher == null || receiptVoucher.getState() == null)
-            {
-                voucherState = voucherHeader.getState();
-                if (voucherState == null)
-                    return dash;
-                else if (voucherState.getValue().equals("END"))
-                    return dash;
-                else
-                    return getUserNameForPosition(voucherState.getOwnerPosition().getId().intValue());
-            }
-            else if (voucherState.getValue().equals("END"))
-                return dash;
-            else
-                return getUserNameForPosition(receiptVoucher.getState().getOwnerPosition().getId().intValue());
-        }*/
-        else
+        } else
             return dash;
     }
 
     private String getUserNameForPosition(final Integer posId) {
-        final String query = "select emp.userName  from org.egov.eis.entity.EmployeeView emp where emp.position.id = ? ";
-        final String userName = (String) persistenceService.find(query, posId.longValue());
-        return userName;
+        final String query = "select emp.userName  from org.egov.eis.entity.EmployeeView emp where emp.position.id = ?1 ";
+        return (String) persistenceService.find(query, posId.longValue());
     }
 
-    public void setParamMap()
-    {
+    public void setParamMap() {
         paramMap.put("fund", voucherHeader.getFundId().getName());
         if (voucherHeader.getVouchermis() != null && voucherHeader.getVouchermis().getDepartmentid() != null)
             paramMap.put("deptName", voucherHeader.getVouchermis().getDepartmentid().getName());
@@ -565,7 +515,7 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     @SkipValidation
     @Action(value = "/report/voucherStatusReport-generatePdf")
-    public String generatePdf() throws Exception {
+    public String generatePdf() throws IOException, JRException, ApplicationException {
         populateData();
         inputStream = reportHelper.exportPdf(inputStream, JASPERPATH, getParamMap(), voucherReportList);
         return "PDF";
@@ -573,7 +523,7 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     @SkipValidation
     @Action(value = "/report/voucherStatusReport-generateXls")
-    public String generateXls() throws Exception {
+    public String generateXls() throws IOException, JRException, ApplicationException {
         populateData();
         inputStream = reportHelper.exportXls(inputStream, JASPERPATH, getParamMap(), voucherReportList);
         return "XLS";
@@ -581,10 +531,6 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     protected Map<String, Object> getParamMap() {
         return paramMap;
-    }
-
-    public void setPagedResults(final EgovPaginatedList pagedResults) {
-        this.pagedResults = pagedResults;
     }
 
     public Integer getPageSize() {
@@ -613,6 +559,10 @@ public class VoucherStatusReportAction extends BaseFormAction
 
     public EgovPaginatedList getPagedResults() {
         return pagedResults;
+    }
+
+    public void setPagedResults(final EgovPaginatedList pagedResults) {
+        this.pagedResults = pagedResults;
     }
 
     public Map<String, String> getNameMap() {

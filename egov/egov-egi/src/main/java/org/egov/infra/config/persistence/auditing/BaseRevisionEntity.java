@@ -48,30 +48,39 @@
 
 package org.egov.infra.config.persistence.auditing;
 
-import org.egov.infra.config.persistence.auditing.listener.AuditableEntityListener;
+import org.egov.infra.config.persistence.auditing.listener.EntityAuditListener;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionEntity;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import java.util.Objects;
 
 @Entity
 @Table(name = "REVINFO")
-@RevisionEntity(AuditableEntityListener.class)
+@RevisionEntity(EntityAuditListener.class)
 public class BaseRevisionEntity extends DefaultRevisionEntity {
     private static final long serialVersionUID = -1956016149274910543L;
-    @NotNull
-    private Long userId;
 
     @NotNull
+    @Positive
+    private Long userId;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 20)
     private String ipAddress;
 
     public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(final Long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -79,8 +88,25 @@ public class BaseRevisionEntity extends DefaultRevisionEntity {
         return ipAddress;
     }
 
-    public void setIpAddress(final String ipAddress) {
+    public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof BaseRevisionEntity))
+            return false;
+        if (!super.equals(other))
+            return false;
+        BaseRevisionEntity that = (BaseRevisionEntity) other;
+        return Objects.equals(getUserId(), that.getUserId()) &&
+                Objects.equals(getIpAddress(), that.getIpAddress());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getUserId(), getIpAddress());
+    }
 }

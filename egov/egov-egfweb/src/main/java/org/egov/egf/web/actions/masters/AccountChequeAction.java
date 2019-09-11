@@ -47,12 +47,6 @@
  */
 package org.egov.egf.web.actions.masters;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -60,12 +54,13 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.commons.service.BankAccountService;
 import org.egov.egf.commons.EgovCommon;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
@@ -74,6 +69,8 @@ import org.egov.utils.Constants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.*;
 
 @Results({
         @Result(name = "new", location = "accountCheque-new.jsp"),
@@ -100,7 +97,9 @@ public class AccountChequeAction extends BaseFormAction {
     private AccountChequesService accountChequesService;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FundRepository fundRepository;
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
@@ -122,7 +121,7 @@ public class AccountChequeAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
-        addDropdownData("departmentList", masterDataCache.get("egi-department"));
+        addDropdownData("departmentList", departmentService.getAllDepartments());
         addDropdownData("financialYearList", financialYearDAO.getAllActiveFinancialYearList());
     }
 
@@ -130,7 +129,7 @@ public class AccountChequeAction extends BaseFormAction {
     public String newform() {
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         return "new";
 
     }
@@ -139,7 +138,7 @@ public class AccountChequeAction extends BaseFormAction {
     public String view() {
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("accNumList", Collections.EMPTY_LIST);
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         return "view";
 
     }
@@ -218,8 +217,7 @@ public class AccountChequeAction extends BaseFormAction {
         AccountCheques accountCheques;
         ChequeDeptMapping chqDept;
         removeEmptyRows();
-        bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id ="
-                + Long.valueOf(parameters.get("bankAccId")[0]));
+        bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id =?1", Long.valueOf(parameters.get("bankAccId")[0]));
         if (null == chequeDetailsList) {
             accountChequesService.deleteRecords(deletedChqDeptId, bankaccount);
             addActionMessage("Cheque Master deleted Successfully : No cheque leafs available");

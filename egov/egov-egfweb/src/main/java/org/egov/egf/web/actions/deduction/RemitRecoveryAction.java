@@ -50,9 +50,20 @@
  */
 package org.egov.egf.web.actions.deduction;
 
-import com.exilant.GLEngine.ChartOfAccounts;
-import com.exilant.GLEngine.Transaxtion;
-import com.opensymphony.xwork2.validator.annotations.Validation;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -79,6 +90,7 @@ import org.egov.commons.utils.EntityType;
 import org.egov.dao.voucher.VoucherHibernateDAO;
 import org.egov.deduction.model.EgRemittance;
 import org.egov.deduction.model.EgRemittanceDetail;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.payment.BasePaymentAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -87,6 +99,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -95,7 +108,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.deduction.RemittanceBean;
 import org.egov.model.instrument.InstrumentHeader;
@@ -114,31 +126,21 @@ import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import com.exilant.GLEngine.ChartOfAccounts;
+import com.exilant.GLEngine.Transaxtion;
+import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
 @Validation
 @Results({ @Result(name = RemitRecoveryAction.NEW, location = "remitRecovery-" + RemitRecoveryAction.NEW + ".jsp"),
         @Result(name = "messages", location = "remitRecovery-messages.jsp"),
         @Result(name = "view", location = "remitRecovery-view.jsp"),
-        @Result(name = "remitDetail", location = "remitRecovery-remitDetail.jsp") })
+        @Result(name = RemitRecoveryAction.REMIT_DETAIL, location = "remitRecovery-remitDetail.jsp"),
+        @Result(name = RemitRecoveryAction.UNAUTHORIZED, location = "../workflow/unauthorized.jsp")})
 public class RemitRecoveryAction extends BasePaymentAction {
-
-    private static final String DESIGNATION_ID = "designationId";
-    private static final String DESIGNATION_NAME = "designationName";
-    private static final String DESIGNATION_LIST = "designationList";
+    protected static final String REMIT_DETAIL = "remitDetail";
+    private static final String INVALID_APPROVER = "invalid.approver";
+    protected static final String UNAUTHORIZED = "unuthorized";
     private static final String UNCHECKED = "unchecked";
     private static final String MESSAGES = "messages";
     private static final long serialVersionUID = 1L;
@@ -199,8 +201,6 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @Autowired
     private PaymentActionHelper paymentActionHelper;
     private ChartOfAccounts chartOfAccounts;
-    @Autowired
-    private EgovMasterDataCaching masterDataCache;
 
     @Autowired
     @Qualifier("bankService")
@@ -211,6 +211,10 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private BankAccountService bankAccountService;
     @Autowired
     private BankHibernateDAO bankHibernateDAO;
+    @Autowired
+    private CommonsUtil commonsUtil;
+    @Autowired
+    private SecurityUtils securityUtils;
     
     public BigDecimal getBalance() {
         return balance;
@@ -321,7 +325,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             LOGGER.debug("RemitRecoveryAction | remit | start");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("RemitRecoveryAction | remit | size before filter" + listRemitBean.size());
-        final Recovery recov = (Recovery) persistenceService.find("from Recovery where id=?",
+        final Recovery recov = (Recovery) persistenceService.find("from Recovery where id=?1",
                 remittanceBean.getRecoveryId());
         if (recov != null)
             remittedTo = recov.getRemitted();
@@ -334,7 +338,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             LOGGER.debug("RemitRecoveryAction | remit | end");
         if (getBankBalanceCheck() == null || "".equals(getBankBalanceCheck()))
             addActionMessage(getText("payment.bankbalance.controltype"));
-        return "remitDetail";
+        return REMIT_DETAIL;
     }
 
     private void prepareListRemitBean(final String selectedRows) {
@@ -344,21 +348,27 @@ public class RemitRecoveryAction extends BasePaymentAction {
 
     }
 
-    @ValidationErrorPage(value = "remitDetail")
+    @ValidationErrorPage(value = REMIT_DETAIL)
     @Action(value = "/deduction/remitRecovery-create")
     public String create() {
         try {
+            populateWorkflowBean();
+            prepareListRemitBean(selectedRows);
+            if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                    addActionError(getText(INVALID_APPROVER));
+                    return REMIT_DETAIL;
+                }
+            }
             final String vdate = parameters.get("voucherDate")[0];
             final Date date1 = sdf1.parse(vdate);
             final String voucherDate = formatter1.format(date1);
             String cutOffDate1 = null;
-            prepareListRemitBean(selectedRows);
             validateFields();
             voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
             voucherHeader.setName(FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE);
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
-            recovery = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
-            populateWorkflowBean();
+            recovery = (Recovery) persistenceService.find("from Recovery where id=?1", remittanceBean.getRecoveryId());
             paymentheader = paymentActionHelper.createRemittancePayment(paymentheader, voucherHeader,
                     Integer.valueOf(commonBean.getAccountNumberId()), getModeOfPayment(),
                     remittanceBean.getTotalAmount(), listRemitBean, recovery, remittanceBean, remittedTo, workflowBean,
@@ -457,7 +467,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
         } else
             paymentid = parameters.get(PAYMENTID)[0];
         if (paymentheader == null && paymentid != null)
-            paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
+            paymentheader = paymentService.find("from Paymentheader where id=?1", Long.valueOf(paymentid));
         if (paymentheader == null)
             paymentheader = new Paymentheader();
 
@@ -468,8 +478,16 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @SkipValidation
     @Action(value = "/deduction/remitRecovery-sendForApproval")
     public String sendForApproval() {
-        paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
+        paymentheader = paymentService.find("from Paymentheader where id=?1", Long.valueOf(paymentid));
         populateWorkflowBean();
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                voucherHeader.setId(paymentheader.getVoucherheader().getId());
+                prepareForViewModifyReverse();
+                addActionError(getText(INVALID_APPROVER));
+                return VIEW;
+            }
+        }
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
@@ -493,7 +511,9 @@ public class RemitRecoveryAction extends BasePaymentAction {
     @SkipValidation
     @Action(value = "/deduction/remitRecovery-viewInboxItem")
     public String viewInboxItem() {
-        paymentheader = paymentService.find("from Paymentheader where id=?", Long.valueOf(paymentid));
+        paymentheader = paymentService.find("from Paymentheader where id=?1", Long.valueOf(paymentid));
+        if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), paymentheader))
+            return UNAUTHORIZED;
         /*
          * if (paymentheader.getState().getValue() != null && !paymentheader.getState().getValue().isEmpty() &&
          * paymentheader.getState().getValue().contains("Reject")) {
@@ -525,13 +545,13 @@ public class RemitRecoveryAction extends BasePaymentAction {
             voucherHeader = voucherService.updateVoucherHeader(voucherHeader);
             reCreateLedger();
             updateRemittanceDetail();
-            paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+            paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                     voucherHeader);
             paymentService.updatePaymentHeader(paymentheader, voucherHeader,
                     Integer.valueOf(commonBean.getAccountNumberId()), getModeOfPayment(),
                     remittanceBean.getTotalAmount());
             final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService
-                    .find(" from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                    .find(" from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
             miscbillDetail.setPaidto(remittedTo);
             // persistenceService.setType(Miscbilldetail.class);
             persistenceService.persist(miscbillDetail);
@@ -553,7 +573,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private void updateRemittanceDetail() {
         for (final RemittanceBean rbean : listRemitBean) {
             final EgRemittanceDetail egrDetail = (EgRemittanceDetail) persistenceService
-                    .find("from EgRemittanceDetail where id=?", rbean.getRemittanceId());
+                    .find("from EgRemittanceDetail where id=?1", rbean.getRemittanceId());
             egrDetail.setRemittedamt(rbean.getPartialAmount());
             // persistenceService.setType(EgRemittanceDetail.class);
             persistenceService.persist(egrDetail);
@@ -577,14 +597,14 @@ public class RemitRecoveryAction extends BasePaymentAction {
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, remittanceBean.getTotalAmount().toString());
             detailMap.put(VoucherConstant.DEBITAMOUNT, ZERO);
-            final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+            final Bankaccount account = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                     Integer.valueOf(commonBean.getAccountNumberId()));
             detailMap.put(VoucherConstant.GLCODE, account.getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
             detailMap = new HashMap<String, Object>();
             detailMap.put(VoucherConstant.CREDITAMOUNT, ZERO);
             detailMap.put(VoucherConstant.DEBITAMOUNT, remittanceBean.getTotalAmount().toString());
-            recovery = (Recovery) persistenceService.find("from Recovery where id=?", remittanceBean.getRecoveryId());
+            recovery = (Recovery) persistenceService.find("from Recovery where id=?1", remittanceBean.getRecoveryId());
             detailMap.put(VoucherConstant.GLCODE, recovery.getChartofaccounts().getGlcode());
             accountdetails.add(detailMap);
             subledgerDetails = addSubledgerGroupBy(subledgerDetails, recovery.getChartofaccounts().getGlcode());
@@ -622,15 +642,15 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private void prepareForViewModifyReverse() {
         final StringBuffer instrumentQuery = new StringBuffer(100);
         instrumentQuery
-                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?")
+                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?1")
                 .append(" order by ih.id");
         remittanceBean = new RemittanceBean();
-        voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?",
+        voucherHeader = (CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1",
                 voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                 voucherHeader);
         final Miscbilldetail miscBill = (Miscbilldetail) persistenceService
-                .find("from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                .find("from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
         remittedTo = miscBill.getPaidto();
         commonBean.setAmount(paymentheader.getPaymentAmount());
         commonBean.setAccountNumberId(paymentheader.getBankaccount().getId().toString());
@@ -660,7 +680,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
     private void getRemittanceFromVoucher() {
         listRemitBean = new ArrayList<RemittanceBean>();
 
-        final List<EgRemittance> remitList = persistenceService.findAllBy("from EgRemittance where voucherheader=?",
+        final List<EgRemittance> remitList = persistenceService.findAllBy("from EgRemittance where voucherheader=?1",
                 voucherHeader);
         for (final EgRemittance remit : remitList) {
             RemittanceBean rbean = null;
@@ -725,9 +745,9 @@ public class RemitRecoveryAction extends BasePaymentAction {
      * @return
      */
     private BigDecimal calculateEarlierPayment(final EgRemittanceDetail remitDtl) {
-        final BigDecimal sum = (BigDecimal) persistenceService.find(
-                "select sum(egr.remittedamt) from EgRemittanceDetail egr where "
-                        + " egr.egRemittanceGldtl=?  and egr.egRemittance.voucherheader.status  NOT in (?,?)",
+        final BigDecimal sum = (BigDecimal) persistenceService.find(new StringBuilder("select sum(egr.remittedamt)")
+                        .append(" from EgRemittanceDetail egr")
+                        .append(" where egr.egRemittanceGldtl=?1 and egr.egRemittance.voucherheader.status NOT in (?2,?3)").toString(),
                 remitDtl.getEgRemittanceGldtl(), FinancialConstants.CANCELLEDVOUCHERSTATUS,
                 FinancialConstants.REVERSEDVOUCHERSTATUS);
         if (sum == null)
@@ -778,7 +798,7 @@ public class RemitRecoveryAction extends BasePaymentAction {
             bankaccount = paymentheader.getBankaccount();
         else if (commonBean.getAccountNumberId() != null && !commonBean.getAccountNumberId().equals("-1")
                 && !commonBean.getAccountNumberId().equals(""))
-            bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?",
+            bankaccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1",
                     Long.valueOf(commonBean.getAccountNumberId()));
         if (bankaccount.getBankbranch().getId() != null)
             addDropdownData("accNumList",

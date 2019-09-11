@@ -252,6 +252,13 @@ function onSubmit()
 		 if (msg == true) {
 			 disableAll();
 			 document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+             $(document.remittanceForm).append(
+                 $('<input>', {
+                     type: 'hidden',
+                     name: '${_csrf.parameterName}',
+                     value: '${_csrf.token}'
+                 })
+             );
 			 document.remittanceForm.submit();
 			return true;
 		 } else {
@@ -262,6 +269,13 @@ function onSubmit()
 	else{
 		disableAll();
 		document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+		 $(document.remittanceForm).append(
+			 $('<input>', {
+				 type: 'hidden',
+				 name: '${_csrf.parameterName}',
+				 value: '${_csrf.token}'
+			 })
+		 );
 	 	document.remittanceForm.submit();
 	}
 			
@@ -402,7 +416,7 @@ else{
 																		id="remitAmount" /></td>
 																	<egov:updatevalues id="availableBalance"
 																		fields="['Text']"
-																		url="/payment/payment-ajaxGetAccountBalance.action" />
+																		url="payment/payment-ajaxGetAccountBalance.action" />
 																	<td class="greybox"><span id="balanceText"
 																		style="display: none" width="18%"><s:text
 																				name="balance.available" />&nbsp;</span></td>

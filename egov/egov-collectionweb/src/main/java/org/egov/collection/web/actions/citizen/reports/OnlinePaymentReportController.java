@@ -50,7 +50,8 @@ package org.egov.collection.web.actions.citizen.reports;
 import org.apache.commons.io.IOUtils;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.collection.service.CollectionReportService;
-import org.hibernate.SQLQuery;
+import org.egov.infra.exception.ApplicationException;
+import org.hibernate.query.NativeQuery;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -97,14 +98,14 @@ public class OnlinePaymentReportController {
 
     @RequestMapping(value = "/citizen/onlinePaymentReport/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody void springPaginationDataTablesUpdate(final HttpServletRequest request,
-            final HttpServletResponse response, final Model model) throws IOException {
+            final HttpServletResponse response, final Model model) throws IOException, ApplicationException {
 
         final String districtname = request.getParameter("districtname");
         final String ulbname = request.getParameter("ulbname");
         final String fromdate = request.getParameter("fromdate");
         final String todate = request.getParameter("todate");
         final String transid = request.getParameter("transid");
-        final SQLQuery query = reportService.getOnlinePaymentReportData(districtname, ulbname, fromdate, todate,
+        final NativeQuery query = reportService.getOnlinePaymentReportData(districtname, ulbname, fromdate, todate,
                 transid);
         List<OnlinePaymentResult> onlinePaymentList = query.list();
         final String result = new StringBuilder("{ \"data\":")

@@ -57,6 +57,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -64,9 +65,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/citizen/signup")
@@ -82,12 +80,12 @@ public class CitizenRegistrationController {
         this.citizenService = citizenService;
     }
 
-    @RequestMapping(method = GET)
+    @GetMapping
     public String registerCitizen(@ModelAttribute Citizen citizen) {
         return "signup";
     }
 
-    @RequestMapping(method = POST)
+    @PostMapping
     public String registerCitizen(@Valid @ModelAttribute Citizen citizen, BindingResult errors,
                                   HttpServletRequest request,
                                   RedirectAttributes redirectAttrib) {
@@ -100,23 +98,18 @@ public class CitizenRegistrationController {
         if (errors.hasErrors())
             return "signup";
         citizenService.create(citizen);
+        redirectAttrib.addFlashAttribute("mobileNo", citizen.getMobileNumber());
         redirectAttrib.addFlashAttribute("message", "msg.reg.success");
         return "redirect:signup";
     }
 
-    @RequestMapping(value = "/otp/{mobileNumber}", method = GET)
+    @PostMapping("/otp/{mobileNumber}")
     @ResponseBody
     public boolean sendOTPMessage(@PathVariable String mobileNumber) {
         return citizenService.sendOTPMessage(mobileNumber);
     }
 
-    @GetMapping("/otp/{mobileNumber}/{emailId:.+}")
-    @ResponseBody
-    public boolean sendOTPMessage(@PathVariable ("mobileNumber") String mobileNumber, @PathVariable ("emailId") String emailId) {
-        return citizenService.sendOTPMessage(mobileNumber, emailId);
-    }
-
-    @RequestMapping(value = "/validate-pwd", method = GET)
+    @PostMapping("/validate-pwd")
     @ResponseBody
     public boolean validatePassword(@RequestParam String pswd) {
         return validatorUtils.isValidPassword(pswd);

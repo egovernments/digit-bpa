@@ -48,13 +48,14 @@
 
 package org.egov.infra.workflow.entity;
 
-import static org.egov.infra.workflow.entity.State.SEQ_STATE;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.JsonUtils;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -70,14 +71,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.utils.JsonUtils;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.egov.infra.workflow.entity.State.SEQ_STATE;
 
 @Entity
 @Table(name = "EG_WF_STATES")
@@ -95,12 +95,13 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     private Long id;
 
     @NotBlank
-    @Length(max = 255)
+    @Length(max = 50)
     @SafeHtml
+    @Column(updatable = false)
     private String type;
 
     @NotBlank
-    @Length(max = 255)
+    @Length(max = 100)
     @SafeHtml
     private String value;
 
@@ -112,12 +113,12 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
 
-    @OneToMany(cascade = { CascadeType.PERSIST,
-            CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "state", targetEntity = StateHistory.class)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY, mappedBy = "state", targetEntity = StateHistory.class)
     @OrderBy("id")
     private Set<StateHistory<T>> history = new HashSet<>();
 
-    @Length(max = 100)
+    @Length(max = 200)
     @SafeHtml
     private String senderName;
 
@@ -158,10 +159,11 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     private State<T> previousStateRef;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column
     private Date sla;
 
     protected State() {
-        // Explicit state initialization not allowed
+        //Explicit state initialization not allowed
     }
 
     @Override
@@ -334,5 +336,4 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     public enum StateStatus {
         STARTED, INPROGRESS, ENDED
     }
-
 }

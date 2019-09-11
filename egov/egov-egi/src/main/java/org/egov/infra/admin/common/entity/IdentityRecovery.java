@@ -50,7 +50,10 @@ package org.egov.infra.admin.common.entity;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.validator.constraints.NotBlank;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.joda.time.DateTime;
 
 import javax.persistence.Entity;
@@ -63,29 +66,41 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.Objects;
 
 import static org.egov.infra.admin.common.entity.IdentityRecovery.SEQ_IDENTITYRECOVERY;
 
 @Entity
 @Table(name = "eg_identityrecovery")
+@Unique(fields = "token", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_IDENTITYRECOVERY, sequenceName = SEQ_IDENTITYRECOVERY, allocationSize = 1)
+@Immutable
 public class IdentityRecovery extends AbstractPersistable<Long> {
 
-    public static final String SEQ_IDENTITYRECOVERY = "SEQ_EG_IDENTITYRECOVERY";
+    protected static final String SEQ_IDENTITYRECOVERY = "SEQ_EG_IDENTITYRECOVERY";
     private static final long serialVersionUID = -1636403427637104041L;
+
     @Id
     @GeneratedValue(generator = SEQ_IDENTITYRECOVERY, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
+    @Length(max = 36)
+    @SafeHtml
     private String token;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "userid", nullable = false, updatable = false)
+    @JoinColumn(name = "userid", nullable = false)
+    @NotNull
     private User user;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    @FutureOrPresent
     private Date expiry;
 
     public Long getId() {
@@ -120,4 +135,18 @@ public class IdentityRecovery extends AbstractPersistable<Long> {
         this.expiry = expiry;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof IdentityRecovery))
+            return false;
+        IdentityRecovery that = (IdentityRecovery) other;
+        return Objects.equals(getToken(), that.getToken());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getToken());
+    }
 }

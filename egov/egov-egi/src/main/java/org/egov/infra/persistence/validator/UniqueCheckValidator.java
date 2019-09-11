@@ -52,6 +52,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -69,16 +70,16 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
     private EntityManager entityManager;
 
     @Override
-    public void initialize(final Unique unique) {
+    public void initialize(Unique unique) {
         this.unique = unique;
     }
 
     @Override
-    public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(Object arg0, ConstraintValidatorContext constraintValidatorContext) {
         try {
-            final Number id = (Number) FieldUtils.readField(arg0, unique.id(), true);
+            Number id = (Number) FieldUtils.readField(arg0, unique.id(), true);
             boolean isValid = true;
-            for (final String fieldName : unique.fields())
+            for (String fieldName : unique.fields()) {
                 if (!checkUnique(arg0, id, fieldName)) {
                     isValid = false;
                     if (unique.enableDfltMsg())
@@ -87,24 +88,29 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
                                 .addConstraintViolation();
 
                 }
+            }
             return isValid;
-        } catch (final IllegalAccessException e) {
-            throw new ApplicationRuntimeException("Error while validating unique key", e);
+        } catch (IllegalAccessException iae) {
+            throw new ApplicationRuntimeException("Error while validating unique key", iae);
         }
 
     }
 
-    private boolean checkUnique(final Object arg0, final Number id, final String fieldName) throws IllegalAccessException {
-        final Criteria criteria = entityManager.unwrap(Session.class)
+    private boolean checkUnique(Object arg0, Number id, String fieldName) throws IllegalAccessException {
+        Criteria criteria = entityManager.unwrap(Session.class)
                 .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
-        final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+        Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
         if (fieldValue instanceof String)
             criteria.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
         else
             criteria.add(Restrictions.eq(fieldName, fieldValue));
         if (id != null)
             criteria.add(Restrictions.ne(unique.id(), id));
-        return criteria.setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
+        return criteria
+                .setProjection(Projections.id())
+                .setMaxResults(1)
+                .setFlushMode(FlushMode.MANUAL)
+                .uniqueResult() == null;
     }
 
 }

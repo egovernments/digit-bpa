@@ -47,12 +47,10 @@
  */
 
 
-
 package org.egov.payment.dao;
 
 import org.egov.commons.CVoucherHeader;
 import org.egov.model.payment.Paymentheader;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +66,9 @@ import java.util.List;
  */
 @Transactional(readOnly = true)
 public class PaymentheaderHibernateDAO {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional
     public Paymentheader update(final Paymentheader entity) {
         getCurrentSession().update(entity);
@@ -90,21 +91,17 @@ public class PaymentheaderHibernateDAO {
     }
 
     public List<Paymentheader> findAll() {
-        return (List<Paymentheader>) getCurrentSession().createCriteria(Paymentheader.class).list();
+        return (List<Paymentheader>) getCurrentSession().createQuery("from Paymentheader").list();
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
 
     public List<Paymentheader> getPaymentheaderByVoucherHeader(final CVoucherHeader voucherHeader) {
-        final Query qry = getCurrentSession().createQuery("from Paymentheader where voucherheader =:voucherHeader");
-        qry.setEntity("voucherHeader", voucherHeader);
-        return qry.list();
+        return getCurrentSession().createQuery("from Paymentheader where voucherheader = :voucherHeader")
+                .setParameter("voucherHeader", voucherHeader)
+                .list();
     }
 }

@@ -48,8 +48,10 @@
 
 package org.egov.infra.workflow.matrix.entity;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.workflow.entity.WorkflowTypes;
+import org.egov.infra.workflow.entity.WorkflowType;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -64,6 +66,7 @@ import static org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule.SEQ_W
 
 @Entity
 @Table(name = "EG_WF_ADDITIONALRULE")
+@Immutable
 @SequenceGenerator(name = SEQ_WF_ADDITIONALRULE, sequenceName = SEQ_WF_ADDITIONALRULE, allocationSize = 1)
 public class WorkFlowAdditionalRule extends AbstractPersistable<Long> {
 
@@ -75,11 +78,21 @@ public class WorkFlowAdditionalRule extends AbstractPersistable<Long> {
 
     @ManyToOne
     @JoinColumn(name = "objecttypeid")
-    private WorkflowTypes objecttypeid;
+    private WorkflowType objecttypeid;
+
+    @Length(max = 512)
     private String additionalRule;
+
+    @Length(max = 512)
     private String states;
+
+    @Length(max = 512)
     private String status;
+
+    @Length(max = 512)
     private String buttons;
+
+    @Length(max = 512)
     private String workFlowActions;
 
     @Override
@@ -92,11 +105,11 @@ public class WorkFlowAdditionalRule extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public WorkflowTypes getObjecttypeid() {
+    public WorkflowType getObjecttypeid() {
         return this.objecttypeid;
     }
 
-    public void setObjecttypeid(WorkflowTypes objecttypeid) {
+    public void setObjecttypeid(WorkflowType objecttypeid) {
         this.objecttypeid = objecttypeid;
     }
 

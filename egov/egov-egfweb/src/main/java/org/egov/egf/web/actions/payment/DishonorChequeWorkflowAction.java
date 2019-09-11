@@ -48,6 +48,7 @@
 package org.egov.egf.web.actions.payment;
 
 //import com.exilant.eGov.src.domain.BankEntries;
+
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -57,12 +58,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
+import org.egov.commons.*;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
@@ -92,7 +88,10 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.type.DateType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -101,15 +100,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 
 @Results({
@@ -185,11 +176,11 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         mode = "approve";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(">>>>>>" + dishonourChqId);
-        dishonorChequeView = finDishonorChequeService.find(" from DishonorCheque where id=?", dishonourChqId);
+        dishonorChequeView = finDishonorChequeService.find(" from DishonorCheque where id=?1", dishonourChqId);
         for (final DishonorChequeDetails dc : dishonorChequeView.getDetails())
             if (dc.getFunctionId() != null)
             {
-                final CFunction function = (CFunction) persistenceService.find("from CFunction  where id=? ", dc.getFunctionId()
+                final CFunction function = (CFunction) persistenceService.find("from CFunction  where id=?1 ", dc.getFunctionId()
                         .longValue());
                 dc.setFunction(function);
             }
@@ -205,9 +196,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
             validActions = Arrays.asList("forward");
         else {
             final String validAction = (String) persistenceService.find(
-                    "select validActions from WorkFlowMatrix where objectType=? " +
-                            "and currentState =?", dishonorChequeView.getStateType(), dishonorChequeView.getCurrentState()
-                            .getValue());
+                    "select validActions from WorkFlowMatrix where objectType=?1 and currentState =?2",
+                    dishonorChequeView.getStateType(), dishonorChequeView.getCurrentState().getValue());
             if (null != validAction) {
                 final StringTokenizer strToken = new StringTokenizer(validAction, ",");
                 tempValidAction = null;
@@ -228,8 +218,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     public String getNextAction() {
         String nextActionTemp = "";
         if (null != dishonorChequeView && null != dishonorChequeView.getId())
-            nextActionTemp = (String) persistenceService.find("select nextAction from WorkFlowMatrix where objectType=? " +
-                    " and currentState=?", dishonorChequeView.getStateType(), dishonorChequeView.getCurrentState().getValue());
+            nextActionTemp = (String) persistenceService.find("select nextAction from WorkFlowMatrix where objectType=?1 and currentState=?2",
+                    dishonorChequeView.getStateType(), dishonorChequeView.getCurrentState().getValue());
         return nextActionTemp;
 
     }
@@ -237,7 +227,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     public void populateWorkflowEntities() {
         approverDepartmentList = persistenceService.findAllBy("from Department order by deptName");
         eisCommonService.getEmployeeByUserId(ApplicationThreadLocals.getUserId());
-        desgnationList = persistenceService.findAllBy("from Designation where name=?", "ACCOUNTS OFFICER");
+        desgnationList = persistenceService.findAllBy("from Designation where name=?1", "ACCOUNTS OFFICER");
         addDropdownData("approverDepartmentList", approverDepartmentList);
         addDropdownData("desgnationList", desgnationList);
 
@@ -307,16 +297,15 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         // set the instrument status of dishonored state
         instHeader.setStatusId(getDishonoredStatus());
         instrumentHeaderService.persist(instHeader);
-        final String instOtherDetailUpdate = "Update InstrumentOtherDetails iod set iod.dishonorBankRefNo=:refNo, iod.modifiedBy.id=:modifiedby , iod.modifiedDate=:modifiedDate , iod.instrumentStatusDate=:InstrumentUpdatedDate where "
-                +
-                " iod.instrumentHeaderId=:instrumentHeaderId ";
-        final Query instOtherDetailUpdateQuery = persistenceService.getSession().createQuery(instOtherDetailUpdate.toString());
-        instOtherDetailUpdateQuery.setString("refNo", dishonorChequeView.getBankReferenceNumber());
-        instOtherDetailUpdateQuery.setLong("modifiedby", ApplicationThreadLocals.getUserId().intValue());
-        instOtherDetailUpdateQuery.setDate("modifiedDate", new Date());
-        instOtherDetailUpdateQuery.setDate("InstrumentUpdatedDate", dishonorChequeView.getTransactionDate());
-        instOtherDetailUpdateQuery.setLong("instrumentHeaderId", dishonorChequeView.getInstrumentHeader().getId());
-
+        final String instOtherDetailUpdate = new StringBuilder("Update InstrumentOtherDetails iod set iod.dishonorBankRefNo=:refNo, iod.modifiedBy.id=:modifiedby,")
+                .append(" iod.modifiedDate=:modifiedDate , iod.instrumentStatusDate=:InstrumentUpdatedDate")
+                .append(" where iod.instrumentHeaderId=:instrumentHeaderId ").toString();
+        final Query instOtherDetailUpdateQuery = persistenceService.getSession().createQuery(instOtherDetailUpdate.toString())
+                .setParameter("refNo", dishonorChequeView.getBankReferenceNumber(), StringType.INSTANCE)
+                .setParameter("modifiedby", ApplicationThreadLocals.getUserId().intValue(), LongType.INSTANCE)
+                .setParameter("modifiedDate", new Date(), DateType.INSTANCE)
+                .setParameter("InstrumentUpdatedDate", dishonorChequeView.getTransactionDate(), DateType.INSTANCE)
+                .setParameter("instrumentHeaderId", dishonorChequeView.getInstrumentHeader().getId(), LongType.INSTANCE);
         instOtherDetailUpdateQuery.executeUpdate();
     }
 
@@ -363,7 +352,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("Completed  integrated system update.");
             } catch (final RuntimeException e) {
-                LOGGER.error("Error in updating integrated system  " + e.getMessage(), e);
+                LOGGER.error("Error in updating integrated system  " , e);
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("exception", e.getMessage()));
                 throw new ValidationException(errors);
@@ -376,7 +365,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                 ApplicationThreadLocals.getUserId().intValue();
             startChequeWorkflow(dishonorChequeView, actionNm,
                     null != parameters.get("approverComments") ? parameters.get("approverComments")[0] : null);
-            final EmployeeView nextUser = (EmployeeView) persistenceService.find("from EmployeeView where position.id=?", null/*
+            final EmployeeView nextUser = (EmployeeView) persistenceService.find("from EmployeeView where position.id=?1", null/*
              * phoenix
              * dishonorChequeView
              * .
@@ -405,9 +394,9 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
             returnValue = "viewMessage";
         } else if (actionNm.equalsIgnoreCase("reject")) {
             final InstrumentOtherDetails iob = (InstrumentOtherDetails) persistenceService
-                    .find("from InstrumentOtherDetails where instrumentHeaderId.id=?", dishonorChequeView.getInstrumentHeader()
+                    .find("from InstrumentOtherDetails where instrumentHeaderId.id=?1", dishonorChequeView.getInstrumentHeader()
                             .getId());
-            final User approverUser = (User) persistenceService.find("from User where id=?", iob.getPayinslipId().getCreatedBy()
+            final User approverUser = (User) persistenceService.find("from User where id=?1", iob.getPayinslipId().getCreatedBy()
                     .getId());
             eisService.getPrimaryPositionForUser(approverUser.getId(), new Date());
             // phoenix migration dishonorChequeView.setApproverPositionId(approvePos.getId());
@@ -506,7 +495,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         BigDecimal total = new BigDecimal(0);
         List<DishonorChequeDetails> tempdetails = new ArrayList<DishonorChequeDetails>();
         dishonorChequeView.setDetails(new HashSet<DishonorChequeDetails>(tempdetails));
-        tempdetails = persistenceService.findAllBy(" from DishonorChequeDetails where header.id=? ", dishonorChequeView.getId());
+        tempdetails = persistenceService.findAllBy(" from DishonorChequeDetails where header.id=?1 ", dishonorChequeView.getId());
         for (final DishonorChequeDetails dishonordetails : tempdetails)
             if (null != dishonordetails.getDebitAmt() && dishonordetails.getDebitAmt().compareTo(BigDecimal.ZERO) > 0)
                 total = total.add(dishonordetails.getDebitAmt());
@@ -545,27 +534,27 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         List<Object[]> slDetailsDebit = new ArrayList<Object[]>();
         StringBuffer reversalGlCodes = new StringBuffer();
         final List<DishonorChequeDetails> tempdetails = persistenceService.findAllBy(
-                "from DishonorChequeDetails where header.id=? ",
+                "from DishonorChequeDetails where header.id=?1 ",
                 dishonorChequeView.getId());
         for (final DishonorChequeDetails dishonordetails : tempdetails)
             reversalGlCodes = reversalGlCodes.append(dishonordetails.getGlcodeId().getGlcode()).append(',');
 
         reversalGlCodesStr = reversalGlCodes.substring(0, reversalGlCodes.length() - 1);
         new StringBuffer();
+        StringBuilder queryString = new StringBuilder("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)")
+                .append(" from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in(?1)")
+                .append(" and gl.id = gd.generalLedgerId.id and gl.debitAmount >0 and gl.glcode in (?2) ")
+                .append(" group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
         // dishonCheqForm.setGlcodeChList(glCode);
-        slDetailsCredit = persistenceService
-                .findAllBy("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)" +
-                        " from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in("
-                        + dishonorChequeView.getOriginalVoucherHeader().getId() + ")" +
-                        " and gl.id = gd.generalLedgerId.id and gl.debitAmount >0 and gl.glcode in (" + reversalGlCodesStr
-                        + ") group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
+        slDetailsCredit = persistenceService.findAllBy(queryString.toString(),dishonorChequeView.getOriginalVoucherHeader().getId(),reversalGlCodesStr);
 
-        slDetailsDebit = persistenceService.findAllBy("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)"
-                +
-                " from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in("
-                + dishonorChequeView.getOriginalVoucherHeader().getId() + ")" +
-                " and gl.id = gd.generalLedgerId.id and gl.creditAmount >0 and gl.glcode in (" + reversalGlCodesStr
-                + ") group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
+        StringBuilder query = new StringBuilder("select distinct gl.glcode, gd.detailTypeId.id, gd.detailKeyId,SUM(gd.amount)")
+                .append(" from CGeneralLedger gl, CGeneralLedgerDetail gd where gl.voucherHeaderId in(?1)")
+                .append(" and gl.id = gd.generalLedgerId.id and gl.creditAmount >0 and gl.glcode in (?2)")
+                .append(" group by gl.glcode, gd.detailTypeId.id, gd.detailKeyId");
+
+        slDetailsDebit = persistenceService.findAllBy(query.toString(),dishonorChequeView.getOriginalVoucherHeader().getId(),reversalGlCodesStr);
+
         LOGGER.debug("Debit Side Subledger list size is " + slDetailsDebit.size());
         LOGGER.debug("Credit Side Subledger list size is " + slDetailsCredit.size());
 
@@ -585,8 +574,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                         else {
                             subledgerMap.put(VoucherConstant.CREDITAMOUNT, chk.get(VoucherConstant.CREDITAMOUNT));
                             List<Recovery> tdslist = new ArrayList<Recovery>();
-                            tdslist = persistenceService.findAllBy(" from Recovery where chartofaccounts.glcode="
-                                    + obj[0].toString());
+                            tdslist = persistenceService.findAllBy(" from Recovery where chartofaccounts.glcode=?1",
+                                    obj[0].toString());
                             if (!tdslist.isEmpty()) {
                                 for (final Recovery tds : tdslist)
                                     if (tds.getType().equals(obj[0].toString()))
@@ -613,8 +602,8 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                         else {
                             subledgerMap.put(VoucherConstant.CREDITAMOUNT, chk.get(VoucherConstant.CREDITAMOUNT));
                             List<Recovery> tdslist = new ArrayList<Recovery>();
-                            tdslist = persistenceService.findAllBy(" from Recovery where chartofaccounts.glcode="
-                                    + obj[0].toString());
+                            tdslist = persistenceService.findAllBy(" from Recovery where chartofaccounts.glcode=?1",
+                                    obj[0].toString());
                             if (!tdslist.isEmpty()) {
                                 for (final Recovery tds : tdslist)
                                     if (tds.getType().equals(obj[0].toString()))
@@ -665,7 +654,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
     private List<HashMap<String, Object>> populateAccountDetails() {
         final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
         final List<DishonorChequeDetails> tempdetails = persistenceService.findAllBy(
-                "from DishonorChequeDetails where header.id=? ",
+                "from DishonorChequeDetails where header.id=?1 ",
                 dishonorChequeView.getId());
         BigDecimal totalAmountDbt = BigDecimal.ZERO;
         BigDecimal totalAmountCrd = BigDecimal.ZERO;
@@ -679,7 +668,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                     final String code = dishonordetails.getGlcodeId().getGlcode();
                     final Integer funct = dishonordetails.getFunctionId();
                     if (null != funct && funct > 0)
-                        glFunctionObj = (CFunction) persistenceService.find(" from CFunction fn where id=?", funct.longValue());
+                        glFunctionObj = (CFunction) persistenceService.find(" from CFunction fn where id=?1", funct.longValue());
                     if (amount.compareTo(BigDecimal.ZERO) != 0)
                         accountdetails.add(populateDetailMap(code, BigDecimal.ZERO, amount, glFunctionObj.getCode()));
 
@@ -692,7 +681,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                     final String code = dishonordetails.getGlcodeId().getGlcode();
                     final Integer funct = dishonordetails.getFunctionId();
                     if (null != funct && funct > 0)
-                        glFunctionObj = (CFunction) persistenceService.find(" from CFunction fn where id=?", funct.longValue());
+                        glFunctionObj = (CFunction) persistenceService.find(" from CFunction fn where id=?1", funct.longValue());
                     if (null != amount && amount.compareTo(BigDecimal.ZERO) != 0)
                     {
                         accountdetails.add(populateDetailMap(code, BigDecimal.ZERO, amount, glFunctionObj.getCode()));
@@ -806,22 +795,22 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
         if (null != dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getDepartmentid())
             headerdetails.put(
                     VoucherConstant.DEPARTMENTCODE,
-                    ((Department) persistenceService.find("from Department where id=?", dishonorChequeView
+                    ((Department) persistenceService.find("from Department where id=?1", dishonorChequeView
                             .getOriginalVoucherHeader().getVouchermis().getDepartmentid().getId())).getCode());
         if (null != dishonorChequeView.getOriginalVoucherHeader().getFundId())
             headerdetails.put(
                     VoucherConstant.FUNDCODE,
-                    ((Fund) persistenceService.find("from Fund where id=?", dishonorChequeView.getOriginalVoucherHeader()
+                    ((Fund) persistenceService.find("from Fund where id=?1", dishonorChequeView.getOriginalVoucherHeader()
                             .getFundId().getId())).getCode());
         if (null != dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getFundsource())
             headerdetails.put(
                     VoucherConstant.FUNDSOURCECODE,
-                    ((Fundsource) persistenceService.find("from Fundsource where id=?", dishonorChequeView
+                    ((Fundsource) persistenceService.find("from Fundsource where id=?1", dishonorChequeView
                             .getOriginalVoucherHeader().getVouchermis().getFundsource().getId())).getCode());
         if (null != dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getFunction())
             headerdetails.put(
                     VoucherConstant.FUNCTIONCODE,
-                    ((CFunction) persistenceService.find("from CFunction where id=?", dishonorChequeView
+                    ((CFunction) persistenceService.find("from CFunction where id=?1", dishonorChequeView
                             .getOriginalVoucherHeader().getVouchermis().getFunction())).getCode());
         if (null != dishonorChequeView.getOriginalVoucherHeader().getVouchermis().getDivisionid())
             headerdetails.put(VoucherConstant.DIVISIONID, dishonorChequeView.getOriginalVoucherHeader().getVouchermis()

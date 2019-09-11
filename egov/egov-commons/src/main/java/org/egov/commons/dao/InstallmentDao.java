@@ -47,11 +47,11 @@
  */
 package org.egov.commons.dao;
 
-import org.egov.commons.Installment;
-import org.egov.infra.admin.master.entity.Module;
-
 import java.util.Date;
 import java.util.List;
+
+import org.egov.commons.Installment;
+import org.egov.infra.admin.master.entity.Module;
 
 public interface InstallmentDao {
     public List<Installment> getInsatllmentByModule(Module module);
@@ -69,6 +69,11 @@ public interface InstallmentDao {
 
     List<Installment> getInstallmentsByModuleForGivenDateAndInstallmentType(Module module, Date installmentDate,
             String installmentType);
+
+    List<Installment> getInstallmentsByModuleAndFromDateAndInstallmentType(Module module, Date fromDate, Date currentDate,
+            String installmentType);
+
+    List<Installment> getInstallmentsByModuleBetweenFromDateAndToDate(Module module, Date fromDate, Date toDate);
 
     List<Installment> getInstallmentsByModuleBetweenFromDateAndToDateAndInstallmentType(Module module, Date fromDate, Date toDate,
             String installmentType);

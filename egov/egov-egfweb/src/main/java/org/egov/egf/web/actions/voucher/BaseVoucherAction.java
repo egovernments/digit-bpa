@@ -56,30 +56,25 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.CChartOfAccountDetail;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.commons.Vouchermis;
+import org.egov.commons.*;
+import org.egov.commons.dao.FunctionaryDAO;
+import org.egov.commons.dao.FundSourceHibernateDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.contra.ContraBean;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.model.voucher.WorkflowBean;
@@ -95,14 +90,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BaseVoucherAction extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
@@ -132,9 +120,20 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     Map<String, List<String>> voucherNames = VoucherHelper.VOUCHER_TYPE_NAMES;
 
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
-    @Autowired
     protected AppConfigValueService appConfigValuesService;
+
+    @Autowired
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private FundRepository fundRepository;
+    @Autowired
+    private FundSourceHibernateDAO fundSourceHibernateDAO;
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private FunctionaryDAO functionaryDAO;
 
     public BaseVoucherAction()
     {
@@ -169,17 +168,17 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             LOGGER.debug("Inside Prepare method");
         getHeaderMandateFields();
         if (headerFields.contains("department"))
-            addDropdownData("departmentList", masterDataCache.get("egi-department"));
+            addDropdownData("departmentList", departmentService.getAllDepartments());
         if (headerFields.contains("functionary"))
-            addDropdownData("functionaryList", masterDataCache.get("egi-functionary"));
+            addDropdownData("functionaryList", functionaryDAO.findAllActiveFunctionary());
         if (headerFields.contains("function"))
-            addDropdownData("functionList", masterDataCache.get("egi-function"));
+            addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
         if (headerFields.contains("fund"))
-            addDropdownData("fundList", masterDataCache.get("egi-fund"));
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (headerFields.contains("fundsource"))
-            addDropdownData("fundsourceList", masterDataCache.get("egi-fundSource"));
+            addDropdownData("fundsourceList", fundSourceHibernateDAO.findAllActiveIsLeafFundSources());
         if (headerFields.contains("field"))
-            addDropdownData("fieldList", masterDataCache.get("egi-ward"));
+            addDropdownData("fieldList", boundaryService.getBoundaryByBoundaryTypeName("WARD"));
         if (headerFields.contains("scheme"))
             addDropdownData("schemeList", Collections.emptyList());
         if (headerFields.contains("subscheme"))
@@ -245,12 +244,12 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected void loadSchemeSubscheme() {
         if (headerFields.contains("scheme") && null != voucherHeader.getFundId())
             addDropdownData("schemeList", getPersistenceService()
-                    .findAllBy("from Scheme where fund=?", voucherHeader.getFundId()));
+                    .findAllBy("from Scheme where fund=?1", voucherHeader.getFundId()));
         if (headerFields.contains("subscheme") && voucherHeader.getVouchermis() != null
                 && null != voucherHeader.getVouchermis().getSchemeid())
             addDropdownData(
                     "subschemeList",
-                    getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
+                    getPersistenceService().findAllBy("from SubScheme where scheme.id=?1 and isActive=true order by name",
                             voucherHeader.getVouchermis().getSchemeid().getId()));
     }
 
@@ -364,7 +363,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                         voucherDetail.getSubledgerCode()).toString() : null; // Debit or Credit.
                 if (voucherDetail.getFunctionDetail() != null && !voucherDetail.getFunctionDetail().equalsIgnoreCase("")
                         && !voucherDetail.getFunctionDetail().equalsIgnoreCase("0")) {
-                    final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?",
+                    final CFunction function = (CFunction) persistenceService.find("from CFunction where id = ?1",
                             Long.parseLong(voucherDetail.getFunctionDetail()));
                     subledgertDetailMap.put(VoucherConstant.FUNCTIONCODE, function != null ? function.getCode() : "");
                 }
@@ -482,8 +481,8 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         final List<String> repeatedglCodes = VoucherHelper.getRepeatedGlcodes(billDetailslist);
         for (final VoucherDetails voucherDetails : billDetailslist) {
             final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-                    " from CChartOfAccountDetail" +
-                            " where glCodeId=(select id from CChartOfAccounts where glcode=?)", voucherDetails.getGlcodeDetail());
+                    " from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?1)",
+                    voucherDetails.getGlcodeDetail());
             if (null != chartOfAccountDetail) {
                 accountDetailMap = new HashMap<>();
                 if (repeatedglCodes.contains(voucherDetails.getGlcodeIdDetail().toString()))
@@ -492,10 +491,10 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                      * voucherDetails.getGlcodeIdDetail()+'-'+voucherHeader.getFunctionId()); }else{
                      */
                     accountDetailMap.put("glcodeId-funcId",
-                            voucherDetails.getGlcodeIdDetail() + '-' + voucherDetails.getFunctionIdDetail());
+                            voucherDetails.getGlcodeIdDetail().toString() + '-' + voucherDetails.getFunctionIdDetail().toString());
                 // }
                 else
-                    accountDetailMap.put("glcodeId-funcId", voucherDetails.getGlcodeIdDetail() + '-' + "0");
+                    accountDetailMap.put("glcodeId-funcId", voucherDetails.getGlcodeIdDetail().toString().concat("-0"));
                 accountDetailMap.put("glcode", voucherDetails.getGlcodeDetail());
                 if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0)
                     accountDetailMap.put("amount", voucherDetails.getCreditAmountDetail());
@@ -520,12 +519,12 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                 // multiple times
                 // then take the function into consideration while calculating the total sl amount , else igone the function by
                 // paasing function value=0
-                if (null != subledAmtmap.get(voucherDetails.getGlcode().getId() + '-' + function)) {
-                    final BigDecimal debitTotalAmount = subledAmtmap.get(voucherDetails.getGlcode().getId() + '-' + function)
+                if (null != subledAmtmap.get(voucherDetails.getGlcode().getId().toString() + '-' + function)) {
+                    final BigDecimal debitTotalAmount = subledAmtmap.get(voucherDetails.getGlcode().getId().toString() + '-' + function)
                             .add(voucherDetails.getAmount());
-                    subledAmtmap.put(voucherDetails.getGlcode().getId() + '-' + function, debitTotalAmount);
+                    subledAmtmap.put(voucherDetails.getGlcode().getId().toString() + '-' + function, debitTotalAmount);
                 } else
-                    subledAmtmap.put(voucherDetails.getGlcode().getId() + '-' + function
+                    subledAmtmap.put(voucherDetails.getGlcode().getId().toString() + '-' + function
                             , voucherDetails.getAmount());
                 final StringBuffer subledgerDetailRow = new StringBuffer();
                 if (voucherDetails.getDetailType().getId() == 0 || null == voucherDetails.getDetailKeyId()) {
@@ -567,7 +566,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                         addActionError(getText("journalvoucher.subledger.amtnotmatchinng", new String[] { map.get("glcode")
                                 .toString() }));
                     else {
-                        final CFunction function = (CFunction) persistenceService.find("from CFunction where id=?",
+                        final CFunction function = (CFunction) persistenceService.find("from CFunction where id=?1",
                                 Long.valueOf(functionId));
                         addActionError(getText("journalvoucher.subledger.amtnotmatchinngFunc", new String[] {
                                 map.get("glcode").toString(), function.getName() }));
@@ -577,10 +576,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             }
 
         final StringBuffer fyQuery = new StringBuffer();
-        fyQuery.append("from CFinancialYear where isActiveForPosting=true and startingDate <= '").
-                append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("' AND endingDate >='")
-                .append(Constants.DDMMYYYYFORMAT1.format(voucherHeader.getVoucherDate())).append("'");
-        final List<CFinancialYear> list = persistenceService.findAllBy(fyQuery.toString());
+        fyQuery.append("from CFinancialYear where isActiveForPosting=true and startingDate <= ?1 AND endingDate >= ?2");
+        final List<CFinancialYear> list = persistenceService.findAllBy(fyQuery.toString(), voucherHeader.getVoucherDate(),
+                voucherHeader.getVoucherDate());
         if (list.size() == 0) {
             addActionError(getText("journalvoucher.fYear.notActive"));
             return true;
@@ -595,8 +593,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             final Integer branchId = Integer.valueOf(contraBean.getBankBranchId().substring(index1 + 1,
                     contraBean.getBankBranchId().length()));
             final List<Bankaccount> bankAccountList = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? " +
-                            "  and isactive=true order by id", branchId);
+                    "from Bankaccount ba where ba.bankbranch.id=?1 and isactive=true order by id", branchId);
             addDropdownData("accNumList", bankAccountList);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Account number list size " + bankAccountList.size());
@@ -610,8 +607,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             final int index1 = bankBranchId.indexOf('-');
             final Integer branchId = Integer.valueOf(bankBranchId.substring(index1 + 1, bankBranchId.length()));
             final List<Bankaccount> bankAccountList = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? " +
-                            "  and isactive=true order by id", branchId);
+                    "from Bankaccount ba where ba.bankbranch.id=?1 and isactive=true order by id", branchId);
             addDropdownData("accNumList", bankAccountList);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Account number list size " + bankAccountList.size());
@@ -627,14 +623,11 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("FUND ID = " + voucherHeader.getFundId().getId());
             final List<Object[]> bankBranch = getPersistenceService()
-                    .findAllBy(
-                            "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname "
-                                    +
-                                    " FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount "
-                                    +
-                                    " where  bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id"
-                                    +
-                                    " and bankaccount.fund.id=?", voucherHeader.getFundId().getId());
+                    .findAllBy(new StringBuilder(
+                            "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
+                            .append(" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount ")
+                            .append(" where  bank.isactive=true  and bankBranch.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id")
+                            .append(" and bankaccount.fund.id=?1").toString(), voucherHeader.getFundId().getId());
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
@@ -650,7 +643,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                 LOGGER.debug("Bank branch list size :" + bankBranchList.size());
             addDropdownData("bankList", bankBranchList);
         } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
+            LOGGER.error("Exception occured while getting the data for bank dropdown " ,
                     new HibernateException(e.getMessage()));
 
         }
@@ -725,13 +718,19 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     protected void removeEmptyRowsAccoutDetail(final List list) {
         for (final Iterator<VoucherDetails> detail = list.iterator(); detail.hasNext();) {
             final VoucherDetails next = detail.next();
-            if (next != null && (next.getGlcodeDetail() == null || next.getGlcodeDetail().trim().isEmpty())
-                    && (next.getFunctionDetail() == null || next.getFunctionDetail().trim().isEmpty())
-                    &&
-                    next.getDebitAmountDetail().compareTo(BigDecimal.ZERO)==0 && next.getCreditAmountDetail().compareTo(BigDecimal.ZERO)==0)
+            if (next == null)
                 detail.remove();
-            else if (next == null)
-                detail.remove();
+            else {
+                if (next.getDebitAmountDetail() == null)
+                    next.setDebitAmountDetail(BigDecimal.ZERO);
+                if (next.getCreditAmountDetail() == null)
+                    next.setCreditAmountDetail(BigDecimal.ZERO);
+                if ((next.getGlcodeDetail() == null || StringUtils.isEmpty(next.getGlcodeDetail()))
+                        && (next.getFunctionDetail() == null || StringUtils.isEmpty(next.getFunctionDetail()))
+                        && next.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0
+                        && next.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0)
+                    detail.remove();
+            }
         }
     }
 
@@ -787,7 +786,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         try {
             voucherHeader.setVoucherDate(sdf.parse(sdf.format(currDate)));
         } catch (final ParseException e) {
-            LOGGER.error("Inside loadDefalutDates" + e.getMessage(), e);
+            LOGGER.error("Inside loadDefalutDates" , e);
             throw new ValidationException(Arrays.asList(new ValidationError("Exception while formatting voucher date",
                     "Transaction failed")));
         }

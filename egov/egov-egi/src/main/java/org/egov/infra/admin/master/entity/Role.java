@@ -51,18 +51,22 @@ package org.egov.infra.admin.master.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 import static org.egov.infra.admin.master.entity.Role.SEQ_ROLE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
 
 @Entity
 @Unique(fields = "name", enableDfltMsg = true)
@@ -70,8 +74,9 @@ import static org.egov.infra.admin.master.entity.Role.SEQ_ROLE;
 @SequenceGenerator(name = SEQ_ROLE, sequenceName = SEQ_ROLE, allocationSize = 1)
 public class Role extends AbstractAuditable {
 
-    public static final String SEQ_ROLE = "SEQ_EG_ROLE";
+    protected static final String SEQ_ROLE = "SEQ_EG_ROLE";
     private static final long serialVersionUID = 7034114743461088547L;
+
     @Id
     @GeneratedValue(generator = SEQ_ROLE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -79,6 +84,8 @@ public class Role extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     @Length(max = 32)
+    @Column(updatable = false)
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String name;
 
     @SafeHtml
@@ -127,12 +134,12 @@ public class Role extends AbstractAuditable {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o)
+    public boolean equals(Object other) {
+        if (this == other)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (other == null || getClass() != other.getClass())
             return false;
-        final Role role = (Role) o;
+        Role role = (Role) other;
         return Objects.equals(getName(), role.getName());
     }
 

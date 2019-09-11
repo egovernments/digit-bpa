@@ -50,36 +50,46 @@ package org.egov.infra.admin.master.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 @Entity
-@Unique(fields = "deviceuid", enableDfltMsg = true)
 @Table(name = "eg_device")
+@Unique(fields = "deviceuid", enableDfltMsg = true)
 @SequenceGenerator(name = Device.SEQ_DEVICE, sequenceName = Device.SEQ_DEVICE, allocationSize = 1)
 public class Device extends AbstractAuditable {
 
-    public static final String SEQ_DEVICE = "SEQ_EG_DEVICE";
+    protected static final String SEQ_DEVICE = "SEQ_EG_DEVICE";
     private static final long serialVersionUID = 7034114743461088547L;
+
     @Id
     @GeneratedValue(generator = SEQ_DEVICE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotBlank
     @SafeHtml
+    @Length(max = 128)
+    @Column(updatable = false)
     private String deviceUId;
 
+    @NotBlank
     @SafeHtml
+    @Length(max = 32)
+    @Column(updatable = false)
     private String type;
 
     @SafeHtml
+    @Length(max = 32)
     private String OSVersion;
 
     @Override
@@ -117,35 +127,17 @@ public class Device extends AbstractAuditable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result
-                + ((deviceUId == null) ? 0 : deviceUId.hashCode());
-        return result;
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Device))
+            return false;
+        Device device = (Device) other;
+        return Objects.equals(getDeviceId(), device.getDeviceId());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Device other = (Device) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (deviceUId == null) {
-            if (other.deviceUId != null)
-                return false;
-        } else if (!deviceUId.equals(other.deviceUId))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getDeviceId());
     }
-
 }

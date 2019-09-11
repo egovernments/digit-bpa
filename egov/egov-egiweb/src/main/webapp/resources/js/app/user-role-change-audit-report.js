@@ -53,7 +53,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/egi/user/username-like/%QUERY',
+            url: '/egi/user/name-like/%QUERY',
             filter: function (data) {
                 return $.map(JSON.parse(data), function (user) {
                     return {
@@ -78,11 +78,11 @@ $(document).ready(function () {
     });
 
     $('#search-btn').on('click', function () {
-        if ($("#changedFor").val() === '') {
-            bootbox.alert("Please enter the user's name.");
+        if ($("#changedFor").val() === '' || $("#userId").val() === '') {
+            bootbox.alert("Please select a valid user name.");
             return;
         }
-        $('#view-user-role-audit-tbl').empty();
+        var userId = $("#userId").val();
         $('#view-user-role-audit-tbl').DataTable({
             processing: true,
             serverSide: true,
@@ -97,8 +97,18 @@ $(document).ready(function () {
                 data: function (args) {
                     return {
                         "args": JSON.stringify(args),
-                        "userId": $("#userId").val()
+                        "changedFor": userId
                     };
+                },
+                error: function (xhr) {
+                    try {
+                        showValidationMessage(xhr.responseJSON);
+                    } catch (e) {
+                        bootbox.alert("No data found for " + $("#changedFor").val())
+                    }
+                    $("#userId").val('');
+                    $("#changedFor").val('')
+                    $('#view-user-role-audit-tbl_wrapper').hide();
                 }
             },
             aLengthMenu: [[10, 25, 50, -1],

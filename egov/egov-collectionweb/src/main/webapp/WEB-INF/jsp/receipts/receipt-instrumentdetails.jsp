@@ -232,6 +232,7 @@ function showInstrumentDetails(obj){
  		clearCardDetails();
 		clearChequeDDDetails();
 		clearBankDetails();
+		clearManualReceiptData();
 	}
 	else  if(obj.id=='chequeradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -243,6 +244,7 @@ function showInstrumentDetails(obj){
 		clearCashDetails();
 		clearCardDetails();
 		clearBankDetails();
+		clearManualReceiptData();
 	}
 	else  if(obj.id=='ddradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -254,6 +256,7 @@ function showInstrumentDetails(obj){
 		clearCashDetails();
 		clearCardDetails();
 		clearBankDetails();
+		clearManualReceiptData();
 	}
 	else if(obj.id=='cardradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -265,6 +268,7 @@ function showInstrumentDetails(obj){
 		clearCashDetails();
 		clearBankDetails();
 		clearChequeDDDetails();
+		clearManualReceiptData();
 	}
 	else if(obj.id=='bankradiobutton'){
 		document.getElementById('cashdetails').style.display='none';
@@ -281,6 +285,7 @@ function showInstrumentDetails(obj){
 				getBankBranchList(document.getElementById('fundId'));
 			}
 		</s:if>
+		document.getElementById('manualreceipt').style.display='block';    
 	}
 	else if(obj.id=='onlineradiobutton'){
 		document.getElementById('onlinedetails').style.display='table-row';
@@ -293,6 +298,7 @@ function showInstrumentDetails(obj){
  		clearCardDetails();
 		clearChequeDDDetails();
 		clearBankDetails();
+		clearManualReceiptData();
 	}
 }
 function validateTransactionNumber()
@@ -391,7 +397,8 @@ function validateTransactionNumber()
 										name="billreceipt.payment.chequeddno" /><span
 									class="mandatory1">*</span></td>
 								<td class="bluebox"><s:textfield label="instrumentNumber"
-										id="instrumentChequeNumber" maxlength="6"
+										id="instrumentChequeNumber" maxlength="6" cssClass="form-control patternvalidation"
+										 data-pattern="number" 
 										name="instrumentProxyList[0].instrumentNumber" size="18" /></td>
 								<td class="bluebox"><s:text
 										name="billreceipt.payment.chequedddate" /><span
@@ -472,7 +479,7 @@ function validateTransactionNumber()
 										class="mandatory1">*</span></td>
 									<td class="bluebox2" width="20%"><s:textfield
 											label="instrumentNumber" id="instrumentChequeNumber"
-											maxlength="6"
+											maxlength="6"  cssClass="form-control patternvalidation" data-pattern="number" 
 											name="instrumentProxyList[%{#instrstatus.index}].instrumentNumber"
 											size="18" /></td>
 									<td class="bluebox2" width="23%"><s:text
@@ -612,7 +619,7 @@ function validateTransactionNumber()
 									name="billreceipt.payment.bankchallano" /><span
 								class="mandatory1">*</span></td>
 							<td class="bluebox"><s:textfield label="transactionNumber"
-									id="instrHeaderBank.transactionNumber" maxlength="6"
+									id="instrHeaderBank.transactionNumber" maxlength="16"
 									name="instrHeaderBank.transactionNumber"
 									value="%{instrHeaderBank.transactionNumber}" size="18" /></td>
 							<td class="bluebox"><s:text

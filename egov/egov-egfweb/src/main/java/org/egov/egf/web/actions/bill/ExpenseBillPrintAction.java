@@ -54,11 +54,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.CVoucherHeader;
+import org.egov.commons.*;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.utils.EntityType;
 import org.egov.dao.budget.BudgetDetailsHibernateDAO;
@@ -89,12 +85,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static org.egov.utils.FinancialConstants.*;
 
 @Results(value = {
 
@@ -110,10 +103,10 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(ExpenseBillPrintAction.class);
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
-    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?1";
     private static final String jasperpath = "/reports/templates/expenseBillReport.jasper";
     private static final String subReportPath = "/reports/templates/budgetAppropriationDetail.jasper";
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private String functionName;
     @Autowired
     private transient AppConfigValueService appConfigValuesService;
@@ -203,7 +196,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
 
     private void populateBill() {
         if (parameters.get("id") != null && !parameters.get("id")[0].isEmpty()) {
-            cbill = (EgBillregister) persistenceService.find("from EgBillregister where id=?",
+            cbill = (EgBillregister) persistenceService.find("from EgBillregister where id=?1",
                     Long.valueOf(parameters.get("id")[0]));
             billRegistermis = cbill.getEgBillregistermis();
         }
@@ -452,16 +445,25 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final VoucherDetails vd = new VoucherDetails();
                 final BigDecimal glcodeid = detail.getGlcodeid();
                 if (detail.getFunctionid() != null) {
-                    functionById = (CFunction) persistenceService.find("from CFunction where id=?",
+                    functionById = (CFunction) persistenceService.find("from CFunction where id=?1",
                             Long.valueOf(detail.getFunctionid().toString()));
                     setFunctionName(functionById.getName());
                     paramMap.put("functionName", functionById.getName());
                 }
-                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
+                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?1",
                         Long.valueOf(glcodeid.toString()));
                 if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
-                    budgetApprDetails = getBudgetDetails(coa, detail, functionById.getName());
-                    budget.add(budgetApprDetails);
+                    final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
+
+                    if (isBudgetCheckingRequiredForType("debit",
+                            budgetHeadListByGlcode.get(0).getBudgetingType().toString())) {
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("No need to check budget for :" + coa.getGlcode() + " as the transaction type is debit "
+                                    + "so skipping budget check");
+                        budgetApprDetails = getBudgetDetails(coa, detail, functionById.getName());
+                        budget.add(budgetApprDetails);
+                    }
+
                 }
                 vd.setGlcodeDetail(coa.getGlcode());
                 vd.setGlcodeIdDetail(coa.getId());
@@ -473,7 +475,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                     try {
                         EntityType entity = null;
                         final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                                "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
+                                "from Accountdetailtype where id=?1 order by name", payeedetail.getAccountDetailTypeId());
                         vd.setDetailTypeName(detailType.getName());
 
                         final Class<?> service = Class.forName(detailType.getFullQualifiedName());
@@ -484,11 +486,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         dataType = method.getReturnType().getSimpleName();
                         if (dataType.equals("Long"))
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId()
+                                    String.format("from %s where id=?1 order by name", detailTypeName), payeedetail.getAccountDetailKeyId()
                                             .longValue());
                         else
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
+                                    String.format("from %s where id=?1 order by name", detailTypeName), payeedetail.getAccountDetailKeyId());
                         vd.setDetailKey(entity.getCode());
                         vd.setDetailName(entity.getName());
                     } catch (final Exception e) {
@@ -510,16 +512,25 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 final VoucherDetails vd = new VoucherDetails();
                 final BigDecimal glcodeid = detail.getGlcodeid();
                 if (detail.getFunctionid() != null) {
-                    functionById = (CFunction) persistenceService.find("from CFunction where id=?",
+                    functionById = (CFunction) persistenceService.find("from CFunction where id=?1",
                             Long.valueOf(detail.getFunctionid().toString()));
                     setFunctionName(functionById.getName());
                     paramMap.put("functionName", functionById.getName());
                 }
-                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
+                final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?1",
                         Long.valueOf(glcodeid.toString()));
                 if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
-                    budgetApprDetails = getBudgetDetails(coa, detail, functionName);
-                    budget.add(budgetApprDetails);
+                    final List<BudgetGroup> budgetHeadListByGlcode = budgetDetailsDAO.getBudgetHeadByGlcode(coa);
+
+                    if (isBudgetCheckingRequiredForType("credit",
+                            budgetHeadListByGlcode.get(0).getBudgetingType().toString())) {
+                        if (LOGGER.isDebugEnabled())
+                            LOGGER.debug("No need to check budget for :" + coa.getGlcode() + " as the transaction type is credit "
+                                    + "so skipping budget check");
+                        budgetApprDetails = getBudgetDetails(coa, detail, functionName);
+                        budget.add(budgetApprDetails);
+                    }
+
                 }
                 vd.setGlcodeDetail(coa.getGlcode());
                 vd.setGlcodeIdDetail(coa.getId());
@@ -532,7 +543,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                     try {
                         EntityType entity = null;
                         final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
-                                "from Accountdetailtype where id=? order by name", payeedetail.getAccountDetailTypeId());
+                                "from Accountdetailtype where id=?1 order by name", payeedetail.getAccountDetailTypeId());
                         vd.setDetailTypeName(detailType.getName());
 
                         final Class<?> service = Class.forName(detailType.getFullQualifiedName());
@@ -543,11 +554,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         dataType = method.getReturnType().getSimpleName();
                         if (dataType.equals("Long"))
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId()
+                                    String.format("from %s where id=?1 order by name", detailTypeName), payeedetail.getAccountDetailKeyId()
                                             .longValue());
                         else
                             entity = (EntityType) persistenceService.find(
-                                    "from " + detailTypeName + " where id=? order by name", payeedetail.getAccountDetailKeyId());
+                                    String.format("from %s where id=?1 order by name", detailTypeName), payeedetail.getAccountDetailKeyId());
                         vd.setDetailKey(entity.getCode());
                         vd.setDetailName(entity.getName());
                     } catch (final Exception e) {
@@ -562,6 +573,24 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             }
         paramMap.put("budgetDetail", budget);
 
+    }
+
+    /**
+     * to check the budget checking is required or not
+     *
+     * @param txnType
+     * @param budgetingType
+     * @return
+     */
+    private boolean isBudgetCheckingRequiredForType(final String txnType, final String budgetingType) {
+        if (BUDGETTYPE_DEBIT.equalsIgnoreCase(budgetingType) && BUDGETTYPE_DEBIT.equals(txnType))
+            return true;
+        else if (BUDGETTYPE_CREDIT.equalsIgnoreCase(budgetingType) && BUDGETTYPE_CREDIT.equals(txnType))
+            return true;
+        else if (BUDGETTYPE_ALL.equalsIgnoreCase(budgetingType))
+            return true;
+        else
+            return false;
     }
 
     public AppConfigValueService getAppConfigValuesService() {

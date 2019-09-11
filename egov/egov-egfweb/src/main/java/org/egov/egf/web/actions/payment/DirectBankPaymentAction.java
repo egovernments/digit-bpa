@@ -74,11 +74,13 @@ import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.utils.EntityType;
+import org.egov.egf.commons.CommonsUtil;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -131,8 +133,11 @@ import java.util.Set;
         @Result(name = DirectBankPaymentAction.EDIT, location = "directBankPayment-" + DirectBankPaymentAction.EDIT
                 + ".jsp"),
         @Result(name = "reverse", location = "directBankPayment-reverse.jsp"),
-        @Result(name = "view", location = "directBankPayment-view.jsp") })
+        @Result(name = "view", location = "directBankPayment-view.jsp"),
+        @Result(name = PaymentAction.UNAUTHORIZED, location = "../workflow/unauthorized.jsp")})
 public class DirectBankPaymentAction extends BasePaymentAction {
+    protected static final String UNAUTHORIZED = "unuthorized";
+    private static final String INVALID_APPROVER = "invalid.approver";
     private final static String FORWARD = "Forward";
     private static final String FAILED_WHILE_REVERSING = "Failed while Reversing";
     private static final String FAILED = "Transaction failed";
@@ -147,6 +152,10 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private PaymentService paymentService;
     @Autowired
     private PaymentActionHelper paymentActionHelper;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private CommonsUtil commonsUtil;
     private static final String DD_MMM_YYYY = "dd-MMM-yyyy";
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
     public Map<String, String> modeOfPaymentMap;
@@ -286,6 +295,12 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                                 voucherHeader.getId());
                 voucherHeader.setId(null);
                 populateWorkflowBean();
+                if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                    if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                        addActionError(getText(INVALID_APPROVER));
+                        return NEW;
+                    }
+                }
                 paymentheader = paymentActionHelper.createDirectBankPayment(paymentheader, voucherHeader, billVhId,
                         commonBean, billDetailslist, subLedgerlist, workflowBean);
                 showMode = "create";
@@ -368,7 +383,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                 .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG, appconfigKey).get(0);
         final String purposeValue = appConfigValues.getValue();
         final CGeneralLedger netPay = (CGeneralLedger) persistenceService.find(
-                "from CGeneralLedger where voucherHeaderId.id=? and glcodeId.purposeId=?", voucherHeader.getId(),
+                "from CGeneralLedger where voucherHeaderId.id=?1 and glcodeId.purposeId=?2", voucherHeader.getId(),
                 purposeValue);
         if (netPay == null)
             throw new ValidationException(Arrays.asList(new ValidationError(
@@ -514,7 +529,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
     private void updateMiscBillDetail(final CVoucherHeader billVhId) {
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService
-                .find(" from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                .find(" from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
         miscbillDetail.setBillnumber(commonBean.getDocumentNumber());
         miscbillDetail.setBilldate(commonBean.getDocumentDate());
         miscbillDetail.setBillVoucherHeader(billVhId);
@@ -554,11 +569,11 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     private void prepareForViewModifyReverse() {
         final StringBuffer instrumentQuery = new StringBuffer(100);
         instrumentQuery
-                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?")
+                .append("select  distinct ih from InstrumentHeader ih join ih.instrumentVouchers iv where iv.voucherHeaderId.id=?1")
                 .append(" order by ih.id");
         voucherHeader = persistenceService.getSession().load(CVoucherHeader.class,
                 voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                 voucherHeader);
         commonBean.setAmount(paymentheader.getPaymentAmount());
         commonBean.setAccountNumberId(paymentheader.getBankaccount().getId().toString());
@@ -569,7 +584,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         commonBean.setBankId(bankBranchId);
         commonBean.setModeOfPayment(paymentheader.getType());
         final Miscbilldetail miscbillDetail = (Miscbilldetail) persistenceService
-                .find(" from Miscbilldetail where payVoucherHeader=?", voucherHeader);
+                .find(" from Miscbilldetail where payVoucherHeader=?1", voucherHeader);
         commonBean.setDocumentNumber(miscbillDetail.getBillnumber());
         commonBean.setDocumentDate(miscbillDetail.getBilldate());
         commonBean.setPaidTo(miscbillDetail.getPaidto());
@@ -626,7 +641,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                     validateRTGS();
 
                 reCreateLedger();
-                paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+                paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                         voucherHeader);
                 paymentService.updatePaymentHeader(paymentheader, voucherHeader,
                         Integer.valueOf(commonBean.getAccountNumberId()), commonBean.getModeOfPayment(),
@@ -875,25 +890,39 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     @Action(value = "/payment/directBankPayment-viewInboxItem")
     public String viewInboxItem() {
         paymentheader = getPayment();
+        if (!commonsUtil.isApplicationOwner(securityUtils.getCurrentUser(), paymentheader))
+            return UNAUTHORIZED;
+        return view();
+
+    }
+
+    /**
+     * @return
+     */
+    public String view() {
         showApprove = true;
         if (paymentheader.getVoucherheader() != null)
             voucherHeader.setId(paymentheader.getVoucherheader().getId());
         prepareForViewModifyReverse();
         return VIEW;
-
     }
 
     @ValidationErrorPage(value = VIEW)
     @SkipValidation
     @Action(value = "/payment/directBankPayment-sendForApproval")
     public String sendForApproval() {
-
+        
         if (paymentheader.getId() == null)
             paymentheader = getPayment();
 
         populateWorkflowBean();
+        if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            if (!commonsUtil.isValidApprover(paymentheader, workflowBean.getApproverPositionId())) {
+                addActionError(getText(INVALID_APPROVER));
+                return view();
+            }
+        }
         paymentheader = paymentActionHelper.sendForApproval(paymentheader, workflowBean);
-
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(getText("payment.voucher.rejected", new String[] {
                     paymentService.getEmployeeNameForPositionId(paymentheader.getState().getOwnerPosition()) }));
@@ -908,7 +937,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
 
         }
         showMode = "view";
-        return viewInboxItem();
+        return view();
     }
 
     @Override
@@ -917,7 +946,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         final List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         if (cutOffDateconfigValue != null && !cutOffDateconfigValue.isEmpty()) {
-            if (null == paymentheader || null == paymentheader.getId()
+            if (null == paymentheader || null == paymentheader.getId() || null == paymentheader.getCurrentState()
                     || paymentheader.getCurrentState().getValue().endsWith("NEW"))
                 validActions = Arrays.asList(FORWARD, FinancialConstants.CREATEANDAPPROVE);
             else if (paymentheader.getCurrentState() != null)
@@ -968,7 +997,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
     public String cancelPayment() {
         voucherHeader = persistenceService.getSession().load(CVoucherHeader.class,
                 voucherHeader.getId());
-        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?",
+        paymentheader = (Paymentheader) persistenceService.find("from Paymentheader where voucherheader=?1",
                 voucherHeader);
         voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
         // persistenceService.setType(CVoucherHeader.class);

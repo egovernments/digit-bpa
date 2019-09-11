@@ -62,20 +62,12 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.recoveries.RecoveryService;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 
 
@@ -120,49 +112,47 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
     @Override
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
         final String query = getSearchQuery();
-        final String countQry = "select count(*) from  RemittanceSchedulerLog  as s " + dynQuery + " ";
+        final String countQry = "select count(*) from  RemittanceSchedulerLog  as s ".concat(dynQuery.toString());
         setPageSize(PAGE_SIZE);
         return new SearchQueryHQL(query, countQry, paramList);
     }
 
     private String getSearchQuery() {
         paramList = new ArrayList<Object>();
-        String queryBeginning = " ";
-        queryBeginning = "select distinct (SELECT COUNT(sp.schId)  from RemittanceSchedulePayment sp  WHERE sp.schId = s.id) AS COUNT, "
-                +
-                "s.schJobName,s.lastRunDate, s.schType, s.glcode, s.status, s.remarks,s.id from RemittanceSchedulerLog as s ";
-
+        StringBuilder queryBeginning = new StringBuilder("select distinct (SELECT COUNT(sp.schId)  from RemittanceSchedulePayment sp  WHERE sp.schId = s.id) AS COUNT, ")
+                .append("s.schJobName,s.lastRunDate, s.schType, s.glcode, s.status, s.remarks,s.id from RemittanceSchedulerLog as s ");
+        int index = 1;
         if (schedulerType.equals("Auto")) {
-            dynQuery.append(" where  s.schType=?");
+            dynQuery.append(" where  s.schType=?").append(index++);
             paramList.add(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_AUTO);
         }
         else if (schedulerType.equals("Manual")) {
-            dynQuery.append(" where s.schType=?");
+            dynQuery.append(" where s.schType=?").append(index++);
             paramList.add(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_MANUAL);
         }
         else {
-            dynQuery.append(" where s.schType=? or s.schType=?");
+            dynQuery.append(" where s.schType=?").append(index++).append(" or s.schType=?").append(index++);
             paramList.add(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_AUTO);
             paramList.add(FinancialConstants.REMITTANCE_SCHEDULER_SCHEDULAR_TYPE_MANUAL);
         }
 
         if (StringUtils.isNotEmpty(recoveryId)) {
-            dynQuery.append(" and  s.glcode=?");
+            dynQuery.append(" and  s.glcode=?").append(index++);
             paramList.add(recoveryId);
         }
 
         if (runDateFrom != null) {
-            dynQuery.append(" and  s.lastRunDate>=to_date(?,'dd/MM/yyyy')");
+            dynQuery.append(" and  s.lastRunDate>=to_date(?").append(index++).append(",'dd/MM/yyyy')");
             paramList.add(DDMMYYYYFORMATS.format(runDateFrom));
         }
 
         if (runDateTo != null) {
-            dynQuery.append(" and  s.lastRunDate<=to_date(?,'dd/MM/yyyy')");
+            dynQuery.append(" and  s.lastRunDate<=to_date(?").append(index++).append(",'dd/MM/yyyy')");
             paramList.add(DDMMYYYYFORMATS.format(runDateTo));
         }
 
         dynQuery.append(" order by lastRunDate desc");
-        return queryBeginning + dynQuery.toString();
+        return queryBeginning.toString() + dynQuery.toString();
     }
 
     public String searchList() {
@@ -221,8 +211,9 @@ public class AutoRemittanceSchedulerReportAction extends SearchFormAction {
 
     private void getRecoveryCOA()
     {
-        final String queryString = "select c.glcode, c.glcode || '-' || c.name from Recovery r join r.chartofaccounts c where r.isactive=true and r.remittanceMode='A'  order by c.glcode ";
-        final Query query = persistenceService.getSession().createQuery(queryString);
+        final StringBuilder queryString = new StringBuilder("select c.glcode, c.glcode || '-' || c.name")
+                .append(" from Recovery r join r.chartofaccounts c where r.isactive=true and r.remittanceMode='A'  order by c.glcode ");
+        final Query query = persistenceService.getSession().createQuery(queryString.toString());
         final List chartList = query.list();
         final Iterator itr = chartList.iterator();
         while (itr.hasNext())

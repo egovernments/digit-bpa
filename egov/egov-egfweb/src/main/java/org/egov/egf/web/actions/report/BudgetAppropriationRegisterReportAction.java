@@ -58,6 +58,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Fund;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.repository.FundRepository;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.egf.model.BudgetAppDisplay;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -67,7 +68,6 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.services.budget.BudgetService;
@@ -75,9 +75,11 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.LongType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -86,12 +88,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Results(value = {
         @Result(name = "result", location = "budgetAppropriationRegisterReport-form.jsp"),
@@ -135,7 +132,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private AppConfigValueService appConfigValuesService;
     private Boolean shouldShowREAppropriations = false;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
     @Autowired
     private BudgetDetailConfig budgetDetailConfig;
 
@@ -152,15 +149,15 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         dropdownData.put("functionList",Collections.EMPTY_LIST);
         dropdownData.put("executingDepartmentList",Collections.EMPTY_LIST);
         dropdownData.put("budgetGroupList", Collections.EMPTY_LIST);
-        dropdownData.put("fundList", masterDataCache.get("egi-fund"));
+        dropdownData.put("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         if (department.getId() != null && department.getId() != -1)
-            department = (Department) persistenceService.find("from Department where id=?", department.getId());
+            department = (Department) persistenceService.find("from Department where id=?1", department.getId());
         if (function.getId() != null && function.getId() != -1)
-            function = (CFunction) persistenceService.find("from CFunction where id=?", function.getId());
+            function = (CFunction) persistenceService.find("from CFunction where id=?1", function.getId());
         if (fund.getId() != null && fund.getId() != -1)
-            fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
+            fund = (Fund) persistenceService.find("from Fund where id=?1", fund.getId());
         if (budgetGroup.getId() != null && budgetGroup.getId() != -1)
-            budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id=?", budgetGroup.getId());
+            budgetGroup = (BudgetGroup) persistenceService.find("from BudgetGroup where id=?1", budgetGroup.getId());
     }
 
     @ReadOnly
@@ -215,38 +212,47 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         if (budgetGroup != null) {
             budgetHead = budgetGroup.getName();
             StringBuilder strQuery = new StringBuilder();
-            strQuery.append("select vmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate, vh.description as description,vh.createddate as createdDate, ");
-            strQuery.append(" null as billNumber, null as billDate,null as billCreatedDate, gl.debitamount as debitAmount, gl.creditamount as creditAmount from generalledger gl, vouchermis vmis,  ");
-            strQuery.append(" voucherheader vh  where vh.id = gl.voucherheaderid and vh.id = vmis.voucherheaderid and  gl.glcodeid =:glCodeId");
-            strQuery.append(" and (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  >=:strStDate");
-            strQuery.append(" and vh.voucherdate <=:strAODate");
-            strQuery.append(getFunctionQuery("gl.functionid"));
-            strQuery.append(getDepartmentQuery("vmis.departmentid"));
-            strQuery.append(getFundQuery("vh.fundid"));
-            strQuery.append(" ");
-            strQuery.append(" union select distinct bmis.budgetary_appnumber as bdgApprNumber, vh1.vouchernumber as VoucherNumber, vh1.voucherdate as  voucherDate , br.narration as description,vh1.createddate as createdDate, br.billnumber as billNumber, br.billdate as billDate,br.createddate as billCreatedDate ,  bd.debitamount as debitAmount, bd.creditamount as creditAmount  ");
-            strQuery.append(" from eg_billdetails bd, eg_billregistermis bmis, eg_billregister br, voucherHeader vh1 where br.id = bd.billid and br.id = bmis.billid and  bd.glcodeid =:glCodeId ");
-            strQuery.append(" and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and (vh1.id = bmis.voucherheaderid )  and br.billdate  >=:strStDate");
-            strQuery.append(" and br.billdate  <=:strAODate");
-            strQuery.append(getFunctionQuery("bd.functionid"));
-            strQuery.append(getDepartmentQuery("bmis.departmentid"));
-            strQuery.append(getFundQuery("bmis.fundid"));
-            strQuery.append("  ");
-            strQuery.append(" union select distinct bmis1.budgetary_appnumber as bdgApprNumber, null as VoucherNumber,cast( null as date) voucherDate , ");
-            strQuery.append(" br.narration as description,cast( null as date) createdDate, br.billnumber as billNumber, br.billdate as billDate,br.createddate as billCreatedDate ,   bd1.debitamount as debitAmount, bd1.creditamount as creditAmount from eg_billdetails bd1, eg_billregistermis bmis1, eg_billregister br  ");
-            strQuery.append(" where br.id = bd1.billid and br.id = bmis1.billid and  bd1.glcodeid =:glCodeId ");
-            strQuery.append(" and (bmis1.budgetary_appnumber != 'null' and bmis1.budgetary_appnumber is not null) ");
-            strQuery.append(" and br.statusid not in (select id from egw_status where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL')) and bmis1.voucherheaderid is null and br.billdate   >=:strStDate");
-            strQuery.append(" and br.billdate <=:strAODate");
-            strQuery.append(getFunctionQuery("bd1.functionid"));
-            strQuery.append(getDepartmentQuery("bmis1.departmentid"));
-            strQuery.append(getFundQuery("bmis1.fundid"));
-            strQuery.append("  order by bdgApprNumber ");
+            strQuery.append("select vmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate,")
+                    .append(" vh.description as description,vh.createddate as createdDate, null as billNumber, null as billDate,null as billCreatedDate, gl.debitamount as debitAmount,")
+                    .append(" gl.creditamount as creditAmount from generalledger gl, vouchermis vmis, voucherheader vh")
+                    .append("  where vh.id = gl.voucherheaderid and vh.id = vmis.voucherheaderid and  gl.glcodeid =:glCodeId")
+                    .append(" and (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  >=:strStDate")
+                    .append(" and vh.voucherdate <=:strAODate")
+                    .append(getFunctionQuery("gl.functionid"))
+                    .append(getDepartmentQuery("vmis.departmentid"))
+                    .append(getFundQuery("vh.fundid"))
+                    .append(" ")
+                    .append(" union select distinct bmis.budgetary_appnumber as bdgApprNumber, vh1.vouchernumber as VoucherNumber, vh1.voucherdate as  voucherDate,")
+                    .append(" br.narration as description,vh1.createddate as createdDate, br.billnumber as billNumber, br.billdate as billDate,br.createddate as billCreatedDate,")
+                    .append("  bd.debitamount as debitAmount, bd.creditamount as creditAmount  ")
+                    .append(" from eg_billdetails bd, eg_billregistermis bmis, eg_billregister br, voucherHeader vh1 where br.id = bd.billid and br.id = bmis.billid")
+                    .append(" and  bd.glcodeid =:glCodeId ")
+                    .append(" and (bmis.budgetary_appnumber != 'null' and bmis.budgetary_appnumber is not null) and br.statusid not in (select id from egw_status")
+                    .append(" where description='Cancelled' and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))")
+                    .append(" and (vh1.id = bmis.voucherheaderid )  and br.billdate  >=:strStDate and br.billdate  <=:strAODate")
+                    .append(getFunctionQuery("bd.functionid"))
+                    .append(getDepartmentQuery("bmis.departmentid"))
+                    .append(getFundQuery("bmis.fundid"))
+                    .append("  ")
+                    .append(" union select distinct bmis1.budgetary_appnumber as bdgApprNumber, null as VoucherNumber,cast( null as date) voucherDate , ")
+                    .append(" br.narration as description,cast( null as date) createdDate, br.billnumber as billNumber, br.billdate as billDate,")
+                    .append("br.createddate as billCreatedDate ,   bd1.debitamount as debitAmount, bd1.creditamount as creditAmount")
+                    .append(" from eg_billdetails bd1, eg_billregistermis bmis1, eg_billregister br  ")
+                    .append(" where br.id = bd1.billid and br.id = bmis1.billid and  bd1.glcodeid =:glCodeId ")
+                    .append(" and (bmis1.budgetary_appnumber != 'null' and bmis1.budgetary_appnumber is not null) ")
+                    .append(" and br.statusid not in (select id from egw_status where description='Cancelled'")
+                    .append(" and moduletype in ('EXPENSEBILL', 'SALBILL', 'WORKSBILL', 'PURCHBILL', 'CBILL', 'SBILL', 'CONTRACTORBILL'))")
+                    .append(" and bmis1.voucherheaderid is null and br.billdate   >=:strStDate")
+                    .append(" and br.billdate <=:strAODate")
+                    .append(getFunctionQuery("bd1.functionid"))
+                    .append(getDepartmentQuery("bmis1.departmentid"))
+                    .append(getFundQuery("bmis1.fundid"))
+                    .append("  order by bdgApprNumber ");
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strQuery...." + strQuery);
 
-            query = persistenceService.getSession().createSQLQuery(strQuery.toString())
+            query = persistenceService.getSession().createNativeQuery(strQuery.toString())
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate", StandardBasicTypes.DATE)
                     .addScalar("billDate", StandardBasicTypes.DATE)
@@ -267,22 +273,23 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         final HashMap<String, BudgetAppDisplay> regMap = new HashMap<String, BudgetAppDisplay>();
         if (budgetAppropriationRegisterList.size() > 0) {
             StringBuilder strsubQuery = new StringBuilder();
-            strsubQuery.append("select vmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate, vh.description as description,vh.createddate as createdDate, ");
-            strsubQuery.append(" br.billnumber as billNumber, br.billdate as billDate,br.createddate as billCreatedDate, gl.debitamount as debitAmount, gl.creditamount as creditAmount from generalledger gl, vouchermis vmis,  ");
-            strsubQuery.append(" voucherheader vh,  eg_billregistermis bmis, eg_billregister br  where vh.id = gl.voucherheaderid and vh.id = vmis.voucherheaderid and vh.id = bmis.voucherheaderid and bmis.billid = br.id ");
-            strsubQuery.append(" and  gl.glcodeid =:glCodeId ");
-            strsubQuery.append(" and  ");
-            strsubQuery.append(" (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  >=:strStDate");
-            strsubQuery.append(" and vh.voucherdate <=:strAODate");
-            strsubQuery.append(getFunctionQuery("gl.functionid"));
-            strsubQuery.append(getDepartmentQuery("vmis.departmentid"));
-            strsubQuery.append(getFundQuery("vh.fundid"));
-            strsubQuery.append("  order by bdgApprNumber ");
+            strsubQuery.append("select vmis.budgetary_appnumber as bdgApprNumber, vh.vouchernumber as VoucherNumber, vh.voucherdate as voucherDate, vh.description as description,")
+                    .append("vh.createddate as createdDate, br.billnumber as billNumber, br.billdate as billDate,br.createddate as billCreatedDate, gl.debitamount as debitAmount,")
+                    .append(" gl.creditamount as creditAmount from generalledger gl, vouchermis vmis, voucherheader vh,  eg_billregistermis bmis, eg_billregister br")
+                    .append(" where vh.id = gl.voucherheaderid and vh.id = vmis.voucherheaderid and vh.id = bmis.voucherheaderid and bmis.billid = br.id ")
+                    .append(" and  gl.glcodeid =:glCodeId ")
+                    .append(" and  ")
+                    .append(" (vmis.budgetary_appnumber  != 'null' and vmis.budgetary_appnumber is not null) and vh.status != 4 and vh.voucherdate  >=:strStDate")
+                    .append(" and vh.voucherdate <=:strAODate")
+                    .append(getFunctionQuery("gl.functionid"))
+                    .append(getDepartmentQuery("vmis.departmentid"))
+                    .append(getFundQuery("vh.fundid"))
+                    .append("  order by bdgApprNumber ");
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
 
-            query = persistenceService.getSession().createSQLQuery(strsubQuery.toString())
+            query = persistenceService.getSession().createNativeQuery(strsubQuery.toString())
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate", StandardBasicTypes.DATE)
                     .addScalar("billDate", StandardBasicTypes.DATE)
@@ -439,14 +446,26 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             final CFinancialYear financialYear = financialYearDAO.getFinancialYearById(Long.valueOf(financialYr.getId()));
 
             List<BudgetDetail> budgedDetailList = new ArrayList<BudgetDetail>();
-            String query = " from BudgetDetail bd where bd.budget.isbere=? and bd.budgetGroup=? and bd.budget.financialYear=? ";
-            if (department.getId() != null && department.getId() != -1)
-                query = query + " and bd.executingDepartment.id=" + department.getId();
-            if (function.getId() != null && function.getId() != -1)
-                query = query + " and bd.function.id=" + function.getId();
-            if (fund.getId() != null && fund.getId() != -1)
-                query = query + " and bd.fund.id=" + fund.getId();
-            budgedDetailList = persistenceService.findAllBy(query, type, budgetGroup, financialYear);
+            int index = 1;
+            List<Object> params = new ArrayList<>();
+            StringBuilder query = new StringBuilder(" from BudgetDetail bd where bd.budget.isbere=?").append(index++)
+                    .append(" and bd.budgetGroup.id=?").append(index++).append(" and bd.budget.financialYear.id=?").append(index++);
+            params.add(type);
+            params.add(Long.valueOf(budgetGroup.getId()));
+            params.add(Long.valueOf(financialYear.getId()));
+            if (department.getId() != null && department.getId() != -1) {
+                query.append(" and bd.executingDepartment.id=?").append(index++);
+                params.add(Long.valueOf(department.getId()));
+            }
+            if (function.getId() != null && function.getId() != -1) {
+                query.append(" and bd.function.id=?").append(index++);
+                params.add(Long.valueOf(function.getId()));
+            }
+            if (fund.getId() != null && fund.getId() != -1) {
+                query.append(" and bd.fund.id=?").append(index++);
+                params.add(Integer.valueOf(fund.getId()));
+            }
+            budgedDetailList = persistenceService.findAllBy(query.toString(), params.toArray());
             if (budgedDetailList != null && budgedDetailList.size() > 0)
                 for (final BudgetDetail bdetail : budgedDetailList) {
                     approvedAmount = approvedAmount.add(bdetail.getApprovedAmount());
@@ -520,28 +539,28 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     {
         if (function.getId() != null && function.getId() != -1)
         {
-            query.setLong("functionId", function.getId()) ; 
+            query.setParameter("functionId", function.getId(), LongType.INSTANCE);
         }
         if (department.getId() != null && department.getId() != -1)
         {
-            query.setLong("departmentId", department.getId()) ; 
+            query.setParameter("departmentId", department.getId(), LongType.INSTANCE);
         }
         if (fund.getId() != null && fund.getId() != -1)
         {
-            query.setLong("fundId", fund.getId()) ; 
+            query.setParameter("fundId", Long.valueOf(fund.getId()), LongType.INSTANCE);
         }
         if (budgetGroup.getMinCode().getId() != null )
         {
-            query.setLong("glCodeId", budgetGroup.getMinCode().getId()) ; 
+            query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), LongType.INSTANCE);
         }
         if (asOnDate != null )
         {
-            query.setDate("strAODate", asOnDate) ; 
+            query.setParameter("strAODate", asOnDate, DateType.INSTANCE);
         }
         
         if (startDate != null )
         {
-            query.setDate("strStDate", startDate) ; 
+            query.setParameter("strStDate", startDate, DateType.INSTANCE);
         }
         
         

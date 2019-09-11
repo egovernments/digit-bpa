@@ -1,2 +1,0 @@
-ALTER TABLE egdm_depreciationmaster ADD CONSTRAINT fk_depremsrtuid_userid FOREIGN KEY (userid) REFERENCES state.eg_user(id);
-ALTER TABLE eg_bill ADD CONSTRAINT fk_eg_user FOREIGN KEY (user_id) REFERENCES state.eg_user(id);

@@ -47,6 +47,8 @@
  */
 package org.egov.collection.web.actions.citizen;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -62,7 +64,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -117,8 +118,6 @@ public class OnlineReceiptAction extends BaseFormAction {
             .append("\n \nIf the amount has not been deducted from your account, then please check your ")
             .append("internet connection and try to pay again after some time. If the transaction fails again, ")
             .append("please contact cell in Corporation.").toString();
-    private static final String TRANSACTION_NOT_FOUND = "Transaction is not found.";
-    private static final String TRANSACTION_ALREADY_RECONCILED = "Transaction is already reconciled.";
     private final List<ValidationError> errors = new ArrayList<>(0);
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
@@ -173,16 +172,11 @@ public class OnlineReceiptAction extends BaseFormAction {
         return NEW;
     }
 
-    @ValidationErrorPage(value = "error")
     @Action(value = "/citizen/onlineReceipt-saveNew")
     public String saveNew() {
         /**
          * initialise receipt info,persist receipt, create bill desk payment object and redirect to payment screen
          */
-
-        receiptHeaderService.validatePayment(receiptHeader.getService().getCode(), receiptHeader.getReferencenumber(), paymentAmount,
-                (ArrayList<ReceiptDetail>) getReceiptDetailList());
-
         if (callbackForApportioning && !overrideAccountHeads)
             apportionBillAmount();
         ServiceDetails paymentService = null;
@@ -203,7 +197,6 @@ public class OnlineReceiptAction extends BaseFormAction {
 
         System.currentTimeMillis();
         LOGGER.info("responseMsg:	" + responseMsg);
-
         ServiceDetails paymentService;
         if (null != paymentServiceId && paymentServiceId > 0)
             paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
@@ -225,12 +218,21 @@ public class OnlineReceiptAction extends BaseFormAction {
         if (onlinePaymentReceiptHeader != null) {
             if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                 processSuccessMsg();
-            else if ((onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
+            else if ((onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                    .equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
                     && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE
                             .equals(paymentResponse.getAuthStatus()))
-                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
+                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                            .equals(CollectionConstants.SERVICECODE_ATOM) &&
                             CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
-                                    .contains(paymentResponse.getAuthStatus()))) {
+                                    .contains(paymentResponse.getAuthStatus()))
+                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                            .equals(CollectionConstants.SERVICECODE_AXIS) &&
+                            CollectionConstants.AXIS_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
+                                    .contains(paymentResponse.getAuthStatus()))
+                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode()
+                            .equals(CollectionConstants.SERVICECODE_SBIMOPS)
+                            && CollectionConstants.PGI_AUTHORISATION_CODE_PENDING.equals(paymentResponse.getAuthStatus()))) {
                 final EgwStatus paymentStatus = collectionsUtil.getStatusForModuleAndCode(
                         CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
@@ -241,15 +243,8 @@ public class OnlineReceiptAction extends BaseFormAction {
             } else
                 processFailureMsg();
         } else {
-            ReceiptHeader receiptHeader = receiptHeaderService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE, Long.valueOf(paymentResponse.getReceiptId()),
-                    paymentResponse.getAdditionalInfo6());
-            if (receiptHeader == null) {
-                addActionError(TRANSACTION_NOT_FOUND);
-                LOGGER.info("onlinePaymentReceiptHeader object is null");
-            }else {
-                addActionError(TRANSACTION_ALREADY_RECONCILED);
-            }
+            errors.add(new ValidationError(BROKEN_TRANSACTION_ERROR_MESSAGE, BROKEN_TRANSACTION_ERROR_MESSAGE));
+            LOGGER.info("onlinePaymentReceiptHeader object is null");
         }
         return RESULT;
     }
@@ -274,7 +269,7 @@ public class OnlineReceiptAction extends BaseFormAction {
         LOGGER.debug("Cancelled receipt after receiving failure message from the payment gateway");
 
         addActionError(getText(onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().toLowerCase()
-                + ".pgi." + onlinePaymentReceiptHeader.getService().getCode().toLowerCase() + "."
+                + ".pgi."
                 + paymentResponse.getAuthStatus()));
         receiptResponse = "FAILURE|NA";
     }
@@ -440,7 +435,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     public void prepare() {
         super.prepare();
         // populates model when request is from the billing system
-        if (StringUtils.isNotBlank(getCollectXML())) {
+        if (isNotBlank(getCollectXML())) {
             final String decodedCollectXml = decodeBillXML();
             try {
                 collDetails = BillInfoMarshaller.toObject(decodedCollectXml);
@@ -461,24 +456,21 @@ public class OnlineReceiptAction extends BaseFormAction {
                 setOverrideAccountHeads(collDetails.getOverrideAccountHeadsAllowed());
                 setPartPaymentAllowed(collDetails.getPartPaymentAllowed());
                 setCallbackForApportioning(collDetails.getCallbackForApportioning());
-                totalAmountToBeCollected = BigDecimal.valueOf(0);
+                totalAmountToBeCollected = BigDecimal.ZERO;
 
                 receiptHeader = collectionCommon.initialiseReceiptModelWithBillInfo(collDetails, fund, dept);
                 setRefNumber(receiptHeader.getReferencenumber());
                 totalAmountToBeCollected = totalAmountToBeCollected.add(receiptHeader.getTotalAmountToBeCollected());
-                for (final ReceiptDetail rDetails : receiptHeader.getReceiptDetails())
-                    rDetails.getCramountToBePaid().setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT,
-                            BigDecimal.ROUND_UP);
-                setReceiptDetailList(new ArrayList<ReceiptDetail>(receiptHeader.getReceiptDetails()));
+                setReceiptDetailList(new ArrayList<>(receiptHeader.getReceiptDetails()));
 
-                if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
+                if (totalAmountToBeCollected.compareTo(BigDecimal.ZERO) < 0) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
                     LOGGER.info(getText("billreceipt.totalamountlessthanzero.error"));
                 } else
                     setTotalAmountToBeCollected(totalAmountToBeCollected.setScale(
                             CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
-            } catch (final Exception e) {
-                LOGGER.error(getText("billreceipt.error.improperbilldata") + e);
+            } catch (final Exception exp) {
+                LOGGER.error(getText("billreceipt.error.improperbilldata"), exp);
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }
@@ -488,19 +480,19 @@ public class OnlineReceiptAction extends BaseFormAction {
                         CollectionConstants.SERVICE_TYPE_PAYMENT));
         constructServiceDetailsList();
         // Fetching pending transaction by consumer code. If transaction is in pending status display message
-	    if (null != receiptHeader && null != receiptHeader.getConsumerCode() && !"".equals(receiptHeader.getConsumerCode())
-	            && receiptHeader.getService().getCode() != null && !receiptHeader.getService().getCode().isEmpty()) {
-	        final List<ReceiptHeader> pendingOnlinePayments = getPersistenceService().findAllByNamedQuery(
-	                CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
-	                receiptHeader.getService().getCode(),
-	                receiptHeader.getConsumerCode(), CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
-	        if (!pendingOnlinePayments.isEmpty()) {
-	            isTransactionPending = Boolean.TRUE;
-	            addActionMessage(getText("onlineReceipts.pending.validate",
-	                    new String[] { pendingOnlinePayments.get(0).getConsumerCode(),
-	                            pendingOnlinePayments.get(0).getId().toString() }));
-	        }
-	    }
+        if (null != receiptHeader && isNotBlank(receiptHeader.getConsumerCode())
+                && isNotBlank(receiptHeader.getService().getCode())) {
+            final List<ReceiptHeader> pendingOnlinePayments = getPersistenceService().findAllByNamedQuery(
+                    CollectionConstants.QUERY_ONLINE_PENDING_RECEIPTS_BY_CONSUMERCODE_AND_SERVICECODE,
+                    receiptHeader.getService().getCode(),
+                    receiptHeader.getConsumerCode(), CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+            if (!pendingOnlinePayments.isEmpty()) {
+                isTransactionPending = Boolean.TRUE;
+                addActionMessage(getText("onlineReceipts.pending.validate",
+                        new String[] { pendingOnlinePayments.get(0).getConsumerCode(),
+                                pendingOnlinePayments.get(0).getId().toString() }));
+            }
+        }
     }
 
     private String decodeBillXML() {
@@ -705,7 +697,7 @@ public class OnlineReceiptAction extends BaseFormAction {
             while (paramNames.hasMoreElements()) {
                 final String paramName = paramNames.nextElement();
                 final String paramValue = httpRequest.getParameter(paramName);
-                if (null != paramValue && !"".equals(paramValue))
+                if (isNotBlank(paramValue))
                     responseMap.put(paramName, paramValue);
             }
             responseMsg = responseMap.toString();
@@ -897,15 +889,16 @@ public class OnlineReceiptAction extends BaseFormAction {
         this.refNumber = refNumber;
     }
 
+    public void setCollectionService(final CollectionService collectionService) {
+        this.collectionService = collectionService;
+    }
+
     public Boolean getIsTransactionPending() {
-	    return isTransactionPending;
-	}
+        return isTransactionPending;
+    }
 
     public void setIsTransactionPending(Boolean isTransactionPending) {
         this.isTransactionPending = isTransactionPending;
     }
 
-    public void setCollectionService(final CollectionService collectionService) {
-        this.collectionService = collectionService;
-    }
 }

@@ -1,1 +1,0 @@
-update egp_portalservice set userservice =false where code in ('New Building Plan Scrutiny','Resubmit Building Plan Scrutiny');

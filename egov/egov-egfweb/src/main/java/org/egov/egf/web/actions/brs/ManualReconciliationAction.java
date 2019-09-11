@@ -59,7 +59,6 @@ import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.egf.model.ReconcileBean;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
@@ -83,7 +82,6 @@ public class ManualReconciliationAction extends BaseFormAction {
 
 
 	private static final long serialVersionUID = -4207341983597707193L;
-	private static final Logger LOGGER = Logger.getLogger(ManualReconciliationAction.class);
 	private List<Bankbranch> branchList = Collections.EMPTY_LIST;
 	private final List<Bankaccount> accountList = Collections.EMPTY_LIST;
 	/* @Autowired
@@ -120,7 +118,7 @@ public class ManualReconciliationAction extends BaseFormAction {
 		{
 			branchList = persistenceService
 					.findAllBy(
-							"select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
+							"select  bb from Bankbranch bb,Bankaccount ba where bb.bank.id=?1 and ba.bankbranch=bb and bb.isactive=true",
 							reconcileBean.getBankId());
 			dropdownData.put("branchList", branchList);
 
@@ -128,7 +126,7 @@ public class ManualReconciliationAction extends BaseFormAction {
 		if (reconcileBean.getAccountId() != null)
 		{
 			final List<Bankaccount> accountList = getPersistenceService().findAllBy(
-					"from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode", reconcileBean.getBranchId());
+					"from Bankaccount ba where ba.bankbranch.id=?1 and isactive=true order by ba.chartofaccounts.glcode", reconcileBean.getBranchId());
 			dropdownData.put("accountList", accountList);
 		}
 

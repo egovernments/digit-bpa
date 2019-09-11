@@ -62,7 +62,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -70,11 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Results(value = {
@@ -160,23 +156,30 @@ public class FixedDepositAction extends BaseFormAction {
     public String search() {
         final StringBuffer query = new StringBuffer();
         query.append("From FixedDeposit ");
-        if (fromDate != null && toDate != null)
-            query.append("where date >='" + sdf.format(fromDate) + "' and date <='" + sdf.format(toDate) + "'");
-        else if (fromDate == null && toDate == null)
+        final List<Object> params = new ArrayList<>();
+        int index = 1;
+        if (fromDate != null && toDate != null) {
+            query.append("where date >=?").append(index++).append(" and date <=?").append(index++);
+            params.add(sdf.format(fromDate));
+            params.add(sdf.format(toDate));
+        } else if (fromDate == null && toDate == null) {
             query.append("where date<= CURRENT_DATE");
-        else if (fromDate != null)
-            query.append("where date>='" + sdf.format(fromDate) + "'");
-        else
-            query.append("where date<='" + sdf.format(toDate) + "'");
+        } else if (fromDate != null) {
+            query.append("where date>=?").append(index++);
+            params.add(sdf.format(fromDate));
+        } else {
+            query.append("where date<=?").append(index++);
+            params.add(sdf.format(toDate));
+        }
         query.append("  order by id");
 
-        fixedDepositList = persistenceService.findAllBy(query.toString());
+        fixedDepositList = persistenceService.findAllBy(query.toString(), params.toArray());
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Fixed deposit size= " + fixedDepositList.size());
 
         for (final FixedDeposit fd : fixedDepositList) {
             bankAccountListTemp = getPersistenceService().findAllBy(
-                    "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
+                    "from Bankaccount ba where ba.bankbranch.id=?1 and isactive=true order by ba.chartofaccounts.glcode",
                     fd.getBankBranch().getId());
             fd.setBankAccountList(bankAccountListTemp);
             if (fd.getReceiptAmount() == null)
@@ -203,23 +206,23 @@ public class FixedDepositAction extends BaseFormAction {
     @Action(value = "/revenue/fixedDeposit-update")
     public String saveOrupdate() {
         for (final FixedDeposit fd : fixedDepositList) {
-            fd.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", fd.getBankBranch().getId()));
-            fd.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?", fd.getBankAccount().getId()));
-            fd.setOutFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", fd
+            fd.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?1", fd.getBankBranch().getId()));
+            fd.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?1", fd.getBankAccount().getId()));
+            fd.setOutFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", fd
                     .getOutFlowVoucher().getId()));
             if (fd.getInFlowVoucher().getId() != null)
-                fd.setInFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", fd
+                fd.setInFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", fd
                         .getInFlowVoucher().getId()));
             else
                 fd.setInFlowVoucher(null);
 
             if (fd.getChallanReceiptVoucher().getId() != null)
-                fd.setChallanReceiptVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", fd
+                fd.setChallanReceiptVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", fd
                         .getChallanReceiptVoucher().getId()));
             else
                 fd.setChallanReceiptVoucher(null);
             if (fd.getInstrumentHeader().getId() != null)
-                fd.setInstrumentHeader((InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", fd
+                fd.setInstrumentHeader((InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?1", fd
                         .getInstrumentHeader().getId()));
             else
                 fd.setInstrumentHeader(null);
@@ -236,26 +239,26 @@ public class FixedDepositAction extends BaseFormAction {
                 for (final FixedDeposit chld : childFDList)
                     if (fdd.getReferenceNumber().equals(chld.getReferenceNumber())) {
                         chld.setParentId(fdd);
-                        chld.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", chld
+                        chld.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?1", chld
                                 .getBankBranch().getId()));
-                        chld.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?", chld
+                        chld.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?1", chld
                                 .getBankAccount().getId()));
-                        chld.setOutFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", chld
+                        chld.setOutFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", chld
                                 .getOutFlowVoucher().getId()));
                         if (chld.getInstrumentHeader().getId() != null)
                             chld.setInstrumentHeader((InstrumentHeader) persistenceService.find(
-                                    "from InstrumentHeader where id=?", chld.getInstrumentHeader().getId()));
+                                    "from InstrumentHeader where id=?1", chld.getInstrumentHeader().getId()));
                         else
                             chld.setInstrumentHeader(null);
                         if (chld.getInFlowVoucher().getId() != null)
-                            chld.setInFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?", chld
+                            chld.setInFlowVoucher((CVoucherHeader) persistenceService.find("from CVoucherHeader where id=?1", chld
                                     .getInFlowVoucher().getId()));
                         else
                             chld.setInFlowVoucher(null);
 
                         if (chld.getChallanReceiptVoucher().getId() != null)
                             chld.setChallanReceiptVoucher((CVoucherHeader) persistenceService.find(
-                                    "from CVoucherHeader where id=?", chld.getChallanReceiptVoucher().getId()));
+                                    "from CVoucherHeader where id=?1", chld.getChallanReceiptVoucher().getId()));
                         else
                             chld.setChallanReceiptVoucher(null);
 
@@ -278,7 +281,7 @@ public class FixedDepositAction extends BaseFormAction {
 
     @SuppressWarnings("unchecked")
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
@@ -308,8 +311,8 @@ public class FixedDepositAction extends BaseFormAction {
         final List<Object> dataSource = new ArrayList<Object>();
         for (final FixedDeposit row : fixedDepositList) {
 
-            row.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", row.getBankBranch().getId()));
-            row.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?", row.getBankAccount().getId()));
+            row.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?1", row.getBankBranch().getId()));
+            row.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?1", row.getBankAccount().getId()));
 
             dataSource.add(row);
         }
@@ -324,8 +327,8 @@ public class FixedDepositAction extends BaseFormAction {
         final List<Object> dataSource = new ArrayList<Object>();
         for (final FixedDeposit row : fixedDepositList) {
             // row.setBankAccountList(bankAccountListTemp);
-            row.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?", row.getBankBranch().getId()));
-            row.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?", row.getBankAccount().getId()));
+            row.setBankBranch((Bankbranch) persistenceService.find("from Bankbranch where id=?1", row.getBankBranch().getId()));
+            row.setBankAccount((Bankaccount) persistenceService.find("from Bankaccount where id=?1", row.getBankAccount().getId()));
             dataSource.add(row);
         }
         setInputStream(reportHelper.exportXls(getInputStream(), jasperpath,

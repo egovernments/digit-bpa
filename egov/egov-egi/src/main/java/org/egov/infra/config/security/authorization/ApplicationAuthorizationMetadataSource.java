@@ -48,7 +48,6 @@
 
 package org.egov.infra.config.security.authorization;
 
-import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.service.ActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
@@ -56,13 +55,15 @@ import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_URI;
-import static org.egov.infra.security.utils.SecurityConstants.PUBLIC_URI;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.utils.ApplicationConstant.NO_ROLE_NAME;
+import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
 public class ApplicationAuthorizationMetadataSource implements FilterInvocationSecurityMetadataSource {
 
@@ -78,13 +79,24 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) {
         FilterInvocation invocation = (FilterInvocation) object;
-        String contextRoot = invocation.getHttpRequest().getContextPath().replace("/", "");
-        return lookupAttributes(contextRoot, invocation.getRequestUrl());
+        HttpServletRequest request = invocation.getHttpRequest();
+        String contextRoot = request.getContextPath().replace(SLASH, EMPTY);
+        String url = invocation.getRequestUrl();
+        String queryString = request.getQueryString();
+        List<ConfigAttribute> configAttributes = new ArrayList<>();
+        if (!urlExcluded(url)) {
+            actionService.getActionByUrlAndContextRoot(url, queryString, contextRoot)
+                    .ifPresent(action -> action.getRoles()
+                            .forEach(role -> configAttributes.add(new SecurityConfig(role.getName()))));
+        }
+        if (configAttributes.isEmpty())
+            configAttributes.add(new SecurityConfig(NO_ROLE_NAME));
+        return configAttributes;
     }
 
     @Override
     public Collection<ConfigAttribute> getAllConfigAttributes() {
-        return Collections.unmodifiableCollection(new ArrayList<ConfigAttribute>());
+        return Collections.unmodifiableCollection(new ArrayList<>());
     }
 
     @Override
@@ -92,26 +104,12 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
         return FilterInvocation.class.isAssignableFrom(clazz);
     }
 
-    private Collection<ConfigAttribute> lookupAttributes(String contextRoot, String url) {
-        if (url.startsWith(LOGIN_URI) || url.startsWith(PUBLIC_URI) || isPatternExcluded(url))
-            return Collections.emptyList();
-        else {
-            Action action = actionService.getActionByUrlAndContextRoot(url, contextRoot);
-            if (action != null) {
-                List<ConfigAttribute> configAttributes = new ArrayList<>();
-                action.getRoles().forEach(role ->
-                        configAttributes.add(new SecurityConfig(role.getName()))
-                );
-                return configAttributes;
-            }
-        }
-        return Collections.emptyList();
-    }
 
-    private Boolean isPatternExcluded(String pattern) {
+
+    private Boolean urlExcluded(String url) {
         return excludePatterns
-                .parallelStream()
-                .anyMatch(excludePattern -> pattern.startsWith(excludePattern.trim()));
+                .stream()
+                .anyMatch(url::startsWith);
     }
 
 }

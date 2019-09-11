@@ -47,13 +47,6 @@
  */
 package org.egov.eis.web.controller.masters.employee;
 
-import static org.egov.eis.utils.constants.EisConstants.EMPLOYEE_JURISDICTION_HIERARCHY;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import javax.validation.Valid;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
@@ -63,7 +56,6 @@ import org.egov.eis.repository.EmployeeTypeRepository;
 import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.JurisdictionService;
-import org.egov.eis.utils.EisUtils;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.postgresql.util.Base64;
@@ -79,6 +71,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
 
 @Controller
 @RequestMapping(value = "/employee")
@@ -109,9 +107,6 @@ public class ViewAndUpdateEmployeController {
 
     @Autowired
     private HeadOfDepartmentsRepository headOfDepartmentsRepository;
-    
-    @Autowired
-    private EisUtils eisUtils;
 
     @ModelAttribute
     public Employee employeeModel(@PathVariable final String code) {
@@ -219,8 +214,7 @@ public class ViewAndUpdateEmployeController {
         model.addAttribute("functionaryList", employeeService.getAllFunctionaries());
         model.addAttribute("functionList", employeeService.getAllFunctions());
         model.addAttribute("gradeList", employeeService.getAllGrades());
-		model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName(
-				eisUtils.getAppconfigValueByKeyName(EMPLOYEE_JURISDICTION_HIERARCHY)));
+        model.addAttribute("boundaryType", boundaryTypeService.getBoundaryTypeByHierarchyTypeName(ADMIN_HIERARCHY_TYPE));
     }
 
 }

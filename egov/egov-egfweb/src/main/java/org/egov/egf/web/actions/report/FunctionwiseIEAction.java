@@ -57,14 +57,16 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.commons.repository.FunctionRepository;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.model.CommonReportBean;
 import org.egov.egf.model.FunctionwiseIE;
 import org.egov.egf.model.ReportSearch;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.services.report.FunctionwiseIEService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
@@ -110,7 +112,11 @@ public class FunctionwiseIEAction extends ReportAction
     private String heading = "";
     private Date todayDate;
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private DepartmentService departmentService;
+    @Autowired
+    private FunctionRepository functionRepository;
+    @Autowired
+    private FundRepository fundRepository;
     
     public FinancialYearDAO getFinancialYearDAO() {
         return financialYearDAO;
@@ -135,12 +141,12 @@ public class FunctionwiseIEAction extends ReportAction
     public void prepare()
     {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setHibernateFlushMode(FlushMode.MANUAL);
         super.prepare();
         if (reportSearch.getStartDate() == null || reportSearch.getStartDate().equals(""))
             reportSearch.setStartDate(sdf.format(((CFinancialYear) persistenceService
-                    .find(" from CFinancialYear where startingDate <= '" + formatter.format(new Date()) + "' and endingDate >= '"
-                            + formatter.format(new Date()) + "'")).getStartingDate()));
+                    .find(" from CFinancialYear where startingDate <= ?1 and endingDate >= ?2",
+                            formatter.format(new Date()), formatter.format(new Date()))).getStartingDate()));
         if (reportSearch.getEndDate() == null || reportSearch.getEndDate().equals(""))
             reportSearch.setEndDate(sdf.format(new Date()));
         setTodayDate(new Date());
@@ -148,8 +154,8 @@ public class FunctionwiseIEAction extends ReportAction
 
     public void preparebeforesearchWithBudget()
     {
-        addDropdownData("fundList", masterDataCache.get("egi-fund"));
-        addDropdownData("functionList", masterDataCache.get("egi-function"));
+        addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
+        addDropdownData("functionList", functionRepository.findByIsActiveAndIsNotLeaf(true,false));
     }
 
     @Override
@@ -338,7 +344,7 @@ public class FunctionwiseIEAction extends ReportAction
                 && reportSearch.getFunction().getId() != -1)
         {
             heading.append(" For the Function Code ");
-            final String code = (String) persistenceService.find("select code from CFunction where id=?", reportSearch
+            final String code = (String) persistenceService.find("select code from CFunction where id=?1", reportSearch
                     .getFunction()
                     .getId());
             heading.append(code);
@@ -350,7 +356,7 @@ public class FunctionwiseIEAction extends ReportAction
         if (reportSearch.getFund() != null && reportSearch.getFund().getId() != -1)
         {
             heading.append(" In Fund ");
-            final String name = (String) persistenceService.find("select name from Fund where id=?", reportSearch.getFund()
+            final String name = (String) persistenceService.find("select name from Fund where id=?1", reportSearch.getFund()
                     .getId());
             heading.append(name);
         }
@@ -367,7 +373,7 @@ public class FunctionwiseIEAction extends ReportAction
         setDatasForBudgetWise();
         reportSearch.setByDepartment(true);
 
-        reportSearch.setDeptList(masterDataCache.get("egi-department"));
+        reportSearch.setDeptList(departmentService.getAllDepartments());
 
         populateDataSourceWithBudget(reportSearch);
         /*
@@ -387,7 +393,7 @@ public class FunctionwiseIEAction extends ReportAction
         reportSearch.setMinorCodeLen(minorCodeLen);
         reportSearch.setByDepartment(true);
         reportSearch.setByDetailCode(true);
-        reportSearch.setDeptList(masterDataCache.get("egi-department"));
+        reportSearch.setDeptList(departmentService.getAllDepartments());
 
         populateDataSourceWithBudget(reportSearch);
         /*
@@ -503,14 +509,14 @@ public class FunctionwiseIEAction extends ReportAction
             if (!reportSearch.getStartDate().equals(""))
                 sdf.parse(reportSearch.getStartDate());
         } catch (final Exception e) {
-            LOGGER.error("ERROR" + e.getMessage(), e);
+            LOGGER.error("ERROR" , e);
             addFieldError("startDate", getMessage("report.startdate.invalid.format"));
         }
         try {
             if (!reportSearch.getEndDate().equals(""))
                 sdf.parse(reportSearch.getEndDate());
         } catch (final Exception e) {
-            LOGGER.error("ERROR" + e.getMessage(), e);
+            LOGGER.error("ERROR" , e);
             addFieldError("endDate", getMessage("report.enddate.invalid.format"));
         }
         super.validate();

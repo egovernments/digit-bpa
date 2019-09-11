@@ -55,18 +55,19 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.repository.FundRepository;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -74,12 +75,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Results(value = {
@@ -116,8 +112,9 @@ public class OutstandingPaymentAction extends BaseFormAction {
     private String selectedVhs;
     private Long[] selectdVhs;
     private BigDecimal rBalance = BigDecimal.ZERO;
+
     @Autowired
-    private EgovMasterDataCaching masterDataCache;
+    private FundRepository fundRepository;
     
     @Override
     public String execute() throws Exception {
@@ -138,7 +135,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
         if (!parameters.containsKey("skipPrepare")) {
             addDropdownData("bankList", Collections.EMPTY_LIST);
             addDropdownData("accNumList", Collections.EMPTY_LIST);
-            addDropdownData("fundList", masterDataCache.get("egi-fund"));
+            addDropdownData("fundList", fundRepository.findByIsactiveAndIsnotleaf(true,false));
         }
     }
 
@@ -156,7 +153,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
             if (parameters.containsKey("asOnDate") && parameters.get("asOnDate")[0] != null)
                 setSelectedVhs("selectedVhs");
             final Integer id = Integer.valueOf(parameters.get("bankAccount.id")[0]);
-            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?", id);
+            bankAccount = (Bankaccount) persistenceService.find("from Bankaccount where id=?1", id);
             // this is actually approval status
             final List<AppConfigValues> appConfig = appConfigValuesService.getConfigValuesByModuleAndKey(Constants.EGF,
                     "VOUCHER_STATUS_TO_CHECK_BANK_BALANCE");
@@ -189,25 +186,26 @@ public class OutstandingPaymentAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Ending app config check...");
             final StringBuffer query = new StringBuffer();
-            query.append("from Paymentheader where voucherheader.voucherDate<=? and voucherheader.status in ( " +
-                    +FinancialConstants.CREATEDVOUCHERSTATUS + "," + FinancialConstants.PREAPPROVEDVOUCHERSTATUS
-                    + ") and bankaccount.id=? and" +
-                    " state.type='Paymentheader'");
+            query.append("from Paymentheader where voucherheader.voucherDate<=?1 and voucherheader.status in (?2,?3) ")
+                    .append(" and bankaccount.id=?4 and")
+                    .append(" state.type='Paymentheader'");
             if (condtitionalAppConfigIsPresent)
             {
                 final String ownerIdList = getCommaSeperatedListForDesignationNameAndFunctionaryName(designationName,
                         functionaryName);
-                query.append(" and state.owner in (" + ownerIdList + ") order by state.createdDate desc ");
+                query.append(" and state.owner in (?5) order by state.createdDate desc ");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("In condtitionalAppConfigIsPresent - qry" + query.toString());
-                paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(), id).getList());
+                paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(),
+                        FinancialConstants.CREATEDVOUCHERSTATUS,FinancialConstants.PREAPPROVEDVOUCHERSTATUS, id, ownerIdList).getList());
             }
             else
             {
-                query.append(" and state.value like '" + stateWithoutCondition + "' order by state.createdDate desc ");
+                query.append(" and state.value like ").append(stateWithoutCondition).append(" order by state.createdDate desc ");
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("In ELSE - qry" + query.toString());
-                paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(), id).getList());
+                paymentHeaderList.addAll(persistenceService.findPageBy(query.toString(), 1, 100, getAsOnDate(),
+                        FinancialConstants.CREATEDVOUCHERSTATUS,FinancialConstants.PREAPPROVEDVOUCHERSTATUS,id).getList());
             }
             bankBalance = egovCommon.getBankBalanceAvailableforPayment(getAsOnDate(), id);
 
@@ -220,11 +218,14 @@ public class OutstandingPaymentAction extends BaseFormAction {
     private String getCommaSeperatedListForDesignationNameAndFunctionaryName(final String designationName,
             final String functionaryName)
     {
-        final String qrySQL = "select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func   " +
-                " where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID " +
-                " and empinfo.isactive=true   " +
-                " and desg.DESIGNATION_NAME like '" + designationName + "' and func.NAME like '" + functionaryName + "' ";
-        final Query query = persistenceService.getSession().createSQLQuery(qrySQL);
+        final StringBuilder qrySQL = new StringBuilder("select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func ")
+                .append(" where empinfo.functionary_id=func.id and empinfo.DESIGNATIONID=desg.DESIGNATIONID ")
+                .append(" and empinfo.isactive=true ")
+                .append(" and desg.DESIGNATION_NAME like :designationName")
+                .append(" and func.NAME like :functionaryName");
+        final Query query = persistenceService.getSession().createNativeQuery(qrySQL.toString())
+                .setParameter("designationName", designationName, StringType.INSTANCE)
+                .setParameter("functionaryName", functionaryName, StringType.INSTANCE);
         final List<BigDecimal> result = query.list();
         if (result == null || result.isEmpty())
             throw new ValidationException("", "No employee with functionary -" + functionaryName + " and designation - "
@@ -240,7 +241,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
     }
 
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

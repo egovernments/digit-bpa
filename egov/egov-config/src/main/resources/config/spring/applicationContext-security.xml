@@ -54,11 +54,34 @@
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
-    <security:global-method-security secured-annotations="disabled"
+    <security:global-method-security secured-annotations="enabled"
                                      access-decision-manager-ref="accessDecisionManager"/>
 
     <bean id="concurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
         <constructor-arg name="sessionRegistry" ref="springSessionBackedSessionRegistry"/>
+    </bean>
+
+    <bean id="csrfFilter" class="org.springframework.security.web.csrf.CsrfFilter">
+        <constructor-arg name="csrfTokenRepository">
+            <bean class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
+        </constructor-arg>
+        <property name="accessDeniedHandler" ref="accessDeniedHandler"/>
+    </bean>
+
+    <bean id="headerWriterFilter" class="org.springframework.security.web.header.HeaderWriterFilter">
+        <constructor-arg name="headerWriters">
+            <list>
+                <bean class="org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter">
+                    <constructor-arg value="SAMEORIGIN"/>
+                </bean>
+                <bean class="org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.HstsHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.XContentTypeOptionsHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.XXssProtectionHeaderWriter"/>
+                <bean class="org.springframework.security.web.header.writers.HpkpHeaderWriter"/>
+            </list>
+        </constructor-arg>
     </bean>
 
     <bean id="concurrentSessionControlStrategy"
@@ -88,19 +111,14 @@
     </bean>
 
     <bean id="authenticationProcessingFilter"
-          class="org.egov.infra.config.security.authentication.filter.ApplicationAuthenticationFilter">
+          class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="rememberMeServices" ref="rememberMeServices"/>
         <property name="sessionAuthenticationStrategy" ref="sessionAuthenticationStrategy"/>
-        <property name="credentialFields">
-            <list>
-                <value>j_password</value>
-                <value>locationId</value>
-                <value>loginType</value>
-                <value>ipAddress</value>
-                <value>userAgentInfo</value>
-            </list>
+        <property name="allowSessionCreation" value="true"/>
+        <property name="authenticationDetailsSource">
+            <bean class="org.egov.infra.config.security.authentication.ApplicationAuthenticationDetailsSource"/>
         </property>
         <property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>
         <property name="authenticationFailureHandler" ref="authenticationFailureHandler"/>
@@ -117,7 +135,7 @@
         <property name="alwaysUseDefaultTargetUrl" value="false"/>
         <property name="defaultTargetUrl" value="/home"/>
         <property name="excludedUrlRegex">
-            <value>^https?://[^/]+/egi/(home/(.*)|inbox($|/.*))</value>
+            <value>^https?://[^/]+/egi/(home/(.*)|inbox(.*)|(login/preauth-check))</value>
         </property>
     </bean>
 
@@ -159,11 +177,11 @@
 
     <bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
         <constructor-arg index="0" ref="authenticationEntryPoint"/>
-        <property name="accessDeniedHandler">
-            <bean class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
-                <property name="errorPage" value="/error/403"/>
-            </bean>
-        </property>
+        <property name="accessDeniedHandler" ref="accessDeniedHandler"/>
+    </bean>
+
+    <bean id="accessDeniedHandler" class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
+        <property name="errorPage" value="/error/403"/>
     </bean>
 
     <bean id="authenticationEntryPoint"
@@ -212,7 +230,8 @@
     <bean id="applicationAuthenticationProvider"
           class="org.egov.infra.config.security.authentication.provider.ApplicationAuthenticationProvider">
         <property name="userDetailsService" ref="userDetailsService"/>
-        <property name="preAuthenticationChecks" ref="userActivationChecker"></property>
+        <property name="preAuthenticationChecks" ref="userActivationChecker"/>
+        <property name="passwordEncoder" ref="passwordEncoder"/>
     </bean>
 
     <bean id="anonymousAuthenticationProvider"
@@ -231,5 +250,12 @@
     </bean>
 
     <bean id="applicationAuthorizationMetadataSource"
-          class="org.egov.infra.config.security.authorization.ApplicationAuthorizationMetadataSource"/>
+          class="org.egov.infra.config.security.authorization.ApplicationAuthorizationMetadataSource">
+        <property name="excludePatterns">
+            <list>
+                <value>/login</value>
+                <value>/public</value>
+            </list>
+        </property>
+    </bean>
 </beans>

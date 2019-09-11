@@ -47,6 +47,18 @@
  */
 package org.egov.collection.service;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.collection.constants.CollectionConstants;
@@ -59,6 +71,7 @@ import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.BillReceiptReq;
 import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
@@ -82,6 +95,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
@@ -91,22 +105,10 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Provides services related to receipt header
@@ -160,21 +162,23 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public List<ReceiptHeader> findAllByPositionAndInboxItemDetails(final List<Long> positionIds,
             final String groupingCriteria) {
         final StringBuilder query = new StringBuilder(
-                "from org.egov.collection.entity.ReceiptHeader where 1=1 and state.value != 'END' and state.status != 2");
+                " select distinct (receipt) from org.egov.collection.entity.ReceiptHeader receipt ");
         String wfAction = null;
         String serviceCode = null;
         String userName = null;
         String receiptDate = null;
         String receiptType = null;
         Integer counterId = null;
+        String paymentMode = null;
         final String params[] = groupingCriteria.split(CollectionConstants.SEPARATOR_HYPHEN, -1);
-        if (params.length == 6) {
+        if (params.length == 7) {
             wfAction = params[0];
             serviceCode = params[1];
             userName = params[2];
             counterId = Integer.valueOf(params[4]);
             receiptDate = params[3];
-            receiptType = params[4];
+            receiptType = params[5];
+            paymentMode = params[6];
         }
         final boolean allCounters = counterId == null || counterId < 0;
         // final boolean allPositions = positionIds == null ||
@@ -186,30 +190,38 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date rcptDate = null;
         try {
-            receiptDate = params[3];
             rcptDate = formatter.parse(receiptDate);
         } catch (final ParseException e) {
-            LOGGER.error("Exception while parsing ReceiptDate" + e.getMessage());
+            LOGGER.error("Exception while parsing ReceiptDate", e);
+            throw new ApplicationRuntimeException(e.getMessage());
         }
-      
-        receiptType = params[4];
+
+        if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH)
+                || paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
+            query.append("join receipt.receiptInstrument as instruments ");
+
+        query.append(" where 1=1 and receipt.state.value != 'END' and receipt.state.status != 2 ");
         // if (!allPositions)
-        query.append(" and state.ownerPosition.id in :positionIds");
+        query.append(" and receipt.state.ownerPosition.id in :positionIds");
         if (!allCounters)
-            query.append(" and location.id = :counterId");
+            query.append(" and receipt.location.id = :counterId");
         if (!allServices && receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
-            query.append(" and service.code = :serviceCode");
+            query.append(" and receipt.service.code = :serviceCode");
         if (!allWfAction)
-            query.append(" and state.nextAction = :wfAction");
+            query.append(" and receipt.state.nextAction = :wfAction");
         if (!allUserName)
-            query.append(" and createdBy.username = :userName");
+            query.append(" and receipt.createdBy.username = :userName");
         if (!allDate)
-            query.append(" and (cast(receiptDate as date)) = :rcptDate");
+            query.append(" and (cast(receipt.receiptdate as date)) = :rcptDate");
         if (receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
-            query.append(" and receipttype = :receiptType");
+            query.append(" and receipt.receipttype = :receiptType");
         else
-            query.append(" and receipttype in ('A', 'C')");
-        query.append(" order by receiptdate  desc");
+            query.append(" and receipt.receipttype in ('A', 'C')");
+
+        if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH)
+                || paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
+            query.append(" and instruments.instrumentType.type in (:paymentMode )");
+        query.append(" order by receipt.receiptdate  desc");
         final Query listQuery = getSession().createQuery(query.toString());
 
         // if (!allPositions)
@@ -226,6 +238,10 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             listQuery.setDate("rcptDate", rcptDate);
         if (receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
             listQuery.setCharacter("receiptType", receiptType.charAt(0));
+        if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
+            listQuery.setString("paymentMode", paymentMode);
+        else if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
+            listQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
         return listQuery.list();
     }
 
@@ -470,6 +486,28 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         return check;
     }
 
+    public int checkIfChequeMapObjectExist(final List<HashMap<String, Object>> paramList,
+            final Object[] arrayObjectInitialIndexTemp) {
+        int check = -1;
+        for (int m = 0; m < paramList.size(); m++) {
+            final HashMap<String, Object> objHashMapTemp = paramList.get(m);
+
+            if (arrayObjectInitialIndexTemp[1] != null && arrayObjectInitialIndexTemp[2] != null)
+                if (arrayObjectInitialIndexTemp[1].equals(objHashMapTemp
+                        .get(CollectionConstants.BANKREMITTANCE_RECEIPTDATE))
+                        && arrayObjectInitialIndexTemp[2].equals(objHashMapTemp
+                                .get(CollectionConstants.BANKREMITTANCE_RECEIPTNUMBER))
+                        && arrayObjectInitialIndexTemp[11].equals(objHashMapTemp
+                                .get(CollectionConstants.BANKREMITTANCE_INSTRUMENTID))) {
+                    check = m;
+                    break;
+                } else
+                    continue;
+
+        }
+        return check;
+    }
+
     @Transactional
     public void updateChequeCardRemittance(final Map<String, Object> instrumentDepositeMap,
             final String voucherWorkflowMsg, final Boolean voucherTypeForChequeDDCard, final Date voucherDate,
@@ -591,22 +629,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
      */
     public void endReceiptWorkFlowOnCancellation(final ReceiptHeader receiptHeaderToBeCancelled) {
         // End work-flow for the cancelled receipt
-        Position position;
-        if (!collectionsUtil.isEmployee(receiptHeaderToBeCancelled.getCreatedBy()))
-            position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeaderToBeCancelled.getReceiptMisc()
-                    .getBoundary());
-        else
-            position = collectionsUtil.getPositionOfUser(receiptHeaderToBeCancelled.getCreatedBy());
-
-        if (position != null)
-            receiptHeaderToBeCancelled
-                    .transition()
-                    .end()
-                    .withSenderName(
-                            receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
-                                    + receiptHeaderToBeCancelled.getCreatedBy().getName())
-                    .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
-                    .withOwner(position).withDateInfo(new Date());
+        receiptHeaderToBeCancelled
+                .transition()
+                .end()
+                .withSenderName(
+                        receiptHeaderToBeCancelled.getCreatedBy().getUsername() + "::"
+                                + receiptHeaderToBeCancelled.getCreatedBy().getName())
+                .withComments("Receipt Cancelled - Workflow ends").withStateValue(CollectionConstants.WF_STATE_END)
+                .withDateInfo(new Date());
     }
 
     /**
@@ -637,8 +667,16 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             if (receiptHeader.getState() != null
                     && !receiptHeader.getState().getValue().equals(CollectionConstants.WF_STATE_END))
                 endReceiptWorkFlowOnCancellation(receiptHeader);
-            if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
-                updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
+            if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
+                if (receiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_LAMS)) {
+                    // TODO Implement separate API for Microservice billing services
+                    final BillReceiptInfo billReceipt = new BillReceiptInfoImpl(receiptHeader, chartOfAccountsHibernateDAO,
+                            persistenceService, null);
+                    collectionsUtil.updateReceiptDetailsAndGetReceiptAmountInfo(new BillReceiptReq(billReceipt),
+                            receiptHeader.getService().getCode());
+                } else
+                    updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
+            }
         }
         return super.persist(receiptHeader);
     }
@@ -717,6 +755,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             try {
                 billingService.updateReceiptDetails(billReceipts);
                 return true;
+            } catch (ValidationException e) {
+                LOGGER.error("Validation error occurred while updating receipt details ", e);
+                throw e;
             } catch (final Exception e) {
                 final String errMsg = "Exception while updating billing system [" + serviceDetails.getCode()
                         + "] with receipt details!";
@@ -838,7 +879,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             final Bankaccount bankaccount, final InstrumentHeader instrumentHeader, final CVoucherHeader voucherHeader,
             final Date voucherDate) {
         final InstrumentType instrumentType = (InstrumentType) persistenceService.find(
-                "select it from InstrumentType it,InstrumentHeader ih where " + "ih.instrumentType=it.id and ih.id=?",
+                "select it from InstrumentType it,InstrumentHeader ih where " + "ih.instrumentType=it.id and ih.id=?1",
                 instrumentHeader.getId());
         instrumentDepositeMap.put("instrumentheader", instrumentHeader.getId());
         instrumentDepositeMap.put("bankaccountid", bankaccount.getId());
@@ -990,7 +1031,19 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void perform(final ReceiptHeader receiptHeader, final String wfState, final String newStatusCode,
             final String nextAction, final Position ownerPosition, final String remarks) {
         receiptHeader.setStatus(collectionsUtil.getReceiptStatusForCode(newStatusCode));
-
+        // Validate state owner position and current user position.
+        Position loggedInUserposition;
+        if (!collectionsUtil.isEmployee(this.securityUtils.getCurrentUser()))
+            loggedInUserposition = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc().getBoundary());
+        else
+            loggedInUserposition = collectionsUtil.getPositionOfUser(this.securityUtils.getCurrentUser());
+        // Validate
+        if (loggedInUserposition != null && receiptHeader.getState() != null
+                && !(receiptHeader.getState().getOwnerPosition().getName().equals(loggedInUserposition.getName()))) {
+            throw new ValidationException(
+                    Arrays.asList(new ValidationError("Current user is not the owner of the selected workflow inbox item",
+                            "Current user is not the owner of the selected workflow inbox item")));
+        }
         if (receiptHeader.getStatus().getCode().equals(CollectionConstants.RECEIPT_STATUS_CODE_APPROVED))
             // Receipt approved. end workflow for this receipt.
             receiptHeader
@@ -1030,29 +1083,30 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         return instrumentHeaderSet;
     }
 
-    public String getReceiptHeaderforDishonor(final Long mode, final Long bankAccId, final Long bankId,
+    public String getReceiptHeaderforDishonor(final String instrumentType, final Long bankAccId, final Long bankId,
             final String chequeDDNo, final String chqueDDDate) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih,egw_status status,bank b,"
-                + "bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id AND status.id = ih.id_status "
-                + "AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND ih.instrumenttype = '"
-                + mode
-                + "' AND ((ih.ispaycheque ='0' AND status.moduletype ='"
-                + CollectionConstants.MODULE_NAME_INSTRUMENTHEADER
-                + "'"
-                + "AND status.description = '"
-                + CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
+        final StringBuilder queryString = new StringBuilder();
+        queryString.append(
+                "FROM egcl_collectionheader rpt,egcl_collectioninstrument ci,egf_instrumentheader ih, egf_instrumenttype it,egw_status status,bank b,")
+                .append("bankbranch bb,bankaccount ba WHERE rpt.id = ci.collectionheader AND ci.instrumentheader = ih.id and ih.instrumenttype =it.id AND status.id = ih.id_status ")
+                .append("AND b.id = bb.bankid AND bb.id = ba.branchid AND ba.id = ih.bankaccountid AND it.type = '")
+                .append(instrumentType)
+                .append("' AND ((ih.ispaycheque ='0' AND status.moduletype ='")
+                .append(CollectionConstants.MODULE_NAME_INSTRUMENTHEADER)
+                .append("'")
+                .append("AND status.description = '")
+                .append(CollectionConstants.INSTRUMENT_DEPOSITED_STATUS + "'))");
 
         if (bankAccId != null && bankAccId != -1)
-            sb.append(" AND ih.bankaccountid=" + bankAccId + "");
+            queryString.append(" AND ih.bankaccountid=" + bankAccId);
         if ((bankAccId == null || bankAccId == -1) && bankId != null && bankId != 0)
-            sb.append(" AND ih.bankid=" + bankId + "");
-        if (!"".equals(chequeDDNo) && chequeDDNo != null)
-            sb.append(" AND ih.instrumentnumber=trim('" + chequeDDNo + "') ");
-        if (!"".equals(chqueDDDate) && chqueDDDate != null)
-            sb.append(" AND ih.instrumentdate = '" + chqueDDDate + "' ");
+            queryString.append(" AND ih.bankid=" + bankId);
+        if (StringUtils.isNotBlank(chequeDDNo))
+            queryString.append(" AND ih.instrumentnumber=trim('" + chequeDDNo + "') ");
+        if (StringUtils.isNotBlank(chqueDDDate))
+            queryString.append(" AND ih.instrumentdate = '" + chqueDDDate + "' ");
 
-        return sb.toString();
+        return queryString.toString();
     }
 
     /**
@@ -1104,7 +1158,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
                     CollectionConstants.APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE));
         } catch (final ParseException e) {
-            LOGGER.error("Error parsing Cut Off Date" + e.getMessage());
+            LOGGER.error("Error parsing Cut Off Date", e);
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return cutOffDate;
     }
@@ -1153,9 +1208,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 && receiptHeader.getStatus().getCode()
                                         .equals(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED)))
             pushMail(receiptHeader);
-        
-        LOGGER.info("Mail sent from collection system for receipt : " + receiptHeader.getId().toString());
-        LOGGER.info("pushing to elastic index for receipt : " + receiptHeader.getId().toString());
         CollectionIndex collectionIndexObj = collectionIndexUtils.findByReceiptNumber(receiptHeader.getReceiptnumber());
         if (collectionIndexObj != null) {
             collectionIndexObj.setStatus(receiptHeader.getStatus().getDescription());
@@ -1165,8 +1217,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
             collectionIndexObj = collectionsUtil.constructCollectionIndex(receiptHeader);
             collectionIndexService.pushCollectionIndex(collectionIndexObj);
         }
-        LOGGER.info("pushing done to elastic index for receipt : " + receiptHeader.getId().toString());
-
     }
 
     private void pushMail(final ReceiptHeader receiptHeader) {
@@ -1346,27 +1396,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
     }
 
-    public void validateReceiptCancellation(String receiptNumber, String serviceCode,String consumerCode) {
-        BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
-        ReceiptCancellationInfo receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber,consumerCode);
-        if (!receiptCancellationInfo.getCancellationAllowed()) {
-            String validationMsg = receiptCancellationInfo.getValidationMessage();
-            throw new ValidationException(new ValidationError("validationMsg", validationMsg));
+    public void validateReceiptCancellation(String receiptNumber, String serviceCode, String consumerCode) {
+        if (!serviceCode.equals(CollectionConstants.SERVICECODE_LAMS)) {
+            BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
+            ReceiptCancellationInfo receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber, consumerCode);
+            if (!receiptCancellationInfo.getCancellationAllowed()) {
+                String validationMsg = receiptCancellationInfo.getValidationMessage();
+                throw new ValidationException(new ValidationError("validationMsg", validationMsg));
+            }
         }
     }
-
-    public void validatePayment(String serviceCode, String billReferenceNumber, BigDecimal actualAmountPaid,
-                                ArrayList<ReceiptDetail> receiptDetailsArray) {
-        BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
-        try {
-            billingService.validatePayment(billReferenceNumber, actualAmountPaid, receiptDetailsArray);
-        } catch (ApplicationRuntimeException e) {
-            LOGGER.error(" ", e);
-            throw new ValidationException(new ValidationError("paymentError","Problem in payment. Please contact adminstrator"));
-        } catch (final Exception e) {
-            LOGGER.error("", e);
-            throw new ValidationException(new ValidationError("paymentAmtValidationMsg","Error while validating the payment amount with billing system."));
-        }
-    }
-
 }

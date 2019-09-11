@@ -49,7 +49,7 @@
 package org.egov.infra.persistence.utils;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -60,11 +60,6 @@ public class Page<T> {
     private final int pageSize;
     private final int pageNumber;
     private int recordTotal;
-
-    public Page(Query query, int pageNumber, int pageSize, int recordTotal) {
-        this(query, ++pageNumber, pageSize);
-        this.recordTotal = recordTotal;
-    }
 
     public Page(Query query, int pageNumber, int pageSize) {
         int currentPageNo = pageNumber;

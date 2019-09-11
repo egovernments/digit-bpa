@@ -152,10 +152,10 @@ function uniqueCheckCode(){
 	dom.get('error_area').innerHTML = '';
 	dom.get("error_area").style.display="none"
 	var serviceCode = dom.get("serviceCode").value.trim();
-	var serviceCodeInitVal ='<s:property value="%{code}" />';
+	 var serviceCodeInitVal ='<s:property value="%{code}" />';
     if(serviceCode !="" && serviceCodeInitVal.trim() != serviceCode){
 		populateCodeUnique({code:dom.get('serviceCode').value});
-   }	
+   }
 }
 
 function clearCodeIfExists(){
@@ -203,10 +203,10 @@ function enableUrl(obj) {
 			<td width="25%" class="bluebox"><s:property value="serviceCategory.name"/></td>
 			<td width="25%" class="bluebox"> </td><td width="25%" class="bluebox"> </td>
 		</tr>
-		<s:set name="serviceCodeInitVal" id="serviceCodeInitVal" value="%{code}"></s:set>
+		<s:set var="serviceCodeInitVal" value="%{code}"></s:set>
 		<tr>
 		    <td></td>
-			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='/service/serviceDetails-codeUniqueCheck.action'
+			<egov:uniquecheck id="CodeUnique" fields="['Value']" url='service/serviceDetails-codeUniqueCheck.action'
 			 key='service.code.already.exists' />
 			<td class="bluebox"> <s:text name="service.create.code"></s:text><span class="mandatory1">*</span></td>
 			<td class="bluebox"><s:textfield name="code" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace" id="serviceCode" maxlength="12"
@@ -227,7 +227,14 @@ function enableUrl(obj) {
 		<tr>
 		    <td></td>
 			<td class="bluebox"> <s:text name="service.master.isvouchertobecreated"></s:text> </td>
-			<td class="bluebox" ><s:checkbox name="voucherCreation" id="voucherCreation" onchange="return EnableVoucherDetails(this)"/></td>
+			<td class="bluebox" >
+			<s:if test="%{isVoucherOnReceiptAndStatusDisplay}">
+			<s:checkbox name="voucherCreation" id="voucherCreation" onclick="return EnableVoucherDetails(this)"/>
+			</s:if> 
+			<s:else>
+			   <s:checkbox name="voucherCreation" id="voucherCreation" onclick ="return false;" />
+			</s:else>
+			</td>
 		</tr>
 		<tr id="voucherApprovedDetails">
 		<td></td>
@@ -334,6 +341,7 @@ function enableUrl(obj) {
 		<s:hidden name="serviceCategory.id" id="serviceCategory.id"></s:hidden>
 		<s:hidden name="id"></s:hidden>
 		<s:hidden name="serviceCategory.name" id="serviceCategory.name"></s:hidden>
+		<s:hidden name="isVoucherOnReceiptAndStatusDisplay" id="isVoucherOnReceiptAndStatusDisplay"></s:hidden>
 	</table>
 	<jsp:include page="finAccountsTable.jsp"/>
 

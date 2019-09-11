@@ -47,7 +47,6 @@
  */
 package org.egov.demand.dao;
 
-import org.egov.commons.Accountdetailkey;
 import org.egov.demand.model.EgReasonCategory;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -91,8 +90,9 @@ public class EgReasonCategoryHibernateDao implements EgReasonCategoryDao {
 	}
 
 	@Override
-    public List<EgReasonCategory> findAll() {
-        return (List<EgReasonCategory>) getCurrentSession().createCriteria(EgReasonCategory.class).list();
-    }
+	public List<EgReasonCategory> findAll() {
+
+		return null;
+	}
 
 }

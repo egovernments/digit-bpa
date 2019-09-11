@@ -62,10 +62,10 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -94,9 +94,7 @@ public class PartyTypeAction extends BaseFormAction {
  @Autowired
  @Qualifier("persistenceService")
  private PersistenceService persistenceService;
- @Autowired
-    private EgovMasterDataCaching masterDataCache;
-    
+
     @Override
     @SkipValidation
     public Object getModel() {
@@ -125,22 +123,10 @@ public class PartyTypeAction extends BaseFormAction {
         try {
             if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null)
                 parentParty = (EgPartytype) persistenceService
-                .find("from EgPartytype where id=?", partyType.getEgPartytype().getId());
+                .find("from EgPartytype where id=?1", partyType.getEgPartytype().getId());
             partyType.setEgPartytype(parentParty);
             partyType.setCode(partyType.getCode());
             partyType.setDescription(partyType.getDescription());
-
-            masterDataCache.removeFromCache("egi-partyTypeMaster");
-            masterDataCache.removeFromCache("egi-partyTypeAllChild");
-            masterDataCache.removeFromCache("egi-typeOfWorkParent");
-            masterDataCache.removeFromCache("egi-coaCodesForLiability");
-
-            masterDataCache.removeFromCache("egi-tds");
-            masterDataCache.removeFromCache("egi-tdsType");
-            masterDataCache.removeFromCache("egi-recovery");
-            masterDataCache.removeFromCache("egi-egwTypeOfWork");
-            masterDataCache.removeFromCache("egi-egwSubTypeOfWork");
-
             //persistenceService.setType(EgPartytype.class);
             persistenceService.persist(partyType);
             persistenceService.getSession().flush();
@@ -161,29 +147,17 @@ public class PartyTypeAction extends BaseFormAction {
     public String edit() {
         validatemandatoryFields();
         try {
-            final EgPartytype partyOld = (EgPartytype) persistenceService.find("from EgPartytype where id=?", partyType.getId());
+            final EgPartytype partyOld = (EgPartytype) persistenceService.find("from EgPartytype where id=?1", partyType.getId());
 
             partyOld.setCode(partyType.getCode());
 
             partyOld.setDescription(partyType.getDescription());
             if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null)
                 parentParty = (EgPartytype) persistenceService
-                .find("from EgPartytype where id=?", partyType.getEgPartytype().getId());
+                .find("from EgPartytype where id=?1", partyType.getEgPartytype().getId());
             partyOld.setEgPartytype(parentParty);
 
             setPartyType(partyOld);
-
-            masterDataCache.removeFromCache("egi-partyTypeMaster");
-            masterDataCache.removeFromCache("egi-partyTypeAllChild");
-            masterDataCache.removeFromCache("egi-typeOfWorkParent");
-            masterDataCache.removeFromCache("egi-coaCodesForLiability");
-
-            masterDataCache.removeFromCache("egi-tds");
-            masterDataCache.removeFromCache("egi-tdsType");
-            masterDataCache.removeFromCache("egi-recovery");
-            masterDataCache.removeFromCache("egi-egwTypeOfWork");
-            masterDataCache.removeFromCache("egi-egwSubTypeOfWork");
-
             //persistenceService.setType(EgPartytype.class);
             persistenceService.persist(partyType);
             // showMode = "view";
@@ -208,24 +182,30 @@ public class PartyTypeAction extends BaseFormAction {
     @Action(value = "/masters/partyType-search")
     public String search() {
         final StringBuffer query = new StringBuffer();
-
+        final List params = new ArrayList();
+        int i = 1;
         query.append("From EgPartytype where createdBy is not null ");
-        if (!partyType.getCode().isEmpty())
-            query.append(" and upper(code) like upper('%" + partyType.getCode() + "%')");
-        if (!partyType.getDescription().isEmpty())
-            query.append(" and upper(description) like upper('%" + partyType.getDescription() + "%')");
-        if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null)
-            query.append(" and egPartytype =" + partyType.getEgPartytype());
-        partySearchList = persistenceService.findAllBy(query.toString());
+        if (!partyType.getCode().isEmpty()) {
+            query.append(" and upper(code) like upper(?").append(i++).append(")");
+            params.add(new StringBuilder("%").append(partyType.getCode()).append("%").toString());
+        }
+        if (!partyType.getDescription().isEmpty()) {
+            query.append(" and upper(description) like upper(?").append(i++).append(")");
+            params.add(new StringBuilder("%").append(partyType.getDescription()).append("%").toString());
 
-        // this.partySearchList = masterDataCache.get(query.toString());
+        }
+        if (partyType.getEgPartytype() != null && partyType.getEgPartytype().getId() != null) {
+            query.append(" and egPartytype = ?").append(i++);
+            params.add(partyType.getEgPartytype());
+        }
+        partySearchList = persistenceService.findAllBy(query.toString(), params.toArray());
         return "search";
     }
 
     @SkipValidation
     @Action(value = "/masters/partyType-beforeModify")
     public String beforeModify() {
-        partyType = (EgPartytype) persistenceService.find("from EgPartytype where id=?", partyType.getId());
+        partyType = (EgPartytype) persistenceService.find("from EgPartytype where id=?1", partyType.getId());
 
         return EDIT;
     }
@@ -248,10 +228,10 @@ public class PartyTypeAction extends BaseFormAction {
         EgPartytype pt = null;
         boolean isDuplicate = false;
         if (!partyType.getCode().equals("") && partyType.getId() != null)
-            pt = (EgPartytype) persistenceService.find("from EgPartytype where code=? and id!=?",
+            pt = (EgPartytype) persistenceService.find("from EgPartytype where code=?1 and id!=?2",
                     partyType.getCode(), partyType.getId());
         else if (!partyType.getCode().equals(""))
-            pt = (EgPartytype) persistenceService.find("from EgPartytype where code=?",
+            pt = (EgPartytype) persistenceService.find("from EgPartytype where code=?1",
                     partyType.getCode());
         if (pt != null)
             isDuplicate = true;

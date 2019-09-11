@@ -59,16 +59,16 @@ import java.util.Collections;
 import java.util.List;
 
 @ParentPackage("egov")
-@Results({ @Result(name = AjaxDishonoredAction.ACCOUNTCODES, location = "ajaxDishonored-accountCodes.jsp") })
+@Results({@Result(name = AjaxDishonoredAction.ACCOUNTCODES, location = "ajaxDishonored-accountCodes.jsp")})
 public class AjaxDishonoredAction extends BaseFormAction {
 
+    public static final String ACCOUNTCODES = "accountCodes";
     /**
      *
      */
     private static final long serialVersionUID = -768679255839298625L;
     private String bankBranchId; // Set by Ajax call
     private List<Bankaccount> bankAccountList;
-    public static final String ACCOUNTCODES = "accountCodes";
 
     @Override
     public Object getModel() {
@@ -81,10 +81,10 @@ public class AjaxDishonoredAction extends BaseFormAction {
         if (bankBranchId != "-1" && bankBranchId != null && bankBranchId != "") {
             final String id[] = bankBranchId.split("-");
             final String branchId = id[1];
-            bankAccountList = persistenceService.findAllBy("select ba from Bankaccount ba "
-                    + "where ba.bankbranch.id=? and ba.isactive=true order by ba.id", Integer.parseInt(branchId));
-        }
-        else
+            final StringBuilder finalQuery = new StringBuilder("select ba from Bankaccount ba")
+                    .append("where ba.bankbranch.id=?1 and ba.isactive=true order by ba.id");
+            bankAccountList = persistenceService.findAllBy(finalQuery.toString(), Integer.parseInt(branchId));
+        } else
             bankAccountList = Collections.emptyList();
         return ACCOUNTCODES;
     }

@@ -1,1 +1,0 @@
-ALTER TABLE state.egp_inbox ADD COLUMN IF NOT EXISTS pendingAction varchar(255);

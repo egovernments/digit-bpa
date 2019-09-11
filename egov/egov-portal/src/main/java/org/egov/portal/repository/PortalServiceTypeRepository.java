@@ -61,25 +61,25 @@ import java.util.List;
 public interface PortalServiceTypeRepository
         extends JpaRepository<PortalServiceType, Long>, JpaSpecificationExecutor<PortalServiceType> {
 
-    @Query("select distinct pst.module from PortalServiceType pst where pst.isActive=true")
+    @Query("select distinct pst.module from PortalServiceType pst")
     List<Module> findAllModules();
 
-    @Query("select distinct pst.name from PortalServiceType pst where pst.isActive=true and pst.module.id=:moduleId order by pst.name asc")
+    @Query("select distinct pst.name from PortalServiceType pst where pst.module.id=:moduleId order by pst.name asc")
     List<String> findAllServiceTypes(@Param("moduleId") Long moduleId);
 
     @Query("select distinct(module.displayName) from PortalServiceType as pst")
     List<String> getDistinctModuleNames();
 
-    @Query("select distinct pst.module from PortalServiceType as pst where pst.isActive=true and pst.businessUserService=true order by pst.module.orderNumber")
-    List<Module> getDistinctModuleNamesForBusinessUser();
+    @Query("select distinct(pst.module.displayName) from PortalServiceType as pst where pst.isActive=true and pst.businessUserService=true order by pst.module.displayName asc")
+    List<String> getDistinctModuleNamesForBusinessUser();
 
-    @Query("select distinct pst.module from PortalServiceType as pst where pst.isActive=true and pst.userService=true order by pst.module.orderNumber")
-    List<Module> getDistinctModuleNamesForCitizen();
+    @Query("select distinct(pst.module.displayName) from PortalServiceType as pst where pst.isActive=true and pst.userService=true order by pst.module.displayName asc")
+    List<String> getDistinctModuleNamesForCitizen();
 
-    @Query("from PortalServiceType pst where pst.isActive=true  and pst.businessUserService=true order by pst.moduleOrder, pst.serviceOrder ")
+    @Query("from PortalServiceType pst where pst.isActive=true  and pst.businessUserService=true order by pst.name asc")
     List<PortalServiceType> findAllServiceTypesForBusinessUser();
 
-    @Query("from PortalServiceType pst where pst.isActive=true and pst.userService=true  order by pst.moduleOrder, pst.serviceOrder ")
+    @Query("from PortalServiceType pst where pst.isActive=true and pst.userService=true  order by pst.name asc")
     List<PortalServiceType> findAllServiceTypesForCitizenUser();
 
 }

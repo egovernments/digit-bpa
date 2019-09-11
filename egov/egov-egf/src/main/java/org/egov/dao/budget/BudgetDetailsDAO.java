@@ -67,26 +67,26 @@ import java.util.Map;
 
 /**
  * @author Administrator
- *
+ * <p>
  * TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
 public interface BudgetDetailsDAO {
     public boolean consumeEncumbranceBudget(Long financialyearid, Integer moduleid, String referencenumber, Integer departmentid,
-            Long functionid, Integer functionaryid, Integer schemeid, Integer subschemeid, Integer fieldid,
-            List<Long> budgetheadid, Integer fundid, double amount, String appropriationnumber) throws ValidationException;
+                                            Long functionid, Integer functionaryid, Integer schemeid, Integer subschemeid, Integer fieldid,
+                                            List<Long> budgetheadid, Integer fundid, double amount, String appropriationnumber) throws ValidationException;
 
     public BudgetUsage consumeEncumbranceBudget(String appropriationnumber, Long financialyearid, Integer moduleid,
-            String referencenumber, Integer departmentid, Long functionid, Integer functionaryid, Integer schemeid,
-            Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Integer fundid, double amount)
+                                                String referencenumber, Integer departmentid, Long functionid, Integer functionaryid, Integer schemeid,
+                                                Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Integer fundid, double amount)
             throws ValidationException;
 
     public void releaseEncumbranceBudget(Long financialyearid, Integer moduleid, String referencenumber, Integer departmentid,
-            Long functionid, Integer functionaryid, Integer schemeid, Integer subschemeid, Integer fieldid,
-            List<Long> budgetheadid, Integer fundid, double amount, String appropriationnumber) throws ValidationException;
+                                         Long functionid, Integer functionaryid, Integer schemeid, Integer subschemeid, Integer fieldid,
+                                         List<Long> budgetheadid, Integer fundid, double amount, String appropriationnumber) throws ValidationException;
 
     public BudgetUsage releaseEncumbranceBudget(String appropriationnumber, Long financialyearid, Integer moduleid,
-            String referencenumber, Integer departmentid, Long functionid, Integer functionaryid, Integer schemeid,
-            Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Integer fundid, double amount)
+                                                String referencenumber, Integer departmentid, Long functionid, Integer functionaryid, Integer schemeid,
+                                                Integer subschemeid, Integer fieldid, List<Long> budgetheadid, Integer fundid, double amount)
             throws ValidationException;
 
     public BigDecimal getActualBudgetUtilized(Map<String, Object> paramMap) throws ValidationException;
@@ -94,8 +94,12 @@ public interface BudgetDetailsDAO {
     public BigDecimal getSanctionedPlanningBudget(Map<String, Object> paramMap) throws ValidationException;
 
     public BigDecimal getPlanningBudgetAvailable(Long financialyearid, Integer departmentid, Long functionid,
-            Integer functionaryid, Integer schemeid, Integer subschemeid, Integer boundaryid, List<Long> budgetheadid,
-            Integer fundid) throws ValidationException;
+                                                 Integer functionaryid, Integer schemeid, Integer subschemeid, Integer boundaryid, List<Long> budgetheadid,
+                                                 Integer fundid) throws ValidationException;
+
+    public List<BudgetDetail> getBudgetAvailableDetail(Long financialyearid, Integer departmentid, Long functionid,
+                                                       Integer functionaryid, Integer schemeid, Integer subschemeid, Integer boundaryid, List<Long> budgetheadid,
+                                                       Integer fundid) throws ValidationException;
 
     public BigDecimal getBudgetedAmtForYear(Map<String, Object> paramMap) throws ValidationException;
 

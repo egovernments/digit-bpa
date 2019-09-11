@@ -52,30 +52,32 @@ import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/hierarchytype")
 public class ViewHierarchyTypeController {
 
     private static final String REQUEST_MAP_VIEW = "/view/{typeName}";
-    private HierarchyTypeService hierarchyTypeService;
-    
+
     @Autowired
-    public ViewHierarchyTypeController(HierarchyTypeService hierarchyTypeService) {
-        this.hierarchyTypeService = hierarchyTypeService;
-    }
-    
+    private HierarchyTypeService hierarchyTypeService;
+
     @ModelAttribute
-    public HierarchyType hierarchyTypeModel(@PathVariable String  typeName) {
-           return hierarchyTypeService.getHierarchyTypeByName(typeName);
+    public HierarchyType hierarchyTypeModel(@PathVariable String typeName) {
+        return hierarchyTypeService.getHierarchyTypeByName(typeName);
     }
-    
-    @RequestMapping(value = REQUEST_MAP_VIEW, method = RequestMethod.GET)
-    public String hierarchyTypeViewForm() {
+
+    @GetMapping(REQUEST_MAP_VIEW)
+    public String hierarchyTypeViewForm(@ModelAttribute HierarchyType hierarchyType, RedirectAttributes attributes) {
+        if (hierarchyType == null) {
+            attributes.addFlashAttribute("error", "err.hierarchytype.not.found");
+            return "redirect:/hierarchytype/view";
+        }
         return "hierarchyType-view";
     }
 }

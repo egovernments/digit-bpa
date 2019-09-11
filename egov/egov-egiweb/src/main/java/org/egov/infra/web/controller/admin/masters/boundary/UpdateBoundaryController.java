@@ -72,6 +72,7 @@ import java.util.Optional;
 public class UpdateBoundaryController {
 
     private static final String BOUNDARY_UPDATE_VIEW = "boundary-update";
+
     @Autowired
     private BoundaryService boundaryService;
 
@@ -95,15 +96,19 @@ public class UpdateBoundaryController {
     }
 
     @GetMapping("{id}")
-    public String showUpdateBoundaryForm(Model model) {
+    public String showUpdateBoundaryForm(@ModelAttribute Boundary boundary, Model model, RedirectAttributes attribs) {
+        if (boundary == null || boundary.isNew()) {
+            attribs.addFlashAttribute("error", "err.boundary.not.found");
+            return "redirect:/boundary/update/";
+        }
         model.addAttribute("search", false);
         return BOUNDARY_UPDATE_VIEW;
     }
 
     @PostMapping("{id}")
-    public String updateBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult bindingResult,
+    public String updateBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult bindResult,
                                  RedirectAttributes redirectAttributes, Model model) {
-        if (bindingResult.hasErrors()) {
+        if (bindResult.hasErrors()) {
             model.addAttribute("boundaryType", boundary.getBoundaryType());
             model.addAttribute("parentBoundary", boundaryService
                     .getActiveBoundariesByBoundaryTypeId(boundary.getBoundaryType().getParent().getId()));
@@ -114,5 +119,4 @@ public class UpdateBoundaryController {
         redirectAttributes.addFlashAttribute("edit", true);
         return "redirect:/boundary/view/" + boundary.getId();
     }
-
 }

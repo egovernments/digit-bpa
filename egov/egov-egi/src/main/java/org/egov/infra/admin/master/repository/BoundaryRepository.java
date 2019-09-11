@@ -80,6 +80,8 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
     Boundary findByBoundaryTypeAndBoundaryNum(BoundaryType boundaryType, Long boundaryNum);
 
+    Boundary findByIdAndBoundaryType(Long boundaryId, BoundaryType boundaryType);
+
     @Query("select b from Boundary b where b.active=true AND b.boundaryType.id =:boundaryTypeId order by b.name")
     List<Boundary> findActiveBoundariesByBoundaryTypeId(@Param("boundaryTypeId") Long boundaryTypeId);
 
@@ -151,11 +153,14 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName,
             @Param("name") String name);
 
-    @Query("from Boundary BND where BND.active=true AND BND.parent.id=:parentId)")
+    @Query("from Boundary BND where BND.active=true AND BND.parent.id=:parentId")
     List<Boundary> findActiveImmediateChildrenWithOutParent(@Param("parentId") Long parentId);
 
     @Query("from Boundary BND where BND.parent is null")
     List<Boundary> findAllParents();
 
     List<Boundary> findByBoundaryTypeOrderByBoundaryNumAsc(BoundaryType boundaryType);
+
+    List<Boundary> findByBoundaryTypeNameIgnoreCaseOrderByName(String boundaryTypeName);
+
 }

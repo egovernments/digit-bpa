@@ -50,7 +50,7 @@ package org.egov.infra.persistence.validator;
 
 import org.egov.infra.persistence.validator.annotation.DateFormat;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.validation.regex.Constants;
+import org.egov.infra.validation.constants.ValidationRegex;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -60,14 +60,14 @@ import java.util.regex.Pattern;
 public class DateFormatValidator implements ConstraintValidator<DateFormat, Date> {
 
     @Override
-    public void initialize(final DateFormat dateFormat) {
+    public void initialize(DateFormat dateFormat) {
         // Unused
 
     }
 
     @Override
-    public boolean isValid(final Date date, final ConstraintValidatorContext context) {
-        return date == null || Pattern.compile(Constants.DATEFORMAT)
+    public boolean isValid(Date date, ConstraintValidatorContext context) {
+        return date == null || Pattern.compile(ValidationRegex.DATEFORMAT)
                 .matcher(DateUtils.getFormattedDate(date, "dd/MM/yyyy")).matches();
     }
 

@@ -48,6 +48,10 @@
 
 package org.egov.infra.admin.master.entity;
 
+import org.hibernate.annotations.Immutable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,24 +64,40 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.Module.SEQ_MODULE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_UNDERSCORE_HYPHEN_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
 
 @Entity
 @Table(name = "eg_module")
 @SequenceGenerator(name = SEQ_MODULE, sequenceName = SEQ_MODULE, allocationSize = 1)
 @Cacheable
+@Immutable
 public class Module implements Serializable {
 
-    public static final String SEQ_MODULE = "SEQ_EG_MODULE";
+    protected static final String SEQ_MODULE = "SEQ_EG_MODULE";
     private static final long serialVersionUID = -632195454827894969L;
+
     @Id
     @GeneratedValue(generator = SEQ_MODULE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
+    @NotBlank
+    @Length(max = 100)
+    @Pattern(regexp = ALPHABETS_UNDERSCORE_HYPHEN_SPACE, message = INVALID_ALPHABETS_UNDERSCORE_HYPHEN_SPACE)
     private String name;
 
     private boolean enabled;
@@ -86,14 +106,21 @@ public class Module implements Serializable {
     @JoinColumn(name = "parentModule")
     private Module parentModule;
 
+    @SafeHtml
+    @Length(max = 50)
+    @Pattern(regexp = ALPHABETS_WITH_SPACE, message = INVALID_ALPHABETS_WITH_SPACE)
     private String displayName;
 
+    @Min(0)
     private Integer orderNumber;
 
 
     @OneToMany(mappedBy = "parentModule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Action> actions = Collections.emptySet();
 
+    @Length(max = 50)
+    @SafeHtml
+    @Pattern(regexp = ALPHABETS, message = INVALID_ALPHABETS)
     private String contextRoot;
 
     public Long getId() {
@@ -161,34 +188,17 @@ public class Module implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        return result;
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Module))
+            return false;
+        Module module = (Module) other;
+        return Objects.equals(getName(), module.getName());
     }
 
-
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Module other = (Module) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

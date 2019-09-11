@@ -47,22 +47,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.struts2.convention.annotation.Action;
-import org.apache.struts2.convention.annotation.ParentPackage;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.Results;
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.utils.CollectionsUtil;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.web.struts.actions.SearchFormAction;
-import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.search.SearchQueryHQL;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -70,11 +54,38 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TemporalType;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.ParentPackage;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+import org.displaytag.pagination.PaginatedList;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.commons.EgwStatus;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.utils.Page;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.utils.EgovPaginatedList;
+import org.egov.infstr.models.ServiceDetails;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
+import org.springframework.beans.factory.annotation.Autowired;
+
 @ParentPackage("egov")
 @Results({
         @Result(name = SearchReceiptAction.SUCCESS, location = "searchReceipt.jsp")
 })
-public class SearchReceiptAction extends SearchFormAction {
+public class SearchReceiptAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private Integer serviceTypeId = -1;
@@ -84,21 +95,170 @@ public class SearchReceiptAction extends SearchFormAction {
     private Date fromDate;
     private Date toDate;
     private Integer searchStatus = -1;
-    private String target = "new";
+    private String target = NEW;
     private String manualReceiptNumber;
-    private List resultList;
+    private List<ReceiptHeader> resultList;
     private String serviceClass = "-1";
-    private TreeMap<String, String> serviceClassMap = new TreeMap<String, String>();
-    private CollectionsUtil collectionsUtil;
+    private TreeMap<String, String> serviceClassMap = new TreeMap<>();
     private Integer branchId;
+    private int pageNum = CollectionConstants.PAGENUM;
+    private int pageSize = CollectionConstants.PAGESIZE;
+    private PaginatedList searchResult;
 
     @Autowired
     private AssignmentService assignmentService;
+    @Autowired
+    private CollectionsUtil collectionsUtil;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Override
     public Object getModel() {
         return null;
     }
+
+
+    @Action(value = "/receipts/searchReceipt-reset")
+    public String reset() {
+        setPage(1);
+        serviceTypeId = -1;
+        userId = (long) -1;
+        receiptNumber = CollectionConstants.BLANK;
+        fromDate = null;
+        toDate = null;
+        instrumentType = CollectionConstants.BLANK;
+        searchStatus = -1;
+        manualReceiptNumber = CollectionConstants.BLANK;
+        serviceClass = "-1";
+        branchId = -1;
+        return SUCCESS;
+    }
+
+    @Override
+    public void prepare() {
+        super.prepare();
+        setupDropdownDataExcluding();
+        addDropdownData("instrumentTypeList",
+                getCurrentSession().createQuery("from InstrumentType i where i.isActive = true order by type").list());
+        addDropdownData("userList",
+                entityManager.createNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS, User.class).getResultList());
+        serviceClassMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
+        serviceClassMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
+        addDropdownData("serviceTypeList", Collections.emptyList());
+        addDropdownData("bankBranchList", collectionsUtil.getBankCollectionBankBranchList());
+        if (!getServiceClass().equals("-1"))
+            addDropdownData("serviceTypeList",
+                    entityManager.createNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, ServiceDetails.class)
+                            .setParameter(1, getServiceClass()).getResultList());
+
+    }
+
+    @Override
+    @Action(value = "/receipts/searchReceipt")
+    public String execute() {
+        return SUCCESS;
+    }
+
+    public List<EgwStatus> getReceiptStatuses() {
+        Query query = getCurrentSession()
+                .createQuery("from EgwStatus s where moduletype=:moduleType and code !=:statusCode order by description");
+        query.setParameter("moduleType", CollectionConstants.MODULE_NAME_RECEIPTHEADER, StringType.INSTANCE);
+        query.setParameter("statusCode", CollectionConstants.RECEIPT_STATUS_CODE_PENDING, StringType.INSTANCE);
+        return query.list();
+    }
+
+    @Action(value = "/receipts/searchReceipt-search")
+    public String search() {
+        target = "searchresult";
+        final StringBuilder searchQueryString = new StringBuilder("select distinct receipt ");
+        final StringBuilder countQueryString = new StringBuilder("select count(distinct receipt) ");
+        final String orderByString = " group by receipt.receiptdate,receipt.id  order by receipt.receiptdate desc";
+        final String criteriaString = prepareQuery();
+        final String searchQuery = searchQueryString.append(criteriaString).append(orderByString).toString();
+        final String countQuery = countQueryString.append(criteriaString).toString();
+        final Query searchReceiptQuery = getCurrentSession().createQuery(searchQuery);
+        setQueryParameters(searchReceiptQuery);
+        Page receiptPage = new Page<>(searchReceiptQuery, getPage(), getPageSize());
+        final Query searchReceiptCountQuery = getCurrentSession().createQuery(countQuery);
+        setQueryParameters(searchReceiptCountQuery);
+        searchResult = new EgovPaginatedList(receiptPage, Integer.parseInt(searchReceiptCountQuery.list().get(0).toString()));
+        ArrayList<ReceiptHeader> receiptList = new ArrayList<>(0);
+        receiptList.addAll(searchResult.getList());
+        searchResult.getList().clear();
+        for (ReceiptHeader receiptHeader : receiptList) {
+            if (receiptHeader.getState() != null && receiptHeader.getState().getOwnerPosition() != null) {
+                List<Assignment> assignments = assignmentService.getAssignmentsForPosition(
+                        receiptHeader.getState().getOwnerPosition().getId(), receiptHeader.getCreatedDate());
+                if (!assignments.isEmpty())
+                    receiptHeader.setWorkflowUserName(assignments.get(0).getEmployee().getUsername());
+            }
+            searchResult.getList().add(receiptHeader);
+        }
+        resultList = searchResult.getList();
+        return SUCCESS;
+    }
+
+    private String prepareQuery() {
+        final StringBuilder fromString = new StringBuilder(" from org.egov.collection.entity.ReceiptHeader receipt ");
+
+        // Get only those receipts whose status is NOT PENDING
+        final StringBuilder criteriaString = new StringBuilder(" where receipt.status.code !=:status ");
+
+        if (StringUtils.isNotBlank(getInstrumentType())) {
+            fromString.append(" inner join receipt.receiptInstrument as instruments ");
+            criteriaString.append(" and instruments.instrumentType.type =:instrumentType ");
+        }
+        if (StringUtils.isNotBlank(getReceiptNumber()))
+            criteriaString.append(" and upper(receiptNumber) like :receiptNo ");
+        if (StringUtils.isNotBlank(getManualReceiptNumber()))
+            criteriaString.append(" and upper(receipt.manualreceiptnumber) like :manualReceiptNo ");
+        if (getSearchStatus() != -1)
+            criteriaString.append(" and receipt.status.id =:statusId ");
+        if (getFromDate() != null)
+            criteriaString.append(" and receipt.receiptdate >= date(:fromDate)");
+        if (getToDate() != null)
+            criteriaString.append(" and receipt.receiptdate < date(:toDate)");
+        if (getServiceTypeId() != -1)
+            criteriaString.append(" and receipt.service.id =:serviceId ");
+
+        if (!getServiceClass().equals("-1"))
+            criteriaString.append(" and receipt.service.serviceType =:serviceType ");
+
+        if (getUserId() != -1)
+            criteriaString.append(" and receipt.createdBy.id =:userId ");
+        if (getBranchId() != -1)
+            criteriaString.append(" and receipt.receiptMisc.depositedBranch.id =:branchId ");
+        return fromString.append(criteriaString).toString();
+    }
+
+    private void setQueryParameters(Query query) {
+        query.setParameter("status", CollectionConstants.RECEIPT_STATUS_CODE_PENDING);
+        if (StringUtils.isNotBlank(getInstrumentType()))
+            query.setParameter("instrumentType", getInstrumentType(), StringType.INSTANCE);
+        if (StringUtils.isNotBlank(getReceiptNumber()))
+            query.setParameter("receiptNo", "%" + getReceiptNumber().toUpperCase() + "%", StringType.INSTANCE);
+        if (StringUtils.isNotBlank(getManualReceiptNumber()))
+            query.setParameter("manualReceiptNo", "%" + getManualReceiptNumber().toUpperCase() + "%", StringType.INSTANCE);
+        if (getSearchStatus() != -1)
+            query.setParameter("statusId", getSearchStatus());
+        if (getFromDate() != null)
+            query.setParameter("fromDate", fromDate, TemporalType.DATE);
+        if (getToDate() != null)
+            query.setParameter("toDate", DateUtils.add(toDate, Calendar.DATE, 1), TemporalType.DATE);
+        if (getServiceTypeId() != -1)
+            query.setParameter("serviceId", Long.valueOf(getServiceTypeId()));
+        if (!getServiceClass().equals("-1"))
+            query.setParameter("serviceType", getServiceClass());
+        if (getUserId() != -1)
+            query.setParameter("userId", userId);
+        if (getBranchId() != -1)
+            query.setParameter("branchId", getBranchId());
+    }
+    
 
     public Integer getServiceTypeId() {
         return serviceTypeId;
@@ -140,76 +300,6 @@ public class SearchReceiptAction extends SearchFormAction {
         this.toDate = toDate;
     }
 
-    @Action(value = "/receipts/searchReceipt-reset")
-    public String reset() {
-        setPage(1);
-        serviceTypeId = -1;
-        userId = (long) -1;
-        receiptNumber = "";
-        fromDate = null;
-        toDate = null;
-        instrumentType = "";
-        searchStatus = -1;
-        manualReceiptNumber = "";
-        serviceClass = "-1";
-        branchId = -1;
-        return SUCCESS;
-    }
-
-    @Override
-    public void prepare() {
-        super.prepare();
-        setupDropdownDataExcluding();
-        addDropdownData("instrumentTypeList",
-                getPersistenceService().findAllBy("from InstrumentType i where i.isActive = true order by type"));
-        addDropdownData("userList",
-                getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_CREATEDBYUSERS_OF_RECEIPTS));
-        serviceClassMap.putAll(CollectionConstants.SERVICE_TYPE_CLASSIFICATION);
-        serviceClassMap.remove(CollectionConstants.SERVICE_TYPE_PAYMENT);
-        addDropdownData("serviceTypeList", Collections.EMPTY_LIST);
-        addDropdownData("bankBranchList", collectionsUtil.getBankCollectionBankBranchList());
-    }
-
-    @Override
-    @Action(value = "/receipts/searchReceipt")
-    public String execute() {
-        return SUCCESS;
-    }
-
-    public List getReceiptStatuses() {
-        return persistenceService.findAllBy(
-                "from EgwStatus s where moduletype=? and code != ? order by description",
-                ReceiptHeader.class.getSimpleName(), CollectionConstants.RECEIPT_STATUS_CODE_PENDING);
-    }
-
-    @Override
-    @Action(value = "/receipts/searchReceipt-search")
-    public String search() {
-        target = "searchresult";
-        super.search();
-        ArrayList<ReceiptHeader> receiptList = new ArrayList<ReceiptHeader>(0);
-        receiptList.addAll(searchResult.getList());
-        searchResult.getList().clear();
-        if (!getServiceClass().equals("-1"))
-            addDropdownData("serviceTypeList",
-                    getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, getServiceClass()));
-
-        for (ReceiptHeader receiptHeader : receiptList) {
-            if (receiptHeader.getState() != null && receiptHeader.getState().getOwnerPosition() != null) {
-                List<Assignment> assignments = assignmentService.getAssignmentsForPosition(
-                        receiptHeader.getState().getOwnerPosition().getId(), receiptHeader.getCreatedDate());
-                if (!assignments.isEmpty())
-                    receiptHeader.setWorkflowUserName(assignments.get(0).getEmployee().getUsername());
-            }
-            searchResult.getList().add(receiptHeader);
-        }
-        resultList = searchResult.getList();
-        return SUCCESS;
-    }
-
-    /**
-     * @return the target
-     */
     public String getTarget() {
         return target;
     }
@@ -222,80 +312,12 @@ public class SearchReceiptAction extends SearchFormAction {
         this.userId = userId;
     }
 
-    @Override
-    public SearchQuery prepareQuery(final String sortField, final String sortDir) {
-        final ArrayList<Object> params = new ArrayList<Object>(0);
-        final StringBuilder searchQueryString = new StringBuilder("select distinct receipt ");
-        final StringBuilder countQueryString = new StringBuilder("select count(distinct receipt) ");
-        final StringBuilder fromString = new StringBuilder(" from org.egov.collection.entity.ReceiptHeader receipt ");
-        final String orderByString = " group by receipt.receiptdate,receipt.id  order by receipt.receiptdate desc";
-
-        // Get only those receipts whose status is NOT PENDING
-        final StringBuilder criteriaString = new StringBuilder(" where receipt.status.code != ? ");
-        params.add(CollectionConstants.RECEIPT_STATUS_CODE_PENDING);
-
-        if (StringUtils.isNotBlank(getInstrumentType())) {
-            fromString.append(" inner join receipt.receiptInstrument as instruments ");
-            criteriaString.append(" and instruments.instrumentType.type = ? ");
-            params.add(getInstrumentType());
-        }
-
-        if (StringUtils.isNotBlank(getReceiptNumber())) {
-            criteriaString.append(" and upper(receiptNumber) like ? ");
-            params.add("%" + getReceiptNumber().toUpperCase() + "%");
-        }
-        if (StringUtils.isNotBlank(getManualReceiptNumber())) {
-            criteriaString.append(" and upper(receipt.manualreceiptnumber) like ? ");
-            params.add("%" + getManualReceiptNumber().toUpperCase() + "%");
-        }
-        if (getSearchStatus() != -1) {
-            criteriaString.append(" and receipt.status.id = ? ");
-            params.add(getSearchStatus());
-        }
-        if (getFromDate() != null) {
-            criteriaString.append(" and receipt.receiptdate >= ? ");
-            params.add(fromDate);
-        }
-        if (getToDate() != null) {
-            criteriaString.append(" and receipt.receiptdate < ? ");
-            params.add(DateUtils.add(toDate, Calendar.DATE, 1));
-        }
-        if (getServiceTypeId() != -1) {
-            criteriaString.append(" and receipt.service.id = ? ");
-            params.add(Long.valueOf(getServiceTypeId()));
-        }
-
-        if (!getServiceClass().equals("-1")) {
-            criteriaString.append(" and receipt.service.serviceType = ? ");
-            params.add(getServiceClass());
-        }
-
-        if (getUserId() != -1) {
-            criteriaString.append(" and receipt.createdBy.id = ? ");
-            params.add(userId);
-        }
-        if (getBranchId() != -1) {
-            criteriaString.append(" and receipt.receiptMisc.depositedBranch.id = ? ");
-            params.add(getBranchId());
-        }
-
-        final String searchQuery = searchQueryString.append(fromString).append(criteriaString).append(orderByString).toString();
-        final String countQuery = countQueryString.append(fromString).append(criteriaString).toString();
-
-        return new SearchQueryHQL(searchQuery, countQuery, params);
-    }
-
     public Integer getSearchStatus() {
         return searchStatus;
     }
 
     public void setSearchStatus(final Integer searchStatus) {
         this.searchStatus = searchStatus;
-    }
-
-    public SearchQuery prepareQuery() {
-
-        return null;
     }
 
     public String getManualReceiptNumber() {
@@ -306,11 +328,11 @@ public class SearchReceiptAction extends SearchFormAction {
         this.manualReceiptNumber = manualReceiptNumber;
     }
 
-    public List getResultList() {
+    public List<ReceiptHeader> getResultList() {
         return resultList;
     }
 
-    public void setResultList(List resultList) {
+    public void setResultList(List<ReceiptHeader> resultList) {
         this.resultList = resultList;
     }
 
@@ -330,13 +352,6 @@ public class SearchReceiptAction extends SearchFormAction {
         this.serviceClassMap = serviceClassMap;
     }
 
-    /**
-     * @param collectionsUtil the collectionsUtil to set
-     */
-    public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
-        this.collectionsUtil = collectionsUtil;
-    }
-
     public Integer getBranchId() {
         return branchId;
     }
@@ -344,4 +359,25 @@ public class SearchReceiptAction extends SearchFormAction {
     public void setBranchId(Integer branchId) {
         this.branchId = branchId;
     }
+
+    public void setPage(final int pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public int getPage() {
+        return pageNum;
+    }
+
+    public void setPageSize(final int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public PaginatedList getSearchResult() {
+        return searchResult;
+    }
+
 }

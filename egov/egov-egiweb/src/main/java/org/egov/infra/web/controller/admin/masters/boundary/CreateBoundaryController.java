@@ -115,12 +115,13 @@ public class CreateBoundaryController {
     }
 
     @PostMapping
-    public String createBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult errors,
+    public String createBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult bindResult,
                                  RedirectAttributes redirectAttributes, Model model) {
-        if (errors.hasErrors()) {
+        if (bindResult.hasErrors()) {
             BoundaryType boundaryType = boundary.getBoundaryType();
             model.addAttribute("boundaryType", boundaryType);
-            model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
+            if (boundaryType.getParent() != null)
+                model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
             return BOUNDARY_CREATE_VIEW;
         }
         boundaryService.createBoundary(boundary);

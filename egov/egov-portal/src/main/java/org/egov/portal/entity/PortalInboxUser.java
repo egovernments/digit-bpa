@@ -47,6 +47,8 @@
  */
 package org.egov.portal.entity;
 
+import org.egov.infra.admin.master.entity.User;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -58,12 +60,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.User;
-import org.hibernate.validator.constraints.Length;
-
 @Entity
-@Table(name = "egp_inboxusers", schema = "state")
-@SequenceGenerator(name = PortalInboxUser.SEQ_EGP_INBOXUSERS, sequenceName = PortalInboxUser.SEQ_EGP_INBOXUSERS, allocationSize = 1, schema = "state")
+@Table(name = "egp_inboxusers")
+@SequenceGenerator(name = PortalInboxUser.SEQ_EGP_INBOXUSERS, sequenceName = PortalInboxUser.SEQ_EGP_INBOXUSERS, allocationSize = 1)
 public class PortalInboxUser {
 
     public static final String SEQ_EGP_INBOXUSERS = "SEQ_EGP_INBOXUSERS";
@@ -81,9 +80,6 @@ public class PortalInboxUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portalInbox", nullable = false)
     private PortalInbox portalInbox;
-
-    @Length(max = 250)
-    private String tenantId;
 
     public Long getId() {
         return id;
@@ -107,14 +103,6 @@ public class PortalInboxUser {
 
     public void setPortalInbox(PortalInbox portalInbox) {
         this.portalInbox = portalInbox;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
     }
 
 }
