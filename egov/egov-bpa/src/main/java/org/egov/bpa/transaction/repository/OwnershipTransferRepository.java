@@ -66,5 +66,7 @@ public interface OwnershipTransferRepository extends JpaRepository<OwnershipTran
 	OwnershipTransfer findByDemand(EgDemand demand);
 	
 	OwnershipTransfer findByOwnershipNumberAndIsActiveTrue(String ownershipNumber);
+	
+	List<OwnershipTransfer> findByOwnershipNumberOrderByIdDesc(String ownershipNumber);
 
 }

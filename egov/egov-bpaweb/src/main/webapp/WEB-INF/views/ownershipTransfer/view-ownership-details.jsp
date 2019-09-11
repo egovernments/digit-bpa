@@ -76,7 +76,7 @@
 			</div>
 	   </div>
 	   
-	   	<div class="row add-border">
+	   <div class="row add-border">
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.service.type" />
 			</div>
@@ -119,13 +119,13 @@
 	 <div class="row add-border">
 	 
 			<div class="col-sm-3 add-margin">
-				<spring:message code="lbl.application.no" />
+				<spring:message code="lbl.ownership.number" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<c:out value="${ownershipTransfer.ownershipNumber}" default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
-				<spring:message code="lbl.application.date" />
+				<spring:message code="lbl.ownership.approvaldate" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<fmt:formatDate value="${ownershipTransfer.ownershipApprovalDate}"
@@ -152,18 +152,18 @@
 			<c:choose>
 			<c:when test="${ownershipNumber ne null && ownershipNumber ne '' }">
             <div class="col-sm-3 add-margin">
-				<spring:message code="lbl.ownership.number" />
+				<spring:message code="lbl.ownership.oldnumber" />
 			</div>
-			<div class="col-sm-3 add-margin">
-				<a target="popup" onclick="window.open('/bpa/application/ownership/transfer/view/${ownershipNumber}','popup','width=1100,height=700'); return false;"
-				>${ownershipNumber}</a>	</div>			
+			<div class="col-sm-3 add-margin view-content">			
+				<a target="popup" onclick="window.open('/bpa/application/ownership/transfer/view/${applicationNo}','popup','width=1100,height=700'); return false;"
+				>${ownershipNumber}</a>	
 			</div>
 			</c:when>
 			<c:otherwise>
             <div class="col-sm-3 add-margin">
 				<spring:message code="lbl.plan.permission.no" />
 			</div>
-			<div class="col-sm-3 add-margin">
+			<div class="col-sm-3 add-margin view-content">			
 				<a target="popup" onclick="window.open('/bpa/application/details-view/by-permit-number/${ownershipTransfer.parent.planPermissionNumber}','popup','width=1100,height=700'); return false;"
 				>${ownershipTransfer.parent.planPermissionNumber}</a>	
 			</div>

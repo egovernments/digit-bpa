@@ -203,16 +203,16 @@ jQuery(document).ready(function ($) {
 	        dataType: "json",
 	        success: function (response) {
 	            if(response) {
-	            	if(response.planPermissionNumber != null && response.planPermissionNumber != permitNo){
-	        			bootbox.alert('For the entered plan permission number ownership is changed. Please enter '+response.planPermissionNumber+
-	        					'to proceed');
+	            	if(response.ownershipNumber != null && response.ownershipNumber != permitNo){
+	        			bootbox.alert('For the entered plan permission number ownership is changed. Please enter '+response.ownershipNumber+
+	        					' to proceed');
 	            	}
-	            	else if(response.inProgress)
+	            	else if(response.inProgress && !response.isRejected)
 	        			bootbox.alert('For the entered plan permission number ownership workflow is in progress. Hence cannot proceed.');
 	            	else if(response.isPermit && response.status!='Order Issued to Applicant'){
 	        			bootbox.alert('For the entered plan permission number permit workflow is in progress. Hence cannot proceed.');
 	            	}
-	            		else{
+	            	else{
 		            	isExist = true;
 		            	$('#parent').val(response.id);
 		                $('#serviceTypeDesc').val(response.serviceTypeDesc);
@@ -224,8 +224,13 @@ jQuery(document).ready(function ($) {
 		                $('#address').val(response.applicantAddress);
 		                $('#bpaApplicationId').val(response.id);
 		                $('#applicationNumber').val(response.applicationNumber);
-		                $('#edcrApplicationNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + response.planPermissionNumber + '\')" href="javascript:void(0);">' + response.planPermissionNumber  + '</a>');
-		                $('#planPermissionNumber').val(response.planPermissionNumber);
+		                if(response.ownershipNumber !=null){
+		                	$('#ownpermitno').html('Old Ownership Number');
+			                $('#edcrApplicationNumber').html('<a onclick="openPopup(\'/bpa/application/ownership/transfer/view/' + response.oldApplicationNo + '\')" href="javascript:void(0);">' + response.oldOwnershipNumber  + '</a>');
+		                }else{
+		                	$('#ownpermitno').html('Building Plan Permission No');
+		                    $('#edcrApplicationNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + response.planPermissionNumber + '\')" href="javascript:void(0);">' + response.planPermissionNumber  + '</a>');
+		                }
 		                $('#planPermissionDate').val(response.planPermissionDate);
 		                $('#extentInSqmts').val(response.plotArea);
 	            	}

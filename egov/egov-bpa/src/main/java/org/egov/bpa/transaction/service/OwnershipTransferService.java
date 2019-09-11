@@ -52,7 +52,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
@@ -147,7 +146,7 @@ public class OwnershipTransferService {
     	 if (ownershipTransfer.getApplicationNumber() == null) {
          	ownershipTransfer.setApplicationNumber(applicationNumberGenerator.generate());
          	ownershipTransfer.setApplicationDate(new Date());
-         	ownershipTransfer.setIsActive(true);
+         	ownershipTransfer.setIsActive(false);
         }
         if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)) {
             final BpaStatus bpaStatus = bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE,APPLICATION_STATUS_SUBMITTED);
@@ -174,7 +173,7 @@ public class OwnershipTransferService {
         if (ownershipTransfer.getApplicationNumber() == null) {
         	ownershipTransfer.setApplicationNumber(applicationNumberGenerator.generate());
         	ownershipTransfer.setApplicationDate(new Date());
-        	ownershipTransfer.setIsActive(true);
+         	ownershipTransfer.setIsActive(false);
         }
         buildDocuments(ownershipTransfer);
         ownershipTransfer.setStatus(bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE, APPLICATION_STATUS_CREATED));
@@ -194,8 +193,8 @@ public class OwnershipTransferService {
         return ownershipTransferRepository.findByApplicationNumber(applicationNumber);
     }
     
-    public List<OwnershipTransfer> findByBpaApplication(final BpaApplication bpaAPplication) {
-        return ownershipTransferRepository.findByParentOrderByIdDesc(bpaAPplication);
+    public List<OwnershipTransfer> findByBpaApplication(final BpaApplication bpaApplication) {
+        return ownershipTransferRepository.findByParentOrderByIdDesc(bpaApplication);
     }
     
     public List<OwnershipTransfer> findByBpaApplicationAndDate(final BpaApplication bpaApplication, Date createdDate) {
@@ -206,15 +205,12 @@ public class OwnershipTransferService {
         return ownershipTransferRepository.findByDemand(demand);
     }
     
-    public OwnershipTransfer findActiveOwnershipNumber(final String renewalNumber) {
-        return ownershipTransferRepository.findByOwnershipNumberAndIsActiveTrue(renewalNumber);
+    public List<OwnershipTransfer> findByOwnershipNumber(final String ownershipNumber) {
+        return ownershipTransferRepository.findByOwnershipNumberOrderByIdDesc(ownershipNumber) ;
     }
     
-    public OwnershipTransfer findByPlanPermissionNumber(final String permitNumber) {
-        List<OwnershipTransfer> ownershipTransfers = ownershipTransferRepository
-                .findByParentPlanPermissionNumberOrderByIdDesc(permitNumber);
-        ownershipTransfers = ownershipTransfers.stream().filter(ot -> ot.getIsActive().equals(true)).collect(Collectors.toList());
-        return ownershipTransfers.isEmpty() ? null : ownershipTransfers.get(0);
+    public List<OwnershipTransfer> findByPlanPermissionNumber(final String permitNumber) {
+        return ownershipTransferRepository.findByParentPlanPermissionNumberOrderByIdDesc(permitNumber);
     }    
     
 

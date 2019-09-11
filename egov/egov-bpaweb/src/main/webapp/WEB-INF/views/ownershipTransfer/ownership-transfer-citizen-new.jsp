@@ -167,11 +167,10 @@
 					</div>
 					
 					<div class="form-group">					
-						<label class="col-sm-3 control-label text-left">
-				            <spring:message code="lbl.edcr.appln.no"/>
+						<label class="col-sm-3 control-label text-left" id="ownpermitno">
 				        </label>
 				        <div class="col-sm-2 add-margin view-content">
-				            <div class="text-center" id="edcrApplicationNumber"></div>
+				            <div class="text" id="edcrApplicationNumber"></div>
 				        </div>				
 					</div>
 				</div>
