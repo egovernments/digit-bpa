@@ -207,7 +207,7 @@ jQuery(document).ready(function ($) {
 	        			bootbox.alert('For the entered plan permission number ownership is changed. Please enter '+response.ownershipNumber+
 	        					' to proceed');
 	            	}
-	            	else if(response.inProgress && !response.isRejected)
+	            	else if(response.inProgress)
 	        			bootbox.alert('For the entered plan permission number ownership workflow is in progress. Hence cannot proceed.');
 	            	else if(response.isPermit && response.status!='Order Issued to Applicant'){
 	        			bootbox.alert('For the entered plan permission number permit workflow is in progress. Hence cannot proceed.');

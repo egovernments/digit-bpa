@@ -229,11 +229,10 @@ public class OwnershipTransferService {
                  .find(PlanPermissionNumberGeneratorImpl.class, specificNoticeService.getCityDetails());
         if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
         	ownershipTransfer.setOwnershipApprovalDate(new Date());
-        	if (bpaAppConfigUtil.autogenerateOwnershipNumber()) {
-               ownershipTransfer.setOwnershipNumber(ownershipTransfer.getParent().getPlanPermissionNumber());
-            }
+        	if (bpaAppConfigUtil.autogenerateOwnershipNumber()) 
+         	   ownershipTransfer.setOwnershipNumber(planPermissionNumber.generatePlanPermissionNumber(ownershipTransfer.getParent()));
         	else
-        	   ownershipTransfer.setOwnershipNumber(planPermissionNumber.generatePlanPermissionNumber(ownershipTransfer.getParent()));
+               ownershipTransfer.setOwnershipNumber(ownershipTransfer.getParent().getPlanPermissionNumber());
         }
         if(BpaConstants.WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue()) && bpaAppConfigUtil.ownershipFeeCollectionRequired()) {
         	calculateOwnershipFee(ownershipTransfer);
