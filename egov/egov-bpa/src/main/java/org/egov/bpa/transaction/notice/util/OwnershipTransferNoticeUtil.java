@@ -46,8 +46,10 @@
  */
 package org.egov.bpa.transaction.notice.util;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -64,6 +66,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.config.reports.properties.BpaApplicationReportProperties;
+import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.OwnershipTransferConditions;
 import org.egov.bpa.transaction.entity.OwnershipTransferNotice;
@@ -76,6 +79,7 @@ import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -83,6 +87,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +132,7 @@ public class OwnershipTransferNoticeUtil {
     private BpaApplicationReportProperties bpaApplicationReportProperties;
     @Autowired
     private BpaWorkFlowService bpaWorkFlowService;
-
+   
     public OwnershipTransferNotice findByOwnershipAndNoticeType(final OwnershipTransfer ownershipTransfer, final String noticeType) {
         return ownershipNoticeRepository.findByOwnershipAndNoticeType(ownershipTransfer, noticeType);
     }    
@@ -143,9 +148,14 @@ public class OwnershipTransferNoticeUtil {
             reportParams.put("rejectionReasons", buildRejectionReasons(ownershipTransfer));
             reportParams.put("approverName", getRejector(ownershipTransfer));
             reportParams.put("permitOrderTitle", "OWNERSHIP TRANSFER ORDER");
-            reportParams.put("subHeaderTitle", "Building permit ownership transfer");
+            reportParams.put("subHeaderTitle", "Building Permit Ownership Transfer");
+            reportParams.put("ownershipAct",  getMessageFromPropertyFile("msg.ownership.act"));
+            reportParams.put("designation", ownershipTransfer.getState().getOwnerPosition().getDeptDesig().getDesignation().getName());
+            reportParams.put("approverName",ownershipTransfer.getState().getOwnerUser().getName());
             reportParams.put("ownershipNumber", ownershipTransfer.getOwnershipNumber());
             reportParams.put("newownerName",ownershipTransfer.getOwner().getName());
+            reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(ownershipTransfer)));
+            
             if (!ownershipTransfer.getOwnershipFee().isEmpty())
                 reportParams.put("ownershipFeeDetails", getOwnershipFeeDetails(ownershipTransfer));
             ReportRequest reportInput = new ReportRequest(rejectionfilename, ownershipTransfer, reportParams);
@@ -265,5 +275,35 @@ public class OwnershipTransferNoticeUtil {
     private String getRejector(final OwnershipTransfer ownershipTransfer) {
         return bpaWorkFlowService.getApproverAssignmentByDate(ownershipTransfer.getState().getOwnerPosition(), ownershipTransfer.getState().getLastModifiedDate()).getEmployee().getName();
     }
-
+    
+    public String buildQRCodeDetails(final OwnershipTransfer ownershipTransfer) {
+        StringBuilder qrCodeValue = new StringBuilder();
+        qrCodeValue = isBlank(ApplicationThreadLocals.getMunicipalityName()) ? qrCodeValue.append("")
+                : qrCodeValue.append(ApplicationThreadLocals.getMunicipalityName()).append(ONE_NEW_LINE);
+        qrCodeValue = ownershipTransfer.getOwner() == null || isBlank(ownershipTransfer.getOwner().getName())
+                ? qrCodeValue.append("Applicant Name : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Applicant Name : ").append(ownershipTransfer.getOwner().getName()).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(ownershipTransfer.getApplicationNumber())
+                ? qrCodeValue.append("Application number : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Application number : ").append(ownershipTransfer.getApplicationNumber()).append(ONE_NEW_LINE);
+        if (!isBlank(ownershipTransfer.getParent().geteDcrNumber())) {
+            qrCodeValue = qrCodeValue.append("Edcr number : ").append(ownershipTransfer.getParent().geteDcrNumber()).append(ONE_NEW_LINE);
+        }
+        qrCodeValue = isBlank(ownershipTransfer.getParent().getPlanPermissionNumber())
+                ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Permit number : ").append(ownershipTransfer.getParent().getPlanPermissionNumber()).append(ONE_NEW_LINE);
+        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(ownershipTransfer.getParent()) == null
+                ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Approved by : ")
+                        .append(ownershipTransfer.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())
+                        .append(ONE_NEW_LINE);
+        qrCodeValue = ownershipTransfer.getParent().getPlanPermissionDate() == null
+                ? qrCodeValue.append("Date of issue of permit : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Date of issue of permit : ")
+                        .append(DateUtils.getDefaultFormattedDate(ownershipTransfer.getParent().getPlanPermissionDate())).append(ONE_NEW_LINE);
+        qrCodeValue = isBlank(ownershipTransfer.getState().getOwnerUser().getName())
+                ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE)
+                : qrCodeValue.append("Name of approver : ").append(ownershipTransfer.getState().getOwnerUser().getName()).append(ONE_NEW_LINE);
+        return qrCodeValue.toString();
+    }
 }
