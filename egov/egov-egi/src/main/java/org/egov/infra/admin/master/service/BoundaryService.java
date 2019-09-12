@@ -48,9 +48,20 @@
 
 package org.egov.infra.admin.master.service;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ValidationException;
+
 import org.egov.infra.admin.master.contracts.BoundarySearchRequest;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
@@ -73,18 +84,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ValidationException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.egov.infra.utils.ApplicationConstant.ADMIN_HIERARCHY_TYPE;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 @Service
 @Transactional(readOnly = true)
@@ -179,25 +181,25 @@ public class BoundaryService {
     }
 
     public Boundary getActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCode(final Long bndryNum,
-                                                                           final String boundaryType, final String hierarchyTypeCode) {
+            final String boundaryType, final String hierarchyTypeCode) {
         return boundaryRepository.findActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCodeAndAsOnDate(bndryNum,
                 boundaryType, hierarchyTypeCode, new Date());
     }
 
     public List<Boundary> getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
-                                                                                 final String hierarchyTypeName) {
+            final String hierarchyTypeName) {
         return boundaryRepository.findActiveBoundariesByBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
                 hierarchyTypeName);
     }
 
     public List<Boundary> getBoundariesByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
-                                                                           final String hierarchyTypeName) {
+            final String hierarchyTypeName) {
         return boundaryRepository.findBoundariesByBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
                 hierarchyTypeName);
     }
 
     public Boundary getBoundaryByBndryTypeNameAndHierarchyTypeName(final String boundaryTypeName,
-                                                                   final String hierarchyTypeName) {
+            final String hierarchyTypeName) {
         return boundaryRepository.findBoundaryByBndryTypeNameAndHierarchyTypeName(boundaryTypeName, hierarchyTypeName);
     }
 
@@ -211,7 +213,7 @@ public class BoundaryService {
     }
 
     public List<Boundary> getBondariesByNameAndBndryTypeAndHierarchyType(final String boundaryTypeName,
-                                                                         final String hierarchyTypeName, final String name) {
+            final String hierarchyTypeName, final String name) {
         return boundaryRepository.findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(boundaryTypeName,
                 hierarchyTypeName, name);
     }
@@ -225,11 +227,11 @@ public class BoundaryService {
 
         crossHierarchyService.getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", ADMIN_HIERARCHY_TYPE,
                 '%' + name + '%').stream().forEach(location -> {
-            final Map<String, Object> res = new HashMap<>();
-            res.put("id", location.getId());
-            res.put("name", location.getChild().getName() + " - " + location.getParent().getName());
-            list.add(res);
-        });
+                    final Map<String, Object> res = new HashMap<>();
+                    res.put("id", location.getId());
+                    res.put("name", location.getChild().getName() + " - " + location.getParent().getName());
+                    list.add(res);
+                });
         return list;
     }
 
@@ -250,7 +252,8 @@ public class BoundaryService {
             childSize = boundaryRepository.findActiveImmediateChildrenWithOutParent(parent.getId()).size();
         if (mpath.isEmpty())
             if (null != child) {
-                if (parent != null && !child.getMaterializedPath().equalsIgnoreCase(parent.getMaterializedPath() + "." + childSize)) {
+                if (parent != null
+                        && !child.getMaterializedPath().equalsIgnoreCase(parent.getMaterializedPath() + "." + childSize)) {
                     childSize += 1;
                     mpath = parent.getMaterializedPath() + "." + childSize;
                 } else
@@ -285,7 +288,8 @@ public class BoundaryService {
                         final SimpleFeature feature = iterator.next();
                         final Geometry geom = (Geometry) feature.getDefaultGeometry();
                         if (geom.contains(point)) {
-                            return getBoundaryByNumberAndType((Long) feature.getAttribute("bndrynum"), (String) feature.getAttribute("bndrytype"));
+                            return getBoundaryByNumberAndType((Long) feature.getAttribute("bndrynum"),
+                                    (String) feature.getAttribute("bndrytype"));
                         }
                     }
                 } finally {
@@ -315,5 +319,9 @@ public class BoundaryService {
         }
 
         return Optional.empty();
+    }
+
+    public List<Boundary> findActiveImmediateChildrenWithOutParent(Long parentId) {
+        return boundaryRepository.findActiveImmediateChildrenWithOutParent(parentId);
     }
 }

@@ -70,229 +70,236 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class StakeHolderBillable extends AbstractBillable implements Billable {
 
-	private static final String DISPLAY_MESSAGE = "Registration Fee Collection";
-	private StakeHolder stakeHolder;
-	private Long userId;
-	private Boolean isCallbackForApportion = Boolean.FALSE;
-	private EgBillType billType;
-	private String referenceNumber;
-	private String transanctionReferenceNumber;
+    private static final String DISPLAY_MESSAGE = "Registration Fee Collection";
+    private StakeHolder stakeHolder;
+    private Long userId;
+    private Boolean isCallbackForApportion = Boolean.FALSE;
+    private EgBillType billType;
+    private String referenceNumber;
+    private String transanctionReferenceNumber;
 
-	@Autowired
-	private AppConfigValueService appConfigValueService;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
-	@Autowired
-	private EgBillDao egBillDAO;
-	@Autowired
-	private ModuleService moduleService;
+    @Autowired
+    private EgBillDao egBillDAO;
+    @Autowired
+    private ModuleService moduleService;
 
-	@Autowired
-	private BpaDemandService bpaDemandService;
+    @Autowired
+    private BpaDemandService bpaDemandService;
 
-	@Override
-	public String getBillPayee() {
-		return stakeHolder.getName();
-	}
+    @Override
+    public String getBillPayee() {
+        return stakeHolder.getName();
+    }
 
-	@Override
-	public String getBillAddress() {
-		List<Address> address = stakeHolder.getAddress();
-		String permanentAddress = null;
-		for (Address address2 : address) {
-			if(address2.getType().equals(AddressType.PERMANENT)){
-				permanentAddress = address2.toString();	
-				break;
-		}
-		}
-		return stakeHolder.getName() == null ? "Not Mentioned" : permanentAddress;
-	}
+    @Override
+    public String getBillAddress() {
+        List<Address> address = stakeHolder.getAddress();
+        String permanentAddress = null;
+        for (Address address2 : address) {
+            if (address2.getType().equals(AddressType.PERMANENT)) {
+                permanentAddress = address2.toString();
+                break;
+            }
+        }
+        return stakeHolder.getName() == null ? "Not Mentioned" : permanentAddress;
+    }
 
-	@Override
-	public EgDemand getCurrentDemand() {
-		return stakeHolder.getDemand();
-	}
+    @Override
+    public EgDemand getCurrentDemand() {
+        return stakeHolder.getDemand();
+    }
 
-	@Override
-	public String getEmailId() {
-		return stakeHolder.getEmailId();
-	}
+    @Override
+    public String getEmailId() {
+        return stakeHolder.getEmailId();
+    }
 
-	@Override
-	public List<EgDemand> getAllDemands() {
-		final List<EgDemand> demandList = new ArrayList<>();
-		demandList.add(stakeHolder.getDemand());
-		return demandList;
-	}
+    @Override
+    public List<EgDemand> getAllDemands() {
+        final List<EgDemand> demandList = new ArrayList<>();
+        demandList.add(stakeHolder.getDemand());
+        return demandList;
+    }
 
-	@Override
-	public EgBillType getBillType() {
-		return billType == null ? billType = egBillDAO.getBillTypeByCode("AUTO") : billType;
-	}
+    @Override
+    public EgBillType getBillType() {
+        return billType == null ? billType = egBillDAO.getBillTypeByCode("AUTO") : billType;
+    }
 
-	public void setBillType(final EgBillType billType) {
-		this.billType = billType;
-	}
+    public void setBillType(final EgBillType billType) {
+        this.billType = billType;
+    }
 
-	@Override
-	public Date getBillLastDueDate() {
-		return new DateTime().plusMonths(1).toDate();
-	}
+    @Override
+    public Date getBillLastDueDate() {
+        return new DateTime().plusMonths(1).toDate();
+    }
 
-	@Override
-	public Long getBoundaryNum() {
-		/*return stakeHolder.getSiteDetail().get(0) != null
-			   && stakeHolder.getSiteDetail().get(0).getAdminBoundary() == null ? 0l : stakeHolder.getSiteDetail().get(0)
-																								  .getAdminBoundary().getBoundaryNum();*/
-		return 0l;
-	}
+    @Override
+    public Long getBoundaryNum() {
+        /*
+         * return stakeHolder.getSiteDetail().get(0) != null && stakeHolder.getSiteDetail().get(0).getAdminBoundary() == null ? 0l
+         * : stakeHolder.getSiteDetail().get(0) .getAdminBoundary().getBoundaryNum();
+         */
+        return 0l;
+    }
 
-	@Override
-	public String getBoundaryType() {
-		return "Ward";
-	}
+    @Override
+    public String getBoundaryType() {
+        return "Ward";
+    }
 
-	@Override
-	public String getDepartmentCode() {
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEPARTMENT_CODE);
-		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-	}
+    @Override
+    public String getDepartmentCode() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEPARTMENT_CODE);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+    }
 
-	@Override
-	public BigDecimal getFunctionaryCode() {
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUNCTIONARY_CODE);
-		return appConfigValueList.isEmpty() ? BigDecimal.ZERO : new BigDecimal(appConfigValueList.get(0).getValue());
-	}
+    @Override
+    public BigDecimal getFunctionaryCode() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUNCTIONARY_CODE);
+        return appConfigValueList.isEmpty() ? BigDecimal.ZERO : new BigDecimal(appConfigValueList.get(0).getValue());
+    }
 
-	@Override
-	public String getFundCode() {
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_CODE);
-		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-	}
+    @Override
+    public String getFundCode() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_CODE);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+    }
 
-	@Override
-	public String getFundSourceCode() {
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_SRC_CODE);
-		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-	}
+    @Override
+    public String getFundSourceCode() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_SRC_CODE);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+    }
 
-	@Override
-	public Date getIssueDate() {
-		return new Date();
-	}
+    @Override
+    public Date getIssueDate() {
+        return new Date();
+    }
 
-	@Override
-	public Date getLastDate() {
-		return getBillLastDueDate();
-	}
+    @Override
+    public Date getLastDate() {
+        return getBillLastDueDate();
+    }
 
-	@Override
-	public Module getModule() {
-		return moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
-	}
+    @Override
+    public Module getModule() {
+        return moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
+    }
 
-	@Override
-	public Boolean getOverrideAccountHeadsAllowed() {
-		return false;
-	}
+    @Override
+    public Boolean getOverrideAccountHeadsAllowed() {
+        return false;
+    }
 
-	@Override
-	public Boolean getPartPaymentAllowed() {
-		return false;
-	}
+    @Override
+    public Boolean getPartPaymentAllowed() {
+        return false;
+    }
 
-	@Override
-	public String getServiceCode() {
-		return "BPASH";
-	}
+    @Override
+    public String getServiceCode() {
+        return "BPASH";
+    }
 
-	@Override
-	public BigDecimal getTotalAmount() {
-		final EgDemand currentDemand = getCurrentDemand();
-		final List<Object> instVsAmt = bpaDemandService.getDmdCollAmtInstallmentWiseForRegFee(currentDemand);
-		BigDecimal balance = BigDecimal.ZERO;
-		for (final Object object : instVsAmt) {
-			final Object[] ddObject = (Object[]) object;
-			final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
-			BigDecimal collAmt = BigDecimal.ZERO;
-			if (ddObject[2] != null)
-				collAmt = new BigDecimal((Double) ddObject[3]);
-			balance = balance.add(dmdAmt.subtract(collAmt));
-		}
-		return balance;
-	}
+    @Override
+    public BigDecimal getTotalAmount() {
+        final EgDemand currentDemand = getCurrentDemand();
+        final List<Object> instVsAmt = bpaDemandService.getDmdCollAmtInstallmentWiseForRegFee(currentDemand);
+        BigDecimal balance = BigDecimal.ZERO;
+        for (final Object object : instVsAmt) {
+            final Object[] ddObject = (Object[]) object;
+            final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
+            BigDecimal collAmt = BigDecimal.ZERO;
+            if (ddObject[2] != null)
+                collAmt = new BigDecimal((Double) ddObject[3]);
+            balance = balance.add(dmdAmt.subtract(collAmt));
+        }
+        return balance;
+    }
 
-	@Override
-	public Long getUserId() {
-		return userId;
-	}
+    @Override
+    public Long getUserId() {
+        return userId;
+    }
 
-	public void setUserId(final Long userId) {
-		this.userId = userId;
-	}
+    public void setUserId(final Long userId) {
+        this.userId = userId;
+    }
 
-	@Override
-	public String getDescription() {
-		return "Acknowledgement Number: " + getStakeHolder().getCode();
-	}
+    @Override
+    public String getDescription() {
+        return "Acknowledgement Number: " + getStakeHolder().getCode();
+    }
 
-	@Override
-	public String getDisplayMessage() {
-		return DISPLAY_MESSAGE;
-	}
+    @Override
+    public String getDisplayMessage() {
+        return DISPLAY_MESSAGE;
+    }
 
-	@Override
-	public String getCollModesNotAllowed() {
-		return CollectionConstants.INSTRUMENTTYPE_BANK;
-	}
+    @Override
+    public String getCollModesNotAllowed() {
+        return CollectionConstants.INSTRUMENTTYPE_BANK;
+    }
 
-	@Override
-	public String getConsumerId() {
-		return stakeHolder.getCode();
-	}
+    @Override
+    public String getConsumerId() {
+        return stakeHolder.getCode();
+    }
 
-	@Override
-	public String getConsumerType() {
-		//return stakeHolder.getServiceType().getCode();
-		return "";
-	}
+    @Override
+    public String getConsumerType() {
+        // return stakeHolder.getServiceType().getCode();
+        return "";
+    }
 
-	@Override
-	public Boolean isCallbackForApportion() {
-		return isCallbackForApportion;
-	}
+    @Override
+    public Boolean isCallbackForApportion() {
+        return isCallbackForApportion;
+    }
 
-	@Override
-	public void setCallbackForApportion(final Boolean b) {
-		isCallbackForApportion = b;
-	}
+    @Override
+    public void setCallbackForApportion(final Boolean b) {
+        isCallbackForApportion = b;
+    }
 
-	public StakeHolder getStakeHolder() {
-		return stakeHolder;
-	}
+    public StakeHolder getStakeHolder() {
+        return stakeHolder;
+    }
 
-	public void setStakeHolder(StakeHolder stakeHolder) {
-		this.stakeHolder = stakeHolder;
-	}
+    public void setStakeHolder(StakeHolder stakeHolder) {
+        this.stakeHolder = stakeHolder;
+    }
 
-	@Override
-	public String getReferenceNumber() {
-		return referenceNumber;
-	}
+    @Override
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
 
-	public void setReferenceNumber(final String referenceNumber) {
-		this.referenceNumber = referenceNumber;
-	}
+    public void setReferenceNumber(final String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
 
-	@Override
-	public String getTransanctionReferenceNumber() {
-		return transanctionReferenceNumber;
-	}
+    @Override
+    public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
 
-	public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
-		this.transanctionReferenceNumber = transanctionReferenceNumber;
-	}
+    public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
+    }
+
+    @Override
+    public BigDecimal getMinAmountPayable() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

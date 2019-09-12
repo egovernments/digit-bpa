@@ -48,29 +48,6 @@
 
 package org.egov.infra.reporting.util;
 
-import com.google.common.collect.ImmutableMap;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.NumberUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.CacheControl;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.Properties;
-
 import static java.lang.String.format;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
@@ -84,9 +61,33 @@ import static org.egov.infra.reporting.engine.ReportConstants.TENANT_REPORT_FILE
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.Properties;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.NumberUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
+import com.google.common.collect.ImmutableMap;
+
 public final class ReportUtil {
 
-    public static final ImmutableMap<ReportFormat, String> CONTENT_TYPES = ImmutableMap.<ReportFormat, String>builder()
+    public static final ImmutableMap<ReportFormat, String> CONTENT_TYPES = ImmutableMap.<ReportFormat, String> builder()
             .put(ReportFormat.PDF, "application/pdf")
             .put(ReportFormat.XLS, "application/vnd.ms-excel")
             .put(ReportFormat.RTF, "application/rtf")
@@ -145,7 +146,7 @@ public final class ReportUtil {
 
     public static Object fetchFromDBSql(Connection connection, String sqlQuery) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery);
-             ResultSet resultSet = statement.executeQuery()) {
+                ResultSet resultSet = statement.executeQuery()) {
             return resultSet.next() ? resultSet.getString(1) : null;
         } catch (SQLException e) {
             String errMsg = "Exception while executing query [" + sqlQuery + "]";
@@ -198,6 +199,10 @@ public final class ReportUtil {
                 .contentLength(reportOutput.getReportOutputData().length)
                 .header(CONTENT_DISPOSITION, reportOutput.reportDisposition())
                 .body(new InputStreamResource(reportOutput.asInputStream()));
+    }
+
+    public static String getImageURL(String imagePathWithContextRoot) {
+        return getDomainURL() + imagePathWithContextRoot;
     }
 
 }

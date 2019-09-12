@@ -47,9 +47,22 @@
  */
 package org.egov.portal.service;
 
+import static java.lang.Boolean.TRUE;
+import static java.lang.String.format;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
+import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
+import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGIN_URL;
+
+import java.util.List;
+import java.util.Locale;
+
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.notification.service.NotificationService;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.token.service.TokenService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
@@ -59,17 +72,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Locale;
-
-import static java.lang.Boolean.TRUE;
-import static java.lang.String.format;
-import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
-import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
-import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGIN_URL;
 
 @Service
 @Transactional(readOnly = true)
@@ -141,5 +143,9 @@ public class CitizenService {
 
     private String getMessage(String msgKey, Object... arg) {
         return messageSource.getMessage(msgKey, arg, Locale.getDefault());
+    }
+    
+    public List<Citizen> getCitizenByMobileNumberAndType(final String mobileNumber, final UserType type) {
+        return citizenRepository.findByMobileNumberAndTypeOrderById(mobileNumber, type);
     }
 }

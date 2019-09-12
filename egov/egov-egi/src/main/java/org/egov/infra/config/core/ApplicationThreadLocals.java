@@ -58,9 +58,46 @@ public class ApplicationThreadLocals {
     private static ThreadLocal<String> municipalityName = new ThreadLocal<>();
     private static ThreadLocal<String> domainURL = new ThreadLocal<>();
     private static ThreadLocal<String> ipAddress = new ThreadLocal<>();
+    private static ThreadLocal<String> cityNameLocal = new ThreadLocal<>();
+    private static ThreadLocal<String> districtName = new ThreadLocal<>();
+    private static ThreadLocal<String> districtCode = new ThreadLocal<>();
+    private static ThreadLocal<String> stateName = new ThreadLocal<>();
+    private static ThreadLocal<String> grade = new ThreadLocal<>();
 
     private ApplicationThreadLocals() {
-        //Not to be initialized
+        // Not to be initialized
+    }
+
+    public static String getGrade() {
+        return grade.get();
+    }
+
+    public static void setGrade(String localGrade) {
+        grade.set(localGrade);
+    }
+
+    public static String getDistrictName() {
+        return districtName.get();
+    }
+
+    public static void setDistrictName(String localDistrictName) {
+        districtName.set(localDistrictName);
+    }
+
+    public static String getDistrictCode() {
+        return districtCode.get();
+    }
+
+    public static void setDistrictCode(String localDistrictCode) {
+        districtCode.set(localDistrictCode);
+    }
+
+    public static String getStateName() {
+        return stateName.get();
+    }
+
+    public static void setStateName(String localStateName) {
+        stateName.set(localStateName);
     }
 
     public static String getCityName() {
@@ -127,6 +164,14 @@ public class ApplicationThreadLocals {
         ipAddress.set(ipAddr);
     }
 
+    public static String getCityNameLocal() {
+        return cityNameLocal.get();
+    }
+
+    public static void setCityNameLocal(String citiNameLocal) {
+        cityNameLocal.set(citiNameLocal);
+    }
+
     public static void clearValues() {
         domainName.remove();
         userId.remove();
@@ -135,6 +180,13 @@ public class ApplicationThreadLocals {
         cityName.remove();
         municipalityName.remove();
         domainURL.remove();
+
+        cityNameLocal.remove();
+
+        grade.remove();
+        districtCode.remove();
+        districtName.remove();
+        stateName.remove();
         ipAddress.remove();
     }
 }

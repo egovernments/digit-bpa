@@ -39,6 +39,11 @@
  */
 package org.egov.bpa.transaction.service.collection;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.constants.CollectionConstants;
@@ -58,229 +63,231 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class OccupancyCertificateBillable extends AbstractBillable implements Billable {
 
-	private static final String DISPLAY_MESSAGE = "BPA Occupancy Certificate Fee Collection";
-	private OccupancyCertificate oc;
-	private Long userId;
-	private Boolean isCallbackForApportion = Boolean.FALSE;
-	private EgBillType billType;
-	private String referenceNumber;
-	private String transanctionReferenceNumber;
+    private static final String DISPLAY_MESSAGE = "BPA Occupancy Certificate Fee Collection";
+    private OccupancyCertificate oc;
+    private Long userId;
+    private Boolean isCallbackForApportion = Boolean.FALSE;
+    private EgBillType billType;
+    private String referenceNumber;
+    private String transanctionReferenceNumber;
 
-	@Autowired
-	private AppConfigValueService appConfigValueService;
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
-	@Autowired
-	private EgBillDao egBillDAO;
-	@Autowired
-	private ModuleService moduleService;
+    @Autowired
+    private EgBillDao egBillDAO;
+    @Autowired
+    private ModuleService moduleService;
 
-	@Autowired
-	private BpaDemandService bpaDemandService;
+    @Autowired
+    private BpaDemandService bpaDemandService;
 
-	@Override
-	public String getBillPayee() {
-		return oc.getParent().getOwner().getName();
-	}
+    @Override
+    public String getBillPayee() {
+        return oc.getParent().getOwner().getName();
+    }
 
-	@Override
-	public String getBillAddress() {
-		return oc.getParent().getOwner() == null ? "Not Mentioned" : oc.getParent().getOwner().getAddress();
-	}
+    @Override
+    public String getBillAddress() {
+        return oc.getParent().getOwner() == null ? "Not Mentioned" : oc.getParent().getOwner().getAddress();
+    }
 
-	@Override
-	public EgDemand getCurrentDemand() {
-		return oc.getDemand();
-	}
+    @Override
+    public EgDemand getCurrentDemand() {
+        return oc.getDemand();
+    }
 
-	@Override
-	public String getEmailId() {
-		return oc.getParent().getOwner().getEmailId();
-	}
+    @Override
+    public String getEmailId() {
+        return oc.getParent().getOwner().getEmailId();
+    }
 
-	@Override
-	public List<EgDemand> getAllDemands() {
-		final List<EgDemand> demandList = new ArrayList<>();
-		demandList.add(oc.getDemand());
-		return demandList;
-	}
+    @Override
+    public List<EgDemand> getAllDemands() {
+        final List<EgDemand> demandList = new ArrayList<>();
+        demandList.add(oc.getDemand());
+        return demandList;
+    }
 
-	@Override
-	public EgBillType getBillType() {
-		return billType == null ? billType = egBillDAO.getBillTypeByCode("AUTO") : billType;
-	}
+    @Override
+    public EgBillType getBillType() {
+        return billType == null ? billType = egBillDAO.getBillTypeByCode("AUTO") : billType;
+    }
 
-	public void setBillType(final EgBillType billType) {
-		this.billType = billType;
-	}
+    public void setBillType(final EgBillType billType) {
+        this.billType = billType;
+    }
 
-	@Override
-	public Date getBillLastDueDate() {
-		return new DateTime().plusMonths(1).toDate();
-	}
+    @Override
+    public Date getBillLastDueDate() {
+        return new DateTime().plusMonths(1).toDate();
+    }
 
-	@Override
-	public Long getBoundaryNum() {
-		return oc.getParent().getSiteDetail().get(0) != null
-			   && oc.getParent().getSiteDetail().get(0).getAdminBoundary() == null ? 0l : oc.getParent().getSiteDetail().get(0)
-																								  .getAdminBoundary().getBoundaryNum();
-	}
+    @Override
+    public Long getBoundaryNum() {
+        return oc.getParent().getSiteDetail().get(0) != null
+                && oc.getParent().getSiteDetail().get(0).getAdminBoundary() == null ? 0l
+                        : oc.getParent().getSiteDetail().get(0)
+                                .getAdminBoundary().getBoundaryNum();
+    }
 
-	@Override
-	public String getBoundaryType() {
-		return "Ward";
-	}
+    @Override
+    public String getBoundaryType() {
+        return "Ward";
+    }
 
-	@Override
-	public String getDepartmentCode() {
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEPARTMENT_CODE);
-		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-	}
+    @Override
+    public String getDepartmentCode() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEPARTMENT_CODE);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+    }
 
-	@Override
-	public BigDecimal getFunctionaryCode() {
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUNCTIONARY_CODE);
-		return appConfigValueList.isEmpty() ? BigDecimal.ZERO : new BigDecimal(appConfigValueList.get(0).getValue());
-	}
+    @Override
+    public BigDecimal getFunctionaryCode() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUNCTIONARY_CODE);
+        return appConfigValueList.isEmpty() ? BigDecimal.ZERO : new BigDecimal(appConfigValueList.get(0).getValue());
+    }
 
-	@Override
-	public String getFundCode() {
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_CODE);
-		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-	}
+    @Override
+    public String getFundCode() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_CODE);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+    }
 
-	@Override
-	public String getFundSourceCode() {
-		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_SRC_CODE);
-		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
-	}
+    @Override
+    public String getFundSourceCode() {
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_SRC_CODE);
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+    }
 
-	@Override
-	public Date getIssueDate() {
-		return new Date();
-	}
+    @Override
+    public Date getIssueDate() {
+        return new Date();
+    }
 
-	@Override
-	public Date getLastDate() {
-		return getBillLastDueDate();
-	}
+    @Override
+    public Date getLastDate() {
+        return getBillLastDueDate();
+    }
 
-	@Override
-	public Module getModule() {
-		return moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
-	}
+    @Override
+    public Module getModule() {
+        return moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
+    }
 
-	@Override
-	public Boolean getOverrideAccountHeadsAllowed() {
-		return false;
-	}
+    @Override
+    public Boolean getOverrideAccountHeadsAllowed() {
+        return false;
+    }
 
-	@Override
-	public Boolean getPartPaymentAllowed() {
-		return false;
-	}
+    @Override
+    public Boolean getPartPaymentAllowed() {
+        return false;
+    }
 
-	@Override
-	public String getServiceCode() {
-		return "OC";
-	}
+    @Override
+    public String getServiceCode() {
+        return "OC";
+    }
 
-	@Override
-	public BigDecimal getTotalAmount() {
-		final EgDemand currentDemand = getCurrentDemand();
-		final List<Object> instVsAmt = bpaDemandService.getDmdCollAmtInstallmentWise(currentDemand);
-		BigDecimal balance = BigDecimal.ZERO;
-		for (final Object object : instVsAmt) {
-			final Object[] ddObject = (Object[]) object;
-			final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
-			BigDecimal collAmt = BigDecimal.ZERO;
-			if (ddObject[2] != null)
-				collAmt = new BigDecimal((Double) ddObject[3]);
-			balance = balance.add(dmdAmt.subtract(collAmt));
-		}
-		return balance;
-	}
+    @Override
+    public BigDecimal getTotalAmount() {
+        final EgDemand currentDemand = getCurrentDemand();
+        final List<Object> instVsAmt = bpaDemandService.getDmdCollAmtInstallmentWise(currentDemand);
+        BigDecimal balance = BigDecimal.ZERO;
+        for (final Object object : instVsAmt) {
+            final Object[] ddObject = (Object[]) object;
+            final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
+            BigDecimal collAmt = BigDecimal.ZERO;
+            if (ddObject[2] != null)
+                collAmt = new BigDecimal((Double) ddObject[3]);
+            balance = balance.add(dmdAmt.subtract(collAmt));
+        }
+        return balance;
+    }
 
-	@Override
-	public Long getUserId() {
-		return userId;
-	}
+    @Override
+    public Long getUserId() {
+        return userId;
+    }
 
-	public void setUserId(final Long userId) {
-		this.userId = userId;
-	}
+    public void setUserId(final Long userId) {
+        this.userId = userId;
+    }
 
-	@Override
-	public String getDescription() {
-		return "Occupancy Certificate Application Number: " + oc.getApplicationNumber();
-	}
+    @Override
+    public String getDescription() {
+        return "Occupancy Certificate Application Number: " + oc.getApplicationNumber();
+    }
 
-	@Override
-	public String getDisplayMessage() {
-		return DISPLAY_MESSAGE;
-	}
+    @Override
+    public String getDisplayMessage() {
+        return DISPLAY_MESSAGE;
+    }
 
-	@Override
-	public String getCollModesNotAllowed() {
-		return CollectionConstants.INSTRUMENTTYPE_BANK;
-	}
+    @Override
+    public String getCollModesNotAllowed() {
+        return CollectionConstants.INSTRUMENTTYPE_BANK;
+    }
 
-	@Override
-	public String getConsumerId() {
-		return oc.getApplicationNumber();
-	}
+    @Override
+    public String getConsumerId() {
+        return oc.getApplicationNumber();
+    }
 
-	@Override
-	public String getConsumerType() {
-		return oc.getParent().getServiceType().getCode();
-	}
+    @Override
+    public String getConsumerType() {
+        return oc.getParent().getServiceType().getCode();
+    }
 
-	@Override
-	public Boolean isCallbackForApportion() {
-		return isCallbackForApportion;
-	}
+    @Override
+    public Boolean isCallbackForApportion() {
+        return isCallbackForApportion;
+    }
 
-	@Override
-	public void setCallbackForApportion(final Boolean b) {
-		isCallbackForApportion = b;
-	}
+    @Override
+    public void setCallbackForApportion(final Boolean b) {
+        isCallbackForApportion = b;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
-	@Override
-	public String getReferenceNumber() {
-		return referenceNumber;
-	}
+    @Override
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
 
-	public void setReferenceNumber(final String referenceNumber) {
-		this.referenceNumber = referenceNumber;
-	}
+    public void setReferenceNumber(final String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
 
-	@Override
-	public String getTransanctionReferenceNumber() {
-		return transanctionReferenceNumber;
-	}
+    @Override
+    public String getTransanctionReferenceNumber() {
+        return transanctionReferenceNumber;
+    }
 
-	public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
-		this.transanctionReferenceNumber = transanctionReferenceNumber;
-	}
+    public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
+        this.transanctionReferenceNumber = transanctionReferenceNumber;
+    }
+
+    @Override
+    public BigDecimal getMinAmountPayable() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

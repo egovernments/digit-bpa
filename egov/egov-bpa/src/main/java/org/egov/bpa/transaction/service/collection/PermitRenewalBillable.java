@@ -284,4 +284,10 @@ public class PermitRenewalBillable extends AbstractBillable implements Billable 
     public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
+
+    @Override
+    public BigDecimal getMinAmountPayable() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

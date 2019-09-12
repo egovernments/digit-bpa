@@ -48,24 +48,33 @@
 
 package org.egov.infra.admin.master.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.gson.annotations.Expose;
-import org.apache.commons.lang3.LocaleUtils;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.Type;
-import org.hibernate.envers.AuditJoinTable;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.joda.time.DateTime;
+import static org.apache.commons.lang3.StringUtils.overlay;
+import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PAN_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_SALUTATION;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_USERNAME;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.PAN_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.SALUTATION;
+import static org.egov.infra.validation.constants.ValidationRegex.USERNAME;
+import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -90,42 +99,35 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Stream;
 
-import static org.apache.commons.lang3.StringUtils.overlay;
-import static org.apache.commons.lang3.StringUtils.repeat;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PAN_NUMBER;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_SALUTATION;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_USERNAME;
-import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
-import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationRegex.PAN_NUMBER;
-import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
-import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationRegex.SALUTATION;
-import static org.egov.infra.validation.constants.ValidationRegex.USERNAME;
-import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
+import org.apache.commons.lang3.LocaleUtils;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.annotations.Expose;
 
 @Entity
 @Table(name = "eg_user")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
-@Unique(fields = {"username", "pan", "emailId"}, enableDfltMsg = true, isSuperclass = true)
-@CompositeUnique(fields = {"type", "mobileNumber"}, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
-@JsonIgnoreProperties({"createdBy", "lastModifiedBy"})
+@Unique(fields = { "username", "pan", "emailId" }, enableDfltMsg = true, isSuperclass = true)
+@CompositeUnique(fields = { "type", "mobileNumber" }, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
+@JsonIgnoreProperties({ "createdBy", "lastModifiedBy" })
 public class User extends AbstractAuditable {
     protected static final String SEQ_USER = "SEQ_EG_USER";
     private static final long serialVersionUID = -2415368058955783970L;
@@ -146,6 +148,10 @@ public class User extends AbstractAuditable {
     @Audited
     @SafeHtml
     private String password;
+
+    @Length(max = 250)
+    @Audited
+    private String tenantId;
 
     @SafeHtml
     @Length(max = 10)
@@ -204,8 +210,7 @@ public class User extends AbstractAuditable {
     private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"),
-            inverseJoinColumns = @JoinColumn(name = "roleid"))
+    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
     @Audited(targetAuditMode = NOT_AUDITED)
     @AuditJoinTable
     private Set<Role> roles = new HashSet<>();
@@ -238,7 +243,7 @@ public class User extends AbstractAuditable {
     private String uid;
 
     public User() {
-        //Default constructor
+        // Default constructor
     }
 
     public User(UserType type) {
@@ -271,6 +276,14 @@ public class User extends AbstractAuditable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 
     public String getSalutation() {

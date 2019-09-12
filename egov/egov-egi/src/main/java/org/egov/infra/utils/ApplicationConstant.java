@@ -123,6 +123,8 @@ public final class ApplicationConstant {
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
     public static final String BLOCK_BOUNDARY_TYPE = "Block";
     public static final String WARD_BOUNDARY_TYPE = "Ward";
+    
+    public static final String STATE_TENANTID = "state";
 
     private ApplicationConstant() {
     }
