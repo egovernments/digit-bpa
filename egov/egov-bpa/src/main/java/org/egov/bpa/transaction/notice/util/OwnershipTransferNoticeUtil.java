@@ -148,8 +148,8 @@ public class OwnershipTransferNoticeUtil {
             reportParams.put("permitOrderTitle", "OWNERSHIP TRANSFER ORDER");
             reportParams.put("subHeaderTitle", "Building Permit Ownership Transfer");
             reportParams.put("ownershipAct",  getMessageFromPropertyFile("msg.ownership.act"));
-            reportParams.put("designation", ownershipTransfer.getState().getOwnerPosition().getDeptDesig().getDesignation().getName());
-            reportParams.put("approverName",ownershipTransfer.getState().getOwnerUser().getName());
+            reportParams.put("designation", ownershipTransfer.getApproverPosition().getDeptDesig().getDesignation().getName());
+            reportParams.put("approverName",ownershipTransfer.getApproverUser().getName());
             reportParams.put("ownershipNumber", ownershipTransfer.getOwnershipNumber());
             reportParams.put("newownerName",ownershipTransfer.getOwner().getName());
             reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(ownershipTransfer)));
@@ -293,7 +293,7 @@ public class OwnershipTransferNoticeUtil {
         qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(ownershipTransfer.getApplication()) == null
                 ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Approved by : ")
-                        .append(ownershipTransfer.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())
+                        .append(ownershipTransfer.getApproverPosition().getDeptDesig().getDesignation().getName())
                         .append(ONE_NEW_LINE);
         qrCodeValue = ownershipTransfer.getApplication().getPlanPermissionDate() == null
                 ? qrCodeValue.append("Date of issue of permit : ").append(N_A).append(ONE_NEW_LINE)
@@ -301,7 +301,7 @@ public class OwnershipTransferNoticeUtil {
                         .append(DateUtils.getDefaultFormattedDate(ownershipTransfer.getApplication().getPlanPermissionDate())).append(ONE_NEW_LINE);
         qrCodeValue = isBlank(ownershipTransfer.getState().getOwnerUser().getName())
                 ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE)
-                : qrCodeValue.append("Name of approver : ").append(ownershipTransfer.getState().getOwnerUser().getName()).append(ONE_NEW_LINE);
+                : qrCodeValue.append("Name of approver : ").append(ownershipTransfer.getApproverUser().getName()).append(ONE_NEW_LINE);
         return qrCodeValue.toString();
     }
 }

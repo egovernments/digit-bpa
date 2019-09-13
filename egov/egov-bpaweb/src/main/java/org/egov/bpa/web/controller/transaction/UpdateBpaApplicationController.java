@@ -488,12 +488,17 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             message = getMessageOnRejectionInitiation(approvalComent, bpaAppln, user, MSG_REJECT_FORWARD_REGISTRATION, pos);
         else if (WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction))
             message = messageSource.getMessage("msg.noc.update.success", new String[] {}, LocaleContextHolder.getLocale());
-        else if (WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction))
+        else if (WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction) && ! bpaAppln.getApplicationType().getName().equals(BpaConstants.LOWRISK))
             message = messageSource.getMessage(MSG_APPROVE_FORWARD_REGISTRATION, new String[] {
                     user == null ? ""
                             : user.getUsername().concat("~")
                                     .concat(getDesinationNameByPosition(pos)),
                     bpaAppln.getApplicationNumber() }, LocaleContextHolder.getLocale());
+        else if (WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction) && bpaAppln.getApplicationType().getName().equals(BpaConstants.LOWRISK))
+            message = messageSource.getMessage("msg.nocapplcn.apprvd.succes", new String[] {
+                    user == null ? ""
+                            : bpaAppln.getApplicationNumber() }, LocaleContextHolder.getLocale());
+        
         else
             message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
                     user == null ? ""

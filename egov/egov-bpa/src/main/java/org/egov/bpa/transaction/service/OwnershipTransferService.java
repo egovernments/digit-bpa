@@ -233,6 +233,10 @@ public class OwnershipTransferService {
          	   ownershipTransfer.setOwnershipNumber(planPermissionNumber.generatePlanPermissionNumber(ownershipTransfer.getApplication()));
         	else
                ownershipTransfer.setOwnershipNumber(ownershipTransfer.getApplication().getPlanPermissionNumber());
+        	  ownershipTransfer.setApproverPosition(ownershipTransfer.getState().getOwnerPosition());
+                  ownershipTransfer.setApproverUser(
+                          ownershipTransfer.getState().getOwnerUser() == null ? securityUtils.getCurrentUser()
+                                  : ownershipTransfer.getState().getOwnerUser());
         }
         if(BpaConstants.WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue()) && bpaAppConfigUtil.ownershipFeeCollectionRequired()) {
         	calculateOwnershipFee(ownershipTransfer);

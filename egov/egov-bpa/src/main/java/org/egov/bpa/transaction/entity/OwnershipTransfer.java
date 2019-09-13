@@ -78,13 +78,13 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
-
 
 @Entity
 @Table(name = "EGBPA_OWNERSHIP_TRANSFER")
@@ -99,7 +99,7 @@ public class OwnershipTransfer extends StateAware<Position> {
     @Id
     @GeneratedValue(generator = SEQ_OWNERSHIP_TRANSFER, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private Source source;
@@ -107,11 +107,11 @@ public class OwnershipTransfer extends StateAware<Position> {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent")
     private OwnershipTransfer parent;
-    
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Applicant owner;
 
@@ -134,39 +134,47 @@ public class OwnershipTransfer extends StateAware<Position> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "status")
     private BpaStatus status;
-    
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "approverPosition")
+    private Position approverPosition;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "approverUser")
+    private User approverUser;
+
     @Length(min = 1, max = 128)
     private String remarks;
-    
+
     private Boolean isActive;
-    
+
     private BigDecimal admissionfeeAmount;
-    
+
     private Boolean mailPwdRequired = false;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egbpa_ownership_transfer_documents", joinColumns = @JoinColumn(name = "ownershipTransfer"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> ownershipTransferDocs = Collections.emptySet();
 
-	@OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OwnershipFee> ownershipFee = new ArrayList<>();
-	
+
     @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OwnershipTransferNotice> ownershipNotices = new ArrayList<>(0);
 
     @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OwnershipTransferConditions> rejectionReasons = new ArrayList<>(0);
-    
+
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OwnershipTransferConditions> additionalOwnershipConditions = new ArrayList<>(0);
-    
+
     @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OwnershipTransferCoApplicant> coApplicants = new ArrayList<>();
     @OrderBy(ORDER_BY_ID_ASC)
     @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OwnershipTransferDocument> ownershipTransferDocuments = new ArrayList<>(0);
-    
+
     private transient MultipartFile[] files;
     private transient String workflowAction;
     private transient Long approvalDepartment;
@@ -189,14 +197,14 @@ public class OwnershipTransfer extends StateAware<Position> {
     }
 
     public Source getSource() {
-		return source;
-	}
+        return source;
+    }
 
-	public void setSource(Source source) {
-		this.source = source;
-	}
+    public void setSource(Source source) {
+        this.source = source;
+    }
 
-	@Override
+    @Override
     public String myLinkId() {
         return applicationNumber == null ? ownershipNumber : applicationNumber;
     }
@@ -211,14 +219,14 @@ public class OwnershipTransfer extends StateAware<Position> {
                         : DateUtils.toDefaultDateFormat(applicationDate),
                 application.getServiceType().getDescription());
     }
-    
+
     public String getApplicantName() {
         StringBuilder nameSB = new StringBuilder();
         nameSB.append(owner == null ? "" : owner.getName());
         if (!coApplicants.isEmpty()) {
             List<CoApplicant> coApps = coApplicants.stream().map(coapp -> coapp.getCoApplicant()).collect(Collectors.toList());
-        	nameSB.append(",").append(
-        			coApps.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
+            nameSB.append(",").append(
+                    coApps.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
         }
         return nameSB.toString();
     }
@@ -232,22 +240,22 @@ public class OwnershipTransfer extends StateAware<Position> {
     }
 
     public BpaApplication getApplication() {
-		return application;
-	}
+        return application;
+    }
 
-	public void setApplication(BpaApplication application) {
-		this.application = application;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
 
-	public Applicant getOwner() {
-		return owner;
-	}
+    public Applicant getOwner() {
+        return owner;
+    }
 
-	public void setOwner(Applicant owner) {
-		this.owner = owner;
-	}
+    public void setOwner(Applicant owner) {
+        this.owner = owner;
+    }
 
-	public String getApplicationNumber() {
+    public String getApplicationNumber() {
         return applicationNumber;
     }
 
@@ -280,30 +288,30 @@ public class OwnershipTransfer extends StateAware<Position> {
     }
 
     public String getRemarks() {
-		return remarks;
-	}
+        return remarks;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-	public Boolean getMailPwdRequired() {
-		return mailPwdRequired;
-	}
+    public Boolean getMailPwdRequired() {
+        return mailPwdRequired;
+    }
 
-	public void setMailPwdRequired(Boolean mailPwdRequired) {
-		this.mailPwdRequired = mailPwdRequired;
-	}
-	
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public void setMailPwdRequired(Boolean mailPwdRequired) {
+        this.mailPwdRequired = mailPwdRequired;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public MultipartFile[] getFiles() {
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public MultipartFile[] getFiles() {
         return files;
     }
 
@@ -343,128 +351,144 @@ public class OwnershipTransfer extends StateAware<Position> {
         this.receipts = receipts;
     }
 
-	public String getOwnershipNumber() {
-		return ownershipNumber;
-	}
-
-	public void setOwnershipNumber(String ownershipNumber) {
-		this.ownershipNumber = ownershipNumber;
-	}
-
-	public Date getOwnershipApprovalDate() {
-		return ownershipApprovalDate;
-	}
-
-	public void setOwnershipApprovalDate(Date ownershipApprovalDate) {
-		this.ownershipApprovalDate = ownershipApprovalDate;
-	}
-
-	public Set<FileStoreMapper> getOwnershipTransferDocs() {
-		return ownershipTransferDocs;
-	}
-
-	public void setOwnershipTransferDocs(Set<FileStoreMapper> ownershipTransferDocs) {
-		this.ownershipTransferDocs = ownershipTransferDocs;
-	}
-
-	public List<OwnershipTransferNotice> getOwnershipNotices() {
-		return ownershipNotices;
-	}
-
-	public void setOwnershipNotices(List<OwnershipTransferNotice> ownershipNotices) {
-		this.ownershipNotices = ownershipNotices;
-	}
-
-	public List<OwnershipTransferConditions> getRejectionReasons() {
-		return rejectionReasons;
-	}
-
-	public void setRejectionReasons(List<OwnershipTransferConditions> rejectionReasons) {
-		this.rejectionReasons = rejectionReasons;
-	}
-	
-	public List<OwnershipFee> getOwnershipFee() {
-		return ownershipFee;
-	}
-
-	public void setOwnershipFee(List<OwnershipFee> ownershipFee) {
-		this.ownershipFee = ownershipFee;
-	}
-
-	public void addOwnershipNotice(OwnershipTransferNotice ownershipNotice) {
-	     this.ownershipNotices.add(ownershipNotice);
+    public String getOwnershipNumber() {
+        return ownershipNumber;
     }
 
-	public List<OwnershipTransferConditions> getAdditionalOwnershipConditions() {
-		return additionalOwnershipConditions;
-	}
+    public void setOwnershipNumber(String ownershipNumber) {
+        this.ownershipNumber = ownershipNumber;
+    }
 
-	public void setAdditionalOwnershipConditions(List<OwnershipTransferConditions> additionalOwnershipConditions) {
-		this.additionalOwnershipConditions = additionalOwnershipConditions;
-	}
+    public Date getOwnershipApprovalDate() {
+        return ownershipApprovalDate;
+    }
 
-	public List<OwnershipTransferConditions> getDynamicOwenrshipConditionsTemp() {
-		return dynamicOwenrshipConditionsTemp;
-	}
+    public void setOwnershipApprovalDate(Date ownershipApprovalDate) {
+        this.ownershipApprovalDate = ownershipApprovalDate;
+    }
 
-	public void setDynamicOwenrshipConditionsTemp(List<OwnershipTransferConditions> dynamicOwenrshipConditionsTemp) {
-		this.dynamicOwenrshipConditionsTemp = dynamicOwenrshipConditionsTemp;
-	}
+    public Set<FileStoreMapper> getOwnershipTransferDocs() {
+        return ownershipTransferDocs;
+    }
 
-	public List<OwnershipTransferConditions> getStaticOwenrshipConditionsTemp() {
-		return staticOwenrshipConditionsTemp;
-	}
+    public void setOwnershipTransferDocs(Set<FileStoreMapper> ownershipTransferDocs) {
+        this.ownershipTransferDocs = ownershipTransferDocs;
+    }
 
-	public void setStaticOwenrshipConditionsTemp(List<OwnershipTransferConditions> staticOwenrshipConditionsTemp) {
-		this.staticOwenrshipConditionsTemp = staticOwenrshipConditionsTemp;
-	}
+    public List<OwnershipTransferNotice> getOwnershipNotices() {
+        return ownershipNotices;
+    }
 
-	public List<OwnershipTransferConditions> getAdditionalOwenrshipConditionsTemp() {
-		return additionalOwenrshipConditionsTemp;
-	}
+    public void setOwnershipNotices(List<OwnershipTransferNotice> ownershipNotices) {
+        this.ownershipNotices = ownershipNotices;
+    }
 
-	public void setAdditionalOwenrshipConditionsTemp(List<OwnershipTransferConditions> additionalOwenrshipConditionsTemp) {
-		this.additionalOwenrshipConditionsTemp = additionalOwenrshipConditionsTemp;
-	}
+    public List<OwnershipTransferConditions> getRejectionReasons() {
+        return rejectionReasons;
+    }
 
-	public List<OwnershipTransferConditions> getRejectionReasonsTemp() {
-		return rejectionReasonsTemp;
-	}
+    public void setRejectionReasons(List<OwnershipTransferConditions> rejectionReasons) {
+        this.rejectionReasons = rejectionReasons;
+    }
 
-	public void setRejectionReasonsTemp(List<OwnershipTransferConditions> rejectionReasonsTemp) {
-		this.rejectionReasonsTemp = rejectionReasonsTemp;
-	}
+    public List<OwnershipFee> getOwnershipFee() {
+        return ownershipFee;
+    }
 
-	public List<OwnershipTransferConditions> getAdditionalRejectReasonsTemp() {
-		return additionalRejectReasonsTemp;
-	}
+    public void setOwnershipFee(List<OwnershipFee> ownershipFee) {
+        this.ownershipFee = ownershipFee;
+    }
 
-	public void setAdditionalRejectReasonsTemp(List<OwnershipTransferConditions> additionalRejectReasonsTemp) {
-		this.additionalRejectReasonsTemp = additionalRejectReasonsTemp;
-	}
+    public void addOwnershipNotice(OwnershipTransferNotice ownershipNotice) {
+        this.ownershipNotices.add(ownershipNotice);
+    }
 
-	public List<OwnershipTransferCoApplicant> getCoApplicants() {
-		return coApplicants;
-	}
+    public List<OwnershipTransferConditions> getAdditionalOwnershipConditions() {
+        return additionalOwnershipConditions;
+    }
 
-	public void setCoApplicants(List<OwnershipTransferCoApplicant> coApplicants) {
-		this.coApplicants = coApplicants;
-	}
+    public void setAdditionalOwnershipConditions(List<OwnershipTransferConditions> additionalOwnershipConditions) {
+        this.additionalOwnershipConditions = additionalOwnershipConditions;
+    }
 
-	public List<OwnershipTransferDocument> getOwnershipTransferDocuments() {
-		return ownershipTransferDocuments;
-	}
+    public List<OwnershipTransferConditions> getDynamicOwenrshipConditionsTemp() {
+        return dynamicOwenrshipConditionsTemp;
+    }
 
-	public void setOwnershipTransferDocuments(List<OwnershipTransferDocument> ownershipTransferDocuments) {
-		this.ownershipTransferDocuments = ownershipTransferDocuments;
-	}
+    public void setDynamicOwenrshipConditionsTemp(List<OwnershipTransferConditions> dynamicOwenrshipConditionsTemp) {
+        this.dynamicOwenrshipConditionsTemp = dynamicOwenrshipConditionsTemp;
+    }
 
-	public BigDecimal getAdmissionfeeAmount() {
-		return admissionfeeAmount;
-	}
+    public List<OwnershipTransferConditions> getStaticOwenrshipConditionsTemp() {
+        return staticOwenrshipConditionsTemp;
+    }
 
-	public void setAdmissionfeeAmount(BigDecimal admissionfeeAmount) {
-		this.admissionfeeAmount = admissionfeeAmount;
-	}
+    public void setStaticOwenrshipConditionsTemp(List<OwnershipTransferConditions> staticOwenrshipConditionsTemp) {
+        this.staticOwenrshipConditionsTemp = staticOwenrshipConditionsTemp;
+    }
+
+    public List<OwnershipTransferConditions> getAdditionalOwenrshipConditionsTemp() {
+        return additionalOwenrshipConditionsTemp;
+    }
+
+    public void setAdditionalOwenrshipConditionsTemp(List<OwnershipTransferConditions> additionalOwenrshipConditionsTemp) {
+        this.additionalOwenrshipConditionsTemp = additionalOwenrshipConditionsTemp;
+    }
+
+    public List<OwnershipTransferConditions> getRejectionReasonsTemp() {
+        return rejectionReasonsTemp;
+    }
+
+    public void setRejectionReasonsTemp(List<OwnershipTransferConditions> rejectionReasonsTemp) {
+        this.rejectionReasonsTemp = rejectionReasonsTemp;
+    }
+
+    public List<OwnershipTransferConditions> getAdditionalRejectReasonsTemp() {
+        return additionalRejectReasonsTemp;
+    }
+
+    public void setAdditionalRejectReasonsTemp(List<OwnershipTransferConditions> additionalRejectReasonsTemp) {
+        this.additionalRejectReasonsTemp = additionalRejectReasonsTemp;
+    }
+
+    public List<OwnershipTransferCoApplicant> getCoApplicants() {
+        return coApplicants;
+    }
+
+    public void setCoApplicants(List<OwnershipTransferCoApplicant> coApplicants) {
+        this.coApplicants = coApplicants;
+    }
+
+    public List<OwnershipTransferDocument> getOwnershipTransferDocuments() {
+        return ownershipTransferDocuments;
+    }
+
+    public void setOwnershipTransferDocuments(List<OwnershipTransferDocument> ownershipTransferDocuments) {
+        this.ownershipTransferDocuments = ownershipTransferDocuments;
+    }
+
+    public BigDecimal getAdmissionfeeAmount() {
+        return admissionfeeAmount;
+    }
+
+    public void setAdmissionfeeAmount(BigDecimal admissionfeeAmount) {
+        this.admissionfeeAmount = admissionfeeAmount;
+    }
+
+    public Position getApproverPosition() {
+        return approverPosition;
+    }
+
+    public void setApproverPosition(Position approverPosition) {
+        this.approverPosition = approverPosition;
+    }
+
+    public User getApproverUser() {
+        return approverUser;
+    }
+
+    public void setApproverUser(User approverUser) {
+        this.approverUser = approverUser;
+    }
 
 }
