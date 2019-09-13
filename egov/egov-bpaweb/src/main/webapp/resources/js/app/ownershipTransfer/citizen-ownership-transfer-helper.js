@@ -214,19 +214,26 @@ jQuery(document).ready(function ($) {
 	            		return false;
 	            	}
 	            	else if(response.ownershipNumber != null && response.ownershipNumber != permitNo){
+	            		$('.resetValues').val('');
 	        			bootbox.alert('For the entered plan permission number ownership is changed. Please enter '+response.ownershipNumber+
 	        					' to proceed');
 	            	}
-	            	else if(response.inProgress)
+	            	else if(response.inProgress){
+	            		$('.resetValues').val('');
 	        			bootbox.alert('For the entered plan permission number ownership workflow is in progress. Hence cannot proceed.');
-	            	else if(response.isPermit && response.status == 'Revocated')
+	            	}
+	            	else if(response.isPermit && response.status == 'Revocated'){
+	            		$('.resetValues').val('');
 	            		bootbox.alert('Permit application for entered plan permission number is revocated, hence cannot proceed.');
+	            	}
 	            	else if(response.isPermit && response.status!='Order Issued to Applicant'){
+	            		$('.resetValues').val('');
 	        			bootbox.alert('For the entered plan permission number permit workflow is in progress. Hence cannot proceed.');
 	            	}
 	            	else{
 		            	isExist = true;
-		            	$('#parent').val(response.id);
+		            	$('#application').val(response.applicationId);
+		            	$('#parent').val(response.parentId);
 		                $('#serviceTypeDesc').val(response.serviceTypeDesc);
 		                $('#serviceType').val(response.serviceTypeId);
 		                $('#serviceTypeCode').val(response.serviceTypeCode);
@@ -234,7 +241,6 @@ jQuery(document).ready(function ($) {
 		                $('#applicationType').val(response.applicationType);
 		                $('.applicantName').val(response.applicantName);
 		                $('#address').val(response.applicantAddress);
-		                $('#bpaApplicationId').val(response.id);
 		                $('#applicationNumber').val(response.applicationNumber);
 		                if(response.oldOwnershipNumber !=null){
 		                	$('#ownpermitno').html('Old Ownership Number');

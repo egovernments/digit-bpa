@@ -118,7 +118,7 @@ public class OwnershipFeeCalculationService {
 	        OwnershipFee ownershipFee = getbpaFee(ownershipTransfer);
 	       
 	        if (ownershipFee.getApplicationFee().getApplicationFeeDetail().isEmpty() && ownershipTransfer != null) {
-	        	for (BpaFeeMapping bpaFee : bpaFeeMappingService.getSanctionFeesByServiceAppType(ownershipTransfer.getParent().getServiceType().getId(), BpaConstants.OWNERSHIP_FEE, FeeApplicationType.OWNERSHIP_TRANSFER)) {
+	        	for (BpaFeeMapping bpaFee : bpaFeeMappingService.getSanctionFeesByServiceAppType(ownershipTransfer.getApplication().getServiceType().getId(), BpaConstants.OWNERSHIP_FEE, FeeApplicationType.OWNERSHIP_TRANSFER)) {
                     if (bpaFee != null) {                            
                         ownershipFee.getApplicationFee()
                                 .addApplicationFeeDetail(
@@ -147,8 +147,8 @@ public class OwnershipFeeCalculationService {
 	                moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
 	        
 	        List<BpaFeeMapping> bpaAdmissionFees = bpaFeeMappingService
-	                .getApplicationFeeByServiceAppType(ownershipTransfer.getParent().getServiceType().getId(), BpaConstants.BPA_APP_FEE, FeeApplicationType.OWNERSHIP_TRANSFER);
-	        ownershipTransfer.setAdmissionfeeAmount(calculateAdmissionFeeAmount(ownershipTransfer.getParent().getServiceType().getId()));
+	                .getApplicationFeeByServiceAppType(ownershipTransfer.getApplication().getServiceType().getId(), BpaConstants.BPA_APP_FEE, FeeApplicationType.OWNERSHIP_TRANSFER);
+	        ownershipTransfer.setAdmissionfeeAmount(calculateAdmissionFeeAmount(ownershipTransfer.getApplication().getServiceType().getId()));
          
 	        
 	        feeDetails.put(bpaAdmissionFees.get(0).getBpaFeeCommon().getCode(), ownershipTransfer.getAdmissionfeeAmount());

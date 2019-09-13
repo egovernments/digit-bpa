@@ -105,8 +105,12 @@ public class OwnershipTransfer extends StateAware<Position> {
     private Source source;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "parent", nullable = false)
-    private BpaApplication parent;
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent")
+    private OwnershipTransfer parent;
     
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Applicant owner;
@@ -200,12 +204,12 @@ public class OwnershipTransfer extends StateAware<Position> {
     @Override
     public String getStateDetails() {
         return String.format("Application Type: %s Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
-                parent.getApplicationType().getName(),
-                parent.getOwner().getName(),
+                application.getApplicationType().getName(),
+                owner.getName(),
                 applicationNumber == null ? ownershipNumber : applicationNumber,
                 applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
                         : DateUtils.toDefaultDateFormat(applicationDate),
-                parent.getServiceType().getDescription());
+                application.getServiceType().getDescription());
     }
     
     public String getApplicantName() {
@@ -219,15 +223,23 @@ public class OwnershipTransfer extends StateAware<Position> {
         return nameSB.toString();
     }
 
-    public BpaApplication getParent() {
+    public OwnershipTransfer getParent() {
         return parent;
     }
 
-    public void setParent(BpaApplication parent) {
+    public void setParent(OwnershipTransfer parent) {
         this.parent = parent;
     }
 
-    public Applicant getOwner() {
+    public BpaApplication getApplication() {
+		return application;
+	}
+
+	public void setApplication(BpaApplication application) {
+		this.application = application;
+	}
+
+	public Applicant getOwner() {
 		return owner;
 	}
 

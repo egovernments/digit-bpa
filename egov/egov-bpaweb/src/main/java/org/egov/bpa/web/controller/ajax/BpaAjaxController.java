@@ -146,6 +146,8 @@ public class BpaAjaxController {
     private static final String MANDATORY = "mandatory";
     private static final Logger LOG = Logger.getLogger(BpaAjaxController.class);
     private static final String BLOCK_NAME = "blockName";
+    private static final String OWNERSHIPNUMBER = "ownershipNumber";
+
 
     private static final String BLOCK_ID = "blockId";
 
@@ -824,68 +826,71 @@ public class BpaAjaxController {
 
         	if(!activeApplication.isEmpty()) {
         		Map<String, String> ocApplicationDetails = occupancyCertificateUtils
-                        .checkIsPermitNumberUsedWithAnyOCApplication(activeApplication.get(0).getParent().getPlanPermissionNumber());
-                jsonObj.addProperty("id", activeApplication.get(0).getParent().getId());
-                jsonObj.addProperty("isOcRequire", activeApplication.get(0).getParent().getServiceType().getIsOCRequired());
+                        .checkIsPermitNumberUsedWithAnyOCApplication(activeApplication.get(0).getApplication().getPlanPermissionNumber());
+                jsonObj.addProperty("applicationId", activeApplication.get(0).getApplication().getId());
+                jsonObj.addProperty("parentId", activeApplication.get(0).getId());
+                jsonObj.addProperty("isOcRequire", activeApplication.get(0).getApplication().getServiceType().getIsOCRequired());
                 jsonObj.addProperty("ocExists", ocApplicationDetails.get("isExists").equals("true"));
-                jsonObj.addProperty("stakeholderId", activeApplication.get(0).getParent().getStakeHolder().get(0).getId());
-                jsonObj.addProperty("occupancy", activeApplication.get(0).getParent().getOccupanciesName());
-                jsonObj.addProperty("plotArea", activeApplication.get(0).getParent().getSiteDetail().get(0).getExtentinsqmts());
-                jsonObj.addProperty("serviceTypeId", activeApplication.get(0).getParent().getServiceType().getId());
-                jsonObj.addProperty("serviceTypeDesc", activeApplication.get(0).getParent().getServiceType().getDescription());
-                jsonObj.addProperty("serviceTypeCode", activeApplication.get(0).getParent().getServiceType().getCode());
+                jsonObj.addProperty("stakeholderId", activeApplication.get(0).getApplication().getStakeHolder().get(0).getId());
+                jsonObj.addProperty("occupancy", activeApplication.get(0).getApplication().getOccupanciesName());
+                jsonObj.addProperty("plotArea", activeApplication.get(0).getApplication().getSiteDetail().get(0).getExtentinsqmts());
+                jsonObj.addProperty("serviceTypeId", activeApplication.get(0).getApplication().getServiceType().getId());
+                jsonObj.addProperty("serviceTypeDesc", activeApplication.get(0).getApplication().getServiceType().getDescription());
+                jsonObj.addProperty("serviceTypeCode", activeApplication.get(0).getApplication().getServiceType().getCode());
                 jsonObj.addProperty("applicationDate", DateUtils.toDefaultDateFormat(activeApplication.get(0).getApplicationDate()));
                 jsonObj.addProperty("applicantName", activeApplication.get(0).getApplicantName());
                 jsonObj.addProperty("applicantAddress", activeApplication.get(0).getOwner().getAddress());
                 jsonObj.addProperty("applicationNumber", activeApplication.get(0).getApplicationNumber());
-                List<OwnershipTransfer> ownerTransfers = ownershipTransferService.findByBpaApplicationAndDate(activeApplication.get(0).getParent(), activeApplication.get(0).getCreatedDate());
+                List<OwnershipTransfer> ownerTransfers = ownershipTransferService.findByBpaApplicationAndDate(activeApplication.get(0).getApplication(), activeApplication.get(0).getCreatedDate());
                 if(!ownerTransfers.isEmpty()) {
                 	jsonObj.addProperty("oldOwnershipNumber", ownerTransfers.get(0).getOwnershipNumber());    
                 	jsonObj.addProperty("oldApplicationNo", ownerTransfers.get(0).getApplicationNumber());                       
                 }
-                List<OwnershipTransfer> currentOwnership = ownershipTransferService.findByBpaApplication(activeApplication.get(0).getParent()).stream().filter(ot -> ot.getIsActive()).collect(Collectors.toList());
+                List<OwnershipTransfer> currentOwnership = ownershipTransferService.findByBpaApplication(activeApplication.get(0).getApplication()).stream().filter(ot -> ot.getIsActive()).collect(Collectors.toList());
                 if(currentOwnership.isEmpty()) {
-                	jsonObj.addProperty("ownershipNumber", activeApplication.get(0).getOwnershipNumber());
+                	jsonObj.addProperty(OWNERSHIPNUMBER, activeApplication.get(0).getOwnershipNumber());
                 }else
-                	jsonObj.addProperty("ownershipNumber", currentOwnership.get(0).getOwnershipNumber());
+                	jsonObj.addProperty(OWNERSHIPNUMBER, currentOwnership.get(0).getOwnershipNumber());
 
-                jsonObj.addProperty("planPermissionNumber", activeApplication.get(0).getParent().getPlanPermissionNumber());
+                jsonObj.addProperty("planPermissionNumber", activeApplication.get(0).getApplication().getPlanPermissionNumber());
                 jsonObj.addProperty("planPermissionDate", DateUtils.toDefaultDateFormat(activeApplication.get(0).getOwnershipApprovalDate()));
                 jsonObj.addProperty("status", activeApplication.get(0).getStatus().getCode());
                 jsonObj.addProperty("inProgress", !activeApplication.get(0).getIsActive() && !activeApplication.get(0).getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_ORDER_ISSUED));
         	} else if(!activeOwnerApplication.isEmpty()) {
         		Map<String, String> ocApplicationDetails = occupancyCertificateUtils
-                        .checkIsPermitNumberUsedWithAnyOCApplication(activeOwnerApplication.get(0).getParent().getPlanPermissionNumber());
-                jsonObj.addProperty("id", activeOwnerApplication.get(0).getId());
-                jsonObj.addProperty("isOcRequire", activeOwnerApplication.get(0).getParent().getServiceType().getIsOCRequired());
+                        .checkIsPermitNumberUsedWithAnyOCApplication(activeOwnerApplication.get(0).getApplication().getPlanPermissionNumber());
+                jsonObj.addProperty("applicationId", activeOwnerApplication.get(0).getId());
+                jsonObj.addProperty("parentId", activeOwnerApplication.get(0).getId());
+                jsonObj.addProperty("isOcRequire", activeOwnerApplication.get(0).getApplication().getServiceType().getIsOCRequired());
                 jsonObj.addProperty("ocExists", ocApplicationDetails.get("isExists").equals("true"));
-                jsonObj.addProperty("stakeholderId", activeOwnerApplication.get(0).getParent().getStakeHolder().get(0).getId());
-                jsonObj.addProperty("occupancy", activeOwnerApplication.get(0).getParent().getOccupanciesName());
-                jsonObj.addProperty("plotArea", activeOwnerApplication.get(0).getParent().getSiteDetail().get(0).getExtentinsqmts());
-                jsonObj.addProperty("serviceTypeId", activeOwnerApplication.get(0).getParent().getServiceType().getId());
-                jsonObj.addProperty("serviceTypeDesc", activeOwnerApplication.get(0).getParent().getServiceType().getDescription());
-                jsonObj.addProperty("serviceTypeCode", activeOwnerApplication.get(0).getParent().getServiceType().getCode());
+                jsonObj.addProperty("stakeholderId", activeOwnerApplication.get(0).getApplication().getStakeHolder().get(0).getId());
+                jsonObj.addProperty("occupancy", activeOwnerApplication.get(0).getApplication().getOccupanciesName());
+                jsonObj.addProperty("plotArea", activeOwnerApplication.get(0).getApplication().getSiteDetail().get(0).getExtentinsqmts());
+                jsonObj.addProperty("serviceTypeId", activeOwnerApplication.get(0).getApplication().getServiceType().getId());
+                jsonObj.addProperty("serviceTypeDesc", activeOwnerApplication.get(0).getApplication().getServiceType().getDescription());
+                jsonObj.addProperty("serviceTypeCode", activeOwnerApplication.get(0).getApplication().getServiceType().getCode());
                 jsonObj.addProperty("applicationDate", DateUtils.toDefaultDateFormat(activeOwnerApplication.get(0).getApplicationDate()));
                 jsonObj.addProperty("applicantName", activeOwnerApplication.get(0).getApplicantName());
                 jsonObj.addProperty("applicantAddress", activeOwnerApplication.get(0).getOwner().getAddress());
                 jsonObj.addProperty("applicationNumber", activeOwnerApplication.get(0).getApplicationNumber());
-                List<OwnershipTransfer> ownerTransfers = ownershipTransferService.findByBpaApplicationAndDate(activeOwnerApplication.get(0).getParent(), activeOwnerApplication.get(0).getCreatedDate());
+                List<OwnershipTransfer> ownerTransfers = ownershipTransferService.findByBpaApplicationAndDate(activeOwnerApplication.get(0).getApplication(), activeOwnerApplication.get(0).getCreatedDate());
                 if(!ownerTransfers.isEmpty()) {
                 	jsonObj.addProperty("oldOwnershipNumber", ownerTransfers.get(0).getOwnershipNumber());  
                 	jsonObj.addProperty("oldApplicationNo", ownerTransfers.get(0).getApplicationNumber());                       
                 }
-                jsonObj.addProperty("ownershipNumber", activeOwnerApplication.get(0).getOwnershipNumber());
-                jsonObj.addProperty("planPermissionNumber", activeOwnerApplication.get(0).getParent().getPlanPermissionNumber()); 
+                jsonObj.addProperty(OWNERSHIPNUMBER, activeOwnerApplication.get(0).getOwnershipNumber());
+                jsonObj.addProperty("planPermissionNumber", activeOwnerApplication.get(0).getApplication().getPlanPermissionNumber()); 
                 jsonObj.addProperty("planPermissionDate", DateUtils.toDefaultDateFormat(activeOwnerApplication.get(0).getOwnershipApprovalDate()));
                 jsonObj.addProperty("status", activeOwnerApplication.get(0).getStatus().getCode());
                 jsonObj.addProperty("inProgress", !activeOwnerApplication.get(0).getIsActive() && !activeOwnerApplication.get(0).getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_ORDER_ISSUED));
         	} else if(application != null) {
         		Map<String, String> ocApplicationDetails = occupancyCertificateUtils
                         .checkIsPermitNumberUsedWithAnyOCApplication(permitNumber);
+                jsonObj.addProperty("applicationId", application.getId());
                 jsonObj.addProperty("isOcRequire", application.getServiceType().getIsOCRequired());
-                jsonObj.addProperty("ocExists", ocApplicationDetails.get("isExists"));
+                jsonObj.addProperty("ocExists", ocApplicationDetails.get("isExists").equals("true"));
                 jsonObj.addProperty("ocExistsMessage", ocApplicationDetails.get(BpaConstants.MESSAGE));
-                jsonObj.addProperty("id", application.getId());
+                jsonObj.addProperty("applicationId", application.getId());
                 jsonObj.addProperty("stakeholderId", application.getStakeHolder().get(0).getId());
                 jsonObj.addProperty("occupancy", application.getOccupanciesName());
                 jsonObj.addProperty("plotArea", application.getSiteDetail().get(0).getExtentinsqmts());
@@ -937,8 +942,8 @@ public class BpaAjaxController {
         if(activeOwnershipApplication.isEmpty()) {
         	application = applicationBpaService.findByPermitNumber(permitNumber);
         }else {        	
-        	renewalApp = renewalService.findByPlanPermissionNumberAndRevocationApplnDate(activeOwnershipApplication.get(0).getParent().getPlanPermissionNumber());
-            application = applicationBpaService.findByPermitNumber(activeOwnershipApplication.get(0).getParent().getPlanPermissionNumber());
+        	renewalApp = renewalService.findByPlanPermissionNumberAndRevocationApplnDate(activeOwnershipApplication.get(0).getApplication().getPlanPermissionNumber());
+            application = applicationBpaService.findByPermitNumber(activeOwnershipApplication.get(0).getApplication().getPlanPermissionNumber());
         }
         
         jsonObj.addProperty("applicationExists", application!=null || !activeOwnershipApplication.isEmpty());
@@ -946,16 +951,15 @@ public class BpaAjaxController {
         if(!activeOwnershipApplication.isEmpty() && renewalApp != null) {
         	if(activeOwnershipApplication.get(0).getLastModifiedDate().after(renewalApp.getLastModifiedDate())) 
         	{
-        		List<OwnershipTransfer> currentOwnership = ownershipTransferService.findByBpaApplication(activeOwnershipApplication.get(0).getParent()).stream().filter(ot -> ot.getIsActive()).collect(Collectors.toList());
+        		List<OwnershipTransfer> currentOwnership = ownershipTransferService.findByBpaApplication(activeOwnershipApplication.get(0).getApplication()).stream().filter(ot -> ot.getIsActive()).collect(Collectors.toList());
                 if(currentOwnership.isEmpty()) {
-                	jsonObj.addProperty("ownershipNumber", activeOwnershipApplication.get(0).getOwnershipNumber());
+                	jsonObj.addProperty(OWNERSHIPNUMBER, activeOwnershipApplication.get(0).getOwnershipNumber());
                 }else
-                	jsonObj.addProperty("ownershipNumber", currentOwnership.get(0).getOwnershipNumber());
+                	jsonObj.addProperty(OWNERSHIPNUMBER, currentOwnership.get(0).getOwnershipNumber());
 
-        		jsonObj.addProperty("ownershipNumber", activeOwnershipApplication.get(0).getOwnershipNumber());
         	    jsonObj.addProperty("inProgress", !activeOwnershipApplication.get(0).getIsActive() && !activeOwnershipApplication.get(0).getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_ORDER_ISSUED));
                 jsonObj.addProperty("applicantName", activeOwnershipApplication.get(0).getApplicantName());
-                jsonObj.addProperty("serviceTypeDesc", activeOwnershipApplication.get(0).getParent().getServiceType().getDescription());
+                jsonObj.addProperty("serviceTypeDesc", activeOwnershipApplication.get(0).getApplication().getServiceType().getDescription());
                 jsonObj.addProperty("planPermissionDate", DateUtils.toDefaultDateFormat(activeOwnershipApplication.get(0).getOwnershipApprovalDate()));
         	    jsonObj.addProperty("isRenewal", false);
             }
@@ -964,15 +968,15 @@ public class BpaAjaxController {
                 jsonObj.addProperty("isRenewal", true);
         } 
         else if(!activeOwnershipApplication.isEmpty()) {
-        	List<OwnershipTransfer> currentOwnership = ownershipTransferService.findByBpaApplication(activeOwnershipApplication.get(0).getParent()).stream().filter(ot -> ot.getIsActive()).collect(Collectors.toList());
+        	List<OwnershipTransfer> currentOwnership = ownershipTransferService.findByBpaApplication(activeOwnershipApplication.get(0).getApplication()).stream().filter(ot -> ot.getIsActive()).collect(Collectors.toList());
             if(currentOwnership.isEmpty()) {
-            	jsonObj.addProperty("ownershipNumber", activeOwnershipApplication.get(0).getOwnershipNumber());
+            	jsonObj.addProperty(OWNERSHIPNUMBER, activeOwnershipApplication.get(0).getOwnershipNumber());
             }else
-            	jsonObj.addProperty("ownershipNumber", currentOwnership.get(0).getOwnershipNumber());
+            	jsonObj.addProperty(OWNERSHIPNUMBER, currentOwnership.get(0).getOwnershipNumber());
 
     	    jsonObj.addProperty("inProgress", !activeOwnershipApplication.get(0).getIsActive() && !activeOwnershipApplication.get(0).getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_ORDER_ISSUED));
             jsonObj.addProperty("applicantName", activeOwnershipApplication.get(0).getApplicantName());
-            jsonObj.addProperty("serviceTypeDesc", activeOwnershipApplication.get(0).getParent().getServiceType().getDescription());
+            jsonObj.addProperty("serviceTypeDesc", activeOwnershipApplication.get(0).getApplication().getServiceType().getDescription());
             jsonObj.addProperty("planPermissionDate", DateUtils.toDefaultDateFormat(activeOwnershipApplication.get(0).getOwnershipApprovalDate()));
     	    jsonObj.addProperty("isRenewal", false);
         }
@@ -1003,18 +1007,18 @@ public class BpaAjaxController {
         	activeOwnershipApplication = ownershipApp.stream().filter(ot -> ot.getIsActive().equals(true)).collect(Collectors.toList());         
          
        if(!activeOwnershipApplication.isEmpty()) {
-        	jsonObj.addProperty("applicationId", activeOwnershipApplication.get(0).getParent().getId());
-            jsonObj.addProperty("occupancy", activeOwnershipApplication.get(0).getParent().getOccupanciesName());
-            jsonObj.addProperty("plotArea", activeOwnershipApplication.get(0).getParent().getSiteDetail().get(0).getExtentinsqmts());
-            jsonObj.addProperty("serviceTypeId", activeOwnershipApplication.get(0).getParent().getServiceType().getId());
-            jsonObj.addProperty("serviceTypeDesc", activeOwnershipApplication.get(0).getParent().getServiceType().getDescription());
-            jsonObj.addProperty("serviceTypeCode", activeOwnershipApplication.get(0).getParent().getServiceType().getCode());
+        	jsonObj.addProperty("applicationId", activeOwnershipApplication.get(0).getApplication().getId());
+            jsonObj.addProperty("occupancy", activeOwnershipApplication.get(0).getApplication().getOccupanciesName());
+            jsonObj.addProperty("plotArea", activeOwnershipApplication.get(0).getApplication().getSiteDetail().get(0).getExtentinsqmts());
+            jsonObj.addProperty("serviceTypeId", activeOwnershipApplication.get(0).getApplication().getServiceType().getId());
+            jsonObj.addProperty("serviceTypeDesc", activeOwnershipApplication.get(0).getApplication().getServiceType().getDescription());
+            jsonObj.addProperty("serviceTypeCode", activeOwnershipApplication.get(0).getApplication().getServiceType().getCode());
             jsonObj.addProperty("applicationDate", DateUtils.toDefaultDateFormat(activeOwnershipApplication.get(0).getApplicationDate()));
             jsonObj.addProperty("applicantName", activeOwnershipApplication.get(0).getApplicantName());
             jsonObj.addProperty("applicantAddress", activeOwnershipApplication.get(0).getOwner().getAddress());
             jsonObj.addProperty("applicationNumber", activeOwnershipApplication.get(0).getApplicationNumber());
-            jsonObj.addProperty("ownershipNumber", activeOwnershipApplication.get(0).getOwnershipNumber());
-            jsonObj.addProperty("planPermissionNumber", activeOwnershipApplication.get(0).getParent().getPlanPermissionNumber());
+            jsonObj.addProperty(OWNERSHIPNUMBER, activeOwnershipApplication.get(0).getOwnershipNumber());
+            jsonObj.addProperty("planPermissionNumber", activeOwnershipApplication.get(0).getApplication().getPlanPermissionNumber());
             jsonObj.addProperty("planPermissionDate", DateUtils.toDefaultDateFormat(activeOwnershipApplication.get(0).getOwnershipApprovalDate()));
             jsonObj.addProperty("status", activeOwnershipApplication.get(0).getStatus().getCode());        
         }        		

@@ -77,6 +77,7 @@ import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BuildingDetail;
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.NocIntegrationInitiationEnum;
@@ -89,6 +90,7 @@ import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
 import org.egov.bpa.transaction.entity.oc.OCSlot;
 import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.entity.oc.OccupancyNocApplication;
+import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.transaction.service.oc.OCAppointmentScheduleService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
@@ -157,6 +159,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private OccupancyCertificateUtils occupancyCertificateUtils;
+    @Autowired
+    private OwnershipTransferService ownershipTransferService;
 
     @GetMapping("/occupancy-certificate/update/{applicationNumber}")
     public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
@@ -236,6 +240,13 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         } else {
             model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }
+        
+        List<OwnershipTransfer> ownershipApp = ownershipTransferService.findByPlanPermissionNumber(oc.getParent().getPlanPermissionNumber());        
+   	    if(!ownershipApp.isEmpty()) {
+   		 ownershipApp = ownershipApp.stream().filter(ot -> ot.getIsActive().equals(true)).collect(Collectors.toList());
+   		 model.addAttribute("ownershipTransfer", ownershipApp.isEmpty() ? null : ownershipApp.get(0));
+        }
+   	 
         model.addAttribute("subOccupancyList", subOccupancyService.findAll());
         buildAppointmentDetailsOfScrutinyAndInspection(model, oc);
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());

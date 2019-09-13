@@ -844,7 +844,7 @@ $(document).ready(
                             $('.applicantName').val(response.applicantName);
                             $('#address').val(response.applicantAddress);
                             $('#bpaApplicationId').val(response.applicationId);
-                            $('#applicationNumber').val(response.applicationNumber);       		                }
+                            $('#applicationNumber').val(response.applicationNumber);       		                
                             $('#planPermissionDate').val(response.planPermissionDate);
                             $('#extentInSqmts').val(response.plotArea);
         	                $('#occupancy').val(response.occupancy);  
@@ -857,10 +857,9 @@ $(document).ready(
     		                }else{
     		                	$('#ownpermitno').html('Building Plan Permission No');
     		                    $('#planPermissionNumber').val(response.planPermissionNumber);
-    		                }
-                            
-                }
-                        ,
+    		                }                            
+                          }
+                        },
                     error: function (response) {
                         console.log("Error occurred while retrieving application details!!!!!!!");
                     }

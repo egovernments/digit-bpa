@@ -82,8 +82,8 @@
 			</div>
 			<div class="col-sm-3 add-margin view-content">
 				<input type="hidden" id="serviceType"
-					value="${ownershipTransfer.parent.serviceType.description}">
-				<c:out value="${ownershipTransfer.parent.serviceType.description}"
+					value="${ownershipTransfer.application.serviceType.description}">
+				<c:out value="${ownershipTransfer.application.serviceType.description}"
 					default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
@@ -91,7 +91,7 @@
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out
-				value="${ownershipTransfer.parent.occupanciesName ne '' ?  ownershipTransfer.parent.occupanciesName : 'N/A'}"></c:out>
+				value="${ownershipTransfer.application.occupanciesName ne '' ?  ownershipTransfer.application.occupanciesName : 'N/A'}"></c:out>
 		</div>
 			
 		</div>
@@ -101,14 +101,14 @@
 				<spring:message code="lbl.applicant.name" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${ownershipTransfer.parent.owner.name}"
+				<c:out value="${ownershipTransfer.application.owner.name}"
 					default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.owner.address" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">				
-				<c:out value="${ownershipTransfer.parent.owner.address}"
+				<c:out value="${ownershipTransfer.application.owner.address}"
 					default="N/A"></c:out>
 			</div>
 		
@@ -164,8 +164,8 @@
 				<spring:message code="lbl.plan.permission.no" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">			
-				<a target="popup" onclick="window.open('/bpa/application/details-view/by-permit-number/${ownershipTransfer.parent.planPermissionNumber}','popup','width=1100,height=700'); return false;"
-				>${ownershipTransfer.parent.planPermissionNumber}</a>	
+				<a target="popup" onclick="window.open('/bpa/application/details-view/by-permit-number/${ownershipTransfer.application.planPermissionNumber}','popup','width=1100,height=700'); return false;"
+				>${ownershipTransfer.application.planPermissionNumber}</a>	
 			</div>
 			</c:otherwise>
 		</c:choose>

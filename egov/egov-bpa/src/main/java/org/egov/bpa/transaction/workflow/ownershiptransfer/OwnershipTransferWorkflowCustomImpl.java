@@ -131,7 +131,7 @@ public abstract class OwnershipTransferWorkflowCustomImpl implements OwnershipTr
 
             if (wfmatrix != null) {
                 if (pos == null) {
-                    SiteDetail siteDetail = ownershipTransfer.getParent().getSiteDetail().get(0);
+                    SiteDetail siteDetail = ownershipTransfer.getApplication().getSiteDetail().get(0);
 					pos = bpaUtils.getUserPositionByZone(wfmatrix.getNextDesignation(),
 							bpaUtils.getBoundaryForWorkflow(siteDetail).getId());
                     List<Assignment> assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(pos.getId(), new Date());

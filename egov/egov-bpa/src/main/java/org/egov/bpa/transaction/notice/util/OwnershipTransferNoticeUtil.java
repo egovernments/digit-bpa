@@ -66,7 +66,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.config.reports.properties.BpaApplicationReportProperties;
-import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.OwnershipTransferConditions;
 import org.egov.bpa.transaction.entity.OwnershipTransferNotice;
@@ -79,7 +78,6 @@ import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -141,7 +139,7 @@ public class OwnershipTransferNoticeUtil {
             String rejectionfilename, String rejectionNoticeType, HttpServletRequest request) throws IOException {
         ReportOutput reportOutput = new ReportOutput();
         if (ownershipNotice == null || ownershipNotice.getNoticeCommon().getNoticeFileStore() == null) {
-            final Map<String, Object> reportParams = bpaNoticeUtil.buildParametersForReport(ownershipTransfer.getParent());
+            final Map<String, Object> reportParams = bpaNoticeUtil.buildParametersForReport(ownershipTransfer.getApplication());
             reportParams.putAll(getUlbDetails());
             reportParams.put("refusalFormat", bpaApplicationReportProperties.getPermitRefusalFormat());
             reportParams.put("applicationNumber", ownershipTransfer.getApplicationNumber());
@@ -286,21 +284,21 @@ public class OwnershipTransferNoticeUtil {
         qrCodeValue = isBlank(ownershipTransfer.getApplicationNumber())
                 ? qrCodeValue.append("Application number : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Application number : ").append(ownershipTransfer.getApplicationNumber()).append(ONE_NEW_LINE);
-        if (!isBlank(ownershipTransfer.getParent().geteDcrNumber())) {
-            qrCodeValue = qrCodeValue.append("Edcr number : ").append(ownershipTransfer.getParent().geteDcrNumber()).append(ONE_NEW_LINE);
+        if (!isBlank(ownershipTransfer.getApplication().geteDcrNumber())) {
+            qrCodeValue = qrCodeValue.append("Edcr number : ").append(ownershipTransfer.getApplication().geteDcrNumber()).append(ONE_NEW_LINE);
         }
-        qrCodeValue = isBlank(ownershipTransfer.getParent().getPlanPermissionNumber())
+        qrCodeValue = isBlank(ownershipTransfer.getApplication().getPlanPermissionNumber())
                 ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE)
-                : qrCodeValue.append("Permit number : ").append(ownershipTransfer.getParent().getPlanPermissionNumber()).append(ONE_NEW_LINE);
-        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(ownershipTransfer.getParent()) == null
+                : qrCodeValue.append("Permit number : ").append(ownershipTransfer.getApplication().getPlanPermissionNumber()).append(ONE_NEW_LINE);
+        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(ownershipTransfer.getApplication()) == null
                 ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Approved by : ")
                         .append(ownershipTransfer.getState().getOwnerPosition().getDeptDesig().getDesignation().getName())
                         .append(ONE_NEW_LINE);
-        qrCodeValue = ownershipTransfer.getParent().getPlanPermissionDate() == null
+        qrCodeValue = ownershipTransfer.getApplication().getPlanPermissionDate() == null
                 ? qrCodeValue.append("Date of issue of permit : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Date of issue of permit : ")
-                        .append(DateUtils.getDefaultFormattedDate(ownershipTransfer.getParent().getPlanPermissionDate())).append(ONE_NEW_LINE);
+                        .append(DateUtils.getDefaultFormattedDate(ownershipTransfer.getApplication().getPlanPermissionDate())).append(ONE_NEW_LINE);
         qrCodeValue = isBlank(ownershipTransfer.getState().getOwnerUser().getName())
                 ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Name of approver : ").append(ownershipTransfer.getState().getOwnerUser().getName()).append(ONE_NEW_LINE);

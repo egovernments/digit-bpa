@@ -55,11 +55,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OwnershipTransferRepository extends JpaRepository<OwnershipTransfer, Long>, JpaSpecificationExecutor<OwnershipTransfer>  {
 	
-    List<OwnershipTransfer> findByParentPlanPermissionNumberOrderByIdDesc(String permitNumber);
+    List<OwnershipTransfer> findByApplicationPlanPermissionNumberOrderByIdDesc(String permitNumber);
     
-	List<OwnershipTransfer> findByParentOrderByIdDesc(BpaApplication bpaApplication);
+	List<OwnershipTransfer> findByApplicationOrderByIdDesc(BpaApplication bpaApplication);
 	
-	List<OwnershipTransfer> findByParentAndCreatedDateLessThanOrderByIdDesc(BpaApplication bpaApplication, Date createdDate);
+	List<OwnershipTransfer> findByApplicationAndCreatedDateLessThanOrderByIdDesc(BpaApplication bpaApplication, Date createdDate);
 	
 	OwnershipTransfer findByApplicationNumber(String applicationNumber);
 

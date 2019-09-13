@@ -194,11 +194,11 @@ public class OwnershipTransferService {
     }
     
     public List<OwnershipTransfer> findByBpaApplication(final BpaApplication bpaApplication) {
-        return ownershipTransferRepository.findByParentOrderByIdDesc(bpaApplication);
+        return ownershipTransferRepository.findByApplicationOrderByIdDesc(bpaApplication);
     }
     
     public List<OwnershipTransfer> findByBpaApplicationAndDate(final BpaApplication bpaApplication, Date createdDate) {
-        return ownershipTransferRepository.findByParentAndCreatedDateLessThanOrderByIdDesc(bpaApplication, createdDate);
+        return ownershipTransferRepository.findByApplicationAndCreatedDateLessThanOrderByIdDesc(bpaApplication, createdDate);
     }
 
     public OwnershipTransfer findByDemand(final EgDemand demand) {
@@ -210,7 +210,7 @@ public class OwnershipTransferService {
     }
     
     public List<OwnershipTransfer> findByPlanPermissionNumber(final String permitNumber) {
-        return ownershipTransferRepository.findByParentPlanPermissionNumberOrderByIdDesc(permitNumber);
+        return ownershipTransferRepository.findByApplicationPlanPermissionNumberOrderByIdDesc(permitNumber);
     }    
     
 
@@ -230,9 +230,9 @@ public class OwnershipTransferService {
         if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
         	ownershipTransfer.setOwnershipApprovalDate(new Date());
         	if (bpaAppConfigUtil.autogenerateOwnershipNumber()) 
-         	   ownershipTransfer.setOwnershipNumber(planPermissionNumber.generatePlanPermissionNumber(ownershipTransfer.getParent()));
+         	   ownershipTransfer.setOwnershipNumber(planPermissionNumber.generatePlanPermissionNumber(ownershipTransfer.getApplication()));
         	else
-               ownershipTransfer.setOwnershipNumber(ownershipTransfer.getParent().getPlanPermissionNumber());
+               ownershipTransfer.setOwnershipNumber(ownershipTransfer.getApplication().getPlanPermissionNumber());
         }
         if(BpaConstants.WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue()) && bpaAppConfigUtil.ownershipFeeCollectionRequired()) {
         	calculateOwnershipFee(ownershipTransfer);
