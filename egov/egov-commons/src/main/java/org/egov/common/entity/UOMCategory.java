@@ -48,10 +48,8 @@
 
 package org.egov.common.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.validator.constraints.Length;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -64,8 +62,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eg_uomcategory")
@@ -83,9 +85,11 @@ public class UOMCategory extends AbstractAuditable {
 
     @Length(min = 1, max = 25)
     @NotNull
+    @SafeHtml
     private String category;
 
     @Length(min = 1, max = 25)
+    @SafeHtml
     private String narration;
 
     @OneToMany(mappedBy = "uomCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

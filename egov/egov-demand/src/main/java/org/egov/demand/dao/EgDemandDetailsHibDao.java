@@ -47,14 +47,15 @@
  */
 package org.egov.demand.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.demand.model.EgDemandDetails;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Repository(value = "egDemandDetailsDAO")
 @Transactional(readOnly = true)
@@ -88,8 +89,8 @@ public class EgDemandDetailsHibDao implements EgDemandDetailsDao {
 
     @Override
     public void delete(EgDemandDetails egDemandDetails) {
-
-
+        getCurrentSession().delete(egDemandDetails);
+        getCurrentSession().flush();
     }
 
     @Transactional

@@ -48,9 +48,12 @@
 
 package org.egov.infra.web.controller.admin.masters.userrole;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.egov.infra.admin.master.contracts.UserRole;
 import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
@@ -63,9 +66,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/userrole/update/{userId}")
@@ -96,7 +96,8 @@ public class UpdateUserRoleController {
     }
 
     @PostMapping
-    public String updateUserRoles(@Valid @ModelAttribute UserRole userRole, BindingResult bindResult, RedirectAttributes redirectAttrs) {
+    public String updateUserRoles(@Valid @ModelAttribute UserRole userRole, BindingResult bindResult,
+            RedirectAttributes redirectAttrs) {
         if (userRole.hasAnyInternalRole())
             bindResult.rejectValue("roles", "err.internal.roles.found");
         if (bindResult.hasErrors())

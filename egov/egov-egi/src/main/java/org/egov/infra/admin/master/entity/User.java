@@ -136,22 +136,20 @@ public class User extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_USER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
-    @Length(min = 2, max = 64)
+    @Length(max = 250)
+    @Audited
+    private String tenantId;
+
+    @Length(max = 64)
     @SafeHtml
     @Column(unique = true, updatable = false)
     @Pattern(regexp = USERNAME, message = INVALID_USERNAME)
     private String username;
 
-    @NotNull
-    @Length(min = 4, max = 64)
+    @Length(max = 64)
     @Audited
     @SafeHtml
     private String password;
-
-    @Length(max = 250)
-    @Audited
-    private String tenantId;
 
     @SafeHtml
     @Length(max = 10)
@@ -260,6 +258,14 @@ public class User extends AbstractAuditable {
         this.id = id;
     }
 
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
     @JsonIgnore
     public String getUsername() {
         return username;
@@ -276,14 +282,6 @@ public class User extends AbstractAuditable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
     }
 
     public String getSalutation() {

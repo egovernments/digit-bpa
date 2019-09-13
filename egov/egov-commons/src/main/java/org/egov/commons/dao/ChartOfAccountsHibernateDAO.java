@@ -57,7 +57,6 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.query.Query;
-import org.hibernate.type.StringType;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -551,8 +550,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
                 throw new ApplicationException("Purpose Name is null or empty");
             }
             Query query = getCurrentSession().createQuery(
-                    " from EgfAccountcodePurpose purpose where purpose.name = :purpose")
-                    .setParameter("purpose", purposeName, StringType.INSTANCE);
+                    " from EgfAccountcodePurpose purpose where purpose.name='" + purposeName + "'");
             if (query.list().size() == 0) {
                 throw new ApplicationException("Purpose ID provided is not defined in the system");
             }

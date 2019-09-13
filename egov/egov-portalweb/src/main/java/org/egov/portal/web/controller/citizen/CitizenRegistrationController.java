@@ -47,6 +47,9 @@
  */
 package org.egov.portal.web.controller.citizen;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.portal.entity.Citizen;
@@ -62,9 +65,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value = "/citizen/signup")
@@ -87,8 +87,8 @@ public class CitizenRegistrationController {
 
     @PostMapping
     public String registerCitizen(@Valid @ModelAttribute Citizen citizen, BindingResult errors,
-                                  HttpServletRequest request,
-                                  RedirectAttributes redirectAttrib) {
+            HttpServletRequest request,
+            RedirectAttributes redirectAttrib) {
         if (!validatorUtils.isValidPassword(citizen.getPassword()))
             errors.rejectValue("password", "error.pwd.invalid");
         else if (!StringUtils.equals(citizen.getPassword(), request.getParameter("con-password")))
@@ -98,18 +98,23 @@ public class CitizenRegistrationController {
         if (errors.hasErrors())
             return "signup";
         citizenService.create(citizen);
-        redirectAttrib.addFlashAttribute("mobileNo", citizen.getMobileNumber());
         redirectAttrib.addFlashAttribute("message", "msg.reg.success");
         return "redirect:signup";
     }
 
-    @PostMapping("/otp/{mobileNumber}")
+    @GetMapping(value = "/otp/{mobileNumber}")
     @ResponseBody
     public boolean sendOTPMessage(@PathVariable String mobileNumber) {
         return citizenService.sendOTPMessage(mobileNumber);
     }
 
-    @PostMapping("/validate-pwd")
+    @GetMapping("/otp/{mobileNumber}/{emailId:.+}")
+    @ResponseBody
+    public boolean sendOTPMessage(@PathVariable("mobileNumber") String mobileNumber, @PathVariable("emailId") String emailId) {
+        return citizenService.sendOTPMessage(mobileNumber, emailId);
+    }
+
+    @GetMapping(value = "/validate-pwd")
     @ResponseBody
     public boolean validatePassword(@RequestParam String pswd) {
         return validatorUtils.isValidPassword(pswd);

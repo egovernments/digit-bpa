@@ -119,6 +119,8 @@ public class OnlineReceiptAction extends BaseFormAction {
             .append("internet connection and try to pay again after some time. If the transaction fails again, ")
             .append("please contact cell in Corporation.").toString();
     private final List<ValidationError> errors = new ArrayList<>(0);
+    private static final String TRANSACTION_NOT_FOUND = "Transaction is not found.";
+    private static final String TRANSACTION_ALREADY_RECONCILED = "Transaction is already reconciled.";
     private CollectionsUtil collectionsUtil;
     private ReceiptHeaderService receiptHeaderService;
     private CollectionService collectionService;
@@ -172,11 +174,14 @@ public class OnlineReceiptAction extends BaseFormAction {
         return NEW;
     }
 
+    @ValidationErrorPage(value = "error")
     @Action(value = "/citizen/onlineReceipt-saveNew")
     public String saveNew() {
         /**
          * initialise receipt info,persist receipt, create bill desk payment object and redirect to payment screen
          */
+    	receiptHeaderService.validatePayment(receiptHeader.getService().getCode(), receiptHeader.getReferencenumber(), paymentAmount,
+                (ArrayList<ReceiptDetail>) getReceiptDetailList());
         if (callbackForApportioning && !overrideAccountHeads)
             apportionBillAmount();
         ServiceDetails paymentService = null;
@@ -243,8 +248,15 @@ public class OnlineReceiptAction extends BaseFormAction {
             } else
                 processFailureMsg();
         } else {
-            errors.add(new ValidationError(BROKEN_TRANSACTION_ERROR_MESSAGE, BROKEN_TRANSACTION_ERROR_MESSAGE));
-            LOGGER.info("onlinePaymentReceiptHeader object is null");
+            ReceiptHeader receiptHeader = receiptHeaderService.findByNamedQuery(
+                    CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CONSUMERCODE, Long.valueOf(paymentResponse.getReceiptId()),
+                    paymentResponse.getAdditionalInfo6());
+            if (receiptHeader == null) {
+                addActionError(TRANSACTION_NOT_FOUND);
+                LOGGER.info("onlinePaymentReceiptHeader object is null");
+            }else {
+                addActionError(TRANSACTION_ALREADY_RECONCILED);
+            }
         }
         return RESULT;
     }

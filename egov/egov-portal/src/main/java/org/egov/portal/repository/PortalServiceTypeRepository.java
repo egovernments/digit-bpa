@@ -47,6 +47,8 @@
  */
 package org.egov.portal.repository;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.portal.entity.PortalServiceType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,16 +57,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface PortalServiceTypeRepository
         extends JpaRepository<PortalServiceType, Long>, JpaSpecificationExecutor<PortalServiceType> {
 
-    @Query("select distinct pst.module from PortalServiceType pst")
+    @Query("select distinct pst.module from PortalServiceType pst where pst.isActive=true")
     List<Module> findAllModules();
 
-    @Query("select distinct pst.name from PortalServiceType pst where pst.module.id=:moduleId order by pst.name asc")
+    @Query("select distinct pst.name from PortalServiceType pst where pst.isActive=true and pst.module.id=:moduleId order by pst.name asc")
     List<String> findAllServiceTypes(@Param("moduleId") Long moduleId);
 
     @Query("select distinct(module.displayName) from PortalServiceType as pst")
@@ -76,10 +76,10 @@ public interface PortalServiceTypeRepository
     @Query("select distinct(pst.module.displayName) from PortalServiceType as pst where pst.isActive=true and pst.userService=true order by pst.module.displayName asc")
     List<String> getDistinctModuleNamesForCitizen();
 
-    @Query("from PortalServiceType pst where pst.isActive=true  and pst.businessUserService=true order by pst.name asc")
+    @Query("from PortalServiceType pst where pst.isActive=true  and pst.businessUserService=true order by pst.id asc")
     List<PortalServiceType> findAllServiceTypesForBusinessUser();
 
-    @Query("from PortalServiceType pst where pst.isActive=true and pst.userService=true  order by pst.name asc")
+    @Query("from PortalServiceType pst where pst.isActive=true and pst.userService=true  order by pst.id asc")
     List<PortalServiceType> findAllServiceTypesForCitizenUser();
 
 }

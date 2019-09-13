@@ -278,7 +278,7 @@
     
     <query name="QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE">
 	<![CDATA[
-	select rh from org.egov.collection.entity.ReceiptHeader rh where rh.status.code ='PENDING' and rh.id = ?1 and replace(replace(rh.consumerCode,'-',''),'/','') = ?2
+	select rh from org.egov.collection.entity.ReceiptHeader rh where  rh.status.moduletype='ReceiptHeader' and rh.status.code='PENDING' and rh.id = ?1 and replace(replace(rh.consumerCode,'-',''),'/','') = ?2
 	]]>
 	</query>
 	

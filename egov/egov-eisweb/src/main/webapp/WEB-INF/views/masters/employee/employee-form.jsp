@@ -93,12 +93,6 @@
                         </div>
 
                         <div class="panel-body custom-form">
-                            <c:if test="${mode == 'create'}">
-                                <form:hidden path="password" value="12345678"/>
-                            </c:if>
-                            <c:if test="${mode == 'update'}">
-                                <form:hidden path="password" value="${employee.password}"/>
-                            </c:if>
                             <form:hidden path="locale" value="en_IN"/>
                             <input type="hidden" value="" id="removedJurisdictionIds" name="removedJurisdictionIds"/>
                             <input type="hidden" value="" id="removedassignIds" name="removedassignIds"/>
@@ -109,19 +103,21 @@
                                 <div class="col-sm-2 col-md-1 add-margin">
                                     <form:select path="salutation" id="salutation"
                                                  cssClass="form-control" cssErrorClass="form-control error">
-                                        <form:option value="MR.">
+                                        <form:option value="Mr">
                                             Mr
                                         </form:option>
-                                        <form:option value="MISS.">
+                                        <form:option value="Miss">
                                             Miss
                                         </form:option>
-                                        <form:option value="MRS.">
+                                        <form:option value="Mrs">
                                             Mrs
                                         </form:option>
                                     </form:select>
+                                    <form:errors path="salutation" cssClass="add-margin error-msg"/>
                                 </div>
                                 <div class="col-sm-4 col-md-5 add-margin">
                                     <form:input type="text" path="name" id="name" cssClass="form-control is_valid_alphabet" maxlength="100" required="required"/>
+                                    <form:errors path="name" cssClass="add-margin error-msg"/>
                                 </div>
                             </div>
 

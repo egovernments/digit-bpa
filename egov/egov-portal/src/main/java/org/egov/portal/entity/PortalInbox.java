@@ -184,14 +184,6 @@ public class PortalInbox extends AbstractAuditable {
         this.applicationNumber = applicationNumber;
     }
 
-    public String getApplicantName() {
-        return applicantName;
-    }
-
-    public void setApplicantName(String applicantName) {
-        this.applicantName = applicantName;
-    }
-
     public String getEntityRefNumber() {
         return entityRefNumber;
     }
@@ -306,6 +298,14 @@ public class PortalInbox extends AbstractAuditable {
 
     public void setResolvedDate(final Date resolvedDate) {
         this.resolvedDate = resolvedDate;
+    }
+
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
     }
 
 }

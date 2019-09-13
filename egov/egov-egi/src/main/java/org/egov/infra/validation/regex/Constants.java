@@ -67,17 +67,19 @@ public class Constants {
     public static final String NUMERIC_WITHMIXEDCHAR = "[0-9-,]+";
     public static final String DATEFORMAT = "(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)[0-9]{2}";
     /**
-     * Matches any unsigned floating point number/NUMERIC. Also matches empty strings.
+     * Matches any unsigned floating point number/NUMERIC. Also matches empty
+     * strings.
      */
     public static final String UNSIGNED_NUMERIC = "^\\d*\\.?\\d*$";
     public static final String UNSIGNED_NUMBER = "^\\d*$";
     /**
-     * Matches any floating point number/NUMERIC, including optional sign character (-). Also matches empty strings.
+     * Matches any floating point number/NUMERIC, including optional sign
+     * character (-). Also matches empty strings.
      */
     public static final String SIGNED_NUMERIC = "^(\\-)?\\d*(\\.\\d+)?$";
     public static final String SIGNED_NUMBER = "^(\\-)?\\d*$";
     public static final String ALPHABETS_WITHMIXEDCHAR = "[A-Z-_ ]+";
     public static final String ALLTYPESOFALPHABETS_WITHMIXEDCHAR = "[A-Za-z-_ ]+";
     public static final String ALPHANUMERICWITHSPECIALCHAR = "[0-9a-zA-Z-& :,/.()@]+";
-
+    
 }

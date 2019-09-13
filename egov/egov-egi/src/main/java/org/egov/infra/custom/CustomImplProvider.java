@@ -10,7 +10,6 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -24,37 +23,22 @@ public class CustomImplProvider {
     public static final String STATE_NAME = "STATE_NAME";
     private static final Logger LOG = Logger.getLogger(CustomImplProvider.class);
 
-    @Value("${client.id}")
-    private String clientId;
-
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private CityService cityService;
 
-    @Deprecated()
     public Map<String, String> getCityDetails() {
-        LOG.info("Getting city Details");
+
         Map<String, String> cityDetails = new HashMap<>();
-        try {
-            cityDetails.put(STATE_NAME, clientId);
-            cityDetails.put(ULB_CODE, ApplicationThreadLocals.getCityCode());
-            City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
-            if (city != null) {
-                cityDetails.put(ULB_NAME, city.getName());
-                cityDetails.put(DISTRICT_CODE, city.getDistrictCode());
-                cityDetails.put(DISTRICT_NAME, city.getDistrictName());
-                cityDetails.put(STATE_NAME, clientId);
-                cityDetails.put(GRADE, city.getGrade());
-            }
-            LOG.info(cityDetails);
-
-        } catch (Exception e) {
-
-            LOG.error("Error while getting city Details", e);
-        }
-
-        LOG.info("Getting city Details completed");
+        cityDetails.put(ULB_CODE, ApplicationThreadLocals.getCityCode());
+        LOG.info("ApplicationThreadLocals.getCityCode()" + ApplicationThreadLocals.getCityCode());
+        City city = cityService.getCityByCode(ApplicationThreadLocals.getCityCode());
+        cityDetails.put(ULB_NAME, city.getName());
+        cityDetails.put(DISTRICT_CODE, city.getDistrictCode());
+        cityDetails.put(DISTRICT_NAME, city.getDistrictName());
+        cityDetails.put(STATE_NAME, city.getDistrictName());
+        cityDetails.put(GRADE, city.getGrade());
         return cityDetails;
     }
 
@@ -92,46 +76,41 @@ public class CustomImplProvider {
             for (String s : keySet) {
 
                 Object c = beans.get(s);
-                String serviceName = c.getClass().getSimpleName().toLowerCase();
-                if (!serviceName.contains(parentClazz.getSimpleName().toLowerCase())) {
+                if (!c.getClass().getSimpleName().toLowerCase().contains(parentClazz.getSimpleName().toLowerCase())) {
                     continue;
+
                 }
 
-                if (!ApplicationThreadLocals.getCityName().isEmpty()
-                        && serviceName.contains(ApplicationThreadLocals.getCityName().toLowerCase())) {
+                if (c.getClass().getSimpleName().toLowerCase().contains(cityDetails.get(ULB_NAME).toLowerCase())) {
                     ulbBean = c;
                     break;
                 }
-                if (!ApplicationThreadLocals.getDistrictName().isEmpty()
-                        && serviceName.contains(ApplicationThreadLocals.getDistrictName().toLowerCase())) {
-                    if (serviceName.contains("District".toLowerCase())) {
-                        districtBean = c;
-                    }
+                if (c.getClass().getSimpleName().contains(cityDetails.get(DISTRICT_NAME))) {
+                    districtBean = c;
+
                 }
 
-                if (!ApplicationThreadLocals.getStateName().isEmpty()
-                        && serviceName.contains(ApplicationThreadLocals.getStateName().toLowerCase())) {
+                if (c.getClass().getSimpleName().contains(cityDetails.get(STATE_NAME))) {
                     stateBean = c;
+
                 }
 
-                if (!ApplicationThreadLocals.getGrade().isEmpty()
-                        && serviceName.contains(ApplicationThreadLocals.getGrade().toLowerCase())) {
+                if (c.getClass().getSimpleName().contains(cityDetails.get(GRADE))) {
                     gradeBean = c;
+
                 }
+
             }
 
             if (ulbBean != null) {
                 bean = ulbBean;
-                LOG.debug("Returning ulb implementation for service " + parentClazz + " : "
-                        + ulbBean.getClass().getName());
+                LOG.debug("Returning ulb implementation for service " + parentClazz + " : " + ulbBean.getClass().getName());
             } else if (districtBean != null) {
                 bean = districtBean;
-                LOG.debug("Returning district implementation for service " + parentClazz + " : "
-                        + bean.getClass().getName());
+                LOG.debug("Returning ulb implementation for service " + parentClazz + " : " + districtBean.getClass().getName());
             } else if (gradeBean != null) {
                 bean = gradeBean;
-                LOG.debug("Returning Gradewise implementation for service " + parentClazz + " : "
-                        + gradeBean.getClass().getName());
+                LOG.debug("Returning ulb implementation for service " + parentClazz + " : " + districtBean.getClass().getName());
             } else if (stateBean != null) {
                 bean = stateBean;
             }
@@ -150,8 +129,6 @@ public class CustomImplProvider {
 
         } catch (BeansException e) {
             LOG.error("No Bean Defined for the Rule " + parentClazz, e);
-        } catch (Exception e) {
-            LOG.error("Exception in finding bean" + parentClazz, e);
         }
         return bean;
     }

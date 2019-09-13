@@ -678,5 +678,41 @@ public final class CollectionConstants {
             add("P");
         }
     };
+    
+    public static final String PNB_MERCHANT_REQUEST = "merchantRequest";
+    public static final String PNB_MID = "MID";
+    public static final String PNB_TRANSACTION_REFERENCE_NO = "Transaction Reference No";
+    public static final String PNB_ORDER_ID = "Order ID";
+    public static final String PNB_AMOUNT = "Amount";
+    public static final String PNB_STATUS_CODE = "Status Code";
+    public static final String PNB_STATUS_DESCRIPTION = "Status Description";
+    public static final String PNB_RESPONSE_CODE = "Response code";
+    public static final String PNB_TRANSACTION_DATE = "Transaction Date Time";
+    public static final String PNB_ADDL_FIELD_ONE  = "Addl Field 1";
+    public static final String PNB_ADDL_FIELD_TWO = "Addl Field 2";
+    public static final String PNB_TRANSACTION_STATUS_DESC = "Success";
+    public static final String PNB_SERVICECODE = "PNB";
+    public static final String HDFC_SERVICECODE = "HDFC";
+
+
+    //HDFC payment gateway  variables name
+    public static final String HDFC_KEY = "key";
+    public static final String HDFC_TXNID = "txnid";
+    public static final String HDFC_AMOUNT = "amount";
+    public static final String HDFC_PRODUCT_INFO = "productinfo";
+    public static final String HDFC_FIRSTNAME = "firstname";
+    public static final String HDFC_EMAIL = "email";
+    public static final String HDFC_PHONE = "phone";
+    public static final String HDFC_SURL = "surl";
+    public static final String HDFC_FURL = "furl";
+    public static final String HDFC_CURL = "curl";
+    public static final String HDFC_HASH = "hash";
+    public static final String HDFC_PG = "pg";
+    public static final String HDFC_COMMAND = "command";
+    public static final String HDFC_VARIABLE = "var1";
+    public static final String CITRUS_RETURNURL     = "returnUrl";
+
+    public static final String SIX_DELIMITER = "||||||";
+    public static final String SINGLE_DELIMITER = "|";
 
 }

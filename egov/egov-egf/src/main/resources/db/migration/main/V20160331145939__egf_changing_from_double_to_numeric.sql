@@ -71,8 +71,7 @@ ALTER TABLE egf_budget_usage
     ALTER COLUMN releasedamt TYPE numeric(13,2);    
 ALTER TABLE bankreconciliation
     ALTER COLUMN amount TYPE numeric(13,2);
-ALTER TABLE generalledger
-    ALTER COLUMN debitamount TYPE numeric(13,2),   
-    ALTER COLUMN creditamount TYPE numeric(13,2);         
+ALTER TABLE generalledger ALTER COLUMN debitamount TYPE numeric(13,2);
+ALTER TABLE generalledger ALTER COLUMN creditamount TYPE numeric(13,2);         
 ALTER TABLE generalledgerdetail
     ALTER COLUMN amount TYPE numeric(13,2);    

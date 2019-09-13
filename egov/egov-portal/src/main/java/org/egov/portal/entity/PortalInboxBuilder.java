@@ -47,12 +47,13 @@
  */
 package org.egov.portal.entity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.DateUtils;
@@ -103,10 +104,9 @@ public class PortalInboxBuilder {
                 if (UserType.BUSINESS.toString().equalsIgnoreCase(userObject.getType().toString()) || UserType.CITIZEN
                         .toString().equalsIgnoreCase(userObject.getType().toString())) {
                     PortalInboxUser portalInboxUser = new PortalInboxUser();
-                    portalInboxUser.setTenantId(ApplicationThreadLocals.getTenantID());
                     portalInboxUser.setUser(userObject);
                     portalInboxUser.setPortalInbox(portalInbox);
-                    portalInbox.getTempPortalInboxUser().add(portalInboxUser);
+                    portalInbox.setTempPortalInboxUser(new ArrayList<PortalInboxUser>(Arrays.asList(portalInboxUser)));
                 }
             }
         }
@@ -138,7 +138,6 @@ public class PortalInboxBuilder {
                 if (UserType.BUSINESS.toString().equalsIgnoreCase(userObject.getType().toString()) || UserType.CITIZEN
                         .toString().equalsIgnoreCase(userObject.getType().toString())) {
                     PortalInboxUser portalInboxUser = new PortalInboxUser();
-                    portalInboxUser.setTenantId(ApplicationThreadLocals.getTenantID());
                     portalInboxUser.setUser(userObject);
                     portalInboxUser.setPortalInbox(portalInbox);
                     portalInbox.getTempPortalInboxUser().add(portalInboxUser);

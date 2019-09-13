@@ -47,16 +47,16 @@
  */
 package org.egov.collection.integration.services;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
 import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.infra.exception.ApplicationRuntimeException;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This interface needs to be implemented by any billing application that integrates with the eGov collection system. <br>
@@ -68,8 +68,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
  * context. Service name is the 'code' provided for the billing service in <code>ServiceDetails</code> class. <br>
  * <br>
  * The method <code>updateReceiptDetails</code> will be called by collections system whenever an event occurs that needs to be
- * communicated to the billing system e.g. receipt creation, receipt cancellation or instrument (related to a receipt) bounced.
- * <br>
+ * communicated to the billing system e.g. receipt creation, receipt cancellation or instrument (related to a receipt) bounced. <br>
  * <br>
  * The <code>BillReceiptInfo</code> object, apart from the receipt information, also provides this event code.
  */
@@ -138,16 +137,17 @@ public interface BillingIntegrationService {
      * @return
      */
     public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo);
-
+    
     /**
-     * Collection system invokes billing system to validate receipt cancellation allowed or not. parameter.
+     * Collection system invokes billing system to validate receipt cancellation allowed or not. 
+     * parameter.
      * @param receiptNumber
      * @return
      */
-    default ReceiptCancellationInfo validateCancelReceipt(String receiptNumber, String consumerCode) {
+    default ReceiptCancellationInfo validateCancelReceipt(String receiptNumber,String consumerCode) {
         return new ReceiptCancellationInfo();
     }
-
+    
     /**
      * Collection system invokes billing system to validate payment amount
      * @param billReferenceNumber
@@ -156,7 +156,7 @@ public interface BillingIntegrationService {
      * @throws ApplicationRuntimeException
      */
     default void validatePayment(String billReferenceNumber, BigDecimal actualAmountPaid,
-            ArrayList<ReceiptDetail> receiptDetailsArray) {
+                                 ArrayList<ReceiptDetail> receiptDetailsArray){
 
     }
 }

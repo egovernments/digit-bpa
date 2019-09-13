@@ -58,7 +58,7 @@ public class SubOccupancyService {
     public SubOccupancy findById(final Long id) {
         return subOccupancyRepository.findOne(id);
     }
-
+    
     public List<SubOccupancy> findAll() {
         return subOccupancyRepository.findAll();
     }
@@ -66,7 +66,7 @@ public class SubOccupancyService {
     public List<SubOccupancy> findAllOrderByOrderNumber() {
         return subOccupancyRepository.findAll(new Sort(Sort.Direction.ASC, "orderNumber"));
     }
-
+    
     public List<SubOccupancy> findSubOccupanciesByOccupancy(String occupancy) {
         return subOccupancyRepository.findByOccupancyNameAndIsActiveTrueOrderByOrderNumberAsc(occupancy);
     }

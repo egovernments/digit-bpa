@@ -1,0 +1,1 @@
+UPDATE EGP_PORTALSERVICE set isactive=true where code='Others';

@@ -47,6 +47,13 @@
  */
 package org.egov.portal.web.controller.citizen;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
+import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
+import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS;
+
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -57,7 +64,11 @@ import org.egov.portal.service.CitizenInboxService;
 import org.egov.portal.service.PortalInboxUserService;
 import org.egov.portal.service.PortalLinkService;
 import org.egov.portal.service.PortalServiceTypeService;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,16 +76,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
-import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
-import static org.egov.infra.utils.ApplicationConstant.ANONYMOUS;
-
 @Controller
 @RequestMapping(value = "/home")
 public class HomeController {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private CitizenInboxService citizenInboxService;
@@ -94,14 +101,16 @@ public class HomeController {
     @Autowired
     private PortalLinkService portalLinkService;
 
+    @Value("${dev.mode}")
+    private boolean devMode;
+
     @RequestMapping(method = RequestMethod.GET)
     public String showHomePage(ModelMap modelData) {
         return setupHomePage(modelData);
     }
 
     @RequestMapping(value = "/refreshInbox", method = RequestMethod.GET)
-    public @ResponseBody
-    Integer refreshInbox(@RequestParam final Long citizenInboxId) {
+    public @ResponseBody Integer refreshInbox(@RequestParam final Long citizenInboxId) {
         final CitizenInbox citizenInbox = citizenInboxService.getInboxMessageById(citizenInboxId);
         citizenInbox.setRead(true);
         citizenInboxService.updateMessage(citizenInbox);
@@ -112,12 +121,20 @@ public class HomeController {
         String moduleName = "moduleNames";
         String services = "services";
         final User user = securityUtils.getCurrentUser();
+        modelData.addAttribute("currentUser", user);
         modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
         modelData.addAttribute("inboxMessages", getAllInboxMessages());
         modelData.addAttribute("myAccountMessages", getMyAccountMessages());
         modelData.addAttribute("cityLogo", cityService.getCityLogoURL());
         modelData.addAttribute("cityName", cityService.getMunicipalityName());
         modelData.addAttribute("userName", defaultIfBlank(user.getName(), ANONYMOUS));
+
+        if (!devMode) {
+            modelData.addAttribute("dflt_pwd_reset_req", checkDefaultPasswordResetRequired(user));
+            int daysToExpirePwd = daysToExpirePassword(user);
+            modelData.addAttribute("pwd_expire_in_days", daysToExpirePwd);
+            modelData.addAttribute("warn_pwd_expire", daysToExpirePwd <= 5);
+        }
 
         if (null != user) {
 
@@ -161,6 +178,14 @@ public class HomeController {
 
     private Integer getUnreadMessageCount() {
         return citizenInboxService.findUnreadMessagesCount(securityUtils.getCurrentUser());
+    }
+
+    private boolean checkDefaultPasswordResetRequired(User user) {
+        return passwordEncoder.matches("12345678", user.getPassword()) || passwordEncoder.matches("demo", user.getPassword());
+    }
+
+    private int daysToExpirePassword(User user) {
+        return Days.daysBetween(new LocalDate(), user.getPwdExpiryDate().toLocalDate()).getDays();
     }
 
 }

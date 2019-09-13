@@ -68,38 +68,6 @@ public class ApplicationThreadLocals {
         // Not to be initialized
     }
 
-    public static String getGrade() {
-        return grade.get();
-    }
-
-    public static void setGrade(String localGrade) {
-        grade.set(localGrade);
-    }
-
-    public static String getDistrictName() {
-        return districtName.get();
-    }
-
-    public static void setDistrictName(String localDistrictName) {
-        districtName.set(localDistrictName);
-    }
-
-    public static String getDistrictCode() {
-        return districtCode.get();
-    }
-
-    public static void setDistrictCode(String localDistrictCode) {
-        districtCode.set(localDistrictCode);
-    }
-
-    public static String getStateName() {
-        return stateName.get();
-    }
-
-    public static void setStateName(String localStateName) {
-        stateName.set(localStateName);
-    }
-
     public static String getCityName() {
         return cityName.get();
     }
@@ -164,6 +132,38 @@ public class ApplicationThreadLocals {
         ipAddress.set(ipAddr);
     }
 
+    public static String getGrade() {
+        return grade.get();
+    }
+
+    public static void setGrade(String localGrade) {
+        grade.set(localGrade);
+    }
+
+    public static String getDistrictName() {
+        return districtName.get();
+    }
+
+    public static void setDistrictName(String localDistrictName) {
+        districtName.set(localDistrictName);
+    }
+
+    public static String getDistrictCode() {
+        return districtCode.get();
+    }
+
+    public static void setDistrictCode(String localDistrictCode) {
+        districtCode.set(localDistrictCode);
+    }
+
+    public static String getStateName() {
+        return stateName.get();
+    }
+
+    public static void setStateName(String localStateName) {
+        stateName.set(localStateName);
+    }
+
     public static String getCityNameLocal() {
         return cityNameLocal.get();
     }
@@ -180,13 +180,12 @@ public class ApplicationThreadLocals {
         cityName.remove();
         municipalityName.remove();
         domainURL.remove();
-
+        ipAddress.remove();
         cityNameLocal.remove();
-
         grade.remove();
         districtCode.remove();
         districtName.remove();
         stateName.remove();
-        ipAddress.remove();
+
     }
 }

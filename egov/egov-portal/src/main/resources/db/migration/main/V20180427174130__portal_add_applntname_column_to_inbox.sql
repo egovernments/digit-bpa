@@ -1,0 +1,1 @@
+alter table egp_inbox add column applicantName character varying(100);

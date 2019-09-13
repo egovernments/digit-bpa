@@ -8,17 +8,6 @@ delete from eg_roleaction where actionid in(select id from eg_action where name 
 
 delete from eg_action where name in('New-CouncilQualification','Create-CouncilQualification','Update-CouncilQualification','View-CouncilQualification','Edit-CouncilQualification','Result-CouncilQualification','Search and View-CouncilQualification','Search and Edit-CouncilQualification','Search and View Result-CouncilQualification','Search and Edit Result-CouncilQualification');
 
--------------alter table--------------------------------
-
-ALTER TABLE egcncl_qualification RENAME TO eg_qualification;
-
-ALTER TABLE eg_qualification RENAME CONSTRAINT pk_egcncl_qualification TO pk_eg_qualification;
-
-ALTER SEQUENCE seq_egcncl_qualification RENAME TO seq_eg_qualification;
-
-
-----------------------educational qualification role action mapping------------------------------------
-
 INSERT into eg_module values (nextval('SEQ_EG_ACTION'),'CommonQualification',true,'common',(select id from eg_module where name='Common-Masters' and contextroot='common'),'Educational Qualification',4);
 
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Create Educational Qualification','/qualification/create',(select id from eg_module where name='CommonQualification'),1,'Create Educational Qualification',true,'common',(select id from eg_module where name='Common' and parentmodule is null));

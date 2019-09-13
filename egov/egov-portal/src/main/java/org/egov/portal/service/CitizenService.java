@@ -102,6 +102,11 @@ public class CitizenService {
     private TokenService tokenService;
 
     @Transactional
+    public Citizen save(Citizen citizen) {
+        return citizenRepository.saveAndFlush(citizen);
+    }
+
+    @Transactional
     public void create(Citizen citizen) {
         citizen.addRole(roleService.getRoleByName(CITIZEN_ROLE_NAME));
         citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
@@ -141,10 +146,22 @@ public class CitizenService {
         return TRUE;
     }
 
+    @Transactional
+    public boolean sendOTPMessage(String mobileNumber, String emailId) {
+        String otp = randomNumeric(5);
+        tokenService.generate(otp, mobileNumber, CITIZEN_REG_SERVICE);
+        notificationService.sendSMS(mobileNumber, getMessage("citizen.reg.otp.sms", otp), HIGH);
+        if (emailId != null) {
+            notificationService.sendEmail(emailId, getMessage("citizen.reg.otp.email.sub"),
+                    getMessage("citizen.reg.otp.email.body", otp));
+        }
+        return TRUE;
+    }
+
     private String getMessage(String msgKey, Object... arg) {
         return messageSource.getMessage(msgKey, arg, Locale.getDefault());
     }
-    
+
     public List<Citizen> getCitizenByMobileNumberAndType(final String mobileNumber, final UserType type) {
         return citizenRepository.findByMobileNumberAndTypeOrderById(mobileNumber, type);
     }

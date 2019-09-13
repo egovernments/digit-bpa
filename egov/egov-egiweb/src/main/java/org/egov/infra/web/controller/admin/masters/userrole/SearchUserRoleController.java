@@ -48,8 +48,9 @@
 
 package org.egov.infra.web.controller.admin.masters.userrole;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+
 import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,8 +61,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 @Controller
 @RequestMapping("/userrole")

@@ -100,7 +100,7 @@
 <div class="page-container horizontal-menu">
     <div class="search">
         <spring:message code="lbl.quick.find" var="quickfind"/>
-        <input type="text" id="searchtree" autofocus="" placeholder="${quickfind}">
+        <input type="text" id="searchtree" autofocus="" autocomplete="off" placeholder="${quickfind}">
         <span class="fa fa-search searchicon tooltip-secondary" data-toggle="tooltip" data-original-title="Search menu item"></span>
         <span class="applyanimation"></span>
     </div>
@@ -191,7 +191,7 @@
 
                 <li class="dropdown">
                     <a href="http://www.egovernments.org" target="_blank">
-                        <img src="<cdn:url value='/resources/global/images/logo@2x.png'/>" title="Powered by eGovernments" height="25px" style="padding-top:5px">
+						<img src="<c:url value='/resources/global/images/digit-logo-black.png' context='/egi'/>" title="Powered by eGovernments" height="35px" style="opacity: 0.8">
                     </a>
                 </li>
             </ul>
@@ -231,8 +231,8 @@
                             <th><spring:message code="lbl.natureoftask"/></th>
                             <th><spring:message code="lbl.status"/></th>
                             <th><spring:message code="lbl.details"/></th>
-                            <th><spring:message code="lbl.elapsed.days"/></th>
-                            <th></th>
+                            <%-- <th><spring:message code="lbl.elapsed.days"/></th> --%>
+                            <th width="1%"></th>
                         </tr>
                         </thead>
                     </table>
@@ -259,7 +259,7 @@
                             <th><spring:message code="lbl.natureoftask"/></th>
                             <th><spring:message code="lbl.status"/></th>
                             <th><spring:message code="lbl.details"/></th>
-                            <th><spring:message code="lbl.elapsed.days"/></th>
+                            <%-- <th><spring:message code="lbl.elapsed.days"/></th> --%>
                         </tr>
                         </thead>
                     </table>

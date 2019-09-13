@@ -47,13 +47,13 @@
  */
 package org.egov.portal.repository;
 
+import java.util.List;
+
 import org.egov.portal.entity.PortalInboxUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface PortalInboxUserRepository extends JpaRepository<PortalInboxUser, Long> {
@@ -65,5 +65,12 @@ public interface PortalInboxUserRepository extends JpaRepository<PortalInboxUser
 
     @Query("select count(*) from PortalInboxUser piu where piu.user.id=:userId")
     Long getPortalInboxUserCount(@Param("userId") Long userId);
+
+    @Query("select count(*) from PortalInboxUser as piu where piu.user.id = :userId and piu.portalInbox.resolved = :resolved")
+    Long getPortalInboxUserCountByResolved(@Param("userId") Long userId, @Param("resolved") boolean resolved);
+
+    @Query("select count(*) from PortalInboxUser as piu where piu.user.id = :userId and piu.portalInbox.resolved = :resolved and piu.portalInbox.module.contextRoot = :serviceContextRoot")
+    Long getPortalInboxUserCountByResolvedAndModule(@Param("userId") Long userId, @Param("resolved") boolean resolved,
+            @Param("serviceContextRoot") String serviceContextRoot);
 
 }

@@ -263,7 +263,64 @@ $(document).ready(function () {
             $(this).tooltip();
         }
     });
+    
+    $('form[data-ajaxsubmit="true"]').submit(function(e){
+		
+		var formData = new FormData($(this)[0]);
+		var formAction = $(this).attr('action');
+
+	    $.ajax({
+	        url: 'https://api.github.com/users/mralexgray/repos',//formAction,
+	        type: 'POST',
+	        data: formData,
+	        beforeSend: function() {
+	        	//remove all existing alert messages
+	        	$('.alert').remove();
+	            //show loader
+	        	$('.loader-class').modal('show', {backdrop: 'static'});
+	        },
+	        complete: function(){
+	        	//callback function calling
+	        	window["callBackAjax"]();
+	        	//hide loader
+	        	$('.loader-class').modal('hide');
+	        	//scroll page to top
+	        	pageScrollTop();
+	        },
+	        success: function (data) {
+	            //append server response html text to current page
+	        	$('.main-content').prepend(data);
+	        },
+	        error: function (xhr, ajaxOptions, thrownError) {
+	        	//generic error message with error code
+	            var errormsg = 'Error '+xhr.status+' '+ thrownError +'. please, try again!';
+	            //add error alert in current page  
+	            $('.main-content').prepend('<div id="notifyerror" class="alert alert-danger" role="alert"> <div> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <span class="sr-only">Error:</span> '+ errormsg +' </div> ');	            
+	        },
+	        cache: false,
+	        contentType: false,
+	        processData: false
+	    });
+
+	    return false;
+		
+	});
+	
+	$('.signout').click(function(){
+		$.each( openedWindows, function( i, val ) {
+			var window = val;
+			window.close();
+		});
+	});
 });
+
+function pageScrollTop()
+{
+    var body = $("html, body");
+    body.stop().animate({scrollTop:0}, '500', 'swing', function() { 
+       //bootbox.alert("Finished animating");
+    });
+}
 
 function showValidationMessage(errorJson) {
     let errorMsg = "";
@@ -322,10 +379,15 @@ $.fn.getCursorPosition = function () {
     return [pos, posEnd];
 };
 
-function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield) {
+function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield,callBackFunc) {
     typeaheadobj.on('typeahead:selected', function (event, data) {
-        //setting hidden value
-        $(hiddeneleid).val(data.value);
+    	//setting hidden value
+		$(hiddeneleid).val(data.value);    
+
+		if(callBackFunc){
+			callBackFunc(event, data);
+		}
+
     }).on('keydown', this, function (event) {
         var e = event;
 

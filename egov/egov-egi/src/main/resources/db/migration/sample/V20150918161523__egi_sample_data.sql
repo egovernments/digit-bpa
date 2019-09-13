@@ -30,6 +30,8 @@ INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedb
 INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (26, 'Land and Estate', '2010-01-01 00:00:00', 'V', 1, 1, '2015-01-01 00:00:00', 0);
 INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (27, 'Works', '2010-01-01 00:00:00', 'W', 1, 1, '2015-01-01 00:00:00', 0);
 INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (28, 'Legal Cell', '2010-01-01 00:00:00', 'Y', 1, 1, '2015-01-01 00:00:00', 0);
+INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (29, 'Administration', '2010-01-01 00:00:00', 'ADM', 1, 1, '2015-01-01 00:00:00', 0);
+INSERT INTO eg_department (id, name, createddate, code, createdby, lastmodifiedby, lastmodifieddate, version) VALUES (30, 'Engineering', '2010-01-01 00:00:00', 'ENG', 1, 1, '2015-01-01 00:00:00', 0);
 
 DROP sequence seq_eg_department;
 

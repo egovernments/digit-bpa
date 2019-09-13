@@ -48,10 +48,6 @@
 
 package org.egov.common.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,8 +57,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
-@Unique(fields = {"name"}, enableDfltMsg = true)
+@Unique(fields = { "name" }, enableDfltMsg = true)
 @Table(name = "eg_qualification")
 @SequenceGenerator(name = EducationalQualification.SEQ_QUALIFICATION, sequenceName = EducationalQualification.SEQ_QUALIFICATION, allocationSize = 1)
 public class EducationalQualification extends AbstractAuditable {
@@ -75,17 +76,20 @@ public class EducationalQualification extends AbstractAuditable {
 
     @NotNull
     @Length(min = 2, max = 100)
+    @SafeHtml
     private String name;
 
     @NotNull
     @Length(max = 20)
     @Column(name = "code", updatable = false)
+    @SafeHtml
     private String code;
 
     @NotNull
     private Boolean isActive;
 
     @Length(min = 2, max = 100)
+    @SafeHtml
     private String description;
 
     public String getDescription() {

@@ -46,123 +46,183 @@
  *
  */
 
-$(document).ready(function () {
-    $.fn.preventDoubleSubmission = function () {
-        $(this).on('submit', function (e) {
-            var $form = $(this);
-            if ($form.data('submitted') === true) {
-                e.preventDefault();
-            } else {
-                $form.data('submitted', true);
-            }
-        });
-        return this;
-    };
+$(document).ready(function(){
+	
+	//Global variable
+	
+	var clickedServiceData;
+	var selectedService;
+	
+	//---------------
+	
+	// AJAX Call -------------------
+	$.ajax({
+        url: '/portal/rest/fetch/servicespending',
+//        dataType: 'text',
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        data: {
+        	id: parseFloat($('#userId').val())
+        },
+        success: function( data, textStatus, jQxhr ){
+        	var tableInitData = configureTableData(data, "portalInboxHelper");
+        	var table = $("#bpa-home-table").DataTable( {
+                data: tableInitData,
+                "columns": [
+                    { "data": "srNo", "orderable": false },
+                    { "data": "applicantName", "orderable": false },
+                    { "data": "serviceRequestNo", "orderable": false},
+                    { "data": "serviceRequestDate" },
+                    { "data": "serviceGroup" },
+                    { "data": "serviceName" },
+                    { "data": "status" },
+                    { "data": "pendingAction", "orderable": false},
+                ]
 
-    $('form').preventDoubleSubmission();
-
-    $('.password-error').hide();
-    $('.totalServicesAppliedHide').hide();
-    $('.totalServicesCompletedHide').hide();
-    $('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-    $('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-    $('#totalServicesAppliedDiv').click(function () {
-        $('.servicesUnderScrutinyHide').hide();
-        $('.totalServicesCompletedHide').hide();
-        $('.totalServicesAppliedHide').show();
-        $('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
-        $('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-        $('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+            } );
+        	$('#bpa-home-table tbody').on('click', 'tr', function (e) {
+        	    var data = table.row( this ).data();
+        	    e.stopImmediatePropagation();
+        	    openPopUp(data.link);
+        	} );
+        	
+        	//Initialize data in global variable
+        	window.clickedServiceData = cloneDeep(data);
+        	window.selectedService = "all";
+        	
+        },
+        error: function( jqXhr, textStatus, errorThrown ){
+            console.log( errorThrown );
+        }
     });
+	
+	
+	
+	//------------------------------
+		
+	$(".bpa-service-card").click(function(){
+		var url = "";
+		switch($(this).attr("name")){
+			case "totalServicesApplied": 
+				url = "/portal/rest/fetch/servicesapplied";
+				break;
+			case "servicesUnderScrutiny": 
+				url = "/portal/rest/fetch/servicespending";
+				break;
+			case "servicesCompleted": 
+				url = "/portal/rest/fetch/servicescompleted";
+				break;
+			default: 
+				url = "/portal/rest/fetch/servicespending";
+				break;
+		}
+		fetchDataAndInitiateTable(url, "portalInboxHelper");
+		
+	})
 
-    $('#servicesUnderScrutinyDiv').click(function () {
-        $('.totalServicesAppliedHide').hide();
-        $('.totalServicesCompletedHide').hide();
-        $('.servicesUnderScrutinyHide').show();
-        $('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
-        $('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-        $('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+    $('#new-pass').popover({trigger: "focus", placement: "bottom"});
+
+	$('.password-error').hide();
+    $('.password-error-msg').hide();
+
+	$('.totalServicesAppliedHide').hide();
+	$('.totalServicesCompletedHide').hide();
+//	$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//	$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+	$('#totalServicesAppliedDiv').click(function() {
+		$('.servicesUnderScrutinyHide').hide();
+		$('.totalServicesCompletedHide').hide();
+		$('.totalServicesAppliedHide').show();
+//		$('#totalServicesAppliedDiv').attr('style', 'opacity: 1;cursor: pointer');
+//		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+	});
+	
+	$('#servicesUnderScrutinyDiv').click(function() {
+		$('.totalServicesAppliedHide').hide();
+		$('.totalServicesCompletedHide').hide();
+		$('.servicesUnderScrutinyHide').show();
+//		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 1;cursor: pointer');
+//		$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+	});
+	
+	$(".bpa-home-card").click(function(){
+		$(".bpa-home-card").removeClass("clicked-card");
+		$(this).addClass("clicked-card");
+		$(".bpa-home-card .text").removeClass("color-generic-new");
+		$(this).find(".text").addClass("color-generic-new");
+	})
+	
+	$('#servicesCmpletedDiv').click(function() {
+		$('.totalServicesAppliedHide').hide();
+		$('.servicesUnderScrutinyHide').hide();
+		$('.totalServicesCompletedHide').show();
+//		$('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
+//		$('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+//		$('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
+
+	});
+	
+  var module;
+
+  $('.services .content').matchHeight();
+  
+  leftmenuheight();
+  rightcontentheight();
+
+  //alert(matchRuleShort("bird123", "bird*"))
+
+  $('#search').keyup(function(e){
+    var rule = '*'+$(this).val()+'*';
+    if(e.keyCode == 8){
+      $('[data-services="'+module+'"]').show();
+    }
+    $(".services-item .services:visible").each(function(){
+      var testStr = $(this).find('.content').html().toLowerCase();
+      console.log(testStr, rule, matchRuleShort(testStr, rule))
+      if(matchRuleShort(testStr, rule))
+        $(this).show();
+      else
+        $(this).hide();
     });
+  });
 
-    $('#servicesCmpletedDiv').click(function () {
-        $('.totalServicesAppliedHide').hide();
-        $('.servicesUnderScrutinyHide').hide();
-        $('.totalServicesCompletedHide').show();
-        $('#servicesCmpletedDiv').attr('style', 'opacity: 1;cursor: pointer');
-        $('#totalServicesAppliedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-        $('#servicesUnderScrutinyDiv').attr('style', 'opacity: 0.7;cursor: pointer');
-
-    });
-
-    var module;
-
-    $('.services .content').matchHeight();
-
+  $('.modules-li').click(function(){
+    $('#search').val('');
+    $('.modules-li').removeClass('active');
+    $(this).addClass('active');
+    module = $(this).data('module');
+    $('.services-item .services').hide();
+    $('#showServiceGroup').hide();
+    if(module == 'home'){
+      $('.inbox-modules').show();
+      $('.action-bar').addClass('hide');
+      $('#showServiceGroup').show();
+      inboxloadmethod();
+    }
+    else{
+    	  $('.inbox-modules').hide();
+    	  $('.module-heading').text(module);  
+          $('[data-services="'+module+'"]').show();
+          $('.action-bar').removeClass('hide');
+    }
+  })  
+	  
+  $( window ).resize(function() {
     leftmenuheight();
     rightcontentheight();
+  });
 
-    //alert(matchRuleShort("bird123", "bird*"))
+  $('table tbody tr').click(function(){
+    $('#myModal').modal('show');
+  });
 
-    $('#search').keyup(function (e) {
-        var rule = '*' + $(this).val() + '*';
-        if (e.keyCode == 8) {
-            $('[data-services="' + module + '"]').show();
-        }
-        $(".services-item .services:visible").each(function () {
-            var testStr = $(this).find('.content').html().toLowerCase();
-            console.log(testStr, rule, matchRuleShort(testStr, rule))
-            if (matchRuleShort(testStr, rule))
-                $(this).show();
-            else
-                $(this).hide();
-        });
-    });
-
-    $('.modules-li').click(function () {
-        $('#search').val('');
-        $('.modules-li').removeClass('active');
-        $(this).addClass('active');
-        module = $(this).data('module');
-        $('.services-item .services').hide();
-        $('#showServiceGroup').hide();
-        if (module == 'home') {
-            $('.inbox-modules #showServiceGroup').show();
-            $('.action-bar').hide();
-            $('.linkedApplications').hide();
-            inboxloadmethod();
-        } else if (module == 'My Services') {
-            $('.inbox-modules').hide();
-            $('[data-services="' + module + '"], .action-bar, .linkedApplications').show();
-        } else {
-            $('.inbox-modules, .linkedApplications').hide();
-            $('[data-services="' + module + '"], .action-bar').show();
-        }
-    });
-
-    $(window).resize(function () {
-        leftmenuheight();
-        rightcontentheight();
-    });
-
-    $('table tbody tr').click(function () {
-        $('#myModal').modal('show');
-    });
-
-
-    $('.checkpassword').blur(function () {
-        if (($('#new-pass').val() != "") && ($('#retype-pass').val() != "")) {
-            if ($('#new-pass').val() === $('#retype-pass').val()) {
-
-            } else {
-                $('.password-error').show();
-                $('#retype-pass').addClass('error');
-            }
-        }
-    });
-
-    $('#btnChangePwd').click(function (e) {
+    $('#passwordForm').on('submit', function (e) {
+        e.preventDefault();
         $.ajax({
             url: '/egi/home/password/update',
+            async: false,
             type: 'POST',
             data: {
                 'currentPwd': $("#old-pass").val(),
@@ -172,104 +232,241 @@ $(document).ready(function () {
             success: function (data) {
                 var msg = "";
                 if (data == "SUCCESS") {
-                    msg = "Your password has been updated."
+                    $("#old-pass").val("");
+                    $("#new-pass").val("");
+                    $("#retype-pass").val("");
+                    $('.change-password').modal('hide');
+                    bootbox.alert("Your password has been updated.");
+                    $('.pass-cancel').removeAttr('disabled');
+                    $('#pass-alert').hide();
                 } else if (data == "NEWPWD_UNMATCH") {
-                    msg = "New password you have entered does not match with retyped password."
+                    msg = "New password you have entered does not match with retyped password.";
+                    $("#new-pass").val("");
+                    $("#retype-pass").val("");
+                    $('.change-password').modal('show');
                 } else if (data == "CURRPWD_UNMATCH") {
-                    msg = "Old password you have entered is incorrect."
+                    msg = "Old password you have entered is incorrect.";
+                    $("#old-pass").val("");
+                    $('.change-password').modal('show');
                 } else if (data == "NEWPWD_INVALID") {
-                    msg = $('#errorPwdInvalid').val() + "\"" + " ' / \ and space]";
-                } else if (data == 'NEW_AND_CURR_PWD_SAME') {
-                    msg = "New Password cannot be same as your Old Password, try a different one.";
+                    msg = $('.password-error-msg').html();
+                    $("#new-pass").val("");
+                    $("#retype-pass").val("");
+                    $('.change-password').modal('show');
                 }
-                bootbox.alert(msg);
+                $('#pwd-incorrt-match').removeClass('alert-success');
+                $('#pwd-incorrt-match').addClass('alert-danger');
+                $('.password-error').html(msg).show();
+
             },
             error: function () {
                 bootbox.alert("Internal server error occurred, please try after sometime.");
-            }, complete: function () {
-                $('.change-password, .loader-class').modal('hide');
-                resetValues();
             }
         });
+
     });
 
-    $('#serviceGroup').change(function () {
-        var selected = $(this).val();
-        var total = $("#totalServicesAppliedSize").html().trim();
-        var length = document.getElementsByClassName($(this).val()).length / 2;
-        if ($(this).val() == "") {
-            $('.showAll').show();
-            $("#totalServicesAppliedSize").html($("#tabelPortal tbody.totalServicesAppliedHide tr.showAll").length);
-            $("#totalServicesCompletedSize").html($("#tabelPortal tbody.totalServicesCompletedHide tr.showAll").length);
-            $("#totalServicesPendingSize").html($("#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll").length);
-            var showAllClass = "#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll td:first-child";
-            generateSno(showAllClass);
-
-        } else {
-            $('.showAll').hide();
-            $('.' + $(this).val()).show();
-            $("#totalServicesAppliedSize").html($("#tabelPortal tbody.totalServicesAppliedHide tr." + $(this).val()).length);
-            $("#totalServicesCompletedSize").html($("#tabelPortal tbody.totalServicesCompletedHide tr." + $(this).val()).length);
-            $("#totalServicesPendingSize").html($("#tabelPortal tbody.servicesUnderScrutinyHide tr." + $(this).val()).length);
-
-            var servicesUnderScrutinyHideClass = "#tabelPortal tbody.servicesUnderScrutinyHide tr." + selected + " td:first-child";
-            var totalServicesAppliedHideClass = "#tabelPortal tbody.totalServicesAppliedHide tr." + selected + " td:first-child";
-            var totalServicesCompletedHideClass = "#tabelPortal tbody.totalServicesCompletedHide tr." + selected + " td:first-child";
-            generateSno(servicesUnderScrutinyHideClass);
-            generateSno(totalServicesAppliedHideClass);
-            generateSno(totalServicesCompletedHideClass);
+    $('.checkpassword').blur(function () {
+        if (($('#new-pass').val() != "") && ($('#retype-pass').val() != "")) {
+            if ($('#new-pass').val() == $('#retype-pass').val()) {
+                $('#pwd-incorrt-match').removeClass('alert-danger');
+                $('#pwd-incorrt-match').addClass('alert-success');
+                $('.password-error').show();
+                $('.password-error').html('Password is matching');
+                $('#retype-pass').addClass('error');
+            } else if ($('#new-pass').val() !== $('#retype-pass').val()) {
+                $('#pwd-incorrt-match').removeClass('alert-success');
+                $('#pwd-incorrt-match').addClass('alert-danger');
+                $('.password-error').show();
+                $('.password-error').html('Password is not matching');
+                $('#retype-pass').addClass('error');
+            }
         }
     });
+  
+  $('#serviceGroup').change(function(){
+	  window.selectedService = getServiceGroup($(this).val());
+	  initiateTable(window.clickedServiceData, window.selectedService, "portalInboxHelper");
+//	  var selected = $(this).val();
+//	  var total = $( "#totalServicesAppliedSize" ).html().trim();
+//	  var length = document.getElementsByClassName($(this).val()).length / 2;
+//	  if($(this).val() == "") {
+//		  $('.showAll').show();
+//		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr.showAll" ).length);
+//		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr.showAll" ).length);
+//		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll" ).length);
+//		  var showAllClass ="#tabelPortal tbody.servicesUnderScrutinyHide tr.showAll td:first-child";
+//		  generateSno(showAllClass);
+//
+//	  } else {
+//		  $('.showAll').hide();
+//		  $('.'+$(this).val()).show();
+//		  $( "#totalServicesAppliedSize" ).html($( "#tabelPortal tbody.totalServicesAppliedHide tr."+$(this).val() ).length);
+//		  $( "#totalServicesCompletedSize" ).html($( "#tabelPortal tbody.totalServicesCompletedHide tr."+$(this).val() ).length);
+//		  $( "#totalServicesPendingSize" ).html($( "#tabelPortal tbody.servicesUnderScrutinyHide tr."+$(this).val() ).length);
+//		  
+//		  var servicesUnderScrutinyHideClass ="#tabelPortal tbody.servicesUnderScrutinyHide tr."+ selected + " td:first-child";
+//		  var totalServicesAppliedHideClass="#tabelPortal tbody.totalServicesAppliedHide tr."+ selected + " td:first-child";
+//		  var totalServicesCompletedHideClass="#tabelPortal tbody.totalServicesCompletedHide tr."+ selected + " td:first-child";
+//		  generateSno(servicesUnderScrutinyHideClass);
+//		  generateSno(totalServicesAppliedHideClass);
+//		  generateSno(totalServicesCompletedHideClass);
+//	  }
+  });
+  
+  
+  
 
-    $('.linkedApplications, .action-bar').hide();
 });
 
-function onlinePayTaxForm(url) {
-    window.open(url, 'window', 'scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+function leftmenuheight(){
+  //console.log($( window ).height(), $('.modules-ul').height());
+  $('.left-menu,.modules-ul').css({
+    height:$( window ).height(),
+    overflow : 'auto'
+  });
 }
 
-function leftmenuheight() {
-    //console.log($( window ).height(), $('.modules-ul').height());
-    $('.left-menu,.modules-ul').css({
-        height: $(window).height(),
-        overflow: 'auto'
-    });
-}
-
-function rightcontentheight() {
-    //console.log($( window ).height(), $('.right-content').height());
-    $('.right-content').css({
-        height: $(window).height(),
-        overflow: 'auto'
-    })
+function rightcontentheight(){
+  //console.log($( window ).height(), $('.right-content').height());
+  $('.right-content').css({
+//    height:$( window ).height(),
+//    overflow : 'auto'
+  })
 }
 
 //Short code
 function matchRuleShort(str, rule) {
-    return new RegExp("^" + rule.toLowerCase().split("*").join(".*") + "$").test(str.toLowerCase());
+  return new RegExp("^" + rule.toLowerCase().split("*").join(".*") + "$").test(str.toLowerCase());
 }
 
 var url;
-
 function openPopUp(url) {
-    window.open(url, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
+	window.open(url, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 
-function generateSno(className) {
-    var idx = 1;
-    $(className).each(function () {
-        $(this).text(idx);
-        idx++;
-    });
+function generateSno(className)
+{
+	var idx=1;
+	$(className).each(function(){
+		$(this).text(idx);
+		idx++;
+	});
 }
 
 function resetValues() {
-    $('#retype-pass').val('');
-    $('#new-pass').val('');
-    $('#old-pass').val('');
-    $('.password-error').hide();
+		$('#retype-pass').val('');
+		$('#new-pass').val('');
+		$('#old-pass').val('');
+		$('.password-error').hide();
 }
 
 function inboxloadmethod() {
-    location.reload();
+	location.reload();
+}
+
+function configureTableData(dataset, dataKey){
+	return dataset[dataKey].map(function(item, index) {
+		item.serviceRequestDate = epochToYmd(item.serviceRequestDate);
+		item.srNo = index+1;
+		return item;
+	})
+}
+
+function initiateTable(tableData, serviceGroup, dataKey){
+	var clonedTableData = cloneDeep(tableData);
+	if(serviceGroup && serviceGroup !== "all"){
+		clonedTableData[dataKey] = clonedTableData[dataKey].filter(function(item) { return item.serviceGroup === serviceGroup});
+	}
+	
+	var finalData = configureTableData(clonedTableData, dataKey);
+	resetServicesCount();
+	var datatable = $( "#bpa-home-table" ).DataTable();
+	datatable.clear();
+	datatable.rows.add(finalData);
+	datatable.draw();
+	$('#bpa-home-table tbody').on('click', 'tr', function (e) {
+	    var data = datatable.row( this ).data();
+	    e.stopImmediatePropagation();
+	    openPopUp(window.origin+data.link);
+	} );
+}
+
+function getServiceGroup(code){
+	switch(code){
+		case "all":
+			return "all";
+		case "edcr":
+			return "Digit DCR";
+		case "bpa":
+			return "BPA";
+		default: 
+			return "all";
+	}
+}
+
+function cloneDeep(obj){
+	return JSON.parse(JSON.stringify(obj));
+}
+
+function fetchDataAndInitiateTable(url, dataKey){
+	$.ajax({
+        url: url,
+//        dataType: 'text',
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        data: {
+        	id: parseFloat($('#userId').val())
+        },
+        success: function( data, textStatus, jQxhr ){
+        	var tableInitData = configureTableData(data, dataKey);
+        	initiateTable(data, window.selectedService, dataKey);
+        	//Initialize data in global variable
+        	window.clickedServiceData = cloneDeep(data);
+        	
+        },
+        error: function( jqXhr, textStatus, errorThrown ){
+            console.log( errorThrown );
+        }
+    });
+
+}
+
+function resetServicesCount(){
+	$.ajax({
+        url: "/portal/rest/fetch/services/count/by-servicegroup",
+        type: "POST",
+        data: {
+        	id: parseFloat($('#userId').val()),
+        	serviceContextRoot: $('#serviceGroup').val()
+        },
+        cache : false,
+        async: false,
+        dataType: "json",
+        success: function (response) {
+        	$('#totalServicesAppliedSize').html('');
+        	$('#totalServicesPendingSize').html('');
+        	$('#totalServicesCompletedSize').html('');
+        	$('#totalServicesAppliedSize').html(response.totalServices);
+        	$('#totalServicesPendingSize').html(response.underScrutiny);
+        	$('#totalServicesCompletedSize').html(response.completedServices);
+        },
+        error: function (response) {
+            console.log("Error occurred while retrieving services!!!!!!!");
+        }
+    });
+}
+
+function epochToYmd(et) {
+	// Return null if et already null
+	if (!et) return null;
+	// Return the same format if et is already a string (boundary case)
+	if (typeof et === "string") return et;
+	let date = new Date(et);
+	let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+	let month =
+	date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+	// date = `${date.getFullYear()}-${month}-${day}`;
+	var formatted_date = day + "-" + month+ "-" +date.getFullYear();
+	return formatted_date;
 }

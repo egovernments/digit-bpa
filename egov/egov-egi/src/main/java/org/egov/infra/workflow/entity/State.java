@@ -95,13 +95,13 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     private Long id;
 
     @NotBlank
-    @Length(max = 50)
+    @Length(max = 255)
     @SafeHtml
     @Column(updatable = false)
     private String type;
 
     @NotBlank
-    @Length(max = 100)
+    @Length(max = 255)
     @SafeHtml
     private String value;
 
@@ -126,7 +126,7 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @SafeHtml
     private String nextAction;
 
-    @Length(max = 1024)
+    @Length(max = 3072)
     @SafeHtml
     private String comments;
 

@@ -1,3 +1,5 @@
+INSERT INTO eg_module(id, name, enabled, contextroot, parentmodule, displayname, ordernumber) VALUES (nextval('SEQ_EG_MODULE'), 'Common', true, 'common', null, 'Common',(select max(ordernumber)+1 from eg_module where parentmodule is null));
+
 INSERT into eg_module values (nextval('SEQ_EG_ACTION'),'CommonUOMCategory',true,'common',(select id from eg_module where name='Common-Masters' and contextroot='common'),'UOM Category',1);
 
 INSERT into eg_module values (nextval('SEQ_EG_ACTION'),'Common-Masters',true,'common',(select id from eg_module where name='Common' and parentmodule is null),'Masters',1);

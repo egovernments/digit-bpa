@@ -174,7 +174,7 @@ $(document).ready(function () {
                 "sInfo": ""
             },
             "ajax": {
-                "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 7),
+                "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 6),
                 "dataSrc": ""
             },
 
@@ -217,18 +217,18 @@ $(document).ready(function () {
     });
 
     $("#official_inbox").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.dataTable().fnGetData(this, 8) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 8),
-                tableContainer1.dataTable().fnGetData(this, 7) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 7) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 7),
+                tableContainer1.dataTable().fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
     });
 
     $("#official_drafts").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.dataTable().fnGetData(this, 7) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 7),
-                tableContainer1.dataTable().fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 6) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 6),
+                tableContainer1.dataTable().fnGetData(this, 5) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
@@ -484,11 +484,11 @@ function worklist() {
         "deferRender": true,
         "columns": [
             {"data": "date", "width": "15%"},
-            {"data": "sender", "width": "15%"},
-            {"data": "task", "width": "15%"},
-            {"data": "status", "width": "20%"},
-            {"data": "details", "width": "20%"},
-            {"data": "elapsed", "className": "text-center", "width": "12%"},
+            {"data": "sender", "width": "18%"},
+            {"data": "task", "width": "18%"},
+            {"data": "status", "width": "23%"},
+            {"data": "details", "width": "23%"},
+            /*{"data": "elapsed", "className": "text-center", "width": "12%"},*/
             {
                 "data": null,
                 "width": "0%",
@@ -542,7 +542,7 @@ function worklist() {
 }
 
 function loadGroupMenusModuleWise(moduleArray) {
-    if (Object.keys(moduleArray).length > 1 ||
+    if (Object.keys(moduleArray).length > 0 ||
         (Object.keys(moduleArray).length == 1 && Object.keys(moduleArray[Object.keys(moduleArray)[0]]).length > 1)) {
 
         Object.keys(moduleArray)
@@ -603,7 +603,7 @@ function drafts() {
             {"data": "task"},
             {"data": "status"},
             {"data": "details", "width": "20%"},
-            {"data": "elapsed"},
+            /*{"data": "elapsed"},*/
             {"data": "id", "visible": false, "searchable": false},
             {"data": "link", "visible": false, "searchable": false}
         ],
@@ -649,11 +649,11 @@ function worklistwrtnow(json) {
         },
         "columns": [
             {"data": "date", "width": "15%"},
-            {"data": "sender", "width": "15%"},
-            {"data": "task", "width": "15%"},
-            {"data": "status", "width": "20%"},
-            {"data": "details", "width": "20%"},
-            {"data": "elapsed", "className": "text-center", "width": "12%"},
+            {"data": "sender", "width": "18%"},
+            {"data": "task", "width": "18%"},
+            {"data": "status", "width": "23%"},
+            {"data": "details", "width": "23%"},
+            /*{"data": "elapsed", "className": "text-center", "width": "12%"},*/
             {
                 "data": null,
                 "width": "0%",

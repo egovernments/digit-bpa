@@ -1,0 +1,1 @@
+update egp_portalservice set isactive=false where module in (select id from eg_module where name='My Services');

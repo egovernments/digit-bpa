@@ -47,6 +47,8 @@
  */
 package org.egov.portal.entity;
 
+import org.egov.infra.admin.master.entity.User;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -57,9 +59,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.egov.infra.admin.master.entity.User;
 
 @Entity
 @Table(name = "egp_inboxusers")
@@ -81,9 +80,6 @@ public class PortalInboxUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portalInbox", nullable = false)
     private PortalInbox portalInbox;
-
-    @Size(max = 250)
-    private String tenantId;
 
     public Long getId() {
         return id;
@@ -109,11 +105,4 @@ public class PortalInboxUser {
         this.portalInbox = portalInbox;
     }
 
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
 }

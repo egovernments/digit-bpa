@@ -51,6 +51,7 @@ package org.egov.common.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -86,9 +87,11 @@ public class UOM extends AbstractAuditable {
 
     @NotNull
     @Length(min = 1, max = 25)
+    @SafeHtml
     private String uom;
 
     @Length(min = 1, max = 25)
+    @SafeHtml
     private String narration;
 
     @NotNull

@@ -63,6 +63,7 @@ import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.notification.service.NotificationService;
+import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.ApplicationConstant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -207,13 +208,37 @@ public class UserService {
         return userRepository.findByMobileNumberAndType(mobileNumber, type);
     }
 
+    public List<User> getUsersByTypeAndEmailId(final String emailId, final UserType type) {
+        return userRepository.findByEmailIdAndTypeOrderById(emailId, type);
+    }
+
+    public User getUserByPan(String panNumber) {
+        return userRepository.findByPan(panNumber);
+    }
+
     public List<User> getUserByMobileNumberAndType(final String mobileNumber, final UserType type) {
         return userRepository.findByMobileNumberAndTypeOrderById(mobileNumber, type);
     }
 
-    public List<User> getUsersByTypeAndTenantId(UserType type, String tenantId) {
-        return userRepository.findUsersByTypeAndTenantId(type, tenantId);
+    public List<User> getUserByTypeInOrder(final UserType type) {
+        return userRepository.findByTypeAndActiveTrueOrderByUsername(type);
+    }
 
+    public User getUserRefById(Long id) {
+        return userRepository.getOne(id);
+    }
+
+    public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender) {
+        return userRepository.findByNameAndMobileNumberAndGender(name, mobileNumber, gender);
+    }
+
+    public List<User> getUserByNameAndMobileNumberAndGenderForUserType(final String name, final String mobileNumber,
+            final Gender gender, final UserType type) {
+        return userRepository.findByNameAndMobileNumberAndGenderAndTypeOrderByIdDesc(name, mobileNumber, gender, type);
+    }
+
+    public List<User> getUserByType(final UserType type) {
+        return userRepository.findByTypeAndActiveTrue(type);
     }
 
     public List<User> getUsersByTypeAndTenants(UserType type) {
@@ -221,15 +246,8 @@ public class UserService {
                 ApplicationConstant.STATE_TENANTID);
     }
 
-    public User getUserByPan(String panNumber) {
-        return userRepository.findByPan(panNumber);
+    public List<User> getUsersByTypeAndTenantId(UserType type, String tenantId) {
+        return userRepository.findUsersByTypeAndTenantId(type, tenantId);
     }
 
-    public List<User> getUserByTypeInOrder(final UserType type) {
-        return userRepository.findByTypeAndActiveTrueOrderByUsername(type);
-    }
-
-    public List<User> getUsersByTypeAndEmailId(final String emailId, final UserType type) {
-        return userRepository.findByEmailIdAndTypeOrderById(emailId, type);
-    }
 }

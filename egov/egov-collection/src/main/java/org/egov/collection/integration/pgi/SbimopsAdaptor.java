@@ -85,12 +85,14 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.google.gson.JsonObject;
 
 /**
  * The PaymentRequestAdaptor class frames the request object for the payment service.
  */
+@Service
 public class SbimopsAdaptor implements PaymentGatewayAdaptor {
     private static final Logger LOGGER = Logger.getLogger(SbimopsAdaptor.class);
     private static final String SBIMOPS_HOA_FORMAT = "%-19sVN";
@@ -196,12 +198,12 @@ public class SbimopsAdaptor implements PaymentGatewayAdaptor {
             if (fieldValue != null && fieldValue.length() > 0)
                 // append the URL parameters
                 try {
-                requestURL.append(URLEncoder.encode(fieldName, UTF8));
-                requestURL.append('=');
-                requestURL.append(URLEncoder.encode(fieldValue, UTF8));
+                    requestURL.append(URLEncoder.encode(fieldName, UTF8));
+                    requestURL.append('=');
+                    requestURL.append(URLEncoder.encode(fieldValue, UTF8));
                 } catch (final UnsupportedEncodingException e) {
-                LOGGER.error("Error appending QueryFields", e);
-                throw new ApplicationRuntimeException(e.getMessage());
+                    LOGGER.error("Error appending QueryFields", e);
+                    throw new ApplicationRuntimeException(e.getMessage());
                 }
             if (itr.hasNext())
                 requestURL.append('&');

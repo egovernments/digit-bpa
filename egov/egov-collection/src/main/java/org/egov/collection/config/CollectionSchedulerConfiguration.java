@@ -57,6 +57,8 @@ import javax.sql.DataSource;
 
 import org.egov.collection.scheduler.AtomReconciliationJob;
 import org.egov.collection.scheduler.AxisReconciliationJob;
+import org.egov.collection.scheduler.HDFCReconciliationJob;
+import org.egov.collection.scheduler.PnbReconciliationJob;
 import org.egov.collection.scheduler.RemittanceInstrumentJob;
 import org.egov.collection.scheduler.SbimopsReconciliationJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
@@ -82,16 +84,67 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         collectionScheduler.setSchedulerName("collection-scheduler");
         collectionScheduler.setAutoStartup(true);
         collectionScheduler.setOverwriteExistingJobs(true);
+        // Registering only pnb,hdfc trigger
         collectionScheduler.setTriggers(
-                axisReconciliationCronTrigger().getObject(),
-                remittanceCashInstrumentCronTrigger0().getObject(),
-                remittanceCashInstrumentCronTrigger1().getObject(),
-                sbimopsReconciliationCronTrigger0().getObject(),
-                sbimopsReconciliationCronTrigger1().getObject(),
-                sbimopsReconciliationCronTrigger2().getObject(),
-                sbimopsReconciliationCronTrigger3().getObject(),
-                sbimopsReconciliationCronTrigger4().getObject());
+                pnbReconciliationCronTrigger().getObject(), hdfcReconciliationCronTrigger().getObject());
         return collectionScheduler;
+    }
+    
+    @Bean
+    public JobDetailFactoryBean hdfcReconciliationJobDetail() {
+        JobDetailFactoryBean hdfcReconciliationJobDetail = new JobDetailFactoryBean();
+        hdfcReconciliationJobDetail.setGroup("COLLECTION_JOB_GROUP");
+        hdfcReconciliationJobDetail.setName("COLLECTION_HDFC_RECON_JOB");
+        hdfcReconciliationJobDetail.setDurability(true);
+        hdfcReconciliationJobDetail.setJobClass(HDFCReconciliationJob.class);
+        hdfcReconciliationJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("jobBeanName", "hdfcReconciliationJob");
+        jobDetailMap.put("userName", "system");
+        jobDetailMap.put("cityDataRequired", "true");
+        jobDetailMap.put("moduleName", "collection");
+        hdfcReconciliationJobDetail.setJobDataAsMap(jobDetailMap);
+        return hdfcReconciliationJobDetail;
+    }
+
+    
+    @Bean
+    public CronTriggerFactoryBean hdfcReconciliationCronTrigger() {
+        CronTriggerFactoryBean hdfcReconciliationCron = new CronTriggerFactoryBean();
+        hdfcReconciliationCron.setJobDetail(hdfcReconciliationJobDetail().getObject());
+        hdfcReconciliationCron.setGroup("COLLECTION_TRIGGER_GROUP");
+        hdfcReconciliationCron.setName("COLLECTION_HDFC_RECON_TRIGGER");
+        hdfcReconciliationCron.setCronExpression("0 */30 * * * ?");
+        hdfcReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return hdfcReconciliationCron;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean pnbReconciliationCronTrigger() {
+        CronTriggerFactoryBean pnbReconciliationCron = new CronTriggerFactoryBean();
+        pnbReconciliationCron.setJobDetail(pnbReconciliationJobDetail().getObject());
+        pnbReconciliationCron.setGroup("COLLECTION_TRIGGER_GROUP");
+        pnbReconciliationCron.setName("COLLECTION_PNB_RECON_TRIGGER");
+        pnbReconciliationCron.setCronExpression("0 */30 * * * ?");
+        pnbReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return pnbReconciliationCron;
+    }
+
+    @Bean
+    public JobDetailFactoryBean pnbReconciliationJobDetail() {
+        JobDetailFactoryBean pnbReconciliationJobDetail = new JobDetailFactoryBean();
+        pnbReconciliationJobDetail.setGroup("COLLECTION_JOB_GROUP");
+        pnbReconciliationJobDetail.setName("COLLECTION_PNB_RECON_JOB");
+        pnbReconciliationJobDetail.setDurability(true);
+        pnbReconciliationJobDetail.setJobClass(PnbReconciliationJob.class);
+        pnbReconciliationJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("jobBeanName", "pnbReconciliationJob");
+        jobDetailMap.put("userName", "system");
+        jobDetailMap.put("cityDataRequired", "true");
+        jobDetailMap.put("moduleName", "collection");
+        pnbReconciliationJobDetail.setJobDataAsMap(jobDetailMap);
+        return pnbReconciliationJobDetail;
     }
 
     private Map<String, String> prepareJobDetailMap() {
@@ -130,6 +183,16 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
     @Bean("axisReconciliationJob")
     public AxisReconciliationJob axisReconciliationJob() {
         return new AxisReconciliationJob();
+    }
+    
+    @Bean("pnbReconciliationJob")
+    public PnbReconciliationJob pnbReconciliationJob() {
+        return new PnbReconciliationJob();
+    }
+    
+    @Bean("hdfcReconciliationJob")
+    public HDFCReconciliationJob hdfcReconciliationJob() {
+        return new HDFCReconciliationJob();
     }
 
     @Bean

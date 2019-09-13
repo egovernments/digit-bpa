@@ -218,4 +218,68 @@ public class CollectionApplicationProperties {
         return environment.getProperty(serviceCode.concat(".validate.receiptcancel.url"));
     }
 
+    public String hdfcKey() {
+        return environment.getProperty("hdfc.key");
+    }
+
+    public String hdfcSalt() {
+        return environment.getProperty("hdfc.salt");
+    }
+
+    public String hdfcPg() {
+        return environment.getProperty("hdfc.pg");
+    }
+
+    public String hdfcReconsileUrl() {
+        return environment.getProperty("hdfc.reconcile.url");
+    }
+
+    public String hdfcReconsileCommand() {
+        return environment.getProperty("hdfc.reconcile.command");
+    }
+
+    public String hdfcTransactionCurrency() {
+        return environment.getProperty("hdfc.transaction.currency");
+    }
+
+    public String hdfcRequestType() {
+        return environment.getProperty("hdfc.transaction.request.type");
+    }
+
+    public String hdfcTransactionMsg() {
+        return environment.getProperty("hdfc.transactionmessage");
+    }
+
+    public String hdfcTransactionEmail() {
+        return environment.getProperty("hdfc.email");
+    }
+
+    public String hdfcTransactionPhone() {
+        return environment.getProperty("hdfc.phone");
+    }
+
+    public String pnbMid() {
+        return environment.getProperty("pnb.mid");
+    }
+
+    public String pnbEncryptionKey() {
+        return environment.getProperty("pnb.encryption.key");
+    }
+
+    public String pnbTransactionCurrency() {
+        return environment.getProperty("pnb.transaction.currency");
+    }
+
+    public String pnbTransactionRequestType() {
+        return environment.getProperty("pnb.transaction.request.type");
+    }
+
+    public String pnbTransactionMessage() {
+        return environment.getProperty("pnb.transactionmessage");
+    }
+
+    public String pnbReconcileUrl() {
+        return environment.getProperty("pnb.reconcile.url");
+    }
+
 }

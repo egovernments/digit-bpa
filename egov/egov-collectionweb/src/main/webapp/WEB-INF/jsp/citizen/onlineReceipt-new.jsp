@@ -51,7 +51,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title><s:text name="title.onlineReceipts"/></title>
+<title><s:text name="title.onlineReceipts" /></title>
 <script
 	src="${pageContext.request.contextPath}/resources/common/watermark.js"
 	type="text/javascript"></script>
@@ -417,11 +417,17 @@ function onLoad(){
 </head>
 
 <body onload="onLoad();">
-<s:if test="%{hasActionMessages()}">
-    <div class="errorstyle">
-      <s:actionmessage/>
-    </div>
-</s:if>  
+	<s:if test="%{hasActionMessages()}">
+		<div class="errorstyle">
+			<s:actionmessage />
+		</div>
+	</s:if>
+	<s:if test="%{hasErrors()}">
+		<div class="error-block" style="color: red; align: left">
+			<s:actionerror />
+			<s:fielderror />
+		</div>
+	</s:if>
 
 	<div class="maincontainer">
 		<s:form theme="simple" name="collDetails"
@@ -480,13 +486,13 @@ function onLoad(){
 									<s:hidden id="paymentServiceId" value="%{paymentServiceId}"
 										name="paymentServiceId" />
 									<s:hidden id="refNumber" value="%{refNumber}" name="refNumber" />
-									<s:hidden id="isTransactionPending" value="%{isTransactionPending}" 
-									name="isTransactionPending"/>
+									<s:hidden id="isTransactionPending"
+										value="%{isTransactionPending}" name="isTransactionPending" />
 									<%
-									    int i = 1;
+										int i = 1;
 									%>
 									<%
-									    int rcptDtlCnt = 0;
+										int rcptDtlCnt = 0;
 									%>
 
 									<tr>
@@ -558,7 +564,7 @@ function onLoad(){
 
 														</tr>
 														<%
-														    rcptDtlCnt = rcptDtlCnt + 1;
+															rcptDtlCnt = rcptDtlCnt + 1;
 														%>
 													</s:iterator>
 													<!--  Finished iterating through the account heads (receipt detail) -->
@@ -594,7 +600,7 @@ function onLoad(){
 												</table>
 												<!-- End of accountdetailtable i -->
 												<%
-												    i = i + 1;
+													i = i + 1;
 												%>
 												<!-- End of table enclosing all account detail tables -->
 											</div>

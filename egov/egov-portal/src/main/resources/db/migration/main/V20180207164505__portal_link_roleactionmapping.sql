@@ -8,8 +8,6 @@ INSERT INTO eg_roleaction(roleid,actionid) VALUES ((SELECT id FROM eg_role WHERE
 
 UPDATE egp_portalservice SET code='Link Services',url='/portal/citizen/searchforlinking', name ='Link Services' WHERE code='Link Application';
 
-INSERT INTO EG_ROLEACTION (roleid, actionid) values((select id from eg_role where name = 'CITIZEN'), (select id from eg_action where name ='View DCB Property Display'));
-
 ALTER table egp_portallink  ADD COLUMN viewDcbURL character varying(250);
 
 ALTER table egp_portallink  ALTER COLUMN applicantname drop not null;

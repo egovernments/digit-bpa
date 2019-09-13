@@ -47,13 +47,13 @@
  */
 package org.egov.portal.service;
 
+import java.util.List;
+
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.repository.PortalInboxUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,6 +72,15 @@ public class PortalInboxUserService {
 
     public Long getPortalInboxUserCount(final Long userId) {
         return portalInboxUserRepository.getPortalInboxUserCount(userId);
+    }
+
+    public Long getPortalInboxUserCountByResolved(final Long userId, final boolean isResolved) {
+        return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, isResolved);
+    }
+
+    public Long getPortalInboxUserCountByResolvedAndModule(final Long userId, final boolean isResolved,
+            final String serviceContextRoot) {
+        return portalInboxUserRepository.getPortalInboxUserCountByResolvedAndModule(userId, isResolved, serviceContextRoot);
     }
 
 }

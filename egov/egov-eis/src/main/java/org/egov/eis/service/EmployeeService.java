@@ -47,6 +47,16 @@
  */
 package org.egov.eis.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
@@ -77,21 +87,12 @@ import org.egov.infra.workflow.service.StateHistoryService;
 import org.egov.infra.workflow.service.StateService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -186,6 +187,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Transactional
     public void create(final Employee employee) {
+        employee.generateUID();
         employee.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
 
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
@@ -225,6 +227,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Transactional
     public void createEmployeeData(final Employee employee) {
+        employee.generateUID();
         employee.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
@@ -420,7 +423,7 @@ public class EmployeeService implements EntityTypeService {
      * @return List of employee objects
      */
     public List<Employee> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
-                                                                 final Long boundaryId) {
+            final Long boundaryId) {
         final Set<Long> bndIds = new HashSet<Long>();
         final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
         boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
@@ -468,7 +471,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Override
     public List<? extends EntityType> filterActiveEntities(final String filterKey, final int maxRecords,
-                                                           final Integer accountDetailTypeId) {
+            final Integer accountDetailTypeId) {
         return employeeRepository.findByNameLikeOrCodeLike(filterKey + "%", filterKey + "%");
     }
 
@@ -577,7 +580,6 @@ public class EmployeeService implements EntityTypeService {
         }
         return count > 1 ? true : false;
     }
-
 
     public Boolean isPositionExistsInWF(String positionName, Boolean isPositionChanged, Date fromDate, Date toDate) {
         Position position = positionMasterService.getPositionByName(positionName);

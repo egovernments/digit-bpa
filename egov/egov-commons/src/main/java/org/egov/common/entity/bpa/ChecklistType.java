@@ -44,42 +44,42 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = ChecklistType.SEQ_CHECKLIST_TYPE, sequenceName = ChecklistType.SEQ_CHECKLIST_TYPE, allocationSize = 1)
 public class ChecklistType extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_CHECKLIST_TYPE = "seq_eg_checklist_type";
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_CHECKLIST_TYPE = "seq_eg_checklist_type";
 
-    @Id
-    @GeneratedValue(generator = SEQ_CHECKLIST_TYPE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_CHECKLIST_TYPE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Length(min = 1, max = 128)
-    private String code;
+	@Length(min = 1, max = 128)
+	private String code;
 
-    @Length(min = 1, max = 250)
-    private String description;
+	@Length(min = 1, max = 250)
+	private String description;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

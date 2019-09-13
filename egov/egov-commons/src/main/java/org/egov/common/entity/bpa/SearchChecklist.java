@@ -40,23 +40,25 @@
 package org.egov.common.entity.bpa;
 
 public class SearchChecklist {
-    // private Long id;
-    private ChecklistType checklistType;
-    private String description;
+	//private Long id;
+	private ChecklistType checklistType;
+	private String description;
 
-    public ChecklistType getChecklistType() {
-        return checklistType;
-    }
 
-    public void setChecklistType(ChecklistType checklistType) {
-        this.checklistType = checklistType;
-    }
 
-    public String getDescription() {
-        return description;
-    }
+	public ChecklistType getChecklistType() {
+		return checklistType;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setChecklistType(ChecklistType checklistType) {
+		this.checklistType = checklistType;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

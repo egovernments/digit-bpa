@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
@@ -96,6 +96,7 @@
     <script src="<cdn:url value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
     <![endif]-->
     <script>
+    	var googleapikey = '${sessionScope.googleApiKey}';
         const citylat = ${empty sessionScope.citylat ? 0 : sessionScope.citylat};
         const citylng = ${empty sessionScope.citylng ? 0 : sessionScope.citylng};
         const tokenVal = '${_csrf.token}';
@@ -106,16 +107,22 @@
 <spring:htmlEscape defaultHtmlEscape="true"/>
 <tiles:insertAttribute name="body"/>
 
-<div class="modal fade change-password" data-backdrop="static">
+<div class="modal fade change-password" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
 
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="close pass-cancel" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">Change Password</h4>
             </div>
 
             <div class="modal-body">
+	            <c:if test="${dflt_pwd_reset_req}">
+	                 <div class="alert alert-warning" role="alert" id="pass-alert">
+	                     <i class="fa fa-exclamation-triangle"></i> Security alert...! You are using default password,
+	                     please reset your password.
+	                 </div>
+	             </c:if>
                 <form id="passwordForm" class="form-horizontal form-groups-bordered">
                     <div class="form-group">
                         <div class="col-md-4">
@@ -124,7 +131,7 @@
                         <div class="col-md-8 add-margin">
                             <input style="display:none" type="password"/>
                             <input type="password" class="form-control readonly-pwd" id="old-pass" autocomplete="new-password"
-                                   onfocus="this.removeAttribute('readonly');" readonly="true"/>
+                                   onfocus="this.removeAttribute('readonly');" readonly="true" required="required" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -133,8 +140,8 @@
                         </div>
                         <div class="col-md-8 add-margin">
                             <input style="display:none" type="password"/>
-                            <input type="password" class="form-control checkpassword readonly-pwd" id="new-pass"
-                                   autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true"/>
+                            <input type="password" class="form-control checkpassword readonly-pwd" id="new-pass" data-container="#wrap" data-toggle="popover" data-content="${pwdmsg}" maxlength="32"
+                                   autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true" required="required"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -145,13 +152,16 @@
                             <input style="display:none" type="password"/>
                             <input type="password" class="form-control checkpassword readonly-pwd" id="retype-pass" autocomplete="new-password"
                                    onfocus="this.removeAttribute('readonly');" readonly="true"/>
+                            <div id="pwd-incorrt-match"
+                                 class="password-error error-msg alert alert-danger display-hide">Password is not matching
+                            </div>
                             <div class="password-error error-msg display-hide">Password is incorrect</div>
                         </div>
                     </div>
                     <div class="form-group text-right">
                         <div class="col-md-12 add-margin">
-                            <button type="button" class="btn btn-primary" id="btnChangePwd">Change Password</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="btnChangePwd">Change Password</button>
+                            <button type="button" class="btn btn-default pass-cancel" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </form>
@@ -159,5 +169,17 @@
         </div>
     </div>
 </div>
+ <c:if test="${dflt_pwd_reset_req}">
+     <script>
+         $('.change-password').modal('show');
+         $('.pass-cancel').attr('disabled', 'disabled');
+     </script>
+ </c:if>
+ <c:if test="${warn_pwd_expire}">
+     <script>
+         var pwdExpireInDays = ${pwd_expire_in_days};
+         bootbox.alert("Your password will expire in " + pwdExpireInDays + " day(s), please update your password.");
+     </script>
+ </c:if>
 </body>
 </html>
