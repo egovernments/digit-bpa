@@ -205,7 +205,7 @@ public class PermitRenewalService {
         return permitRenewalRepository.findByApplicationNumber(applicationNumber);
     }
 
-    public PermitRenewal findByRevocationNumber(final String renewalNumber) {
+    public List<PermitRenewal> findByRenewalNumber(final String renewalNumber) {
         return permitRenewalRepository.findByRenewalNumber(renewalNumber);
     }
 

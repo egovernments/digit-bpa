@@ -182,10 +182,11 @@ jQuery(document).ready(function ($) {
         return false;
     });
     
-    $('#planPermissionNumber').change(function() {
+    $('#planPermitNumber').change(function() {
     	var permitNo = $(this).val();
     	if(permitNo) {
     		getApplicationByPermitNo(permitNo);
+    		getRenewalAppByPermitNo(permitNo);
             getDocumentList();
     	}
 	});
@@ -203,12 +204,23 @@ jQuery(document).ready(function ($) {
 	        dataType: "json",
 	        success: function (response) {
 	            if(response) {
-	            	if(response.ownershipNumber != null && response.ownershipNumber != permitNo){
+	            	if(response.notExistPermissionNo){
+	            		$('.resetValues').val('');
+	    			    bootbox.alert('For the entered plan permission number application details are not found. Please check if the plan permission number is correct.');
+	                }
+	            	else if(response.ocExists) {
+	            		bootbox.alert('Occupancy Certificate is initiated for the entered plan permission number, hence cannot proceed' );
+	            		$('.resetValues').val('');
+	            		return false;
+	            	}
+	            	else if(response.ownershipNumber != null && response.ownershipNumber != permitNo){
 	        			bootbox.alert('For the entered plan permission number ownership is changed. Please enter '+response.ownershipNumber+
 	        					' to proceed');
 	            	}
 	            	else if(response.inProgress)
 	        			bootbox.alert('For the entered plan permission number ownership workflow is in progress. Hence cannot proceed.');
+	            	else if(response.isPermit && response.status == 'Revocated')
+	            		bootbox.alert('Permit application for entered plan permission number is revocated, hence cannot proceed.');
 	            	else if(response.isPermit && response.status!='Order Issued to Applicant'){
 	        			bootbox.alert('For the entered plan permission number permit workflow is in progress. Hence cannot proceed.');
 	            	}
@@ -224,7 +236,7 @@ jQuery(document).ready(function ($) {
 		                $('#address').val(response.applicantAddress);
 		                $('#bpaApplicationId').val(response.id);
 		                $('#applicationNumber').val(response.applicationNumber);
-		                if(response.ownershipNumber !=null){
+		                if(response.oldOwnershipNumber !=null){
 		                	$('#ownpermitno').html('Old Ownership Number');
 			                $('#edcrApplicationNumber').html('<a onclick="openPopup(\'/bpa/application/ownership/transfer/view/' + response.oldApplicationNo + '\')" href="javascript:void(0);">' + response.oldOwnershipNumber  + '</a>');
 		                }else{
@@ -236,7 +248,7 @@ jQuery(document).ready(function ($) {
 	            	}
 	            } else {
 	            	$('.resetValues').val('');
-	    			bootbox.alert('For the entered plan permission number application details are not found. Please check the plan permission number is correct.');
+	    			bootbox.alert('Application details are not available for the entered plan permission number.');
 	            }
 	        },
 	        error: function (response) {
@@ -244,6 +256,29 @@ jQuery(document).ready(function ($) {
 	        }
 	    });
 		return isExist;
+	}
+    
+    function getRenewalAppByPermitNo(permitNo) {
+		$.ajax({
+	        url: "/bpa/application/getrenewalapplication",
+	        type: "GET",
+	        data: {
+	            permitNumber : permitNo
+	        },
+	        cache : false,
+	        async: false,
+	        dataType: "json",
+	        success: function (response) {
+	            if(response) {
+            		    $('.resetValues').val('');
+	        			bootbox.alert('For the entered plan permission number permit renewal workflow is in progress. Hence cannot proceed');
+	        			return false;
+	            	}
+	            },
+	        error: function (response) {
+	            console.log("Error occurred while retrieving application details!!!!!!!");
+	        }
+	    });
 	}
 
     

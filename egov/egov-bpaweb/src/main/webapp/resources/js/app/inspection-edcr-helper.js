@@ -246,13 +246,7 @@ $(document).ready(
 	        async: false,
 	        dataType: "json",
 	        success: function (response) {
-	            if(response) {
-	            	 if(response.notExistPermissionNo){
-                         bootbox.alert('Invalid Building Plan Permission No.');
-                         resetDCRPopulatedValues();
-                  	   $('#planPermissionNumber').val('');
-                         return false;
-	            	 }
+	        	if(Object.keys(response).length > 0 ) {
                     $('#bpaApplicationNumber').val(response.applicationNumber);
 
                     $('#permissionNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + $('#planPermissionNumber').val() + '\')" href="javascript:void(0);">' + $('#planPermissionNumber').val()  + '</a>');

@@ -90,10 +90,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.plan.permission.no" /> <span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation resetValues"
-								maxlength="20" id="planPermissionNumber"
+							<input type="text" class="form-control patternvalidation resetValues"
+								maxlength="20" id="planPermitNumber"
 								placeholder="Enter plan permission number"
-								path="parent.planPermissionNumber"
 								value="${ownershipTransfer.parent.planPermissionNumber}"
 								required="required" />
 							<form:hidden path="parent" id="parent" />

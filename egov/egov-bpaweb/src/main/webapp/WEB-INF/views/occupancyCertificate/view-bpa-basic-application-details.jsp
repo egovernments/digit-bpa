@@ -64,13 +64,29 @@
 
 <div class="panel-body display-hide">
 	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
+	
+	
+	  <c:choose>
+			<c:when test="${ownershipTransfer ne null && ownershipTransfer ne '' }">
+            <div class="col-sm-3 add-margin">
+				<spring:message code="lbl.ownership.number" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">			
+				<a target="popup" onclick="window.open('/bpa/application/ownership/transfer/view/${ownershipTransfer.applicationNumber}','popup','width=1100,height=700'); return false;"
+				>${ownershipTransfer.ownershipNumber}</a>	
+			</div>
+			</c:when>
+			<c:otherwise>
+            <div class="col-sm-3 add-margin">
 			<spring:message code="lbl.plan.permission.no"/>
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<a target="popup" onclick="window.open('/bpa/application/details-view/by-permit-number/${occupancyCertificate.parent.planPermissionNumber}','popup','width=1100,height=700'); return false;"
-			>${occupancyCertificate.parent.planPermissionNumber}</a>
-		</div>
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<a target="popup" onclick="window.open('/bpa/application/details-view/by-permit-number/${occupancyCertificate.parent.planPermissionNumber}','popup','width=1100,height=700'); return false;"
+				>${occupancyCertificate.parent.planPermissionNumber}</a>
+			</div>
+			</c:otherwise>
+		</c:choose>
+		
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.edcr.number"/>
 		</div>
@@ -79,18 +95,37 @@
 		</div>
 	</div>
 	<div class="row add-border">
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.applicant.name"/>
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.parent.owner.name}" default="N/A"></c:out>
-		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.owner.address"/>
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${occupancyCertificate.parent.owner.address}"></c:out>
-		</div>
+	<c:choose>
+			<c:when test="${ownershipTransfer ne null && ownershipTransfer ne '' }">
+            		<div class="col-sm-3 add-margin">
+						<spring:message code="lbl.applicant.name"/>
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<c:out value="${ownershipTransfer.owner.name}" default="N/A"></c:out>
+					</div>
+					<div class="col-sm-3 add-margin">
+						<spring:message code="lbl.owner.address"/>
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<c:out value="${ownershipTransfer.owner.address}"></c:out>
+					</div>
+			</c:when>
+			<c:otherwise>
+		            <div class="col-sm-3 add-margin">
+						<spring:message code="lbl.applicant.name"/>
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<c:out value="${occupancyCertificate.parent.owner.name}" default="N/A"></c:out>
+					</div>
+					<div class="col-sm-3 add-margin">
+						<spring:message code="lbl.owner.address"/>
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						<c:out value="${occupancyCertificate.parent.owner.address}"></c:out>
+					</div>
+			</c:otherwise>
+		</c:choose>
+		
 	</div>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">

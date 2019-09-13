@@ -40,6 +40,7 @@
 
 $(document).ready(
     function ($) {
+    	$('#ownpermitno').html('Building Plan Permission No');
 
         String.prototype.compose = (function (){
             var re = /\{{(.+?)\}}/g;
@@ -494,7 +495,9 @@ $(document).ready(
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
                     	if($('#mode').val() === 'new') {
+                    		var ocdcrNo = $('#ocEDcrNumber').val();
                     		getApplicationByPermitNo(response.planPermitNumber);
+                    	    getOwnershipByPermitNo(response.planPermitNumber, ocdcrNo);
                     		var zone= $('#zone').val();
                     		var wrd = $('#revenueWard').val();
                     		$('#circle').html(zone);
@@ -605,7 +608,8 @@ $(document).ready(
                     }
                 });
             }
-            
+           
+    
           //to update noc document is required
             function updateNocRequired(planInformation){
             	if(planInformation.nocIrrigationDept === 'YES'){
@@ -819,6 +823,50 @@ $(document).ready(
                     $("#extentinsqmtshdn").val(convertExtendOfLandToSqmts(extentOfLand, $("#unitOfMeasurement").val()));
                 }
             }
+            
+
+
+            function getOwnershipByPermitNo(permitNo, ocdcrNo) {
+            	$.ajax({
+                    url: "/bpa/application/getactiveownershipapplication",
+                    type: "GET",
+                    data: {
+                        permitNumber : permitNo
+                    },
+                    cache : false,
+                    async: false,
+                    dataType: "json",
+                    success: function (response) {
+                    	if(Object.keys(response).length > 0 ) {                    		
+                        	$('#ocEDcrNumber').val(ocdcrNo);
+    		                $('#serviceType').val(response.serviceTypeId);
+                            $('#serviceTypeDesc').val(response.serviceTypeDesc);
+                            $('.applicantName').val(response.applicantName);
+                            $('#address').val(response.applicantAddress);
+                            $('#bpaApplicationId').val(response.applicationId);
+                            $('#applicationNumber').val(response.applicationNumber);       		                }
+                            $('#planPermissionDate').val(response.planPermissionDate);
+                            $('#extentInSqmts').val(response.plotArea);
+        	                $('#occupancy').val(response.occupancy);  
+        	                loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCDCRDOCUMENTS');
+        	            	loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCGENERALDOCUMENTS');
+        	                loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCNOC');
+        	                if(response.ownershipNumber != null){
+    		                	$('#ownpermitno').html('Ownership Number');
+    			                $('#planPermissionNumber').val(response.ownershipNumber);
+    		                }else{
+    		                	$('#ownpermitno').html('Building Plan Permission No');
+    		                    $('#planPermissionNumber').val(response.planPermissionNumber);
+    		                }
+                            
+                }
+                        ,
+                    error: function (response) {
+                        console.log("Error occurred while retrieving application details!!!!!!!");
+                    }
+                });
+            }
+
     });
 
         // This code require when edit facility enabled for auto populated floor details
@@ -1002,6 +1050,5 @@ function checkDCRIsUsedWithAnyOccupancyCertificateAppln() {
     });
     return isExist;
 }
-
 
 

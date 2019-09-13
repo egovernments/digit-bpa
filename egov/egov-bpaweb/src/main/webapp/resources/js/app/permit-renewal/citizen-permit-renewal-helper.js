@@ -193,6 +193,7 @@ jQuery(document).ready(function ($) {
     		if(!isExist)
     			bootbox.alert('For the entered plan permission number application details are not found. Please check the plan permission number is correct.');
     	}
+    	getOwnershipAppByPermitNo(permitNo);
 	});
     
     function getApplicationByPermitNo(permitNo) {
@@ -233,7 +234,36 @@ jQuery(document).ready(function ($) {
 	    });
 		return isExist;
 	}
-
-
+    
+    function getOwnershipAppByPermitNo(permitNo) {
+		$.ajax({
+	        url: "/bpa/application/getownershipapplication",
+	        type: "GET",
+	        data: {
+	            permitNumber : permitNo
+	        },
+	        cache : false,
+	        async: false,
+	        dataType: "json",
+	        success: function (response) {
+	            if(response) {
+	                if(response.ownershipNumber != null && response.ownershipNumber != permitNo){
+		            	$('.resetValues').val('');
+	        			bootbox.alert('For the entered plan permission number ownership is changed. Please enter '+response.ownershipNumber+
+	        					' to proceed');
+	        			return false;
+	            	}
+	            	else if(response.inProgress){
+		            	$('.resetValues').val('');
+	        			bootbox.alert('For the entered plan permission number ownership workflow is in progress. Hence cannot proceed.');
+        			    return false;
+	            	}
+	            }
+	        },
+	        error: function (response) {
+	            console.log("Error occurred while retrieving application details!!!!!!!");
+	        }
+	    });
+	}
 });
 	

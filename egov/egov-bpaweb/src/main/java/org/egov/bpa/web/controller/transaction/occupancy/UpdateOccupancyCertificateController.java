@@ -102,6 +102,7 @@ import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.enums.CalculationType;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
+import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
@@ -121,6 +122,7 @@ import org.egov.bpa.transaction.notice.impl.OccupancyCertificateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyRejectionFormatImpl;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.NocStatusService;
+import org.egov.bpa.transaction.service.OwnershipTransferService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OCNoticeConditionsService;
 import org.egov.bpa.transaction.service.oc.OcInspectionService;
@@ -198,6 +200,8 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private NocStatusService nocStatusService;
+    @Autowired
+    private OwnershipTransferService ownershipTransferService;
 
     @GetMapping("/update/{applicationNumber}")
     public String editOccupancyCertificateApplication(@PathVariable final String applicationNumber, final Model model,
@@ -349,6 +353,13 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
             }
             i++;
         }
+        
+    	List<OwnershipTransfer> ownershipApp = ownershipTransferService.findByPlanPermissionNumber(oc.getParent().getPlanPermissionNumber());        
+    	 if(!ownershipApp.isEmpty()) {
+    		 ownershipApp = ownershipApp.stream().filter(ot -> ot.getIsActive().equals(true)).collect(Collectors.toList());
+    		 model.addAttribute("ownershipTransfer", ownershipApp.isEmpty() ? null : ownershipApp.get(0));
+         } 
+    	 
         model.addAttribute("inspectionList", inspectionList);
         model.addAttribute("letterToPartyList", ocLetterToPartyService.findAllByOC(oc));
         if ((FWD_TO_AE_FOR_FIELD_ISPECTION.equals(oc.getState().getNextAction())

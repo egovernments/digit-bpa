@@ -205,8 +205,10 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
     @GetMapping("/ownership/transfer/update/{applicationNumber}")
     public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
         OwnershipTransfer ownershipTransfer = ownershipTransferService.findByApplicationNumber(applicationNumber);
-        List<OwnershipTransfer> ownershipTransfers = ownershipTransferService.findByBpaApplication(ownershipTransfer.getParent());
+        List<OwnershipTransfer> ownershipTransfers = ownershipTransferService.findByBpaApplicationAndDate(ownershipTransfer.getParent(), ownershipTransfer.getCreatedDate());
         if(ownershipTransfers.size()>1) {
+        	model.addAttribute("ownershipNumber", ownershipTransfers.get(0).getOwnershipNumber());        
+            model.addAttribute("applicationNo", ownershipTransfers.get(0).getApplicationNumber());   
         	model.addAttribute("applicants",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getName());
         	model.addAttribute("applicantAddress",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getAddress());
         }

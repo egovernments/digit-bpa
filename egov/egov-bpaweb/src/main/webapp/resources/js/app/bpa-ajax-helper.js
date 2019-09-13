@@ -734,7 +734,7 @@ $(document).ready(
 	        async: false,
 	        dataType: "json",
 	        success: function (response) {
-	            if(response) {
+	            if(Object.keys(response).length > 0) {
 	            	isExist = true;
 	            	loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCDCRDOCUMENTS');
 	            	loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCGENERALDOCUMENTS');
