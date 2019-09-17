@@ -81,4 +81,8 @@ public class BpaApplicationReportProperties {
 	public String getByeLaws() {
 		return environment.getProperty("report.byelaws");
 	}
+	
+	public String getOwnershipRefusalFormat() {
+		return environment.getProperty("report.ownership.rejectionpermit");
+	}
 }

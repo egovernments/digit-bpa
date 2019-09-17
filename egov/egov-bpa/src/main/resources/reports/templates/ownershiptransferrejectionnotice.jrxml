@@ -15,7 +15,7 @@
 	<parameter name="refusalFormat" class="java.lang.String"/>
 	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="applicationDate" class="java.util.Date"/>
-	<field name="parent" class="org.egov.bpa.transaction.entity.BpaApplication"/>
+	<field name="application" class="org.egov.bpa.transaction.entity.BpaApplication"/>
 	<background>
 		<band height="802" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{isBusinessUser}]]></printWhenExpression>
@@ -90,14 +90,14 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="23" y="19" width="532" height="20" uuid="d7b21c92-04d4-4c38-8a61-56d9052898a3"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{parent}.getApplicantName() +",\n"+$F{parent}.getOwner().getAddress()+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{application}.getApplicantName() +",\n"+$F{application}.getOwner().getAddress()+"."]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="78">
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["    Your application, dated "+DateUtils.toDefaultDateFormat($F{applicationDate})+" for permit renewal for "+$F{parent}.getServiceType().getDescription()+"  in "+$P{ulbName}+" falling in Revenue Ward "+$F{parent}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum()+",Re-Survey No."+$F{parent}.getSiteDetail().get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["    Your application, dated "+DateUtils.toDefaultDateFormat($F{applicationDate})+" for ownership transfer for "+$F{application}.getServiceType().getDescription()+"  in "+$P{ulbName}+" falling in Revenue Ward "+$F{application}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum()+",Re-Survey No."+$F{application}.getSiteDetail().get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>
