@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bparejectionnotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b1715f8d-a189-45c5-a759-a3f04bc5d6b4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -97,7 +97,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["    Your application, dated "+DateUtils.toDefaultDateFormat($F{applicationDate})+" for ownership transfer for "+$F{application}.getServiceType().getDescription()+"  in "+$P{ulbName}+" falling in Revenue Ward "+$F{application}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum()+",Re-Survey No."+$F{application}.getSiteDetail().get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["    Your application, dated " +DateUtils.toDefaultDateFormat($F{applicationDate}) + " for ownership transfer for " + $F{application}.getServiceType().getDescription() + "  in " + $P{ulbName} + " falling in Revenue Ward " +$F{application}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum() + ",Re-Survey No."   +   (($F{application}.getSiteDetail().get(0).getReSurveyNumber() == null) ?   "N/A" : $F{application}.getSiteDetail().get(0).getReSurveyNumber())  + ",is rejected due the following reason(s),"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>
