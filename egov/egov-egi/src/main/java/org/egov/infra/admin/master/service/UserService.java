@@ -250,4 +250,18 @@ public class UserService {
         return userRepository.findUsersByTypeAndTenantId(type, tenantId);
     }
 
+    public User getUserByUsernameAndTenantIdForLogin(String userName) {
+        User user = null;
+        user = userRepository.findByUsernameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
+        if (user == null)
+            user = userRepository.findByUsernameAndTenantId(userName, ApplicationConstant.STATE_TENANTID);
+        return user;
+    }
+
+    public List<User> findAllByMatchingUserNameAndTenantIdForType(String username, UserType type) {
+        return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(
+                "%" + username.toUpperCase() + "%", type, ApplicationThreadLocals.getTenantID(),
+                ApplicationConstant.STATE_TENANTID);
+    }
+
 }

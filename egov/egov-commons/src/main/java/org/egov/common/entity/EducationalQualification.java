@@ -100,10 +100,12 @@ public class EducationalQualification extends AbstractAuditable {
         this.description = description;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

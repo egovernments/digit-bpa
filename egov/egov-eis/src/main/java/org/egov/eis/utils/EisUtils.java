@@ -47,20 +47,30 @@
  */
 package org.egov.eis.utils;
 
+import static org.egov.eis.utils.constants.EisConstants.EGMODULE_NAME;
+
+import java.awt.Color;
+import java.util.List;
+
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ar.com.fdvs.dj.domain.Style;
 import ar.com.fdvs.dj.domain.constants.Border;
 import ar.com.fdvs.dj.domain.constants.Font;
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.constants.Transparency;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.awt.*;
 
 @Service
 @Transactional(readOnly = true)
 public class EisUtils {
+
+    @Autowired
+    private AppConfigValueService appConfigValueService;
 
     public Style getTextStyleLeftBorder() {
         final Style textStyle = getTextStyle();
@@ -68,7 +78,7 @@ public class EisUtils {
         textStyle.setBorderLeft(Border.THIN());
         return textStyle;
     }
-    
+
     public Style getTextStyle() {
         final Style textStyle = new Style("textStyle");
         textStyle.setTextColor(Color.BLACK);
@@ -112,11 +122,18 @@ public class EisUtils {
         titleStyle.setVerticalAlign(VerticalAlign.MIDDLE);
         return titleStyle;
     }
-    
+
     public Style getHeaderStyleLeftAlign() {
         final Style headerStyle = getHeaderStyle();
         headerStyle.setName("headerStyleLeftAlign");
         headerStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         return headerStyle;
+    }
+
+    public String getAppconfigValueByKeyName(String keyName) {
+
+        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(EGMODULE_NAME, keyName);
+
+        return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
     }
 }

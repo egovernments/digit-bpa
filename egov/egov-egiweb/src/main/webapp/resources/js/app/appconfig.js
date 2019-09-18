@@ -180,7 +180,7 @@ $(document).ready(function () {
             dateinitialize();
         }
     });
-
+    
     var regexp_alphanumericcomma = /[^a-zA-Z0-9 ,]/g;
 
     $('.confValues').on('keyup', function (e) {

@@ -48,21 +48,21 @@
 
 package org.egov.infra.config.notification.listener;
 
+import static org.egov.infra.notification.NotificationConstants.MESSAGE;
+import static org.egov.infra.notification.NotificationConstants.MOBILE;
+import static org.egov.infra.notification.NotificationConstants.PRIORITY;
+import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
+
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+
 import org.egov.infra.notification.entity.NotificationPriority;
 import org.egov.infra.notification.service.SMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.support.JmsUtils;
 import org.springframework.stereotype.Component;
-
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-
-import static org.egov.infra.notification.NotificationConstants.MESSAGE;
-import static org.egov.infra.notification.NotificationConstants.MOBILE;
-import static org.egov.infra.notification.NotificationConstants.PRIORITY;
-import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
 
 @Component
 public class SMSNotificationListener {
@@ -73,10 +73,10 @@ public class SMSNotificationListener {
     @JmsListener(destination = "java:/jms/queue/sms")
     public void sendSMS(Message message) {
         try {
-            MapMessage emailMessage = (MapMessage) message;
+            final MapMessage emailMessage = (MapMessage) message;
             smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
                     NotificationPriority.valueOf(emailMessage.getString(PRIORITY)));
-        } catch (JMSException e) {
+        } catch (final JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }
     }

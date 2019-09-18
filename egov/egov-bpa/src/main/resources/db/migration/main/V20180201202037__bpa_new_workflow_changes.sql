@@ -2,6 +2,8 @@ alter table egbpa_application add column issenttopreviousowner boolean default f
 
 alter table egbpa_application add column townsurveyorremarks character varying(5000);
 
+alter table eg_wf_matrix alter column nextstatus type varchar(120);
+
 Insert into EGBPA_STATUS (ID,MODULETYPE,description,LASTMODIFIEDDATE,CODE,isactive,version,createdby,createddate)
  values (nextval('SEQ_EGBPA_STATUS'),'REGISTRATION','Town Surveyor Inspection Initiated',now(),'Town Surveyor Inspection Initiated',true,0,1,now());
 

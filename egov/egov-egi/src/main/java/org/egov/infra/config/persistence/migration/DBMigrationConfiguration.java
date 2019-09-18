@@ -48,6 +48,13 @@
 
 package org.egov.infra.config.persistence.migration;
 
+import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +65,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
-
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.String.format;
 
 @Configuration
 public class DBMigrationConfiguration {
@@ -105,6 +106,7 @@ public class DBMigrationConfiguration {
     @DependsOn("dataSource")
     public Flyway flyway(DataSource dataSource, @Qualifier("cities") List<String> cities) {
         if (dbMigrationEnabled) {
+
             cities.stream().forEach(schema -> {
                 if (devMode)
                     migrateDatabase(dataSource, schema,
@@ -119,6 +121,7 @@ public class DBMigrationConfiguration {
             } else if (!devMode) {
                 migrateDatabase(dataSource, statewideSchemaName, mainMigrationFilePath);
             }
+
         }
 
         return Flyway.configure().load();
@@ -143,11 +146,24 @@ public class DBMigrationConfiguration {
         environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
             if (propertySource instanceof MapPropertySource)
                 ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                    if (key.startsWith("tenant."))
+                    if (key.startsWith("tenant.")) {
                         tenants.add(value.toString());
+                    }
                 });
         });
-        return tenants;
+        return orderedTenants(tenants);
+    }
+
+    // This API is to make sure always state schema created first if its available.
+    private List<String> orderedTenants(List<String> tenants) {
+        List<String> orderedTenants = new ArrayList<>();
+        for (String tenant : tenants) {
+            if (tenant.equalsIgnoreCase("state"))
+                orderedTenants.add(0, tenant);
+            else
+                orderedTenants.add(tenant);
+        }
+        return orderedTenants;
     }
 
 }

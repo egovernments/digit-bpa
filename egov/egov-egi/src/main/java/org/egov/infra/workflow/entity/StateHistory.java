@@ -48,9 +48,10 @@
 
 package org.egov.infra.workflow.entity;
 
-import org.egov.infra.admin.master.entity.User;
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -65,8 +66,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Date;
+
+import org.egov.infra.admin.master.entity.User;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Immutable
@@ -110,17 +112,11 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
     private User ownerUser;
 
     private String senderName;
-
     private String nextAction;
-
     private String comments;
-
     private String natureOfTask;
-
     private String extraInfo;
-
     private Date dateInfo;
-
     private Date extraDateInfo;
 
     @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
@@ -128,13 +124,13 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
     private T initiatorPosition;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
     private Date sla;
 
     @Enumerated(EnumType.ORDINAL)
     private State.StateStatus status;
-
+    
     StateHistory() {
-        //Default constructor for jpa
     }
 
     public StateHistory(State<T> state) {
@@ -301,7 +297,6 @@ public class StateHistory<T extends OwnerGroup> implements Serializable {
     public void setSla(Date sla) {
         this.sla = sla;
     }
-
     public State.StateStatus getStatus() {
         return status;
     }

@@ -9,6 +9,6 @@ INSERT INTO EG_DEMAND_REASON_MASTER ( ID, REASONMASTER, "category", ISDEBIT, mod
 
 INSERT into EG_DEMAND_REASON (ID,ID_DEMAND_REASON_MASTER,ID_INSTALLMENT,PERCENTAGE_BASIS,ID_BASE_REASON,create_date,modified_date,GLCODEID) (select (nextval('seq_eg_demand_reason')), (select id from eg_demand_reason_master where code='30' and module=(select id from eg_module where name='BPA' and parentmodule is null)), inst.id, null, null, current_timestamp, current_timestamp, (select ID from CHARTOFACCOUNTS where GLCODE = '1401202') from eg_installment_master inst where inst.id_module=(select id from eg_module where name='BPA' and parentmodule is null));
 
-INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'BUILDING_LICENSEE_REG_FEE_REQUIRED','Building licensee registration fee is required or not',(select id from eg_module where name='BPA'));
+INSERT INTO eg_appconfig ( ID, KEYNAME, DESCRIPTION, MODULE ) VALUES ( nextval('SEQ_EG_APPCONFIG'), 'BUILDING_LICENSEE_REG_FEE_REQUIRED','Building licensee registration fee is required or not',(select id from eg_module where name='BPA'));
 
-Insert into eg_appconfig_values (ID,KEY_ID,EFFECTIVE_FROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEY_NAME ='BUILDING_LICENSEE_REG_FEE_REQUIRED'),now(),'NO');
+Insert into eg_appconfig_values (ID,CONFIG,EFFECTIVEFROM,VALUE) values (nextval('seq_eg_appconfig_values'),(select id from eg_appconfig where KEYNAME ='BUILDING_LICENSEE_REG_FEE_REQUIRED'),now(),'NO');

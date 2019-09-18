@@ -47,9 +47,8 @@
  */
 package org.egov.portal.entity;
 
-import org.egov.infra.admin.master.entity.Device;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.enums.UserType;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -59,11 +58,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.HashSet;
-import java.util.Set;
+
+import org.egov.infra.admin.master.entity.Device;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.enums.UserType;
 
 @Entity
-@Table(name = "egp_citizen")
+@Table(name = "egp_citizen", schema = "state")
 public class Citizen extends User {
 
     private static final long serialVersionUID = -521416613072970524L;
@@ -72,7 +73,7 @@ public class Citizen extends User {
     private String activationCode;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userdevice", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "deviceid"))
+    @JoinTable(name = "eg_userdevice", schema = "state", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "deviceid"))
     private Set<Device> devices = new HashSet<>();
 
     public Citizen() {

@@ -47,15 +47,17 @@
  */
 package org.egov.portal.service;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.enums.MessageType;
 import org.egov.portal.repository.CitizenInboxRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Service for the CitizenInbox
@@ -75,27 +77,59 @@ public class CitizenInboxService {
 
     @Transactional
     public void pushMessage(final CitizenInbox citizenInbox) {
+        citizenInbox.setTenantId(ApplicationThreadLocals.getTenantID());
         citizenInboxRepository.save(citizenInbox);
     }
 
     public Integer findUnreadMessagesCount(final User citizenUser) {
-        return citizenInboxRepository.findUnreadMessagesCount(citizenUser.getId());
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return citizenInboxRepository.findUnreadMessagesCount(citizenUser.getId());
+        } else {
+            return citizenInboxRepository.findUnreadMessagesCount(citizenUser.getId(), ApplicationThreadLocals.getTenantID());
+        }
+
     }
 
     public List<CitizenInbox> findAllInboxMessage(final User citizenUser) {
-        return citizenInboxRepository.findAllInboxMessage(citizenUser.getId());
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return citizenInboxRepository.findAllInboxMessage(citizenUser.getId());
+        } else {
+            return citizenInboxRepository.findAllInboxMessage(citizenUser.getId(), ApplicationThreadLocals.getTenantID());
+        }
+
     }
 
     public List<CitizenInbox> findAllUserMessages(final User citizenUser) {
-        return citizenInboxRepository.findAllInboxMessageByType(MessageType.USER_MESSAGE, citizenUser.getId());
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return citizenInboxRepository.findAllInboxMessageByType(MessageType.USER_MESSAGE, citizenUser.getId());
+        } else {
+            return citizenInboxRepository.findAllInboxMessageByType(MessageType.USER_MESSAGE, citizenUser.getId(),
+                    ApplicationThreadLocals.getTenantID());
+        }
+
     }
 
     public List<CitizenInbox> findAllSystemMessages(final User citizenUser) {
-        return citizenInboxRepository.findAllInboxMessageByType(MessageType.SYSTEM_MESSAGE, citizenUser.getId());
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return citizenInboxRepository.findAllInboxMessageByType(MessageType.SYSTEM_MESSAGE, citizenUser.getId());
+        } else {
+            return citizenInboxRepository.findAllInboxMessageByType(MessageType.SYSTEM_MESSAGE, citizenUser.getId(),
+                    ApplicationThreadLocals.getTenantID());
+        }
+
     }
 
     public List<CitizenInbox> findMyAccountMessages(final User citizenUser) {
-        return citizenInboxRepository.findMyAccountMessages(MessageType.USER_MESSAGE, citizenUser.getId());
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return citizenInboxRepository.findMyAccountMessages(MessageType.USER_MESSAGE, citizenUser.getId());
+        } else {
+            return citizenInboxRepository.findMyAccountMessages(MessageType.USER_MESSAGE, citizenUser.getId(),
+                    ApplicationThreadLocals.getTenantID());
+        }
     }
 
     @Transactional

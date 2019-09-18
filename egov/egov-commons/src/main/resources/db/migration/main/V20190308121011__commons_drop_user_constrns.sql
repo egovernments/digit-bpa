@@ -1,0 +1,5 @@
+ALTER TABLE eg_checklist DROP CONSTRAINT fk_eg_checklist_crtby;
+ALTER TABLE eg_checklist DROP CONSTRAINT fk_eg_checklist_mdfdby;
+ALTER TABLE eg_checklist_type DROP CONSTRAINT fk_eg_mstr_checklist_type_crtby;
+ALTER TABLE eg_checklist_type DROP CONSTRAINT fk_eg_mstr_checklist_type_mdfdby;
+ALTER TABLE eg_object_history DROP CONSTRAINT fk_modified_by;

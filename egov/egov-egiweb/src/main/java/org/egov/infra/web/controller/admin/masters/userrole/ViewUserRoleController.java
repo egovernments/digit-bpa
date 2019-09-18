@@ -69,6 +69,7 @@ public class ViewUserRoleController {
         User user = userService.getUserByUID(userId);
         model.addAttribute("userName", new StringBuilder(10).append(user.getName()).append(" [ ")
                 .append(user.getUsername()).append(" ]").toString());
+        model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles());
         return "userrole-view";
     }

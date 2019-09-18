@@ -62,6 +62,6 @@ public class UserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        return new CurrentUser(this.userService.getUserByUsername(username));
+        return new CurrentUser(this.userService.getUserByUsernameAndTenantIdForLogin(username));
     }
 }

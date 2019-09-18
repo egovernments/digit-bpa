@@ -82,8 +82,8 @@ import org.hibernate.validator.constraints.Length;
  * @author Pradeep
  */
 @Entity
-@Table(name = "egp_inbox")
-@SequenceGenerator(name = SEQ_PORTALINBOX, sequenceName = SEQ_PORTALINBOX, allocationSize = 1)
+@Table(name = "egp_inbox", schema = "state")
+@SequenceGenerator(name = SEQ_PORTALINBOX, sequenceName = SEQ_PORTALINBOX, allocationSize = 1, schema = "state")
 public class PortalInbox extends AbstractAuditable {
 
     public static final String SEQ_PORTALINBOX = "seq_egp_inbox";
@@ -149,6 +149,15 @@ public class PortalInbox extends AbstractAuditable {
 
     @Length(max = 100)
     private String status;
+
+    @Length(max = 250)
+    private String tenantId;
+
+    @Length(max = 255)
+    private String pendingAction;
+
+    @Transient
+    private String domainUrl;
 
     @Override
     public Long getId() {
@@ -306,6 +315,30 @@ public class PortalInbox extends AbstractAuditable {
 
     public void setApplicantName(String applicantName) {
         this.applicantName = applicantName;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getPendingAction() {
+        return pendingAction;
+    }
+
+    public void setPendingAction(String pendingAction) {
+        this.pendingAction = pendingAction;
+    }
+
+    public String getDomainUrl() {
+        return domainUrl;
+    }
+
+    public void setDomainUrl(String domainUrl) {
+        this.domainUrl = domainUrl;
     }
 
 }

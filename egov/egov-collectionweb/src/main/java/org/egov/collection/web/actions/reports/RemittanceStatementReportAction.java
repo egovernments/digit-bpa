@@ -51,6 +51,13 @@
  */
 package org.egov.collection.web.actions.reports;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -79,13 +86,6 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.model.masters.AccountCodePurpose;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Results({ @Result(name = RemittanceStatementReportAction.INDEX, location = "remittanceStatementReport-index.jsp"),
         @Result(name = RemittanceStatementReportAction.REPORT, location = "remittanceStatementReport-report.jsp") })
@@ -162,6 +162,10 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         if (employee != null)
             for (final Jurisdiction element : employee.getJurisdictions())
                 boundaryList.add(element.getBoundary());
+        for (final Jurisdiction element : employee.getJurisdictions()) {
+            if (element.getBoundary() != null)
+                boundaryList.add(element.getBoundary());
+        }
         addDropdownData("boundaryList", boundaryList);
         return INDEX;
     }
@@ -177,8 +181,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final Integer bounaryId = getDeptId();
 
         final StringBuilder jurValuesId = new StringBuilder();
-
-        jurValuesId.append(bounaryId);
+        if (bounaryId != null)
+            jurValuesId.append(bounaryId);
         new ArrayList<Boundary>();
         final Employee employee = employeeService.getEmployeeById(user.getId());
 
@@ -186,11 +190,12 @@ public class RemittanceStatementReportAction extends ReportFormAction {
             for (final Jurisdiction element : employee.getJurisdictions()) {
                 if (jurValuesId.length() > 0)
                     jurValuesId.append(',');
-                jurValuesId.append(element.getBoundary().getId());
-
-                for (final Boundary boundary : element.getBoundary().getChildren()) {
-                    jurValuesId.append(',');
-                    jurValuesId.append(boundary.getId());
+                if (element.getBoundary() != null) {
+                    jurValuesId.append(element.getBoundary().getId());
+                    for (final Boundary boundary : element.getBoundary().getChildren()) {
+                        jurValuesId.append(',');
+                        jurValuesId.append(boundary.getId());
+                    }
                 }
             }
         if (null == jurValuesId.toString() || StringUtils.isEmpty(jurValuesId.toString())
@@ -226,6 +231,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
+
     public void buildReportParams() {
         critParams.put(EGOV_CASH_AMOUNT, totalCashAmount);
         critParams.put(EGOV_CHEQUE_AMOUNT, totalChequeAmount);
@@ -238,6 +244,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
                 bankRemittanceList.isEmpty() ? "" : bankRemittanceList.get(0).getVoucherNumber());
         critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
     }
+
     @SuppressWarnings("unchecked")
     @Action(value = "/reports/remittanceStatementReport-printChequeBankChallan")
     public String printChequeBankChallan() {
@@ -250,6 +257,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return REPORT;
     }
+
     @SuppressWarnings("unchecked")
     @Action(value = "/reports/remittanceStatementReport-printCashBankChallan")
     public String printCashBankChallan() {
@@ -263,7 +271,6 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         return REPORT;
     }
 
- 
     @Action(value = "/reports/remittanceStatementReport-reportPrintBankChallan")
     public String reportPrintBankChallan() {
         final Remittance remittanceObj = (Remittance) persistenceService
@@ -287,7 +294,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         critParams.put(EGOV_REMITTANCE_VOUCHER, remittanceObj == null ? "" : remittanceObj.getReferenceNumber());
         critParams.put(EGOV_REMITTANCE_DATE, remittanceObj == null ? new Date() : remittanceObj.getReferenceDate());
         critParams.put(EGOV_BANK, remittanceObj.getBankAccount() != null
-                ? remittanceObj.getBankAccount().getBankbranch().getBank().getName() : "");
+                ? remittanceObj.getBankAccount().getBankbranch().getBank().getName()
+                : "");
         critParams.put(EGOV_BANK_ACCOUNT,
                 remittanceObj.getBankAccount() != null ? remittanceObj.getBankAccount().getAccountnumber() : "");
         critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());

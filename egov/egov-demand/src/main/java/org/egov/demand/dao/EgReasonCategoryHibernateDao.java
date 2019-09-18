@@ -47,52 +47,50 @@
  */
 package org.egov.demand.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.demand.model.EgReasonCategory;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-
 @Repository(value = "egReasonCategoryDAO")
 public class EgReasonCategoryHibernateDao implements EgReasonCategoryDao {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@SuppressWarnings("unused")
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @SuppressWarnings("unused")
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Override
-	public EgReasonCategory findById(Long id, boolean lock) {
-		return (EgReasonCategory) getCurrentSession().load(EgReasonCategory.class, id);
-	}
+    @Override
+    public EgReasonCategory findById(Long id, boolean lock) {
+        return (EgReasonCategory) getCurrentSession().load(EgReasonCategory.class, id);
+    }
 
-	@Override
-	public EgReasonCategory create(EgReasonCategory egReasonCategory) {
+    @Override
+    public EgReasonCategory create(EgReasonCategory egReasonCategory) {
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public void delete(EgReasonCategory egReasonCategory) {
+    @Override
+    public void delete(EgReasonCategory egReasonCategory) {
 
+    }
 
-	}
+    @Override
+    public EgReasonCategory update(EgReasonCategory egReasonCategory) {
 
-	@Override
-	public EgReasonCategory update(EgReasonCategory egReasonCategory) {
+        return null;
+    }
 
-		return null;
-	}
-
-	@Override
-	public List<EgReasonCategory> findAll() {
-
-		return null;
-	}
-
+    @Override
+    public List<EgReasonCategory> findAll() {
+        return (List<EgReasonCategory>) getCurrentSession().createCriteria(EgReasonCategory.class).list();
+    }
 }

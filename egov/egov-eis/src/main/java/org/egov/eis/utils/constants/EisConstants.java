@@ -76,5 +76,7 @@ public class EisConstants {
 
     public static final String WARD = "Ward";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
+    public static final String EGMODULE_NAME = "EIS";
+    public static final String EMPLOYEE_JURISDICTION_HIERARCHY = "EIS_EMPLOYEE_JURISDICTION_HIERARCHY";
 
 }

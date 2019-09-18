@@ -50,6 +50,7 @@ package org.egov.portal.web.controller.citizen;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,6 +60,7 @@ import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxHelper;
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.service.PortalInboxUserService;
+import org.egov.portal.util.PortalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,11 +75,13 @@ public class PortalRestController {
 
     @Autowired
     private PortalInboxUserService portalInboxUserService;
+    @Autowired
+    private PortalUtils portalUtils;
 
     @PostMapping(value = "/rest/fetch/servicesapplied", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public InboxRenderResponse fetchServicesApplied(@RequestParam final Long id) {
-        List<PortalInboxUser> totalServicesAppliedList = portalInboxUserService.getPortalInboxByUserId(id);
+        List<PortalInboxUser> totalServicesAppliedList = enrichPortalInboxUser(portalInboxUserService.getPortalInboxByUserId(id));
         InboxRenderResponse inboxRenderResponse = new InboxRenderResponse();
         inboxRenderResponse.setPortalInboxHelper(getPortalInboxHelperList(totalServicesAppliedList));
         inboxRenderResponse.setTotalServices((long) totalServicesAppliedList.size());
@@ -90,7 +94,8 @@ public class PortalRestController {
     @PostMapping(value = "/rest/fetch/servicescompleted", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public InboxRenderResponse fetchServicesCompleted(@RequestParam final Long id) {
-        List<PortalInboxUser> totalServicesCompletedList = portalInboxUserService.getPortalInboxByResolved(id, true);
+        List<PortalInboxUser> totalServicesCompletedList = enrichPortalInboxUser(
+                portalInboxUserService.getPortalInboxByResolved(id, true));
         InboxRenderResponse inboxRenderResponse = new InboxRenderResponse();
         inboxRenderResponse.setPortalInboxHelper(getPortalInboxHelperList(totalServicesCompletedList));
         inboxRenderResponse.setTotalServices(portalInboxUserService.getPortalInboxUserCount(id));
@@ -103,7 +108,8 @@ public class PortalRestController {
     @PostMapping(value = "/rest/fetch/servicespending", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public InboxRenderResponse fetchServicesUnderScrutiny(@RequestParam final Long id) {
-        List<PortalInboxUser> totalServicesPendingList = portalInboxUserService.getPortalInboxByResolved(id, false);
+        List<PortalInboxUser> totalServicesPendingList = enrichPortalInboxUser(
+                portalInboxUserService.getPortalInboxByResolved(id, false));
         InboxRenderResponse inboxRenderResponse = new InboxRenderResponse();
         inboxRenderResponse.setPortalInboxHelper(getPortalInboxHelperList(totalServicesPendingList));
         inboxRenderResponse.setTotalServices(portalInboxUserService.getPortalInboxUserCount(id));
@@ -139,6 +145,7 @@ public class PortalRestController {
         for (PortalInboxUser totalServicesApplied : servicesList) {
             PortalInboxHelper portalInboxHelper = new PortalInboxHelper();
             PortalInbox portalInbox = totalServicesApplied.getPortalInbox();
+            portalInboxHelper.setUlbName(portalInbox.getTenantId());
             portalInboxHelper.setApplicantName(portalInbox.getApplicantName());
             portalInboxHelper.setServiceRequestNo(portalInbox.getApplicationNumber());
             portalInboxHelper.setServiceRequestDate(portalInbox.getApplicationDate());
@@ -148,8 +155,19 @@ public class PortalRestController {
             portalInboxHelper.setStatus(portalInbox.getStatus());
             portalInboxHelper.setPendingAction(portalInbox.getState() != null ? portalInbox.getState().getNextAction() : null);
             portalInboxHelper.setResolved(portalInbox.isResolved());
+            portalInboxHelper.setTenantId(portalInbox.getTenantId());
+            portalInboxHelper.setDomainUrl(portalInbox.getDomainUrl());
             portalInboxHelperList.add(portalInboxHelper);
         }
         return portalInboxHelperList;
+    }
+
+    private List<PortalInboxUser> enrichPortalInboxUser(List<PortalInboxUser> portalInboxUsers) {
+        Map<String, String> allTenants = portalUtils.tenantsMap();
+        portalInboxUsers.stream().forEach((portalInboxUser) -> {
+            portalInboxUser.getPortalInbox()
+                    .setDomainUrl(allTenants.get(portalInboxUser.getPortalInbox().getTenantId()));
+        });
+        return portalInboxUsers;
     }
 }

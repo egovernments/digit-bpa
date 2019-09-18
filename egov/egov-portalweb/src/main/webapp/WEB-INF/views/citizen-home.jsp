@@ -203,6 +203,7 @@
 							<thead>
 								<tr>
 									<th><spring:message code="lbl.slno" /></th>
+									<th><spring:message code="lbl.ulb.name" /></th>
 									<th><spring:message code="lbl.applicant.name" /></th>
 									<th><spring:message code="lbl.applicartionno" /></th>
 									<th><spring:message code="lbl.applicationdate" /></th>
@@ -367,9 +368,18 @@
 					<div class="is-flex services-item">
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 services"
 							data-services="${service.module.displayName }">
-							<a href="javascript:openPopUp('${service.url}')">
-								<div class="content a">${service.name}</div>
-							</a>
+							<c:choose>
+							<c:when test="${isState }">
+								<a href="javascript:openPopUp('/portal/common/city/selection-form?url=${domainURL}${service.url}')">
+									<div class="content a">${service.name}</div>
+								</a>
+							</c:when>
+							<c:otherwise>
+								<a href="javascript:openPopUp('${service.url}')">
+									<div class="content a">${service.name}</div>
+								</a>
+							</c:otherwise>
+							</c:choose>
 						</div>
 					</div>
 				</c:forEach>

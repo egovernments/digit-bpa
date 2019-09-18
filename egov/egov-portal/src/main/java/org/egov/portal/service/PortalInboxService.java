@@ -47,7 +47,13 @@
  */
 package org.egov.portal.service;
 
+import static org.egov.infra.utils.ApplicationConstant.NA;
+
+import java.util.Date;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
@@ -58,10 +64,6 @@ import org.egov.portal.service.es.PortalInboxIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class PortalInboxService {
@@ -90,6 +92,8 @@ public class PortalInboxService {
 
     @Transactional
     public void pushInboxMessage(final PortalInbox portalInbox) {
+        portalInbox.setTenantId(ApplicationThreadLocals.getTenantID());
+        portalInbox.setPendingAction(portalInbox.getState() == null ? NA : portalInbox.getState().getNextAction());
         if (portalInbox.getTempPortalInboxUser().isEmpty()) {
             final User user = getLoggedInUser();
             if (user != null
@@ -110,41 +114,45 @@ public class PortalInboxService {
 
     private PortalInboxUser createPortalUser(final PortalInbox portalInbox, final User user) {
         PortalInboxUser portalInboxUser = null;
-        if (portalInbox != null && user!=null) {
+        if (portalInbox != null && user != null) {
             portalInboxUser = new PortalInboxUser();
+            portalInboxUser.setTenantId(ApplicationThreadLocals.getTenantID());
             portalInboxUser.setUser(user);
             portalInbox.getPortalInboxUsers().add(portalInboxUser);
             portalInboxUser.setPortalInbox(portalInbox);
         }
         return portalInboxUser;
     }
-/***
- * 
- * @param applicationNumber mandatory
- * @param moduleId mandatory
- * @param status mandatory status of object
- * @param isResolved true if service resolved
- * @param slaEndDate SLA end date
- * @param state object workflow state
- * @param additionalUser if any additional user to be added
- * @param consumerNumber
- * @param mandatory  link to view record
- */
+
+    /***
+     * 
+     * @param applicationNumber mandatory
+     * @param moduleId mandatory
+     * @param status mandatory status of object
+     * @param isResolved true if service resolved
+     * @param slaEndDate SLA end date
+     * @param state object workflow state
+     * @param additionalUser if any additional user to be added
+     * @param consumerNumber
+     * @param mandatory link to view record
+     */
     @Transactional
     public void updateInboxMessage(final String applicationNumber, final Long moduleId, final String status,
             final Boolean isResolved, final Date slaEndDate, final State state, final User additionalUser,
             final String consumerNumber, final String link) {
-        if (applicationNumber != null && moduleId != null && status!=null && link!=null) {
+        if (applicationNumber != null && moduleId != null && status != null && link != null) {
             final PortalInbox portalInbox = getPortalInboxByApplicationNo(applicationNumber, moduleId);
             if (portalInbox != null) {
                 portalInbox.setStatus(status);
                 portalInbox.setResolved(isResolved);
                 portalInbox.setState(state);
+                portalInbox.setPendingAction(state == null ? NA : state.getNextAction());
                 updatePortalInboxData(slaEndDate, consumerNumber, link, portalInbox);
                 if (additionalUser != null
                         && (UserType.BUSINESS.toString().equalsIgnoreCase(additionalUser.getType().toString()) || UserType.CITIZEN
                                 .toString().equalsIgnoreCase(additionalUser.getType().toString()))
-                        && !containsUser(portalInbox.getPortalInboxUsers(), additionalUser.getId()))
+                        && (!containsUser(portalInbox.getPortalInboxUsers(), additionalUser.getId())
+                                && !status.equalsIgnoreCase("Cancelled")))
                     createPortalUser(portalInbox, additionalUser);
                 portalInboxRepository.saveAndFlush(portalInbox);
                 portalInboxIndexService.createPortalInboxIndex(portalInbox);

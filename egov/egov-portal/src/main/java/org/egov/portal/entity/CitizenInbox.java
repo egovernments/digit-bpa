@@ -47,13 +47,9 @@
  */
 package org.egov.portal.entity;
 
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.workflow.entity.State;
-import org.egov.portal.entity.enums.MessageType;
-import org.egov.portal.entity.enums.Priority;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.portal.entity.CitizenInbox.SEQ_CITIZENINBOX;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -70,9 +66,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
-import static org.egov.portal.entity.CitizenInbox.SEQ_CITIZENINBOX;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.workflow.entity.State;
+import org.egov.portal.entity.enums.MessageType;
+import org.egov.portal.entity.enums.Priority;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * CitizenInbox class
@@ -80,7 +81,7 @@ import static org.egov.portal.entity.CitizenInbox.SEQ_CITIZENINBOX;
  * @author rishi
  */
 @Entity
-@Table(name = "egp_citizeninbox")
+@Table(name = "egp_citizeninbox", schema = "state")
 @SequenceGenerator(name = SEQ_CITIZENINBOX, sequenceName = SEQ_CITIZENINBOX, allocationSize = 1)
 public class CitizenInbox extends AbstractAuditable {
 
@@ -142,6 +143,9 @@ public class CitizenInbox extends AbstractAuditable {
     @Length(max = 100)
     @Column(name = "STATUS")
     private String status;
+
+    @Length(max = 250)
+    private String tenantId;
 
     public Module getModule() {
         return module;
@@ -247,5 +251,13 @@ public class CitizenInbox extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

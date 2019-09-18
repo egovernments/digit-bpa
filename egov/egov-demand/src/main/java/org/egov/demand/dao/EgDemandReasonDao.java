@@ -47,19 +47,19 @@
  */
 package org.egov.demand.dao;
 
-import org.egov.demand.model.EgDemandReason;
-
 import java.util.List;
+
+import org.egov.demand.model.EgDemandReason;
 
 public interface EgDemandReasonDao {
 
-	public EgDemandReason findById(Integer id, boolean lock);
+    public EgDemandReason findById(Integer id, boolean lock);
 
-	public List<EgDemandReason> findAll();
+    public List<EgDemandReason> findAll();
 
-	public EgDemandReason create(EgDemandReason egDemandReason);
+    public void create(EgDemandReason egDemandReason);
 
-	public void delete(EgDemandReason egDemandReason);
+    public void delete(EgDemandReason egDemandReason);
 
-	public EgDemandReason update(EgDemandReason egDemandReason);
+    public EgDemandReason update(EgDemandReason egDemandReason);
 }

@@ -48,15 +48,6 @@
 
 package org.egov.infra.web.support.ui;
 
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.entity.WorkflowType;
-
-import java.io.Serializable;
-import java.util.Date;
-
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -64,6 +55,15 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.infra.utils.DateUtils.now;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.entity.WorkflowType;
 
 public class Inbox implements Serializable {
 
@@ -82,13 +82,14 @@ public class Inbox implements Serializable {
     private Date sla;
 
     public Inbox() {
-        //Default constructor for external inbox integration
+        // Default constructor for external inbox integration
     }
 
     private Inbox(StateAware stateAware, WorkflowType workflowType, String nextAction) {
         State state = stateAware.getCurrentState();
-        this.id = workflowType.isGrouped() ? EMPTY : new StringBuilder(5).append(state.getId()).append("#")
-                .append(workflowType.getId()).toString();
+        this.id = workflowType.isGrouped() ? EMPTY
+                : new StringBuilder(5).append(state.getId()).append("#")
+                        .append(workflowType.getId()).toString();
         this.date = toDefaultDateTimeFormat(state.getCreatedDate());
         this.sender = state.getSenderName();
         this.task = defaultIfBlank(state.getNatureOfTask(), workflowType.getDisplayName());
@@ -207,4 +208,5 @@ public class Inbox implements Serializable {
     public boolean isWithinSla() {
         return this.sla == null || sla.after(now());
     }
+
 }

@@ -95,11 +95,11 @@
             <artifactId>egov-collection</artifactId>
             <version>BPA-3.0.0-SNAPSHOT</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
            <groupId>org.egov</groupId>
-           <artifactId>egov-ptis</artifactId>
+           <artifactId>egov-search</artifactId>
            <version>BPA-3.0.0-SNAPSHOT</version>
-       </dependency>-->
+       </dependency>
 
         <dependency>
             <groupId>org.springframework.data</groupId>

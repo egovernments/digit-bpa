@@ -81,6 +81,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.StateHistoryService;
@@ -221,12 +222,14 @@ public class EmployeeService implements EntityTypeService {
             jurisdiction.setBoundary(jurisdiction.getBoundary());
         }
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
+        employee.setTenantId(ApplicationThreadLocals.getTenantID());
 
         employeeRepository.save(employee);
     }
 
     @Transactional
     public void createEmployeeData(final Employee employee) {
+        employee.setTenantId(ApplicationThreadLocals.getTenantID());
         employee.generateUID();
         employee.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));

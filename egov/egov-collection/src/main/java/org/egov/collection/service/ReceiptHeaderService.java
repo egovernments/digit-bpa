@@ -194,6 +194,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 		final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		Date rcptDate = null;
 		try {
+		        receiptDate = params[3];
 			rcptDate = formatter.parse(receiptDate);
 		} catch (final ParseException e) {
 			LOGGER.error("Exception while parsing ReceiptDate", e);
@@ -205,6 +206,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 			query.append("join receipt.receiptInstrument as instruments ");
 
 		query.append(" where 1=1 and receipt.state.value != 'END' and receipt.state.status != 2 ");
+		receiptType = params[5];
 		// if (!allPositions)
 		query.append(" and receipt.state.ownerPosition.id in :positionIds");
 		if (!allCounters)

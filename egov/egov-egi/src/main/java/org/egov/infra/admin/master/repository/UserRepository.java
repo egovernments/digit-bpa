@@ -73,6 +73,9 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     User findByUsername(String userName);
 
     @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
+    User findByUsernameAndTenantId(String userName, String tenantId);
+
+    @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     User findByUid(String uid);
 
     List<User> findByNameContainingIgnoreCase(String userName);
@@ -128,5 +131,9 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
 
     @Query("select distinct usr from User usr where usr.type=:type and usr.tenantId = :tenant and usr.active=true")
     List<User> findUsersByTypeAndTenantId(@Param("type") UserType type, @Param("tenant") String tenant);
+
+    @Query("select distinct usr from User usr where upper(usr.username) like :usrName and usr.type = :type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId)")
+    List<User> findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(@Param("usrName") String usrName,
+            @Param("type") UserType type, @Param("tenantId") String tenantId, @Param("stateTenantId") String stateTenantId);
 
 }

@@ -1,3 +1,4 @@
+alter table eg_wf_matrix alter column currentstatus type varchar(120);
 
 INSERT INTO eg_wf_matrix (id, department, objecttype, currentstate, currentstatus, pendingactions, currentdesignation, additionalrule, nextstate, nextaction, nextdesignation, nextstatus, validactions, fromqty, toqty, fromdate, todate)
  VALUES (nextval('seq_eg_wf_matrix'), 'ANY', 'OccupancyCertificate', 'New', '', 'Occupancy certificate application creation pending', '', 'OCCUPANCYCERTIFICATE', 'Registered', 'Document Scrutiny Scheduling Pending', 'Section Clerk', 'Registered', 'Forward', NULL, NULL, now(), '2099-04-01');

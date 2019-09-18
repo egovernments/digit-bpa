@@ -1,0 +1,3 @@
+Insert into EGCL_SERVICE_INSTRUMENTACCOUNTS(id, instrumenttype, servicedetails, chartofaccounts, createdby, createddate, lastmodifiedby, lastmodifieddate)
+values(nextval('seq_egcl_service_instrumentaccounts'),(select id from egf_instrumenttype  where type ='online'),(select id from egcl_servicedetails where name='HDFC Bank Payment Gateway' and code='HDFC'),
+(select id from chartofaccounts where glcode='4318001'),1,now(),1,now());

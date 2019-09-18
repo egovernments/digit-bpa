@@ -48,53 +48,52 @@
 
 package org.egov.demand.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.demand.model.EgDemandReasonMaster;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-
 @Repository(value = "egDemandReasonMasterDAO")
 @Transactional(readOnly = true)
 public class EgDemandReasonMasterHibDao implements EgDemandReasonMasterDao {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Override
-	public EgDemandReasonMaster findById(Long id, boolean lock) {
-		return (EgDemandReasonMaster) getCurrentSession().load(EgDemandReasonMaster.class, id);
-	}
+    @Override
+    public EgDemandReasonMaster findById(Long id, boolean lock) {
+        return (EgDemandReasonMaster) getCurrentSession().load(EgDemandReasonMaster.class, id);
+    }
 
-	@Override
-	public List<EgDemandReasonMaster> findAll() {
+    @Override
+    public List<EgDemandReasonMaster> findAll() {
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public EgDemandReasonMaster create(EgDemandReasonMaster egDemandReasonMaster) {
+    @Override
+    @Transactional
+    public void create(EgDemandReasonMaster egDemandReasonMaster) {
+        getCurrentSession().save(egDemandReasonMaster);
+    }
 
-		return null;
-	}
+    @Override
+    public void delete(EgDemandReasonMaster egDemandReasonMaster) {
 
-	@Override
-	public void delete(EgDemandReasonMaster egDemandReasonMaster) {
+    }
 
+    @Override
+    public EgDemandReasonMaster update(EgDemandReasonMaster egDemandReasonMaster) {
 
-	}
-
-	@Override
-	public EgDemandReasonMaster update(EgDemandReasonMaster egDemandReasonMaster) {
-
-		return null;
-	}
-
+        return null;
+    }
 }

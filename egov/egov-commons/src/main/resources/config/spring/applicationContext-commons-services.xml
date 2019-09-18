@@ -54,7 +54,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 	   default-lazy-init="true">
 	   
-	<context:component-scan base-package="org.egov.commons, org.egov.common, org.egov.lib" />
+	<context:component-scan base-package="org.egov.commons.*, org.egov.common, org.egov.lib" />
 
 	<bean id="authRuleService" parent="abstractPersistenceService" autowire-candidate="true">
         <constructor-arg name="type" value="org.egov.lib.rrbac.model.AuthorizationRule"/>

@@ -48,20 +48,14 @@
 
 package org.egov.infra.admin.master.entity;
 
-import static org.apache.commons.lang3.StringUtils.overlay;
-import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PAN_NUMBER;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_SALUTATION;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_USERNAME;
 import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
 import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationRegex.PAN_NUMBER;
 import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
-import static org.egov.infra.validation.constants.ValidationRegex.SALUTATION;
 import static org.egov.infra.validation.constants.ValidationRegex.USERNAME;
 import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 
@@ -96,7 +90,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -121,10 +114,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
 @Entity
-@Table(name = "eg_user")
+@Table(name = "eg_user", schema = "state")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cacheable
-@SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
+@SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1, schema = "state")
 @Unique(fields = { "username", "pan", "emailId" }, enableDfltMsg = true, isSuperclass = true)
 @CompositeUnique(fields = { "type", "mobileNumber" }, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
 @JsonIgnoreProperties({ "createdBy", "lastModifiedBy" })
@@ -140,32 +133,29 @@ public class User extends AbstractAuditable {
     @Audited
     private String tenantId;
 
-    @Length(max = 64)
+    @Length(min = 2, max = 64)
     @SafeHtml
     @Column(unique = true, updatable = false)
     @Pattern(regexp = USERNAME, message = INVALID_USERNAME)
     private String username;
 
-    @Length(max = 64)
+    @NotNull
+    @Length(min = 4, max = 64)
     @Audited
-    @SafeHtml
     private String password;
 
-    @SafeHtml
-    @Length(max = 10)
-    @Pattern(regexp = SALUTATION, message = INVALID_SALUTATION)
     private String salutation;
 
     @SafeHtml
-    @Length(max = 64)
+    @Length(min = 2, max = 64)
     @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String guardian;
 
     @SafeHtml
-    @Length(max = 64)
+    @Length(min = 2, max = 64)
     private String guardianRelation;
 
-    @NotBlank
+    @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
     @Audited
@@ -175,16 +165,16 @@ public class User extends AbstractAuditable {
     @Enumerated(EnumType.ORDINAL)
     private Gender gender;
 
-    @SafeHtml
-    @Length(max = 10)
-    @Audited
     @Pattern(regexp = MOBILE_NUMBER, message = INVALID_MOBILE_NUMBER)
+    @SafeHtml
+    @Length(max = 15)
+    @Audited
     private String mobileNumber;
 
+    @Email(regexp = EMAIL)
     @SafeHtml
     @Length(max = 128)
     @Audited
-    @Email(regexp = EMAIL)
     private String emailId;
 
     @SafeHtml
@@ -194,7 +184,6 @@ public class User extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 10)
-    @Pattern(regexp = PAN_NUMBER, message = INVALID_PAN_NUMBER)
     private String pan;
 
     @SafeHtml
@@ -208,7 +197,7 @@ public class User extends AbstractAuditable {
     private boolean active;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "eg_userrole", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
+    @JoinTable(name = "eg_userrole", schema = "state", joinColumns = @JoinColumn(name = "userid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
     @Audited(targetAuditMode = NOT_AUDITED)
     @AuditJoinTable
     private Set<Role> roles = new HashSet<>();
@@ -219,13 +208,13 @@ public class User extends AbstractAuditable {
     @NotNull
     private Date pwdExpiryDate = new Date();
 
-    @NotBlank
+    @NotNull
     @Length(max = 15)
     @SafeHtml
     private String locale = "en_IN";
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", updatable = false)
+    @Column(name = "type")
     private UserType type;
 
     private byte[] signature;
@@ -254,7 +243,7 @@ public class User extends AbstractAuditable {
     }
 
     @Override
-    protected void setId(Long id) {
+    protected void setId(final Long id) {
         this.id = id;
     }
 
@@ -271,7 +260,7 @@ public class User extends AbstractAuditable {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -280,7 +269,7 @@ public class User extends AbstractAuditable {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -288,7 +277,7 @@ public class User extends AbstractAuditable {
         return salutation;
     }
 
-    public void setSalutation(String salutation) {
+    public void setSalutation(final String salutation) {
         this.salutation = salutation;
     }
 
@@ -296,7 +285,7 @@ public class User extends AbstractAuditable {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -304,7 +293,7 @@ public class User extends AbstractAuditable {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(final Gender gender) {
         this.gender = gender;
     }
 
@@ -312,7 +301,7 @@ public class User extends AbstractAuditable {
         return mobileNumber;
     }
 
-    public void setMobileNumber(String mobileNumber) {
+    public void setMobileNumber(final String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
 
@@ -320,7 +309,7 @@ public class User extends AbstractAuditable {
         return emailId;
     }
 
-    public void setEmailId(String emailId) {
+    public void setEmailId(final String emailId) {
         this.emailId = emailId;
     }
 
@@ -328,7 +317,7 @@ public class User extends AbstractAuditable {
         return altContactNumber;
     }
 
-    public void setAltContactNumber(String altContactNumber) {
+    public void setAltContactNumber(final String altContactNumber) {
         this.altContactNumber = altContactNumber;
     }
 
@@ -336,20 +325,15 @@ public class User extends AbstractAuditable {
         return pan;
     }
 
-    public void setPan(String pan) {
+    public void setPan(final String pan) {
         this.pan = pan;
     }
 
-    public String getMaskedAadhaarNumber() {
-        return overlay(getAadhaarNumber(), repeat('*', 9), 1, 10);
-    }
-
-    @JsonIgnore
     public String getAadhaarNumber() {
         return aadhaarNumber;
     }
 
-    public void setAadhaarNumber(String aadhaarNumber) {
+    public void setAadhaarNumber(final String aadhaarNumber) {
         this.aadhaarNumber = aadhaarNumber;
     }
 
@@ -357,16 +341,16 @@ public class User extends AbstractAuditable {
         return address;
     }
 
-    public void setAddress(List<Address> address) {
+    public void setAddress(final List<Address> address) {
         this.address = address;
     }
 
-    public void addAddress(Address address) {
+    public void addAddress(final Address address) {
         address.setUser(this);
         this.address.add(address);
     }
 
-    public void removeAddress(Address address) {
+    public void removeAddress(final Address address) {
         getAddress().remove(address);
     }
 
@@ -374,7 +358,7 @@ public class User extends AbstractAuditable {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -382,15 +366,15 @@ public class User extends AbstractAuditable {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(final Set<Role> roles) {
         this.roles = roles;
     }
 
-    public void addRole(Role role) {
+    public void addRole(final Role role) {
         getRoles().add(role);
     }
 
-    public void removeRole(Role role) {
+    public void removeRole(final Role role) {
         getRoles().remove(role);
     }
 
@@ -398,7 +382,7 @@ public class User extends AbstractAuditable {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(final Date dob) {
         this.dob = dob;
     }
 
@@ -406,7 +390,7 @@ public class User extends AbstractAuditable {
         return null == pwdExpiryDate ? null : new DateTime(pwdExpiryDate);
     }
 
-    public void setPwdExpiryDate(Date pwdExpiryDate) {
+    public void setPwdExpiryDate(final Date pwdExpiryDate) {
         this.pwdExpiryDate = pwdExpiryDate;
     }
 
@@ -414,7 +398,7 @@ public class User extends AbstractAuditable {
         return locale;
     }
 
-    public void setLocale(String locale) {
+    public void setLocale(final String locale) {
         this.locale = locale;
     }
 
@@ -426,7 +410,7 @@ public class User extends AbstractAuditable {
         return type;
     }
 
-    protected void setType(UserType userType) {
+    public void setType(final UserType userType) {
         type = userType;
     }
 
@@ -434,7 +418,7 @@ public class User extends AbstractAuditable {
         return guardian;
     }
 
-    public void setGuardian(String guardian) {
+    public void setGuardian(final String guardian) {
         this.guardian = guardian;
     }
 
@@ -442,7 +426,7 @@ public class User extends AbstractAuditable {
         return guardianRelation;
     }
 
-    public void setGuardianRelation(String guardianRelation) {
+    public void setGuardianRelation(final String guardianRelation) {
         this.guardianRelation = guardianRelation;
     }
 
@@ -459,7 +443,7 @@ public class User extends AbstractAuditable {
         return accountLocked;
     }
 
-    public void setAccountLocked(boolean accountLocked) {
+    public void setAccountLocked(final boolean accountLocked) {
         this.accountLocked = accountLocked;
     }
 

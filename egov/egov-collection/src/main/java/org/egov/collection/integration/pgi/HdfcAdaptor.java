@@ -1,50 +1,3 @@
-/*
- *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
- *
- *     Copyright (C) 2017  eGovernments Foundation
- *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
- *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
- *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces,
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *            derived works should carry eGovernments Foundation logo on the top right corner.
- *
- *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines,
- *            please contact contact@egovernments.org
- *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
- *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
- *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- *
- */
 package org.egov.collection.integration.pgi;
 
 import static org.egov.collection.constants.CollectionConstants.SINGLE_DELIMITER;
@@ -83,18 +36,19 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.service.ReceiptHeaderService;
+import org.egov.collection.utils.CollectionsUtil;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * The PaymentRequestAdaptor class frames the payment request object and parses the payment response for the payment gateway
  * service HDFC
  */
-@Service
+
 public class HdfcAdaptor implements PaymentGatewayAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(HdfcAdaptor.class);
@@ -121,12 +75,16 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
     private static final String ADDED_ON = "addedon";
     private static final String SUCCESS = "success";
     private static final String DROP_CATEGORY = "drop_category";
+    private static final String CITY_CODE = "city_code";
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
 
     @Autowired
     private ReceiptHeaderService receiptHeaderService;
+
+    @Autowired
+    private CollectionsUtil collectionsUtil;
 
     /**
      * This method invokes APIs to frame request object for the payment service passed as parameter
@@ -138,7 +96,12 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
     public PaymentRequest createPaymentRequest(ServiceDetails paymentServiceDetails, ReceiptHeader receiptHeader) {
         DefaultPaymentRequest paymentRequest = new DefaultPaymentRequest();
         paymentRequest.setParameter(CollectionConstants.HDFC_KEY, collectionApplicationProperties.hdfcKey());
-        paymentRequest.setParameter(CollectionConstants.HDFC_TXNID, receiptHeader.getId().toString());
+        String cityCode = ApplicationThreadLocals.getCityCode();
+
+        paymentRequest.setParameter(CollectionConstants.HDFC_TXNID, cityCode
+                + CollectionConstants.SEPARATOR_HYPHEN + receiptHeader.getId().toString()
+                + CollectionConstants.SEPARATOR_HYPHEN + receiptHeader.getService().getCode());
+
         paymentRequest
                 .setParameter(CollectionConstants.HDFC_AMOUNT, receiptHeader.getTotalAmount().setScale(0, BigDecimal.ROUND_UP));
 
@@ -167,7 +130,7 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
         // Phone
         paymentRequest.setParameter(UDF3, collectionApplicationProperties.hdfcTransactionPhone());
         // Address
-        paymentRequest.setParameter(UDF4, buildAddress(receiptHeader.getPayeeAddress()));
+        paymentRequest.setParameter(UDF4, buildAddress(ApplicationThreadLocals.getCityName()));
         // Txn ID
         paymentRequest.setParameter(UDF5, receiptHeader.getId().toString());
 
@@ -201,7 +164,7 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
 
         hashData.append(SIX_DELIMITER).append(collectionApplicationProperties.hdfcSalt());
 
-        LOGGER.info(KEY + " = " + collectionApplicationProperties.hdfcKey() + " | "
+        LOGGER.info(CITY_CODE + " = " + cityCode + " | " + KEY + " = " + collectionApplicationProperties.hdfcKey() + " | "
                 + CollectionConstants.HDFC_TXNID + " = " + requestmap.get(CollectionConstants.HDFC_TXNID)
                 + " | " + CollectionConstants.HDFC_PRODUCT_INFO + " = " + requestmap.get(CollectionConstants.HDFC_PRODUCT_INFO)
                 + " | " + CollectionConstants.HDFC_FIRSTNAME + " = " + requestmap.get(CollectionConstants.HDFC_FIRSTNAME)
@@ -231,9 +194,9 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
             if (split.length > 0) {
                 String splitZero = split[0];
                 if (splitZero.length() > 20) {
-                    return splitZero.substring(0, 19).replaceAll("[^A-Za-z0-9]", " ").trim();
+                    return splitZero.substring(0, 19).trim().replaceAll("[^A-Za-z0-9]", " ");
                 } else
-                    return splitZero.replaceAll("[^A-Za-z0-9]", " ").trim();
+                    return splitZero.trim().replaceAll("[^A-Za-z0-9]", " ");
             }
         }
         return StringUtils.EMPTY;
@@ -296,10 +259,12 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
             Date transactionDate = formatDate(responseMap.get(ADDED_ON));
 
             String txnId = responseMap.get(TNX_ID);
+            String convertedTnxId = collectionsUtil.getTransactionId(txnId, CollectionConstants.SEPARATOR_HYPHEN);
+
             String udf1 = responseMap.get(UDF1); // consumer code
 
             ReceiptHeader onlinePaymentReceiptHeader = receiptHeaderService.findByNamedQuery(
-                    CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE, Long.valueOf(txnId),
+                    CollectionConstants.QUERY_PENDING_RECEIPT_BY_ID_AND_CONSUMERCODE, Long.valueOf(convertedTnxId),
                     udf1);
 
             if (verifyResponse(responseMap, transactionDate, onlinePaymentReceiptHeader)) {
@@ -322,7 +287,7 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
 
             hdfcResponse.setErrorDescription(responseMap.get(ERROR));
             hdfcResponse.setAdditionalInfo6(responseMap.get(PRODUCT_INFO));
-            hdfcResponse.setReceiptId(responseMap.get(TNX_ID));
+            hdfcResponse.setReceiptId(convertedTnxId);
 
         } catch (ApplicationException e) {
             LOGGER.error(e);
@@ -356,7 +321,7 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
                 if (onlinePaymentReceiptHeader != null) {
 
                     String udf5 = onlinePaymentReceiptHeader.getId().toString();
-                    String udf4 = buildAddress(onlinePaymentReceiptHeader.getPayeeAddress());
+                    String udf4 = buildAddress(ApplicationThreadLocals.getCityName());
                     String udf3 = collectionApplicationProperties.hdfcTransactionPhone();
                     String udf2 = !StringUtils.isBlank(onlinePaymentReceiptHeader.getPayeeEmail())
                             ? onlinePaymentReceiptHeader.getPayeeEmail()
@@ -469,7 +434,9 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
                 hdfcResponse
                         .setAdditionalInfo6(onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "").replace("/", ""));
                 hdfcResponse.setErrorDescription(responseMap.get("error_Message"));
-                hdfcResponse.setReceiptId(responseMap.get(TNX_ID));
+                String txnId = responseMap.get(TNX_ID);
+                String convertedTnxId = collectionsUtil.getTransactionId(txnId, CollectionConstants.SEPARATOR_HYPHEN);
+                hdfcResponse.setReceiptId(convertedTnxId);
                 hdfcResponse.setTxnAmount(new BigDecimal(responseMap.get("amt")));
                 hdfcResponse.setTxnReferenceNo(responseMap.get(MIH_PAYID));
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -531,6 +498,7 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
 
     private UrlEncodedFormEntity prepareEntityData(OnlinePayment onlinePayment) {
         List<NameValuePair> formData = new ArrayList<>();
+        String cityCode = ApplicationThreadLocals.getCityCode();
         formData.add(new BasicNameValuePair(CollectionConstants.HDFC_KEY, collectionApplicationProperties.hdfcKey()));
         formData.add(new BasicNameValuePair(CollectionConstants.HDFC_COMMAND,
                 collectionApplicationProperties.hdfcReconsileCommand()));
@@ -539,7 +507,9 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
         hashData.append(SINGLE_DELIMITER);
         hashData.append(collectionApplicationProperties.hdfcReconsileCommand());
         hashData.append(SINGLE_DELIMITER);
-        hashData.append(onlinePayment.getReceiptHeader().getId().toString());
+        hashData.append(cityCode + CollectionConstants.SEPARATOR_HYPHEN
+                + onlinePayment.getReceiptHeader().getId().toString() + CollectionConstants.SEPARATOR_HYPHEN
+                + onlinePayment.getReceiptHeader().getService().getCode());
         hashData.append(SINGLE_DELIMITER);
         hashData.append(collectionApplicationProperties.hdfcSalt());
         String hashValue = "";
@@ -549,8 +519,10 @@ public class HdfcAdaptor implements PaymentGatewayAdaptor {
         }
         LOGGER.info("Reconcile - Hashing data before encryption" + hashData.toString());
         formData.add(new BasicNameValuePair(CollectionConstants.HDFC_HASH, hashValue));
-        formData.add(
-                new BasicNameValuePair(CollectionConstants.HDFC_VARIABLE, onlinePayment.getReceiptHeader().getId().toString()));
+        formData.add(new BasicNameValuePair(CollectionConstants.HDFC_VARIABLE,
+                cityCode + CollectionConstants.SEPARATOR_HYPHEN + onlinePayment.getReceiptHeader().getId().toString()
+                        + CollectionConstants.SEPARATOR_HYPHEN
+                        + onlinePayment.getReceiptHeader().getService().getCode()));
         LOGGER.debug("HDFC  Reconcilation request: " + formData);
 
         UrlEncodedFormEntity urlEncodedFormEntity = null;

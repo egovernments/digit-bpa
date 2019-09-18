@@ -1,0 +1,16 @@
+alter table egp_portalservice add column ordernumber bigint;
+update egp_portalservice set ordernumber=1 where name='New Building Plan Scrutiny';
+update egp_portalservice set ordernumber=2 where name='Resubmit Building Plan Scrutiny';
+update egp_portalservice set ordernumber=3 where name='New Occupancy Certificate Plan Scrutiny';
+update egp_portalservice set ordernumber=4 where name='Resubmit Occupancy Certificate Plan Scrutiny';
+update egp_portalservice set ordernumber=5 where name='New Construction';
+update egp_portalservice set ordernumber=6 where name='Demolition';
+update egp_portalservice set ordernumber=7 where name='Reconstruction';
+update egp_portalservice set ordernumber=8 where name='Alteration';
+update egp_portalservice set ordernumber=9 where name='Addition or Extension';
+update egp_portalservice set ordernumber=10 where name='Change in Occupancy';
+update egp_portalservice set ordernumber=11 where name='Sub-Division of plot/Land Development';
+update egp_portalservice set ordernumber=12 where name='Amenities (Well,Compound Wall,Roof cov..etc)';
+update egp_portalservice set ordernumber=13 where name='Permission for Temporary hut or shed';
+update egp_portalservice set ordernumber=6 where name='Tower Construction';
+update egp_portalservice set ordernumber=6 where name='Pole Structures';

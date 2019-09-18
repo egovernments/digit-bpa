@@ -378,8 +378,10 @@ public class CollectionsUtil {
             // allowed.
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
-        } else
+        } else {
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_CARD);
+        }
         return collectionsModeNotAllowed;
     }
 
@@ -843,7 +845,8 @@ public class CollectionsUtil {
                 .withConsumerCode(receiptHeader.getConsumerCode() != null ? receiptHeader.getConsumerCode() : "")
                 .withBillNumber(receiptHeader.getReferencenumber() != null ? receiptHeader.getReferencenumber() : null)
                 .withPaymentGateway(receiptHeader.getOnlinePayment() != null
-                        ? receiptHeader.getOnlinePayment().getService().getName() : "")
+                        ? receiptHeader.getOnlinePayment().getService().getName()
+                        : "")
                 .withConsumerName(receiptHeader.getPayeeName() != null ? receiptHeader.getPayeeName() : "")
                 .withReceiptCreator(receiptHeader.getCreatedBy() != null ? receiptHeader.getCreatedBy().getName() : "")
                 .withArrearAmount(receiptAmountInfo.getArrearsAmount())
@@ -978,10 +981,10 @@ public class CollectionsUtil {
 
     public void emailReceiptAsAttachment(final ReceiptHeader receiptHeader, final byte[] attachment) {
         String emailBody = collectionApplicationProperties.getEmailBody();
-        emailBody = String.format(emailBody, ApplicationThreadLocals.getCityName(),
+        emailBody = String.format(emailBody, ApplicationThreadLocals.getMunicipalityName(),
                 receiptHeader.getTotalAmount().toString(), receiptHeader.getService().getName(),
                 receiptHeader.getConsumerCode(), receiptHeader.getReceiptdate().toString(),
-                ApplicationThreadLocals.getCityName());
+                ApplicationThreadLocals.getMunicipalityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
         notificationService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
@@ -1087,6 +1090,14 @@ public class CollectionsUtil {
             return jurValuesId.toString();
         } else
             return "";
+    }
+
+    public String getTransactionId(String tnxId, String delimiter) {
+
+        String[] tnxIdSplit = tnxId.split(delimiter);
+
+        return tnxIdSplit.length >= 3 ? tnxIdSplit[1] : tnxId;
+
     }
 
 }

@@ -13,7 +13,9 @@ public class PortalInboxHelper {
     private String status;
     private String pendingAction;
     private String tenantId;
+    private String ulbName;
     private boolean resolved;
+    private String domainUrl;
 
     public String getApplicantName() {
         return applicantName;
@@ -95,4 +97,19 @@ public class PortalInboxHelper {
         this.tenantId = tenantId;
     }
 
+    public String getUlbName() {
+        return ulbName;
+    }
+
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
+    }
+
+    public String getDomainUrl() {
+        return domainUrl;
+    }
+
+    public void setDomainUrl(String domainUrl) {
+        this.domainUrl = domainUrl;
+    }
 }

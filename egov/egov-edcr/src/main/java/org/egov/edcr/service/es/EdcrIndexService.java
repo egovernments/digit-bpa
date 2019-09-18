@@ -1,6 +1,8 @@
 package org.egov.edcr.service.es;
 
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 import org.egov.commons.entity.Source;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.es.EdcrIndex;
@@ -9,15 +11,13 @@ import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.elasticsearch.entity.ApplicationIndex;
-import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
-import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
-import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.search.elasticsearch.entity.ApplicationIndex;
+import org.egov.search.elasticsearch.entity.enums.ApprovalStatus;
+import org.egov.search.elasticsearch.entity.enums.ClosureStatus;
+import org.egov.search.elasticsearch.service.ApplicationIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
 @Transactional(readOnly = true)

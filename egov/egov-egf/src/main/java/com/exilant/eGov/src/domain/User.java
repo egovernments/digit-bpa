@@ -118,7 +118,7 @@ public class User {
     // this method gets the assigned role for the user from the database.
     public String getRole(final Connection con) throws TaskFailedException {
         final StringBuilder query = new StringBuilder("select r.Role_name as role")
-                .append(" from EG_ROLES r, EG_USER u, EG_USERROLE ur")
+                .append(" from EG_ROLES r, state.EG_USER u, state.EG_USERROLE ur")
                 .append(" where u.user_name = :userName and ur.id_role = r.id_role and u.id_user = ur.id_user ");
         String role = "";
         try {
@@ -136,7 +136,7 @@ public class User {
 
     public int getId() throws TaskFailedException {
         final StringBuilder query = new StringBuilder("select id_user")
-                .append(" from EG_USER")
+                .append(" from state.EG_USER")
                 .append(" where user_name = :userName ");
         int userId = 0;
         try {

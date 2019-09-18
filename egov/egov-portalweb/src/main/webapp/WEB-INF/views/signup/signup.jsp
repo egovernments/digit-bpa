@@ -103,7 +103,7 @@
                     <ul class="hr-menu text-right">
                         <li class="ico-menu">
                             <a href="http://www.egovernments.org" data-strwindname="egovsite" class="open-popup">
-                                <img src="<cdn:url value='/resources/global/images/egov_logo_tr_h.png' context='/egi'/>" title="Powered by eGovernments" height="37" alt="">
+                                <img src="<cdn:url value='/resources/global/images/digit-logo-black.png' context='/egi'/>" title="Powered by eGovernments" height="37" alt="">
                             </a>
                         </li>
                     </ul>

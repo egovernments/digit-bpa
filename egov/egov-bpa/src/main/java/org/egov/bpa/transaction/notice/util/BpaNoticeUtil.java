@@ -345,27 +345,29 @@ public class BpaNoticeUtil {
                         receipts.add(receipt);
                     }
 
-            receipts.sort((o1, o2) -> o2.getReceiptDate().compareTo(o1.getReceiptDate()));
+            if (!receipts.isEmpty()) {
 
-            String regularizationMsg1 = bpaMessageSource.getMessage("msg.regularization.permit.desc1",
-                    new String[] { applicantName, serviceType, site.getReSurveyNumber(), site.getPlotdoornumber(),
-                            site.getNearestbuildingnumber(),
-                            DateUtils.toDefaultDateFormat(bpaApplication.getPlanPermissionDate()), applicantName,
-                            String.valueOf(receipts.get(0).getReceiptAmt()),
-                            String.valueOf(receipts.get(0).getReceiptNumber()),
-                            String.valueOf(DateUtils.toDefaultDateFormat(receipts.get(0).getReceiptDate())) },
-                    null);
-            String regularizationMsg2 = bpaMessageSource.getMessage("msg.regularization.permit.desc2",
-                    new String[] { approverName, approverDesignation, serviceType, site.getPlotdoornumber(),
-                            site.getNearestbuildingnumber(),
-                            DateUtils.toDefaultDateFormat(bpaApplication.getPlanPermissionDate()), applicantName,
-                            String.valueOf(receipts.get(0).getReceiptAmt()),
-                            String.valueOf(receipts.get(0).getReceiptNumber()),
-                            String.valueOf(DateUtils.toDefaultDateFormat(receipts.get(0).getReceiptDate())) },
-                    null);
-            reportParams.put("regularizationMsg1", regularizationMsg1);
-            reportParams.put("regularizationMsg2", regularizationMsg2);
+                receipts.sort((o1, o2) -> o2.getReceiptDate().compareTo(o1.getReceiptDate()));
 
+                String regularizationMsg1 = bpaMessageSource.getMessage("msg.regularization.permit.desc1",
+                        new String[] { applicantName, serviceType, site.getReSurveyNumber(), site.getPlotdoornumber(),
+                                site.getNearestbuildingnumber(),
+                                DateUtils.toDefaultDateFormat(bpaApplication.getPlanPermissionDate()), applicantName,
+                                String.valueOf(receipts.get(0).getReceiptAmt()),
+                                String.valueOf(receipts.get(0).getReceiptNumber()),
+                                String.valueOf(DateUtils.toDefaultDateFormat(receipts.get(0).getReceiptDate())) },
+                        null);
+                String regularizationMsg2 = bpaMessageSource.getMessage("msg.regularization.permit.desc2",
+                        new String[] { approverName, approverDesignation, serviceType, site.getPlotdoornumber(),
+                                site.getNearestbuildingnumber(),
+                                DateUtils.toDefaultDateFormat(bpaApplication.getPlanPermissionDate()), applicantName,
+                                String.valueOf(receipts.get(0).getReceiptAmt()),
+                                String.valueOf(receipts.get(0).getReceiptNumber()),
+                                String.valueOf(DateUtils.toDefaultDateFormat(receipts.get(0).getReceiptDate())) },
+                        null);
+                reportParams.put("regularizationMsg1", regularizationMsg1);
+                reportParams.put("regularizationMsg2", regularizationMsg2);
+            }
             lawAct = "APPENDIX -I, [See rule 146 (3)]";
         } else {
             lawAct = "APPENDIX C, [See Rule 11 (3)]";

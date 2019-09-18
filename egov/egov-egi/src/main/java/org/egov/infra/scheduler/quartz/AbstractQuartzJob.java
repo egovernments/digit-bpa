@@ -48,6 +48,17 @@
 
 package org.egov.infra.scheduler.quartz;
 
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.infra.utils.ApplicationConstant.MDC_APPNAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.MDC_UID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.MDC_ULBCODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.SYSTEM_USERNAME;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
@@ -60,22 +71,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.QuartzJobBean;
-
-import javax.annotation.Resource;
-import java.util.List;
-
-import static java.util.UUID.randomUUID;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.egov.infra.utils.ApplicationConstant.MDC_APPNAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.MDC_UID_KEY;
-import static org.egov.infra.utils.ApplicationConstant.MDC_ULBCODE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.SYSTEM_USERNAME;
 
 public abstract class AbstractQuartzJob extends QuartzJobBean implements GenericJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractQuartzJob.class);
     private static final long serialVersionUID = -3575280953294411371L;
+
+    @Value("${client.id}")
+    private String clientId;
 
     @Resource(name = "cities")
     private transient List<String> cities;
@@ -95,7 +100,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     @Override
     protected void executeInternal(JobExecutionContext jobCtx) throws JobExecutionException {
         try {
-            MDC.put(MDC_APPNAME_KEY, moduleName.toUpperCase());
+            MDC.put(MDC_APPNAME_KEY, String.format("%s-%s", moduleName, jobCtx.getJobDetail().getKey().getName()));
             for (String tenant : this.cities) {
                 MDC.put(MDC_ULBCODE_KEY, tenant);
                 MDC.put(MDC_UID_KEY, randomUUID().toString());
@@ -111,7 +116,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
         }
     }
 
-    public void setModuleName(String moduleName) {
+    public void setModuleName(final String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -127,15 +132,25 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
         ApplicationThreadLocals.setTenantID(tenant);
         ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
         if (cityDataRequired) {
+            // TODO: get the city by tenant
             City city = this.cityService.findAll().get(0);
-            ApplicationThreadLocals.setCityCode(city.getCode());
-            ApplicationThreadLocals.setCityName(city.getName());
+            if (city != null) {
+                ApplicationThreadLocals.setCityCode(city.getCode());
+                ApplicationThreadLocals.setCityName(city.getName());
+                ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
+                ApplicationThreadLocals.setDistrictName(city.getDistrictName());
+                ApplicationThreadLocals.setStateName(clientId);
+                ApplicationThreadLocals.setGrade(city.getGrade());
+                ApplicationThreadLocals.setDomainName(city.getDomainURL());
+                ApplicationThreadLocals.setDomainURL("https://" + city.getDomainURL());
+            } else {
+                LOGGER.warn("Unable to find the city");
+            }
             CityPreferences cityPreferences = city.getPreferences();
             if (cityPreferences != null)
                 ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
             else
                 LOGGER.warn("City preferences not set for {}", city.getName());
-            ApplicationThreadLocals.setDomainName(city.getDomainURL());
         }
     }
 }

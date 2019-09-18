@@ -49,6 +49,8 @@ package org.egov.portal.service;
 
 import java.util.List;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.repository.PortalInboxUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,24 +65,51 @@ public class PortalInboxUserService {
     private PortalInboxUserRepository portalInboxUserRepository;
 
     public List<PortalInboxUser> getPortalInboxByResolved(final Long userId, final boolean resolved) {
-        return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved);
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved);
+        } else {
+            return portalInboxUserRepository.getPortalInboxByResolved(userId, resolved, ApplicationThreadLocals.getTenantID());
+        }
+
     }
 
     public List<PortalInboxUser> getPortalInboxByUserId(final Long userId) {
-        return portalInboxUserRepository.findByUser_IdOrderByIdDesc(userId);
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.findByUser_IdOrderByIdDesc(userId);
+        } else {
+            return portalInboxUserRepository.findByTenantIdAndUser_IdOrderByIdDesc(ApplicationThreadLocals.getTenantID(), userId);
+        }
+
     }
 
     public Long getPortalInboxUserCount(final Long userId) {
-        return portalInboxUserRepository.getPortalInboxUserCount(userId);
+
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.getPortalInboxUserCount(userId);
+        } else {
+            return portalInboxUserRepository.getPortalInboxUserCount(userId, ApplicationThreadLocals.getTenantID());
+        }
+
     }
 
-    public Long getPortalInboxUserCountByResolved(final Long userId, final boolean isResolved) {
-        return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, isResolved);
+    public Long getPortalInboxUserCountByResolved(final Long userId, boolean resolved) {
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, resolved);
+        } else {
+            return portalInboxUserRepository.getPortalInboxUserCountByResolved(userId, resolved,
+                    ApplicationThreadLocals.getTenantID());
+        }
     }
 
-    public Long getPortalInboxUserCountByResolvedAndModule(final Long userId, final boolean isResolved,
-            final String serviceContextRoot) {
-        return portalInboxUserRepository.getPortalInboxUserCountByResolvedAndModule(userId, isResolved, serviceContextRoot);
+    public Long getPortalInboxUserCountByResolvedAndModule(final Long userId, boolean resolved, final String serviceContextRoot) {
+        if (ApplicationConstant.STATE_TENANTID.equalsIgnoreCase(ApplicationThreadLocals.getTenantID())) {
+            return portalInboxUserRepository.getPortalInboxUserCountByResolvedAndModule(userId, resolved, serviceContextRoot);
+        } else {
+            return portalInboxUserRepository.getPortalInboxUserCountByResolvedAndModule(userId, resolved,
+                    ApplicationThreadLocals.getTenantID(), serviceContextRoot);
+        }
     }
 
 }

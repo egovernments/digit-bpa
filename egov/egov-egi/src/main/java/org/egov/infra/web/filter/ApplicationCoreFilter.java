@@ -48,9 +48,18 @@
 
 package org.egov.infra.web.filter;
 
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.egov.infra.security.utils.SecurityUtils.getCurrentAuthentication;
+import static org.egov.infra.utils.ApplicationConstant.APP_RELEASE_ATTRIB_NAME;
+import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOCAL_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
+
+import java.io.IOException;
+import java.util.Optional;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -60,25 +69,18 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
-import static org.egov.infra.config.core.ApplicationThreadLocals.clearValues;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setCityCode;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setCityName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setIPAddress;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setMunicipalityName;
-import static org.egov.infra.config.core.ApplicationThreadLocals.setUserId;
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_IP_ADDRESS;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
-import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
-import static org.egov.infra.web.utils.WebUtils.extractOriginIPAddress;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 
 public class ApplicationCoreFilter implements Filter {
-
 
     @Autowired
     private CityService cityService;
@@ -86,45 +88,72 @@ public class ApplicationCoreFilter implements Filter {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Value("${cdn.domain.url}")
+    private String cdnURL;
+
+    @Value("${client.id}")
+    private String clientId;
+
+    @Value("${app.version}_${app.build.no}")
+    private String applicationRelease;
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpSession session = request.getSession();
         try {
-            HttpServletRequest request = (HttpServletRequest) req;
-            HttpSession session = request.getSession();
-            prepareUserSession(session, request);
+            prepareUserSession(session);
             prepareApplicationThreadLocal(session);
             chain.doFilter(request, resp);
         } finally {
-            clearValues();
+            ApplicationThreadLocals.clearValues();
         }
     }
 
-    private void prepareUserSession(HttpSession session, HttpServletRequest request) {
-        if (session.getAttribute(CITY_CODE_KEY) == null)
-            cityService.cityDataAsMap().forEach(session::setAttribute);
+    private void prepareUserSession(HttpSession session) {
+        // if (session.getAttribute(CITY_CODE_KEY) == null)
+        cityService.cityDataAsMap().forEach(session::setAttribute);
+        if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
+            session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationRelease);
         if (session.getAttribute(TENANTID_KEY) == null)
-            session.setAttribute(TENANTID_KEY, getTenantID());
-        if (session.getAttribute(USERID_KEY) == null)
-            session.setAttribute(USERID_KEY, securityUtils.getCurrentUser().getId());
-        if (session.getAttribute(LOGIN_IP_ADDRESS) == null)
-            session.setAttribute(LOGIN_IP_ADDRESS, extractOriginIPAddress(request));
+            session.setAttribute(TENANTID_KEY, ApplicationThreadLocals.getTenantID());
+        if (session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)
+            session.getServletContext().setAttribute(CDN_ATTRIB_NAME, cdnURL);
+        if (session.getAttribute(USERID_KEY) == null) {
+            Optional<Authentication> authentication = getCurrentAuthentication();
+            if (authentication.isPresent() && authentication.get().getPrincipal() instanceof CurrentUser) {
+                session.setAttribute(USERID_KEY, ((CurrentUser) authentication.get().getPrincipal()).getUserId());
+            } else if (!authentication.isPresent() || !(authentication.get().getPrincipal() instanceof User)) {
+                session.setAttribute(USERID_KEY, securityUtils.getCurrentUser().getId());
+            }
+        }
     }
 
     private void prepareApplicationThreadLocal(HttpSession session) {
-        setCityCode((String) session.getAttribute(CITY_CODE_KEY));
-        setCityName((String) session.getAttribute(CITY_NAME_KEY));
-        setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
-        setUserId((Long) session.getAttribute(USERID_KEY));
-        setIPAddress((String) session.getAttribute(LOGIN_IP_ADDRESS));
+        ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
+        ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
+        ApplicationThreadLocals.setCityNameLocal((String) session.getAttribute(CITY_LOCAL_NAME_KEY));
+        ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
+        ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
+        if (session.getAttribute(CITY_CODE_KEY) != null) {
+            City city = cityService.getCityByCode((String) session.getAttribute(CITY_CODE_KEY));
+            if (city != null) {
+                ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
+                ApplicationThreadLocals.setDistrictName(city.getDistrictName());
+                ApplicationThreadLocals.setStateName(clientId);
+                ApplicationThreadLocals.setGrade(city.getGrade());
+            }
+        }
+
     }
 
     @Override
     public void destroy() {
-        //Nothing to be destroyed
+        // Nothing to be destroyed
     }
 
     @Override
-    public void init(FilterConfig filterConfig) {
-        //Nothing to be initialized
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // Nothing to be initialized
     }
 }

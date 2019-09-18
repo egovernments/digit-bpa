@@ -134,17 +134,17 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TS1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TS1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TS1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TS1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TS1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -166,17 +166,17 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TS2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TS2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TS2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TS2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TS2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -200,17 +200,17 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='SEC1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='SEC1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='SEC1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='SEC1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='SEC1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -233,17 +233,17 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='SEC2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='SEC2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='SEC2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='SEC2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='SEC2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -265,15 +265,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPBO1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPBO1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPBO1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPBO1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -296,15 +296,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPBO2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPBO2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPBO2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPBO2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -326,12 +326,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPBO3'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPBO3'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPBO3'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -353,12 +353,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPBO4'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPBO4'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPBO4'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -381,15 +381,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPCORPENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPCORPENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPCORPENG1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPCORPENG1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -412,15 +412,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPCORPENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPCORPENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPCORPENG2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPCORPENG2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -442,12 +442,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPCORPENG3'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPCORPENG3'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPCORPENG3'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -469,12 +469,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPCORPENG4'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPCORPENG4'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPCORPENG4'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -497,15 +497,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPEXEENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPEXEENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPEXEENG1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPEXEENG1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -528,15 +528,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPEXEENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPEXEENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPEXEENG2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPEXEENG2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -558,12 +558,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPEXEENG3'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPEXEENG3'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPEXEENG3'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -585,12 +585,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPEXEENG4'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPEXEENG4'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPEXEENG4'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -614,15 +614,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTENG1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTENG1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -645,15 +645,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTENG2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTENG2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -675,12 +675,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTENG3'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTENG3'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTENG3'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -702,12 +702,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTENG4'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTENG4'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTENG4'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -730,15 +730,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTEXEENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTEXEENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTEXEENG1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTEXEENG1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -761,15 +761,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTEXEENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTEXEENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTEXEENG2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTEXEENG2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -791,12 +791,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTEXEENG3'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTEXEENG3'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTEXEENG3'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -818,12 +818,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPASSTEXEENG4'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTEXEENG4'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPASSTEXEENG4'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -845,15 +845,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSUPENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSUPENG1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSUPENG1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSUPENG1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -876,15 +876,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSUPENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSUPENG2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSUPENG2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSUPENG2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -906,12 +906,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSUPENG3'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSUPENG3'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSUPENG3'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -933,12 +933,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSUPENG4'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSUPENG4'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSUPENG4'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -960,15 +960,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSECCLRK1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 1' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSECCLRK1'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 2' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSECCLRK1'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSECCLRK1'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -991,15 +991,15 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSECCLRK2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 3' order by name ;
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSECCLRK2'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 4' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSECCLRK2'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSECCLRK2'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -1021,12 +1021,12 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSECCLRK3'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 5' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSECCLRK3'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSECCLRK3'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 
 
@@ -1048,11 +1048,11 @@ insert into eg_userrole(roleid,userid) values((select id from eg_role where uppe
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
 select nextval('seq_egeis_jurisdiction'), (select id from egeis_employee where upper(code)='TPSECCLRK4'),boundarytype ,current_date,
-current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundary_type  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
+current_date,1,1,0, id from eg_boundary where boundarytype in ( select id from eg_boundarytype  where name='Ward' and hierarchytype=(select ID from eg_hierarchy_type where name='ADMINISTRATION')) AND name='Election Ward No 6' order by name ;
 
 
 insert into egeis_jurisdiction (id,employee,boundarytype,createddate,lastmodifieddate,createdby,lastmodifiedby,version,boundary)
-values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSECCLRK4'),(select id from eg_boundary_type where upper(name)=upper('City') 
-and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundary_type where upper(name)=upper('City') 
+values(nextval('seq_egeis_jurisdiction'),(select id from egeis_employee where upper(code)='TPSECCLRK4'),(select id from eg_boundarytype where upper(name)=upper('City') 
+and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION')),current_date,current_date,1,1,0,(select id from eg_boundary where boundarytype =(select id from eg_boundarytype where upper(name)=upper('City') 
 and hierarchytype in(select id from eg_hierarchy_type where upper(name)='ADMINISTRATION'))));
 

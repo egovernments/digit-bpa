@@ -154,4 +154,26 @@ $(document).ready(function () {
     if (!navigator.cookieEnabled) {
         $('#cookieornoscript').modal('show', {backdrop: 'static'});
     }
+    
+	$('#appsearch').click(function() {
+		var applnum=$('#appsearchtxt').val();
+		if (applnum) {
+			$('.search-error-msg').addClass('display-hide');
+			$('#appsearchtxt').val("");
+			window.open("/bpa/application/citizen/check-status/"+applnum,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes')
+		}else{
+			$('.search-error-msg').removeClass('display-hide');
+		}
+	});
+	
+	$('#stkhldrregfeesearch').click(function() {
+		var acknum=$('#stkhldrregfeetxt').val();
+		if (acknum) {
+			$('.search-stkhldr-error-msg').addClass('display-hide');
+			$('#stkhldrregfeetxt').val("");
+			window.open("/bpa/stakeholder/payregfee/"+acknum,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes')
+		}else{
+			$('.search-stkhldr-error-msg').removeClass('display-hide');
+		}
+	});
 });

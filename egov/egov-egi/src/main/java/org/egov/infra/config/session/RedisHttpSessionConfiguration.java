@@ -48,7 +48,11 @@
 
 package org.egov.infra.config.session;
 
+import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_NAME;
+import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
+
 import org.egov.infra.config.security.authentication.listener.UserSessionListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -58,18 +62,19 @@ import org.springframework.session.web.http.CookieHttpSessionStrategy;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
-import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_NAME;
-import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
-
 @Configuration
 @EnableRedisHttpSession
 public class RedisHttpSessionConfiguration {
+
+    @Value("${common.domain.name}")
+    private String commonDomainName;
 
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
         serializer.setCookieName(SESSION_COOKIE_NAME);
         serializer.setCookiePath(SESSION_COOKIE_PATH);
+        serializer.setDomainName(commonDomainName);
         return serializer;
     }
 
@@ -81,7 +86,8 @@ public class RedisHttpSessionConfiguration {
     }
 
     @Bean
-    public SpringSessionBackedSessionRegistry springSessionBackedSessionRegistry(FindByIndexNameSessionRepository sessionRepository) {
+    public SpringSessionBackedSessionRegistry springSessionBackedSessionRegistry(
+            FindByIndexNameSessionRepository sessionRepository) {
         return new SpringSessionBackedSessionRegistry(sessionRepository);
     }
 

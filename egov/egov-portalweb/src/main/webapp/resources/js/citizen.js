@@ -52,6 +52,7 @@ $(document).ready(function(){
 	
 	var clickedServiceData;
 	var selectedService;
+	var clientId = $('#clientId').val();
 	
 	//---------------
 	
@@ -70,6 +71,7 @@ $(document).ready(function(){
                 data: tableInitData,
                 "columns": [
                     { "data": "srNo", "orderable": false },
+                    { "data": "ulbName", "orderable": false },
                     { "data": "applicantName", "orderable": false },
                     { "data": "serviceRequestNo", "orderable": false},
                     { "data": "serviceRequestDate" },
@@ -83,7 +85,7 @@ $(document).ready(function(){
         	$('#bpa-home-table tbody').on('click', 'tr', function (e) {
         	    var data = table.row( this ).data();
         	    e.stopImmediatePropagation();
-        	    openPopUp(data.link);
+        	    openPopUp(data.domainUrl+data.link);
         	} );
         	
         	//Initialize data in global variable
@@ -429,7 +431,6 @@ function fetchDataAndInitiateTable(url, dataKey){
             console.log( errorThrown );
         }
     });
-
 }
 
 function resetServicesCount(){

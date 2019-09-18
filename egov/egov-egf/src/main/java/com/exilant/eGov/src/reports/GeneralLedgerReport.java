@@ -873,7 +873,7 @@ public class GeneralLedgerReport {
                     .append(" vh.voucherNumber AS \"vouchernumber\", gl.glCode AS \"glcode\", coa.name|| (CASE WHEN (GLDET.GENERALLEDGERID = GL.ID)")
                     .append(" THEN '-['||(CASE WHEN gldet.detailtypeid = (select id from accountdetailtype where name = 'Creditor')")
                     .append(" THEN (select name from Supplier where id = gldet.detailkeyid) ELSE (CASE WHEN gldet.detailtypeid =")
-                    .append(" (select id from accountdetailtype where name = 'EMPLOYEE') THEN (select name from eg_user where id = gldet.detailkeyid)")
+                    .append(" (select id from accountdetailtype where name = 'EMPLOYEE') THEN (select name from state.eg_user where id = gldet.detailkeyid)")
                     .append(" ELSE (select name from accountentitymaster where id = gldet.detailkeyid) END) END)||']' ELSE NULL END) as \"Name\",")
                     .append(" CASE WHEN gl.glcode = :glCode1 THEN (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gldet.amount||'.00cr') ELSE (gldet.amount||'.00dr') END)")
                     .append(" ELSE (CASE WHEN gl.DEBITAMOUNT = 0 THEN (gl.creditamount||'.00cr') ELSE (gl.debitamount||'.00dr') END) END as \"amount\",")

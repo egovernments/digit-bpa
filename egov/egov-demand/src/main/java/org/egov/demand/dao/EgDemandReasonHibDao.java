@@ -48,55 +48,55 @@
 
 package org.egov.demand.dao;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.demand.model.EgDemandReason;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-
 @Repository(value = "egDemandReasonDAO")
 @Transactional(readOnly = true)
 public class EgDemandReasonHibDao implements EgDemandReasonDao {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	@SuppressWarnings("unused")
-	private Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @SuppressWarnings("unused")
+    private Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Override
-	public EgDemandReason findById(Integer id, boolean lock) {
+    @Override
+    public EgDemandReason findById(Integer id, boolean lock) {
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public List<EgDemandReason> findAll() {
+    @Override
+    public List<EgDemandReason> findAll() {
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public EgDemandReason create(EgDemandReason egDemandReason) {
+    @Override
+    public void create(EgDemandReason egDemandReason) {
 
-		return null;
-	}
+        getCurrentSession().save(egDemandReason);
+    }
 
-	@Override
-	public void delete(EgDemandReason egDemandReason) {
+    @Override
+    public void delete(EgDemandReason egDemandReason) {
 
+    }
 
-	}
+    @Override
+    public EgDemandReason update(EgDemandReason egDemandReason) {
 
-	@Override
-	public EgDemandReason update(EgDemandReason egDemandReason) {
-
-		return null;
-	}
+        return null;
+    }
 
 }

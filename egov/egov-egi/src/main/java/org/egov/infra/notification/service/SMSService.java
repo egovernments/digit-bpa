@@ -48,6 +48,14 @@
 
 package org.egov.infra.notification.service;
 
+import static org.egov.infra.config.core.LocalizationSettings.countryCode;
+import static org.egov.infra.config.core.LocalizationSettings.encoding;
+import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -63,14 +71,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.infra.config.core.LocalizationSettings.countryCode;
-import static org.egov.infra.config.core.LocalizationSettings.encoding;
-import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
 
 @Service
 public class SMSService {
@@ -157,8 +157,7 @@ public class SMSService {
 
         if (smsPriorityEnabled) {
             urlParameters.add(new BasicNameValuePair(smsPriorityParamName,
-                    environment.getProperty(String.format(SMS_PRIORITY_PARAM_VALUE, priority.toString()))
-            ));
+                    environment.getProperty(String.format(SMS_PRIORITY_PARAM_VALUE, priority.toString()))));
         }
     }
 }

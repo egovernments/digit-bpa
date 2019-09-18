@@ -438,7 +438,7 @@ function onLoad(){
 
 				<div class="subheadnew">
 					<span class="complaintmsg"><s:text
-							name="onlineReceipts.payyourtax" /></span>
+							name="onlineReceipts.paytaxtext" /></span>
 					<div class="dottedgridlarge2"></div>
 				</div>
 
@@ -447,9 +447,9 @@ function onLoad(){
 						<div class="rbcontent4">
 							<div class="containerformsg1">
 
-								<div class="text-left margin-5">
-									<s:text name="onlineReceipts.paytaxtext" />
-								</div>
+								<%-- <div class="text-left margin-5">
+									<s:text name="onlineReceipts.payfeetext" />
+								</div> --%>
 								<table width="100%" border="0" cellspacing="0" cellpadding="0"
 									id="billsheaderinfotable">
 									<s:hidden name="collectXML" id="collectXML"
@@ -509,7 +509,7 @@ function onLoad(){
 														</td>
 														<th class="bluebgheadtd" width="10%"><div
 																align="right">
-																<s:text name="onlineReceipts.demand" />
+																<s:text name="onlineReceipts.amount" />
 															</div>
 														</td>
 														<!--td class="head" width="19%" ><s:text name="onlineReceipts.collectedamount"/></td-->
@@ -586,7 +586,7 @@ function onLoad(){
 																class="mandatory1">*</span></span></td>
 														<td class="blueborderfortd text-right bg-gray"><s:textfield
 																label="paymentAmount" id="paymentAmount" maxlength="12"
-																name="paymentAmount" size="12"
+																name="paymentAmount" size="12" value="%{totalAmountToBeCollected}"
 																cssClass="form-control patternvalidation text-right"
 																data-pattern="number" placeholder="0"
 																onkeyup="populateapportioningamountnew()"

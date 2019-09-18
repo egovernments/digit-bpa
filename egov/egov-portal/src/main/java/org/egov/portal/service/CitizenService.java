@@ -64,6 +64,7 @@ import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.token.service.TokenService;
+import org.egov.infra.utils.ApplicationConstant;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +113,7 @@ public class CitizenService {
         citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActive(true);
+        citizen.setTenantId(ApplicationConstant.STATE_TENANTID);
         citizen.generateUID();
         citizenRepository.saveAndFlush(citizen);
         notificationService.sendSMS(citizen.getMobileNumber(), getMessage("citizen.reg.sms"));
@@ -131,6 +133,10 @@ public class CitizenService {
 
     public Citizen getCitizenByUserName(String userName) {
         return citizenRepository.findByUsername(userName);
+    }
+
+    public List<Citizen> getCitizenByMobileNumberAndType(final String mobileNumber, final UserType type) {
+        return citizenRepository.findByMobileNumberAndTypeOrderById(mobileNumber, type);
     }
 
     @Transactional
@@ -162,7 +168,4 @@ public class CitizenService {
         return messageSource.getMessage(msgKey, arg, Locale.getDefault());
     }
 
-    public List<Citizen> getCitizenByMobileNumberAndType(final String mobileNumber, final UserType type) {
-        return citizenRepository.findByMobileNumberAndTypeOrderById(mobileNumber, type);
-    }
 }

@@ -47,9 +47,7 @@
  */
 package org.egov.portal.entity;
 
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.portal.entity.PortalServiceType.SEQ_EGP_PORTALSERVICE;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,7 +61,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import static org.egov.portal.entity.PortalServiceType.SEQ_EGP_PORTALSERVICE;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGP_PORTALSERVICE")
@@ -110,6 +110,10 @@ public class PortalServiceType extends AbstractAuditable {
 
     @Column(name = "HELPDOCLINK")
     private String helpDocLink;
+
+    private Integer serviceOrder;
+
+    private Integer moduleOrder;
 
     public Long getId() {
         return id;
@@ -189,6 +193,22 @@ public class PortalServiceType extends AbstractAuditable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getServiceOrder() {
+        return serviceOrder;
+    }
+
+    public void setServiceOrder(Integer serviceOrder) {
+        this.serviceOrder = serviceOrder;
+    }
+
+    public Integer getModuleOrder() {
+        return moduleOrder;
+    }
+
+    public void setModuleOrder(Integer moduleOrder) {
+        this.moduleOrder = moduleOrder;
     }
 
 }

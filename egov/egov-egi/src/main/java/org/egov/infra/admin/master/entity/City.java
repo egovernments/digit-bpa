@@ -48,15 +48,41 @@
 
 package org.egov.infra.admin.master.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.admin.master.entity.City.QUERY_CITY_BY_URL;
+import static org.egov.infra.admin.master.entity.City.SEQ_CITY;
+import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PRIV_KEY;
+import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PUB_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_ADDRESS_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_CALLCENTER_NO_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_CONTACT_NO_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_EMAIL_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_FB_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GOOGLE_MAP_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_TWITTER_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_LGD_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_GOOGLE_API_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LAT_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LGD_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LNG_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOCAL_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_FS_UUID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_URL_KEY;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
+import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
+import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -70,27 +96,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.infra.admin.master.entity.City.QUERY_CITY_BY_URL;
-import static org.egov.infra.admin.master.entity.City.SEQ_CITY;
-import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PRIV_KEY;
-import static org.egov.infra.security.utils.captcha.CaptchaUtils.CITY_CAPTCHA_PUB_KEY;
-import static org.egov.infra.utils.ApplicationConstant.*;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ALPHABETS_WITH_SPACE;
-import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MASTER_DATA_CODE;
-import static org.egov.infra.validation.constants.ValidationRegex.ALPHABETS_WITH_SPACE;
-import static org.egov.infra.validation.constants.ValidationRegex.MASTER_DATA_CODE;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
-@Unique(fields = {"code", "domainURL"}, enableDfltMsg = true)
+@Unique(fields = { "code", "domainURL" }, enableDfltMsg = true)
 @Table(name = "eg_city")
 @NamedQuery(name = QUERY_CITY_BY_URL, query = "Select cw FROM City cw WHERE cw.domainURL=:domainURL")
 @SequenceGenerator(name = SEQ_CITY, sequenceName = SEQ_CITY, allocationSize = 1)
@@ -175,6 +198,9 @@ public class City extends AbstractAuditable {
     @Fetch(FetchMode.JOIN)
     @Valid
     private CityPreferences preferences;
+
+    @Transient
+    private String tenantId;
 
     @Override
     public Long getId() {
@@ -298,6 +324,14 @@ public class City extends AbstractAuditable {
         this.preferences = preferences;
     }
 
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
     public Map<String, Object> toMap() {
         final Map<String, Object> cityPrefs = new HashMap<>();
         cityPrefs.put(CITY_URL_KEY, domainURL);
@@ -314,7 +348,8 @@ public class City extends AbstractAuditable {
         cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
         cityPrefs.put(CITY_REGION_NAME_KEY, regionName);
         if (preferences != null) {
-            cityPrefs.put(CITY_LOGO_FS_UUID_KEY, preferences.logoExist() ? preferences.getMunicipalityLogo().getFileStoreId() : EMPTY);
+            cityPrefs.put(CITY_LOGO_FS_UUID_KEY,
+                    preferences.logoExist() ? preferences.getMunicipalityLogo().getFileStoreId() : EMPTY);
             cityPrefs.put(CITY_CORP_NAME_KEY, preferences.getMunicipalityName());
             cityPrefs.put(CITY_CORP_ADDRESS_KEY, preferences.getMunicipalityAddress());
             cityPrefs.put(CITY_CORP_CALLCENTER_NO_KEY, preferences.getMunicipalityCallCenterNo());

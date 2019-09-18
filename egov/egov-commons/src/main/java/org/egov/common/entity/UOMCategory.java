@@ -95,7 +95,7 @@ public class UOMCategory extends AbstractAuditable {
     @OneToMany(mappedBy = "uomCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id DESC ")
     @NotAudited
-    private final List<UOM> uom = new ArrayList<UOM>(0);
+    private final List<UOM> uom = new ArrayList<>(0);
 
     @Override
     public Long getId() {

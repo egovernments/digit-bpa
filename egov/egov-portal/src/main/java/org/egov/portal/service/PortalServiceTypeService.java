@@ -47,6 +47,8 @@
  */
 package org.egov.portal.service;
 
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.portal.entity.PortalServiceType;
 import org.egov.portal.repository.PortalServiceTypeRepository;
@@ -54,8 +56,6 @@ import org.egov.portal.repository.specs.SearchPortalServiceTypeSpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -86,11 +86,11 @@ public class PortalServiceTypeService {
         portalServiceTypeRepository.save(portalService);
     }
 
-    public List<String> getDistinctModuleNamesForCitizen() {
+    public List<Module> getDistinctModuleNamesForCitizen() {
         return portalServiceTypeRepository.getDistinctModuleNamesForCitizen();
     }
 
-    public List<String> getDistinctModuleNamesForBusinessUser() {
+    public List<Module> getDistinctModuleNamesForBusinessUser() {
         return portalServiceTypeRepository.getDistinctModuleNamesForBusinessUser();
     }
 

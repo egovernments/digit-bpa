@@ -1,0 +1,1 @@
+update eg_action set contextroot='portal' where url='/common/city/selection-form';

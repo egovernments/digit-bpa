@@ -51,8 +51,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<header class="navbar navbar-fixed-top">
-	<!-- set fixed position by adding class "navbar-fixed-top" -->
+<header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
 	<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header col-md-10 col-xs-10">
@@ -70,12 +69,11 @@
 
 			<div class="nav-right-menu col-md-2 col-xs-2">
 				<ul class="hr-menu text-right">
-					<li class="ico-menu"><a href="http://www.egovernments.org"
-						target="_blank"> <img
-							src="<c:url value='/resources/global/images/digit-logo-black.png' context='/egi'/>"
-							title="Powered by eGovernments" height="35px"
-							style="opacity: 0.8">
-					</a></li>
+					<li class="ico-menu">
+						<a href="http://www.egovernments.org" target="_blank">
+							<img src="<cdn:url value='/resources/global/images/digit-logo-black.png' context='/egi'/>" title="Powered by eGovernments" height="35px" style="opacity: 0.8">
+						</a>
+					</li>
 				</ul>
 			</div>
 

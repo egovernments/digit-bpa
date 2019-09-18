@@ -47,6 +47,8 @@
  */
 package org.egov.portal.repository;
 
+import java.util.List;
+
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.enums.MessageType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -54,22 +56,34 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface CitizenInboxRepository extends JpaRepository<CitizenInbox, Long> {
 
     @Query("select count(*) from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId and ci.read is false")
     Integer findUnreadMessagesCount(@Param("citizenUserId") Long citizenUserId);
 
-    @Query("select ci from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId order by ci.createdDate desc")
+    @Query("select count(*) from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId and ci.tenantId=:tenantId and ci.read is false")
+    Integer findUnreadMessagesCount(@Param("citizenUserId") Long citizenUserId, @Param("tenantId") String tenantId);
+
+    @Query("select ci from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId  order by ci.createdDate desc")
     List<CitizenInbox> findAllInboxMessage(@Param("citizenUserId") Long citizenUserId);
+
+    @Query("select ci from CitizenInbox ci where ci.assignedToCitizen.id=:citizenUserId and ci.tenantId=:tenantId order by ci.createdDate desc")
+    List<CitizenInbox> findAllInboxMessage(@Param("citizenUserId") Long citizenUserId, @Param("tenantId") String tenantId);
 
     @Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.assignedToCitizen.id=:citizenUserId order by ci.createdDate desc")
     List<CitizenInbox> findAllInboxMessageByType(@Param("messageType") MessageType messageType,
             @Param("citizenUserId") Long citizenUserId);
 
+    @Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.assignedToCitizen.id=:citizenUserId and ci.tenantId=:tenantId order by ci.createdDate desc")
+    List<CitizenInbox> findAllInboxMessageByType(@Param("messageType") MessageType messageType,
+            @Param("citizenUserId") Long citizenUserId, @Param("tenantId") String tenantId);
+
     @Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.createdBy.id=:citizenUserId and ci.id in (select max(ci1.id) from CitizenInbox ci1 where ci1.messageType=:messageType and ci1.createdBy.id=:citizenUserId group by ci1.identifier) order by ci.createdDate desc")
     List<CitizenInbox> findMyAccountMessages(@Param("messageType") MessageType messageType,
             @Param("citizenUserId") Long citizenUserId);
+
+    @Query("select ci from CitizenInbox ci where ci.messageType=:messageType and ci.createdBy.id=:citizenUserId and ci.tenantId=:tenantId and ci.id in (select max(ci1.id) from CitizenInbox ci1 where ci1.messageType=:messageType and ci1.createdBy.id=:citizenUserId group by ci1.identifier) order by ci.createdDate desc")
+    List<CitizenInbox> findMyAccountMessages(@Param("messageType") MessageType messageType,
+            @Param("citizenUserId") Long citizenUserId, @Param("tenantId") String tenantId);
 }
