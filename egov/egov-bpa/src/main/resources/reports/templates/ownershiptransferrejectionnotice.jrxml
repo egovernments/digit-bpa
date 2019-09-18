@@ -113,15 +113,7 @@
 				<textFieldExpression><![CDATA[$P{rejectionReasons}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="20">
-			<textField>
-				<reportElement x="0" y="0" width="555" height="20" uuid="76dcc689-70ea-4e10-8583-860fe1a32de9"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Note: No construction work is to be commenced before obtaining Permission in writing."]]></textFieldExpression>
-			</textField>
-		</band>
+		<band height="20"/>
 		<band height="50">
 			<textField>
 				<reportElement x="65" y="31" width="133" height="19" uuid="b04d8a39-92ff-4b97-b634-e1ee6fb8c76c"/>
