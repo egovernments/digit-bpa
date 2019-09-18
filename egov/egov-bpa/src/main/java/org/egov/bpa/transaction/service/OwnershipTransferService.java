@@ -41,9 +41,11 @@
 package org.egov.bpa.transaction.service;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.OwnershipFee;
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
 import org.egov.bpa.transaction.entity.OwnershipTransferCoApplicant;
+import org.egov.bpa.transaction.entity.OwnershipTransferConditions;
 import org.egov.bpa.transaction.entity.OwnershipTransferDocument;
 import org.egov.bpa.transaction.entity.WorkflowBean;
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
@@ -140,6 +143,8 @@ public class OwnershipTransferService {
 	private OwnershipTransferRepository ownershipRepository;
 	@Autowired
 	private BpaUtils bpaUtils;
+	@Autowired
+	private OwnershipTransferConditionsService ownershipConditionsService;
     
     @Transactional
     public OwnershipTransfer createNewApplication(final OwnershipTransfer ownershipTransfer, WorkflowBean wfBean) {
@@ -241,7 +246,10 @@ public class OwnershipTransferService {
         if(BpaConstants.WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue()) && bpaAppConfigUtil.ownershipFeeCollectionRequired()) {
         	calculateOwnershipFee(ownershipTransfer);
         }
-        
+        if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
+                || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())) {
+            buildRejectionReasons(ownershipTransfer);
+        }
         OwnershipTransfer ownershipRes = ownershipTransferRepository.save(ownershipTransfer);
         bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(ownershipTransfer, wfBean);
         return ownershipRes;
@@ -378,5 +386,22 @@ public class OwnershipTransferService {
 	   return ownershipTransfer.getState() != null && ownershipTransfer.getState().getOwnerPosition() != null 
 			  ? workflowHistoryService.getUserPositionByPositionAndDate(ownershipTransfer.getState().getOwnerPosition().getId(), ownershipTransfer.getState().getLastModifiedDate()).getName() 
 			  : ownershipTransfer.getLastModifiedBy().getName();
-    } 
+     } 
+	 
+	 private void buildRejectionReasons(final OwnershipTransfer ownershipTransfer) {
+		 ownershipConditionsService.delete(ownershipTransfer.getRejectionReasons());
+		 ownershipConditionsService.delete(ownershipTransfer.getAdditionalOwnershipConditions());
+		 ownershipTransfer.getAdditionalOwnershipConditions().clear();
+		 ownershipTransfer.getRejectionReasons().clear();
+	     List<OwnershipTransferConditions> additionalRejectReasons = new ArrayList<>();
+	     for (OwnershipTransferConditions addnlReason : ownershipTransfer.getAdditionalRejectReasonsTemp()) {
+	         addnlReason.setOwnershipTransfer(ownershipTransfer);
+	         addnlReason.getNoticeCondition().setChecklistServicetype(
+	        		 ownershipTransfer.getAdditionalRejectReasonsTemp().get(0).getNoticeCondition().getChecklistServicetype());
+	         if (addnlReason != null && addnlReason.getNoticeCondition().getAdditionalCondition() != null)
+	                additionalRejectReasons.add(addnlReason);
+	     }
+	     ownershipTransfer.setRejectionReasons(ownershipTransfer.getRejectionReasonsTemp());
+	     ownershipTransfer.setAdditionalOwnershipConditions(additionalRejectReasons);
+	 }
 }

@@ -130,11 +130,6 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
 					</div>
-					<c:if test="${showRejectionReasons}">
-						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="../application/rejection-reasons.jsp"></jsp:include>
-						</div>
-					</c:if>
 				</div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -153,6 +148,14 @@
 				
 			</div>
 			<div class="text-center">
+				<c:if test="${ownershipTransfer.status.code eq 'Rejected'}">
+				<td><a
+					href="/bpa/application/permitrenewal/rejectionnotice/${ownershipTransfer.applicationNumber}"
+					target="popup" class="btn btn-primary"
+					onclick="window.open('/bpa/application/ownership/transfer/rejectionnotice/${ownershipTransfer.applicationNumber}','popup','width=1100,height=700'); return false;">
+						<spring:message code='lbl.btn.print.rejection.notice' />
+				</a>&nbsp;</td>
+			</c:if>
 				<a href='javascript:void(0)' class='btn btn-default'
 					onclick='self.close()'><spring:message code='lbl.close' /></a>
 			</div>   
