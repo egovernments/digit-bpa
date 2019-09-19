@@ -62,10 +62,7 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize" value="104857600"/>
-        <property name="maxInMemorySize" value="1048576"/>
-    </bean>
+    <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
 
     <bean name="edcrBpaRestService" class="org.egov.edcr.service.EdcrBpaRestService"></bean>
     <bean name="genericBillGeneratorService" class="org.egov.bpa.transaction.service.collection.GenericBillGeneratorService"></bean>

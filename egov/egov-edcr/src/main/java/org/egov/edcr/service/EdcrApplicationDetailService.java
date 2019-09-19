@@ -22,7 +22,7 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanInformation;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.repository.EdcrApplicationDetailRepository;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

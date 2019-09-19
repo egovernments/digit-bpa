@@ -58,6 +58,8 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	    <meta name="description" content="eGov System" />
 	    <meta name="author" content="eGovernments Foundation" />
+	    <meta name="_csrf" content="${_csrf.token}"/>
+        <meta name="_csrf_header" content="${_csrf.headerName}"/>
 	
 	    <title><tiles:insertAttribute name="title"/></title>
 		<link rel="icon" href="<c:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
@@ -66,6 +68,7 @@
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 		<link rel="stylesheet" href="<c:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
+		
 		
 		<script src="<c:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
 		<script src="<c:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
@@ -77,12 +80,17 @@
 		<script src="<c:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
         <script src="<c:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
         <script src="<c:url value='/resources/js/app/util-helper.js?rnd=${app_release_no}'/>"></script>
+        <script src="<cdn:url  value='/resources/global/js/egov/csrf.js?rnd=${app_release_no}' context='/egi'/>"></script>
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
 			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
 		<![endif]-->
+		<script>
+	        const tokenVal = '${_csrf.token}';
+	        const tokenName = '${_csrf.parameterName}';
+	    </script>
 	
 	</head>
     <body class="page-body" oncontextmenu="return false;">

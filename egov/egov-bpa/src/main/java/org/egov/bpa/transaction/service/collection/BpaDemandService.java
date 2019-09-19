@@ -73,7 +73,7 @@ import org.egov.demand.model.EgReasonCategory;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -317,8 +317,8 @@ public class BpaDemandService {
     public EgDemandReason getDemandReasonByCodeAndInstallment(final String demandReason,
             final Installment installment) {
         final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
-        demandQuery.setString(0, demandReason);
-        demandQuery.setInteger(1, installment.getId());
+        demandQuery.setParameter(1, demandReason);
+        demandQuery.setParameter(2, installment.getId());
         return (EgDemandReason) demandQuery.uniqueResult();
     }
 
