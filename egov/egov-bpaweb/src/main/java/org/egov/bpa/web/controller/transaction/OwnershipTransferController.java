@@ -220,7 +220,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
                     .find(OwnershipTransferNoticeService.class, specificNoticeService.getCityDetails());
         	ReportOutput reportOutput = ownershipTransferNotice
                     .generateOwnershipOrder(ownershipTransferService.findByApplicationNumber(applicationNumber));
-                ownershipTransferSmsAndEmailService.sendSMSAndEmail(ownershipTransfer, reportOutput,OWNERSHIP_ORDER_NOTICE_TYPE +PDFEXTN);
+                ownershipTransferSmsAndEmailService.sendSMSAndEmail(ownershipTransfer, reportOutput,"ownershiptransferorder" + PDFEXTN);
             return "redirect:/application/ownership/transfer/generateorder/" + ownershipres.getApplicationNumber();
         }
         if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())) {

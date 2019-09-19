@@ -8,7 +8,7 @@ import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
 import static org.egov.bpa.utils.BpaConstants.NO;
 import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
 import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_ORDER_ISSUED;
 import static org.egov.bpa.utils.BpaConstants.YES;
 
 import java.util.List;
@@ -77,24 +77,32 @@ public class OwnershipTransferSmsAndEmailService {
         if (isSmsEnabled() || isEmailEnabled()) {
             ApplicationStakeHolder applnStakeHolder = ownership.getApplication().getStakeHolder().get(0);
             if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
-                Applicant applicant = ownership.getOwner();
-                applicantName = applicant.getName();
+                Applicant applicant = ownership.getOwner(); 
+                applicantName = applicant.getName();        
                 email = applicant.getEmailId();
                 mobileNo = applicant.getUser().getMobileNumber();
                 buildSmsAndEmailForOwnershipTransfer(ownership, applicantName, mobileNo, email,
                         reportOutput, fileName);
             }
-            if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null && 
-                    (APPLICATION_STATUS_APPROVED.equalsIgnoreCase(ownership.getStatus().getCode()))){
-                Applicant applicant = applnStakeHolder.getApplication().getOwner();
-                applicantName = applicant.getName();
+            if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null 
+                    && ownership.getParent() != null ){
+                Applicant applicant = ownership.getParent().getOwner();
+                applicantName = applicant.getName();         
                 email = applicant.getEmailId();
                 mobileNo = applicant.getUser().getMobileNumber();
                 buildSmsAndEmailForOwnershipTransfer(ownership, applicantName, mobileNo, email,
-                        reportOutput, fileName);
+                     reportOutput, fileName);
+            }
+                else {
+                    Applicant applicant = applnStakeHolder.getApplication().getOwner();
+                    applicantName = applicant.getName();          
+                    email = applicant.getEmailId();
+                    mobileNo = applicant.getUser().getMobileNumber();
+                    buildSmsAndEmailForOwnershipTransfer(ownership, applicantName, mobileNo, email,
+                                        reportOutput, fileName);
             }
             if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().isActive()) {
-                applicantName = applnStakeHolder.getStakeHolder().getName();
+                applicantName = applnStakeHolder.getStakeHolder().getName();           //stakeholder 
                 email = applnStakeHolder.getStakeHolder().getEmailId();
                 mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();
                 buildSmsAndEmailForOwnershipTransfer(ownership, applicantName, mobileNo, email,
@@ -108,11 +116,11 @@ public class OwnershipTransferSmsAndEmailService {
         String smsMsg = EMPTY;
         String body = EMPTY;
         String subject = EMPTY;
-        if (APPROVED.equalsIgnoreCase(ownership.getStatus().getCode())) {
+        if (APPLICATION_STATUS_ORDER_ISSUED.equalsIgnoreCase(ownership.getStatus().getCode())) {
             smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_OWNERSHIP_APPROVAL, applicantName,
-                    ownership, APPROVED, EMPTY);
+                    ownership, APPLICATION_STATUS_ORDER_ISSUED, EMPTY);
             body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_OWNERSHIP_APPROVAL, applicantName,
-                    ownership, APPROVED);
+                    ownership, APPLICATION_STATUS_ORDER_ISSUED);
             subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_OWNERSHIP_APPROVAL, ownership.getApplicationNumber());
         } else if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownership.getStatus().getCode())) {
             smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_OWNERSHIP_REJECT, applicantName,
@@ -134,7 +142,7 @@ public class OwnershipTransferSmsAndEmailService {
     private String smsBodyByCodeAndArgsWithType(String code, String applicantName, OwnershipTransfer ownership,
             String type, String initiator) {
         String smsMsg = EMPTY;
-        if (APPLICATION_STATUS_APPROVED.equalsIgnoreCase(type)) {
+        if (APPLICATION_STATUS_ORDER_ISSUED.equalsIgnoreCase(type)) {
             smsMsg = bpaMessageSource.getMessage(code,
                     new String[] { ownership.getApplicationNumber(),
                             DateUtils.toDefaultDateFormat(ownership.getApplicationDate()),
@@ -152,7 +160,7 @@ public class OwnershipTransferSmsAndEmailService {
     private String emailBodyByCodeAndArgsWithType(String code, String applicantName, OwnershipTransfer ownership,
             String type) {
         String body = EMPTY;
-        if (APPLICATION_STATUS_APPROVED.equalsIgnoreCase(type)) {
+        if (APPLICATION_STATUS_ORDER_ISSUED.equalsIgnoreCase(type)) {
             body = bpaMessageSource.getMessage(code,
                     new String[] { applicantName, ownership.getApplicationNumber(),
                             DateUtils.toDefaultDateFormat(ownership.getApplicationDate()),
