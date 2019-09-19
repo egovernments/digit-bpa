@@ -72,6 +72,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.StakeHolder;
@@ -169,6 +170,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private InspectionApplicationService inspectionAppService;
     @Autowired
     private InConstructionInspectionService inspectionConstService;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
     
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -229,6 +232,19 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 application.getServiceType().getDescription(), CHECKLIST_TYPE_NOC));
         model.addAttribute("checkListDetailList", checklistServieTypeServcie
                 .findByActiveChecklistAndServiceType(application.getServiceType().getDescription(), CHECKLIST_TYPE));
+        
+        model.addAttribute("appDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.extenstions"));
+        model.addAttribute("appDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.max.size"));
+
+        model.addAttribute("dcrDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.allowed.extenstions"));
+        model.addAttribute("dcrDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.max.size"));
+
+        model.addAttribute("nocDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.noc.docs.allowed.extenstions"));
+        model.addAttribute("nocDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.noc.docs.max.size"));
+        
         Map<String, String> nocConfigMap = new ConcurrentHashMap<>();
         Map<String, String> nocTypeApplMap = new ConcurrentHashMap<>();
         Map<String, String> nocAutoMap = new ConcurrentHashMap<>();
@@ -399,6 +415,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             @PathVariable final String applicationNumber, final BindingResult resultBinder,
             final HttpServletRequest request, final Model model, final RedirectAttributes redirectAttributes,
             @RequestParam("files") final MultipartFile... files) {
+        applicationBpaService.validateDocs(bpaApplication, resultBinder);
         if (resultBinder.hasErrors()) {
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadViewdata(model, bpaApplication);

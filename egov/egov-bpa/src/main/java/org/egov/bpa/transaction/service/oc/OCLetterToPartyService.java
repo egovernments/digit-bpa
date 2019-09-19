@@ -43,6 +43,7 @@ package org.egov.bpa.transaction.service.oc;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.bpa.autonumber.LettertoPartyNumberGenerator;
 import org.egov.bpa.autonumber.LettertoPartyReplyAckNumberGenerator;
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.LpReason;
 import org.egov.bpa.transaction.entity.WorkflowBean;
@@ -77,6 +79,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -102,6 +105,8 @@ public class OCLetterToPartyService {
     private BpaStatusService bpaStatusService;
     @Autowired
     private OcSmsAndEmailService ocSmsAndEmailService;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
 
     public List<OCLetterToParty> findAllByOC(final OccupancyCertificate oc) {
         return letterToPartyRepository.findByOcOrderByIdDesc(oc);
@@ -204,5 +209,22 @@ public class OCLetterToPartyService {
                 ocLetterToParty.getLetterToParty().getLpReason().stream().map(LpReason::getDescription)
                         .collect(Collectors.joining(",")));
         return reportParams;
+    }
+
+    public void validateDocs(final OCLetterToParty ocLetterToParty, final BindingResult errors) {
+        List<String> lpDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.lpreply.docs.allowed.extenstions").split(",")));
+
+        List<String> lpDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.lpreply.docs.allowed.mime.types").split(",")));
+
+        Integer i = 0;
+        for (LetterToPartyDocumentCommon document : ocLetterToParty.getLetterToParty().getLetterToPartyDocuments()) {
+            bpaUtils.validateFiles(errors, lpDocAllowedExtenstions, lpDocMimeTypes, document.getFiles(),
+                    "letterToParty.letterToPartyDocuments[" + i + "].files",
+                    bpaApplicationSettings.getValue("bpa.lpreply.docs.max.size"));
+            i++;
+        }
+
     }
 }

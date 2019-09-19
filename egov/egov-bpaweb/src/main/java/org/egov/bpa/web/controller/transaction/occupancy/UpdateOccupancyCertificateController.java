@@ -205,6 +205,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         setCityName(model, request);
         prepareFormData(oc, model);
+        prepareDocumentsAllowedExtAndSize(model);
         loadData(oc, model);
         bpaUtils.loadBoundary(oc.getParent());
         getActionsForOCApplication(model, oc);
@@ -227,6 +228,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         }
         prepareFormData(oc, model);
         prepareCommonModelAttribute(model, oc.isCitizenAccepted());
+        prepareDocumentsAllowedExtAndSize(model);
         loadData(oc, model);
         getActionsForOCApplication(model, oc);
         buildRejectionReasons(model, oc);
@@ -480,8 +482,13 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     public String createDocumentScrutinyForOC(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
             @PathVariable final String applicationNumber, final HttpServletRequest request,
             final Model model, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-        if (errors.hasErrors())
+
+        occupancyCertificateService.validateDocs(occupancyCertificate, errors);
+
+        if (errors.hasErrors()) {
+            prepareDocumentsAllowedExtAndSize(model);
             return OC_CREATE_DOCUMENT_SCRUTINY_FORM;
+        }
 
         List<Designation> loginUserDesignations = Collections.emptyList();
         List<Assignment> loginUserAssignments = bpaWorkFlowService
@@ -539,8 +546,11 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
             final HttpServletRequest request, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttributes,
             @RequestParam final BigDecimal amountRule) {
-        if (errors.hasErrors())
+        occupancyCertificateService.validateDocs(occupancyCertificate, errors);
+        if (errors.hasErrors()) {
+            prepareDocumentsAllowedExtAndSize(model);  
             return OCCUPANCY_CERTIFICATE_VIEW;
+        }
 
         Position ownerPosition = occupancyCertificate.getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))

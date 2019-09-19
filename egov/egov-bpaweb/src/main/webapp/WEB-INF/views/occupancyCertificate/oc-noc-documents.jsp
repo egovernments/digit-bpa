@@ -161,7 +161,7 @@
 								</div>
 							</td>
 							<td>
-								<div class="files-upload-container ${checklistName}" data-file-max-size="5"
+								<div class="files-upload-container ${checklistName}" data-file-max-size="${nocDocMaxSize }"
 									<c:if test="${doc.nocDocument.serviceChecklist.mandatory eq true && fn:length(doc.nocDocument.getNocSupportDocs()) eq 0}">required</c:if>
 									data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 									<div class="files-viewer">

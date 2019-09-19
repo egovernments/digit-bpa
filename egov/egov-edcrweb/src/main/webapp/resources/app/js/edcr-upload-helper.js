@@ -81,6 +81,39 @@ $(document)
                 }
             });
             
+            $('#myfile').change(function () {
+                var fileformats = $('#dcrAllowedFileExtns').val().split(',');
+                var allowedSizeInMB = parseFloat($('#dxfFileSizeAllowed').val());
+                var allowedSizeInBytes = allowedSizeInMB * 1024 * 1024;
+                var ext = $(this).val().split('.').pop();
+                var fileInput = $(this);
+                if (this.files.length) {
+                    var fileSize = this.files[0].size; // in
+                    // bytes
+                    var charlen = (this.value
+                        .split('/').pop().split(
+                            '\\').pop()).length;
+                    if (charlen > 255) {
+                        bootbox
+                            .alert('Document name should not exceed 255 characters!');
+                        fileInput.replaceWith(fileInput.val('').clone(true));
+                        return false;
+                    } else if (fileSize > allowedSizeInBytes) {
+                        bootbox.alert('File size should not exceed '+allowedSizeInMB+' MB!');
+                        return false;
+                    } else if ($.inArray(ext.toString().toLowerCase(), fileformats) == -1) {
+                        bootbox.alert("Please upload " + fileformats
+                            + " format file only");
+                        $(this).val('');
+                        return false;
+                    } else {
+                        console.log('Files -->', this.files[0]);
+                        $('#fileTrigger').hide().parent().find('p, .fileActions').removeClass('hide');
+                        $('#fileName').html(this.files[0].name);
+                    }
+                }
+            });
+            
             $('#fileTrigger').click(function () {
                 $('.upload-msg').addClass('hide');
                 $("#myfile").trigger('click');

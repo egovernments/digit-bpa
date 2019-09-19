@@ -96,6 +96,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
 import org.egov.bpa.autonumber.RevocationNumberGenerator;
 import org.egov.bpa.autonumber.impl.PlanPermissionNumberGeneratorImpl;
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.PermitRevocation;
@@ -175,6 +176,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -265,6 +267,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private RevocationNumberGenerator revocationNumberGenerator;
     @Autowired
     private PermitCoApplicantService coApplicantService;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -1179,6 +1183,63 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         citizen.setActive(true);
         citizen.addRole(roleService.getRoleByName(ROLE_CITIZEN));
         return citizen;
+    }
+
+    public void validateDocs(final BpaApplication application, final BindingResult errors) {
+        List<String> appDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.extenstions").split(",")));
+
+        List<String> appDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.mime.types").split(",")));
+
+        List<String> dcrDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.allowed.extenstions").split(",")));
+
+        List<String> dcrDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.allowed.mime.types").split(",")));
+
+        List<String> nocDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.noc.docs.allowed.extenstions").split(",")));
+
+        List<String> nocDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.noc.docs.allowed.mime.types").split(",")));
+
+        Integer i = 0;
+        for (PermitDocument document : application.getPermitDocuments()) {
+            bpaUtils.validateFiles(errors, appDocAllowedExtenstions, appDocMimeTypes, document.getDocument().getFiles(),
+                    "applicationDocument[" + i + "].files",
+                    bpaApplicationSettings.getValue("bpa.citizen.app.docs.max.size"));
+            i++;
+        }
+
+        i = 0;
+        for (PermitDcrDocument document : application.getPermitDcrDocuments()) {
+            bpaUtils.validateFiles(errors, dcrDocAllowedExtenstions, dcrDocMimeTypes, document.getDcrDocument().getFiles(),
+                    "dcrDocuments[" + i + "].files",
+                    bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.max.size"));
+            i++;
+        }
+
+        i = 0;
+        for (PermitNocDocument document : application.getPermitNocDocuments()) {
+            bpaUtils.validateFiles(errors, nocDocAllowedExtenstions, nocDocMimeTypes, document.getNocDocument().getFiles(),
+                    "applicationNOCDocument[" + i + "].files",
+                    bpaApplicationSettings.getValue("bpa.citizen.noc.docs.max.size"));
+            i++;
+        }
+
+    }
+
+    public void validateTownSurveyorDocs(final BpaApplication application, final BindingResult errors) {
+        List<String> tsDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.ts.docs.allowed.extenstions").split(",")));
+
+        List<String> tsDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.ts.docs.allowed.mime.types").split(",")));
+
+        bpaUtils.validateFiles(errors, tsDocAllowedExtenstions, tsDocMimeTypes, application.getFiles(),
+                "files", bpaApplicationSettings.getValue("bpa.ts.docs.max.size"));
+
     }
 
 }

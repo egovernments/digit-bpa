@@ -62,6 +62,8 @@
 			<input type="hidden" name="permitDateTemp" id="permitApplicationDate" />
 			<input type="hidden"  id="isCitizen" value="${isCitizen}" />
 			<form:hidden path="buildingLicensee" id="stakeholderId" />
+			<input type="hidden" id="dxfFileSizeAllowed" value="${dcrDxfMaxSize}">
+			<input type="hidden" id="dcrAllowedFileExtns" value="${dcrDxfAllowedExtenstions}">
 			<div class="panel panel-primary" data-collapsed="0">
 				<%@ include file="oc-plan-scrutiny-form.jsp"%>
 			</div>

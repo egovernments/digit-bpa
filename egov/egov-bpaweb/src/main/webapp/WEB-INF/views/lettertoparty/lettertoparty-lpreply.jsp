@@ -211,7 +211,7 @@
 
 										<div class="col-sm-4 add-margin">
 												<div class="files-upload-container"
-													 data-file-max-size="5"
+													 data-file-max-size="${lpreplyDocMaxSize }"
 													 <c:if test="${lpdoc.isRequested eq true && fn:length(lpdoc.getSupportDocs()) eq 0}">required</c:if>
 													 data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 													<div class="files-viewer">

@@ -101,6 +101,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import eu.medsea.mimeutil.MimeException;
+import eu.medsea.mimeutil.MimeUtil;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -269,11 +275,11 @@ public class BpaUtils {
             status = "Accepted by Applicant";
 
         if (isCitizenAcceptanceRequired() && !application.isCitizenAccepted()
-                && !logedInuserIsCitizen() && additionalPortalInboxUser != null){
+                && !logedInuserIsCitizen() && additionalPortalInboxUser != null) {
             status = "Applicant Acceptance Pending";
-            
-            if(application.getStatus().getCode().equals(APPLICATION_STATUS_CANCELLED))
-            	status = "Application Cancelled by Applicant";
+
+            if (application.getStatus().getCode().equals(APPLICATION_STATUS_CANCELLED))
+                status = "Application Cancelled by Applicant";
         }
 
         if ((application.getState() != null && (CLOSED.equals(application.getState().getValue())
@@ -989,9 +995,50 @@ public class BpaUtils {
         else
             return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
     }
-    
+
     public Boolean feeCollector() {
-        List<Role> collectorRole = securityUtils.getCurrentUser().getRoles().stream().filter(str -> str.getName().contains(BpaConstants.ROLE_BILLCOLLECTOR)).collect(Collectors.toList());
+        List<Role> collectorRole = securityUtils.getCurrentUser().getRoles().stream()
+                .filter(str -> str.getName().contains(BpaConstants.ROLE_BILLCOLLECTOR)).collect(Collectors.toList());
         return collectorRole.isEmpty() ? false : true;
+    }
+
+    public String getMimeType(final MultipartFile file) {
+        MimeUtil.registerMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
+
+        eu.medsea.mimeutil.MimeType mimeType = null;
+        try {
+            mimeType = MimeUtil.getMostSpecificMimeType(MimeUtil.getMimeTypes(file.getInputStream()));
+        } catch (MimeException | IOException e) {
+            e.printStackTrace();
+        }
+
+        MimeUtil.unregisterMimeDetector("eu.medsea.mimeutil.detector.MagicMimeMimeDetector");
+        return String.valueOf(mimeType);
+    }
+
+    public void validateFiles(final BindingResult errors, List<String> allowedExtenstions, List<String> mimeTypes,
+            MultipartFile[] files, String filePath, final String maxAllowSizeInMB) {
+        String extension;
+        String mimeType;
+        if (files != null && files.length > 0)
+            for (MultipartFile file : files) {
+                extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
+                if (extension != null && !extension.isEmpty()) {
+                    mimeType = getMimeType(file);
+                    if (!allowedExtenstions.contains(extension.toLowerCase())) {
+                        errors.rejectValue(filePath, "upload.invalid.file.type",
+                                new Object[] { file.getOriginalFilename() }, null);
+                    } else if (allowedExtenstions.contains(extension.toLowerCase())
+                            && (!mimeTypes.contains(mimeType)
+                                    || StringUtils.countMatches(file.getOriginalFilename(), ".") > 1
+                                    || file.getOriginalFilename().contains("%00"))) {
+                        errors.rejectValue(filePath, "upload.malicious.file.type",
+                                new Object[] { file.getOriginalFilename() }, null);
+                    } else if (file.getSize() > (Long.valueOf(maxAllowSizeInMB) * 1024 * 1024)) {
+                        errors.rejectValue(filePath, "upload.exceeded.file.size",
+                                new Object[] { file.getOriginalFilename() }, null);
+                    }
+                }
+            }
     }
 }

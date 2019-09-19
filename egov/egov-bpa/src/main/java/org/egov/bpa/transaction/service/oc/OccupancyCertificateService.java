@@ -71,6 +71,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -81,6 +82,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.bpa.autonumber.OccupancyCertificateNumberGenerator;
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.enums.FeeSubType;
@@ -138,6 +140,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -197,6 +200,8 @@ public class OccupancyCertificateService {
     private ServiceTypeService serviceTypeService;
     @Autowired
     protected OccupancyFeeService ocFeeService;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
 
     public List<OccupancyCertificate> findByEdcrNumber(String edcrNumber) {
         return occupancyCertificateRepository.findByEDcrNumber(edcrNumber);
@@ -622,5 +627,50 @@ public class OccupancyCertificateService {
         }
 
         return ocFee;
+    }
+
+    public void validateDocs(final OccupancyCertificate occupancyCertificate, final BindingResult errors) {
+        List<String> appDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.extenstions").split(",")));
+
+        List<String> appDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.mime.types").split(",")));
+
+        List<String> dcrDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.allowed.extenstions").split(",")));
+
+        List<String> dcrDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.allowed.mime.types").split(",")));
+
+        List<String> nocDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.noc.docs.allowed.extenstions").split(",")));
+
+        List<String> nocDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.noc.docs.allowed.mime.types").split(",")));
+
+        Integer i = 0;
+        for (OCDocuments document : occupancyCertificate.getDocuments()) {
+            bpaUtils.validateFiles(errors, appDocAllowedExtenstions, appDocMimeTypes, document.getDocument().getFiles(),
+                    "documents[" + i + "].document.files",
+                    bpaApplicationSettings.getValue("bpa.citizen.app.docs.max.size"));
+            i++;
+        }
+
+        i = 0;
+        for (OCDcrDocuments document : occupancyCertificate.getDcrDocuments()) {
+            bpaUtils.validateFiles(errors, dcrDocAllowedExtenstions, dcrDocMimeTypes, document.getDcrDocument().getFiles(),
+                    "dcrDocuments[" + i + "].dcrDocument.files",
+                    bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.max.size"));
+            i++;
+        }
+
+        i = 0;
+        for (OCNocDocuments document : occupancyCertificate.getNocDocuments()) {
+            bpaUtils.validateFiles(errors, nocDocAllowedExtenstions, nocDocMimeTypes, document.getNocDocument().getFiles(),
+                    "nocDocuments[" + i + "].nocDocument.files",
+                    bpaApplicationSettings.getValue("bpa.citizen.noc.docs.max.size"));
+            i++;
+        }
+
     }
 }

@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.LpReason;
 import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
@@ -139,6 +140,8 @@ public class OccupancyCertificateLetterToPartyController {
     private OccupancyCertificateService occupancyCertificateService;
     @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
 
     @ModelAttribute(name = "lpReasonList")
     public List<LpReason> getLpReasonList() {
@@ -226,13 +229,14 @@ public class OccupancyCertificateLetterToPartyController {
     @GetMapping("/update/{applicationNumber}/{lpNumber}")
     public String editLetterToParty(@PathVariable final String applicationNumber, @PathVariable final String lpNumber,
             final Model model) {
-        prepareLetterToParty(applicationNumber, lpNumber, model);
+        final OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber,
+                lpNumber);
+        prepareLetterToParty(model, ocLetterToParty);
         return LETTER_TO_PARTY_UPDATE;
     }
 
-    private void prepareLetterToParty(String applicationNumber, String lpNumber, Model model) {
-        OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber,
-                lpNumber);
+    private void prepareLetterToParty(Model model, OCLetterToParty ocLetterToParty) {
+
         if (ocLetterToParty != null) {
             model.addAttribute(OC_LETTER_TO_PARTY, ocLetterToParty);
             model.addAttribute(LETTER_TO_PARTY_DOC_LIST, ocLetterToParty.getLetterToParty().getLetterToPartyDocuments());
@@ -258,7 +262,9 @@ public class OccupancyCertificateLetterToPartyController {
     @GetMapping("/result/{applicationNumber}/{lpNumber}")
     public String resultLetterToParty(@PathVariable final String applicationNumber, @PathVariable final String lpNumber,
             final Model model) {
-        prepareLetterToParty(applicationNumber, lpNumber, model);
+        final OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber,
+                lpNumber);
+        prepareLetterToParty(model, ocLetterToParty);
         return LETTER_TO_PARTY_RESULT;
     }
 
@@ -299,28 +305,45 @@ public class OccupancyCertificateLetterToPartyController {
     @GetMapping("/view-details/{type}/{applicationNumber}/{lpNumber}")
     public String viewChecklist(@PathVariable final String applicationNumber, @PathVariable final String lpNumber,
             @PathVariable final String type, final Model model) {
-        prepareLetterToParty(applicationNumber, lpNumber, model);
+        OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber,
+                lpNumber);
+        prepareLetterToParty(model, ocLetterToParty);
         return LETTER_TO_PARTY_VIEW;
     }
 
     @GetMapping(value = "/capture-sent-date/{applicationNumber}/{lpNumber}")
     public String captureSentDate(@PathVariable final String applicationNumber, @PathVariable final String lpNumber,
             final Model model) {
-        prepareLetterToParty(applicationNumber, lpNumber, model);
+        OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber,
+                lpNumber);
+        prepareLetterToParty(model, ocLetterToParty);
         return LP_CAPTURE_SENT_DATE;
     }
 
     @GetMapping("/reply/{applicationNumber}/{lpNumber}")
     public String showLetterToPartyReply(@PathVariable final String applicationNumber, @PathVariable final String lpNumber,
             final Model model) {
-        prepareLetterToParty(applicationNumber, lpNumber, model);
+        OCLetterToParty ocLetterToParty = ocLetterToPartyService.findByOcApplicationNoAndInspectionNo(applicationNumber,
+                lpNumber);
+        return getLPReplyForm(model, ocLetterToParty);
+    }
+
+    private String getLPReplyForm(final Model model, OCLetterToParty ocLetterToParty) {
+        prepareLetterToParty(model, ocLetterToParty);
+
+        model.addAttribute("lpreplyDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.lpreply.docs.allowed.extenstions"));
+        model.addAttribute("lpreplyDocMaxSize", bpaApplicationSettings.getValue("bpa.lpreply.docs.max.size"));
         return LP_REPLY;
     }
 
     @PostMapping("/reply/{applicationNumber}/{lpNumber}")
-    public String createLetterToPartyReply(@ModelAttribute("ocLetterToParty") final OCLetterToParty ocLetterToParty,
-            @PathVariable final String applicationNumber,
-            @PathVariable final String lpNumber, final RedirectAttributes redirectAttributes) {
+    public String createLetterToPartyReply(@PathVariable final String applicationNumber, @PathVariable final String lpNumber,
+            @ModelAttribute("ocLetterToParty") final OCLetterToParty ocLetterToParty, final BindingResult errors,
+            final RedirectAttributes redirectAttributes, final Model model) {
+        ocLetterToPartyService.validateDocs(ocLetterToParty, errors);
+        if (errors.hasErrors())
+            return getLPReplyForm(model, ocLetterToParty);
         processAndStoreLetterToPartyDocuments(ocLetterToParty);
         OCLetterToParty ocLetterToPartyRes = ocLetterToPartyService.save(ocLetterToParty,
                 ocLetterToParty.getOc().getState().getOwnerPosition().getId());

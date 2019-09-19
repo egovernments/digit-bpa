@@ -60,6 +60,9 @@
 			<input type="hidden" id="applnType" value="${edcrApplication.applicationType}">
 			<input type="hidden" id="applicationType"
 				value="${edcrApplication.applicationType.applicationTypeVal}">
+				<input type="hidden" id="dxfFileSizeAllowed" value="${dcrDxfMaxSize}">
+			<input type="hidden" id="dcrAllowedFileExtns"
+				value="${dcrDxfAllowedExtenstions}">
 			<div class="panel panel-primary" data-collapsed="0">
 				<%@ include file="edcr-reupload-details.jsp"%>
 			</div>

@@ -109,7 +109,7 @@
 
 				<div class="col-sm-6 add-margin">
 					<div class="files-upload-container <c:if test="${docs.document.serviceChecklist.checklist.description eq 'Land Tax Receipt' || docs.document.serviceChecklist.checklist.description eq 'One day permit agreement'}">documentRequire</c:if>"
-					    data-file-max-size="5"
+					    data-file-max-size="${appDocMaxSize}"
 					    <c:if test="${docs.document.serviceChecklist.mandatory eq true && fn:length(docs.document.getOrderedSupportDocs()) eq 0}">required</c:if>
 						data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 						<div class="files-viewer">

@@ -73,6 +73,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.service.NocConfigurationService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
@@ -157,6 +158,8 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private OccupancyCertificateUtils occupancyCertificateUtils;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
 
     @GetMapping("/occupancy-certificate/update/{applicationNumber}")
     public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
@@ -228,7 +231,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
         if (APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode())
                 || APPLICATION_STATUS_APPROVED.equals(oc.getStatus().getCode())
-                && bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
+                        && bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
             model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
             String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
             model.addAttribute(ONLINE_PAYMENT_ENABLE,
@@ -241,61 +244,74 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
-        
+
         Map<String, String> nocConfigMap = new HashMap<String, String>();
         Map<String, String> nocAutoMap = new HashMap<String, String>();
         Map<String, String> nocTypeApplMap = new HashMap<String, String>();
         int nocAutoCount = 0;
         List<User> nocAutoUsers = new ArrayList<>();
-	    List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+        List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
         List<OccupancyNocApplication> ocNoc = ocNocService.findByOCApplicationNumber(oc.getApplicationNumber());
-        model.addAttribute("isOcApplFeeReq","NO");
-        model.addAttribute("ocApplFeeCollected","NO");
-        if(occupancyCertificateUtils.isApplicationFeeCollectionRequired() ){
-        	model.addAttribute("isOcApplFeeReq","YES");
+        model.addAttribute("isOcApplFeeReq", "NO");
+        model.addAttribute("ocApplFeeCollected", "NO");
+        if (occupancyCertificateUtils.isApplicationFeeCollectionRequired()) {
+            model.addAttribute("isOcApplFeeReq", "YES");
         }
-        if(oc.getDemand() != null && oc.getDemand().getAmtCollected().compareTo(oc.getAdmissionfeeAmount())>=0){
-        		model.addAttribute("ocApplFeeCollected","YES");
+        if (oc.getDemand() != null && oc.getDemand().getAmtCollected().compareTo(oc.getAdmissionfeeAmount()) >= 0) {
+            model.addAttribute("ocApplFeeCollected", "YES");
         }
         Map<String, String> edcrNocMandatory = ocNocService.getEdcrNocMandatory(oc.geteDcrNumber());
         for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
-        	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
-			NocConfiguration nocConfig = nocConfigurationService
-					.findByDepartmentAndType(code, BpaConstants.OC);
-		    
-			if(ocNocService.findByApplicationNumberAndType(oc.getApplicationNumber(),code)!=null)
-				nocTypeApplMap.put(code, "initiated");
-			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
-					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
-				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
-			}
-			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
-					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
-				nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
-				nocAutoCount++;
-				 List<User> userList = nocUsers.stream()
-			    	      .filter(usr -> usr.getRoles().stream()
-			    	        .anyMatch(usrrl -> 
-			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-			    	        .collect(Collectors.toList());	
-				 if(!userList.isEmpty())
-                	nocAutoUsers.add(userList.get(0));
-			}
-			 model.addAttribute("nocTypeApplMap",nocTypeApplMap);
-		        model.addAttribute("nocConfigMap",nocConfigMap);
-		        model.addAttribute("nocAutoMap",nocConfigMap);
-			for (OccupancyNocApplication ona : ocNoc) {
-				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
-					nocDocument.setOcNoc(ona);
-				}
-			}
-			 if(nocAutoUsers.size() == nocAutoCount) 
-					model.addAttribute("nocUserExists",true);
-				else
-					model.addAttribute("nocUserExists",false);
-		}
+            String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+            NocConfiguration nocConfig = nocConfigurationService
+                    .findByDepartmentAndType(code, BpaConstants.OC);
+
+            if (ocNocService.findByApplicationNumberAndType(oc.getApplicationNumber(), code) != null)
+                nocTypeApplMap.put(code, "initiated");
+            if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC)
+                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
+                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+                nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+            }
+            if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+                nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
+                nocAutoCount++;
+                List<User> userList = nocUsers.stream()
+                        .filter(usr -> usr.getRoles().stream()
+                                .anyMatch(usrrl -> usrrl.getName()
+                                        .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                        .collect(Collectors.toList());
+                if (!userList.isEmpty())
+                    nocAutoUsers.add(userList.get(0));
+            }
+            model.addAttribute("nocTypeApplMap", nocTypeApplMap);
+            model.addAttribute("nocConfigMap", nocConfigMap);
+            model.addAttribute("nocAutoMap", nocConfigMap);
+            for (OccupancyNocApplication ona : ocNoc) {
+                if (nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode()
+                        .equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
+                    nocDocument.setOcNoc(ona);
+                }
+            }
+            if (nocAutoUsers.size() == nocAutoCount)
+                model.addAttribute("nocUserExists", true);
+            else
+                model.addAttribute("nocUserExists", false);
+        }
+        model.addAttribute("appDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.extenstions"));
+        model.addAttribute("appDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.max.size"));
+
+        model.addAttribute("dcrDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.allowed.extenstions"));
+        model.addAttribute("dcrDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.max.size"));
+
+        model.addAttribute("nocDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.noc.docs.allowed.extenstions"));
+        model.addAttribute("nocDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.noc.docs.max.size"));
     }
 
     private void prepareFormData(final OccupancyCertificate oc, final Model model) {
@@ -316,6 +332,7 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     public String updateOCDetails(@Valid @ModelAttribute("occupancyCertificate") final OccupancyCertificate occupancyCertificate,
             final HttpServletRequest request, final Model model,
             final BindingResult errors) {
+        occupancyCertificateService.validateDocs(occupancyCertificate, errors);
         if (errors.hasErrors())
             return OCCUPANCY_CERTIFICATE_UPDATE;
         occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
@@ -328,10 +345,11 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
                 && request.getParameter(ONLINE_PAYMENT_ENABLE)
                         .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE,
+                CREATE_ADDITIONAL_RULE_CREATE_OC);
         if (wfMatrix != null)
-			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
+            userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
         if (citizenOrBusinessUser && workFlowAction != null
                 && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (userPosition == 0 || userPosition == null)) {

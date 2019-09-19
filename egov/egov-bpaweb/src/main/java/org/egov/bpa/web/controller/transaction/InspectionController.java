@@ -86,7 +86,7 @@ public class InspectionController extends BpaGenericApplicationController {
         loadApplication(model, application);
         return CREATEINSPECTIONDETAIL_FORM;
     }
-    
+
     @GetMapping("/createpreinspectiondetails/{applicationNumber}")
     public String inspectionDetail(final Model model, @PathVariable final String applicationNumber) {
         final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -98,6 +98,7 @@ public class InspectionController extends BpaGenericApplicationController {
     public String createInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection inspection,
             @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        inspectionService.validatePermitInspectionDocs(inspection, resultBinder);
         if (resultBinder.hasErrors()) {
             loadApplication(model, application);
             return CREATEINSPECTIONDETAIL_FORM;
@@ -105,12 +106,12 @@ public class InspectionController extends BpaGenericApplicationController {
         Position ownerPosition = application.getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
-       // inspection.getInspection().setDocket(inspectionService.buildDocDetFromUI(inspection));
+        // inspection.getInspection().setDocket(inspectionService.buildDocDetFromUI(inspection));
         final PermitInspection savedInspection = inspectionService.save(inspection, application);
         model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
         return "redirect:/application/view-inspection/" + savedInspection.getId();
     }
-    
+
     @PostMapping("/createpreinspectiondetails/{applicationNumber}")
     public String createPreInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection inspection,
             @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
@@ -158,9 +159,9 @@ public class InspectionController extends BpaGenericApplicationController {
         model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
         model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
         model.addAttribute("planScrutinyCheckList",
-        		inspectionService.buildPlanScrutiny(servicetypeId));
+                inspectionService.buildPlanScrutiny(servicetypeId));
         model.addAttribute("planScrutinyChecklistForDrawing",
-        		inspectionService.buildPlanScrutinyDrawing(servicetypeId));
+                inspectionService.buildPlanScrutinyDrawing(servicetypeId));
         model.addAttribute("planScrutinyValues", ChecklistValues.values());
         List<ChecklistServiceTypeMapping> imagesChecklist = checklistServicetypeMappingService
                 .findByActiveByServiceTypeAndChecklist(servicetypeId, "PERMITINSPNIMAGES");

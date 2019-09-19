@@ -163,6 +163,11 @@
 			<artifactId>arial-uni-ms</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>eu.medsea.mimeutil</groupId>
+		    <artifactId>mime-util</artifactId>
+		    <version>2.1.1</version>
+		</dependency>
     </dependencies>
 
     <build>

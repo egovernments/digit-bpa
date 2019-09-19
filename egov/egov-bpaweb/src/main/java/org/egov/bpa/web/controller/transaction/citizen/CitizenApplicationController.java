@@ -282,6 +282,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             exstBldg.setNumber(0);
             bpaApplication.getExistingBuildingDetails().add(exstBldg);
         }
+        prepareDocumentsAllowedExtAndSize(model);
         return "citizenApplication-form";
     }
 
@@ -382,6 +383,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             final HttpServletRequest request, final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
         String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
+        applicationBpaService.validateDocs(bpaApplication, errors);
         List<ApplicationSubType> riskBasedAppTypes = applicationTypeService.getRiskBasedApplicationTypes();
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);

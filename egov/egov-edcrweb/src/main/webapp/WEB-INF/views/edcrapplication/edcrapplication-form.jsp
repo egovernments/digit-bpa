@@ -64,6 +64,8 @@
 			<div class="fileSection col-md77-4">
 				<input type="file" required="required" name="dxfFile" id="myfile"
 					style="display: none;">
+				<input type="hidden" id="dxfFileSizeAllowed" value="${dcrDxfMaxSize}">
+        		<input type="hidden" id="dcrAllowedFileExtns" value="${dcrDxfAllowedExtenstions}">
 				<p class="hide">
 					<i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span>
 				</p>

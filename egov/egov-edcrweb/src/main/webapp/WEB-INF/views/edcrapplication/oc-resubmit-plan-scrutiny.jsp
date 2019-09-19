@@ -58,6 +58,8 @@
             <div class="panel panel-primary" data-collapsed="0">
                 <%@ include file="oc-resubmit-plan-scrutiny-form.jsp" %>
             </div>
+            <input type="hidden" id="dxfFileSizeAllowed" value="${dcrDxfMaxSize}">
+			<input type="hidden" id="dcrAllowedFileExtns" value="${dcrDxfAllowedExtenstions}">
             <div class="form-group">
                 <div class="text-center">
                     <button type='submit' class='btn btn-primary' id="reUploadSubmit"><spring:message

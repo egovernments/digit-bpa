@@ -224,7 +224,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private InspectionApplicationService inspectionAppService;
     @Autowired
     private InConstructionInspectionService inspectionConstService;
-    
+
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
@@ -283,6 +283,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             @PathVariable final String applicationNumber, final BindingResult resultBinder,
             final HttpServletRequest request, @RequestParam final BigDecimal amountRule,
             final Model model, final RedirectAttributes redirectAttributes) throws IOException {
+        applicationBpaService.validateDocs(bpaApplication, resultBinder);
         if (resultBinder.hasErrors()) {
             loadFormData(model, bpaApplication);
             loadCommonApplicationDetails(model, bpaApplication);
@@ -363,7 +364,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
         String approvalComent = request.getParameter(APPROVAL_COMENT);
-
+        applicationBpaService.validateDocs(bpaApplication, resultBinder);
+        applicationBpaService.validateTownSurveyorDocs(bpaApplication, resultBinder);
         if (resultBinder.hasErrors()) {
             loadFormData(model, bpaApplication);
             return BPAAPPLICATION_FORM;
@@ -792,18 +794,21 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             model.addAttribute("showRejectionReasons", false);
         }
 
+        prepareDocumentsAllowedExtAndSize(model);
     }
 
     private void loadCommonApplicationDetails(Model model, BpaApplication application) {
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
-        final List<PermitInspectionApplication> permitInspections = inspectionAppService.findByApplicationNumber(application.getApplicationNumber());
+        final List<PermitInspectionApplication> permitInspections = inspectionAppService
+                .findByApplicationNumber(application.getApplicationNumber());
 
-        for( PermitInspectionApplication permitInspection : permitInspections) {
-        	List<InConstructionInspection> inspApp = inspectionConstService.findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
-        	inConstInspections.addAll(inspApp);
-        }        
-        model.addAttribute("inconstinspectionList",inConstInspections);
+        for (PermitInspectionApplication permitInspection : permitInspections) {
+            List<InConstructionInspection> inspApp = inspectionConstService
+                    .findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
+            inConstInspections.addAll(inspApp);
+        }
+        model.addAttribute("inconstinspectionList", inConstInspections);
         model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),

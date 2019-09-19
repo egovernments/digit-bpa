@@ -157,7 +157,7 @@
 						<div class="col-sm-6 add-margin">
 							<div
 								class="files-upload-container <c:if test="${dcrDoc.dcrDocument.serviceChecklist.mandatory eq true && fn:length(dcrDoc.dcrDocument.getOrderedDcrAttachments()) eq 0}">mandatory-dcr-doc</c:if>"
-								data-file-max-size="20"
+								data-file-max-size="${dcrDocMaxSize }"
 								<c:if test="${dcrDoc.dcrDocument.serviceChecklist.mandatory eq true && fn:length(dcrDoc.dcrDocument.getOrderedDcrAttachments()) eq 0}">required</c:if>
 								data-allowed-extenstion="pdf">
 								<div class="files-viewer ${checklistName}">

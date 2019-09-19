@@ -21,6 +21,7 @@ import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.commons.service.OccupancyService;
+import org.egov.edcr.config.properties.EdcrApplicationSettings;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
@@ -34,7 +35,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationConstant;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -90,11 +90,16 @@ public class EdcrApplicationController {
     private StakeholderTypeService stakeholderTypeService;
     @Autowired
     protected AppConfigValueService appConfigValueService;
+    @Autowired
+    private EdcrApplicationSettings edcrApplicationSettings;
 
     private void prepareNewForm(Model model, HttpServletRequest request) {
         model.addAttribute("serviceTypeList", serviceTypeService.getEDcrRequiredServiceTypes());
         model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
+        model.addAttribute("dcrDxfAllowedExtenstions",
+                edcrApplicationSettings.getValue("dcr.dxf.allowed.extenstions"));
+        model.addAttribute("dcrDxfMaxSize", edcrApplicationSettings.getValue("dcr.dxf.max.size"));
     }
 
     @GetMapping("/edcrapplication/new")

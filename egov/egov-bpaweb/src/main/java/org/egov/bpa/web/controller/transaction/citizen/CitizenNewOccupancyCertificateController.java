@@ -127,7 +127,7 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private OccupancyCertificateNocService ocNocService;
-    
+
     @GetMapping("/occupancy-certificate/apply")
     public String newOCForm(final Model model, final HttpServletRequest request) {
 
@@ -146,8 +146,9 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
         setCityName(model, request);
         getDcrDocumentsUploadMode(model);
         prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
+        prepareDocumentsAllowedExtAndSize(model);
         model.addAttribute("occupancyCertificate", occupancyCertificate);
-       
+
     }
 
     private void setCityName(final Model model, final HttpServletRequest request) {
@@ -159,11 +160,14 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
     public String submitOCDetails(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
             final HttpServletRequest request, final Model model,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
+
+        occupancyCertificateService.validateDocs(occupancyCertificate, errors);
+
         if (errors.hasErrors()) {
             return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
         }
         occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
-        OccupancyCertificateValidationService ocService =  (OccupancyCertificateValidationService) specificNoticeService
+        OccupancyCertificateValidationService ocService = (OccupancyCertificateValidationService) specificNoticeService
                 .find(OccupancyCertificateValidationService.class, specificNoticeService.getCityDetails());
         Boolean result = ocService.validateOcApplnWithPermittedBpaAppln(model, occupancyCertificate);
         if (occupancyCertificate.getParent() != null && occupancyCertificate.getParent().geteDcrNumber() != null && !result) {
@@ -184,7 +188,8 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
         Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
                 && request.getParameter(ONLINE_PAYMENT_ENABLE)
                         .equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(), WF_NEW_STATE,
+                CREATE_ADDITIONAL_RULE_CREATE_OC);
         if (wfMatrix != null)
             userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
                     bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
@@ -222,33 +227,34 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
             wfBean.setCurrentState(WF_NEW_STATE);
             bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, wfBean);
             ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
-            
+
             ocNocService.initiateNoc(ocResponse);
-            
+
             int nocAutoCount = 0;
             List<User> nocAutoUsers = new ArrayList<>();
-    	    List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
-           
+            List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+
             for (OCNocDocuments nocDocument : occupancyCertificate.getNocDocuments()) {
-            	String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
-    			NocConfiguration nocConfig = nocConfigurationService
-    					.findByDepartmentAndType(code, BpaConstants.OC);
-    			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-    					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
-    				nocAutoCount++;
-    				 List<User> userList = nocUsers.stream()
-    			    	      .filter(usr -> usr.getRoles().stream()
-    			    	        .anyMatch(usrrl -> 
-    			    	          usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-    			    	        .collect(Collectors.toList());	
-    				 if(!userList.isEmpty())
-                    	nocAutoUsers.add(userList.get(0));
-    			}    			
-    			 if(nocAutoUsers.size() == nocAutoCount) 
-    					model.addAttribute("nocUserExists",true);
-    				else
-    					model.addAttribute("nocUserExists",false);
-    		}
+                String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+                NocConfiguration nocConfig = nocConfigurationService
+                        .findByDepartmentAndType(code, BpaConstants.OC);
+                if (nocConfig != null
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
+                    nocAutoCount++;
+                    List<User> userList = nocUsers.stream()
+                            .filter(usr -> usr.getRoles().stream()
+                                    .anyMatch(usrrl -> usrrl.getName()
+                                            .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                            .collect(Collectors.toList());
+                    if (!userList.isEmpty())
+                        nocAutoUsers.add(userList.get(0));
+                }
+                if (nocAutoUsers.size() == nocAutoCount)
+                    model.addAttribute("nocUserExists", true);
+                else
+                    model.addAttribute("nocUserExists", false);
+            }
 
             List<Assignment> assignments;
             if (null == userPosition)

@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.entity.oc.OCInspection;
@@ -66,75 +67,87 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/application/occupancy-certificate")
 public class UpdateInspectionForOccupancyCertificateController extends BpaGenericApplicationController {
 
-	@Autowired
+    @Autowired
     private CustomImplProvider specificNoticeService;
+    @Autowired
+    private OcInspectionService ocInspectionService;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
 
-	@GetMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
-	public String editInspectionAppointment(
-			@PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model) {
-		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+    @GetMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
+    public String editInspectionAppointment(
+            @PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model) {
+        final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
-		OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
-		loadApplication(model, ocInspection);
-		model.addAttribute("mode", "editinsp");
-		return "oc-inspection-edit";
-	}
+        OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber, inspectionNumber);
+        loadApplication(model, ocInspection);
+        model.addAttribute("mode", "editinsp");
+        return "oc-inspection-edit";
+    }
 
-	@PostMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
-	public String updateInspection(@ModelAttribute("ocInspection") final OCInspection ocInspection,
-								   @PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model, final BindingResult resultBinder) {
-		if (resultBinder.hasErrors()) {
-			loadApplication(model, ocInspection);
-			return "oc-inspection-edit";
-		}
-		/*final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(ocInspection);
-		ocInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);*/
-		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+    @PostMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
+    public String updateInspection(@ModelAttribute("ocInspection") final OCInspection ocInspection,
+            @PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model,
+            final BindingResult resultBinder) {
+        ocInspectionService.validateinspectionDocs(ocInspection, resultBinder);
+        if (resultBinder.hasErrors()) {
+            loadApplication(model, ocInspection);
+            return "oc-inspection-edit";
+        }
+        /*
+         * final List<DocketDetailCommon> docketDetailTempList = buildDocketDetails(ocInspection);
+         * ocInspection.getInspection().getDocket().get(0).setDocketDetail(docketDetailTempList);
+         */
+        final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
-		OCInspection ocInspectionRes = ocInspectionService.save(ocInspection);
-		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
-		return "redirect:/application/occupancy-certificate/success/view-inspection-details/" + applicationNumber + "/" + ocInspectionRes.getInspection().getInspectionNumber();
-	}
+        OCInspection ocInspectionRes = ocInspectionService.save(ocInspection);
+        model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
+        return "redirect:/application/occupancy-certificate/success/view-inspection-details/" + applicationNumber + "/"
+                + ocInspectionRes.getInspection().getInspectionNumber();
+    }
 
-	private List<DocketDetailCommon> buildDocketDetails(@ModelAttribute("ocInspection") OCInspection ocInspection) {
-		final List<DocketDetailCommon> docketDetailTempList = new ArrayList<>();
-		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+    private List<DocketDetailCommon> buildDocketDetails(@ModelAttribute("ocInspection") OCInspection ocInspection) {
+        final List<DocketDetailCommon> docketDetailTempList = new ArrayList<>();
+        final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
-		final List<DocketDetailCommon> docketDetailList = ocInspectionService.buildDocketDetail(ocInspection.getInspection());
-		for (final DocketDetailCommon docketDet : ocInspection.getInspection().getDocket().get(0).getDocketDetail())
-			for (final DocketDetailCommon tempLoc : docketDetailList)
-				if (docketDet.getServiceChecklist().getId().equals(tempLoc.getServiceChecklist().getId())) {
-					docketDet.setValue(tempLoc.getValue());
-					docketDet.setRemarks(tempLoc.getRemarks());
-					docketDetailTempList.add(docketDet);
-				}
-		return docketDetailTempList;
-	}
+        final List<DocketDetailCommon> docketDetailList = ocInspectionService.buildDocketDetail(ocInspection.getInspection());
+        for (final DocketDetailCommon docketDet : ocInspection.getInspection().getDocket().get(0).getDocketDetail())
+            for (final DocketDetailCommon tempLoc : docketDetailList)
+                if (docketDet.getServiceChecklist().getId().equals(tempLoc.getServiceChecklist().getId())) {
+                    docketDet.setValue(tempLoc.getValue());
+                    docketDet.setRemarks(tempLoc.getRemarks());
+                    docketDetailTempList.add(docketDet);
+                }
+        return docketDetailTempList;
+    }
 
-	private void loadApplication(final Model model, final OCInspection ocInspection) {
-		final OccupancyCertificate oc = ocInspection.getOc();
-		if (oc != null && oc.getState() != null
-				&& oc.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
-			prepareWorkflowDataForInspection(model, oc);
-			model.addAttribute("loginUser", securityUtils.getCurrentUser());
-			model.addAttribute(BpaConstants.APPLICATION_HISTORY, workflowHistoryService
-					.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
-		}
-		if (ocInspection != null)
-			ocInspection.getInspection().setInspectionDate(new Date());
-		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+    private void loadApplication(final Model model, final OCInspection ocInspection) {
+        final OccupancyCertificate oc = ocInspection.getOc();
+        if (oc != null && oc.getState() != null
+                && oc.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
+            prepareWorkflowDataForInspection(model, oc);
+            model.addAttribute("loginUser", securityUtils.getCurrentUser());
+            model.addAttribute(BpaConstants.APPLICATION_HISTORY, workflowHistoryService
+                    .getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
+        }
+        if (ocInspection != null)
+            ocInspection.getInspection().setInspectionDate(new Date());
+        final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
-		ocInspectionService.prepareImagesForView(ocInspection);
-		//ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
-		model.addAttribute("ocInspection", ocInspection);
-		model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
-		model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
-		model.addAttribute("planScrutinyValues", ChecklistValues.values());
+        ocInspectionService.prepareImagesForView(ocInspection);
+        // ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
+        model.addAttribute("ocInspection", ocInspection);
+        model.addAttribute(BpaConstants.BPA_APPLICATION, oc.getParent());
+        model.addAttribute(OcConstants.OCCUPANCY_CERTIFICATE, oc);
+        model.addAttribute("planScrutinyValues", ChecklistValues.values());
 
-		ocInspection.getInspection().setPlanScrutinyChecklistForRuleTemp(ocInspectionService.getPlanScrutinyForRuleValidation(ocInspection));
-		ocInspection.getInspection().setPlanScrutinyChecklistForDrawingTemp(ocInspectionService.getPlanScrutinyForDrawingDetails(ocInspection));
-
-	}
-
+        ocInspection.getInspection()
+                .setPlanScrutinyChecklistForRuleTemp(ocInspectionService.getPlanScrutinyForRuleValidation(ocInspection));
+        ocInspection.getInspection()
+                .setPlanScrutinyChecklistForDrawingTemp(ocInspectionService.getPlanScrutinyForDrawingDetails(ocInspection));
+        model.addAttribute("inspectionDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.oc.inspection.docs.allowed.extenstions"));
+        model.addAttribute("inspectionDocMaxSize", bpaApplicationSettings.getValue("bpa.oc.inspection.docs.max.size"));
+    }
 
 }

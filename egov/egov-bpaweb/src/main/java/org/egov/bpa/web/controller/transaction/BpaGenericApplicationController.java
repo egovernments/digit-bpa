@@ -81,6 +81,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.master.entity.ApplicationSubType;
 import org.egov.bpa.master.service.ApplicationSubTypeService;
 import org.egov.bpa.master.service.BpaSchemeService;
@@ -194,6 +195,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     protected StakeholderTypeService stakeholderTypeService;
     @Autowired
     protected ApplicationSubTypeService applicationTypeService;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
 
     protected void prepareFormData(Model model) {
         model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
@@ -340,7 +343,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("currentState", occupancyCertificate.getCurrentState().getValue());
         model.addAttribute(OCCUPANCY_CERTIFICATE, occupancyCertificate);
     }
-    
+
     protected void prepareWorkflowDataForInspection(final Model model, final InspectionApplication application) {
         model.addAttribute("stateType", application.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
@@ -348,7 +351,25 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         workflowContainer.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
         prepareWorkflow(model, application, workflowContainer);
         model.addAttribute("currentState", application.getCurrentState().getValue());
-        model.addAttribute(BpaConstants.WFINSPECTIONAPPLICATION , application);
+        model.addAttribute(BpaConstants.WFINSPECTIONAPPLICATION, application);
+    }
+
+    protected void prepareDocumentsAllowedExtAndSize(Model model) {
+        model.addAttribute("appDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.extenstions"));
+        model.addAttribute("appDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.app.docs.max.size"));
+
+        model.addAttribute("dcrDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.allowed.extenstions"));
+        model.addAttribute("dcrDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.max.size"));
+
+        model.addAttribute("nocDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.citizen.noc.docs.allowed.extenstions"));
+        model.addAttribute("nocDocMaxSize", bpaApplicationSettings.getValue("bpa.citizen.noc.docs.max.size"));
+
+        model.addAttribute("tsDocAllowedExtenstions",
+                bpaApplicationSettings.getValue("bpa.ts.docs.allowed.extenstions"));
+        model.addAttribute("tsDocMaxSize", bpaApplicationSettings.getValue("bpa.ts.docs.max.size"));
     }
 
     protected void buildReceiptDetails(Set<EgDemandDetails> egDemandDetails, Set<Receipt> receipts) {

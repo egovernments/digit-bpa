@@ -49,7 +49,6 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
-import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
 import org.egov.bpa.utils.BpaConstants;
@@ -101,6 +100,7 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
     public String updateInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection permitInspn,
             @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        inspectionService.validatePermitInspectionDocs(permitInspn, resultBinder);
         if (resultBinder.hasErrors()) {
             loadApplication(model, application);
             return "inspection-edit";
@@ -138,12 +138,14 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
         final InspectionService inspectionService = (InspectionService) specificNoticeService
                 .find(InspectionService.class, specificNoticeService.getCityDetails());
         inspectionService.prepareImagesForView(permitInspn);
-       // inspectionService.buildDocketDetailForModifyAndViewList(permitInspn, model);
+        // inspectionService.buildDocketDetailForModifyAndViewList(permitInspn, model);
         model.addAttribute("permitInspection", permitInspn);
         model.addAttribute(BpaConstants.BPA_APPLICATION, application);
         model.addAttribute("planScrutinyValues", ChecklistValues.values());
-        permitInspn.getInspection().setPlanScrutinyChecklistForRuleTemp(inspectionService.getPlanScrutinyForRuleValidation(permitInspn));
-        permitInspn.getInspection().setPlanScrutinyChecklistForDrawingTemp(inspectionService.getPlanScrutinyForDrawingDetails(permitInspn));
+        permitInspn.getInspection()
+                .setPlanScrutinyChecklistForRuleTemp(inspectionService.getPlanScrutinyForRuleValidation(permitInspn));
+        permitInspn.getInspection()
+                .setPlanScrutinyChecklistForDrawingTemp(inspectionService.getPlanScrutinyForDrawingDetails(permitInspn));
     }
 
 }
