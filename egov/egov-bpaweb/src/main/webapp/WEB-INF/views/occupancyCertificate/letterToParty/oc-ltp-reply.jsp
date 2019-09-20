@@ -241,6 +241,7 @@
                                                    data-file-input-name="letterToParty.letterToPartyDocuments[${status.index}].files">
                                                     <i class="fa fa-plus"></i>
                                                 </a>
+                                                <form:errors path="letterToParty.letterToPartyDocuments[${status.index}].files" cssClass="add-margin error-msg" />
 
                                             </div>
                                         </div>

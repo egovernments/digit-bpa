@@ -217,7 +217,7 @@
 									data-file-input-name="permitNocDocuments[${status.index}].nocDocument.files">
 									<i class="fa fa-plus"></i>
 								</a>
-
+								<form:errors path="permitNocDocuments[${status.index}].nocDocument.files" cssClass="add-margin error-msg" />
 							</div>
 						</div>
 					</td>

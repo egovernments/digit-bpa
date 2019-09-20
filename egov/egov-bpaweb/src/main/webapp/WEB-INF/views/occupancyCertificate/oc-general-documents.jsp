@@ -155,6 +155,7 @@
 								data-file-input-name="documents[${status.index}].document.files">
 								<i class="fa fa-plus"></i>
 							</a>
+							<form:errors path="documents[${status.index}].document.files" cssClass="add-margin error-msg" />
 
 						</div>
 					</div>

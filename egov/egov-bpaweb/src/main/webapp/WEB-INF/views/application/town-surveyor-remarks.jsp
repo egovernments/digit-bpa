@@ -137,6 +137,7 @@
 				style="display: none;" /><input
 				type="file" name="files" class="filechange inline btn"
 				style="display: none;" />
+				<form:errors path="files" cssClass="add-margin error-msg"/>
 		</div>
 	</div>
 </div>

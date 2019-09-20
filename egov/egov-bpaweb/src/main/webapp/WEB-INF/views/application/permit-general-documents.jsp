@@ -153,11 +153,10 @@
 								</div>
 							</c:forEach>
 
-							<a href="javascript:void(0);" class="file-add"
-								data-unlimited-files="true"
-								data-file-input-name="permitDocuments[${status.index}].document.files">
+							<a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-file-input-name="permitDocuments[${status.index}].document.files">
 								<i class="fa fa-plus"></i>
 							</a>
+							<form:errors path="permitDocuments[${status.index}].document.files" cssClass="add-margin error-msg" />
 
 						</div>
 					</div>

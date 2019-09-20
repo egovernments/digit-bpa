@@ -162,6 +162,7 @@
                                data-file-input-name="permitDcrDocuments[${dcrDocStatus.index}].dcrDocument.files">
                                 <i class="fa fa-plus"></i>
                             </a>
+                            <form:errors path="permitDcrDocuments[${dcrDocStatus.index}].dcrDocument.files" cssClass="add-margin error-msg" />
 
                         </div>
                     </div>

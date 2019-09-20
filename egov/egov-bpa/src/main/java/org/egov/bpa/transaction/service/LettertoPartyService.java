@@ -151,7 +151,7 @@ public class LettertoPartyService {
         Integer i = 0;
         for (LetterToPartyDocumentCommon document : lettertoparty.getLetterToParty().getLetterToPartyDocuments()) {
             bpaUtils.validateFiles(errors, lpDocAllowedExtenstions, lpDocMimeTypes, document.getFiles(),
-                    "lettertoPartyDocument[" + i + "].files",
+                    "letterToParty.letterToPartyDocuments[" + i + "].files",
                     bpaApplicationSettings.getValue("bpa.lpreply.docs.max.size"));
             i++;
         }

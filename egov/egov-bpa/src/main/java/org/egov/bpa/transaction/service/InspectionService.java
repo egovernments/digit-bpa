@@ -417,7 +417,7 @@ public class InspectionService {
         Integer i = 0;
         for (InspectionFilesCommon document : inspection.getInspection().getInspectionSupportDocs()) {
             bpaUtils.validateFiles(errors, tsDocAllowedExtenstions, tsDocMimeTypes, document.getFiles(),
-                    "applicationDocument[" + i + "].files",
+                    "inspection.inspectionSupportDocs[" + i + "].files",
                     bpaApplicationSettings.getValue("bpa.oc.inspection.docs.max.size"));
             i++;
         }

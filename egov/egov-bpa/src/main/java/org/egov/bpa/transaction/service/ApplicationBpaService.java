@@ -1207,7 +1207,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         Integer i = 0;
         for (PermitDocument document : application.getPermitDocuments()) {
             bpaUtils.validateFiles(errors, appDocAllowedExtenstions, appDocMimeTypes, document.getDocument().getFiles(),
-                    "applicationDocument[" + i + "].files",
+                    "permitDocuments[" + i + "].document.files",
                     bpaApplicationSettings.getValue("bpa.citizen.app.docs.max.size"));
             i++;
         }
@@ -1215,7 +1215,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         i = 0;
         for (PermitDcrDocument document : application.getPermitDcrDocuments()) {
             bpaUtils.validateFiles(errors, dcrDocAllowedExtenstions, dcrDocMimeTypes, document.getDcrDocument().getFiles(),
-                    "dcrDocuments[" + i + "].files",
+                    "permitDcrDocuments[" + i + "].dcrDocument.files",
                     bpaApplicationSettings.getValue("bpa.citizen.dcr.docs.max.size"));
             i++;
         }
@@ -1223,7 +1223,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         i = 0;
         for (PermitNocDocument document : application.getPermitNocDocuments()) {
             bpaUtils.validateFiles(errors, nocDocAllowedExtenstions, nocDocMimeTypes, document.getNocDocument().getFiles(),
-                    "applicationNOCDocument[" + i + "].files",
+                    "permitNocDocuments[" + i + "].nocDocument.files",
                     bpaApplicationSettings.getValue("bpa.citizen.noc.docs.max.size"));
             i++;
         }

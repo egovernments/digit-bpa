@@ -94,7 +94,7 @@
 							data-file-input-name="inspection.inspectionSupportDocs[${status.index}].files">
 							<i class="fa fa-plus"></i>
 						</a>
-
+						<form:errors path="inspection.inspectionSupportDocs[${status.index}].files" cssClass="add-margin error-msg" />
 					</div>
 				</div>
 			</div>

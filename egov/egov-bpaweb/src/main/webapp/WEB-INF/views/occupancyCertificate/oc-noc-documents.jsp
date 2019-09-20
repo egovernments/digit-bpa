@@ -207,7 +207,7 @@
 											data-file-input-name="nocDocuments[${status.index}].nocDocument.files">
 											<i class="fa fa-plus"></i>
 										</a>
-
+										<form:errors path="nocDocuments[${status.index}].nocDocument.files" cssClass="add-margin error-msg" />
 									</div>
 								</div>
 								<c:if test="${not empty nocConfigMap}">

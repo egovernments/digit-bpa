@@ -336,7 +336,7 @@ public class OcInspectionService {
         for (InspectionFilesCommon document : ocInspection.getInspection().getInspectionSupportDocs()) {
             bpaUtils.validateFiles(errors, inspDocAllowedExtenstions, inspDocMimeTypes,
                     document.getFiles(),
-                    "inspection.inspectionSupportDocs[" + i + "].file",
+                    "inspection.inspectionSupportDocs[" + i + "].files",
                     bpaApplicationSettings.getValue("bpa.oc.inspection.docs.max.size"));
             i++;
         }
