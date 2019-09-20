@@ -31,6 +31,7 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,7 +39,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -53,14 +53,12 @@ public class PermitCoApplicant extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_PERMIT_COAPPLICANT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "application")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
     
-    @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "coApplicant")
+    @JoinColumn(name = "coApplicant", nullable = false)
     private CoApplicant coApplicant;
     
     @Override

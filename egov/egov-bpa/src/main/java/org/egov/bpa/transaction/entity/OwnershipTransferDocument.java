@@ -41,6 +41,7 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,7 +50,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -59,35 +59,33 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OwnershipTransferDocument.SEQ_OWNERSHIP_DOCUMENT, sequenceName = OwnershipTransferDocument.SEQ_OWNERSHIP_DOCUMENT, allocationSize = 1)
 public class OwnershipTransferDocument extends AbstractAuditable {
 
-    public static final String SEQ_OWNERSHIP_DOCUMENT = "seq_egbpa_ownershiptransfer_document";
-    private static final long serialVersionUID = 511172192589137332L;
+	public static final String SEQ_OWNERSHIP_DOCUMENT = "seq_egbpa_ownershiptransfer_document";
+	private static final long serialVersionUID = 511172192589137332L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_OWNERSHIP_DOCUMENT, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_OWNERSHIP_DOCUMENT, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
-    @NotNull
-    @JoinColumn(name = "ownershipTransfer", nullable = false)
-    private OwnershipTransfer ownershipTransfer;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ownershipTransfer", nullable = false)
+	private OwnershipTransfer ownershipTransfer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "document", nullable = false)
-    private GeneralDocument document;
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "document", nullable = false)
+	private GeneralDocument document;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public OwnershipTransfer getOwnershipTransfer() {
+	public OwnershipTransfer getOwnershipTransfer() {
 		return ownershipTransfer;
 	}
 
@@ -96,11 +94,11 @@ public class OwnershipTransferDocument extends AbstractAuditable {
 	}
 
 	public GeneralDocument getDocument() {
-        return document;
-    }
+		return document;
+	}
 
-    public void setDocument(GeneralDocument document) {
-        this.document = document;
-    }
+	public void setDocument(GeneralDocument document) {
+		this.document = document;
+	}
 
 }

@@ -39,12 +39,14 @@
  */
 package org.egov.common.entity.bpa;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class SearchChecklist {
-	//private Long id;
+	// private Long id;
 	private ChecklistType checklistType;
+
+	@SafeHtml
 	private String description;
-
-
 
 	public ChecklistType getChecklistType() {
 		return checklistType;

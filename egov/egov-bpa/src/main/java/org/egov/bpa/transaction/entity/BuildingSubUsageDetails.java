@@ -80,11 +80,11 @@ public class BuildingSubUsageDetails extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ_SUB_USAGE, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "mainUsage")
 	private Occupancy mainUsage;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "buildingSubUsage")
 	private BuildingSubUsage buildingSubUsage;
 

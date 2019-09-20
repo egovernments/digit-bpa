@@ -58,101 +58,102 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_slot")
 @SequenceGenerator(name = Slot.SEQ, sequenceName = Slot.SEQ, allocationSize = 1)
 public class Slot extends AbstractAuditable {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-    public static final String SEQ = "seq_egbpa_slot";
+	public static final String SEQ = "seq_egbpa_slot";
 
-    @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    private String type;
+	@SafeHtml
+	private String type;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "zone")
-    private Boundary zone;
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "zone")
+	private Boundary zone;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "electionward")
-    private Boundary electionWard;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "electionward")
+	private Boundary electionWard;
 
-    @Temporal(value = TemporalType.DATE)
-    @NotNull
-    private Date appointmentDate;
+	@Temporal(value = TemporalType.DATE)
+	@NotNull
+	private Date appointmentDate;
 
-    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SlotDetail> slotDetail;
+	@OneToMany(mappedBy = "slot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<SlotDetail> slotDetail;
 
-    public List<SlotDetail> getSlotDetail() {
-        return slotDetail;
-    }
+	public List<SlotDetail> getSlotDetail() {
+		return slotDetail;
+	}
 
-    public void setSlotDetail(List<SlotDetail> slotDetail) {
-        this.slotDetail = slotDetail;
-    }
+	public void setSlotDetail(List<SlotDetail> slotDetail) {
+		this.slotDetail = slotDetail;
+	}
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Boundary getZone() {
-        return zone;
-    }
+	public Boundary getZone() {
+		return zone;
+	}
 
-    public void setZone(Boundary zone) {
-        this.zone = zone;
-    }
+	public void setZone(Boundary zone) {
+		this.zone = zone;
+	}
 
-    public Date getAppointmentDate() {
-        return appointmentDate;
-    }
+	public Date getAppointmentDate() {
+		return appointmentDate;
+	}
 
-    public void setAppointmentDate(Date appointmentDate) {
-        this.appointmentDate = appointmentDate;
-    }
+	public void setAppointmentDate(Date appointmentDate) {
+		this.appointmentDate = appointmentDate;
+	}
 
-    public Boundary getElectionWard() {
-        return electionWard;
-    }
+	public Boundary getElectionWard() {
+		return electionWard;
+	}
 
-    public void setElectionWard(Boundary electionWard) {
-        this.electionWard = electionWard;
-    }
+	public void setElectionWard(Boundary electionWard) {
+		this.electionWard = electionWard;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-    public Slot(){
+	public Slot() {
 
-    }
+	}
 
-    public Slot(String type, Boundary zone, Date appointmentDate,Boundary electionWard) {
-        this.type = type;
-        this.zone = zone;
-        this.appointmentDate = appointmentDate;
-        this.electionWard = electionWard;
-    }
+	public Slot(String type, Boundary zone, Date appointmentDate, Boundary electionWard) {
+		this.type = type;
+		this.zone = zone;
+		this.appointmentDate = appointmentDate;
+		this.electionWard = electionWard;
+	}
 
 }

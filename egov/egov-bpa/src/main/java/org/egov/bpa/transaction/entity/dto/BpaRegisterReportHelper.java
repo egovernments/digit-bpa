@@ -4,33 +4,51 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class BpaRegisterReportHelper {
 	private Long id;
+	@SafeHtml
 	private String applicationNumber;
+	@SafeHtml
 	private String applicationType;
+	@SafeHtml
 	private String permitType;
 	private Date dateOfAdmission;
+	@SafeHtml
 	private String applicantName;
+	@SafeHtml
 	private String address;
+	@SafeHtml
 	private String surveyNumber;
+	@SafeHtml
 	private String village;
+	@SafeHtml
 	private String revenueWard;
+	@SafeHtml
 	private String electionWard;
+	@SafeHtml
 	private String natureOfOccupancy;
+	@SafeHtml
 	private BigDecimal totalFloorArea = BigDecimal.ZERO;
 	private Integer numberOfFloors;
 	private BigDecimal far;
 	private BigDecimal applicationFee;
 	private Date docVerificationDate;
 	private Date fieldVerificationDate;
+	@SafeHtml
 	private String nocDetails;
+	@SafeHtml
 	private String buildingPermitNo;
 	private BigDecimal permitFee;
 	private BigDecimal additionalFee;
 	private BigDecimal otherFee;
+	@SafeHtml
 	private String rejectionReason;
 	private Date finalApprovalDate;
+	@SafeHtml
 	private String apprvd_rejected_by;
+	@SafeHtml
 	private String serviceType;
 	private BigDecimal shelterFund;
 	private BigDecimal labourcess;

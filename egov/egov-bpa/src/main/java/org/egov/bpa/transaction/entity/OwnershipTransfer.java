@@ -57,6 +57,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -73,7 +74,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.Receipt;
@@ -83,108 +86,133 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
-
 
 @Entity
 @Table(name = "EGBPA_OWNERSHIP_TRANSFER")
 @SequenceGenerator(name = OwnershipTransfer.SEQ_OWNERSHIP_TRANSFER, sequenceName = OwnershipTransfer.SEQ_OWNERSHIP_TRANSFER, allocationSize = 1)
 public class OwnershipTransfer extends StateAware<Position> {
 
-    private static final long serialVersionUID = -4954480849979881787L;
+	private static final long serialVersionUID = -4954480849979881787L;
 
-    public static final String SEQ_OWNERSHIP_TRANSFER = "SEQ_EGBPA_OWNERSHIP_TRANSFER";
-    public static final String ORDER_BY_ID_ASC = "id ASC";
+	public static final String SEQ_OWNERSHIP_TRANSFER = "SEQ_EGBPA_OWNERSHIP_TRANSFER";
+	public static final String ORDER_BY_ID_ASC = "id ASC";
 
-    @Id
-    @GeneratedValue(generator = SEQ_OWNERSHIP_TRANSFER, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private Source source;
+	@Id
+	@GeneratedValue(generator = SEQ_OWNERSHIP_TRANSFER, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "parent", nullable = false)
-    private BpaApplication parent;
-    
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Applicant owner;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private Source source;
 
-    @Length(min = 1, max = 64)
-    private String applicationNumber;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent", nullable = false)
+	private BpaApplication parent;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date applicationDate;
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "owner_id", nullable = false)
+	private Applicant owner;
 
-    @Length(min = 1, max = 64)
-    private String ownershipNumber;
+	@SafeHtml
+	@Length(min = 1, max = 64)
+	@Column(unique = true)
+	private String applicationNumber;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date ownershipApprovalDate;
+	@Temporal(value = TemporalType.DATE)
+	private Date applicationDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "demand")
-    private EgDemand demand;
+	@SafeHtml
+	@Length(min = 1, max = 64)
+	@Column(unique = true)
+	private String ownershipNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "status")
-    private BpaStatus status;
-    
-    @Length(min = 1, max = 128)
-    private String remarks;
-    
-    private Boolean isActive;
-    
-    private BigDecimal admissionfeeAmount;
-    
-    private Boolean mailPwdRequired = false;
+	@Temporal(value = TemporalType.DATE)
+	private Date ownershipApprovalDate;
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "demand")
+	private EgDemand demand;
+
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "status")
+	private BpaStatus status;
+
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String remarks;
+
+	private Boolean isActive;
+
+	@PositiveOrZero
+	private BigDecimal admissionfeeAmount;
+
+	private Boolean mailPwdRequired = false;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "egbpa_ownership_transfer_documents", joinColumns = @JoinColumn(name = "ownershipTransfer"), inverseJoinColumns = @JoinColumn(name = "filestore"))
-    private Set<FileStoreMapper> ownershipTransferDocs = Collections.emptySet();
+	@JoinTable(name = "egbpa_ownership_transfer_documents", joinColumns = @JoinColumn(name = "ownershipTransfer"), inverseJoinColumns = @JoinColumn(name = "filestore"))
+	private Set<FileStoreMapper> ownershipTransferDocs = Collections.emptySet();
 
 	@OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OwnershipFee> ownershipFee = new ArrayList<>();
-	
-    @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OwnershipTransferNotice> ownershipNotices = new ArrayList<>(0);
+	private List<OwnershipFee> ownershipFee = new ArrayList<>();
 
-    @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OwnershipTransferConditions> rejectionReasons = new ArrayList<>(0);
-    
-    @OrderBy(ORDER_BY_ID_ASC)
-    @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OwnershipTransferConditions> additionalOwnershipConditions = new ArrayList<>(0);
-    
-    @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OwnershipTransferCoApplicant> coApplicants = new ArrayList<>();
-    @OrderBy(ORDER_BY_ID_ASC)
-    @OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OwnershipTransferDocument> ownershipTransferDocuments = new ArrayList<>(0);
-    
-    private transient MultipartFile[] files;
-    private transient String workflowAction;
-    private transient Long approvalDepartment;
-    private transient String approvalComent;
-    private transient List<OwnershipTransferConditions> dynamicOwenrshipConditionsTemp = new ArrayList<>(0);
-    private transient List<OwnershipTransferConditions> staticOwenrshipConditionsTemp = new ArrayList<>(0);
-    private transient List<OwnershipTransferConditions> additionalOwenrshipConditionsTemp = new ArrayList<>(0);
-    private transient List<OwnershipTransferConditions> rejectionReasonsTemp = new ArrayList<>(0);
-    private transient List<OwnershipTransferConditions> additionalRejectReasonsTemp = new ArrayList<>(0);
-    private transient Set<Receipt> receipts = new HashSet<>();
+	@OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<OwnershipTransferNotice> ownershipNotices = new ArrayList<>(0);
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<OwnershipTransferConditions> rejectionReasons = new ArrayList<>(0);
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@OrderBy(ORDER_BY_ID_ASC)
+	@OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<OwnershipTransferConditions> additionalOwnershipConditions = new ArrayList<>(0);
 
-    public Source getSource() {
+	@OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<OwnershipTransferCoApplicant> coApplicants = new ArrayList<>();
+
+	@OrderBy(ORDER_BY_ID_ASC)
+	@OneToMany(mappedBy = "ownershipTransfer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<OwnershipTransferDocument> ownershipTransferDocuments = new ArrayList<>(0);
+
+	private transient MultipartFile[] files;
+
+	@SafeHtml
+	private transient String workflowAction;
+
+	private transient Long approvalDepartment;
+
+	@SafeHtml
+	private transient String approvalComent;
+
+	@Valid
+	private transient List<OwnershipTransferConditions> dynamicOwenrshipConditionsTemp = new ArrayList<>(0);
+
+	@Valid
+	private transient List<OwnershipTransferConditions> staticOwenrshipConditionsTemp = new ArrayList<>(0);
+
+	@Valid
+	private transient List<OwnershipTransferConditions> additionalOwenrshipConditionsTemp = new ArrayList<>(0);
+
+	@Valid
+	private transient List<OwnershipTransferConditions> rejectionReasonsTemp = new ArrayList<>(0);
+
+	@Valid
+	private transient List<OwnershipTransferConditions> additionalRejectReasonsTemp = new ArrayList<>(0);
+
+	private transient Set<Receipt> receipts = new HashSet<>();
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Source getSource() {
 		return source;
 	}
 
@@ -193,41 +221,41 @@ public class OwnershipTransfer extends StateAware<Position> {
 	}
 
 	@Override
-    public String myLinkId() {
-        return applicationNumber == null ? ownershipNumber : applicationNumber;
-    }
+	public String myLinkId() {
+		return applicationNumber == null ? ownershipNumber : applicationNumber;
+	}
 
-    @Override
-    public String getStateDetails() {
-        return String.format("Application Type: %s Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
-                parent.getApplicationType().getName(),
-                parent.getOwner().getName(),
-                applicationNumber == null ? ownershipNumber : applicationNumber,
-                applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
-                        : DateUtils.toDefaultDateFormat(applicationDate),
-                parent.getServiceType().getDescription());
-    }
-    
-    public String getApplicantName() {
-        StringBuilder nameSB = new StringBuilder();
-        nameSB.append(owner == null ? "" : owner.getName());
-        if (!coApplicants.isEmpty()) {
-            List<CoApplicant> coApps = coApplicants.stream().map(coapp -> coapp.getCoApplicant()).collect(Collectors.toList());
-        	nameSB.append(",").append(
-        			coApps.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
-        }
-        return nameSB.toString();
-    }
+	@Override
+	public String getStateDetails() {
+		return String.format(
+				"Application Type: %s Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
+				parent.getApplicationType().getName(), parent.getOwner().getName(),
+				applicationNumber == null ? ownershipNumber : applicationNumber,
+				applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
+						: DateUtils.toDefaultDateFormat(applicationDate),
+				parent.getServiceType().getDescription());
+	}
 
-    public BpaApplication getParent() {
-        return parent;
-    }
+	public String getApplicantName() {
+		StringBuilder nameSB = new StringBuilder();
+		nameSB.append(owner == null ? "" : owner.getName());
+		if (!coApplicants.isEmpty()) {
+			List<CoApplicant> coApps = coApplicants.stream().map(coapp -> coapp.getCoApplicant())
+					.collect(Collectors.toList());
+			nameSB.append(",").append(coApps.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
+		}
+		return nameSB.toString();
+	}
 
-    public void setParent(BpaApplication parent) {
-        this.parent = parent;
-    }
+	public BpaApplication getParent() {
+		return parent;
+	}
 
-    public Applicant getOwner() {
+	public void setParent(BpaApplication parent) {
+		this.parent = parent;
+	}
+
+	public Applicant getOwner() {
 		return owner;
 	}
 
@@ -236,38 +264,38 @@ public class OwnershipTransfer extends StateAware<Position> {
 	}
 
 	public String getApplicationNumber() {
-        return applicationNumber;
-    }
+		return applicationNumber;
+	}
 
-    public void setApplicationNumber(String applicationNumber) {
-        this.applicationNumber = applicationNumber;
-    }
+	public void setApplicationNumber(String applicationNumber) {
+		this.applicationNumber = applicationNumber;
+	}
 
-    public Date getApplicationDate() {
-        return applicationDate;
-    }
+	public Date getApplicationDate() {
+		return applicationDate;
+	}
 
-    public void setApplicationDate(Date applicationDate) {
-        this.applicationDate = applicationDate;
-    }
+	public void setApplicationDate(Date applicationDate) {
+		this.applicationDate = applicationDate;
+	}
 
-    public EgDemand getDemand() {
-        return demand;
-    }
+	public EgDemand getDemand() {
+		return demand;
+	}
 
-    public void setDemand(EgDemand demand) {
-        this.demand = demand;
-    }
+	public void setDemand(EgDemand demand) {
+		this.demand = demand;
+	}
 
-    public BpaStatus getStatus() {
-        return status;
-    }
+	public BpaStatus getStatus() {
+		return status;
+	}
 
-    public void setStatus(BpaStatus status) {
-        this.status = status;
-    }
+	public void setStatus(BpaStatus status) {
+		this.status = status;
+	}
 
-    public String getRemarks() {
+	public String getRemarks() {
 		return remarks;
 	}
 
@@ -282,7 +310,7 @@ public class OwnershipTransfer extends StateAware<Position> {
 	public void setMailPwdRequired(Boolean mailPwdRequired) {
 		this.mailPwdRequired = mailPwdRequired;
 	}
-	
+
 	public Boolean getIsActive() {
 		return isActive;
 	}
@@ -292,44 +320,44 @@ public class OwnershipTransfer extends StateAware<Position> {
 	}
 
 	public MultipartFile[] getFiles() {
-        return files;
-    }
+		return files;
+	}
 
-    public void setFiles(MultipartFile... files) {
-        this.files = files;
-    }
+	public void setFiles(MultipartFile... files) {
+		this.files = files;
+	}
 
-    public String getWorkflowAction() {
-        return workflowAction;
-    }
+	public String getWorkflowAction() {
+		return workflowAction;
+	}
 
-    public void setWorkflowAction(String workflowAction) {
-        this.workflowAction = workflowAction;
-    }
+	public void setWorkflowAction(String workflowAction) {
+		this.workflowAction = workflowAction;
+	}
 
-    public Long getApprovalDepartment() {
-        return approvalDepartment;
-    }
+	public Long getApprovalDepartment() {
+		return approvalDepartment;
+	}
 
-    public void setApprovalDepartment(Long approvalDepartment) {
-        this.approvalDepartment = approvalDepartment;
-    }
+	public void setApprovalDepartment(Long approvalDepartment) {
+		this.approvalDepartment = approvalDepartment;
+	}
 
-    public String getApprovalComent() {
-        return approvalComent;
-    }
+	public String getApprovalComent() {
+		return approvalComent;
+	}
 
-    public void setApprovalComent(String approvalComent) {
-        this.approvalComent = approvalComent;
-    }
+	public void setApprovalComent(String approvalComent) {
+		this.approvalComent = approvalComent;
+	}
 
-    public Set<Receipt> getReceipts() {
-        return receipts;
-    }
+	public Set<Receipt> getReceipts() {
+		return receipts;
+	}
 
-    public void setReceipts(Set<Receipt> receipts) {
-        this.receipts = receipts;
-    }
+	public void setReceipts(Set<Receipt> receipts) {
+		this.receipts = receipts;
+	}
 
 	public String getOwnershipNumber() {
 		return ownershipNumber;
@@ -370,7 +398,7 @@ public class OwnershipTransfer extends StateAware<Position> {
 	public void setRejectionReasons(List<OwnershipTransferConditions> rejectionReasons) {
 		this.rejectionReasons = rejectionReasons;
 	}
-	
+
 	public List<OwnershipFee> getOwnershipFee() {
 		return ownershipFee;
 	}
@@ -380,8 +408,8 @@ public class OwnershipTransfer extends StateAware<Position> {
 	}
 
 	public void addOwnershipNotice(OwnershipTransferNotice ownershipNotice) {
-	     this.ownershipNotices.add(ownershipNotice);
-    }
+		this.ownershipNotices.add(ownershipNotice);
+	}
 
 	public List<OwnershipTransferConditions> getAdditionalOwnershipConditions() {
 		return additionalOwnershipConditions;
@@ -411,7 +439,8 @@ public class OwnershipTransfer extends StateAware<Position> {
 		return additionalOwenrshipConditionsTemp;
 	}
 
-	public void setAdditionalOwenrshipConditionsTemp(List<OwnershipTransferConditions> additionalOwenrshipConditionsTemp) {
+	public void setAdditionalOwenrshipConditionsTemp(
+			List<OwnershipTransferConditions> additionalOwenrshipConditionsTemp) {
 		this.additionalOwenrshipConditionsTemp = additionalOwenrshipConditionsTemp;
 	}
 

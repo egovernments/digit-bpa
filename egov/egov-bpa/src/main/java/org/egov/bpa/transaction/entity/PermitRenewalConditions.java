@@ -48,6 +48,7 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,7 +56,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.NoticeCondition;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -65,29 +66,30 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = PermitRenewalConditions.SEQ_RENEWAL_CONDITIONS, sequenceName = PermitRenewalConditions.SEQ_RENEWAL_CONDITIONS, allocationSize = 1)
 public class PermitRenewalConditions extends AbstractAuditable {
 
-    private static final long serialVersionUID = 771762227114807254L;
+	private static final long serialVersionUID = 771762227114807254L;
 
-    public static final String SEQ_RENEWAL_CONDITIONS = "seq_egbpa_permitrenewal_conditions";
+	public static final String SEQ_RENEWAL_CONDITIONS = "seq_egbpa_permitrenewal_conditions";
 
-    @Id
-    @GeneratedValue(generator = SEQ_RENEWAL_CONDITIONS, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "permitRenewal", nullable = false)
-    private PermitRenewal permitRenewal;
-   
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "noticecondition", nullable = false)
-    private NoticeCondition noticeCondition;
+	@Id
+	@GeneratedValue(generator = SEQ_RENEWAL_CONDITIONS, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public Long getId() {
-        return id;
-    }
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "permitRenewal", nullable = false)
+	private PermitRenewal permitRenewal;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "noticecondition", nullable = false)
+	private NoticeCondition noticeCondition;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public PermitRenewal getPermitRenewal() {
 		return permitRenewal;

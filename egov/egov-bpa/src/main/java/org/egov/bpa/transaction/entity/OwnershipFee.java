@@ -55,7 +55,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -68,28 +68,28 @@ public class OwnershipFee extends AbstractAuditable {
 
 	public static final String SEQ_EGBPA_OWNERSHIP_FEE = "seq_egbpa_ownership_fee";
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGBPA_OWNERSHIP_FEE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_EGBPA_OWNERSHIP_FEE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "ownershipTransfer", nullable = false)
-    private OwnershipTransfer ownershipTransfer;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ownershipTransfer", nullable = false)
+	private OwnershipTransfer ownershipTransfer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "applicationFee")
-    private ApplicationFee applicationFee;
+	@Valid
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "applicationFee")
+	private ApplicationFee applicationFee;
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public OwnershipTransfer getOwnershipTransfer() {
+	public OwnershipTransfer getOwnershipTransfer() {
 		return ownershipTransfer;
 	}
 
@@ -98,10 +98,10 @@ public class OwnershipFee extends AbstractAuditable {
 	}
 
 	public ApplicationFee getApplicationFee() {
-        return applicationFee;
-    }
+		return applicationFee;
+	}
 
-    public void setApplicationFee(ApplicationFee applicationFee) {
-        this.applicationFee = applicationFee;
-    }
+	public void setApplicationFee(ApplicationFee applicationFee) {
+		this.applicationFee = applicationFee;
+	}
 }

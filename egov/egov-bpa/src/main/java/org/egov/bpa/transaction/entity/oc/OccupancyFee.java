@@ -48,6 +48,7 @@ package org.egov.bpa.transaction.entity.oc;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,7 +56,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.ApplicationFee;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -69,41 +69,39 @@ public class OccupancyFee extends AbstractAuditable {
 
 	public static final String SEQ_EGBPA_OCCUPANCY_FEE = "seq_egbpa_occupancy_fee";
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGBPA_OCCUPANCY_FEE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_EGBPA_OCCUPANCY_FEE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "oc", nullable = false)
-    private OccupancyCertificate oc;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "oc", nullable = false)
+	private OccupancyCertificate oc;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "applicationFee", nullable = false)
-    private ApplicationFee applicationFee;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "applicationFee", nullable = false)
+	private ApplicationFee applicationFee;
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public OccupancyCertificate getOc() {
-        return oc;
-    }
+	public OccupancyCertificate getOc() {
+		return oc;
+	}
 
-    public void setOc(OccupancyCertificate oc) {
-        this.oc = oc;
-    }
+	public void setOc(OccupancyCertificate oc) {
+		this.oc = oc;
+	}
 
-    public ApplicationFee getApplicationFee() {
-        return applicationFee;
-    }
+	public ApplicationFee getApplicationFee() {
+		return applicationFee;
+	}
 
-    public void setApplicationFee(ApplicationFee applicationFee) {
-        this.applicationFee = applicationFee;
-    }
+	public void setApplicationFee(ApplicationFee applicationFee) {
+		this.applicationFee = applicationFee;
+	}
 }

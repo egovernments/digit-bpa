@@ -57,7 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.NoticeCondition;
 
@@ -72,11 +72,12 @@ public class ApplicationPermitConditions implements Serializable {
     @Id
     @GeneratedValue(generator = SEQ_APPLICATION_PERMIT_CONDITIONS, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
     
-    @NotNull
+    @Valid
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "noticecondition", nullable = false)
     private NoticeCondition noticeCondition;

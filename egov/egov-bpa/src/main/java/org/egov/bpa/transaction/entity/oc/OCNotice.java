@@ -46,11 +46,9 @@
  */
 package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.transaction.entity.common.NoticeCommon;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,47 +58,54 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.bpa.transaction.entity.common.NoticeCommon;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 @Entity
 @Table(name = "egbpa_oc_notice")
 @SequenceGenerator(name = OCNotice.SEQ_EGBPA_OC_NOTICE, sequenceName = OCNotice.SEQ_EGBPA_OC_NOTICE, allocationSize = 1)
 public class OCNotice extends AbstractAuditable {
-    public static final String SEQ_EGBPA_OC_NOTICE = "seq_egbpa_oc_notice";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1777452371034648665L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGBPA_OC_NOTICE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	public static final String SEQ_EGBPA_OC_NOTICE = "seq_egbpa_oc_notice";
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "occupancyCertificate", nullable = false)
-    private OccupancyCertificate oc;
+	@Id
+	@GeneratedValue(generator = SEQ_EGBPA_OC_NOTICE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "notice", nullable = false)
-    private NoticeCommon noticeCommon;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@NotNull
+	@JoinColumn(name = "occupancyCertificate", nullable = false)
+	private OccupancyCertificate oc;
 
-    public Long getId() {
-        return id;
-    }
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "notice", nullable = false)
+	private NoticeCommon noticeCommon;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public OccupancyCertificate getOc() {
-        return oc;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setOc(OccupancyCertificate oc) {
-        this.oc = oc;
-    }
+	public OccupancyCertificate getOc() {
+		return oc;
+	}
 
-    public NoticeCommon getNoticeCommon() {
-        return noticeCommon;
-    }
+	public void setOc(OccupancyCertificate oc) {
+		this.oc = oc;
+	}
 
-    public void setNoticeCommon(NoticeCommon noticeCommon) {
-        this.noticeCommon = noticeCommon;
-    }
+	public NoticeCommon getNoticeCommon() {
+		return noticeCommon;
+	}
+
+	public void setNoticeCommon(NoticeCommon noticeCommon) {
+		this.noticeCommon = noticeCommon;
+	}
 }

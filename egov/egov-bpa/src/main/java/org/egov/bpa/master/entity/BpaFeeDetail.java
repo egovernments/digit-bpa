@@ -42,8 +42,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.envers.AuditOverride;
@@ -51,161 +51,179 @@ import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_MSTR_BPAFEEDETAIL")
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-    @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+		@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 @SequenceGenerator(name = BpaFeeDetail.SEQ_BPAFEEDETAIL, sequenceName = BpaFeeDetail.SEQ_BPAFEEDETAIL, allocationSize = 1)
 public class BpaFeeDetail extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_BPAFEEDETAIL = "SEQ_EGBPA_MSTR_BPAFEEDETAIL";
-    @Id
-    @GeneratedValue(generator = SEQ_BPAFEEDETAIL, strategy = GenerationType.SEQUENCE)
-    @Audited
-    private Long id;
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_BPAFEEDETAIL = "SEQ_EGBPA_MSTR_BPAFEEDETAIL";
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "bpafee")
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    private BpaFee bpafee;
-    @Audited
-    private Double fromAreasqmt;
-    @Audited
-    private Double toAreasqmt;
-    @NotNull
-    @Audited
-    private Double amount;
-    @Transient
-    private Long srlNo;
-    @Length(min = 1, max = 128)
-    @Audited
-    private String subType;
-    @Length(min = 1, max = 128)
-    @Audited
-    private String landUseZone;
-    @Audited
-    private Long floorNumber;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usageType")
-    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    private LandBuildingTypes usageType;
-    @NotNull
-    @Temporal(value = TemporalType.DATE)
-    @Audited
-    private Date startDate;
-    @Temporal(value = TemporalType.DATE)
-    @Audited
-    private Date endDate;
-    @Length(min = 1, max = 128)
-    @Audited
-    private String additionalType;
+	@Id
+	@GeneratedValue(generator = SEQ_BPAFEEDETAIL, strategy = GenerationType.SEQUENCE)
+	@Audited
+	private Long id;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@NotNull
+	@JoinColumn(name = "bpafee")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	private BpaFee bpafee;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Audited
+	@PositiveOrZero
+	private Double fromAreasqmt;
 
-    public BpaFee getBpafee() {
-        return bpafee;
-    }
+	@Audited
+	@PositiveOrZero
+	private Double toAreasqmt;
 
-    public Double getFromAreasqmt() {
-        return fromAreasqmt;
-    }
+	@NotNull
+	@Audited
+	@PositiveOrZero
+	private Double amount;
 
-    public Double getToAreasqmt() {
-        return toAreasqmt;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	@Audited
+	private String subType;
 
-    public Double getAmount() {
-        return amount;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	@Audited
+	private String landUseZone;
 
-    public Long getSrlNo() {
-        return srlNo;
-    }
+	@Audited
+	private Long floorNumber;
 
-    public String getSubType() {
-        return subType;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "usageType")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	private LandBuildingTypes usageType;
 
-    public String getLandUseZone() {
-        return landUseZone;
-    }
+	@NotNull
+	@Temporal(value = TemporalType.DATE)
+	@Audited
+	private Date startDate;
 
-    public Long getFloorNumber() {
-        return floorNumber;
-    }
+	@Temporal(value = TemporalType.DATE)
+	@Audited
+	private Date endDate;
 
-    public LandBuildingTypes getUsageType() {
-        return usageType;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	@Audited
+	private String additionalType;
+	
+	private transient Long srlNo;
 
-    public Date getStartDate() {
-        return startDate;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public Date getEndDate() {
-        return endDate;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public String getAdditionalType() {
-        return additionalType;
-    }
+	public BpaFee getBpafee() {
+		return bpafee;
+	}
 
-    public void setBpafee(final BpaFee bpafee) {
-        this.bpafee = bpafee;
-    }
+	public Double getFromAreasqmt() {
+		return fromAreasqmt;
+	}
 
-    public void setFromAreasqmt(final Double fromAreasqmt) {
-        this.fromAreasqmt = fromAreasqmt;
-    }
+	public Double getToAreasqmt() {
+		return toAreasqmt;
+	}
 
-    public void setToAreasqmt(final Double toAreasqmt) {
-        this.toAreasqmt = toAreasqmt;
-    }
+	public Double getAmount() {
+		return amount;
+	}
 
-    public void setAmount(final Double amount) {
-        this.amount = amount;
-    }
+	public Long getSrlNo() {
+		return srlNo;
+	}
 
-    public void setSrlNo(final Long srlNo) {
-        this.srlNo = srlNo;
-    }
+	public String getSubType() {
+		return subType;
+	}
 
-    public void setSubType(final String subType) {
-        this.subType = subType;
-    }
+	public String getLandUseZone() {
+		return landUseZone;
+	}
 
-    public void setLandUseZone(final String landUseZone) {
-        this.landUseZone = landUseZone;
-    }
+	public Long getFloorNumber() {
+		return floorNumber;
+	}
 
-    public void setFloorNumber(final Long floorNumber) {
-        this.floorNumber = floorNumber;
-    }
+	public LandBuildingTypes getUsageType() {
+		return usageType;
+	}
 
-    public void setUsageType(final LandBuildingTypes usageType) {
-        this.usageType = usageType;
-    }
+	public Date getStartDate() {
+		return startDate;
+	}
 
-    public void setStartDate(final Date startDate) {
-        this.startDate = startDate;
-    }
+	public Date getEndDate() {
+		return endDate;
+	}
 
-    public void setEndDate(final Date endDate) {
-        this.endDate = endDate;
-    }
+	public String getAdditionalType() {
+		return additionalType;
+	}
 
-    public void setAdditionalType(final String additionalType) {
-        this.additionalType = additionalType;
-    }
+	public void setBpafee(final BpaFee bpafee) {
+		this.bpafee = bpafee;
+	}
+
+	public void setFromAreasqmt(final Double fromAreasqmt) {
+		this.fromAreasqmt = fromAreasqmt;
+	}
+
+	public void setToAreasqmt(final Double toAreasqmt) {
+		this.toAreasqmt = toAreasqmt;
+	}
+
+	public void setAmount(final Double amount) {
+		this.amount = amount;
+	}
+
+	public void setSrlNo(final Long srlNo) {
+		this.srlNo = srlNo;
+	}
+
+	public void setSubType(final String subType) {
+		this.subType = subType;
+	}
+
+	public void setLandUseZone(final String landUseZone) {
+		this.landUseZone = landUseZone;
+	}
+
+	public void setFloorNumber(final Long floorNumber) {
+		this.floorNumber = floorNumber;
+	}
+
+	public void setUsageType(final LandBuildingTypes usageType) {
+		this.usageType = usageType;
+	}
+
+	public void setStartDate(final Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setEndDate(final Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public void setAdditionalType(final String additionalType) {
+		this.additionalType = additionalType;
+	}
 }

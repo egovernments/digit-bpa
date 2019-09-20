@@ -65,14 +65,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -80,123 +79,121 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = LetterToPartyDocumentCommon.SEQ_LETTERTOPARTYDOCUMENT, sequenceName = LetterToPartyDocumentCommon.SEQ_LETTERTOPARTYDOCUMENT, allocationSize = 1)
 public class LetterToPartyDocumentCommon extends AbstractAuditable {
 
-    public static final String SEQ_LETTERTOPARTYDOCUMENT = "seq_egbpa_lp_document_common";
-    private static final long serialVersionUID = 3665580365090675067L;
+	public static final String SEQ_LETTERTOPARTYDOCUMENT = "seq_egbpa_lp_document_common";
+	private static final long serialVersionUID = 3665580365090675067L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_LETTERTOPARTYDOCUMENT, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_LETTERTOPARTYDOCUMENT, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "egbpa_lp_files_common", joinColumns = @JoinColumn(name = "lpDocument"), inverseJoinColumns = @JoinColumn(name = "filestore"))
-    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "egbpa_lp_files_common", joinColumns = @JoinColumn(name = "lpDocument"), inverseJoinColumns = @JoinColumn(name = "filestore"))
+	private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
-    private transient MultipartFile[] files;
+	private transient MultipartFile[] files;
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "serviceChecklist", nullable = false)
-    private ChecklistServiceTypeMapping serviceChecklist;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "serviceChecklist", nullable = false)
+	private ChecklistServiceTypeMapping serviceChecklist;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
-    @NotNull
-    @JoinColumn(name = "lettertoParty", nullable = false)
-    private LetterToPartyCommon letterToParty;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "lettertoParty", nullable = false)
+	private LetterToPartyCommon letterToParty;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date submissionDate;
+	@Temporal(value = TemporalType.DATE)
+	private Date submissionDate;
 
-    private Boolean isSubmitted;
+	private Boolean isSubmitted;
 
-    private Boolean isRequested;
+	private Boolean isRequested;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "createduser")
-    private User createdUser;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "createduser")
+	private User createdUser;
 
-    @Length(min = 1, max = 256)
-    private String remarks;
+	@SafeHtml
+	@Length(min = 1, max = 256)
+	private String remarks;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Set<FileStoreMapper> getSupportDocs() {
-        return supportDocs;
-    }
+	public Set<FileStoreMapper> getSupportDocs() {
+		return supportDocs;
+	}
 
-    public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
-        this.supportDocs = supportDocs;
-    }
+	public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
+		this.supportDocs = supportDocs;
+	}
 
-    public MultipartFile[] getFiles() {
-        return files;
-    }
+	public MultipartFile[] getFiles() {
+		return files;
+	}
 
-    public void setFiles(MultipartFile[] files) {
-        this.files = files;
-    }
+	public void setFiles(MultipartFile[] files) {
+		this.files = files;
+	}
 
-    public ChecklistServiceTypeMapping getServiceChecklist() {
-        return serviceChecklist;
-    }
+	public ChecklistServiceTypeMapping getServiceChecklist() {
+		return serviceChecklist;
+	}
 
-    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-        this.serviceChecklist = serviceChecklist;
-    }
+	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+		this.serviceChecklist = serviceChecklist;
+	}
 
-    public LetterToPartyCommon getLetterToParty() {
-        return letterToParty;
-    }
+	public LetterToPartyCommon getLetterToParty() {
+		return letterToParty;
+	}
 
-    public void setLetterToParty(LetterToPartyCommon letterToParty) {
-        this.letterToParty = letterToParty;
-    }
+	public void setLetterToParty(LetterToPartyCommon letterToParty) {
+		this.letterToParty = letterToParty;
+	}
 
-    public Date getSubmissionDate() {
-        return submissionDate;
-    }
+	public Date getSubmissionDate() {
+		return submissionDate;
+	}
 
-    public void setSubmissionDate(Date submissionDate) {
-        this.submissionDate = submissionDate;
-    }
+	public void setSubmissionDate(Date submissionDate) {
+		this.submissionDate = submissionDate;
+	}
 
-    public Boolean getIsSubmitted() {
-        return isSubmitted;
-    }
+	public Boolean getIsSubmitted() {
+		return isSubmitted;
+	}
 
-    public void setIsSubmitted(Boolean isSubmitted) {
-        this.isSubmitted = isSubmitted;
-    }
+	public void setIsSubmitted(Boolean isSubmitted) {
+		this.isSubmitted = isSubmitted;
+	}
 
-    public Boolean getIsRequested() {
-        return isRequested;
-    }
+	public Boolean getIsRequested() {
+		return isRequested;
+	}
 
-    public void setIsRequested(Boolean isRequested) {
-        this.isRequested = isRequested;
-    }
+	public void setIsRequested(Boolean isRequested) {
+		this.isRequested = isRequested;
+	}
 
-    public User getCreatedUser() {
-        return createdUser;
-    }
+	public User getCreatedUser() {
+		return createdUser;
+	}
 
-    public void setCreatedUser(User createdUser) {
-        this.createdUser = createdUser;
-    }
+	public void setCreatedUser(User createdUser) {
+		this.createdUser = createdUser;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 }

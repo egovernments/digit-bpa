@@ -52,6 +52,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,6 +60,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
 @Entity
 @Table(name = "EGBPA_OC_APPOINTMENT_SCHEDULE")
@@ -72,11 +74,12 @@ public class OCAppointmentSchedule extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGBPA_APPOINTMENT_SCHEDULE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Valid
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "appointmentScheduleCommon")
     private AppointmentScheduleCommon appointmentScheduleCommon;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "occupancyCertificate")
     private OccupancyCertificate oc;
 

@@ -47,11 +47,9 @@
 
 package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.transaction.entity.common.DocumentScrutiny;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,7 +57,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
+
+import org.egov.bpa.transaction.entity.common.DocumentScrutiny;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "EGBPA_OC_DOCUMENT_SCRUTINY")
@@ -73,13 +74,12 @@ public class OCDocumentScrutiny extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
+	@Valid
 	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
 	@JoinColumn(name = "documentScrutiny", nullable = false)
 	private DocumentScrutiny docScrutiny;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "occupancyCertificate", nullable = false)
 	private OccupancyCertificate oc;
 

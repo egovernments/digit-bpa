@@ -37,201 +37,225 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_MSTR_SERVICETYPE")
 @SequenceGenerator(name = ServiceType.SEQ_SERVICETYPE, sequenceName = ServiceType.SEQ_SERVICETYPE, allocationSize = 1)
 public class ServiceType extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_SERVICETYPE = "SEQ_EGBPA_MSTR_SERVICETYPE";
-    @Id
-    @GeneratedValue(generator = SEQ_SERVICETYPE, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String description;
-    private Boolean isActive;
-    private Boolean buildingPlanApproval;
-    @NotNull
-    private Boolean siteApproval;
-    @NotNull
-    private Boolean isApplicationFeeRequired;
-    @NotNull
-    private Boolean isPtisNumberRequired;
-    @NotNull
-    private Boolean isEdcrMandatory;
-    @NotNull
-    @Length(min = 1, max = 128)
-    private String serviceNumberPrefix;
-    @Length(min = 1, max = 256)
-    private String descriptionLocal;
-    private Boolean isDocUploadForCitizen;
-    private Long sla;
-    @NotNull
-    private Boolean isAmenity;
-    @Column(name = "isBuildingRequired")
-    private Boolean isBuildingDetailsRequired;
-    private Boolean isOCRequired;
-    @NotNull
-    @Column(name = "validity")
-    private Double validity;
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_SERVICETYPE = "SEQ_EGBPA_MSTR_SERVICETYPE";
+	@Id
+	@GeneratedValue(generator = SEQ_SERVICETYPE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @NotNull
-    @Column(name = "renewalValidity")
-    private Double renewalValidity;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String description;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	private Boolean isActive;
 
-    public String getCode() {
-        return code;
-    }
+	private Boolean buildingPlanApproval;
 
-    public void setCode(final String code) {
-        this.code = code;
-    }
+	@NotNull
+	private Boolean siteApproval;
 
-    public String getDescription() {
-        return description;
-    }
+	@NotNull
+	private Boolean isApplicationFeeRequired;
 
-    public void setDescription(final String description) {
-        this.description = description;
-    }
+	@NotNull
+	private Boolean isPtisNumberRequired;
 
-    public Boolean getIsActive() {
-        return isActive;
-    }
+	@NotNull
+	private Boolean isEdcrMandatory;
 
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
-    }
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	private String serviceNumberPrefix;
 
-    public Boolean getIsPtisNumberRequired() {
-        return isPtisNumberRequired;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 256)
+	private String descriptionLocal;
 
-    public void setIsPtisNumberRequired(final Boolean isPtisNumberRequired) {
-        this.isPtisNumberRequired = isPtisNumberRequired;
-    }
+	private Boolean isDocUploadForCitizen;
 
-    public String getServiceNumberPrefix() {
-        return serviceNumberPrefix;
-    }
+	@PositiveOrZero
+	@NotNull
+	private Long sla;
 
-    public void setServiceNumberPrefix(final String serviceNumberPrefix) {
-        this.serviceNumberPrefix = serviceNumberPrefix;
-    }
+	@NotNull
+	private Boolean isAmenity;
 
-    public String getDescriptionLocal() {
-        return descriptionLocal;
-    }
+	@Column(name = "isBuildingRequired")
+	private Boolean isBuildingDetailsRequired;
 
-    public void setDescriptionLocal(final String descriptionLocal) {
-        this.descriptionLocal = descriptionLocal;
-    }
+	private Boolean isOCRequired;
 
-    public Boolean getIsDocUploadForCitizen() {
-        return isDocUploadForCitizen;
-    }
+	@NotNull
+	@Column(name = "validity")
+	private Double validity;
 
-    public void setIsDocUploadForCitizen(final Boolean isDocUploadForCitizen) {
-        this.isDocUploadForCitizen = isDocUploadForCitizen;
-    }
+	@NotNull
+	@Column(name = "renewalValidity")
+	private Double renewalValidity;
 
-    public Boolean getSiteApproval() {
-        return siteApproval;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public Boolean getIsApplicationFeeRequired() {
-        return isApplicationFeeRequired;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public Long getSla() {
-        return sla;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setSiteApproval(final Boolean siteApproval) {
-        this.siteApproval = siteApproval;
-    }
+	public void setCode(final String code) {
+		this.code = code;
+	}
 
-    public void setIsApplicationFeeRequired(final Boolean isApplicationFeeRequired) {
-        this.isApplicationFeeRequired = isApplicationFeeRequired;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setSla(final Long sla) {
-        this.sla = sla;
-    }
+	public void setDescription(final String description) {
+		this.description = description;
+	}
 
-    public Boolean getBuildingPlanApproval() {
-        return buildingPlanApproval;
-    }
+	public Boolean getIsActive() {
+		return isActive;
+	}
 
-    public void setBuildingPlanApproval(final Boolean buildingPlanApproval) {
-        this.buildingPlanApproval = buildingPlanApproval;
-    }
+	public void setIsActive(final Boolean isActive) {
+		this.isActive = isActive;
+	}
 
-    public Boolean getIsAmenity() {
-        return isAmenity;
-    }
+	public Boolean getIsPtisNumberRequired() {
+		return isPtisNumberRequired;
+	}
 
-    public void setIsAmenity(Boolean isAmenity) {
-        this.isAmenity = isAmenity;
-    }
+	public void setIsPtisNumberRequired(final Boolean isPtisNumberRequired) {
+		this.isPtisNumberRequired = isPtisNumberRequired;
+	}
 
-    public Boolean getIsEdcrMandatory() {
-        return isEdcrMandatory;
-    }
+	public String getServiceNumberPrefix() {
+		return serviceNumberPrefix;
+	}
 
-    public void setIsEdcrMandatory(Boolean isEdcrMandatory) {
-        this.isEdcrMandatory = isEdcrMandatory;
-    }
+	public void setServiceNumberPrefix(final String serviceNumberPrefix) {
+		this.serviceNumberPrefix = serviceNumberPrefix;
+	}
 
-    public Boolean getIsBuildingDetailsRequired() {
-        return isBuildingDetailsRequired;
-    }
+	public String getDescriptionLocal() {
+		return descriptionLocal;
+	}
 
-    public void setIsBuildingDetailsRequired(Boolean isBuildingDetailsRequired) {
-        this.isBuildingDetailsRequired = isBuildingDetailsRequired;
-    }
+	public void setDescriptionLocal(final String descriptionLocal) {
+		this.descriptionLocal = descriptionLocal;
+	}
 
-    public Boolean getIsOCRequired() {
-        return isOCRequired;
-    }
+	public Boolean getIsDocUploadForCitizen() {
+		return isDocUploadForCitizen;
+	}
 
-    public void setIsOCRequired(Boolean isOCRequired) {
-        this.isOCRequired = isOCRequired;
-    }
+	public void setIsDocUploadForCitizen(final Boolean isDocUploadForCitizen) {
+		this.isDocUploadForCitizen = isDocUploadForCitizen;
+	}
 
-    public Double getValidity() {
-        return validity;
-    }
+	public Boolean getSiteApproval() {
+		return siteApproval;
+	}
 
-    public void setValidity(Double validity) {
-        this.validity = validity;
-    }
+	public Boolean getIsApplicationFeeRequired() {
+		return isApplicationFeeRequired;
+	}
 
-    public Double getRenewalValidity() {
-        return renewalValidity;
-    }
+	public Long getSla() {
+		return sla;
+	}
 
-    public void setRenewalValidity(Double renewalValidity) {
-        this.renewalValidity = renewalValidity;
-    }
+	public void setSiteApproval(final Boolean siteApproval) {
+		this.siteApproval = siteApproval;
+	}
+
+	public void setIsApplicationFeeRequired(final Boolean isApplicationFeeRequired) {
+		this.isApplicationFeeRequired = isApplicationFeeRequired;
+	}
+
+	public void setSla(final Long sla) {
+		this.sla = sla;
+	}
+
+	public Boolean getBuildingPlanApproval() {
+		return buildingPlanApproval;
+	}
+
+	public void setBuildingPlanApproval(final Boolean buildingPlanApproval) {
+		this.buildingPlanApproval = buildingPlanApproval;
+	}
+
+	public Boolean getIsAmenity() {
+		return isAmenity;
+	}
+
+	public void setIsAmenity(Boolean isAmenity) {
+		this.isAmenity = isAmenity;
+	}
+
+	public Boolean getIsEdcrMandatory() {
+		return isEdcrMandatory;
+	}
+
+	public void setIsEdcrMandatory(Boolean isEdcrMandatory) {
+		this.isEdcrMandatory = isEdcrMandatory;
+	}
+
+	public Boolean getIsBuildingDetailsRequired() {
+		return isBuildingDetailsRequired;
+	}
+
+	public void setIsBuildingDetailsRequired(Boolean isBuildingDetailsRequired) {
+		this.isBuildingDetailsRequired = isBuildingDetailsRequired;
+	}
+
+	public Boolean getIsOCRequired() {
+		return isOCRequired;
+	}
+
+	public void setIsOCRequired(Boolean isOCRequired) {
+		this.isOCRequired = isOCRequired;
+	}
+
+	public Double getValidity() {
+		return validity;
+	}
+
+	public void setValidity(Double validity) {
+		this.validity = validity;
+	}
+
+	public Double getRenewalValidity() {
+		return renewalValidity;
+	}
+
+	public void setRenewalValidity(Double renewalValidity) {
+		this.renewalValidity = renewalValidity;
+	}
 
 }

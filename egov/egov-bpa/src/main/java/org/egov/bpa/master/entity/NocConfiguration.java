@@ -54,48 +54,53 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_master_nocconfiguration")
 @SequenceGenerator(name = NocConfiguration.SEQ_NOCCONFIG, sequenceName = NocConfiguration.SEQ_NOCCONFIG, allocationSize = 1)
 public class NocConfiguration {
-	
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_NOCCONFIG = "SEQ_EGBPA_MSTR_NOCCONFIG";
-    @Id
-    @GeneratedValue(generator = SEQ_NOCCONFIG, strategy = GenerationType.SEQUENCE)
-    private Long id;
 
-    @NotNull
-    @Length(min = 1, max = 20)
-    @Column(name = "department")
-    private String department;
+	public static final String SEQ_NOCCONFIG = "SEQ_EGBPA_MSTR_NOCCONFIG";
+	@Id
+	@GeneratedValue(generator = SEQ_NOCCONFIG, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @NotNull
-    @Length(min = 1, max = 25)
-    @Column(name = "applicationType")
-    private String applicationType;
-    
-    @NotNull
-    @Length(min = 1, max = 20)
-    @Column(name = "integrationtype")
-    private String integrationType;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 20)
+	@Column(name = "department")
+	private String department;
 
-    @NotNull
-    @Length(min = 1, max = 20)
-    @Column(name = "integrationinitiation")
-    private String integrationInitiation;
-    
-    @NotNull
-    @Column(name = "sla")
-    private Long sla;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 25)
+	@Column(name = "applicationType")
+	private String applicationType;
 
-    @NotNull
-    @Column(name = "isdeemedapproval")
-    private Boolean isDeemedApproval;
-    
+	@NotNull
+	@Length(min = 1, max = 20)
+	@Column(name = "integrationtype")
+	private String integrationType;
+
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 20)
+	@Column(name = "integrationinitiation")
+	private String integrationInitiation;
+
+	@PositiveOrZero
+	@NotNull
+	@Column(name = "sla")
+	private Long sla;
+
+	@NotNull
+	@Column(name = "isdeemedapproval")
+	private Boolean isDeemedApproval;
+
 	public Long getId() {
 		return id;
 	}

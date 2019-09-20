@@ -61,10 +61,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -75,128 +78,137 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 public class Occupancy extends AbstractAuditable {
 
-    public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_OCCUPANCY";
-    private static final long serialVersionUID = -1928622582218032380L;
+	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_OCCUPANCY";
+	private static final long serialVersionUID = -1928622582218032380L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @OneToMany(mappedBy = "occupancy", cascade = CascadeType.ALL)
-    private List<SubOccupancy> subOccupancies = new ArrayList<>();
+	@Valid
+	@OneToMany(mappedBy = "occupancy", cascade = CascadeType.ALL)
+	private List<SubOccupancy> subOccupancies = new ArrayList<>();
 
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
 
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String name;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String name;
 
-    @Length(min = 1, max = 1024)
-    private String description;
+	@SafeHtml
+	@Length(min = 1, max = 1024)
+	private String description;
 
-    private Boolean isactive;
+	private Boolean isactive;
 
-    private BigDecimal maxCoverage;
+	@PositiveOrZero
+	private BigDecimal maxCoverage;
 
-    private BigDecimal minFar;
+	@PositiveOrZero
+	private BigDecimal minFar;
 
-    private BigDecimal maxFar;
+	@PositiveOrZero
+	private BigDecimal maxFar;
 
-    private Integer orderNumber;
+	@PositiveOrZero
+	private Integer orderNumber;
 
-    private Integer colorCode;
+	@PositiveOrZero
+	private Integer colorCode;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public Boolean getIsactive() {
-        return isactive;
-    }
+	public Boolean getIsactive() {
+		return isactive;
+	}
 
-    public void setIsactive(Boolean isactive) {
-        this.isactive = isactive;
-    }
+	public void setIsactive(Boolean isactive) {
+		this.isactive = isactive;
+	}
 
-    public Integer getOrderNumber() {
-        return orderNumber;
-    }
+	public Integer getOrderNumber() {
+		return orderNumber;
+	}
 
-    public List<SubOccupancy> getSubOccupancies() {
-        return subOccupancies;
-    }
+	public List<SubOccupancy> getSubOccupancies() {
+		return subOccupancies;
+	}
 
-    public void setSubOccupancies(List<SubOccupancy> subOccupancies) {
-        this.subOccupancies = subOccupancies;
-    }
+	public void setSubOccupancies(List<SubOccupancy> subOccupancies) {
+		this.subOccupancies = subOccupancies;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public BigDecimal getMaxCoverage() {
-        return maxCoverage;
-    }
+	public BigDecimal getMaxCoverage() {
+		return maxCoverage;
+	}
 
-    public void setMaxCoverage(BigDecimal maxCoverage) {
-        this.maxCoverage = maxCoverage;
-    }
+	public void setMaxCoverage(BigDecimal maxCoverage) {
+		this.maxCoverage = maxCoverage;
+	}
 
-    public BigDecimal getMinFar() {
-        return minFar;
-    }
+	public BigDecimal getMinFar() {
+		return minFar;
+	}
 
-    public void setMinFar(BigDecimal minFar) {
-        this.minFar = minFar;
-    }
+	public void setMinFar(BigDecimal minFar) {
+		this.minFar = minFar;
+	}
 
-    public BigDecimal getMaxFar() {
-        return maxFar;
-    }
+	public BigDecimal getMaxFar() {
+		return maxFar;
+	}
 
-    public void setMaxFar(BigDecimal maxFar) {
-        this.maxFar = maxFar;
-    }
+	public void setMaxFar(BigDecimal maxFar) {
+		this.maxFar = maxFar;
+	}
 
-    public void setOrderNumber(Integer orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+	public void setOrderNumber(Integer orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 
-    public Integer getColorCode() {
-        return colorCode;
-    }
+	public Integer getColorCode() {
+		return colorCode;
+	}
 
-    public void setColorCode(Integer colorCode) {
-        this.colorCode = colorCode;
-    }
+	public void setColorCode(Integer colorCode) {
+		this.colorCode = colorCode;
+	}
 
 }

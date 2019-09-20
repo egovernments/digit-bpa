@@ -55,6 +55,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -63,10 +64,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -79,140 +83,150 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @JsonIgnoreProperties({ "createdBy", "lastModifiedBy" })
 public class SubOccupancy extends AbstractAuditable {
 
-    public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_SUB_OCCUPANCY";
-    private static final long serialVersionUID = -1928622582218032380L;
+	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_SUB_OCCUPANCY";
+	private static final long serialVersionUID = -1928622582218032380L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @OneToMany(mappedBy = "subOccupancy", cascade = CascadeType.ALL)
-    private List<Usage> usages = new ArrayList<>();
+	@Valid
+	@OneToMany(mappedBy = "subOccupancy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Usage> usages = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "occupancy")
-    private Occupancy occupancy;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "occupancy")
+	private Occupancy occupancy;
 
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
 
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String name;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String name;
 
-    @Length(min = 1, max = 1024)
-    private String description;
+	@SafeHtml
+	@Length(min = 1, max = 1024)
+	private String description;
 
-    private Boolean isActive;
+	@PositiveOrZero
+	private Boolean isActive;
 
-    private BigDecimal maxCoverage;
+	@PositiveOrZero
+	private BigDecimal maxCoverage;
 
-    private BigDecimal minFar;
+	@PositiveOrZero
+	private BigDecimal minFar;
 
-    private BigDecimal maxFar;
+	@PositiveOrZero
+	private BigDecimal maxFar;
 
-    private Integer orderNumber;
+	@PositiveOrZero
+	private Integer orderNumber;
 
-    private Integer colorCode;
+	@PositiveOrZero
+	private Integer colorCode;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public Boolean getIsactive() {
-        return isActive;
-    }
+	public Boolean getIsactive() {
+		return isActive;
+	}
 
-    public void setIsactive(Boolean isactive) {
-        this.isActive = isactive;
-    }
+	public void setIsactive(Boolean isactive) {
+		this.isActive = isactive;
+	}
 
-    public Integer getOrderNumber() {
-        return orderNumber;
-    }
+	public Integer getOrderNumber() {
+		return orderNumber;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public BigDecimal getMaxCoverage() {
-        return maxCoverage;
-    }
+	public BigDecimal getMaxCoverage() {
+		return maxCoverage;
+	}
 
-    public void setMaxCoverage(BigDecimal maxCoverage) {
-        this.maxCoverage = maxCoverage;
-    }
+	public void setMaxCoverage(BigDecimal maxCoverage) {
+		this.maxCoverage = maxCoverage;
+	}
 
-    public BigDecimal getMinFar() {
-        return minFar;
-    }
+	public BigDecimal getMinFar() {
+		return minFar;
+	}
 
-    public void setMinFar(BigDecimal minFar) {
-        this.minFar = minFar;
-    }
+	public void setMinFar(BigDecimal minFar) {
+		this.minFar = minFar;
+	}
 
-    public BigDecimal getMaxFar() {
-        return maxFar;
-    }
+	public BigDecimal getMaxFar() {
+		return maxFar;
+	}
 
-    public void setMaxFar(BigDecimal maxFar) {
-        this.maxFar = maxFar;
-    }
+	public void setMaxFar(BigDecimal maxFar) {
+		this.maxFar = maxFar;
+	}
 
-    public void setOrderNumber(Integer orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+	public void setOrderNumber(Integer orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 
-    public Occupancy getOccupancy() {
-        return occupancy;
-    }
+	public Occupancy getOccupancy() {
+		return occupancy;
+	}
 
-    public void setOccupancy(Occupancy occupancy) {
-        this.occupancy = occupancy;
-    }
+	public void setOccupancy(Occupancy occupancy) {
+		this.occupancy = occupancy;
+	}
 
-    public List<Usage> getUsages() {
-        return usages;
-    }
+	public List<Usage> getUsages() {
+		return usages;
+	}
 
-    public void setUsages(List<Usage> usages) {
-        this.usages = usages;
-    }
+	public void setUsages(List<Usage> usages) {
+		this.usages = usages;
+	}
 
-    public Integer getColorCode() {
-        return colorCode;
-    }
+	public Integer getColorCode() {
+		return colorCode;
+	}
 
-    public void setColorCode(Integer colorCode) {
-        this.colorCode = colorCode;
-    }
+	public void setColorCode(Integer colorCode) {
+		this.colorCode = colorCode;
+	}
 
 }

@@ -62,82 +62,86 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_inspectionnotice")
 @SequenceGenerator(name = InspectionNotice.SEQ_EGBPA_INSPECTIONNOTICE, sequenceName = InspectionNotice.SEQ_EGBPA_INSPECTIONNOTICE, allocationSize = 1)
 public class InspectionNotice implements Serializable {
 
-    private static final long serialVersionUID = 2340581885002571006L;
+	private static final long serialVersionUID = 2340581885002571006L;
 
-    public static final String SEQ_EGBPA_INSPECTIONNOTICE = "SEQ_EGBPA_INSPECTIONNOTICE";
+	public static final String SEQ_EGBPA_INSPECTIONNOTICE = "SEQ_EGBPA_INSPECTIONNOTICE";
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGBPA_INSPECTIONNOTICE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_EGBPA_INSPECTIONNOTICE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    private String inspectionNumber;
+	@SafeHtml
+	private String inspectionNumber;
 
-    private String refNumber;
+	@SafeHtml
+	private String refNumber;
 
-    private Date noticeGeneratedDate;
+	private Date noticeGeneratedDate;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "noticeFileStore")
-    private FileStoreMapper noticeFileStore;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "noticeFileStore")
+	private FileStoreMapper noticeFileStore;
 
-    private String applicationType;
+	@SafeHtml
+	private String applicationType;
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public FileStoreMapper getNoticeFileStore() {
-        return noticeFileStore;
-    }
+	public FileStoreMapper getNoticeFileStore() {
+		return noticeFileStore;
+	}
 
-    public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
-        this.noticeFileStore = noticeFileStore;
-    }
+	public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
+		this.noticeFileStore = noticeFileStore;
+	}
 
-    public Date getNoticeGeneratedDate() {
-        return noticeGeneratedDate;
-    }
+	public Date getNoticeGeneratedDate() {
+		return noticeGeneratedDate;
+	}
 
-    public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
-        this.noticeGeneratedDate = noticeGeneratedDate;
-    }
+	public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
+		this.noticeGeneratedDate = noticeGeneratedDate;
+	}
 
-    public String getInspectionNumber() {
-        return inspectionNumber;
-    }
+	public String getInspectionNumber() {
+		return inspectionNumber;
+	}
 
-    public void setInspectionNumber(String inspectionNumber) {
-        this.inspectionNumber = inspectionNumber;
-    }
+	public void setInspectionNumber(String inspectionNumber) {
+		this.inspectionNumber = inspectionNumber;
+	}
 
-    public String getRefNumber() {
-        return refNumber;
-    }
+	public String getRefNumber() {
+		return refNumber;
+	}
 
-    public void setRefNumber(String refNumber) {
-        this.refNumber = refNumber;
-    }
+	public void setRefNumber(String refNumber) {
+		this.refNumber = refNumber;
+	}
 
-    public String getApplicationType() {
-        return applicationType;
-    }
+	public String getApplicationType() {
+		return applicationType;
+	}
 
-    public void setApplicationType(String applicationType) {
-        this.applicationType = applicationType;
-    }
+	public void setApplicationType(String applicationType) {
+		this.applicationType = applicationType;
+	}
 
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
 }

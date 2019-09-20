@@ -49,6 +49,7 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,6 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.AppointmentScheduleCommon;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -65,20 +67,21 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = InspectionAppointmentSchedule.SEQ_EGBPA_APPOINTMENT_SCHEDULE, sequenceName = InspectionAppointmentSchedule.SEQ_EGBPA_APPOINTMENT_SCHEDULE, allocationSize = 1)
 public class InspectionAppointmentSchedule extends AbstractAuditable {
 
-    public static final String SEQ_EGBPA_APPOINTMENT_SCHEDULE = "SEQ_EGBPA_INSPECTION_APPOINTMENT_SCHEDULE";
-    private static final long serialVersionUID = -1344489436357479689L;
+	public static final String SEQ_EGBPA_APPOINTMENT_SCHEDULE = "SEQ_EGBPA_INSPECTION_APPOINTMENT_SCHEDULE";
+	private static final long serialVersionUID = -1344489436357479689L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGBPA_APPOINTMENT_SCHEDULE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_EGBPA_APPOINTMENT_SCHEDULE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "appointmentScheduleCommon")
-    private AppointmentScheduleCommon appointmentScheduleCommon;
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "appointmentScheduleCommon", nullable = false)
+	private AppointmentScheduleCommon appointmentScheduleCommon;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "inspectionApplication")
-    private InspectionApplication inspectionApplication;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "inspectionApplication", nullable = false)
+	private InspectionApplication inspectionApplication;
 
 	public Long getId() {
 		return id;

@@ -64,12 +64,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -77,56 +77,73 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = BpaNocApplication.SEQ_NOCAPPLICATION, sequenceName = BpaNocApplication.SEQ_NOCAPPLICATION, allocationSize = 1)
 public class BpaNocApplication extends AbstractAuditable {
 
-    public static final String SEQ_NOCAPPLICATION = "SEQ_EGBPA_NOCAPPLICATION";
-    public static final String ORDER_BY_ID_ASC = "id ASC";
-    private static final long serialVersionUID = -361205348191992869L;
-    public static final String ORDER_BY_NUMBER_ASC = "orderNumber ASC";
-    @Id
-    @GeneratedValue(generator = SEQ_NOCAPPLICATION, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @Length(min = 1, max = 128)
-    private String nocApplicationNumber;
-    @Length(min = 1, max = 256)
-    private String nocType;
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status")
-    private BpaStatus status;
+	public static final String SEQ_NOCAPPLICATION = "SEQ_EGBPA_NOCAPPLICATION";
+	public static final String ORDER_BY_ID_ASC = "id ASC";
+	private static final long serialVersionUID = -361205348191992869L;
+	public static final String ORDER_BY_NUMBER_ASC = "orderNumber ASC";
+
+	@Id
+	@GeneratedValue(generator = SEQ_NOCAPPLICATION, strategy = GenerationType.SEQUENCE)
+	private Long id;
+
+	@SafeHtml
 	@Length(min = 1, max = 128)
-    private String remarks;
-    private Date slaEndDate;
-    private Date deemedApprovedDate;
+	private String nocApplicationNumber;
+
+	@SafeHtml
+	@Length(min = 1, max = 256)
+	private String nocType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "status")
+	private BpaStatus status;
+
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String remarks;
+
+	private Date slaEndDate;
+
+	private Date deemedApprovedDate;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "egbpa_noc_certificate", joinColumns = @JoinColumn(name = "nocapplication"), inverseJoinColumns = @JoinColumn(name = "fileStore"))
-    private Set<FileStoreMapper> nocSupportDocs = new HashSet<>();
-    private transient MultipartFile[] files;
-    private transient Map<Long, String> encodedImages = new HashMap<>();
-    private transient User ownerUser;
+	@JoinTable(name = "egbpa_noc_certificate", joinColumns = @JoinColumn(name = "nocapplication"), inverseJoinColumns = @JoinColumn(name = "fileStore"))
+	private Set<FileStoreMapper> nocSupportDocs = new HashSet<>();
 
-	
-	
-    public Long getId() {
+	private transient MultipartFile[] files;
+
+	private transient Map<Long, String> encodedImages = new HashMap<>();
+
+	private transient User ownerUser;
+
+	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getNocType() {
 		return nocType;
 	}
+
 	public void setNocType(String nocType) {
 		this.nocType = nocType;
 	}
+
 	public BpaStatus getStatus() {
 		return status;
 	}
+
 	public void setStatus(BpaStatus status) {
 		this.status = status;
 	}
+
 	public String getRemarks() {
 		return remarks;
 	}
+
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
@@ -134,42 +151,55 @@ public class BpaNocApplication extends AbstractAuditable {
 	public Date getSlaEndDate() {
 		return slaEndDate;
 	}
+
 	public void setSlaEndDate(Date slaEndDate) {
 		this.slaEndDate = slaEndDate;
 	}
+
 	public Date getDeemedApprovedDate() {
 		return deemedApprovedDate;
 	}
+
 	public void setDeemedApprovedDate(Date deemedApprovedDate) {
 		this.deemedApprovedDate = deemedApprovedDate;
 	}
+
 	public MultipartFile[] getFiles() {
 		return files;
 	}
+
 	public void setFiles(MultipartFile[] files) {
 		this.files = files;
 	}
+
 	public Set<FileStoreMapper> getNocSupportDocs() {
 		return nocSupportDocs;
 	}
+
 	public void setNocSupportDocs(Set<FileStoreMapper> nocSupportDocs) {
 		this.nocSupportDocs = nocSupportDocs;
 	}
+
 	public Map<Long, String> getEncodedImages() {
 		return encodedImages;
 	}
+
 	public void setEncodedImages(Map<Long, String> encodedImages) {
 		this.encodedImages = encodedImages;
 	}
+
 	public String getNocApplicationNumber() {
 		return nocApplicationNumber;
 	}
+
 	public void setNocApplicationNumber(String nocApplicationNumber) {
 		this.nocApplicationNumber = nocApplicationNumber;
 	}
+
 	public User getOwnerUser() {
 		return ownerUser;
 	}
+
 	public void setOwnerUser(User ownerUser) {
 		this.ownerUser = ownerUser;
 	}

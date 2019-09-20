@@ -51,117 +51,133 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_OC_EXISTING_BUILDING")
 @SequenceGenerator(name = OCExistingBuilding.SEQ_EXISTING_BUILDING, sequenceName = OCExistingBuilding.SEQ_EXISTING_BUILDING, allocationSize = 1)
 public class OCExistingBuilding extends AbstractAuditable {
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_EXISTING_BUILDING = "SEQ_EGBPA_OC_EXISTING_BUILDING";
-    @Id
-    @GeneratedValue(generator = SEQ_EXISTING_BUILDING, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    private String name;
-    private Integer buildingNumber;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Valid
-    @NotNull
-    @JoinColumn(name = "oc", nullable = false)
-    private OccupancyCertificate oc;
-    private BigDecimal totalPlinthArea;
-    @OneToMany(mappedBy = "existingBuildingDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("orderOfFloor")
-    private List<OCExistingBuildingFloor> existingBuildingFloorDetails = new ArrayList<>(0);
-    private transient List<OCExistingBuildingFloor> existingBuildingFloorDetailsUpdate = new ArrayList<>(0);
-    private transient List<OCExistingBuildingFloor> existingBldgFloorDetailsFromEdcr = new ArrayList<>(0);
-    private transient Long[] deletedFloorIds;
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_EXISTING_BUILDING = "SEQ_EGBPA_OC_EXISTING_BUILDING";
+	@Id
+	@GeneratedValue(generator = SEQ_EXISTING_BUILDING, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@SafeHtml
+	@Size(min = 1, max = 50)
+	private String name;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@PositiveOrZero
+	private Integer buildingNumber;
 
-    public String getName() {
-        return name;
-    }
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "oc", nullable = false)
+	private OccupancyCertificate oc;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@PositiveOrZero
+	private BigDecimal totalPlinthArea;
 
-    public Integer getBuildingNumber() {
-        return buildingNumber;
-    }
+	@Valid
+	@OneToMany(mappedBy = "existingBuildingDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("orderOfFloor")
+	private List<OCExistingBuildingFloor> existingBuildingFloorDetails = new ArrayList<>(0);
 
-    public void setBuildingNumber(Integer buildingNumber) {
-        this.buildingNumber = buildingNumber;
-    }
+	@Valid
+	private transient List<OCExistingBuildingFloor> existingBuildingFloorDetailsUpdate = new ArrayList<>(0);
 
-    public OccupancyCertificate getOc() {
-        return oc;
-    }
+	@Valid
+	private transient List<OCExistingBuildingFloor> existingBldgFloorDetailsFromEdcr = new ArrayList<>(0);
 
-    public void setOc(OccupancyCertificate oc) {
-        this.oc = oc;
-    }
+	private transient Long[] deletedFloorIds;
 
-    public BigDecimal getTotalPlinthArea() {
-        return totalPlinthArea;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public void setTotalPlinthArea(BigDecimal totalPlinthArea) {
-        this.totalPlinthArea = totalPlinthArea;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public List<OCExistingBuildingFloor> getExistingBuildingFloorDetails() {
-        return existingBuildingFloorDetails;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setExistingBuildingFloorDetails(List<OCExistingBuildingFloor> existingBuildingFloorDetails) {
-        this.existingBuildingFloorDetails = existingBuildingFloorDetails;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public List<OCExistingBuildingFloor> getExistingBuildingFloorDetailsUpdate() {
-        return existingBuildingFloorDetailsUpdate;
-    }
+	public Integer getBuildingNumber() {
+		return buildingNumber;
+	}
 
-    public void setExistingBuildingFloorDetailsUpdate(List<OCExistingBuildingFloor> existingBuildingFloorDetailsUpdate) {
-        this.existingBuildingFloorDetailsUpdate = existingBuildingFloorDetailsUpdate;
-    }
+	public void setBuildingNumber(Integer buildingNumber) {
+		this.buildingNumber = buildingNumber;
+	}
 
-    public List<OCExistingBuildingFloor> getExistingBldgFloorDetailsFromEdcr() {
-        return existingBldgFloorDetailsFromEdcr;
-    }
+	public OccupancyCertificate getOc() {
+		return oc;
+	}
 
-    public void setExistingBldgFloorDetailsFromEdcr(List<OCExistingBuildingFloor> existingBldgFloorDetailsFromEdcr) {
-        this.existingBldgFloorDetailsFromEdcr = existingBldgFloorDetailsFromEdcr;
-    }
+	public void setOc(OccupancyCertificate oc) {
+		this.oc = oc;
+	}
 
-    public Long[] getDeletedFloorIds() {
-        return deletedFloorIds;
-    }
+	public BigDecimal getTotalPlinthArea() {
+		return totalPlinthArea;
+	}
 
-    public void setDeletedFloorIds(Long[] deletedFloorIds) {
-        this.deletedFloorIds = deletedFloorIds;
-    }
+	public void setTotalPlinthArea(BigDecimal totalPlinthArea) {
+		this.totalPlinthArea = totalPlinthArea;
+	}
 
-    public void delete(final List<OCExistingBuildingFloor> existingBuildingFloorDetails) {
-        if (existingBuildingFloorDetails != null)
-            this.existingBuildingFloorDetails.removeAll(existingBuildingFloorDetails);
-    }
+	public List<OCExistingBuildingFloor> getExistingBuildingFloorDetails() {
+		return existingBuildingFloorDetails;
+	}
+
+	public void setExistingBuildingFloorDetails(List<OCExistingBuildingFloor> existingBuildingFloorDetails) {
+		this.existingBuildingFloorDetails = existingBuildingFloorDetails;
+	}
+
+	public List<OCExistingBuildingFloor> getExistingBuildingFloorDetailsUpdate() {
+		return existingBuildingFloorDetailsUpdate;
+	}
+
+	public void setExistingBuildingFloorDetailsUpdate(
+			List<OCExistingBuildingFloor> existingBuildingFloorDetailsUpdate) {
+		this.existingBuildingFloorDetailsUpdate = existingBuildingFloorDetailsUpdate;
+	}
+
+	public List<OCExistingBuildingFloor> getExistingBldgFloorDetailsFromEdcr() {
+		return existingBldgFloorDetailsFromEdcr;
+	}
+
+	public void setExistingBldgFloorDetailsFromEdcr(List<OCExistingBuildingFloor> existingBldgFloorDetailsFromEdcr) {
+		this.existingBldgFloorDetailsFromEdcr = existingBldgFloorDetailsFromEdcr;
+	}
+
+	public Long[] getDeletedFloorIds() {
+		return deletedFloorIds;
+	}
+
+	public void setDeletedFloorIds(Long[] deletedFloorIds) {
+		this.deletedFloorIds = deletedFloorIds;
+	}
+
+	public void delete(final List<OCExistingBuildingFloor> existingBuildingFloorDetails) {
+		if (existingBuildingFloorDetails != null)
+			this.existingBuildingFloorDetails.removeAll(existingBuildingFloorDetails);
+	}
 
 }

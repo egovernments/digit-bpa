@@ -52,7 +52,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -64,135 +66,145 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_PERMIT_REVOCATION")
 @SequenceGenerator(name = PermitRevocation.SEQ_REVOCATION, sequenceName = PermitRevocation.SEQ_REVOCATION, allocationSize = 1)
 public class PermitRevocation extends AbstractAuditable {
 
-    /**
-    * 
-    */
-    private static final long serialVersionUID = -4954480849979881787L;
+	/**
+	* 
+	*/
+	private static final long serialVersionUID = -4954480849979881787L;
 
-    public static final String SEQ_REVOCATION = "SEQ_EGBPA_PERMIT_REVOCATION";
+	public static final String SEQ_REVOCATION = "SEQ_EGBPA_PERMIT_REVOCATION";
 
-    @Id
-    @GeneratedValue(generator = SEQ_REVOCATION, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_REVOCATION, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "application", nullable = false)
-    private BpaApplication application;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "application", nullable = false)
+	private BpaApplication application;
 
-    @Length(min = 1, max = 64)
-    private String applicationNumber;
+	@SafeHtml
+	@Length(min = 1, max = 64)
+	@Column(length = 64, unique = true, nullable = false)
+	private String applicationNumber;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date applicationDate;
+	@Temporal(value = TemporalType.DATE)
+	private Date applicationDate;
 
-    @Length(min = 1, max = 64)
-    private String revocationNumber;
+	@SafeHtml
+	@Length(min = 1, max = 64)
+	@Column(length = 64, unique = true, nullable = false)
+	private String revocationNumber;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date revocationDate;
+	@Temporal(value = TemporalType.DATE)
+	private Date revocationDate;
 
-    @Length(min = 1, max = 1024)
-    private String initiateRemarks;
+	@SafeHtml
+	@Length(min = 1, max = 1024)
+	private String initiateRemarks;
 
-    @Length(min = 1, max = 1024)
-    private String approveCancelRemarks;
+	@SafeHtml
+	@Length(min = 1, max = 1024)
+	private String approveCancelRemarks;
 
-    @OneToMany(mappedBy = "revocation", cascade = CascadeType.ALL)
-    @OrderBy("id asc")
-    private List<PermitRevocationDetail> revocationDetails = new ArrayList<>();
+	@Valid
+	@OneToMany(mappedBy = "revocation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("id asc")
+	private List<PermitRevocationDetail> revocationDetails = new ArrayList<>();
 
-    private transient String workflowAction;
+	@SafeHtml
+	private transient String workflowAction;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public BpaApplication getApplication() {
-        return application;
-    }
+	public BpaApplication getApplication() {
+		return application;
+	}
 
-    public void setApplication(BpaApplication application) {
-        this.application = application;
-    }
+	public void setApplication(BpaApplication application) {
+		this.application = application;
+	}
 
-    public String getApplicationNumber() {
-        return applicationNumber;
-    }
+	public String getApplicationNumber() {
+		return applicationNumber;
+	}
 
-    public void setApplicationNumber(String applicationNumber) {
-        this.applicationNumber = applicationNumber;
-    }
+	public void setApplicationNumber(String applicationNumber) {
+		this.applicationNumber = applicationNumber;
+	}
 
-    public Date getApplicationDate() {
-        return applicationDate;
-    }
+	public Date getApplicationDate() {
+		return applicationDate;
+	}
 
-    public void setApplicationDate(Date applicationDate) {
-        this.applicationDate = applicationDate;
-    }
+	public void setApplicationDate(Date applicationDate) {
+		this.applicationDate = applicationDate;
+	}
 
-    public String getRevocationNumber() {
-        return revocationNumber;
-    }
+	public String getRevocationNumber() {
+		return revocationNumber;
+	}
 
-    public void setRevocationNumber(String revocationNumber) {
-        this.revocationNumber = revocationNumber;
-    }
+	public void setRevocationNumber(String revocationNumber) {
+		this.revocationNumber = revocationNumber;
+	}
 
-    public Date getRevocationDate() {
-        return revocationDate;
-    }
+	public Date getRevocationDate() {
+		return revocationDate;
+	}
 
-    public void setRevocationDate(Date revocationDate) {
-        this.revocationDate = revocationDate;
-    }
+	public void setRevocationDate(Date revocationDate) {
+		this.revocationDate = revocationDate;
+	}
 
-    public String getInitiateRemarks() {
-        return initiateRemarks;
-    }
+	public String getInitiateRemarks() {
+		return initiateRemarks;
+	}
 
-    public void setInitiateRemarks(String initiateRemarks) {
-        this.initiateRemarks = initiateRemarks;
-    }
+	public void setInitiateRemarks(String initiateRemarks) {
+		this.initiateRemarks = initiateRemarks;
+	}
 
-    public String getApproveCancelRemarks() {
-        return approveCancelRemarks;
-    }
+	public String getApproveCancelRemarks() {
+		return approveCancelRemarks;
+	}
 
-    public void setApproveCancelRemarks(String approveCancelRemarks) {
-        this.approveCancelRemarks = approveCancelRemarks;
-    }
+	public void setApproveCancelRemarks(String approveCancelRemarks) {
+		this.approveCancelRemarks = approveCancelRemarks;
+	}
 
-    public List<PermitRevocationDetail> getRevocationDetails() {
-        return revocationDetails;
-    }
+	public List<PermitRevocationDetail> getRevocationDetails() {
+		return revocationDetails;
+	}
 
-    public void setRevocationDetails(List<PermitRevocationDetail> revocationDetails) {
-        this.revocationDetails = revocationDetails;
-    }
+	public void setRevocationDetails(List<PermitRevocationDetail> revocationDetails) {
+		this.revocationDetails = revocationDetails;
+	}
 
-    public String getWorkflowAction() {
-        return workflowAction;
-    }
+	public String getWorkflowAction() {
+		return workflowAction;
+	}
 
-    public void setWorkflowAction(String workflowAction) {
-        this.workflowAction = workflowAction;
-    }
+	public void setWorkflowAction(String workflowAction) {
+		this.workflowAction = workflowAction;
+	}
 
 }

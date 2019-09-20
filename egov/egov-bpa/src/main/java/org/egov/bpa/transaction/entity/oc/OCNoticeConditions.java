@@ -48,6 +48,7 @@ package org.egov.bpa.transaction.entity.oc;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,7 +56,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.NoticeCondition;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -65,37 +66,38 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OCNoticeConditions.SEQ_OC_NOTICE_CONDITIONS, sequenceName = OCNoticeConditions.SEQ_OC_NOTICE_CONDITIONS, allocationSize = 1)
 public class OCNoticeConditions extends AbstractAuditable {
 
-    private static final long serialVersionUID = 771762227114807254L;
+	private static final long serialVersionUID = 771762227114807254L;
 
-    public static final String SEQ_OC_NOTICE_CONDITIONS = "seq_egbpa_oc_notice_conditions";
+	public static final String SEQ_OC_NOTICE_CONDITIONS = "seq_egbpa_oc_notice_conditions";
 
-    @Id
-    @GeneratedValue(generator = SEQ_OC_NOTICE_CONDITIONS, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "occupancyCertificate", nullable = false)
-    private OccupancyCertificate oc;
-   
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "noticecondition", nullable = false)
-    private NoticeCondition noticeCondition;
+	@Id
+	@GeneratedValue(generator = SEQ_OC_NOTICE_CONDITIONS, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public Long getId() {
-        return id;
-    }
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "occupancyCertificate", nullable = false)
+	private OccupancyCertificate oc;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "noticecondition", nullable = false)
+	private NoticeCondition noticeCondition;
 
-    public OccupancyCertificate getOc() {
-        return oc;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setOc(OccupancyCertificate oc) {
-        this.oc = oc;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public OccupancyCertificate getOc() {
+		return oc;
+	}
+
+	public void setOc(OccupancyCertificate oc) {
+		this.oc = oc;
+	}
 
 	public NoticeCondition getNoticeCondition() {
 		return noticeCondition;

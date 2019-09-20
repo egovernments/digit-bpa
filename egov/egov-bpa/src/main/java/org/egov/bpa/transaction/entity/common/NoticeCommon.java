@@ -47,8 +47,7 @@
 
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,57 +59,66 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.Date;
+
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_notice_common")
 @SequenceGenerator(name = NoticeCommon.SEQ_BPA_NOTICE_COMMON, sequenceName = NoticeCommon.SEQ_BPA_NOTICE_COMMON, allocationSize = 1)
 public class NoticeCommon extends AbstractAuditable {
 
-    public static final String SEQ_BPA_NOTICE_COMMON = "SEQ_EGBPA_NOTICE_COMMON";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_BPA_NOTICE_COMMON, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	public static final String SEQ_BPA_NOTICE_COMMON = "SEQ_EGBPA_NOTICE_COMMON";
 
-    private Date noticeGeneratedDate;
+	@Id
+	@GeneratedValue(generator = SEQ_BPA_NOTICE_COMMON, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "noticeFileStore")
-    private FileStoreMapper noticeFileStore;
+	private Date noticeGeneratedDate;
 
-    private String noticeType;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "noticeFileStore")
+	private FileStoreMapper noticeFileStore;
 
-    public Long getId() {
-        return id;
-    }
+	@SafeHtml
+	private String noticeType;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public FileStoreMapper getNoticeFileStore() {
-        return noticeFileStore;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
-        this.noticeFileStore = noticeFileStore;
-    }
+	public FileStoreMapper getNoticeFileStore() {
+		return noticeFileStore;
+	}
 
-    public Date getNoticeGeneratedDate() {
-        return noticeGeneratedDate;
-    }
+	public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
+		this.noticeFileStore = noticeFileStore;
+	}
 
-    public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
-        this.noticeGeneratedDate = noticeGeneratedDate;
-    }
+	public Date getNoticeGeneratedDate() {
+		return noticeGeneratedDate;
+	}
 
-    public String getNoticeType() {
-        return noticeType;
-    }
+	public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
+		this.noticeGeneratedDate = noticeGeneratedDate;
+	}
 
-    public void setNoticeType(String noticeType) {
-        this.noticeType = noticeType;
-    }
+	public String getNoticeType() {
+		return noticeType;
+	}
+
+	public void setNoticeType(String noticeType) {
+		this.noticeType = noticeType;
+	}
 
 }

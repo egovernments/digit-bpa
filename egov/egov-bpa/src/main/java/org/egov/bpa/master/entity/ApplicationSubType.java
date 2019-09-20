@@ -40,6 +40,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_MSTR_APPLICATIONSUBTYPE")
@@ -47,52 +48,62 @@ import org.hibernate.validator.constraints.Length;
 public class ApplicationSubType extends AbstractAuditable {
 
 	private static final long serialVersionUID = 3523866218161324731L;
-	public static final String SEQ_APPLICATIONSUBTYPE= "SEQ_EGBPA_MSTR_APPLICATIONSUBTYPE";
-    @Id
-    @GeneratedValue(generator = SEQ_APPLICATIONSUBTYPE, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "name", unique = true)
-    private String name;
-    
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String description;
-    
-    private Boolean enabled;
-    
-    private Boolean slotRequired;
+	public static final String SEQ_APPLICATIONSUBTYPE = "SEQ_EGBPA_MSTR_APPLICATIONSUBTYPE";
+	@Id
+	@GeneratedValue(generator = SEQ_APPLICATIONSUBTYPE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "name", unique = true)
+	private String name;
+
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String description;
+
+	private Boolean enabled;
+
+	private Boolean slotRequired;
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public Boolean getEnabled() {
 		return enabled;
 	}
+
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
+
 	public Boolean getSlotRequired() {
 		return slotRequired;
 	}
+
 	public void setSlotRequired(Boolean slotRequired) {
 		this.slotRequired = slotRequired;
 	}

@@ -57,6 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -71,10 +72,12 @@ public class PermitInspectionApplication extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Valid
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "inspectionapplication", nullable = false)
     private InspectionApplication inspectionApplication;
-    @ManyToOne(cascade = CascadeType.ALL)
+    
+    @ManyToOne(cascade = CascadeType.ALL, fetch =FetchType.LAZY)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
 

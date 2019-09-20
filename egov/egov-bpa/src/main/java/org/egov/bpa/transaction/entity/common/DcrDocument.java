@@ -59,11 +59,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -71,95 +71,102 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = DcrDocument.SEQ_APPLN_DCR_DOCUMENT, sequenceName = DcrDocument.SEQ_APPLN_DCR_DOCUMENT, allocationSize = 1)
 public class DcrDocument extends AbstractAuditable {
 
-    private static final long serialVersionUID = -4967429196646450211L;
-    public static final String SEQ_APPLN_DCR_DOCUMENT = "seq_egbpa_dcr_document";
-    @Id
-    @GeneratedValue(generator = SEQ_APPLN_DCR_DOCUMENT, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "servicechecklist", nullable = false)
-    private ChecklistServiceTypeMapping serviceChecklist;
-    @Temporal(value = TemporalType.DATE)
-    private Date submissionDate;
-    private Boolean isSubmitted;
-    @Length(min = 1, max = 256)
-    private String remarks;
-    @OrderBy("id ASC")
-    @OneToMany(mappedBy = "dcrDocument", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<StoreDcrFiles> dcrAttachments = Collections.emptySet();
-    private transient MultipartFile[] files;
-    private transient String[] fileStoreIds;
+	private static final long serialVersionUID = -4967429196646450211L;
+	public static final String SEQ_APPLN_DCR_DOCUMENT = "seq_egbpa_dcr_document";
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(generator = SEQ_APPLN_DCR_DOCUMENT, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "servicechecklist", nullable = false)
+	private ChecklistServiceTypeMapping serviceChecklist;
 
-    public ChecklistServiceTypeMapping getServiceChecklist() {
-        return serviceChecklist;
-    }
+	@Temporal(value = TemporalType.DATE)
+	private Date submissionDate;
 
-    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-        this.serviceChecklist = serviceChecklist;
-    }
+	private Boolean isSubmitted;
 
-    public String getRemarks() {
-        return remarks;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 256)
+	private String remarks;
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
+	@OrderBy("id ASC")
+	@OneToMany(mappedBy = "dcrDocument", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<StoreDcrFiles> dcrAttachments = Collections.emptySet();
 
-    public Date getSubmissionDate() {
-        return submissionDate;
-    }
+	private transient MultipartFile[] files;
 
-    public void setSubmissionDate(Date submissionDate) {
-        this.submissionDate = submissionDate;
-    }
+	private transient String[] fileStoreIds;
 
-    public Boolean getSubmitted() {
-        return isSubmitted;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public void setSubmitted(Boolean submitted) {
-        isSubmitted = submitted;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Set<StoreDcrFiles> getDcrAttachments() {
-        return dcrAttachments;
-    }
+	public ChecklistServiceTypeMapping getServiceChecklist() {
+		return serviceChecklist;
+	}
 
-    public Set<StoreDcrFiles> getOrderedDcrAttachments() {
-        return this.dcrAttachments.stream()
-                .sorted(Comparator.comparing(StoreDcrFiles::getId))
-                .collect(Collectors.toSet());
-    }
+	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+		this.serviceChecklist = serviceChecklist;
+	}
 
-    public void setDcrAttachments(Set<StoreDcrFiles> dcrAttachments) {
-        this.dcrAttachments = dcrAttachments;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    public MultipartFile[] getFiles() {
-        return files;
-    }
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
-    public void setFiles(MultipartFile[] files) {
-        this.files = files;
-    }
+	public Date getSubmissionDate() {
+		return submissionDate;
+	}
 
-    public String[] getFileStoreIds() {
-        return fileStoreIds;
-    }
+	public void setSubmissionDate(Date submissionDate) {
+		this.submissionDate = submissionDate;
+	}
 
-    public void setFileStoreIds(String[] fileStoreIds) {
-        this.fileStoreIds = fileStoreIds;
-    }
+	public Boolean getSubmitted() {
+		return isSubmitted;
+	}
+
+	public void setSubmitted(Boolean submitted) {
+		isSubmitted = submitted;
+	}
+
+	public Set<StoreDcrFiles> getDcrAttachments() {
+		return dcrAttachments;
+	}
+
+	public Set<StoreDcrFiles> getOrderedDcrAttachments() {
+		return this.dcrAttachments.stream().sorted(Comparator.comparing(StoreDcrFiles::getId))
+				.collect(Collectors.toSet());
+	}
+
+	public void setDcrAttachments(Set<StoreDcrFiles> dcrAttachments) {
+		this.dcrAttachments = dcrAttachments;
+	}
+
+	public MultipartFile[] getFiles() {
+		return files;
+	}
+
+	public void setFiles(MultipartFile[] files) {
+		this.files = files;
+	}
+
+	public String[] getFileStoreIds() {
+		return fileStoreIds;
+	}
+
+	public void setFileStoreIds(String[] fileStoreIds) {
+		this.fileStoreIds = fileStoreIds;
+	}
 }

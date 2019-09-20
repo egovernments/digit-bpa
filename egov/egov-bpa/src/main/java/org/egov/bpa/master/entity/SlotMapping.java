@@ -49,12 +49,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.bpa.master.entity.enums.WorkingDays;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_mstr_slotmapping")
@@ -76,29 +77,30 @@ public class SlotMapping extends AbstractAuditable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "zone")
 	private Boundary zone;
-	
-	
+
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "revenueward")
-	private Boundary revenueWard; 
+	private Boundary revenueWard;
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "electionward")
 	private Boundary electionWard;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "slotApplicationType")
 	private ApplicationSubType applicationType;
 
-	@Transient
-	private WorkingDays days;
-
+	@SafeHtml
 	private String day;
 
 	@NotNull
+	@PositiveOrZero
 	private Integer maxSlotsAllowed;
 
+	@PositiveOrZero
 	private Integer maxRescheduledSlotsAllowed;
+
+	private transient WorkingDays days;
 
 	public Boundary getRevenueWard() {
 		return revenueWard;

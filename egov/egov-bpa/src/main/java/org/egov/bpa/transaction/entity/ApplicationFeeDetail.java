@@ -41,6 +41,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.bpa.master.entity.BpaFeeMapping;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -62,17 +63,20 @@ public class ApplicationFeeDetail extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_APPLICATIONFEE_DETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
     @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "bpaFeeMapping")
+    @JoinColumn(name = "bpaFeeMapping", nullable = false)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private BpaFeeMapping bpaFeeMapping;
+    
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "applicationFee")
+    @JoinColumn(name = "applicationFee", nullable = false)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private ApplicationFee applicationFee;
+    
     @Audited
+    @PositiveOrZero
     private BigDecimal amount = BigDecimal.ZERO;
 
     @Override

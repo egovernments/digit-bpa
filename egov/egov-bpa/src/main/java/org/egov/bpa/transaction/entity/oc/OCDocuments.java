@@ -47,11 +47,9 @@
 
 package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.transaction.entity.common.GeneralDocument;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,7 +58,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+
+import org.egov.bpa.transaction.entity.common.GeneralDocument;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "egbpa_oc_documents")
@@ -74,14 +74,12 @@ public class OCDocuments extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ_OC_DOCUMENT, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
+	@Valid
 	@ManyToOne(cascade = CascadeType.ALL)
-	@NotNull
 	@JoinColumn(name = "document", nullable = false)
 	private GeneralDocument document;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@Valid
-	@NotNull
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "occupancyCertificate", nullable = false)
 	private OccupancyCertificate oc;
 

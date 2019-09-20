@@ -65,10 +65,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_INSPECTION_COMMON")
@@ -83,22 +85,24 @@ public class InspectionCommon extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @SafeHtml
     @Length(min = 1, max = 64)
     private String inspectionNumber;
 
     @Temporal(value = TemporalType.DATE)
     private Date inspectionDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent")
     private InspectionCommon parent;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inspectedby")
     private User inspectedBy;
 
     private Boolean isInspected;
 
+    @SafeHtml
     @Length(min = 1, max = 1000)
     private String inspectionRemarks;
 
@@ -106,41 +110,61 @@ public class InspectionCommon extends AbstractAuditable {
 
     private boolean rightToMakeConstruction;
 
+    @SafeHtml
     @Length(min = 1, max = 128)
     private String typeofLand;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @Valid
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "inspection")
     private List<DocketCommon> docket = new ArrayList<>();
 
-    @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL)
+    @Valid
+    @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy(ORDER_BY_ID_ASC)
     private List<InspectionFilesCommon> inspectionSupportDocs = new ArrayList<>();
 
+    @Valid
     @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy(ORDER_BY_ID_ASC)
     private List<PlanScrutinyChecklistCommon> planScrutinyChecklistForRule = new ArrayList<>(0);
 
+    @Valid
     @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy(ORDER_BY_ID_ASC)
     private List<PlanScrutinyChecklistCommon> planScrutinyChecklistForDrawing = new ArrayList<>(0);
 
+    @Valid
     private transient List<DocketDetailCommon> docketDetailLocList = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailAccessList = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailSurroundingPlotList = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailLandTypeList = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailProposedWorkList = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailWorkAsPerPlanList = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailHgtAbuttRoadList = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailMeasurementList = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailAreaLoc = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailLengthOfCompWall = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailNumberOfWell = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailErectionTower = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailShutter = new ArrayList<>();
+    @Valid
     private transient List<DocketDetailCommon> docketDetailRoofConversion = new ArrayList<>();
-    
+    @Valid
     private transient List<PlanScrutinyChecklistCommon> planScrutinyChecklistForRuleTemp = new ArrayList<>(0);
+    @Valid
     private transient List<PlanScrutinyChecklistCommon> planScrutinyChecklistForDrawingTemp = new ArrayList<>(0);
 
     @Override

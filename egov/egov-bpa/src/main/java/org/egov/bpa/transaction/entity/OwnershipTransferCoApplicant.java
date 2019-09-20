@@ -31,6 +31,7 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,7 +39,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -47,31 +48,31 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OwnershipTransferCoApplicant.SEQ_OWNERSHIP_COAPPLICANT, sequenceName = OwnershipTransferCoApplicant.SEQ_OWNERSHIP_COAPPLICANT, allocationSize = 1)
 public class OwnershipTransferCoApplicant extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_OWNERSHIP_COAPPLICANT = "seq_egbpa_ownershiptransfer_coapplicant";
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_OWNERSHIP_COAPPLICANT = "seq_egbpa_ownershiptransfer_coapplicant";
 
-    @Id
-    @GeneratedValue(generator = SEQ_OWNERSHIP_COAPPLICANT, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ownershipTransfer")
-    private OwnershipTransfer ownershipTransfer;
-    
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "coApplicant")
-    private CoApplicant coApplicant;
-    
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(generator = SEQ_OWNERSHIP_COAPPLICANT, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "ownershipTransfer", nullable = false)
+	private OwnershipTransfer ownershipTransfer;
+
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "coApplicant", nullable = false)
+	private CoApplicant coApplicant;
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
 	public OwnershipTransfer getOwnershipTransfer() {
 		return ownershipTransfer;
@@ -87,5 +88,5 @@ public class OwnershipTransferCoApplicant extends AbstractAuditable {
 
 	public void setCoApplicant(CoApplicant coApplicant) {
 		this.coApplicant = coApplicant;
-	}  
+	}
 }

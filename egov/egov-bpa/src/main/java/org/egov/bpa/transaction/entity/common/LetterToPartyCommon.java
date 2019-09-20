@@ -47,11 +47,9 @@
 
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.bpa.master.entity.LpReason;
-import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -68,9 +66,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.validation.Valid;
+
+import org.egov.bpa.master.entity.LpReason;
+import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
 @Table(name = "EGBPA_LETTERTOPARTY_COMMON")
 @SequenceGenerator(name = LetterToPartyCommon.SEQ_OC_LETTERTOPARTY, sequenceName = LetterToPartyCommon.SEQ_OC_LETTERTOPARTY, allocationSize = 1)
@@ -83,27 +87,30 @@ public class LetterToPartyCommon extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ_OC_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "inspection")
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "inspection", nullable = false)
 	private InspectionCommon inspection;
 
+	@SafeHtml
 	@Length(min = 1, max = 32)
 	private String acknowledgementNumber;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "egbpa_lp_reason_common", joinColumns = @JoinColumn(name = "lettertoparty"), inverseJoinColumns = @JoinColumn(name = "lpreason"))
 	private List<LpReason> lpReason = new ArrayList<>();
 
+	@SafeHtml
 	@Length(min = 1, max = 128)
 	private String lpNumber;
 
 	@Temporal(TemporalType.DATE)
 	private Date letterDate;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "scheduledby")
 	private User scheduledBy;
 
+	@SafeHtml
 	@Length(min = 1, max = 128)
 	private String scheduledPlace;
 
@@ -116,37 +123,49 @@ public class LetterToPartyCommon extends AbstractAuditable {
 	@Temporal(TemporalType.DATE)
 	private Date replyDate;
 
+	@SafeHtml
 	@Length(min = 1, max = 1024)
 	private String lpRemarks;
 
+	@SafeHtml
 	@Length(min = 1, max = 1024)
 	private String lpReplyRemarks;
 
+	@SafeHtml
 	@Length(min = 1, max = 1024)
 	private String lpDesc;
 
+	@SafeHtml
 	@Length(min = 1, max = 1024)
 	private String lpReplyDesc;
 
 	private Boolean isHistory;
 
+	@SafeHtml
 	@Length(min = 1, max = 512)
 	private String documentId;
 
 	@Temporal(TemporalType.DATE)
 	private Date lastReplyDate;
 
+	@SafeHtml
+	@Length(min = 1, max = 200)
 	private String currentStateValueOfLP;
 
+	@SafeHtml
+	@Length(min = 1, max = 200)
 	private String stateForOwnerPosition;
 
+	@SafeHtml
+	@Length(min = 1, max = 200)
 	private String pendingAction;
 
+	@Valid
 	@OrderBy("id ASC")
-	@OneToMany(mappedBy = "letterToParty", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "letterToParty", cascade = CascadeType.ALL, fetch =FetchType.LAZY)
 	private List<LetterToPartyDocumentCommon> letterToPartyDocuments = new ArrayList<>(0);
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "currentapplnstatus")
 	private BpaStatus currentApplnStatus;
 

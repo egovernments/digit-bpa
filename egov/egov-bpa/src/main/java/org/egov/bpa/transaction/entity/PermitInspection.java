@@ -49,6 +49,7 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,7 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -66,44 +67,44 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = PermitInspection.SEQ_INSPECTION, sequenceName = PermitInspection.SEQ_INSPECTION, allocationSize = 1)
 public class PermitInspection extends AbstractAuditable {
 
-    public static final String SEQ_INSPECTION = "SEQ_EGBPA_PERMIT_INSPECTION";
-    private static final long serialVersionUID = 3078684328383202788L;
-    @Id
-    @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	public static final String SEQ_INSPECTION = "SEQ_EGBPA_PERMIT_INSPECTION";
+	private static final long serialVersionUID = 3078684328383202788L;
+	@Id
+	@GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "inspection", nullable = false)
-    private InspectionCommon inspection;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "application", nullable = false)
-    private BpaApplication application;
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "inspection", nullable = false)
+	private InspectionCommon inspection;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "application", nullable = false)
+	private BpaApplication application;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public InspectionCommon getInspection() {
-        return inspection;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public void setInspection(InspectionCommon inspection) {
-        this.inspection = inspection;
-    }
+	public InspectionCommon getInspection() {
+		return inspection;
+	}
 
-    public BpaApplication getApplication() {
-        return application;
-    }
+	public void setInspection(InspectionCommon inspection) {
+		this.inspection = inspection;
+	}
 
-    public void setApplication(BpaApplication application) {
-        this.application = application;
-    }
+	public BpaApplication getApplication() {
+		return application;
+	}
+
+	public void setApplication(BpaApplication application) {
+		this.application = application;
+	}
 }

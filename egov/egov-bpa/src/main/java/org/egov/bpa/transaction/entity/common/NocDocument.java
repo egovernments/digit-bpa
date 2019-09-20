@@ -67,7 +67,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.transaction.entity.enums.NocStatus;
@@ -75,6 +74,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -82,163 +82,164 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = NocDocument.SEQ_EGBPA_NOC_DOCUMENT, sequenceName = NocDocument.SEQ_EGBPA_NOC_DOCUMENT, allocationSize = 1)
 public class NocDocument extends AbstractAuditable {
 
-    public static final String SEQ_EGBPA_NOC_DOCUMENT = "seq_egbpa_noc_document";
-    private static final long serialVersionUID = 6711740700667429211L;
+	public static final String SEQ_EGBPA_NOC_DOCUMENT = "seq_egbpa_noc_document";
+	private static final long serialVersionUID = 6711740700667429211L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGBPA_NOC_DOCUMENT, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_EGBPA_NOC_DOCUMENT, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "egbpa_noc_document_files", joinColumns = @JoinColumn(name = "nocdocument"), inverseJoinColumns = @JoinColumn(name = "filestore"))
-    private Set<FileStoreMapper> nocSupportDocs = Collections.emptySet();
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "egbpa_noc_document_files", joinColumns = @JoinColumn(name = "nocdocument"), inverseJoinColumns = @JoinColumn(name = "filestore"))
+	private Set<FileStoreMapper> nocSupportDocs = Collections.emptySet();
 
-    @ManyToOne
-    @NotNull
-    @JoinColumn(name = "servicechecklist", nullable = false)
-    private ChecklistServiceTypeMapping serviceChecklist;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "servicechecklist", nullable = false)
+	private ChecklistServiceTypeMapping serviceChecklist;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date submissionDate;
+	@Temporal(value = TemporalType.DATE)
+	private Date submissionDate;
 
-    private Boolean isSubmitted = false;
+	private Boolean isSubmitted = false;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "createdUser")
-    private User createdUser;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "createdUser")
+	private User createdUser;
 
-    @Length(min = 1, max = 1000)
-    private String remarks;
+	@SafeHtml
+	@Length(min = 1, max = 1000)
+	private String remarks;
 
-    @Length(min = 1, max = 1000)
-    private String natureOfRequest;
+	@SafeHtml
+	@Length(min = 1, max = 1000)
+	private String natureOfRequest;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date letterSentOn;
+	@Temporal(value = TemporalType.DATE)
+	private Date letterSentOn;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date replyReceivedOn;
+	@Temporal(value = TemporalType.DATE)
+	private Date replyReceivedOn;
 
-    private Boolean rejection = false;
+	private Boolean rejection = false;
 
-    private Boolean notApplicable = false;
+	private Boolean notApplicable = false;
 
-    @Enumerated(EnumType.STRING)
-    private NocStatus nocStatus;
+	@Enumerated(EnumType.STRING)
+	private NocStatus nocStatus;
 
-    private transient MultipartFile[] files;
+	private transient MultipartFile[] files;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Set<FileStoreMapper> getNocSupportDocs() {
-        return nocSupportDocs;
-    }
+	public Set<FileStoreMapper> getNocSupportDocs() {
+		return nocSupportDocs;
+	}
 
-    public void setNocSupportDocs(Set<FileStoreMapper> nocSupportDocs) {
-        this.nocSupportDocs = nocSupportDocs;
-    }
+	public void setNocSupportDocs(Set<FileStoreMapper> nocSupportDocs) {
+		this.nocSupportDocs = nocSupportDocs;
+	}
 
-    public MultipartFile[] getFiles() {
-        return files;
-    }
+	public MultipartFile[] getFiles() {
+		return files;
+	}
 
-    public void setFiles(MultipartFile[] files) {
-        this.files = files;
-    }
+	public void setFiles(MultipartFile[] files) {
+		this.files = files;
+	}
 
-    public ChecklistServiceTypeMapping getServiceChecklist() {
-        return serviceChecklist;
-    }
+	public ChecklistServiceTypeMapping getServiceChecklist() {
+		return serviceChecklist;
+	}
 
-    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-        this.serviceChecklist = serviceChecklist;
-    }
+	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+		this.serviceChecklist = serviceChecklist;
+	}
 
-    public Date getSubmissionDate() {
-        return submissionDate;
-    }
+	public Date getSubmissionDate() {
+		return submissionDate;
+	}
 
-    public void setSubmissionDate(Date submissionDate) {
-        this.submissionDate = submissionDate;
-    }
+	public void setSubmissionDate(Date submissionDate) {
+		this.submissionDate = submissionDate;
+	}
 
-    public Boolean getSubmitted() {
-        return isSubmitted;
-    }
+	public Boolean getSubmitted() {
+		return isSubmitted;
+	}
 
-    public void setSubmitted(Boolean submitted) {
-        isSubmitted = submitted;
-    }
+	public void setSubmitted(Boolean submitted) {
+		isSubmitted = submitted;
+	}
 
-    public User getCreatedUser() {
-        return createdUser;
-    }
+	public User getCreatedUser() {
+		return createdUser;
+	}
 
-    public void setCreatedUser(User createdUser) {
-        this.createdUser = createdUser;
-    }
+	public void setCreatedUser(User createdUser) {
+		this.createdUser = createdUser;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
-    public String getNatureOfRequest() {
-        return natureOfRequest;
-    }
+	public String getNatureOfRequest() {
+		return natureOfRequest;
+	}
 
-    public void setNatureOfRequest(String natureOfRequest) {
-        this.natureOfRequest = natureOfRequest;
-    }
+	public void setNatureOfRequest(String natureOfRequest) {
+		this.natureOfRequest = natureOfRequest;
+	}
 
-    public Date getLetterSentOn() {
-        return letterSentOn;
-    }
+	public Date getLetterSentOn() {
+		return letterSentOn;
+	}
 
-    public void setLetterSentOn(Date letterSentOn) {
-        this.letterSentOn = letterSentOn;
-    }
+	public void setLetterSentOn(Date letterSentOn) {
+		this.letterSentOn = letterSentOn;
+	}
 
-    public Date getReplyReceivedOn() {
-        return replyReceivedOn;
-    }
+	public Date getReplyReceivedOn() {
+		return replyReceivedOn;
+	}
 
-    public void setReplyReceivedOn(Date replyReceivedOn) {
-        this.replyReceivedOn = replyReceivedOn;
-    }
+	public void setReplyReceivedOn(Date replyReceivedOn) {
+		this.replyReceivedOn = replyReceivedOn;
+	}
 
-    public Boolean getRejection() {
-        return rejection;
-    }
+	public Boolean getRejection() {
+		return rejection;
+	}
 
-    public void setRejection(Boolean rejection) {
-        this.rejection = rejection;
-    }
+	public void setRejection(Boolean rejection) {
+		this.rejection = rejection;
+	}
 
-    public Boolean getNotApplicable() {
-        return notApplicable;
-    }
+	public Boolean getNotApplicable() {
+		return notApplicable;
+	}
 
-    public void setNotApplicable(Boolean notApplicable) {
-        this.notApplicable = notApplicable;
-    }
+	public void setNotApplicable(Boolean notApplicable) {
+		this.notApplicable = notApplicable;
+	}
 
-    public NocStatus getNocStatus() {
-        return nocStatus;
-    }
+	public NocStatus getNocStatus() {
+		return nocStatus;
+	}
 
-    public void setNocStatus(NocStatus nocStatus) {
-        this.nocStatus = nocStatus;
-    }
+	public void setNocStatus(NocStatus nocStatus) {
+		this.nocStatus = nocStatus;
+	}
 }

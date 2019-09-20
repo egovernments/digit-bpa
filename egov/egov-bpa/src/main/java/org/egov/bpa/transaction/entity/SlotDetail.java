@@ -40,7 +40,6 @@
 package org.egov.bpa.transaction.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -56,7 +55,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
@@ -89,7 +87,7 @@ public class SlotDetail extends AbstractAuditable {
 	@NotNull
 	private Integer utilizedRescheduledSlots;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "slotid", nullable = false)
 	private Slot slot;
 
@@ -162,11 +160,12 @@ public class SlotDetail extends AbstractAuditable {
 		this.utilizedRescheduledSlots = utilizedRescheduledSlots;
 	}
 
-	public SlotDetail(){
+	public SlotDetail() {
 
 	}
 
-	public SlotDetail(String appointmentTime, Integer maxScheduledSlots, Integer maxRescheduledSlots, Integer utilizedScheduledSlots, Integer utilizedRescheduledSlots, Slot slot) {
+	public SlotDetail(String appointmentTime, Integer maxScheduledSlots, Integer maxRescheduledSlots,
+			Integer utilizedScheduledSlots, Integer utilizedRescheduledSlots, Slot slot) {
 		this.appointmentTime = appointmentTime;
 		this.maxScheduledSlots = maxScheduledSlots;
 		this.maxRescheduledSlots = maxRescheduledSlots;

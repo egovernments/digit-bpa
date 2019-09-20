@@ -57,7 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.DcrDocument;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -67,46 +67,45 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OCDcrDocuments.SEQ, sequenceName = OCDcrDocuments.SEQ, allocationSize = 1)
 public class OCDcrDocuments extends AbstractAuditable {
 
-    private static final long serialVersionUID = 6227621606888116379L;
-    protected static final String SEQ = "seq_egbpa_oc_dcr_document";
+	private static final long serialVersionUID = 6227621606888116379L;
+	protected static final String SEQ = "seq_egbpa_oc_dcr_document";
 
-    @Id
-    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "dcrDocument", nullable = false)
-    private DcrDocument dcrDocument;
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "dcrDocument", nullable = false)
+	private DcrDocument dcrDocument;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "occupancyCertificate", nullable = false)
-    private OccupancyCertificate oc;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "occupancyCertificate", nullable = false)
+	private OccupancyCertificate oc;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public DcrDocument getDcrDocument() {
-        return dcrDocument;
-    }
+	public DcrDocument getDcrDocument() {
+		return dcrDocument;
+	}
 
-    public void setDcrDocument(DcrDocument dcrDocument) {
-        this.dcrDocument = dcrDocument;
-    }
+	public void setDcrDocument(DcrDocument dcrDocument) {
+		this.dcrDocument = dcrDocument;
+	}
 
-    public OccupancyCertificate getOc() {
-        return oc;
-    }
+	public OccupancyCertificate getOc() {
+		return oc;
+	}
 
-    public void setOc(OccupancyCertificate oc) {
-        this.oc = oc;
-    }
+	public void setOc(OccupancyCertificate oc) {
+		this.oc = oc;
+	}
 }

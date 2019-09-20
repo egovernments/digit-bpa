@@ -39,14 +39,11 @@
  */
 package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.transaction.entity.SlotDetail;
-import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,6 +52,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.egov.bpa.transaction.entity.SlotDetail;
+import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "egbpa_oc_slot")
@@ -72,11 +73,11 @@ public class OCSlot extends AbstractAuditable {
 	@NotNull
 	private ScheduleAppointmentType scheduleAppointmentType;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "occupancyCertificate", nullable = false)
 	private OccupancyCertificate oc;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "slotdetailid", nullable = false)
 	private SlotDetail slotDetail;
 

@@ -47,10 +47,7 @@
 
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.bpa.master.entity.AppointmentLocations;
-import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -67,118 +64,126 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+
+import org.egov.bpa.master.entity.AppointmentLocations;
+import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_APPOINTMENT_SCHEDULE_COMMON")
 @SequenceGenerator(name = AppointmentScheduleCommon.SEQ_EGBPA_APPOINTMENT_SCHEDULE, sequenceName = AppointmentScheduleCommon.SEQ_EGBPA_APPOINTMENT_SCHEDULE, allocationSize = 1)
 public class AppointmentScheduleCommon extends AbstractAuditable {
 
-    public static final String SEQ_EGBPA_APPOINTMENT_SCHEDULE = "SEQ_EGBPA_APPOINTMENT_SCHEDULE_COMMON";
-    private static final long serialVersionUID = 8521605863828619973L;
+	public static final String SEQ_EGBPA_APPOINTMENT_SCHEDULE = "SEQ_EGBPA_APPOINTMENT_SCHEDULE_COMMON";
+	private static final long serialVersionUID = 8521605863828619973L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_EGBPA_APPOINTMENT_SCHEDULE, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_EGBPA_APPOINTMENT_SCHEDULE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private AppointmentSchedulePurpose purpose;
+	@Enumerated(EnumType.STRING)
+	@NotNull
+	private AppointmentSchedulePurpose purpose;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date appointmentDate;
+	@Temporal(value = TemporalType.DATE)
+	private Date appointmentDate;
 
-    @Length(min = 1, max = 50)
-    private String appointmentTime;
+	@SafeHtml
+	@Length(min = 1, max = 50)
+	private String appointmentTime;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "appointmentLocation")
-    private AppointmentLocations appointmentLocation;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "appointmentLocation")
+	private AppointmentLocations appointmentLocation;
 
-    @Length(min = 1, max = 256)
-    private String remarks;
+	@SafeHtml
+	@Length(min = 1, max = 256)
+	private String remarks;
 
-    @Length(min = 1, max = 256)
-    private String postponementReason;
+	@SafeHtml
+	@Length(min = 1, max = 256)
+	private String postponementReason;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent")
-    private AppointmentScheduleCommon parent;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent")
+	private AppointmentScheduleCommon parent;
 
-    private boolean isPostponed;
+	private boolean isPostponed;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public AppointmentSchedulePurpose getPurpose() {
-        return purpose;
-    }
+	public AppointmentSchedulePurpose getPurpose() {
+		return purpose;
+	}
 
-    public void setPurpose(AppointmentSchedulePurpose purpose) {
-        this.purpose = purpose;
-    }
+	public void setPurpose(AppointmentSchedulePurpose purpose) {
+		this.purpose = purpose;
+	}
 
-    public Date getAppointmentDate() {
-        return appointmentDate;
-    }
+	public Date getAppointmentDate() {
+		return appointmentDate;
+	}
 
-    public void setAppointmentDate(final Date appointmentDate) {
-        this.appointmentDate = appointmentDate;
-    }
+	public void setAppointmentDate(final Date appointmentDate) {
+		this.appointmentDate = appointmentDate;
+	}
 
-    public String getAppointmentTime() {
-        return appointmentTime;
-    }
+	public String getAppointmentTime() {
+		return appointmentTime;
+	}
 
-    public void setAppointmentTime(final String appointmentTime) {
-        this.appointmentTime = appointmentTime;
-    }
+	public void setAppointmentTime(final String appointmentTime) {
+		this.appointmentTime = appointmentTime;
+	}
 
-    public AppointmentLocations getAppointmentLocation() {
-        return appointmentLocation;
-    }
+	public AppointmentLocations getAppointmentLocation() {
+		return appointmentLocation;
+	}
 
-    public void setAppointmentLocation(AppointmentLocations appointmentLocation) {
-        this.appointmentLocation = appointmentLocation;
-    }
+	public void setAppointmentLocation(AppointmentLocations appointmentLocation) {
+		this.appointmentLocation = appointmentLocation;
+	}
 
-    public String getPostponementReason() {
-        return postponementReason;
-    }
+	public String getPostponementReason() {
+		return postponementReason;
+	}
 
-    public void setPostponementReason(final String postponementReason) {
-        this.postponementReason = postponementReason;
-    }
+	public void setPostponementReason(final String postponementReason) {
+		this.postponementReason = postponementReason;
+	}
 
-    public AppointmentScheduleCommon getParent() {
-        return parent;
-    }
+	public AppointmentScheduleCommon getParent() {
+		return parent;
+	}
 
-    public void setParent(final AppointmentScheduleCommon parent) {
-        this.parent = parent;
-    }
+	public void setParent(final AppointmentScheduleCommon parent) {
+		this.parent = parent;
+	}
 
-    public boolean isPostponed() {
-        return isPostponed;
-    }
+	public boolean isPostponed() {
+		return isPostponed;
+	}
 
-    public void setPostponed(final boolean isPostponed) {
-        this.isPostponed = isPostponed;
-    }
+	public void setPostponed(final boolean isPostponed) {
+		this.isPostponed = isPostponed;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    public void setRemarks(final String remarks) {
-        this.remarks = remarks;
-    }
+	public void setRemarks(final String remarks) {
+		this.remarks = remarks;
+	}
 
 }

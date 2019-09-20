@@ -31,7 +31,6 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,7 +38,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.LetterToPartyCommon;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -49,47 +48,46 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = PermitLetterToParty.SEQ_LETTERTOPARTY, sequenceName = PermitLetterToParty.SEQ_LETTERTOPARTY, allocationSize = 1)
 public class PermitLetterToParty extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_LETTERTOPARTY = "seq_egbpa_permit_letter_to_party";
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_LETTERTOPARTY = "seq_egbpa_permit_letter_to_party";
 
-    @Id
-    @GeneratedValue(generator = SEQ_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "application")
-    private BpaApplication application;
-    
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "letterToParty")
-    private LetterToPartyCommon letterToParty;
-    
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(generator = SEQ_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "application", nullable = false)
+	private BpaApplication application;
 
-    public BpaApplication getApplication() {
-        return application;
-    }
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "letterToParty", nullable = false)
+	private LetterToPartyCommon letterToParty;
 
-    public void setApplication(BpaApplication application) {
-        this.application = application;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public LetterToPartyCommon getLetterToParty() {
-        return letterToParty;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public void setLetterToParty(LetterToPartyCommon letterToParty) {
-        this.letterToParty = letterToParty;
-    }
+	public BpaApplication getApplication() {
+		return application;
+	}
 
-    
+	public void setApplication(BpaApplication application) {
+		this.application = application;
+	}
+
+	public LetterToPartyCommon getLetterToParty() {
+		return letterToParty;
+	}
+
+	public void setLetterToParty(LetterToPartyCommon letterToParty) {
+		this.letterToParty = letterToParty;
+	}
+
 }

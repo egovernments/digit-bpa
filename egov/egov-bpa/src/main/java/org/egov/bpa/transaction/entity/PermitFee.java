@@ -46,6 +46,7 @@
  */
 package org.egov.bpa.transaction.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -55,7 +56,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -72,13 +73,13 @@ public class PermitFee extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_EGBPA_PERMIT_FEE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "applicationFee")
+    @Valid
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "applicationFee", nullable = false)
     private ApplicationFee applicationFee;
 
     public Long getId() {

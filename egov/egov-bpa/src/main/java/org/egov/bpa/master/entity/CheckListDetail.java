@@ -40,11 +40,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -52,98 +52,101 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = CheckListDetail.SEQ_CHECKLISTDETAIL, sequenceName = CheckListDetail.SEQ_CHECKLISTDETAIL, allocationSize = 1)
 public class CheckListDetail extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_CHECKLISTDETAIL = "SEQ_EGBPA_MSTR_CHKLISTDETAIL";
-    @Id
-    @GeneratedValue(generator = SEQ_CHECKLISTDETAIL, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_CHECKLISTDETAIL = "SEQ_EGBPA_MSTR_CHKLISTDETAIL";
+	@Id
+	@GeneratedValue(generator = SEQ_CHECKLISTDETAIL, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String description;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
 
-    @NotNull
-    private Boolean isActive;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @NotNull
-    @JoinColumn(name = "checkList")
-    private Checklist checkList;
+	@NotNull
+	private Boolean isActive;
 
-    @NotNull
-    private Boolean isMandatory;
-    @Transient
-    private Long srlNo;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@NotNull
+	@JoinColumn(name = "checkList")
+	private Checklist checkList;
 
-    private transient MultipartFile file;
+	@NotNull
+	private Boolean isMandatory;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	private transient Long srlNo;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	private transient MultipartFile file;
 
-    public String getCode() {
-        return code;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public void setCode(final String code) {
-        this.code = code;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setDescription(final String description) {
-        this.description = description;
-    }
+	public void setCode(final String code) {
+		this.code = code;
+	}
 
-    public Boolean getIsActive() {
-        return isActive;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
-    }
+	public void setDescription(final String description) {
+		this.description = description;
+	}
 
-    public Checklist getCheckList() {
-        return checkList;
-    }
+	public Boolean getIsActive() {
+		return isActive;
+	}
 
-    public void setCheckList(final Checklist checkList) {
-        this.checkList = checkList;
-    }
+	public void setIsActive(final Boolean isActive) {
+		this.isActive = isActive;
+	}
 
-    public Boolean getIsMandatory() {
-        return isMandatory;
-    }
+	public Checklist getCheckList() {
+		return checkList;
+	}
 
-    public void setIsMandatory(final Boolean isMandatory) {
-        this.isMandatory = isMandatory;
-    }
+	public void setCheckList(final Checklist checkList) {
+		this.checkList = checkList;
+	}
 
-    public Long getSrlNo() {
-        return srlNo;
-    }
+	public Boolean getIsMandatory() {
+		return isMandatory;
+	}
 
-    public void setSrlNo(final Long srlNo) {
-        this.srlNo = srlNo;
-    }
+	public void setIsMandatory(final Boolean isMandatory) {
+		this.isMandatory = isMandatory;
+	}
 
-    public MultipartFile getFile() {
-        return file;
-    }
+	public Long getSrlNo() {
+		return srlNo;
+	}
 
-    public void setFile(final MultipartFile file) {
-        this.file = file;
-    }
+	public void setSrlNo(final Long srlNo) {
+		this.srlNo = srlNo;
+	}
+
+	public MultipartFile getFile() {
+		return file;
+	}
+
+	public void setFile(final MultipartFile file) {
+		this.file = file;
+	}
 }

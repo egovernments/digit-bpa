@@ -40,74 +40,78 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_MSTR_LPREASON")
 @SequenceGenerator(name = LpReason.SEQ_LPREASON, sequenceName = LpReason.SEQ_LPREASON, allocationSize = 1)
 public class LpReason extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_LPREASON = "SEQ_EGBPA_MSTR_LPREASON";
-    @Id
-    @GeneratedValue(generator = SEQ_LPREASON, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_LPREASON = "SEQ_EGBPA_MSTR_LPREASON";
+	@Id
+	@GeneratedValue(generator = SEQ_LPREASON, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
 
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String description;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String description;
 
-    @NotNull
-    private Boolean isActive;
+	@NotNull
+	private Boolean isActive;
 
-    @NotNull
-    @Length(min = 1, max = 1024)
-    private String reason;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 1024)
+	private String reason;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(final String code) {
-        this.code = code;
-    }
+	public void setCode(final String code) {
+		this.code = code;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(final String description) {
-        this.description = description;
-    }
+	public void setDescription(final String description) {
+		this.description = description;
+	}
 
-    public Boolean getIsActive() {
-        return isActive;
-    }
+	public Boolean getIsActive() {
+		return isActive;
+	}
 
-    public void setIsActive(final Boolean isActive) {
-        this.isActive = isActive;
-    }
+	public void setIsActive(final Boolean isActive) {
+		this.isActive = isActive;
+	}
 
-    public String getReason() {
-        return reason;
-    }
+	public String getReason() {
+		return reason;
+	}
 
-    public void setReason(final String reason) {
-        this.reason = reason;
-    }
+	public void setReason(final String reason) {
+		this.reason = reason;
+	}
 
 }

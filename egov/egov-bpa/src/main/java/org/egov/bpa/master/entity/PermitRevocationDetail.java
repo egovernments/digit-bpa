@@ -65,10 +65,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -76,114 +78,126 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = PermitRevocationDetail.SEQ_REVOCATION_DETAIL, sequenceName = PermitRevocationDetail.SEQ_REVOCATION_DETAIL, allocationSize = 1)
 public class PermitRevocationDetail extends AbstractAuditable {
 
-    /**
-    * 
-    */
-    private static final long serialVersionUID = -3497037801478484778L;
-    public static final String SEQ_REVOCATION_DETAIL = "SEQ_EGBPA_PERMIT_REVOCATION_DETAIL";
+	/**
+	* 
+	*/
+	private static final long serialVersionUID = -3497037801478484778L;
+	public static final String SEQ_REVOCATION_DETAIL = "SEQ_EGBPA_PERMIT_REVOCATION_DETAIL";
 
-    @Id
-    @GeneratedValue(generator = SEQ_REVOCATION_DETAIL, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "revocation", nullable = false)
-    private PermitRevocation revocation;
-    @Length(min = 1, max = 256)
-    private String natureOfRequest;
-    @Temporal(value = TemporalType.DATE)
-    private Date requestDate;
-    @Temporal(value = TemporalType.DATE)
-    private Date replyDate;
-    @Length(min = 1, max = 128)
-    private String issuedBy;
-    @Length(min = 1, max = 512)
-    private String remarks;
-    private Integer orderNumber;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "egbpa_permit_revocation_document", joinColumns = @JoinColumn(name = "revocationDetail"), inverseJoinColumns = @JoinColumn(name = "fileStore"))
-    private Set<FileStoreMapper> revokeSupportDocs = new HashSet<>();
-    private transient MultipartFile[] files;
+	@Id
+	@GeneratedValue(generator = SEQ_REVOCATION_DETAIL, strategy = GenerationType.SEQUENCE)
+	private Long id;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "revocation", nullable = false)
+	private PermitRevocation revocation;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 256)
+	private String natureOfRequest;
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Temporal(value = TemporalType.DATE)
+	private Date requestDate;
 
-    public PermitRevocation getRevocation() {
-        return revocation;
-    }
+	@Temporal(value = TemporalType.DATE)
+	private Date replyDate;
 
-    public void setRevocation(PermitRevocation revocation) {
-        this.revocation = revocation;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String issuedBy;
 
-    public String getNatureOfRequest() {
-        return natureOfRequest;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 512)
+	private String remarks;
 
-    public void setNatureOfRequest(String natureOfRequest) {
-        this.natureOfRequest = natureOfRequest;
-    }
+	@PositiveOrZero
+	private Integer orderNumber;
 
-    public Date getRequestDate() {
-        return requestDate;
-    }
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinTable(name = "egbpa_permit_revocation_document", joinColumns = @JoinColumn(name = "revocationDetail"), inverseJoinColumns = @JoinColumn(name = "fileStore"))
+	private Set<FileStoreMapper> revokeSupportDocs = new HashSet<>();
 
-    public void setRequestDate(Date requestDate) {
-        this.requestDate = requestDate;
-    }
+	private transient MultipartFile[] files;
 
-    public Date getReplyDate() {
-        return replyDate;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public void setReplyDate(Date replyDate) {
-        this.replyDate = replyDate;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getIssuedBy() {
-        return issuedBy;
-    }
+	public PermitRevocation getRevocation() {
+		return revocation;
+	}
 
-    public void setIssuedBy(String issuedBy) {
-        this.issuedBy = issuedBy;
-    }
+	public void setRevocation(PermitRevocation revocation) {
+		this.revocation = revocation;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getNatureOfRequest() {
+		return natureOfRequest;
+	}
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
+	public void setNatureOfRequest(String natureOfRequest) {
+		this.natureOfRequest = natureOfRequest;
+	}
 
-    public Integer getOrderNumber() {
-        return orderNumber;
-    }
+	public Date getRequestDate() {
+		return requestDate;
+	}
 
-    public void setOrderNumber(Integer orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+	public void setRequestDate(Date requestDate) {
+		this.requestDate = requestDate;
+	}
 
-    public Set<FileStoreMapper> getRevokeSupportDocs() {
-        return revokeSupportDocs;
-    }
+	public Date getReplyDate() {
+		return replyDate;
+	}
 
-    public void setRevokeSupportDocs(Set<FileStoreMapper> revokeSupportDocs) {
-        this.revokeSupportDocs = revokeSupportDocs;
-    }
+	public void setReplyDate(Date replyDate) {
+		this.replyDate = replyDate;
+	}
 
-    public MultipartFile[] getFiles() {
-        return files;
-    }
+	public String getIssuedBy() {
+		return issuedBy;
+	}
 
-    public void setFiles(MultipartFile[] files) {
-        this.files = files;
-    }
+	public void setIssuedBy(String issuedBy) {
+		this.issuedBy = issuedBy;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public Integer getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(Integer orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
+	public Set<FileStoreMapper> getRevokeSupportDocs() {
+		return revokeSupportDocs;
+	}
+
+	public void setRevokeSupportDocs(Set<FileStoreMapper> revokeSupportDocs) {
+		this.revokeSupportDocs = revokeSupportDocs;
+	}
+
+	public MultipartFile[] getFiles() {
+		return files;
+	}
+
+	public void setFiles(MultipartFile[] files) {
+		this.files = files;
+	}
 
 }

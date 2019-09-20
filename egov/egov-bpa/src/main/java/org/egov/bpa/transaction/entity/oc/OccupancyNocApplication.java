@@ -49,6 +49,7 @@ package org.egov.bpa.transaction.entity.oc;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,7 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.BpaNocApplication;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -66,22 +67,21 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OccupancyNocApplication.SEQ_OCNOCAPPLICATION, sequenceName = OccupancyNocApplication.SEQ_OCNOCAPPLICATION, allocationSize = 1)
 public class OccupancyNocApplication extends AbstractAuditable {
 
-    protected static final String SEQ_OCNOCAPPLICATION = "SEQ_EGBPA_OC_NOCAPPLICATION";
-    private static final long serialVersionUID = -3889308488871083896L;
+	protected static final String SEQ_OCNOCAPPLICATION = "SEQ_EGBPA_OC_NOCAPPLICATION";
+	private static final long serialVersionUID = -3889308488871083896L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_OCNOCAPPLICATION, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_OCNOCAPPLICATION, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "nocapplication", nullable = false)
-    private BpaNocApplication bpaNocApplication;
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "nocapplication", nullable = false)
+	private BpaNocApplication bpaNocApplication;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "oc", nullable = false)
-    private OccupancyCertificate oc;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "oc", nullable = false)
+	private OccupancyCertificate oc;
 
 	public Long getId() {
 		return id;
@@ -105,6 +105,6 @@ public class OccupancyNocApplication extends AbstractAuditable {
 
 	public void setOc(OccupancyCertificate oc) {
 		this.oc = oc;
-	}  
+	}
 
 }

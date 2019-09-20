@@ -46,9 +46,11 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_OC_BUILDING")
@@ -59,23 +61,45 @@ public class OCBuilding extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQEGBPABUILDINGDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String name;
-    private Integer buildingNumber;
+    
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Valid
-    @NotNull
     @JoinColumn(name = "oc", nullable = false)
     private OccupancyCertificate oc;
+    
+    @SafeHtml
+    @Size(min = 1, max =50)
+    private String name;
+    
+    @PositiveOrZero
+    private Integer buildingNumber;
+    
+    @PositiveOrZero
     private Integer floorCount;
+    
+    @PositiveOrZero
     private BigDecimal totalPlinthArea;
+    
+    @PositiveOrZero
     private BigDecimal heightFromGroundWithStairRoom;
+    
+    @PositiveOrZero
     private BigDecimal heightFromGroundWithOutStairRoom;
+    
+    @PositiveOrZero
     private BigDecimal fromStreetLevelWithStairRoom;
+    
+    @PositiveOrZero
     private BigDecimal fromStreetLevelWithOutStairRoom;
+    
+    @Valid
     @OneToMany(mappedBy = "buildingDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("orderOfFloor")
     private List<OCFloor> floorDetails = new ArrayList<>(0);
+    
+    @Valid
     private transient List<OCFloor> floorDetailsForUpdate = new ArrayList<>(0);
+    
+    @Valid
     private transient List<OCFloor> floorDetailsByEdcr = new ArrayList<>(0);
 
     public Long getId() {

@@ -44,11 +44,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_DOCUMENTHISTORY")
@@ -60,23 +61,27 @@ public class DocumentHistory extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_DOCUMENTHISTORY, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "application")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
-    @NotNull
+    @SafeHtml
     @Length(min = 1, max = 256)
     private String documentNum;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "createdUser")
     private User createdUser;
+    @PositiveOrZero
     private BigDecimal docEnclosedNumber;
+    @PositiveOrZero
     private BigDecimal docEnclosedDate;
+    @PositiveOrZero
     private BigDecimal docEnclosedextentInsqmt;
+    @PositiveOrZero
     private BigDecimal layoutdextentInsqmt;
     private Boolean wheatherdocumentEnclosed;
     private Boolean wheatherplotDevelopedBy;
     private Boolean wheatherpartOfLayout;
+    @SafeHtml
     @Length(min = 1, max = 256)
     private String plotDevelopedBy;
     private Boolean wheatherFmsOrSketchCopyOfReg;

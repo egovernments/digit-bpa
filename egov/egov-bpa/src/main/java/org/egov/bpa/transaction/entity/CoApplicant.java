@@ -41,18 +41,14 @@ package org.egov.bpa.transaction.entity;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +56,6 @@ import org.egov.bpa.transaction.entity.enums.GenderTitle;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.validation.regex.Constants;
-import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -73,168 +68,190 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = CoApplicant.SEQ_APPLICANT, sequenceName = CoApplicant.SEQ_APPLICANT, allocationSize = 1)
 public class CoApplicant extends AbstractAuditable {
 
-    private static final long serialVersionUID = -1097154739634712968L;
-    public static final String SEQ_APPLICANT = "SEQ_EGBPA_COAPPLICANT";
-    @Id
-    @GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    private GenderTitle title;
-    @NotNull
-    @SafeHtml
-    @Length(min = 2, max = 100)
-    private String name;
-    @Length(min = 1, max = 128)
-    private String fatherorHusbandName;
-    private Date dateofBirth;
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-    @Email(regexp = Constants.EMAIL)
-    @SafeHtml
-    @Length(max = 128)
-    private String emailId;
-    @Pattern(regexp = Constants.MOBILE_NUM)
-    @SafeHtml
-    @Length(max = 15)
-    private String mobileNumber;
-    @Length(min = 1, max = 128)
-    private String pinCode;
-    private String address;
-    @Length(min = 1, max = 128)
-    private String district;
-    @Length(min = 1, max = 128)
-    private String taluk;
-    @Length(min = 1, max = 128)
-    private String area;
-    @Length(min = 1, max = 128)
-    private String city;
-    @Length(min = 1, max = 128)
-    private String state;
+	private static final long serialVersionUID = -1097154739634712968L;
+	public static final String SEQ_APPLICANT = "SEQ_EGBPA_COAPPLICANT";
+	@Id
+	@GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Enumerated(EnumType.STRING)
+	private GenderTitle title;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@SafeHtml
+	@Length(min = 2, max = 100)
+	private String name;
 
-    public GenderTitle getTitle() {
-        return title;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String fatherorHusbandName;
 
-    public void setTitle(GenderTitle title) {
-        this.title = title;
-    }
+	private Date dateofBirth;
 
-    public String getName() {
-        return name;
-    }
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@Pattern(regexp = Constants.EMAIL)
+	@SafeHtml
+	@Length(max = 128)
+	private String emailId;
+	
+	@Pattern(regexp = Constants.MOBILE_NUM)
+	@SafeHtml
+	@Length(max = 15)
+	private String mobileNumber;
+	
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String pinCode;
+	
+	@SafeHtml
+	@Length(min = 1, max = 1024)
+	private String address;
+	
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String district;
+	
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String taluk;
+	
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String area;
+	
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String city;
+	
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	private String state;
 
-    public String getFatherorHusbandName() {
-        return fatherorHusbandName;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public void setFatherorHusbandName(String fatherorHusbandName) {
-        this.fatherorHusbandName = fatherorHusbandName;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public Date getDateofBirth() {
-        return dateofBirth;
-    }
+	public GenderTitle getTitle() {
+		return title;
+	}
 
-    public void setDateofBirth(Date dateofBirth) {
-        this.dateofBirth = dateofBirth;
-    }
+	public void setTitle(GenderTitle title) {
+		this.title = title;
+	}
 
-    public Gender getGender() {
-        return gender;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getEmailId() {
-        return emailId;
-    }
+	public String getFatherorHusbandName() {
+		return fatherorHusbandName;
+	}
 
-    public void setEmailId(String emailId) {
-        this.emailId = emailId;
-    }
+	public void setFatherorHusbandName(String fatherorHusbandName) {
+		this.fatherorHusbandName = fatherorHusbandName;
+	}
 
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
+	public Date getDateofBirth() {
+		return dateofBirth;
+	}
 
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
-    }
+	public void setDateofBirth(Date dateofBirth) {
+		this.dateofBirth = dateofBirth;
+	}
 
-    public String getPinCode() {
-        return pinCode;
-    }
+	public Gender getGender() {
+		return gender;
+	}
 
-    public void setPinCode(String pinCode) {
-        this.pinCode = pinCode;
-    }
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getEmailId() {
+		return emailId;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
 
-    public String getDistrict() {
-        return district;
-    }
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
 
-    public void setDistrict(String district) {
-        this.district = district;
-    }
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
 
-    public String getTaluk() {
-        return taluk;
-    }
+	public String getPinCode() {
+		return pinCode;
+	}
 
-    public void setTaluk(String taluk) {
-        this.taluk = taluk;
-    }
+	public void setPinCode(String pinCode) {
+		this.pinCode = pinCode;
+	}
 
-    public String getArea() {
-        return area;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setArea(String area) {
-        this.area = area;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public String getCity() {
-        return city;
-    }
+	public String getDistrict() {
+		return district;
+	}
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+	public void setDistrict(String district) {
+		this.district = district;
+	}
 
-    public String getState() {
-        return state;
-    }
+	public String getTaluk() {
+		return taluk;
+	}
 
-    public void setState(String state) {
-        this.state = state;
-    }
+	public void setTaluk(String taluk) {
+		this.taluk = taluk;
+	}
 
-    public String showMobileNumber() {
-        return StringUtils.isBlank(mobileNumber) ? ""
-                : mobileNumber.replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
-    }
+	public String getArea() {
+		return area;
+	}
+
+	public void setArea(String area) {
+		this.area = area;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String showMobileNumber() {
+		return StringUtils.isBlank(mobileNumber) ? "" : mobileNumber.replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+	}
 
 }

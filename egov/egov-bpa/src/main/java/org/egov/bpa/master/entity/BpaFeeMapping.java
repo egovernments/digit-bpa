@@ -32,6 +32,7 @@ package org.egov.bpa.master.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -44,6 +45,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.bpa.master.entity.enums.CalculationType;
 import org.egov.bpa.master.entity.enums.FeeApplicationType;
@@ -63,7 +65,7 @@ public class BpaFeeMapping extends AbstractAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
-    @JoinColumn(name = "bpafeecommon")
+    @JoinColumn(name = "bpafeecommon", nullable = false)
     private BpaFeeCommon bpaFeeCommon;
 
     @Enumerated(EnumType.STRING)
@@ -75,15 +77,16 @@ public class BpaFeeMapping extends AbstractAuditable {
     @Enumerated(EnumType.STRING)
     private FeeSubType feeSubType;
 
-    @ManyToOne
-    @JoinColumn(name = "serviceType")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "serviceType", nullable = false)
     private ServiceType serviceType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicationSubType")
     private ApplicationSubType applicationSubType;
 
-    @JoinColumn(name = "amount")
+    @PositiveOrZero
+    @Column(name = "amount")
     private Double amount;
 
     private transient List<BpaFeeMapping> bpaFeeMapTemp = new ArrayList<>();

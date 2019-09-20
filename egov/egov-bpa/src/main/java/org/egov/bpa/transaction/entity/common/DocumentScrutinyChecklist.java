@@ -50,6 +50,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,86 +58,90 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_document_scrutiny_checklist")
 @SequenceGenerator(name = DocumentScrutinyChecklist.SEQ_PLAN_SCRUTINY, sequenceName = DocumentScrutinyChecklist.SEQ_PLAN_SCRUTINY, allocationSize = 1)
 public class DocumentScrutinyChecklist extends AbstractAuditable {
 
-    protected static final String SEQ_PLAN_SCRUTINY = "seq_egbpa_document_scrutiny_checklist";
-    private static final long serialVersionUID = -4606373944456639905L;
+	protected static final String SEQ_PLAN_SCRUTINY = "seq_egbpa_document_scrutiny_checklist";
+	private static final long serialVersionUID = -4606373944456639905L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_PLAN_SCRUTINY, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_PLAN_SCRUTINY, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "documentScrutiny", nullable = false)
-    private DocumentScrutiny documentScrutiny;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "documentScrutiny", nullable = false)
+	private DocumentScrutiny documentScrutiny;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "serviceChecklist", nullable = false)
-    private ChecklistServiceTypeMapping serviceChecklist;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "serviceChecklist", nullable = false)
+	private ChecklistServiceTypeMapping serviceChecklist;
 
-    @Enumerated(EnumType.STRING)
-    private ChecklistValues scrutinyValue;
+	@Enumerated(EnumType.STRING)
+	private ChecklistValues scrutinyValue;
 
-    private String remarks;
+	@SafeHtml
+	private String remarks;
 
-    private Integer orderNumber;
+	@PositiveOrZero
+	private Integer orderNumber;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public DocumentScrutiny getDocumentScrutiny() {
-        return documentScrutiny;
-    }
+	public DocumentScrutiny getDocumentScrutiny() {
+		return documentScrutiny;
+	}
 
-    public void setDocumentScrutiny(DocumentScrutiny documentScrutiny) {
-        this.documentScrutiny = documentScrutiny;
-    }
+	public void setDocumentScrutiny(DocumentScrutiny documentScrutiny) {
+		this.documentScrutiny = documentScrutiny;
+	}
 
-    public ChecklistServiceTypeMapping getServiceChecklist() {
-        return serviceChecklist;
-    }
+	public ChecklistServiceTypeMapping getServiceChecklist() {
+		return serviceChecklist;
+	}
 
-    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-        this.serviceChecklist = serviceChecklist;
-    }
+	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+		this.serviceChecklist = serviceChecklist;
+	}
 
-    public ChecklistValues getScrutinyValue() {
-        return scrutinyValue;
-    }
+	public ChecklistValues getScrutinyValue() {
+		return scrutinyValue;
+	}
 
-    public void setScrutinyValue(ChecklistValues scrutinyValue) {
-        this.scrutinyValue = scrutinyValue;
-    }
+	public void setScrutinyValue(ChecklistValues scrutinyValue) {
+		this.scrutinyValue = scrutinyValue;
+	}
 
-    public String getRemarks() {
-        return remarks;
-    }
+	public String getRemarks() {
+		return remarks;
+	}
 
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
-    public Integer getOrderNumber() {
-        return orderNumber;
-    }
+	public Integer getOrderNumber() {
+		return orderNumber;
+	}
 
-    public void setOrderNumber(Integer orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+	public void setOrderNumber(Integer orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 
 }

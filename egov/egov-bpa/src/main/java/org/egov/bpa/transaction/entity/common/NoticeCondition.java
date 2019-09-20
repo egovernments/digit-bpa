@@ -49,11 +49,11 @@ package org.egov.bpa.transaction.entity.common;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -62,10 +62,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.transaction.entity.enums.ConditionType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_notice_conditions")
@@ -73,24 +76,35 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 public class NoticeCondition extends AbstractAuditable {
 
 	private static final long serialVersionUID = 1L;
-    public static final String SEQ_BPA_NOTICE_CONDITION = "SEQ_EGBPA_NOTICE_CONDITION";
+	public static final String SEQ_BPA_NOTICE_CONDITION = "SEQ_EGBPA_NOTICE_CONDITION";
 
-    @Id
-    @GeneratedValue(generator = SEQ_BPA_NOTICE_CONDITION, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "checklistservicetype", nullable = false)
-    private ChecklistServiceTypeMapping checklistServicetype;
-    private Date conditiondDate;
-    private String conditionNumber;
-    private Integer orderNumber;
-    @NotNull
+	@Id
+	@GeneratedValue(generator = SEQ_BPA_NOTICE_CONDITION, strategy = GenerationType.SEQUENCE)
+	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "checklistservicetype", nullable = false)
+	private ChecklistServiceTypeMapping checklistServicetype;
+	
+	private Date conditiondDate;
+	
+	@SafeHtml
+	@Length(min = 1, max = 30)
+	private String conditionNumber;
+	
+	@PositiveOrZero
+	private Integer orderNumber;
+	
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type")
-    private ConditionType type;
-    private boolean isRequired;
-    private String additionalCondition;
+	private ConditionType type;
+	
+	private boolean isRequired;
+	
+	@SafeHtml
+	@Length(min = 1, max = 600)
+	private String additionalCondition;
 
 	@Override
 	public Long getId() {

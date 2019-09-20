@@ -48,10 +48,12 @@
 
 package org.egov.bpa.transaction.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -61,8 +63,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_building_sub_usage")
@@ -76,14 +82,18 @@ public class BuildingSubUsage extends AbstractAuditable {
 	@GeneratedValue(generator = SEQ_SUB_USAGE, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "application")
 	private BpaApplication application;
 
+	@PositiveOrZero
 	private Integer blockNumber;
 
+	@SafeHtml
+	@Length(min = 1, max = 50)
 	private String blockName;
 
+	@Valid
 	@OneToMany(mappedBy = "buildingSubUsage", cascade = CascadeType.ALL)
 	@OrderBy("id ASC")
 	private List<BuildingSubUsageDetails> subUsageDetails = new ArrayList<>();

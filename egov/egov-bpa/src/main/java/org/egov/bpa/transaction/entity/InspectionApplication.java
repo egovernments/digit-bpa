@@ -68,6 +68,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.BuildingConstructionStage;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -75,6 +76,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
@@ -82,82 +84,93 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = InspectionApplication.SEQ_INSPECTIONAPPLICATION, sequenceName = InspectionApplication.SEQ_INSPECTIONAPPLICATION, allocationSize = 1)
 public class InspectionApplication extends StateAware<Position> {
 
-    public static final String SEQ_INSPECTIONAPPLICATION = "SEQ_EGBPA_INSPECTION_APPLICATION";
-    private static final long serialVersionUID = -6537197288191260269L;
-    public static final String ORDER_BY_ID_ASC = "id ASC";
-    
-    @Id
-    @GeneratedValue(generator = SEQ_INSPECTIONAPPLICATION, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	public static final String SEQ_INSPECTIONAPPLICATION = "SEQ_EGBPA_INSPECTION_APPLICATION";
+	private static final long serialVersionUID = -6537197288191260269L;
+	public static final String ORDER_BY_ID_ASC = "id ASC";
 
-    @Length(min = 1, max = 64)
-    private String applicationNumber;
+	@Id
+	@GeneratedValue(generator = SEQ_INSPECTIONAPPLICATION, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Temporal(value = TemporalType.DATE)
-    private Date applicationDate;
-    
-    @Temporal(value = TemporalType.DATE)
-    private Date approvalDate;
-    
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "status")
-    private BpaStatus status;
-    
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "buildingConstructionStage")
-    private BuildingConstructionStage buildingConstructionStage;
+	@SafeHtml
+	@Length(min = 1, max = 64)
+	private String applicationNumber;
 
-    @Length(min = 1, max = 1000)
-    private String remarks;
-    
-    private Boolean isSentToPreviousOwner = false;
+	@Temporal(value = TemporalType.DATE)
+	private Date applicationDate;
 
-    
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "egbpa_ts_inspnappln_documents", joinColumns = @JoinColumn(name = "inspectionapplication"), inverseJoinColumns = @JoinColumn(name = "fileStoreId"))
-    private Set<FileStoreMapper> tsInspnSupportDocs = Collections.emptySet();
-      
+	@Temporal(value = TemporalType.DATE)
+	private Date approvalDate;
 
-    @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy(ORDER_BY_ID_ASC)
-    private List<InspectionAppointmentSchedule> appointmentSchedules = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("id DESC ")
-    private List<InConstructionInspection> inspections = new ArrayList<>();
-    @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<InspectionLetterToParty> inspectionLetterToParties = new ArrayList<>();
-    @Length(min = 1, max = 5000)
-    private String townSurveyorRemarks;
-    private Boolean isTownSurveyorInspectionRequire = false;
-    private transient Long approvalDepartment;
-    private transient Long approvalDesignation;
-    private Boolean isLPRequestInitiated;
-    private transient String approvalComent;
-    private transient MultipartFile[] files;
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "status")
+	private BpaStatus status;
 
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "buildingConstructionStage")
+	private BuildingConstructionStage buildingConstructionStage;
 
-    @Override
-    public String getStateDetails() {
-    	return String.format(" Acknowledgement Number %s Dated %s ",
-    			applicationNumber,
-    			applicationDate == null ? DateUtils.toDefaultDateFormat(new Date()) : DateUtils.toDefaultDateFormat(applicationDate));
-    }
-    
-    @Override
-    public String myLinkId() {
-        return applicationNumber;
-    }
-   
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@SafeHtml
+	@Length(min = 1, max = 1000)
+	private String remarks;
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	private Boolean isSentToPreviousOwner = false;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "egbpa_ts_inspnappln_documents", joinColumns = @JoinColumn(name = "inspectionapplication"), inverseJoinColumns = @JoinColumn(name = "fileStoreId"))
+	private Set<FileStoreMapper> tsInspnSupportDocs = Collections.emptySet();
+
+	@OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy(ORDER_BY_ID_ASC)
+	private List<InspectionAppointmentSchedule> appointmentSchedules = new ArrayList<>();
+
+	@Valid
+	@OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("id DESC ")
+	private List<InConstructionInspection> inspections = new ArrayList<>();
+
+	@OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<InspectionLetterToParty> inspectionLetterToParties = new ArrayList<>();
+
+	@SafeHtml
+	@Length(min = 1, max = 5000)
+	private String townSurveyorRemarks;
+
+	private Boolean isTownSurveyorInspectionRequire = false;
+
+	private Boolean isLPRequestInitiated;
+
+	private transient Long approvalDepartment;
+
+	private transient Long approvalDesignation;
+
+	@SafeHtml
+	@Length(max = 1024)
+	private transient String approvalComent;
+
+	private transient MultipartFile[] files;
+
+	@Override
+	public String getStateDetails() {
+		return String.format(" Acknowledgement Number %s Dated %s ", applicationNumber,
+				applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
+						: DateUtils.toDefaultDateFormat(applicationDate));
+	}
+
+	@Override
+	public String myLinkId() {
+		return applicationNumber;
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getApplicationNumber() {
 		return applicationNumber;
@@ -238,14 +251,14 @@ public class InspectionApplication extends StateAware<Position> {
 	public void setTsInspnSupportDocs(Set<FileStoreMapper> tsInspnSupportDocs) {
 		this.tsInspnSupportDocs = tsInspnSupportDocs;
 	}
-	
-	public Boolean getLPRequestInitiated() {
-        return isLPRequestInitiated;
-    }
 
-    public void setLPRequestInitiated(Boolean LPRequestInitiated) {
-        isLPRequestInitiated = LPRequestInitiated;
-    }
+	public Boolean getLPRequestInitiated() {
+		return isLPRequestInitiated;
+	}
+
+	public void setLPRequestInitiated(Boolean LPRequestInitiated) {
+		isLPRequestInitiated = LPRequestInitiated;
+	}
 
 	public MultipartFile[] getFiles() {
 		return files;
@@ -264,20 +277,20 @@ public class InspectionApplication extends StateAware<Position> {
 	}
 
 	public Boolean getSentToPreviousOwner() {
-	    return isSentToPreviousOwner;
+		return isSentToPreviousOwner;
 	}
 
 	public void setSentToPreviousOwner(Boolean sentToPreviousOwner) {
-	    isSentToPreviousOwner = sentToPreviousOwner;
+		isSentToPreviousOwner = sentToPreviousOwner;
 	}
-	
-	public Boolean getTownSurveyorInspectionRequire() {
-        return isTownSurveyorInspectionRequire;
-    }
 
-    public void setTownSurveyorInspectionRequire(Boolean townSurveyorInspectionRequire) {
-        isTownSurveyorInspectionRequire = townSurveyorInspectionRequire;
-    }
+	public Boolean getTownSurveyorInspectionRequire() {
+		return isTownSurveyorInspectionRequire;
+	}
+
+	public void setTownSurveyorInspectionRequire(Boolean townSurveyorInspectionRequire) {
+		isTownSurveyorInspectionRequire = townSurveyorInspectionRequire;
+	}
 
 	public String getTownSurveyorRemarks() {
 		return townSurveyorRemarks;

@@ -3,11 +3,15 @@ package org.egov.common.entity.bpa;
 import java.math.BigDecimal;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "EGBPA_OCCUPANCY_MAPPING")
@@ -21,16 +25,26 @@ public class OccupancyMapping {
 	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
 	private Long id;
 
+	@PositiveOrZero
 	private BigDecimal fromArea;
 
+	@PositiveOrZero
 	private BigDecimal toArea;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "occpancy")
 	private Occupancy occpancy;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "subOccupancy")
 	private SubOccupancy subOccupancy;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "alternateOccupancy")
 	private Occupancy alternateOccupancy;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "alternateSuboccupancy")
 	private SubOccupancy alternateSuboccupancy;
 
 	public Long getId() {

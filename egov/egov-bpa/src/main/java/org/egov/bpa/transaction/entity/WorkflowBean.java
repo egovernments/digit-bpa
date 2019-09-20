@@ -51,16 +51,21 @@ package org.egov.bpa.transaction.entity;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Designation;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public class WorkflowBean {
+	@SafeHtml
     private String actionName;
+	@SafeHtml
     private String additionalRule;
+	@SafeHtml
     private String actionState;
     private List<User> appoverUserList;
     private Long approverUserId;
+    @SafeHtml
     private String approverComments;
     private Integer departmentId;
     private List<Department> departmentList;
@@ -68,7 +73,9 @@ public class WorkflowBean {
     private List<Designation> designationList;
     private String workFlowAction;
     private Long approverPositionId;
+    @SafeHtml
     private String currentState;
+    @SafeHtml
     private String currentDesignation;
     private Long zoneId;
     private Long wardId;

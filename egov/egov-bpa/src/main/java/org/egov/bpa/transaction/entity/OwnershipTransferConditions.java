@@ -48,6 +48,7 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,7 +56,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.NoticeCondition;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -73,11 +74,11 @@ public class OwnershipTransferConditions extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_OWNERSHIP_CONDITIONS, strategy = GenerationType.SEQUENCE)
     private Long id;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ownershipTransfer", nullable = false)
     private OwnershipTransfer ownershipTransfer;
    
-    @NotNull
+    @Valid
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "noticecondition", nullable = false)
     private NoticeCondition noticeCondition;

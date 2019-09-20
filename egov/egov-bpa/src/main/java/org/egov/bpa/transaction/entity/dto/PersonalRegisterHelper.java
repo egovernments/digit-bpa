@@ -51,29 +51,51 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
+import javax.validation.constraints.PositiveOrZero;
+
+import org.hibernate.validator.constraints.SafeHtml;
+
 public class PersonalRegisterHelper {
     private Long id;
+    @SafeHtml
     private String applicationNumber;
+    @SafeHtml
     private String applicationType;
+    @SafeHtml
     private String permitType;
     private Date dateOfAdmission;
+    @SafeHtml
     private String applicantName;
+    @SafeHtml
     private String address;
+    @SafeHtml
     private String surveyNo;
+    @SafeHtml
     private String village;
+    @SafeHtml
     private String revenueWard;
+    @SafeHtml
     private String electionWard;
+    @SafeHtml
     private String natureOfOccupancy;
+    @PositiveOrZero
     private BigDecimal totalFloorArea;
+    @PositiveOrZero
     private Integer noOfFloors;
+    @PositiveOrZero
     private BigDecimal far;
+    @SafeHtml
     private String fromWhom;
+    @SafeHtml
     private String toWhom;
+    @SafeHtml
     private String previousStatus;
+    @SafeHtml
     private String currentStatus;
     private Date previousDateAndTime;
     private Date NextDateAndTime;
     private Long userId;
+    @SafeHtml
     private String serviceTypeEnum;
 
     public Long getId() {

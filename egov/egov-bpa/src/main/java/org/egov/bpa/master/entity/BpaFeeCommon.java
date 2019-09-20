@@ -45,35 +45,44 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.demand.model.EgReasonCategory;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_MSTR_BPAFEE_COMMON")
 @SequenceGenerator(name = BpaFeeCommon.SEQ_BPAFEECOMMON, sequenceName = BpaFeeCommon.SEQ_BPAFEECOMMON, allocationSize = 1)
 public class BpaFeeCommon extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_BPAFEECOMMON = "SEQ_EGBPA_MSTR_BPAFEE_COMMON";
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_BPAFEECOMMON = "SEQ_EGBPA_MSTR_BPAFEE_COMMON";
 
-    @Id
-    @GeneratedValue(generator = SEQ_BPAFEECOMMON, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "glcode")
-    private CChartOfAccounts glcode;
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
-    @NotNull
-    @Length(min = 1, max = 128)
-    @Column(name = "name", unique = true)
-    private String name;
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String description;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category")
-    private EgReasonCategory category;
+	@Id
+	@GeneratedValue(generator = SEQ_BPAFEECOMMON, strategy = GenerationType.SEQUENCE)
+	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "glcode")
+	private CChartOfAccounts glcode;
+
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
+
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 128)
+	@Column(name = "name", unique = true)
+	private String name;
+
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String description;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "category")
+	private EgReasonCategory category;
 
 	public Long getId() {
 		return id;

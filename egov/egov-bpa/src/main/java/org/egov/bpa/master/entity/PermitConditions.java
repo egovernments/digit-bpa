@@ -53,62 +53,76 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egbpa_mstr_permit_conditions")
 @SequenceGenerator(name = PermitConditions.SEQ_PERMIT_CONDITIONS, sequenceName = PermitConditions.SEQ_PERMIT_CONDITIONS, allocationSize = 1)
 public class PermitConditions extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_PERMIT_CONDITIONS = "seq_egbpa_mstr_permit_conditions";
+	private static final long serialVersionUID = 3078684328383202788L;
+	public static final String SEQ_PERMIT_CONDITIONS = "seq_egbpa_mstr_permit_conditions";
 
-    @Id
-    @GeneratedValue(generator = SEQ_PERMIT_CONDITIONS, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    private String code;
-    private String description;
-    private String orderNumber;
-    private String conditionType;
+	@Id
+	@GeneratedValue(generator = SEQ_PERMIT_CONDITIONS, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public Long getId() {
-        return id;
-    }
+	@SafeHtml
+	@Size(min = 1, max= 32)
+	private String code;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@SafeHtml
+	@Size(min = 1, max= 1560)
+	private String description;
 
-    public String getCode() {
-        return code;
-    }
+	@SafeHtml
+	@Size(min = 1, max= 32)
+	private String orderNumber;
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	@SafeHtml
+	@Size(min = 1, max= 30)
+	private String conditionType;
 
-    public String getDescription() {
-        return description;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getOrderNumber() {
-        return orderNumber;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setOrdernumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public String getConditionType() {
-        return conditionType;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setConditionType(String conditionType) {
-        this.conditionType = conditionType;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrdernumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
+	public String getConditionType() {
+		return conditionType;
+	}
+
+	public void setConditionType(String conditionType) {
+		this.conditionType = conditionType;
+	}
 }

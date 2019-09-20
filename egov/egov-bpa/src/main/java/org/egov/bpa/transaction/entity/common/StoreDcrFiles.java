@@ -39,8 +39,6 @@
  */
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.infra.filestore.entity.FileStoreMapper;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,7 +49,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+
+import org.egov.infra.filestore.entity.FileStoreMapper;
 
 @Entity
 @Table(name = "egbpa_dcr_document_files")
@@ -63,11 +62,9 @@ public class StoreDcrFiles {
     @GeneratedValue(generator = SEQ_CMN_DCR_FILES, strategy = GenerationType.SEQUENCE)
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @NotNull
     @JoinColumn(name = "dcrdocument", nullable = false)
     private DcrDocument dcrDocument;
     @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @NotNull
     @JoinColumn(name = "filestore", nullable = false)
     private FileStoreMapper fileStoreMapper;
     private boolean isAutoPopulated = false;

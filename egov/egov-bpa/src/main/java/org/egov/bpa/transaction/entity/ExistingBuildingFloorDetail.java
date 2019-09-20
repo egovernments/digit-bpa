@@ -41,7 +41,6 @@ package org.egov.bpa.transaction.entity;
 
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -51,117 +50,135 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_EXISTING_BUILDING_FLOORDETAIL")
 @SequenceGenerator(name = ExistingBuildingFloorDetail.SEQ_EGBPA_EXST_BUILD_FLOORDETAIL, sequenceName = ExistingBuildingFloorDetail.SEQ_EGBPA_EXST_BUILD_FLOORDETAIL, allocationSize = 1)
 public class ExistingBuildingFloorDetail extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1L;
-    public static final String SEQ_EGBPA_EXST_BUILD_FLOORDETAIL = "SEQ_EGBPA_EXISTING_BUILDING_FLOORDETAIL";
-    @Id
-    @GeneratedValue(generator = SEQ_EGBPA_EXST_BUILD_FLOORDETAIL, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "existingBuildingDetail", nullable = false)
-    private ExistingBuildingDetail existingBuildingDetail;
-    private Integer orderOfFloor;
-    private String floorDescription;
-    private Integer floorNumber;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "suboccupancy")
-    private SubOccupancy subOccupancy;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "usage")
-    private Usage usage;
-    private BigDecimal plinthArea;
-    private BigDecimal floorArea;
-    private BigDecimal carpetArea;
+	private static final long serialVersionUID = 1L;
+	public static final String SEQ_EGBPA_EXST_BUILD_FLOORDETAIL = "SEQ_EGBPA_EXISTING_BUILDING_FLOORDETAIL";
+	@Id
+	@GeneratedValue(generator = SEQ_EGBPA_EXST_BUILD_FLOORDETAIL, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "existingBuildingDetail", nullable = false)
+	private ExistingBuildingDetail existingBuildingDetail;
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@PositiveOrZero
+	private Integer orderOfFloor;
 
-    public ExistingBuildingDetail getExistingBuildingDetail() {
-        return existingBuildingDetail;
-    }
+	@SafeHtml
+	private String floorDescription;
 
-    public void setExistingBuildingDetail(ExistingBuildingDetail existingBuildingDetail) {
-        this.existingBuildingDetail = existingBuildingDetail;
-    }
+	@Range(min = -50, max = 500)
+	private Integer floorNumber;
 
-    public Integer getOrderOfFloor() {
-        return orderOfFloor;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "suboccupancy")
+	private SubOccupancy subOccupancy;
 
-    public void setOrderOfFloor(Integer orderOfFloor) {
-        this.orderOfFloor = orderOfFloor;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "usage")
+	private Usage usage;
 
-    public String getFloorDescription() {
-        return floorDescription;
-    }
+	@PositiveOrZero
+	private BigDecimal plinthArea;
 
-    public void setFloorDescription(String floorDescription) {
-        this.floorDescription = floorDescription;
-    }
+	@PositiveOrZero
+	private BigDecimal floorArea;
 
-    public Integer getFloorNumber() {
-        return floorNumber;
-    }
+	@PositiveOrZero
+	private BigDecimal carpetArea;
 
-    public void setFloorNumber(Integer floorNumber) {
-        this.floorNumber = floorNumber;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public BigDecimal getPlinthArea() {
-        return plinthArea;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public void setPlinthArea(BigDecimal plinthArea) {
-        this.plinthArea = plinthArea;
-    }
+	public ExistingBuildingDetail getExistingBuildingDetail() {
+		return existingBuildingDetail;
+	}
 
-    public BigDecimal getFloorArea() {
-        return floorArea;
-    }
+	public void setExistingBuildingDetail(ExistingBuildingDetail existingBuildingDetail) {
+		this.existingBuildingDetail = existingBuildingDetail;
+	}
 
-    public void setFloorArea(BigDecimal floorArea) {
-        this.floorArea = floorArea;
-    }
+	public Integer getOrderOfFloor() {
+		return orderOfFloor;
+	}
 
-    public BigDecimal getCarpetArea() {
-        return carpetArea;
-    }
+	public void setOrderOfFloor(Integer orderOfFloor) {
+		this.orderOfFloor = orderOfFloor;
+	}
 
-    public void setCarpetArea(BigDecimal carpetArea) {
-        this.carpetArea = carpetArea;
-    }
+	public String getFloorDescription() {
+		return floorDescription;
+	}
 
-    public SubOccupancy getSubOccupancy() {
-        return subOccupancy;
-    }
+	public void setFloorDescription(String floorDescription) {
+		this.floorDescription = floorDescription;
+	}
 
-    public void setSubOccupancy(SubOccupancy subOccupancy) {
-        this.subOccupancy = subOccupancy;
-    }
+	public Integer getFloorNumber() {
+		return floorNumber;
+	}
 
-    public Usage getUsage() {
-        return usage;
-    }
+	public void setFloorNumber(Integer floorNumber) {
+		this.floorNumber = floorNumber;
+	}
 
-    public void setUsage(Usage usage) {
-        this.usage = usage;
-    }
+	public BigDecimal getPlinthArea() {
+		return plinthArea;
+	}
+
+	public void setPlinthArea(BigDecimal plinthArea) {
+		this.plinthArea = plinthArea;
+	}
+
+	public BigDecimal getFloorArea() {
+		return floorArea;
+	}
+
+	public void setFloorArea(BigDecimal floorArea) {
+		this.floorArea = floorArea;
+	}
+
+	public BigDecimal getCarpetArea() {
+		return carpetArea;
+	}
+
+	public void setCarpetArea(BigDecimal carpetArea) {
+		this.carpetArea = carpetArea;
+	}
+
+	public SubOccupancy getSubOccupancy() {
+		return subOccupancy;
+	}
+
+	public void setSubOccupancy(SubOccupancy subOccupancy) {
+		this.subOccupancy = subOccupancy;
+	}
+
+	public Usage getUsage() {
+		return usage;
+	}
+
+	public void setUsage(Usage usage) {
+		this.usage = usage;
+	}
 
 }

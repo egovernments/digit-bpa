@@ -67,60 +67,64 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 @Table(name = "egbpa_notice")
 @SequenceGenerator(name = BpaNotice.SEQ_BPA_NOTICE, sequenceName = BpaNotice.SEQ_BPA_NOTICE, allocationSize = 1)
 public class BpaNotice implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
-    public static final String SEQ_BPA_NOTICE = "SEQ_EGBPA_NOTICE";
 
-    @Id
-    @GeneratedValue(generator = SEQ_BPA_NOTICE, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application")
-    private BpaApplication application;
-    private Date noticeGeneratedDate;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "noticeFileStore")
-    private FileStoreMapper noticeFileStore;
-    private String noticeType;
+	private static final long serialVersionUID = 1L;
+	public static final String SEQ_BPA_NOTICE = "SEQ_EGBPA_NOTICE";
 
-    public Long getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(generator = SEQ_BPA_NOTICE, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "application")
+	private BpaApplication application;
 
-    public BpaApplication getApplication() {
-        return application;
-    }
+	private Date noticeGeneratedDate;
 
-    public void setApplication(BpaApplication application) {
-        this.application = application;
-    }
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "noticeFileStore")
+	private FileStoreMapper noticeFileStore;
 
-    public FileStoreMapper getNoticeFileStore() {
-        return noticeFileStore;
-    }
+	private String noticeType;
 
-    public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
-        this.noticeFileStore = noticeFileStore;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Date getNoticeGeneratedDate() {
-        return noticeGeneratedDate;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
-        this.noticeGeneratedDate = noticeGeneratedDate;
-    }
+	public BpaApplication getApplication() {
+		return application;
+	}
 
-    public String getNoticeType() {
-        return noticeType;
-    }
+	public void setApplication(BpaApplication application) {
+		this.application = application;
+	}
 
-    public void setNoticeType(String noticeType) {
-        this.noticeType = noticeType;
-    }
+	public FileStoreMapper getNoticeFileStore() {
+		return noticeFileStore;
+	}
+
+	public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
+		this.noticeFileStore = noticeFileStore;
+	}
+
+	public Date getNoticeGeneratedDate() {
+		return noticeGeneratedDate;
+	}
+
+	public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
+		this.noticeGeneratedDate = noticeGeneratedDate;
+	}
+
+	public String getNoticeType() {
+		return noticeType;
+	}
+
+	public void setNoticeType(String noticeType) {
+		this.noticeType = noticeType;
+	}
 
 }

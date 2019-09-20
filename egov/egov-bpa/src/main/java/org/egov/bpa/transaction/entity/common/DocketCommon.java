@@ -47,8 +47,8 @@
 
 package org.egov.bpa.transaction.entity.common;
 
-import org.egov.common.entity.bpa.ChecklistType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -61,8 +61,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.Valid;
+
+import org.egov.common.entity.bpa.ChecklistType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "EGBPA_DOCKET_COMMON")
@@ -76,7 +78,7 @@ public class DocketCommon extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_DOCKET, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
     @JoinColumn(name = "inspection")
     private InspectionCommon inspection;
     
@@ -84,10 +86,12 @@ public class DocketCommon extends AbstractAuditable {
     @JoinColumn(name = "checklisttype")
     private ChecklistType checklistType;
 
-    @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL)
+    @Valid
+    @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL, fetch= FetchType.LAZY)
     private List<DocketConstructionStageCommon> docketConstructionStage = new ArrayList<>(0);
 
-    @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL)
+    @Valid
+    @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL, fetch= FetchType.LAZY)
     private List<DocketDetailCommon> docketDetail = new ArrayList<>(0);
 
     public DocketCommon() {

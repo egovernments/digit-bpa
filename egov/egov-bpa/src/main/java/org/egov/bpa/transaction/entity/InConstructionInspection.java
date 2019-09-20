@@ -49,6 +49,7 @@ package org.egov.bpa.transaction.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,7 +57,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.common.InspectionCommon;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -66,32 +67,31 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = InConstructionInspection.SEQ_INCONSTINSPECTION, sequenceName = InConstructionInspection.SEQ_INCONSTINSPECTION, allocationSize = 1)
 public class InConstructionInspection extends AbstractAuditable {
 
-    protected static final String SEQ_INCONSTINSPECTION = "SEQ_EGBPA_INCONSTRUCTION_INSPECTION";
-    private static final long serialVersionUID = -3889308488871083896L;
+	protected static final String SEQ_INCONSTINSPECTION = "SEQ_EGBPA_INCONSTRUCTION_INSPECTION";
+	private static final long serialVersionUID = -3889308488871083896L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_INCONSTINSPECTION, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_INCONSTINSPECTION, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "inspection", nullable = false)
-    private InspectionCommon inspection;
+	@Valid
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "inspection", nullable = false)
+	private InspectionCommon inspection;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
-    @JoinColumn(name = "inspectionApplication", nullable = false)
-    private InspectionApplication inspectionApplication;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "inspectionApplication", nullable = false)
+	private InspectionApplication inspectionApplication;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public InspectionApplication getInspectionApplication() {
 		return inspectionApplication;

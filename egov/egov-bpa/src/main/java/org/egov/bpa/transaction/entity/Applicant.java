@@ -39,15 +39,7 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.transaction.entity.enums.GenderTitle;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.validation.regex.Constants;
-import org.egov.portal.entity.Citizen;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -62,7 +54,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import javax.validation.constraints.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.bpa.transaction.entity.enums.GenderTitle;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.validation.regex.Constants;
+import org.egov.portal.entity.Citizen;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EGBPA_APPLICANT")
@@ -71,40 +72,64 @@ public class Applicant extends AbstractAuditable {
 
 	public static final String SEQ_APPLICANT = "SEQ_EGBPA_Applicant";
 	private static final long serialVersionUID = 3078684328383202788L;
+
 	@Id
 	@GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
 	private Long id;
+
+	@Enumerated(EnumType.STRING)
 	private GenderTitle title;
+
 	@Length(min = 1, max = 128)
 	private String fatherorHusbandName;
+
 	private Date dateofBirth;
+
+	@SafeHtml
 	@Length(min = 1, max = 128)
 	private String district;
+
+	@SafeHtml
 	@Length(min = 1, max = 128)
 	private String taluk;
+
+	@SafeHtml
 	@Length(min = 1, max = 128)
 	private String area;
+
+	@SafeHtml
 	@Length(min = 1, max = 128)
 	private String city;
+
+	@SafeHtml
 	@Length(min = 1, max = 128)
 	private String state;
+
+	@SafeHtml
 	@Length(min = 1, max = 128)
 	private String pinCode;
-	@NotNull
+
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private Citizen user;
+
 	@NotNull
 	@SafeHtml
 	@Length(min = 2, max = 100)
 	private String name;
+
+	@SafeHtml
+	@Length(min = 1, max = 1024)
 	private String address;
-	@Enumerated(EnumType.ORDINAL)
+
+	@Enumerated(EnumType.STRING)
 	private Gender gender;
-	@Email(regexp = Constants.EMAIL)
+
+	@Pattern(regexp = Constants.EMAIL)
 	@SafeHtml
 	@Length(max = 128)
 	private String emailId;
+
 	@SafeHtml
 	@Length(max = 20)
 	private String aadhaarNumber;
@@ -126,7 +151,6 @@ public class Applicant extends AbstractAuditable {
 	public void setTitle(final GenderTitle title) {
 		this.title = title;
 	}
-
 
 	public Date getDateofBirth() {
 		return dateofBirth;
@@ -241,11 +265,13 @@ public class Applicant extends AbstractAuditable {
 	}
 
 	public String showAadhaarNumber() {
-		return StringUtils.isBlank(aadhaarNumber) ? aadhaarNumber : aadhaarNumber.replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+		return StringUtils.isBlank(aadhaarNumber) ? aadhaarNumber
+				: aadhaarNumber.replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
 	}
 
 	public String showMobileNumber() {
-		return user == null || StringUtils.isBlank(user.getMobileNumber()) ? "" : user.getMobileNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+		return user == null || StringUtils.isBlank(user.getMobileNumber()) ? ""
+				: user.getMobileNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
 	}
 
 }

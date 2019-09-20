@@ -51,6 +51,7 @@ package org.egov.common.entity.bpa;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,9 +60,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -72,98 +75,103 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "@id")
 public class Usage extends AbstractAuditable {
 
-    public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_USAGE";
-    private static final long serialVersionUID = -3811124517745056627L;
+	public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_USAGE";
+	private static final long serialVersionUID = -3811124517745056627L;
 
-    @Id
-    @GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "subOccupancy")
-    private SubOccupancy subOccupancy;
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "subOccupancy")
+	private SubOccupancy subOccupancy;
 
-    @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
-    private String code;
+	@SafeHtml
+	@Length(min = 1, max = 128)
+	@Column(name = "code", unique = true)
+	private String code;
 
-    @NotNull
-    @Length(min = 1, max = 256)
-    private String name;
+	@SafeHtml
+	@NotNull
+	@Length(min = 1, max = 256)
+	private String name;
 
-    @Length(min = 1, max = 512)
-    private String description;
+	@SafeHtml
+	@Length(min = 1, max = 512)
+	private String description;
 
-    private Boolean isActive;
+	private Boolean isActive;
 
-    private Integer orderNumber;
+	@PositiveOrZero
+	private Integer orderNumber;
 
-    private Integer colorCode;
+	@PositiveOrZero
+	private Integer colorCode;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public Boolean getActive() {
-        return isActive;
-    }
+	public Boolean getActive() {
+		return isActive;
+	}
 
-    public void setActive(Boolean active) {
-        isActive = active;
-    }
+	public void setActive(Boolean active) {
+		isActive = active;
+	}
 
-    public Integer getOrderNumber() {
-        return orderNumber;
-    }
+	public Integer getOrderNumber() {
+		return orderNumber;
+	}
 
-    public void setOrderNumber(Integer orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+	public void setOrderNumber(Integer orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public SubOccupancy getSubOccupancy() {
-        return subOccupancy;
-    }
+	public SubOccupancy getSubOccupancy() {
+		return subOccupancy;
+	}
 
-    public void setSubOccupancy(SubOccupancy subOccupancy) {
-        this.subOccupancy = subOccupancy;
-    }
+	public void setSubOccupancy(SubOccupancy subOccupancy) {
+		this.subOccupancy = subOccupancy;
+	}
 
-    public Integer getColorCode() {
-        return colorCode;
-    }
+	public Integer getColorCode() {
+		return colorCode;
+	}
 
-    public void setColorCode(Integer colorCode) {
-        this.colorCode = colorCode;
-    }
+	public void setColorCode(Integer colorCode) {
+		this.colorCode = colorCode;
+	}
 
 }
