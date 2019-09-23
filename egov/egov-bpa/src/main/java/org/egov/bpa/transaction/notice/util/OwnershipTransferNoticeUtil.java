@@ -141,6 +141,7 @@ public class OwnershipTransferNoticeUtil {
         if (ownershipNotice == null || ownershipNotice.getNoticeCommon().getNoticeFileStore() == null) {
             final Map<String, Object> reportParams = bpaNoticeUtil.buildParametersForReport(ownershipTransfer.getApplication());
             reportParams.putAll(getUlbDetails());
+            reportParams.put("applicantName", ownershipTransfer.getParent() == null ? ownershipTransfer.getApplication().getApplicantName() : ownershipTransfer.getParent().getApplicantName());
             reportParams.put("refusalFormat", bpaApplicationReportProperties.getOwnershipRefusalFormat());
             reportParams.put("applicationNumber", ownershipTransfer.getApplicationNumber());
             reportParams.put("rejectionReasons", buildRejectionReasons(ownershipTransfer));
@@ -151,7 +152,7 @@ public class OwnershipTransferNoticeUtil {
             reportParams.put("designation", ownershipTransfer.getApproverPosition() == null ? "" : ownershipTransfer.getApproverPosition().getDeptDesig().getDesignation().getName());
             reportParams.put("approverName",ownershipTransfer.getApproverUser() == null ? "" : ownershipTransfer.getApproverUser().getName());
             reportParams.put("ownershipNumber", ownershipTransfer.getOwnershipNumber());
-            reportParams.put("newownerName",ownershipTransfer.getOwner().getName());
+            reportParams.put("newownerName",ownershipTransfer.getApplicantName());
             reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(ownershipTransfer)));
             
             if (!ownershipTransfer.getOwnershipFee().isEmpty())
