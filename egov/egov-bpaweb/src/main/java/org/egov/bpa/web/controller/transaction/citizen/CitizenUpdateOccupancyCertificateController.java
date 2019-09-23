@@ -276,12 +276,12 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
 		    
 			if(ocNocService.findByApplicationNumberAndType(oc.getApplicationNumber(),code)!=null)
 				nocTypeApplMap.put(code, "initiated");
-			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC) && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
 					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
 					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
 				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
 			}
-			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+			if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
 					&& nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
 					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
 				nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");

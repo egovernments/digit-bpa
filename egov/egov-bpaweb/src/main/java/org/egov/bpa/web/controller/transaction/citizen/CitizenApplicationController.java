@@ -256,11 +256,11 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                         && permitNocService.findByApplicationNumberAndType(bpaApplication.getApplicationNumber(), code) != null)
                     nocTypeApplMap.put(code, "initiated");
                 if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
-                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
                         && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
                     nocConfigMap.put(nocConfig.getDepartment(), "initiate");
                 if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
-                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
                         && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString()))
                     nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
 
@@ -550,6 +550,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             String remarks = null;
             if (bpaApplication.getAuthorizedToSubmitPlan())
                 remarks = AUTH_TO_SUBMIT_PLAN;
+            if (isEdcrIntegrationRequire)
+                permitNocService.initiateNoc(bpaApplication);
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, bpaApplication, WF_NEW_STATE,
                     remarks == null ? bpaApplication.getApprovalComent() : remarks, null, null);
             bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);

@@ -143,7 +143,7 @@
 						N/A
 					</c:if></td>
 					<c:forTokens var="splittedString"
-							items="${nocDoc.nocDocument.serviceChecklist.checklist.description}"
+							items="${nocDoc.nocDocument.serviceChecklist.checklist.code}"
 							delims="\ ()" varStatus="stat">
 							<c:set var="checklistName"
 								value="${stat.first ? '' : checklistName}_${splittedString}" />
@@ -158,7 +158,7 @@
 								<input type="hidden" id="nocchkcode" value="${noccode}"/>
 								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
 								<c:out value="${nocapp}"/>
-								<button type="button" id="btninitiatenoc" value="/bpa/ocnocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
+								<button type="button" id="btninitiatenoc" value="/bpa/ocnocapplication/create/${nocDoc.nocDocument.serviceChecklist.checklist.code}"  class="btn btn-secondary btn${checklistName}">
 										<spring:message code="lbl.initiate.noc" />
 								</button>
 								</c:if>
