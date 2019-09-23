@@ -64,8 +64,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -73,143 +73,152 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/bpafee")
 public class BpaFeeController {
-	public static final String CATEGORY_FEE = "Fee";
+    private static final String BPA_FEE_MAPPING = "bpaFeeMapping";
 
-	private static final String FEES_NEW = "fees-new";
-	private static final String FEES_RESULT = "fees-result";
-	private static final String BPAFEEMAPPING = "bpaFeeMapping";
+    public static final String CATEGORY_FEE = "Fee";
 
-	@Autowired
-	private BpaFeeCommonService bpaFeeCommonService;
+    private static final String FEES_NEW = "fees-new";
+    private static final String FEES_RESULT = "fees-result";
+    private static final String BPAFEEMAPPING = BPA_FEE_MAPPING;
 
-	@Autowired
-	private BpaFeeMappingService bpaFeeMappingService;
+    @Autowired
+    private BpaFeeCommonService bpaFeeCommonService;
 
-	@Autowired
-	private ServiceTypeService serviceTypeService;
+    @Autowired
+    private BpaFeeMappingService bpaFeeMappingService;
 
-	@Autowired
-	private BpaDemandService bpaDemandService;
-	
-	@Autowired
-	private ApplicationSubTypeService applicationSubTypeService;
-	
-	@Autowired
-	private MessageSource messageSource;
-	
-	@Autowired
-	private EgReasonCategoryDao egReasonCategoryDAO;
+    @Autowired
+    private ServiceTypeService serviceTypeService;
 
+    @Autowired
+    private BpaDemandService bpaDemandService;
 
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public String createFees(final Model model) {
-		model.addAttribute("bpaFeeMapping", new BpaFeeMapping());
-		loadForm(model);
-		return FEES_NEW;
-	}
+    @Autowired
+    private ApplicationSubTypeService applicationSubTypeService;
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String createFee(@Valid @ModelAttribute(BPAFEEMAPPING) final BpaFeeMapping bpaFeeMap, final Model model,
-			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-		bpaFeeCommonService.validateFeeList(bpaFeeMap, errors);
-		BpaFeeMapping bpaFeeMapping = new BpaFeeMapping();
-		if( bpaFeeMap.getBpaFeeCommon().getCategory()!=null && bpaFeeMap.getBpaFeeCommon().getCategory().getIdType()!=null)
-		{
-           final EgReasonCategory reasonCategory = egReasonCategoryDAO.findById(bpaFeeMap.getBpaFeeCommon().getCategory().getIdType(), false);
-           bpaFeeMap.getBpaFeeCommon().setCategory(reasonCategory);
-		}	
-		if (errors.hasErrors()) {
-			loadForm(model);
-			return FEES_NEW;
-		}
-		
-		BpaFeeCommon bpaFee = bpaFeeCommonService.update(bpaFeeMap.getBpaFeeCommon());
-		
-		for (BpaFeeMapping bpafee : bpaFeeMap.getBpaFeeMapTemp()) {
-			bpafee.setBpaFeeCommon(bpaFee);
-		}
-		bpaDemandService.createEgDemandReasonMaster(bpaFee);
-		List<BpaFeeMapping> bpaFeeTempList = bpaFeeMappingService.save(bpaFeeMap.getBpaFeeMapTemp());
-		bpaFeeMapping.setBpaFeeMapTemp(bpaFeeTempList);
-		bpaFeeMapping.setBpaFeeCommon(bpaFee);
-		model.addAttribute("bpaFeeMapping", bpaFeeMapping);
-		model.addAttribute("message", messageSource.getMessage("msg.create.fees.success", null, null));
+    @Autowired
+    private MessageSource messageSource;
 
-		return FEES_RESULT;
-	}
+    @Autowired
+    private EgReasonCategoryDao egReasonCategoryDAO;
 
-	@GetMapping(value = "/fee-by-code", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public BpaFeeCommon feeByCode(@RequestParam String code) {
-		return bpaFeeCommonService.findByCode(code).get(0);
-	}
+    @GetMapping("/create")
+    public String createFees(final Model model) {
+        model.addAttribute(BPA_FEE_MAPPING, new BpaFeeMapping());
+        loadForm(model);
+        return FEES_NEW;
+    }
 
-	private void prepareSearchForm(Model model) {
-		model.addAttribute("bpaFeeList", bpaFeeCommonService.findAll());
-	}
+    @PostMapping("/create")
+    public String createFee(@Valid @ModelAttribute(BPAFEEMAPPING) final BpaFeeMapping bpaFeeMap,
+            final BindingResult errors, final Model model, final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) {
+        bpaFeeCommonService.validateFeeList(bpaFeeMap, errors);
+        BpaFeeMapping bpaFeeMapping = new BpaFeeMapping();
+        if (bpaFeeMap.getBpaFeeCommon().getCategory() != null
+                && bpaFeeMap.getBpaFeeCommon().getCategory().getIdType() != null) {
+            final EgReasonCategory reasonCategory = egReasonCategoryDAO
+                    .findById(bpaFeeMap.getBpaFeeCommon().getCategory().getIdType(), false);
+            bpaFeeMap.getBpaFeeCommon().setCategory(reasonCategory);
+        }
+        if (errors.hasErrors()) {
+            loadForm(model);
+            return FEES_NEW;
+        }
 
-	@RequestMapping(value = "/update", method = RequestMethod.GET)
-	public String showUpdateFeeSearchForm(Model model) {
-		model.addAttribute("bpaFeeMapping", new BpaFeeMapping());
-		prepareSearchForm(model);
-		return "fees-search-update";
-	}
+        BpaFeeCommon bpaFee = bpaFeeCommonService.update(bpaFeeMap.getBpaFeeCommon());
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String showUpdateSubCategoryForm(@ModelAttribute BpaFeeMapping bpaFeeMapping) {
-		return "redirect:/bpafee/update/" + bpaFeeMapping.getBpaFeeCommon().getCode();
-	}
+        for (BpaFeeMapping bpafee : bpaFeeMap.getBpaFeeMapTemp()) {
+            bpafee.setBpaFeeCommon(bpaFee);
+        }
+        bpaDemandService.createEgDemandReasonMaster(bpaFee);
+        List<BpaFeeMapping> bpaFeeTempList = bpaFeeMappingService.save(bpaFeeMap.getBpaFeeMapTemp());
+        bpaFeeMapping.setBpaFeeMapTemp(bpaFeeTempList);
+        bpaFeeMapping.setBpaFeeCommon(bpaFee);
+        model.addAttribute(BPA_FEE_MAPPING, bpaFeeMapping);
+        model.addAttribute("message", messageSource.getMessage("msg.create.fees.success", null, null));
 
-	@RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-	public String showSubCategoryUpdateForm(Model model, @PathVariable(required = false) String code) {
-		loadForm(model);
-		List<BpaFeeMapping> bpaFeeMapList = bpaFeeMappingService.findByFeeCode(code);
-		BpaFeeMapping bpaFeeMapping = new BpaFeeMapping();
-		bpaFeeMapping.setBpaFeeCommon(bpaFeeMapList.get(0).getBpaFeeCommon());
-		bpaFeeMapping.setBpaFeeMapTemp(bpaFeeMapList);
-		model.addAttribute("bpaFeeMapping", bpaFeeMapping);
-		return "update-fees";
-	}
+        return FEES_RESULT;
+    }
 
-	@RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
-	public String updateFees(@ModelAttribute @Valid BpaFeeMapping bpaFeeMap, BindingResult bindingResult,
-			RedirectAttributes responseAttrbs, Model model) {
-		bpaFeeMap.getBpaFeeMapTemp().forEach(tmpMap -> tmpMap.setBpaFeeCommon(bpaFeeMap.getBpaFeeCommon()));
-		//bpaFeeMap.getBpaFeeMapTemp().get(0).setBpaFeeCommon(bpaFeeMap.getBpaFeeCommon());
-		bpaFeeMappingService.update(bpaFeeMap.getBpaFeeMapTemp());
-		responseAttrbs.addFlashAttribute("message",messageSource.getMessage("msg.update.fees.success", null, null));
-		return "redirect:/bpafee/update/" + bpaFeeMap.getBpaFeeCommon().getCode();
-	}
+    @GetMapping(value = "/fee-by-code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public BpaFeeCommon feeByCode(@RequestParam String code) {
+        return bpaFeeCommonService.findByCode(code).get(0);
+    }
 
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public String showViewFeeSearchForm(Model model) {
-		model.addAttribute("bpaFeeMapping", new BpaFeeMapping());
-		prepareSearchForm(model);
-		return "fees-search-view";
-	}
+    private void prepareSearchForm(Model model) {
+        model.addAttribute("bpaFeeList", bpaFeeCommonService.findAll());
+    }
 
-	@RequestMapping(value = "/view", method = RequestMethod.POST)
-	public String showViewFees(@ModelAttribute BpaFeeMapping bpaFeeMap) {
-		return "redirect:/bpafee/view/" + bpaFeeMap.getBpaFeeCommon().getCode();
-	}
+    @GetMapping("/update")
+    public String showUpdateFeeSearchForm(Model model) {
+        model.addAttribute(BPA_FEE_MAPPING, new BpaFeeMapping());
+        prepareSearchForm(model);
+        return "fees-search-update";
+    }
 
-	@RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-	public String viewFees(Model model, @PathVariable(required = false) String code) {
-		List<BpaFeeMapping> bpaFeeMapList = bpaFeeMappingService.findByFeeCode(code);
-		BpaFeeMapping bpaFeeMapping = new BpaFeeMapping();
-		bpaFeeMapping.setBpaFeeCommon(bpaFeeMapList.get(0).getBpaFeeCommon());
-		bpaFeeMapping.setBpaFeeMapTemp(bpaFeeMapList);
-		model.addAttribute("bpaFeeMapping", bpaFeeMapping);
-		return "fees-view";
-	}
+    @PostMapping("/update")
+    public String showUpdateSubCategoryForm(@Valid @ModelAttribute BpaFeeMapping bpaFeeMapping) {
+        return "redirect:/bpafee/update/" + bpaFeeMapping.getBpaFeeCommon().getCode();
+    }
 
-	public void loadForm(final Model model) {
-		model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveServiceTypes());
-		model.addAttribute("applicationTypes", bpaFeeCommonService.getFeeAppTypes());
-		model.addAttribute("calculationTypes", Arrays.asList(CalculationType.values()));
-		model.addAttribute("feeSubTypes", bpaFeeCommonService.getFeeSubTypes());
-		model.addAttribute("categories", egReasonCategoryDAO.findAll());
-		model.addAttribute("appSubTypes", applicationSubTypeService.getAllEnabledApplicationTypes());
-	}
+    @GetMapping("/update/{code}")
+    public String showSubCategoryUpdateForm(Model model, @PathVariable(required = false) String code) {
+        loadForm(model);
+        List<BpaFeeMapping> bpaFeeMapList = bpaFeeMappingService.findByFeeCode(code);
+        BpaFeeMapping bpaFeeMapping = new BpaFeeMapping();
+        bpaFeeMapping.setBpaFeeCommon(bpaFeeMapList.get(0).getBpaFeeCommon());
+        bpaFeeMapping.setBpaFeeMapTemp(bpaFeeMapList);
+        model.addAttribute(BPA_FEE_MAPPING, bpaFeeMapping);
+        return "update-fees";
+    }
+
+    @PostMapping("/update/{code}")
+    public String updateFees(@PathVariable(required = false) String code,
+            @Valid @ModelAttribute BpaFeeMapping bpaFeeMap, BindingResult bindingResult,
+            RedirectAttributes responseAttrbs, Model model) {
+        if (bindingResult.hasErrors()) {
+            loadForm(model);
+            model.addAttribute(BPA_FEE_MAPPING, bpaFeeMap);
+            return "update-fees";
+        }
+        bpaFeeMap.getBpaFeeMapTemp().forEach(tmpMap -> tmpMap.setBpaFeeCommon(bpaFeeMap.getBpaFeeCommon()));
+        // bpaFeeMap.getBpaFeeMapTemp().get(0).setBpaFeeCommon(bpaFeeMap.getBpaFeeCommon());
+        bpaFeeMappingService.update(bpaFeeMap.getBpaFeeMapTemp());
+        responseAttrbs.addFlashAttribute("message", messageSource.getMessage("msg.update.fees.success", null, null));
+        return "redirect:/bpafee/update/" + bpaFeeMap.getBpaFeeCommon().getCode();
+    }
+
+    @GetMapping("/view")
+    public String showViewFeeSearchForm(Model model) {
+        model.addAttribute(BPA_FEE_MAPPING, new BpaFeeMapping());
+        prepareSearchForm(model);
+        return "fees-search-view";
+    }
+
+    @PostMapping("/view")
+    public String showViewFees(@ModelAttribute BpaFeeMapping bpaFeeMap) {
+        return "redirect:/bpafee/view/" + bpaFeeMap.getBpaFeeCommon().getCode();
+    }
+
+    @GetMapping("/view/{code}")
+    public String viewFees(Model model, @PathVariable(required = false) String code) {
+        List<BpaFeeMapping> bpaFeeMapList = bpaFeeMappingService.findByFeeCode(code);
+        BpaFeeMapping bpaFeeMapping = new BpaFeeMapping();
+        bpaFeeMapping.setBpaFeeCommon(bpaFeeMapList.get(0).getBpaFeeCommon());
+        bpaFeeMapping.setBpaFeeMapTemp(bpaFeeMapList);
+        model.addAttribute(BPA_FEE_MAPPING, bpaFeeMapping);
+        return "fees-view";
+    }
+
+    public void loadForm(final Model model) {
+        model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveServiceTypes());
+        model.addAttribute("applicationTypes", bpaFeeCommonService.getFeeAppTypes());
+        model.addAttribute("calculationTypes", Arrays.asList(CalculationType.values()));
+        model.addAttribute("feeSubTypes", bpaFeeCommonService.getFeeSubTypes());
+        model.addAttribute("categories", egReasonCategoryDAO.findAll());
+        model.addAttribute("appSubTypes", applicationSubTypeService.getAllEnabledApplicationTypes());
+    }
 
 }

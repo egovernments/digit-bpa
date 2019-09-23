@@ -42,6 +42,7 @@ package org.egov.bpa.web.controller.master;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeDetail;
@@ -49,50 +50,57 @@ import org.egov.bpa.master.service.BpaFeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/fees")
 public class FeesController {
 
-	@Autowired
-	private BpaFeeService bpaFeeService;
+    private static final String FEES_DETAIL_UPDATE = "feesDetail-update";
+    private static final String BPA_FEE = "bpaFee";
 
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public String showFees(final Model model, final HttpServletRequest request) {
-		model.addAttribute("bpaFee", new BpaFee());
-		final List<BpaFee> activeBpaFees = bpaFeeService.getAllActiveBpaFees();
-		model.addAttribute("activeBpaFees", activeBpaFees);
-		return "view-fees";
-	}
+    @Autowired
+    private BpaFeeService bpaFeeService;
 
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
-	public String showFeesDetail(@ModelAttribute BpaFee bpaFee,
-			@PathVariable final Long id, final Model model) {
-		if (id != null) {
-			bpaFee = bpaFeeService.findById(id);
-			model.addAttribute("bpaFee", bpaFeeService.findById(id));
-			model.addAttribute("mode", "edit");
-		}
-		return "feesDetail-update";
-	}
+    @GetMapping("/view")
+    public String showFees(final Model model, final HttpServletRequest request) {
+        model.addAttribute(BPA_FEE, new BpaFee());
+        final List<BpaFee> activeBpaFees = bpaFeeService.getAllActiveBpaFees();
+        model.addAttribute("activeBpaFees", activeBpaFees);
+        return "view-fees";
+    }
 
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
-	public String updateFeesDetail(@ModelAttribute final BpaFee bpaFee,
-			@PathVariable final Long id, final Model model,
-			final HttpServletRequest request) {
-		BpaFee dbBpaFee = bpaFeeService.findById(id);
-		for (BpaFeeDetail bfd : bpaFee.getFeeDetail())
-			for (BpaFeeDetail bfd1 : dbBpaFee.getFeeDetail())
-				if (bfd.getId().equals(bfd1.getId()))
-					bfd1.setAmount(bfd.getAmount());
-		bpaFeeService.update(dbBpaFee);
-		model.addAttribute("bpaFee", dbBpaFee);
-		model.addAttribute("mode", "view");
-		return "feesDetail-update";
-	}
+    @GetMapping("/update/{id}")
+    public String showFeesDetail(@ModelAttribute BpaFee bpaFee, @PathVariable final Long id, final Model model) {
+        if (id != null) {
+            model.addAttribute(BPA_FEE, bpaFeeService.findById(id));
+            model.addAttribute("mode", "edit");
+        }
+        return FEES_DETAIL_UPDATE;
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateFeesDetail(@PathVariable final Long id, @Valid @ModelAttribute final BpaFee bpaFee,
+            final BindingResult result, final Model model, final HttpServletRequest request) {
+        if (result.hasErrors()) {
+            model.addAttribute(BPA_FEE, bpaFee);
+            model.addAttribute("mode", "edit");
+            return FEES_DETAIL_UPDATE;
+        }
+        BpaFee dbBpaFee = bpaFeeService.findById(id);
+        for (BpaFeeDetail bfd : bpaFee.getFeeDetail())
+            for (BpaFeeDetail bfd1 : dbBpaFee.getFeeDetail())
+                if (bfd.getId().equals(bfd1.getId()))
+                    bfd1.setAmount(bfd.getAmount());
+        bpaFeeService.update(dbBpaFee);
+        model.addAttribute(BPA_FEE, dbBpaFee);
+        model.addAttribute("mode", "view");
+        return FEES_DETAIL_UPDATE;
+    }
 
 }

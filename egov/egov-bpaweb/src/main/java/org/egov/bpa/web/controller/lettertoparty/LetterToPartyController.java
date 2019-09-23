@@ -47,10 +47,10 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.LpReason;
-import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.LpReasonService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.PermitLetterToParty;
@@ -118,8 +118,6 @@ public class LetterToPartyController extends BpaGenericApplicationController {
     private LettertoPartyDocumentService lettertoPartyDocumentService;
     @Autowired
     private CustomImplProvider specificNoticeService;
-    @Autowired
-    private ChecklistServicetypeMappingService checklistServiceTypeService;
 
     @ModelAttribute("lpReasonList")
     public List<LpReason> getLpReasonList() {
@@ -131,8 +129,9 @@ public class LetterToPartyController extends BpaGenericApplicationController {
     }
 
     @GetMapping("/create/{applicationNumber}")
-    public String createLetterToParty(@ModelAttribute final PermitLetterToParty lettertoParty,
-            @PathVariable final String applicationNumber, final Model model, final HttpServletRequest request) {
+    public String createLetterToParty(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute final PermitLetterToParty lettertoParty,
+            final Model model, final HttpServletRequest request) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         Position ownerPosition = application.getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
@@ -154,9 +153,16 @@ public class LetterToPartyController extends BpaGenericApplicationController {
     }
 
     @PostMapping("/create")
-    public String createLetterToParty(@ModelAttribute("permitLetterToParty") final PermitLetterToParty permitLTP,
+    public String createLetterToParty(@Valid @ModelAttribute("permitLetterToParty") final PermitLetterToParty permitLTP,
             final BindingResult resultBinder, final Model model, final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
+
+        validateCreateLetterToParty(permitLTP, errors);
+        if (errors.hasErrors()) {
+            prepareData(permitLTP, permitLTP.getApplication(), model);
+            return LETTERTOPARTY_CREATE;
+        }
+
         if (permitLTP.getApplication().getStatus().getCode().equals(BpaConstants.CREATEDLETTERTOPARTY)) {
             model.addAttribute(MESSAGE,
                     messageSource.getMessage("msg.lp.already.created", null, LocaleContextHolder.getLocale()));
@@ -165,11 +171,6 @@ public class LetterToPartyController extends BpaGenericApplicationController {
         Position ownerPosition = permitLTP.getApplication().getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
-        validateCreateLetterToParty(permitLTP, errors);
-        if (errors.hasErrors()) {
-            prepareData(permitLTP, permitLTP.getApplication(), model);
-            return LETTERTOPARTY_CREATE;
-        }
         processAndStoreLetterToPartyDocuments(permitLTP);
         LetterToPartyCommon ltp = permitLTP.getLetterToParty();
         ltp.setCurrentApplnStatus(permitLTP.getApplication().getStatus());
@@ -244,9 +245,14 @@ public class LetterToPartyController extends BpaGenericApplicationController {
     }
 
     @PostMapping("/update")
-    public String updateLettertoparty(@ModelAttribute("permitLetterToParty") final PermitLetterToParty lettertoparty,
+    public String updateLettertoparty(@Valid @ModelAttribute("permitLetterToParty") final PermitLetterToParty lettertoparty,
+            final BindingResult errors,
             final Model model,
-            final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+            final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
+        if (errors.hasErrors()) {
+            prepareLetterToParty(lettertoparty.getApplication().getApplicationNumber(), model);
+            return LETTERTOPARTY_UPDATE;
+        }
         processAndStoreLetterToPartyDocuments(lettertoparty);
         lettertoPartyService.save(lettertoparty, lettertoparty.getApplication().getState().getOwnerPosition().getId());
         redirectAttributes.addFlashAttribute(MESSAGE,
@@ -349,9 +355,10 @@ public class LetterToPartyController extends BpaGenericApplicationController {
     }
 
     @PostMapping("/lettertopartyreply")
-    public String createLettertoPartyReply(@ModelAttribute("permitLetterToParty") final PermitLetterToParty lettertoparty,
+    public String createLettertoPartyReply(@Valid @ModelAttribute("permitLetterToParty") final PermitLetterToParty lettertoparty,
+            final BindingResult errors,
             final Model model,
-            final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+            final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
         lettertoPartyService.validateDocs(lettertoparty, errors);
         if (errors.hasErrors())
             return getLPReplyForm(model, lettertoparty);

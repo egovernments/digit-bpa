@@ -47,17 +47,15 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.master.entity.LpReason;
-import org.egov.bpa.master.service.ChecklistServicetypeMappingService;
 import org.egov.bpa.master.service.LpReasonService;
 import org.egov.bpa.transaction.entity.InspectionLetterToParty;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
-import org.egov.bpa.transaction.entity.PermitLetterToParty;
 import org.egov.bpa.transaction.entity.common.LetterToPartyCommon;
 import org.egov.bpa.transaction.entity.common.LetterToPartyDocumentCommon;
-import org.egov.bpa.transaction.notice.LetterToPartyFormat;
 import org.egov.bpa.transaction.notice.impl.LetterToPartyCreateFormatImpl;
 import org.egov.bpa.transaction.notice.impl.LetterToPartyReplyFormatImpl;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
@@ -91,7 +89,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/inspection/lettertoparty")
 public class InspectionLetterToPartyController extends BpaGenericApplicationController {
 
-	public static final String COMMON_ERROR = "common-error";
+    private static final String INS_LETTERTOPARTY_CREATE = "ins-lettertoparty-create";
+    private static final String INSPECTION_APPLICATION = "inspectionApplication";
+    public static final String COMMON_ERROR = "common-error";
     private static final String PDFEXTN = ".pdf";
     private static final String INLINE_FILENAME = "inline;filename=";
     private static final String CONTENT_DISPOSITION = "content-disposition";
@@ -104,7 +104,7 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
     private static final String LETTERTOPARTYLIST = "lettertopartylist";
     private static final String LETTERTOPARTY_RESULT = "ins-lettertoparty-result";
     private static final String LETTERTOPARTY_UPDATE = "ins-lettertoparty-update";
-    private static final String LETTERTOPARTY_CREATE = "ins-lettertoparty-create";
+    private static final String LETTERTOPARTY_CREATE = INS_LETTERTOPARTY_CREATE;
     private static final String REDIRECT_LETTERTOPARTY_RESULT = "redirect:/inspection/lettertoparty/result/";
     private static final String CHECK_LIST_DETAIL_LIST = "checkListDetailList";
     private static final String LETTERTOPARTYDOC_LIST = "lettertopartydocList";
@@ -115,9 +115,6 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
     private LpReasonService lpReasonService;
     @Autowired
     private LettertoPartyDocumentService lettertoPartyDocumentService;
-
-    @Autowired
-    private ChecklistServicetypeMappingService checklistServiceTypeService;
     @Autowired
     private InspectionApplicationService inspectionAppService;
     @Autowired
@@ -129,37 +126,48 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
     public List<LpReason> getLpReasonList() {
         return lpReasonService.findAll();
     }
-    
- 
 
     public List<ChecklistServiceTypeMapping> getCheckListDetailList(final Long serviceTypeId) {
         return checklistServiceTypeService.findByActiveByServiceTypeAndChecklist(serviceTypeId, BpaConstants.LP_CHECKLIST);
     }
 
-    
     @GetMapping("/create/{applicationNumber}")
-    public String createLetterToParty(@ModelAttribute final InspectionLetterToParty lettertoParty,
-            @PathVariable final String applicationNumber, final Model model, final HttpServletRequest request) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+    public String createLetterToParty(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute final InspectionLetterToParty lettertoParty,
+            final Model model, final HttpServletRequest request) {
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
         Position ownerPosition = permitInspection.getInspectionApplication().getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
         prepareInspectionData(lettertoParty, permitInspection, model);
         return LETTERTOPARTY_CREATE;
     }
-    
-    private void prepareInspectionData(final InspectionLetterToParty lettertoParty, final PermitInspectionApplication permitInspection, final Model model) {
+
+    private void prepareInspectionData(final InspectionLetterToParty lettertoParty,
+            final PermitInspectionApplication permitInspection, final Model model) {
         model.addAttribute("mode", "new");
-        model.addAttribute("inspectionApplication", permitInspection.getInspectionApplication());
-        model.addAttribute(CHECK_LIST_DETAIL_LIST, getCheckListDetailList(permitInspection.getApplication().getServiceType().getId()));
+        model.addAttribute(INSPECTION_APPLICATION, permitInspection.getInspectionApplication());
+        model.addAttribute(CHECK_LIST_DETAIL_LIST,
+                getCheckListDetailList(permitInspection.getApplication().getServiceType().getId()));
         lettertoParty.setInspectionApplication(permitInspection.getInspectionApplication());
     }
-    
+
     @PostMapping("/create/{applicationNumber}")
-    public String createLetterToParty(@ModelAttribute("inspectionLetterToParty") final InspectionLetterToParty inspectionLetterToParty,
-    		@PathVariable final String applicationNumber,final BindingResult resultBinder, final Model model, final HttpServletRequest request,
+    public String createLetterToParty(
+            @PathVariable final String applicationNumber,
+            @Valid @ModelAttribute("inspectionLetterToParty") final InspectionLetterToParty inspectionLetterToParty,
+            final BindingResult resultBinder, final Model model,
+            final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
+        if (inspectionLetterToParty.getLetterToParty().getLpReason() == null)
+            errors.rejectValue("lpReason", "lbl.lp.reason.required");
+        if (errors.hasErrors()) {
+            prepareInspectionData(inspectionLetterToParty, permitInspection, model);
+            return INS_LETTERTOPARTY_CREATE;
+        }
         inspectionLetterToParty.setInspectionApplication(permitInspection.getInspectionApplication());
         if (inspectionLetterToParty.getInspectionApplication().getStatus().getCode().equals(BpaConstants.CREATEDLETTERTOPARTY)) {
             model.addAttribute(MESSAGE,
@@ -169,24 +177,18 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
         Position ownerPosition = inspectionLetterToParty.getInspectionApplication().getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
-        if (inspectionLetterToParty.getLetterToParty().getLpReason() == null)
-            errors.rejectValue("lpReason", "lbl.lp.reason.required");
-        if (errors.hasErrors()) {
-        	prepareInspectionData(inspectionLetterToParty, permitInspection, model);
-            return "ins-lettertoparty-create";
-        }
         processAndStoreInsLetterToPartyDocuments(inspectionLetterToParty);
         LetterToPartyCommon ltp = inspectionLetterToParty.getLetterToParty();
         ltp.setCurrentApplnStatus(inspectionLetterToParty.getInspectionApplication().getStatus());
-        
-        String value ="";
-        String nextAction="";
-        if(!inspectionLetterToParty.getInspectionApplication().getStateHistory().isEmpty()){
-        	value = getInsStateHistoryObjByDesc(inspectionLetterToParty).getValue();
-        	nextAction = getInsStateHistoryObjByDesc(inspectionLetterToParty).getNextAction();
+
+        String value = "";
+        String nextAction = "";
+        if (!inspectionLetterToParty.getInspectionApplication().getStateHistory().isEmpty()) {
+            value = getInsStateHistoryObjByDesc(inspectionLetterToParty).getValue();
+            nextAction = getInsStateHistoryObjByDesc(inspectionLetterToParty).getNextAction();
         } else {
-        	value = inspectionLetterToParty.getInspectionApplication().getState().getValue();
-        	nextAction = inspectionLetterToParty.getInspectionApplication().getState().getNextAction();
+            value = inspectionLetterToParty.getInspectionApplication().getState().getValue();
+            nextAction = inspectionLetterToParty.getInspectionApplication().getState().getNextAction();
         }
         ltp.setCurrentStateValueOfLP(value);
         ltp.setStateForOwnerPosition(inspectionLetterToParty.getInspectionApplication().getState().getValue());
@@ -215,7 +217,7 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
         redirectAttributes.addFlashAttribute(MESSAGE, message);
         return REDIRECT_LETTERTOPARTY_RESULT + inspectionLetterToParty.getId();
     }
-    
+
     protected void processAndStoreInsLetterToPartyDocuments(final InspectionLetterToParty lettertoParty) {
         if (!lettertoParty.getLetterToParty().getLetterToPartyDocuments().isEmpty())
             for (final LetterToPartyDocumentCommon lettertoPartyDocument : lettertoParty.getLetterToParty()
@@ -228,20 +230,18 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
                     lettertoPartyDocument.setIsSubmitted(true);
                 }
             }
-    }   		
-    		
+    }
+
     private StateHistory<Position> getInsStateHistoryObjByDesc(final InspectionLetterToParty lettertoParty) {
         return lettertoParty.getInspectionApplication().getStateHistory().stream()
                 .sorted(Comparator.comparing(StateHistory<Position>::getId).reversed()).collect(Collectors.toList()).get(0);
     }
-    
 
     private String getApproverDesigName(Position pos) {
         return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() != null
                 ? pos.getDeptDesig().getDesignation().getName()
                 : "";
     }
-
 
     @GetMapping("/update/{applicationNumber}")
     public String editLetterToParty(@PathVariable final String applicationNumber, final Model model) {
@@ -250,7 +250,8 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
     }
 
     private void prepareLetterToParty(String applicationNumber, Model model) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
         final List<InspectionLetterToParty> lettertoPartyList = insLettertoPartyService
                 .findByInspectionApplicationOrderByIdDesc(permitInspection.getInspectionApplication());
         InspectionLetterToParty lettertoParty = null;
@@ -260,17 +261,27 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
             model.addAttribute(LETTERTO_PARTY, lettertoParty);
             model.addAttribute(LETTERTOPARTYDOC_LIST, lettertoParty.getLetterToParty().getLetterToPartyDocuments());
         }
-        model.addAttribute(CHECK_LIST_DETAIL_LIST, getCheckListDetailList(permitInspection.getApplication().getServiceType().getId()));
-        model.addAttribute("inspectionApplication", permitInspection.getInspectionApplication());
+        model.addAttribute(CHECK_LIST_DETAIL_LIST,
+                getCheckListDetailList(permitInspection.getApplication().getServiceType().getId()));
+        model.addAttribute(INSPECTION_APPLICATION, permitInspection.getInspectionApplication());
     }
 
     @PostMapping("/update/{applicationNumber}")
-    public String updateLettertoparty(@ModelAttribute("inspectionLetterToParty") final InspectionLetterToParty lettertoparty, final Model model,
-    		@PathVariable final String applicationNumber, final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+    public String updateLettertoparty(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute("inspectionLetterToParty") final InspectionLetterToParty lettertoparty,
+            final BindingResult errors, final Model model,
+            final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) {
+        if (errors.hasErrors()) {
+            prepareLetterToParty(applicationNumber, model);
+            return LETTERTOPARTY_UPDATE;
+        }
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
 
-    	processAndStoreLetterToPartyDocuments(lettertoparty);
-        insLettertoPartyService.save(lettertoparty, permitInspection, lettertoparty.getInspectionApplication().getState().getOwnerPosition().getId());
+        processAndStoreLetterToPartyDocuments(lettertoparty);
+        insLettertoPartyService.save(lettertoparty, permitInspection,
+                lettertoparty.getInspectionApplication().getState().getOwnerPosition().getId());
         redirectAttributes.addFlashAttribute(MESSAGE,
                 messageSource.getMessage(MSG_LETTERTOPARTY_UPDATE_SUCCESS, null, null));
         return REDIRECT_LETTERTOPARTY_RESULT + lettertoparty.getId();
@@ -283,7 +294,7 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
 
         model.addAttribute(LETTERTOPARTYDOC_LIST, lettertoParty.getLetterToParty().getLetterToPartyDocuments());
         model.addAttribute(LETTERTOPARTYLIST,
-        		insLettertoPartyService.findByInspectionApplicationOrderByIdDesc(lettertoParty.getInspectionApplication()));
+                insLettertoPartyService.findByInspectionApplicationOrderByIdDesc(lettertoParty.getInspectionApplication()));
         return LETTERTOPARTY_RESULT;
     }
 
@@ -315,7 +326,7 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
         InspectionLetterToParty lettertoParty = insLettertoPartyService.findById(id);
         model.addAttribute(LETTERTO_PARTY, lettertoParty);
         model.addAttribute(LETTERTOPARTYDOC_LIST, lettertoParty.getLetterToParty().getLetterToPartyDocuments());
-        model.addAttribute("inspectionApplication", lettertoParty.getInspectionApplication());
+        model.addAttribute(INSPECTION_APPLICATION, lettertoParty.getInspectionApplication());
         return LETTERTOPARTY_CAPTURESENTDATE;
     }
 
@@ -323,31 +334,42 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
     public String createLettertoPartyReply(@PathVariable final Long id, final Model model) {
 
         InspectionLetterToParty lettertoParty = insLettertoPartyService.findById(id);
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(lettertoParty.getInspectionApplication().getApplicationNumber());
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(lettertoParty.getInspectionApplication().getApplicationNumber());
 
         model.addAttribute(LETTERTO_PARTY, lettertoParty);
         model.addAttribute(LETTERTOPARTYDOC_LIST, lettertoParty.getLetterToParty().getLetterToPartyDocuments());
-        model.addAttribute("inspectionApplication", lettertoParty.getInspectionApplication());
+        model.addAttribute(INSPECTION_APPLICATION, lettertoParty.getInspectionApplication());
         model.addAttribute(CHECK_LIST_DETAIL_LIST,
                 getCheckListDetailList(permitInspection.getApplication().getServiceType().getId()));
         return LETTERTOPARTY_LPREPLY;
     }
 
     @PostMapping("/lettertopartyreply")
-    public String createLettertoPartyReply(@ModelAttribute final InspectionLetterToParty lettertoparty, final Model model,
-            final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(lettertoparty.getInspectionApplication().getApplicationNumber());
+    public String createLettertoPartyReply(@Valid @ModelAttribute final InspectionLetterToParty lettertoparty,
+            final BindingResult errors, final Model model,
+            final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(lettertoparty.getInspectionApplication().getApplicationNumber());
+        if (errors.hasErrors()) {
+            model.addAttribute(LETTERTO_PARTY, lettertoparty);
+            model.addAttribute(LETTERTOPARTYDOC_LIST, lettertoparty.getLetterToParty().getLetterToPartyDocuments());
+            model.addAttribute(INSPECTION_APPLICATION, lettertoparty.getInspectionApplication());
+            model.addAttribute(CHECK_LIST_DETAIL_LIST,
+                    getCheckListDetailList(permitInspection.getApplication().getServiceType().getId()));
+            return LETTERTOPARTY_LPREPLY;
+        }
 
-    	processAndStoreLetterToPartyDocuments(lettertoparty);
-        InspectionLetterToParty lettertopartyRes = insLettertoPartyService.save(lettertoparty,permitInspection,
-        		permitInspection.getApplication().getState().getOwnerPosition().getId());
+        processAndStoreLetterToPartyDocuments(lettertoparty);
+        InspectionLetterToParty lettertopartyRes = insLettertoPartyService.save(lettertoparty, permitInspection,
+                permitInspection.getApplication().getState().getOwnerPosition().getId());
         permitInspection.setInspectionApplication(lettertopartyRes.getInspectionApplication());
         bpaUtils.updatePortalUserinbox(permitInspection, null);
         redirectAttributes.addFlashAttribute(MESSAGE,
                 messageSource.getMessage(MSG_LETTERTOPARTY_REPLY_SUCCESS, null, null));
         return REDIRECT_LETTERTOPARTY_RESULT + lettertoparty.getId();
-    }  
-    
+    }
+
     @GetMapping("/lettertopartyprint/lp")
     @ResponseBody
     public ResponseEntity<InputStreamResource> generateLettertoPartyCreate(final HttpServletRequest request,
@@ -382,6 +404,6 @@ public class InspectionLetterToPartyController extends BpaGenericApplicationCont
                 .header(CONTENT_DISPOSITION, String.format(INLINE_FILENAME,
                         append(prefixFileName, lpNumber) + PDFEXTN))
                 .body(new InputStreamResource(reportOutput.asInputStream()));
-    }     
-    
+    }
+
 }

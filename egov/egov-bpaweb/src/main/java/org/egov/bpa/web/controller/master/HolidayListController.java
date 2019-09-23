@@ -40,6 +40,15 @@
 
 package org.egov.bpa.web.controller.master;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.bpa.master.entity.Holiday;
 import org.egov.bpa.master.service.HolidayListService;
 import org.egov.bpa.transaction.entity.dto.SearchHolidayList;
@@ -52,161 +61,151 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/holiday")
 public class HolidayListController {
-	private static final String HOLIDAYLIST_RESULT = "holidaylist-result";
-	private static final String SEARCH_HOLIDAYLIST_EDIT = "search-holidayList-edit";
-	private static final String HOLIDAY = "holiday";
-	private static final String HOLIDAYLIST_UPDATE = "holidaylist-update";
-	private static final String HOLIDAYLIST_VIEW = "holidaylist-view";
-	private static final String SEARCH_HOLIDAYLIST_VIEW = "search-holidaylist-view";
-	private static final String HOLIDAYLIST_NEW = "holidaylist-new";
-	private static final String DATA = "{ \"data\":";
+    private static final String HOLIDAY_TYPE = "holidayType";
+    private static final String HOLIDAYLIST_RESULT = "holidaylist-result";
+    private static final String SEARCH_HOLIDAYLIST_EDIT = "search-holidayList-edit";
+    private static final String HOLIDAY = "holiday";
+    private static final String HOLIDAYLIST_UPDATE = "holidaylist-update";
+    private static final String HOLIDAYLIST_VIEW = "holidaylist-view";
+    private static final String SEARCH_HOLIDAYLIST_VIEW = "search-holidaylist-view";
+    private static final String HOLIDAYLIST_NEW = "holidaylist-new";
+    private static final String DATA = "{ \"data\":";
 
-	@Autowired
-	private HolidayListService holidayListService;
+    @Autowired
+    private HolidayListService holidayListService;
 
-	@Autowired
-	private MessageSource messageSource;
+    @Autowired
+    private MessageSource messageSource;
 
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public String showHolidaYList(final Model model) {
-		model.addAttribute(HOLIDAY, new Holiday());
-		model.addAttribute("holidayType", Arrays.asList(HolidayType.values()));
-		return HOLIDAYLIST_NEW;
-	}
+    @GetMapping("/create")
+    public String showHolidaYList(final Model model) {
+        model.addAttribute(HOLIDAY, new Holiday());
+        model.addAttribute(HOLIDAY_TYPE, Arrays.asList(HolidayType.values()));
+        return HOLIDAYLIST_NEW;
+    }
 
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String createHolidayList(@ModelAttribute(HOLIDAY) final Holiday holiday, final Model model,
-			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-		holidayListService.validateCreateHolidayList(holiday, errors);
-		
-		if (errors.hasErrors()) {
-			return HOLIDAYLIST_NEW;
-		}
-		Date d = holiday.getHolidaysTemp().get(0).getHolidayDate();
-		if(d == null)
-			d = new Date();
-		if (!holidayListService.getPreLoadedGeneralHolidays(DateUtils.toYearFormat(d))) {
-			List<Holiday> saturdayList = holidayListService.listOfSecondSaturday(d);
-			List<Holiday> sundayList = holidayListService.listOfSunday(d);
-			holiday.getHolidaysTemp().addAll(saturdayList);
-			holiday.getHolidaysTemp().addAll(sundayList);
-		}
-		for (Holiday hlday : holiday.getHolidaysTemp())
-			hlday.setYear(DateUtils.toYearFormat(hlday.getHolidayDate()));
+    @PostMapping("/create")
+    public String createHolidayList(@Valid @ModelAttribute(HOLIDAY) final Holiday holiday, final BindingResult errors,
+            final Model model, final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
+        holidayListService.validateCreateHolidayList(holiday, errors);
 
+        if (errors.hasErrors()) {
+            model.addAttribute(HOLIDAY, holiday);
+            model.addAttribute(HOLIDAY_TYPE, Arrays.asList(HolidayType.values()));
+            return HOLIDAYLIST_NEW;
+        }
+        Date d = holiday.getHolidaysTemp().get(0).getHolidayDate();
+        if (d == null)
+            d = new Date();
+        if (!holidayListService.getPreLoadedGeneralHolidays(DateUtils.toYearFormat(d))) {
+            List<Holiday> saturdayList = holidayListService.listOfSecondSaturday(d);
+            List<Holiday> sundayList = holidayListService.listOfSunday(d);
+            holiday.getHolidaysTemp().addAll(saturdayList);
+            holiday.getHolidaysTemp().addAll(sundayList);
+        }
+        for (Holiday hlday : holiday.getHolidaysTemp())
+            hlday.setYear(DateUtils.toYearFormat(hlday.getHolidayDate()));
 
-		holidayListService.save(holiday.getHolidaysTemp());
-		redirectAttributes.addFlashAttribute("message",
-				messageSource.getMessage("msg.create.holiday.success", null, null));
-		return "redirect:/holiday/result";
-	}
+        holidayListService.save(holiday.getHolidaysTemp());
+        redirectAttributes.addFlashAttribute("message",
+                messageSource.getMessage("msg.create.holiday.success", null, null));
+        return "redirect:/holiday/result";
+    }
 
-	@RequestMapping(value = "/search/update", method = RequestMethod.GET)
-	public String searchEditHolidayList(final Model model) {
-		model.addAttribute("holidayType", Arrays.asList(HolidayType.values()));
-		model.addAttribute(HOLIDAY, new SearchHolidayList());
-		return SEARCH_HOLIDAYLIST_EDIT;
-	}
+    @GetMapping("/search/update")
+    public String searchEditHolidayList(final Model model) {
+        model.addAttribute(HOLIDAY_TYPE, Arrays.asList(HolidayType.values()));
+        model.addAttribute(HOLIDAY, new SearchHolidayList());
+        return SEARCH_HOLIDAYLIST_EDIT;
+    }
 
-	@RequestMapping(value = "/search/update", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public String getHolidayListResultForEdit(final Model model,
-			@ModelAttribute final SearchHolidayList searchHolidayList) {
-		final List<SearchHolidayList> searchResultList = holidayListService.search(searchHolidayList);
+    @PostMapping(value = "/search/update", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getHolidayListResultForEdit(final Model model,
+            @ModelAttribute final SearchHolidayList searchHolidayList) {
+        final List<SearchHolidayList> searchResultList = holidayListService.search(searchHolidayList);
 
-		return new StringBuilder(DATA)
-				.append(toJSON(searchResultList, SearchHolidayList.class, HolidayListJsonAdaptor.class)).append("}")
-				.toString();
-	}
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, SearchHolidayList.class, HolidayListJsonAdaptor.class)).append("}")
+                .toString();
+    }
 
-	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
-	public String editHolidayList(@PathVariable final Long id, final Model model) {
-		final Holiday holidayList = holidayListService.findById(id);
-		preapreUpdateModel(holidayList, model);
-		return HOLIDAYLIST_UPDATE;
-	}
+    @GetMapping("/update/{id}")
+    public String editHolidayList(@PathVariable final Long id, final Model model) {
+        final Holiday holidayList = holidayListService.findById(id);
+        preapreUpdateModel(holidayList, model);
+        return HOLIDAYLIST_UPDATE;
+    }
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String updateHolidayList(@ModelAttribute(HOLIDAY) final Holiday holidayList, final Model model,
-			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-		holidayListService.validateUpdateHolidayList(holidayList, errors);
-		if (errors.hasErrors()) {
-			preapreUpdateModel(holidayList, model);
-			return HOLIDAYLIST_UPDATE;
-		}
+    @PostMapping("/update")
+    public String updateHolidayList(@Valid @ModelAttribute(HOLIDAY) final Holiday holidayList,
+            final BindingResult errors, final Model model, final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) {
+        holidayListService.validateUpdateHolidayList(holidayList, errors);
+        if (errors.hasErrors()) {
+            preapreUpdateModel(holidayList, model);
+            return HOLIDAYLIST_UPDATE;
+        }
 
-		holidayListService.update(holidayList);
-		redirectAttributes.addFlashAttribute("message",
-				messageSource.getMessage("msg.update.holiday.success", null, null));
-		return "redirect:/holiday/result";
-	}
+        holidayListService.update(holidayList);
+        redirectAttributes.addFlashAttribute("message",
+                messageSource.getMessage("msg.update.holiday.success", null, null));
+        return "redirect:/holiday/result";
+    }
 
-	private void preapreUpdateModel(final Holiday holidayList, final Model model) {
-		model.addAttribute(HOLIDAY, holidayList);
-	}
+    private void preapreUpdateModel(final Holiday holidayList, final Model model) {
+        model.addAttribute(HOLIDAY, holidayList);
+    }
 
-	@RequestMapping(value = "/search/view", method = RequestMethod.GET)
-	public String searchViewHolidayList(final Model model) {
-		model.addAttribute("holidayType", Arrays.asList(HolidayType.values()));
-		model.addAttribute(HOLIDAY, new Holiday());
-		return SEARCH_HOLIDAYLIST_VIEW;
-	}
+    @GetMapping("/search/view")
+    public String searchViewHolidayList(final Model model) {
+        model.addAttribute(HOLIDAY_TYPE, Arrays.asList(HolidayType.values()));
+        model.addAttribute(HOLIDAY, new Holiday());
+        return SEARCH_HOLIDAYLIST_VIEW;
+    }
 
-	@RequestMapping(value = "/search/view", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
-	@ResponseBody
-	public String getHolidayListForView(@ModelAttribute final SearchHolidayList holidayList, final Model model) {
-		final List<SearchHolidayList> searchResultList = holidayListService.search(holidayList);
-		return new StringBuilder(DATA)
-				.append(toJSON(searchResultList, SearchHolidayList.class, HolidayListJsonAdaptor.class)).append("}")
-				.toString();
-	}
+    @PostMapping(value = "/search/view", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getHolidayListForView(@Valid @ModelAttribute final SearchHolidayList holidayList, final Model model) {
+        final List<SearchHolidayList> searchResultList = holidayListService.search(holidayList);
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, SearchHolidayList.class, HolidayListJsonAdaptor.class)).append("}")
+                .toString();
+    }
 
-	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-	public String viewHolidayList(@PathVariable final Long id, final Model model) {
-		model.addAttribute("holidayType", HolidayType.values());
+    @GetMapping("/view/{id}")
+    public String viewHolidayList(@PathVariable final Long id, final Model model) {
+        model.addAttribute(HOLIDAY_TYPE, HolidayType.values());
 
-		model.addAttribute(HOLIDAY, holidayListService.findById(id));
-		return HOLIDAYLIST_VIEW;
-	}
+        model.addAttribute(HOLIDAY, holidayListService.findById(id));
+        return HOLIDAYLIST_VIEW;
+    }
 
-	@RequestMapping(value = "/result", method = RequestMethod.GET)
-	public String resultHolidayList(final Model model) {
-		return HOLIDAYLIST_RESULT;
-	}
+    @GetMapping("/result")
+    public String resultHolidayList(final Model model) {
+        return HOLIDAYLIST_RESULT;
+    }
 
-	/*
-	 * @RequestMapping(value = "/markasworkingday/{id}", method =
-	 * RequestMethod.GET) public String deleteHolidayList(@PathVariable final
-	 * Long id, final Model model) { final Holiday holidayList =
-	 * holidayListService.findById(id); preapreUpdateModel(holidayList, model);
-	 * return HOLIDAYLIST_UPDATE; }
-	 * 
-	 * @RequestMapping(value = "/markasworkingday/{id}", method =
-	 * RequestMethod.GET) public String deleteHolidayList(@PathVariable final
-	 * Long id, final Model model, final HttpServletRequest request, final
-	 * BindingResult errors, final RedirectAttributes redirectAttributes) { if
-	 * (errors.hasErrors()) { return HOLIDAYLIST_UPDATE; }
-	 * holidayListService.delete(id);
-	 * redirectAttributes.addFlashAttribute("message",
-	 * messageSource.getMessage("msg.mark.work.holiday.success", null, null));
-	 * return "redirect:/holiday/result"; }
-	 */
+    /*
+     * @RequestMapping(value = "/markasworkingday/{id}", method = RequestMethod.GET) public String deleteHolidayList(@PathVariable
+     * final Long id, final Model model) { final Holiday holidayList = holidayListService.findById(id);
+     * preapreUpdateModel(holidayList, model); return HOLIDAYLIST_UPDATE; }
+     * @RequestMapping(value = "/markasworkingday/{id}", method = RequestMethod.GET) public String deleteHolidayList(@PathVariable
+     * final Long id, final Model model, final HttpServletRequest request, final BindingResult errors, final RedirectAttributes
+     * redirectAttributes) { if (errors.hasErrors()) { return HOLIDAYLIST_UPDATE; } holidayListService.delete(id);
+     * redirectAttributes.addFlashAttribute("message", messageSource.getMessage("msg.mark.work.holiday.success", null, null));
+     * return "redirect:/holiday/result"; }
+     */
 
 }
