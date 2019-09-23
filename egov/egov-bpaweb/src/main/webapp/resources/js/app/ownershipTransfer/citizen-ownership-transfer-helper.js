@@ -314,8 +314,8 @@ jQuery(document).ready(function ($) {
 																			+ '">'
 																			+ '<input type="hidden"  name="ownershipTransferDocuments['
 																			+ index
-																			+ '].document.serviceChecklist.isMandatory" value="'
-																			+ checklist.isMandatory
+																			+ '].document.serviceChecklist.mandatory" value="'
+																			+ checklist.mandatory
 																			+ '">'
 																			+ '<input type="hidden"  name="ownershipTransferDocuments['
 																			+ index
@@ -323,17 +323,17 @@ jQuery(document).ready(function ($) {
 																			+ checklist.checklistDesc
 																			+ '">'
 																			+ checklist.checklistDesc
-																			+ (checklist.isMandatory ? '<span class="mandatory"></span>'
+																			+ (checklist.mandatory ? '<span class="mandatory"></span>'
 																					: '')
 																			+ '</div>'
-																			+ '<div class="col-sm-2 add-margin "><input type="checkbox" name="ownershipTransferDocuments['
+																			/*+ '<div class="col-sm-2 add-margin "><input type="checkbox" name="ownershipTransferDocuments['
 																			+ index
-																			+ '].document.issubmitted" /></div>'
+																			+ '].document.issubmitted" /></div>'*/
 																			+ '<div class="col-sm-3 add-margin "><div class="input-group"><textarea class="form-control patternvalidation" data-pattern="string" maxlength="256" name="ownershipTransferDocuments['
 																			+ index
 																			+ '].document.remarks" /></div></div>'
-																			+ '<div class="col-sm-4 add-margin "><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
-																			+ (checklist.isMandatory ? "required"
+																			+ '<div class="col-sm-6 add-margin "><div class="files-upload-container" data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff" '
+																			+ (checklist.mandatory ? "required"
 																					: '')
 																			+ '> <div class="files-viewer"> <a href="javascript:void(0);" class="file-add" data-unlimited-files="true" data-toggle="tooltip" data-placement="top" tittle="Test Tooltip" data-file-input-name="ownershipTransferDocuments['
 																			+ index
