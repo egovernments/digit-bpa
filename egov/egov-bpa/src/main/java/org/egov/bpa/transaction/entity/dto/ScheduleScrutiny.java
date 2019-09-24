@@ -52,42 +52,42 @@ import java.util.Date;
 import org.hibernate.validator.constraints.SafeHtml;
 
 public class ScheduleScrutiny {
-	private Long applicationId;
-	@SafeHtml
-	private String appointmentTime;
-	private Date appointmentDate;
-	@SafeHtml
-	private String reScheduledBy;
+    private Long applicationId;
+    @SafeHtml
+    private String appointmentTime;
+    private Date appointmentDate;
+    @SafeHtml
+    private String reScheduledBy;
 
-	public Long getApplicationId() {
-		return applicationId;
-	}
+    public Long getApplicationId() {
+        return applicationId;
+    }
 
-	public void setApplicationId(Long applicationId) {
-		this.applicationId = applicationId;
-	}
+    public void setApplicationId(Long applicationId) {
+        this.applicationId = applicationId;
+    }
 
-	public String getAppointmentTime() {
-		return appointmentTime;
-	}
+    public String getAppointmentTime() {
+        return appointmentTime;
+    }
 
-	public void setAppointmentTime(String appointmentTime) {
-		this.appointmentTime = appointmentTime;
-	}
+    public void setAppointmentTime(String appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
 
-	public Date getAppointmentDate() {
-		return appointmentDate;
-	}
+    public Date getAppointmentDate() {
+        return appointmentDate;
+    }
 
-	public void setAppointmentDate(Date appointmentDate) {
-		this.appointmentDate = appointmentDate;
-	}
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
 
-	public String getReScheduledBy() {
-		return reScheduledBy;
-	}
+    public String getReScheduledBy() {
+        return reScheduledBy;
+    }
 
-	public void setReScheduledBy(String reScheduledBy) {
-		this.reScheduledBy = reScheduledBy;
-	}
+    public void setReScheduledBy(String reScheduledBy) {
+        this.reScheduledBy = reScheduledBy;
+    }
 }

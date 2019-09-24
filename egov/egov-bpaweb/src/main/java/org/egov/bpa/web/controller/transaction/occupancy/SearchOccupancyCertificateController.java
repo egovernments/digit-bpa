@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.entity.oc.OCNocDocuments;
@@ -74,6 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -114,7 +116,15 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
 
     @PostMapping(value = "/occupancy-certificate/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchRegisterStatusMarriageRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+    public String searchRegisterStatusMarriageRecords(
+            @Valid @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm,
+            final BindingResult result, final Model model) {
+        if (result.hasErrors()) {
+            prepareFormData(model);
+            model.addAttribute("serviceTypeList", serviceTypeService.getOccupancyCertificateRequiredServiceTypes());
+            model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+            return "search-occupany-certificate";
+        }
         return new DataTable<>(searchOCService.pagedSearch(searchBpaApplicationForm),
                 searchBpaApplicationForm.draw())
                         .toJson(SearchBpaApplicationAdaptor.class);
@@ -125,14 +135,15 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
             final HttpServletRequest request) {
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         List<OccupancyNocApplication> nocApplication = ocNocService.findByOCApplicationNumber(applicationNumber);
-        model.addAttribute("nocApplication",nocApplication);
+        model.addAttribute("nocApplication", nocApplication);
         for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
-			for (OccupancyNocApplication ona : nocApplication) {
-				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
-					nocDocument.setOcNoc(ona);
-				}
-			}
-		}
+            for (OccupancyNocApplication ona : nocApplication) {
+                if (nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode()
+                        .equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
+                    nocDocument.setOcNoc(ona);
+                }
+            }
+        }
         model.addAttribute("occupancyCertificate", oc);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         model.addAttribute(APPLICATION_HISTORY,
@@ -147,12 +158,17 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
 
     @GetMapping("/occupancy-certificate/search/document-scrutiny")
     public String showDocumentScrutinyPendingRecords(final Model model) {
+        documentScrutinyFormData(model, new SearchBpaApplicationForm());
+        return "search-document-scrutiny-oc";
+    }
+
+    private void documentScrutinyFormData(final Model model, final SearchBpaApplicationForm searchBpaApplicationForm) {
         Set<Boundary> employeeMappedZone = new HashSet<>();
         Set<Boundary> mappedElectionWard = new HashSet<>();
         Set<Boundary> electionWards = new HashSet<>();
         Set<Boundary> revenueWards = new HashSet<>();
         Set<Boundary> revWards = new HashSet<>();
-        String isUnattendedCancelled=bpaUtils.getAppconfigValueByKeyName(AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_OC);
+        String isUnattendedCancelled = bpaUtils.getAppconfigValueByKeyName(AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_OC);
         BoundaryType revenueType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
         final Employee employee = employeeService.getEmployeeById(securityUtils.getCurrentUser().getId());
         for (Jurisdiction jurisdiction : employee.getJurisdictions()) {
@@ -175,17 +191,21 @@ public class SearchOccupancyCertificateController extends BpaGenericApplicationC
                                 REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
             }
         }
-        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+        model.addAttribute("searchBpaApplicationForm", searchBpaApplicationForm);
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
-        model.addAttribute("isUnattendedCancelled",isUnattendedCancelled);
-        return "search-document-scrutiny-oc";
+        model.addAttribute("isUnattendedCancelled", isUnattendedCancelled);
     }
 
     @PostMapping(value = "/occupancy-certificate/search/document-scrutiny", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchDocumentScrutinyPendingRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+    public String searchDocumentScrutinyPendingRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm,
+            final BindingResult result, final Model model) {
+        if (result.hasErrors()) {
+            documentScrutinyFormData(model, searchBpaApplicationForm);
+            return "search-document-scrutiny-oc";
+        }
         return new DataTable<>(searchOCService.searchForDocumentScrutinyPending(searchBpaApplicationForm),
                 searchBpaApplicationForm.draw())
                         .toJson(SearchBpaApplicationAdaptor.class);

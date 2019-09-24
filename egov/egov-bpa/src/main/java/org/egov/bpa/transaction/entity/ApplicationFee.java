@@ -68,111 +68,111 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = ApplicationFee.SEQ_APPLICATIONFEE, sequenceName = ApplicationFee.SEQ_APPLICATIONFEE, allocationSize = 1)
 public class ApplicationFee extends StateAware<Position> {
 
-	public static final String SEQ_APPLICATIONFEE = "SEQ_EGBPA_APPLICATION_FEE";
-	private static final long serialVersionUID = 3078684328383202788L;
-	@Id
-	@GeneratedValue(generator = SEQ_APPLICATIONFEE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    public static final String SEQ_APPLICATIONFEE = "SEQ_EGBPA_APPLICATION_FEE";
+    private static final long serialVersionUID = 3078684328383202788L;
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICATIONFEE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@NotNull
-	private Date feeDate;
+    @NotNull
+    private Date feeDate;
 
-	@SafeHtml
-	@Size(min = 1, max = 1024)
-	private String feeRemarks;
+    @SafeHtml
+    @Size(min = 1, max = 1024)
+    private String feeRemarks;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "status")
-	private BpaStatus status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status")
+    private BpaStatus status;
 
-	@SafeHtml
-	@Size(min = 1, max = 128)
-	private String challanNumber;
+    @SafeHtml
+    @Size(min = 1, max = 128)
+    private String challanNumber;
 
-	@Valid
-	@OrderBy("id ASC")
-	@OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ApplicationFeeDetail> applicationFeeDetail = new ArrayList<>();
+    @Valid
+    @OrderBy("id ASC")
+    @OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ApplicationFeeDetail> applicationFeeDetail = new ArrayList<>();
 
-	private Boolean isRevised = false;
+    private Boolean isRevised = false;
 
-	@SafeHtml
-	@Size(min = 1, max = 512)
-	private String modifyFeeReason;
+    @SafeHtml
+    @Size(min = 1, max = 512)
+    private String modifyFeeReason;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public Date getFeeDate() {
-		return feeDate;
-	}
+    public Date getFeeDate() {
+        return feeDate;
+    }
 
-	public void setFeeDate(final Date feeDate) {
-		this.feeDate = feeDate;
-	}
+    public void setFeeDate(final Date feeDate) {
+        this.feeDate = feeDate;
+    }
 
-	public String getFeeRemarks() {
-		return feeRemarks;
-	}
+    public String getFeeRemarks() {
+        return feeRemarks;
+    }
 
-	public void setFeeRemarks(final String feeRemarks) {
-		this.feeRemarks = feeRemarks;
-	}
+    public void setFeeRemarks(final String feeRemarks) {
+        this.feeRemarks = feeRemarks;
+    }
 
-	public BpaStatus getStatus() {
-		return status;
-	}
+    public BpaStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(final BpaStatus status) {
-		this.status = status;
-	}
+    public void setStatus(final BpaStatus status) {
+        this.status = status;
+    }
 
-	public String getChallanNumber() {
-		return challanNumber;
-	}
+    public String getChallanNumber() {
+        return challanNumber;
+    }
 
-	public void setChallanNumber(final String challanNumber) {
-		this.challanNumber = challanNumber;
-	}
+    public void setChallanNumber(final String challanNumber) {
+        this.challanNumber = challanNumber;
+    }
 
-	@Override
-	public String getStateDetails() {
-		return "";
-	}
+    @Override
+    public String getStateDetails() {
+        return "";
+    }
 
-	public List<ApplicationFeeDetail> getApplicationFeeDetail() {
-		return applicationFeeDetail;
-	}
+    public List<ApplicationFeeDetail> getApplicationFeeDetail() {
+        return applicationFeeDetail;
+    }
 
-	public void setApplicationFeeDetail(final List<ApplicationFeeDetail> applicationFeeDetail) {
-		this.applicationFeeDetail = applicationFeeDetail;
-	}
+    public void setApplicationFeeDetail(final List<ApplicationFeeDetail> applicationFeeDetail) {
+        this.applicationFeeDetail = applicationFeeDetail;
+    }
 
-	public Boolean getIsRevised() {
-		return isRevised;
-	}
+    public Boolean getIsRevised() {
+        return isRevised;
+    }
 
-	public void setIsRevised(Boolean isRevised) {
-		this.isRevised = isRevised;
-	}
+    public void setIsRevised(Boolean isRevised) {
+        this.isRevised = isRevised;
+    }
 
-	public String getModifyFeeReason() {
-		return modifyFeeReason;
-	}
+    public String getModifyFeeReason() {
+        return modifyFeeReason;
+    }
 
-	public void setModifyFeeReason(String modifyFeeReason) {
-		this.modifyFeeReason = modifyFeeReason;
-	}
+    public void setModifyFeeReason(String modifyFeeReason) {
+        this.modifyFeeReason = modifyFeeReason;
+    }
 
-	public void addApplicationFeeDetail(ApplicationFeeDetail applicationFeeDtl) {
-		if (this.applicationFeeDetail != null)
-			this.applicationFeeDetail.add(applicationFeeDtl);
-	}
+    public void addApplicationFeeDetail(ApplicationFeeDetail applicationFeeDtl) {
+        if (this.applicationFeeDetail != null)
+            this.applicationFeeDetail.add(applicationFeeDtl);
+    }
 }

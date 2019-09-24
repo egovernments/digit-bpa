@@ -72,91 +72,91 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = PlanScrutinyChecklistCommon.SEQ_PLAN_SCRUTINY, sequenceName = PlanScrutinyChecklistCommon.SEQ_PLAN_SCRUTINY, allocationSize = 1)
 public class PlanScrutinyChecklistCommon extends AbstractAuditable {
 
-	protected static final String SEQ_PLAN_SCRUTINY = "seq_egbpa_plan_scrutiny_checklist_common";
-	private static final long serialVersionUID = -4606373944456639905L;
+    protected static final String SEQ_PLAN_SCRUTINY = "seq_egbpa_plan_scrutiny_checklist_common";
+    private static final long serialVersionUID = -4606373944456639905L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_PLAN_SCRUTINY, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_PLAN_SCRUTINY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "inspection", nullable = false)
-	private InspectionCommon inspection;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "inspection", nullable = false)
+    private InspectionCommon inspection;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "serviceChecklist", nullable = false)
-	private ChecklistServiceTypeMapping serviceChecklist;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "serviceChecklist", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
 
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private ChecklistValues scrutinyValue;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ChecklistValues scrutinyValue;
 
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private ScrutinyChecklistType scrutinyChecklistType;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ScrutinyChecklistType scrutinyChecklistType;
 
-	@SafeHtml
-	private String remarks;
+    @SafeHtml
+    private String remarks;
 
-	@PositiveOrZero
-	private Integer orderNumber;
+    @PositiveOrZero
+    private Integer orderNumber;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public InspectionCommon getInspection() {
-		return inspection;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
 
-	public void setInspection(InspectionCommon inspection) {
-		this.inspection = inspection;
-	}
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
 
-	public ChecklistServiceTypeMapping getServiceChecklist() {
-		return serviceChecklist;
-	}
+    public ChecklistServiceTypeMapping getServiceChecklist() {
+        return serviceChecklist;
+    }
 
-	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-		this.serviceChecklist = serviceChecklist;
-	}
+    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
+    }
 
-	public ChecklistValues getScrutinyValue() {
-		return scrutinyValue;
-	}
+    public ChecklistValues getScrutinyValue() {
+        return scrutinyValue;
+    }
 
-	public void setScrutinyValue(ChecklistValues scrutinyValue) {
-		this.scrutinyValue = scrutinyValue;
-	}
+    public void setScrutinyValue(ChecklistValues scrutinyValue) {
+        this.scrutinyValue = scrutinyValue;
+    }
 
-	public ScrutinyChecklistType getScrutinyChecklistType() {
-		return scrutinyChecklistType;
-	}
+    public ScrutinyChecklistType getScrutinyChecklistType() {
+        return scrutinyChecklistType;
+    }
 
-	public void setScrutinyChecklistType(ScrutinyChecklistType scrutinyChecklistType) {
-		this.scrutinyChecklistType = scrutinyChecklistType;
-	}
+    public void setScrutinyChecklistType(ScrutinyChecklistType scrutinyChecklistType) {
+        this.scrutinyChecklistType = scrutinyChecklistType;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-	public Integer getOrderNumber() {
-		return orderNumber;
-	}
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setOrderNumber(Integer orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
 }

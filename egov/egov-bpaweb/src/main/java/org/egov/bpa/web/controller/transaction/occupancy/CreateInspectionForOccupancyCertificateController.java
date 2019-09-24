@@ -86,8 +86,14 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
     }
 
     @PostMapping("/create-inspection/{applicationNumber}")
-    public String createInspection(@Valid @ModelAttribute final OCInspection ocInspection,
-            @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+    public String createInspection(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute("ocInspection") final OCInspection ocInspection,
+            final BindingResult resultBinder,
+            final Model model) {
+        if (resultBinder.hasErrors()) {
+            loadApplication(model, applicationNumber);
+            return CREATE_INSPECTION;
+        }
         final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
         // ocInspection.getInspection().setDocket(ocInspectionService.buildDocDetFromUI(ocInspection));

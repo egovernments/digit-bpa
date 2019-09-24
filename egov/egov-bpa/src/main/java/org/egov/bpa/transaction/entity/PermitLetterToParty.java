@@ -48,46 +48,46 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = PermitLetterToParty.SEQ_LETTERTOPARTY, sequenceName = PermitLetterToParty.SEQ_LETTERTOPARTY, allocationSize = 1)
 public class PermitLetterToParty extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_LETTERTOPARTY = "seq_egbpa_permit_letter_to_party";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_LETTERTOPARTY = "seq_egbpa_permit_letter_to_party";
 
-	@Id
-	@GeneratedValue(generator = SEQ_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "application", nullable = false)
-	private BpaApplication application;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "letterToParty", nullable = false)
-	private LetterToPartyCommon letterToParty;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "letterToParty", nullable = false)
+    private LetterToPartyCommon letterToParty;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public void setApplication(BpaApplication application) {
-		this.application = application;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
 
-	public LetterToPartyCommon getLetterToParty() {
-		return letterToParty;
-	}
+    public LetterToPartyCommon getLetterToParty() {
+        return letterToParty;
+    }
 
-	public void setLetterToParty(LetterToPartyCommon letterToParty) {
-		this.letterToParty = letterToParty;
-	}
+    public void setLetterToParty(LetterToPartyCommon letterToParty) {
+        this.letterToParty = letterToParty;
+    }
 
 }

@@ -65,9 +65,9 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = PermitFee.SEQ_EGBPA_PERMIT_FEE, sequenceName = PermitFee.SEQ_EGBPA_PERMIT_FEE, allocationSize = 1)
 public class PermitFee extends AbstractAuditable {
 
-	private static final long serialVersionUID = 5453896334585849094L;
+    private static final long serialVersionUID = 5453896334585849094L;
 
-	public static final String SEQ_EGBPA_PERMIT_FEE = "seq_egbpa_permit_fee";
+    public static final String SEQ_EGBPA_PERMIT_FEE = "seq_egbpa_permit_fee";
 
     @Id
     @GeneratedValue(generator = SEQ_EGBPA_PERMIT_FEE, strategy = GenerationType.SEQUENCE)

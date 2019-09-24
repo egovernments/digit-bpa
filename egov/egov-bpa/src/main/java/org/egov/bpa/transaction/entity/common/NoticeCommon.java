@@ -69,56 +69,56 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = NoticeCommon.SEQ_BPA_NOTICE_COMMON, sequenceName = NoticeCommon.SEQ_BPA_NOTICE_COMMON, allocationSize = 1)
 public class NoticeCommon extends AbstractAuditable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	public static final String SEQ_BPA_NOTICE_COMMON = "SEQ_EGBPA_NOTICE_COMMON";
+    public static final String SEQ_BPA_NOTICE_COMMON = "SEQ_EGBPA_NOTICE_COMMON";
 
-	@Id
-	@GeneratedValue(generator = SEQ_BPA_NOTICE_COMMON, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_BPA_NOTICE_COMMON, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	private Date noticeGeneratedDate;
+    private Date noticeGeneratedDate;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "noticeFileStore")
-	private FileStoreMapper noticeFileStore;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "noticeFileStore")
+    private FileStoreMapper noticeFileStore;
 
-	@SafeHtml
-	private String noticeType;
+    @SafeHtml
+    private String noticeType;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public FileStoreMapper getNoticeFileStore() {
-		return noticeFileStore;
-	}
+    public FileStoreMapper getNoticeFileStore() {
+        return noticeFileStore;
+    }
 
-	public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
-		this.noticeFileStore = noticeFileStore;
-	}
+    public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
+        this.noticeFileStore = noticeFileStore;
+    }
 
-	public Date getNoticeGeneratedDate() {
-		return noticeGeneratedDate;
-	}
+    public Date getNoticeGeneratedDate() {
+        return noticeGeneratedDate;
+    }
 
-	public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
-		this.noticeGeneratedDate = noticeGeneratedDate;
-	}
+    public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
+        this.noticeGeneratedDate = noticeGeneratedDate;
+    }
 
-	public String getNoticeType() {
-		return noticeType;
-	}
+    public String getNoticeType() {
+        return noticeType;
+    }
 
-	public void setNoticeType(String noticeType) {
-		this.noticeType = noticeType;
-	}
+    public void setNoticeType(String noticeType) {
+        this.noticeType = noticeType;
+    }
 
 }

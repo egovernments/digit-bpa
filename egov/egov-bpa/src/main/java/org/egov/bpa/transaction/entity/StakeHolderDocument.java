@@ -56,77 +56,77 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = StakeHolderDocument.SEQ_STAKEHOLDER_DOCUMENT, sequenceName = StakeHolderDocument.SEQ_STAKEHOLDER_DOCUMENT, allocationSize = 1, schema = "state")
 public class StakeHolderDocument extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_STAKEHOLDER_DOCUMENT = "SEQ_EGBPA_STAKEHOLDER_Document";
-	
-	@Id
-	@GeneratedValue(generator = SEQ_STAKEHOLDER_DOCUMENT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_STAKEHOLDER_DOCUMENT = "SEQ_EGBPA_STAKEHOLDER_Document";
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "checklistdetail")
-	private CheckListDetail checkListDetail;
+    @Id
+    @GeneratedValue(generator = SEQ_STAKEHOLDER_DOCUMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "stakeHolder")
-	private StakeHolder stakeHolder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "checklistdetail")
+    private CheckListDetail checkListDetail;
 
-	private Boolean isAttached;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stakeHolder")
+    private StakeHolder stakeHolder;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "egbpa_stakeholder_support_documents", schema = "state", joinColumns = @JoinColumn(name = "stakeholderdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
-	private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+    private Boolean isAttached;
 
-	private transient MultipartFile[] files;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "egbpa_stakeholder_support_documents", schema = "state", joinColumns = @JoinColumn(name = "stakeholderdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    private transient MultipartFile[] files;
 
-	@Override
-	protected void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public StakeHolder getStakeHolder() {
-		return stakeHolder;
-	}
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
-	public void setStakeHolder(final StakeHolder stakeHolder) {
-		this.stakeHolder = stakeHolder;
-	}
+    public StakeHolder getStakeHolder() {
+        return stakeHolder;
+    }
 
-	public Boolean getIsAttached() {
-		return isAttached;
-	}
+    public void setStakeHolder(final StakeHolder stakeHolder) {
+        this.stakeHolder = stakeHolder;
+    }
 
-	public void setIsAttached(final Boolean isAttached) {
-		this.isAttached = isAttached;
-	}
+    public Boolean getIsAttached() {
+        return isAttached;
+    }
 
-	public CheckListDetail getCheckListDetail() {
-		return checkListDetail;
-	}
+    public void setIsAttached(final Boolean isAttached) {
+        this.isAttached = isAttached;
+    }
 
-	public void setCheckListDetail(final CheckListDetail checkListDetail) {
-		this.checkListDetail = checkListDetail;
-	}
+    public CheckListDetail getCheckListDetail() {
+        return checkListDetail;
+    }
 
-	public MultipartFile[] getFiles() {
-		return files;
-	}
+    public void setCheckListDetail(final CheckListDetail checkListDetail) {
+        this.checkListDetail = checkListDetail;
+    }
 
-	public void setFiles(MultipartFile[] files) {
-		this.files = files;
-	}
+    public MultipartFile[] getFiles() {
+        return files;
+    }
 
-	public Set<FileStoreMapper> getSupportDocs() {
-		return supportDocs;
-	}
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
 
-	public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
-		this.supportDocs = supportDocs;
-	}
+    public Set<FileStoreMapper> getSupportDocs() {
+        return supportDocs;
+    }
+
+    public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
+        this.supportDocs = supportDocs;
+    }
 
 }

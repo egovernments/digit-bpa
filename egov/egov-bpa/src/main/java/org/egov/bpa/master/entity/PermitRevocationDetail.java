@@ -78,126 +78,126 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = PermitRevocationDetail.SEQ_REVOCATION_DETAIL, sequenceName = PermitRevocationDetail.SEQ_REVOCATION_DETAIL, allocationSize = 1)
 public class PermitRevocationDetail extends AbstractAuditable {
 
-	/**
-	* 
-	*/
-	private static final long serialVersionUID = -3497037801478484778L;
-	public static final String SEQ_REVOCATION_DETAIL = "SEQ_EGBPA_PERMIT_REVOCATION_DETAIL";
+    /**
+    * 
+    */
+    private static final long serialVersionUID = -3497037801478484778L;
+    public static final String SEQ_REVOCATION_DETAIL = "SEQ_EGBPA_PERMIT_REVOCATION_DETAIL";
 
-	@Id
-	@GeneratedValue(generator = SEQ_REVOCATION_DETAIL, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "revocation", nullable = false)
-	private PermitRevocation revocation;
+    @Id
+    @GeneratedValue(generator = SEQ_REVOCATION_DETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "revocation", nullable = false)
+    private PermitRevocation revocation;
 
-	@SafeHtml
-	@Length(min = 1, max = 256)
-	private String natureOfRequest;
+    @SafeHtml
+    @Length(min = 1, max = 256)
+    private String natureOfRequest;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date requestDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date requestDate;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date replyDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date replyDate;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String issuedBy;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String issuedBy;
 
-	@SafeHtml
-	@Length(min = 1, max = 512)
-	private String remarks;
+    @SafeHtml
+    @Length(min = 1, max = 512)
+    private String remarks;
 
-	@PositiveOrZero
-	private Integer orderNumber;
+    @PositiveOrZero
+    private Integer orderNumber;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JoinTable(name = "egbpa_permit_revocation_document", joinColumns = @JoinColumn(name = "revocationDetail"), inverseJoinColumns = @JoinColumn(name = "fileStore"))
-	private Set<FileStoreMapper> revokeSupportDocs = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinTable(name = "egbpa_permit_revocation_document", joinColumns = @JoinColumn(name = "revocationDetail"), inverseJoinColumns = @JoinColumn(name = "fileStore"))
+    private Set<FileStoreMapper> revokeSupportDocs = new HashSet<>();
 
-	private transient MultipartFile[] files;
+    private transient MultipartFile[] files;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public PermitRevocation getRevocation() {
-		return revocation;
-	}
+    public PermitRevocation getRevocation() {
+        return revocation;
+    }
 
-	public void setRevocation(PermitRevocation revocation) {
-		this.revocation = revocation;
-	}
+    public void setRevocation(PermitRevocation revocation) {
+        this.revocation = revocation;
+    }
 
-	public String getNatureOfRequest() {
-		return natureOfRequest;
-	}
+    public String getNatureOfRequest() {
+        return natureOfRequest;
+    }
 
-	public void setNatureOfRequest(String natureOfRequest) {
-		this.natureOfRequest = natureOfRequest;
-	}
+    public void setNatureOfRequest(String natureOfRequest) {
+        this.natureOfRequest = natureOfRequest;
+    }
 
-	public Date getRequestDate() {
-		return requestDate;
-	}
+    public Date getRequestDate() {
+        return requestDate;
+    }
 
-	public void setRequestDate(Date requestDate) {
-		this.requestDate = requestDate;
-	}
+    public void setRequestDate(Date requestDate) {
+        this.requestDate = requestDate;
+    }
 
-	public Date getReplyDate() {
-		return replyDate;
-	}
+    public Date getReplyDate() {
+        return replyDate;
+    }
 
-	public void setReplyDate(Date replyDate) {
-		this.replyDate = replyDate;
-	}
+    public void setReplyDate(Date replyDate) {
+        this.replyDate = replyDate;
+    }
 
-	public String getIssuedBy() {
-		return issuedBy;
-	}
+    public String getIssuedBy() {
+        return issuedBy;
+    }
 
-	public void setIssuedBy(String issuedBy) {
-		this.issuedBy = issuedBy;
-	}
+    public void setIssuedBy(String issuedBy) {
+        this.issuedBy = issuedBy;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-	public Integer getOrderNumber() {
-		return orderNumber;
-	}
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setOrderNumber(Integer orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-	public Set<FileStoreMapper> getRevokeSupportDocs() {
-		return revokeSupportDocs;
-	}
+    public Set<FileStoreMapper> getRevokeSupportDocs() {
+        return revokeSupportDocs;
+    }
 
-	public void setRevokeSupportDocs(Set<FileStoreMapper> revokeSupportDocs) {
-		this.revokeSupportDocs = revokeSupportDocs;
-	}
+    public void setRevokeSupportDocs(Set<FileStoreMapper> revokeSupportDocs) {
+        this.revokeSupportDocs = revokeSupportDocs;
+    }
 
-	public MultipartFile[] getFiles() {
-		return files;
-	}
+    public MultipartFile[] getFiles() {
+        return files;
+    }
 
-	public void setFiles(MultipartFile[] files) {
-		this.files = files;
-	}
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
 
 }

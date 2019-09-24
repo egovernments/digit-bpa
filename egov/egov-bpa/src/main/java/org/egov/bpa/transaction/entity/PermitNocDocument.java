@@ -76,7 +76,6 @@ public class PermitNocDocument extends AbstractAuditable {
     @Valid
     private transient PermitNocApplication permitNoc = new PermitNocApplication();
 
-
     @Override
     public Long getId() {
         return id;
@@ -103,12 +102,12 @@ public class PermitNocDocument extends AbstractAuditable {
         this.nocDocument = nocDocument;
     }
 
-	public PermitNocApplication getPermitNoc() {
-		return permitNoc;
-	}
+    public PermitNocApplication getPermitNoc() {
+        return permitNoc;
+    }
 
-	public void setPermitNoc(PermitNocApplication permitNoc) {
-		this.permitNoc = permitNoc;
-	}
+    public void setPermitNoc(PermitNocApplication permitNoc) {
+        this.permitNoc = permitNoc;
+    }
 
 }

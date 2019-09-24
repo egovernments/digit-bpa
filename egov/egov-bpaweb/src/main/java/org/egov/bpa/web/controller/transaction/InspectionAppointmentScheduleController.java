@@ -44,6 +44,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.bpa.master.service.AppointmentLocationsService;
+import org.egov.bpa.transaction.entity.InspectionApplication;
 import org.egov.bpa.transaction.entity.InspectionAppointmentSchedule;
 import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.common.AppointmentScheduleCommon;
@@ -55,6 +56,7 @@ import org.egov.bpa.utils.BpaConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,15 +100,22 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
 
     @GetMapping("/scheduleappointment/{applicationNumber}")
     public String showScheduleAppointmentForInspection(@PathVariable final String applicationNumber, final Model model) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
-        InspectionAppointmentSchedule inspectionAppointmentSchedule = new InspectionAppointmentSchedule();
-        AppointmentScheduleCommon appointmentSchedule = new AppointmentScheduleCommon();
-        
-        if (BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(permitInspection.getInspectionApplication().getCurrentState().getNextAction())) {
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
+        return scheduleForm(applicationNumber, model, permitInspection.getInspectionApplication(),
+                new InspectionAppointmentSchedule(),
+                new AppointmentScheduleCommon());
+    }
+
+    private String scheduleForm(final String applicationNumber, final Model model,
+            final InspectionApplication inspectionApplication, InspectionAppointmentSchedule inspectionAppointmentSchedule,
+            AppointmentScheduleCommon appointmentSchedule) {
+        if (BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS
+                .equalsIgnoreCase(inspectionApplication.getCurrentState().getNextAction())) {
             appointmentSchedule.setPurpose(AppointmentSchedulePurpose.INSPECTION);
         }
         inspectionAppointmentSchedule.setAppointmentScheduleCommon(appointmentSchedule);
-        inspectionAppointmentSchedule.setInspectionApplication(permitInspection.getInspectionApplication());
+        inspectionAppointmentSchedule.setInspectionApplication(inspectionApplication);
         model.addAttribute(APPOINTMENT_LOCATIONS_LIST, appointmentLocationsService.findAllOrderByOrderNumber());
         model.addAttribute(INS_APPOINTMENT_SCHEDULE, inspectionAppointmentSchedule);
         model.addAttribute(APPLICATION_NUMBER, applicationNumber);
@@ -114,31 +123,48 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
     }
 
     @PostMapping("/scheduleappointment/{applicationNumber}")
-    public String scheduleAppointmentForInspection(@ModelAttribute final InspectionAppointmentSchedule inspectionAppointmentSchedule,
-            @PathVariable final String applicationNumber, final Model model, final RedirectAttributes redirectAttributes) {
-    	InspectionAppointmentSchedule schedule = buildAndSaveNewAppointment(inspectionAppointmentSchedule, applicationNumber);
-        if (AppointmentSchedulePurpose.INSPECTION.equals(inspectionAppointmentSchedule.getAppointmentScheduleCommon().getPurpose())) {
+    public String scheduleAppointmentForInspection(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute final InspectionAppointmentSchedule inspectionAppointmentSchedule,
+            final BindingResult result, final Model model, final RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return scheduleForm(applicationNumber, model, inspectionAppointmentSchedule.getInspectionApplication(),
+                    inspectionAppointmentSchedule,
+                    inspectionAppointmentSchedule.getAppointmentScheduleCommon());
+        }
+        InspectionAppointmentSchedule schedule = buildAndSaveNewAppointment(inspectionAppointmentSchedule, applicationNumber);
+        if (AppointmentSchedulePurpose.INSPECTION
+                .equals(inspectionAppointmentSchedule.getAppointmentScheduleCommon().getPurpose())) {
             redirectAttributes.addFlashAttribute(MESSAGE,
                     messageSource.getMessage("msg.new.appoimt.fieldins", null, null));
         }
         return REDIRECT_APPLICATION_VIEW_APPOINTMENT + schedule.getId();
     }
 
-    private InspectionAppointmentSchedule buildAndSaveNewAppointment(final InspectionAppointmentSchedule insAppointmentSchedule, final String applicationNumber) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+    private InspectionAppointmentSchedule buildAndSaveNewAppointment(final InspectionAppointmentSchedule insAppointmentSchedule,
+            final String applicationNumber) {
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
         insAppointmentSchedule.setInspectionApplication(permitInspection.getInspectionApplication());
-    	InspectionAppointmentSchedule schedule = insAppointmentScheduleService.save(insAppointmentSchedule);
-        bpaSmsAndEmailService.sendSMSAndEmailToInsscheduleAppointment(schedule, permitInspection.getInspectionApplication(), permitInspection.getApplication());
-    	return schedule;
+        InspectionAppointmentSchedule schedule = insAppointmentScheduleService.save(insAppointmentSchedule);
+        bpaSmsAndEmailService.sendSMSAndEmailToInsscheduleAppointment(schedule, permitInspection.getInspectionApplication(),
+                permitInspection.getApplication());
+        return schedule;
     }
 
     @GetMapping("/rescheduleappointment/{scheduleType}/{applicationNumber}")
     public String showReScheduleAppointmentForInspection(@PathVariable final AppointmentSchedulePurpose scheduleType,
             @PathVariable final String applicationNumber, final Model model) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
-        List<InspectionAppointmentSchedule> appointmentScheduledList = insAppointmentScheduleService.findByApplication(permitInspection.getInspectionApplication(), scheduleType);
-        InspectionAppointmentSchedule appointmentSchedule = new InspectionAppointmentSchedule();
-        AppointmentScheduleCommon appointmentScheduleCommon = new AppointmentScheduleCommon();
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
+        List<InspectionAppointmentSchedule> appointmentScheduledList = insAppointmentScheduleService
+                .findByApplication(permitInspection.getInspectionApplication(), scheduleType);
+        return reScheduleForm(applicationNumber, model, appointmentScheduledList, new InspectionAppointmentSchedule(),
+                new AppointmentScheduleCommon());
+    }
+
+    private String reScheduleForm(final String applicationNumber, final Model model,
+            List<InspectionAppointmentSchedule> appointmentScheduledList, InspectionAppointmentSchedule appointmentSchedule,
+            AppointmentScheduleCommon appointmentScheduleCommon) {
         appointmentScheduleCommon.setPurpose(appointmentScheduledList.get(0).getAppointmentScheduleCommon().getPurpose());
         appointmentSchedule.setAppointmentScheduleCommon(appointmentScheduleCommon);
         model.addAttribute(APPOINTMENT_LOCATIONS_LIST, appointmentLocationsService.findAllOrderByOrderNumber());
@@ -150,16 +176,28 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
     }
 
     @PostMapping("/rescheduleappointment/{scheduleType}/{applicationNumber}")
-    public String reScheduleAppointmentForOC(@Valid @ModelAttribute final InspectionAppointmentSchedule insAppointmentSchedule,
-            @PathVariable final AppointmentSchedulePurpose scheduleType, @PathVariable final String applicationNumber,
-            @RequestParam Long parentAppointmentScheduleId, final RedirectAttributes redirectAttributes) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+    public String reScheduleAppointmentForInspection(@PathVariable final AppointmentSchedulePurpose scheduleType,
+            @PathVariable final String applicationNumber,
+            @RequestParam Long parentAppointmentScheduleId,
+            @Valid @ModelAttribute final InspectionAppointmentSchedule insAppointmentSchedule, final BindingResult result,
+            final Model model,
+            final RedirectAttributes redirectAttributes) {
+
+        if (result.hasErrors()) {
+            List<InspectionAppointmentSchedule> appointmentScheduledList = insAppointmentScheduleService
+                    .findByApplication(insAppointmentSchedule.getInspectionApplication(), scheduleType);
+            return reScheduleForm(applicationNumber, model, appointmentScheduledList, insAppointmentSchedule,
+                    new AppointmentScheduleCommon());
+        }
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
         AppointmentScheduleCommon parent = appointmentScheduleCommonService.findById(parentAppointmentScheduleId);
         insAppointmentSchedule.getAppointmentScheduleCommon().setPostponed(true);
         insAppointmentSchedule.getAppointmentScheduleCommon().setParent(parent);
         insAppointmentSchedule.setInspectionApplication(permitInspection.getInspectionApplication());
         InspectionAppointmentSchedule schedule = insAppointmentScheduleService.save(insAppointmentSchedule);
-        bpaSmsAndEmailService.sendSMSAndEmailToInsscheduleAppointment(schedule, permitInspection.getInspectionApplication(), permitInspection.getApplication());
+        bpaSmsAndEmailService.sendSMSAndEmailToInsscheduleAppointment(schedule, permitInspection.getInspectionApplication(),
+                permitInspection.getApplication());
         if (AppointmentSchedulePurpose.INSPECTION.equals(schedule.getAppointmentScheduleCommon().getPurpose())) {
             redirectAttributes.addFlashAttribute(MESSAGE,
                     messageSource.getMessage("msg.update.appoimt.fieldins", null, null));
@@ -175,5 +213,4 @@ public class InspectionAppointmentScheduleController extends BpaGenericApplicati
         return SCHEDULE_APPIONTMENT_RESULT;
     }
 
-  }
-
+}

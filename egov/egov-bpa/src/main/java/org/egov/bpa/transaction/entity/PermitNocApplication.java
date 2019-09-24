@@ -82,28 +82,28 @@ public class PermitNocApplication extends AbstractAuditable {
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication bpaApplication;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public BpaNocApplication getBpaNocApplication() {
-		return bpaNocApplication;
-	}
+    public BpaNocApplication getBpaNocApplication() {
+        return bpaNocApplication;
+    }
 
-	public void setBpaNocApplication(BpaNocApplication bpaNocApplication) {
-		this.bpaNocApplication = bpaNocApplication;
-	}
+    public void setBpaNocApplication(BpaNocApplication bpaNocApplication) {
+        this.bpaNocApplication = bpaNocApplication;
+    }
 
-	public BpaApplication getBpaApplication() {
-		return bpaApplication;
-	}
+    public BpaApplication getBpaApplication() {
+        return bpaApplication;
+    }
 
-	public void setBpaApplication(BpaApplication bpaApplication) {
-		this.bpaApplication = bpaApplication;
-	}   
+    public void setBpaApplication(BpaApplication bpaApplication) {
+        this.bpaApplication = bpaApplication;
+    }
 
 }

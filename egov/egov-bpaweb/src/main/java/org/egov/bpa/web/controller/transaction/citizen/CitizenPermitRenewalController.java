@@ -91,138 +91,138 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/citizen/application")
 public class CitizenPermitRenewalController extends BpaGenericApplicationController {
 
-	private static final String PERMIT_RENEWAL_CITIZEN_UPDATE = "permit-renewal-citizen-update";
-	private static final String PERMIT_RENEWAL_CITIZEN_NEW = "permit-renewal-citizen-new";
-	private static final String APPLICATION_SUCCESS = "application-success";
-	private static final String PERMIT_RENEWAL = "permitRenewal";
-	private static final String MESSAGE = "message";
-	public static final String COMMON_ERROR = "common-error";
-	private static final String WORK_FLOW_ACTION = "workFlowAction";
-	private static final String APPLICATION_HISTORY = "applicationHistory";
+    private static final String PERMIT_RENEWAL_CITIZEN_UPDATE = "permit-renewal-citizen-update";
+    private static final String PERMIT_RENEWAL_CITIZEN_NEW = "permit-renewal-citizen-new";
+    private static final String APPLICATION_SUCCESS = "application-success";
+    private static final String PERMIT_RENEWAL = "permitRenewal";
+    private static final String MESSAGE = "message";
+    public static final String COMMON_ERROR = "common-error";
+    private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String APPLICATION_HISTORY = "applicationHistory";
 
-	@Autowired
-	private PermitRenewalService permitRenewalService;
-	@Autowired
-	private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
-	@Autowired
-	private BpaNoticeUtil bpaNoticeUtil;
-	@Autowired
-	private RenewalSmsAndEmailService renewalSmsAndEmailService;
+    @Autowired
+    private PermitRenewalService permitRenewalService;
+    @Autowired
+    private PushBpaApplicationToPortalUtil pushBpaApplicationToPortal;
+    @Autowired
+    private BpaNoticeUtil bpaNoticeUtil;
+    @Autowired
+    private RenewalSmsAndEmailService renewalSmsAndEmailService;
 
-	@GetMapping("/permit/renewal/apply")
-	public String showPermitRenewalForm(final Model model) {
-		PermitRenewal permitRenewal = new PermitRenewal();
-		permitRenewal.setApplicationDate(new Date());
-		permitRenewal.setSource(Source.CITIZENPORTAL);
-		model.addAttribute(PERMIT_RENEWAL, permitRenewal);
-		model.addAttribute("constStages", constructionStagesService.findByRequiredForPermitRenewal());
-		return PERMIT_RENEWAL_CITIZEN_NEW;
-	}
+    @GetMapping("/permit/renewal/apply")
+    public String showPermitRenewalForm(final Model model) {
+        PermitRenewal permitRenewal = new PermitRenewal();
+        permitRenewal.setApplicationDate(new Date());
+        permitRenewal.setSource(Source.CITIZENPORTAL);
+        model.addAttribute(PERMIT_RENEWAL, permitRenewal);
+        model.addAttribute("constStages", constructionStagesService.findByRequiredForPermitRenewal());
+        return PERMIT_RENEWAL_CITIZEN_NEW;
+    }
 
-	@PostMapping("/permit/renewal/create")
-	public String submitPermitRenewal(@Valid @ModelAttribute PermitRenewal permitRenewal, final BindingResult errors,
-			final Model model, final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
+    @PostMapping("/permit/renewal/create")
+    public String submitPermitRenewal(@Valid @ModelAttribute PermitRenewal permitRenewal, final BindingResult errors,
+            final Model model, final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
 
-		if (errors.hasErrors()) {
-			model.addAttribute(PERMIT_RENEWAL, permitRenewal);
-			model.addAttribute("constStages", constructionStagesService.findByRequiredForPermitRenewal());
-			return PERMIT_RENEWAL_CITIZEN_NEW;
-		}
-		String isPermitExt = permitRenewalService
-				.permitExtensionAndRenewalNotAllowed(permitRenewal.getParent().getPlanPermissionNumber());
-		if (StringUtils.isNotBlank(isPermitExt)) {
-			model.addAttribute("errorMsg", isPermitExt);
-			prepareUpdateFormData(model, permitRenewal);
-			return PERMIT_RENEWAL_CITIZEN_NEW;
-		}
-		if (permitRenewal.getSource() == null)
-			permitRenewal.setSource(Source.CITIZENPORTAL);
-		Long approvalPosition = null;
-		WorkflowBean wfBean = new WorkflowBean();
-		wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
-		if (WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
-			final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(false, permitRenewal.getStateType(),
-					WF_NEW_STATE, permitRenewal.getParent().getApplicationType().getName());
-			if (wfMatrix != null)
-				approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-						bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
-			wfBean.setApproverPositionId(approvalPosition);
-		}
-		PermitRenewal renewalRes = permitRenewalService.save(permitRenewal, wfBean);
-		pushBpaApplicationToPortal.createPortalUserinbox(permitRenewal,
-				Arrays.asList(permitRenewal.getParent().getOwner().getUser(),
-						permitRenewal.getParent().getStakeHolder().get(0).getStakeHolder()),
-				wfBean.getWorkFlowAction());
+        if (errors.hasErrors()) {
+            model.addAttribute(PERMIT_RENEWAL, permitRenewal);
+            model.addAttribute("constStages", constructionStagesService.findByRequiredForPermitRenewal());
+            return PERMIT_RENEWAL_CITIZEN_NEW;
+        }
+        String isPermitExt = permitRenewalService
+                .permitExtensionAndRenewalNotAllowed(permitRenewal.getParent().getPlanPermissionNumber());
+        if (StringUtils.isNotBlank(isPermitExt)) {
+            model.addAttribute("errorMsg", isPermitExt);
+            prepareUpdateFormData(model, permitRenewal);
+            return PERMIT_RENEWAL_CITIZEN_NEW;
+        }
+        if (permitRenewal.getSource() == null)
+            permitRenewal.setSource(Source.CITIZENPORTAL);
+        Long approvalPosition = null;
+        WorkflowBean wfBean = new WorkflowBean();
+        wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
+        if (WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(false, permitRenewal.getStateType(),
+                    WF_NEW_STATE, permitRenewal.getParent().getApplicationType().getName());
+            if (wfMatrix != null)
+                approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                        bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
+            wfBean.setApproverPositionId(approvalPosition);
+        }
+        PermitRenewal renewalRes = permitRenewalService.save(permitRenewal, wfBean);
+        pushBpaApplicationToPortal.createPortalUserinbox(permitRenewal,
+                Arrays.asList(permitRenewal.getParent().getOwner().getUser(),
+                        permitRenewal.getParent().getStakeHolder().get(0).getStakeHolder()),
+                wfBean.getWorkFlowAction());
 
-		renewalSmsAndEmailService.sendSMSAndEmail(renewalRes, null, null);
+        renewalSmsAndEmailService.sendSMSAndEmail(renewalRes, null, null);
 
-		if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.save",
-					new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
-		else
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.submit",
-					new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
-		return APPLICATION_SUCCESS;
-	}
+        if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.save",
+                    new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
+        else
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.submit",
+                    new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
+        return APPLICATION_SUCCESS;
+    }
 
-	@GetMapping("/permit/renewal/update/{applicationNumber}")
-	public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
-		PermitRenewal permitRenewal = permitRenewalService.findByApplicationNumber(applicationNumber);
-		prepareUpdateFormData(model, permitRenewal);
-		if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(permitRenewal.getStatus().getCode()))
-			return PERMIT_RENEWAL_CITIZEN_UPDATE;
-		else
-			return "permit-renewal-citizen-view";
-	}
+    @GetMapping("/permit/renewal/update/{applicationNumber}")
+    public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
+        PermitRenewal permitRenewal = permitRenewalService.findByApplicationNumber(applicationNumber);
+        prepareUpdateFormData(model, permitRenewal);
+        if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(permitRenewal.getStatus().getCode()))
+            return PERMIT_RENEWAL_CITIZEN_UPDATE;
+        else
+            return "permit-renewal-citizen-view";
+    }
 
-	private void prepareUpdateFormData(final Model model, PermitRenewal permitRenewal) {
-		model.addAttribute("permitExpiryDate",
-				bpaNoticeUtil.calculateCertExpryDate(new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
-						permitRenewal.getParent().getServiceType().getValidity()));
-		model.addAttribute(PERMIT_RENEWAL, permitRenewal);
-		model.addAttribute("constStages", constructionStagesService.findByRequiredForPermitRenewal());
-		model.addAttribute(APPLICATION_HISTORY, workflowHistoryService.getHistory(Collections.emptyList(),
-				permitRenewal.getCurrentState(), permitRenewal.getStateHistory()));
-		model.addAttribute("feePending", bpaUtils.checkAnyTaxIsPendingToCollect(permitRenewal.getDemand()));
-		String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
-		model.addAttribute("onlinePaymentEnable",
-				(enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
-		if (permitRenewal.getDemand() != null)
-			buildReceiptDetails(permitRenewal.getDemand().getEgDemandDetails(), permitRenewal.getReceipts());
-	}
+    private void prepareUpdateFormData(final Model model, PermitRenewal permitRenewal) {
+        model.addAttribute("permitExpiryDate",
+                bpaNoticeUtil.calculateCertExpryDate(new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
+                        permitRenewal.getParent().getServiceType().getValidity()));
+        model.addAttribute(PERMIT_RENEWAL, permitRenewal);
+        model.addAttribute("constStages", constructionStagesService.findByRequiredForPermitRenewal());
+        model.addAttribute(APPLICATION_HISTORY, workflowHistoryService.getHistory(Collections.emptyList(),
+                permitRenewal.getCurrentState(), permitRenewal.getStateHistory()));
+        model.addAttribute("feePending", bpaUtils.checkAnyTaxIsPendingToCollect(permitRenewal.getDemand()));
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
+        model.addAttribute("onlinePaymentEnable",
+                (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+        if (permitRenewal.getDemand() != null)
+            buildReceiptDetails(permitRenewal.getDemand().getEgDemandDetails(), permitRenewal.getReceipts());
+    }
 
-	@PostMapping("/permit/renewal/update/{applicationNumber}")
-	public String updatePermitRenewalDetails(@PathVariable String applicationNumber,
-			@Valid @ModelAttribute PermitRenewal permitRenewal, final Model model, final HttpServletRequest request,
-			final BindingResult errors, final RedirectAttributes redirectAttributes) {
-		String isPermitExt = permitRenewalService
-				.permitExtensionAndRenewalNotAllowed(permitRenewal.getParent().getPlanPermissionNumber());
-		if (StringUtils.isNotBlank(isPermitExt)) {
-			model.addAttribute("errorMsg", isPermitExt);
-			prepareUpdateFormData(model, permitRenewal);
-			return PERMIT_RENEWAL_CITIZEN_UPDATE;
-		}
-		Long approvalPosition = null;
-		WorkflowBean wfBean = new WorkflowBean();
-		wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
-		if (WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
-			final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(false, permitRenewal.getStateType(),
-					WF_NEW_STATE, permitRenewal.getParent().getApplicationType().getName());
-			if (wfMatrix != null)
-				approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-						bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
-			wfBean.setApproverPositionId(approvalPosition);
-		}
-		PermitRenewal renewalRes = permitRenewalService.save(permitRenewal, wfBean);
-		pushBpaApplicationToPortal.updatePortalUserinbox(permitRenewal, null);
-		renewalSmsAndEmailService.sendSMSAndEmail(renewalRes, null, null);
-		if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.save",
-					new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
-		else
-			model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.submit",
-					new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
-		return APPLICATION_SUCCESS;
-	}
+    @PostMapping("/permit/renewal/update/{applicationNumber}")
+    public String updatePermitRenewalDetails(@PathVariable String applicationNumber,
+            @Valid @ModelAttribute PermitRenewal permitRenewal, final Model model, final HttpServletRequest request,
+            final BindingResult errors, final RedirectAttributes redirectAttributes) {
+        String isPermitExt = permitRenewalService
+                .permitExtensionAndRenewalNotAllowed(permitRenewal.getParent().getPlanPermissionNumber());
+        if (StringUtils.isNotBlank(isPermitExt)) {
+            model.addAttribute("errorMsg", isPermitExt);
+            prepareUpdateFormData(model, permitRenewal);
+            return PERMIT_RENEWAL_CITIZEN_UPDATE;
+        }
+        Long approvalPosition = null;
+        WorkflowBean wfBean = new WorkflowBean();
+        wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
+        if (WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(false, permitRenewal.getStateType(),
+                    WF_NEW_STATE, permitRenewal.getParent().getApplicationType().getName());
+            if (wfMatrix != null)
+                approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                        bpaUtils.getBoundaryForWorkflow(permitRenewal.getParent().getSiteDetail().get(0)).getId());
+            wfBean.setApproverPositionId(approvalPosition);
+        }
+        PermitRenewal renewalRes = permitRenewalService.save(permitRenewal, wfBean);
+        pushBpaApplicationToPortal.updatePortalUserinbox(permitRenewal, null);
+        renewalSmsAndEmailService.sendSMSAndEmail(renewalRes, null, null);
+        if (WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.save",
+                    new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
+        else
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.permit.renewal.submit",
+                    new String[] { permitRenewal.getApplicationNumber() }, LocaleContextHolder.getLocale()));
+        return APPLICATION_SUCCESS;
+    }
 
 }

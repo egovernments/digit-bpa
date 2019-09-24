@@ -50,7 +50,6 @@ import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.service.InspectionService;
-import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.pims.commons.Position;
@@ -70,8 +69,6 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
 
     @Autowired
     private InspectionService inspectionService;
-    @Autowired
-    private PlanScrutinyChecklistCommonService planScrutinyChecklistCommonService;
     @Autowired
     private CustomImplProvider specificNoticeService;
 
@@ -97,8 +94,9 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
     }
 
     @PostMapping("/modify-inspection/{applicationNumber}")
-    public String updateInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection permitInspn,
-            @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+    public String updateInspection(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute("permitInspection") final PermitInspection permitInspn, final BindingResult resultBinder,
+            final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         inspectionService.validatePermitInspectionDocs(permitInspn, resultBinder);
         if (resultBinder.hasErrors()) {

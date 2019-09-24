@@ -62,66 +62,66 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OCSlot.SEQ, sequenceName = OCSlot.SEQ, allocationSize = 1)
 public class OCSlot extends AbstractAuditable {
 
-	protected static final String SEQ = "seq_egbpa_oc_slot";
-	private static final long serialVersionUID = 3649900317247159528L;
+    protected static final String SEQ = "seq_egbpa_oc_slot";
+    private static final long serialVersionUID = 3649900317247159528L;
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Enumerated(EnumType.STRING)
-	@NotNull
-	private ScheduleAppointmentType scheduleAppointmentType;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ScheduleAppointmentType scheduleAppointmentType;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "occupancyCertificate", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "occupancyCertificate", nullable = false)
+    private OccupancyCertificate oc;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "slotdetailid", nullable = false)
-	private SlotDetail slotDetail;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "slotdetailid", nullable = false)
+    private SlotDetail slotDetail;
 
-	private Boolean isActive;
+    private Boolean isActive;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public ScheduleAppointmentType getScheduleAppointmentType() {
-		return scheduleAppointmentType;
-	}
+    public ScheduleAppointmentType getScheduleAppointmentType() {
+        return scheduleAppointmentType;
+    }
 
-	public void setScheduleAppointmentType(ScheduleAppointmentType scheduleAppointmentType) {
-		this.scheduleAppointmentType = scheduleAppointmentType;
-	}
+    public void setScheduleAppointmentType(ScheduleAppointmentType scheduleAppointmentType) {
+        this.scheduleAppointmentType = scheduleAppointmentType;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
-	public SlotDetail getSlotDetail() {
-		return slotDetail;
-	}
+    public SlotDetail getSlotDetail() {
+        return slotDetail;
+    }
 
-	public void setSlotDetail(SlotDetail slotDetail) {
-		this.slotDetail = slotDetail;
-	}
+    public void setSlotDetail(SlotDetail slotDetail) {
+        this.slotDetail = slotDetail;
+    }
 
-	public Boolean getActive() {
-		return isActive;
-	}
+    public Boolean getActive() {
+        return isActive;
+    }
 
-	public void setActive(Boolean active) {
-		isActive = active;
-	}
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 }

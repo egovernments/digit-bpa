@@ -74,10 +74,11 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -127,7 +128,7 @@ public class UpdateBpaPermitFeeController {
             List<PermitFee> permitFeeList = permitFeeService
                     .getPermitFeeListByApplicationId(bpaApplication.getId());
             if (permitFeeList.isEmpty()) {
-            	permitFee.setApplication(bpaApplication);
+                permitFee.setApplication(bpaApplication);
                 return permitFee;
             } else {
                 return permitFeeList.get(0);
@@ -135,39 +136,42 @@ public class UpdateBpaPermitFeeController {
         }
         return permitFee;
     }
-   
 
-    @RequestMapping(value = "/calculateFee/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/calculateFee/{applicationNumber}")
     public String calculateFeeform(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
+        return modifyFeeForm(model, applicationNumber);
+    }
+
+    private String modifyFeeForm(final Model model, final String applicationNumber) {
         PermitFee permitFee = getBpaApplication(applicationNumber);
         if (permitFee != null && permitFee.getApplication() != null) {
             loadViewdata(model, permitFee);
             // Get all sanction fee by service type
-            List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService.getPermitFeesByAppType(permitFee.getApplication(), permitFee.getApplication().getServiceType().getId());
-                    
+            List<BpaFeeMapping> bpaSanctionFees = bpaFeeMappingService.getPermitFeesByAppType(permitFee.getApplication(),
+                    permitFee.getApplication().getServiceType().getId());
 
             String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
             model.addAttribute("sanctionFees", bpaSanctionFees);
             model.addAttribute("feeCalculationMode", feeCalculationMode);
-            
+
             if (feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECAL) ||
-            		feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
+                    feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 // calculate fee by passing sanction list, inspection latest object.
                 // based on fee code, define calculation logic for each servicewise.
-            	ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
-		                .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
-		  
-            	permitFee = feeCalculation.calculateBpaSanctionFees(permitFee.getApplication());
+                ApplicationBpaFeeCalculation feeCalculation = (ApplicationBpaFeeCalculation) specificNoticeService
+                        .find(PermitFeeCalculationService.class, specificNoticeService.getCityDetails());
+
+                permitFee = feeCalculation.calculateBpaSanctionFees(permitFee.getApplication());
                 model.addAttribute(PERMIT_FEE, permitFee);
-               return MODIFYPAFEE_FORM;
-            }  else {
+                return MODIFYPAFEE_FORM;
+            } else {
                 if (permitFee.getApplicationFee() == null) {
-                	permitFee.setApplicationFee(new ApplicationFee());
-                	permitFee.getApplicationFee().setStatus(bpaStatusService
+                    permitFee.setApplicationFee(new ApplicationFee());
+                    permitFee.getApplicationFee().setStatus(bpaStatusService
                             .findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE_REGISTRATIONFEE,
                                     BpaConstants.BPASTATUS_REGISTRATIONFEE_APPROVED));
-                	permitFee.getApplicationFee().setFeeDate(new Date());
+                    permitFee.getApplicationFee().setFeeDate(new Date());
 
                     for (BpaFeeMapping bpaFee : bpaSanctionFees) {
                         ApplicationFeeDetail applicationDtl = new ApplicationFeeDetail();
@@ -176,11 +180,12 @@ public class UpdateBpaPermitFeeController {
                         applicationDtl.setAmount(BigDecimal.ZERO);
                         permitFee.getApplicationFee().addApplicationFeeDetail(applicationDtl);
                     }
-                    
+
                     model.addAttribute(PERMIT_FEE, permitFee);
-                    BigDecimal amount = permitFee.getApplicationFee().getApplicationFeeDetail().stream().map(ApplicationFeeDetail::getAmount)
+                    BigDecimal amount = permitFee.getApplicationFee().getApplicationFeeDetail().stream()
+                            .map(ApplicationFeeDetail::getAmount)
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    return  amount.compareTo(BigDecimal.ZERO) > 0 ? MODIFYPAFEE_FORM : CREATEBPAFEE_FORM;
+                    return amount.compareTo(BigDecimal.ZERO) > 0 ? MODIFYPAFEE_FORM : CREATEBPAFEE_FORM;
                 }
                 // If manual process, then return list of sanction fee.
             }
@@ -205,22 +210,26 @@ public class UpdateBpaPermitFeeController {
 
     }
 
-    @RequestMapping(value = "/calculateFee/{applicationNumber}", method = RequestMethod.POST)
-    public String calculateFeeform(@Valid @ModelAttribute(PERMIT_FEE) PermitFee permitFee,
-            @PathVariable final String applicationNumber,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
+    @PostMapping("/calculateFee/{applicationNumber}")
+    public String calculateFeeform(@PathVariable final String applicationNumber,
+            @RequestParam("files") final MultipartFile[] files, @Valid @ModelAttribute(PERMIT_FEE) PermitFee permitFee,
+            final BindingResult resultBinder, final Model model, final RedirectAttributes redirectAttributes,
+            final HttpServletRequest request) {
+
+        if (resultBinder.hasErrors())
+            return modifyFeeForm(model, applicationNumber);
 
         // save sanction fee in application fee
         // generate demand based on sanction list, application
         ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(permitFee.getApplicationFee());
         permitFee.setApplicationFee(applicationFee);
-        EgDemand demand = bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(), permitFee.getApplication().getDemand());
-        if (permitFee.getApplication().getDemand() == null) { 
-        	permitFee.getApplication().setDemand(demand);	
-		}
+        EgDemand demand = bpaDemandService.generateDemandUsingSanctionFeeList(permitFee.getApplicationFee(),
+                permitFee.getApplication().getDemand());
+        if (permitFee.getApplication().getDemand() == null) {
+            permitFee.getApplication().setDemand(demand);
+        }
         permitFeeRepository.save(permitFee);
-        
+
         String message = messageSource.getMessage("msg.create.calculateFee", new String[] {
                 permitFee.getApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
         model.addAttribute(MESSAGE, message);

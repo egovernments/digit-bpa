@@ -67,46 +67,46 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OCInspection.SEQ_INSPECTION, sequenceName = OCInspection.SEQ_INSPECTION, allocationSize = 1)
 public class OCInspection extends AbstractAuditable {
 
-	protected static final String SEQ_INSPECTION = "SEQ_EGBPA_OC_INSPECTION";
-	private static final long serialVersionUID = -3889308488871083896L;
+    protected static final String SEQ_INSPECTION = "SEQ_EGBPA_OC_INSPECTION";
+    private static final long serialVersionUID = -3889308488871083896L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "inspection", nullable = false)
-	private InspectionCommon inspection;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "inspection", nullable = false)
+    private InspectionCommon inspection;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "occupancyCertificate", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "occupancyCertificate", nullable = false)
+    private OccupancyCertificate oc;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public InspectionCommon getInspection() {
-		return inspection;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
 
-	public void setInspection(InspectionCommon inspection) {
-		this.inspection = inspection;
-	}
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
 }

@@ -118,6 +118,5 @@ public class PostalAddress {
     public void setTaluk(String taluk) {
         this.taluk = taluk;
     }
-    
 
 }

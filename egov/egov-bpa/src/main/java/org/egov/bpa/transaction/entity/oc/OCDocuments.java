@@ -67,45 +67,45 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OCDocuments.SEQ_OC_DOCUMENT, sequenceName = OCDocuments.SEQ_OC_DOCUMENT, allocationSize = 1)
 public class OCDocuments extends AbstractAuditable {
 
-	public static final String SEQ_OC_DOCUMENT = "seq_egbpa_oc_documents";
-	private static final long serialVersionUID = -7396986929033696141L;
+    public static final String SEQ_OC_DOCUMENT = "seq_egbpa_oc_documents";
+    private static final long serialVersionUID = -7396986929033696141L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_OC_DOCUMENT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_OC_DOCUMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "document", nullable = false)
-	private GeneralDocument document;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "document", nullable = false)
+    private GeneralDocument document;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "occupancyCertificate", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "occupancyCertificate", nullable = false)
+    private OccupancyCertificate oc;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public GeneralDocument getDocument() {
-		return document;
-	}
+    public GeneralDocument getDocument() {
+        return document;
+    }
 
-	public void setDocument(GeneralDocument document) {
-		this.document = document;
-	}
+    public void setDocument(GeneralDocument document) {
+        this.document = document;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 }

@@ -63,110 +63,110 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = OCFloor.SEQ_EGBPA_REGN_FLOORDETAIL, sequenceName = OCFloor.SEQ_EGBPA_REGN_FLOORDETAIL, allocationSize = 1)
 public class OCFloor extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ_EGBPA_REGN_FLOORDETAIL = "SEQ_EGBPA_OC_FLOOR";
-	
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_REGN_FLOORDETAIL, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "buildingDetail", nullable = false)
-	private OCBuilding buildingDetails;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "suboccupancy")
-	private SubOccupancy subOccupancy;
-	
-	@Range(min = -50, max = 500)
-	private Integer floorNumber;
-	
-	@SafeHtml
-	@Size(min = 1, max = 128)
-	private String floorDescription;
-	
-	@PositiveOrZero
-	private BigDecimal carpetArea;
-	
-	@PositiveOrZero
-	private BigDecimal plinthArea;
-	
-	@PositiveOrZero
-	private BigDecimal floorArea;
-	
-	@PositiveOrZero
-	private Integer orderOfFloor;
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_EGBPA_REGN_FLOORDETAIL = "SEQ_EGBPA_OC_FLOOR";
 
-	public Long getId() {
-		return id;
-	}
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_REGN_FLOORDETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buildingDetail", nullable = false)
+    private OCBuilding buildingDetails;
 
-	public OCBuilding getBuildingDetails() {
-		return buildingDetails;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "suboccupancy")
+    private SubOccupancy subOccupancy;
 
-	public void setBuildingDetails(OCBuilding buildingDetails) {
-		this.buildingDetails = buildingDetails;
-	}
+    @Range(min = -50, max = 500)
+    private Integer floorNumber;
 
-	public Integer getFloorNumber() {
-		return floorNumber;
-	}
+    @SafeHtml
+    @Size(min = 1, max = 128)
+    private String floorDescription;
 
-	public void setFloorNumber(Integer floorNumber) {
-		this.floorNumber = floorNumber;
-	}
+    @PositiveOrZero
+    private BigDecimal carpetArea;
 
-	public String getFloorDescription() {
-		return floorDescription;
-	}
+    @PositiveOrZero
+    private BigDecimal plinthArea;
 
-	public void setFloorDescription(String floorDescription) {
-		this.floorDescription = floorDescription;
-	}
+    @PositiveOrZero
+    private BigDecimal floorArea;
 
-	public BigDecimal getCarpetArea() {
-		return carpetArea;
-	}
+    @PositiveOrZero
+    private Integer orderOfFloor;
 
-	public void setCarpetArea(BigDecimal carpetArea) {
-		this.carpetArea = carpetArea;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public BigDecimal getPlinthArea() {
-		return plinthArea;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setPlinthArea(BigDecimal plinthArea) {
-		this.plinthArea = plinthArea;
-	}
+    public OCBuilding getBuildingDetails() {
+        return buildingDetails;
+    }
 
-	public BigDecimal getFloorArea() {
-		return floorArea;
-	}
+    public void setBuildingDetails(OCBuilding buildingDetails) {
+        this.buildingDetails = buildingDetails;
+    }
 
-	public void setFloorArea(BigDecimal floorArea) {
-		this.floorArea = floorArea;
-	}
+    public Integer getFloorNumber() {
+        return floorNumber;
+    }
 
-	public Integer getOrderOfFloor() {
-		return orderOfFloor;
-	}
+    public void setFloorNumber(Integer floorNumber) {
+        this.floorNumber = floorNumber;
+    }
 
-	public void setOrderOfFloor(Integer orderOfFloor) {
-		this.orderOfFloor = orderOfFloor;
-	}
+    public String getFloorDescription() {
+        return floorDescription;
+    }
 
-	public SubOccupancy getSubOccupancy() {
-		return subOccupancy;
-	}
+    public void setFloorDescription(String floorDescription) {
+        this.floorDescription = floorDescription;
+    }
 
-	public void setSubOccupancy(SubOccupancy subOccupancy) {
-		this.subOccupancy = subOccupancy;
-	}
+    public BigDecimal getCarpetArea() {
+        return carpetArea;
+    }
+
+    public void setCarpetArea(BigDecimal carpetArea) {
+        this.carpetArea = carpetArea;
+    }
+
+    public BigDecimal getPlinthArea() {
+        return plinthArea;
+    }
+
+    public void setPlinthArea(BigDecimal plinthArea) {
+        this.plinthArea = plinthArea;
+    }
+
+    public BigDecimal getFloorArea() {
+        return floorArea;
+    }
+
+    public void setFloorArea(BigDecimal floorArea) {
+        this.floorArea = floorArea;
+    }
+
+    public Integer getOrderOfFloor() {
+        return orderOfFloor;
+    }
+
+    public void setOrderOfFloor(Integer orderOfFloor) {
+        this.orderOfFloor = orderOfFloor;
+    }
+
+    public SubOccupancy getSubOccupancy() {
+        return subOccupancy;
+    }
+
+    public void setSubOccupancy(SubOccupancy subOccupancy) {
+        this.subOccupancy = subOccupancy;
+    }
 
 }

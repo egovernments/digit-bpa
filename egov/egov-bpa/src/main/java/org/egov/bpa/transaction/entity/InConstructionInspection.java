@@ -67,45 +67,45 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = InConstructionInspection.SEQ_INCONSTINSPECTION, sequenceName = InConstructionInspection.SEQ_INCONSTINSPECTION, allocationSize = 1)
 public class InConstructionInspection extends AbstractAuditable {
 
-	protected static final String SEQ_INCONSTINSPECTION = "SEQ_EGBPA_INCONSTRUCTION_INSPECTION";
-	private static final long serialVersionUID = -3889308488871083896L;
+    protected static final String SEQ_INCONSTINSPECTION = "SEQ_EGBPA_INCONSTRUCTION_INSPECTION";
+    private static final long serialVersionUID = -3889308488871083896L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_INCONSTINSPECTION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_INCONSTINSPECTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "inspection", nullable = false)
-	private InspectionCommon inspection;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "inspection", nullable = false)
+    private InspectionCommon inspection;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "inspectionApplication", nullable = false)
-	private InspectionApplication inspectionApplication;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "inspectionApplication", nullable = false)
+    private InspectionApplication inspectionApplication;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public InspectionApplication getInspectionApplication() {
-		return inspectionApplication;
-	}
+    public InspectionApplication getInspectionApplication() {
+        return inspectionApplication;
+    }
 
-	public void setInspectionApplication(InspectionApplication inspectionApplication) {
-		this.inspectionApplication = inspectionApplication;
-	}
+    public void setInspectionApplication(InspectionApplication inspectionApplication) {
+        this.inspectionApplication = inspectionApplication;
+    }
 
-	public InspectionCommon getInspection() {
-		return inspection;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
 
-	public void setInspection(InspectionCommon inspection) {
-		this.inspection = inspection;
-	}
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
 }

@@ -66,45 +66,45 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = PermitRenewalConditions.SEQ_RENEWAL_CONDITIONS, sequenceName = PermitRenewalConditions.SEQ_RENEWAL_CONDITIONS, allocationSize = 1)
 public class PermitRenewalConditions extends AbstractAuditable {
 
-	private static final long serialVersionUID = 771762227114807254L;
+    private static final long serialVersionUID = 771762227114807254L;
 
-	public static final String SEQ_RENEWAL_CONDITIONS = "seq_egbpa_permitrenewal_conditions";
+    public static final String SEQ_RENEWAL_CONDITIONS = "seq_egbpa_permitrenewal_conditions";
 
-	@Id
-	@GeneratedValue(generator = SEQ_RENEWAL_CONDITIONS, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_RENEWAL_CONDITIONS, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "permitRenewal", nullable = false)
-	private PermitRenewal permitRenewal;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "permitRenewal", nullable = false)
+    private PermitRenewal permitRenewal;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "noticecondition", nullable = false)
-	private NoticeCondition noticeCondition;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "noticecondition", nullable = false)
+    private NoticeCondition noticeCondition;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public PermitRenewal getPermitRenewal() {
-		return permitRenewal;
-	}
+    public PermitRenewal getPermitRenewal() {
+        return permitRenewal;
+    }
 
-	public void setPermitRenewal(PermitRenewal permitRenewal) {
-		this.permitRenewal = permitRenewal;
-	}
+    public void setPermitRenewal(PermitRenewal permitRenewal) {
+        this.permitRenewal = permitRenewal;
+    }
 
-	public NoticeCondition getNoticeCondition() {
-		return noticeCondition;
-	}
+    public NoticeCondition getNoticeCondition() {
+        return noticeCondition;
+    }
 
-	public void setNoticeCondition(NoticeCondition noticeCondition) {
-		this.noticeCondition = noticeCondition;
-	}
+    public void setNoticeCondition(NoticeCondition noticeCondition) {
+        this.noticeCondition = noticeCondition;
+    }
 
 }

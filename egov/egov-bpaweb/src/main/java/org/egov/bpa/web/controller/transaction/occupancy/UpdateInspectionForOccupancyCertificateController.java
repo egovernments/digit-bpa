@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
@@ -86,9 +88,11 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
     }
 
     @PostMapping("/update-inspection/{applicationNumber}/{inspectionNumber}")
-    public String updateInspection(@ModelAttribute("ocInspection") final OCInspection ocInspection,
-            @PathVariable final String applicationNumber, @PathVariable final String inspectionNumber, final Model model,
-            final BindingResult resultBinder) {
+    public String updateInspection(@PathVariable final String applicationNumber,
+            @PathVariable final String inspectionNumber,
+            @Valid @ModelAttribute("ocInspection") final OCInspection ocInspection,
+            final BindingResult resultBinder,
+            final Model model) {
         ocInspectionService.validateinspectionDocs(ocInspection, resultBinder);
         if (resultBinder.hasErrors()) {
             loadApplication(model, ocInspection);
@@ -106,7 +110,7 @@ public class UpdateInspectionForOccupancyCertificateController extends BpaGeneri
                 + ocInspectionRes.getInspection().getInspectionNumber();
     }
 
-    private List<DocketDetailCommon> buildDocketDetails(@ModelAttribute("ocInspection") OCInspection ocInspection) {
+    private List<DocketDetailCommon> buildDocketDetails(final OCInspection ocInspection) {
         final List<DocketDetailCommon> docketDetailTempList = new ArrayList<>();
         final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());

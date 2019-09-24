@@ -81,105 +81,105 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = GeneralDocument.SEQ_COMMON_DOCUMENT, sequenceName = GeneralDocument.SEQ_COMMON_DOCUMENT, allocationSize = 1)
 public class GeneralDocument extends AbstractAuditable {
 
-	public static final String SEQ_COMMON_DOCUMENT = "seq_egbpa_general_document";
-	private static final long serialVersionUID = 8833590155845005135L;
+    public static final String SEQ_COMMON_DOCUMENT = "seq_egbpa_general_document";
+    private static final long serialVersionUID = 8833590155845005135L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_COMMON_DOCUMENT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_COMMON_DOCUMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "egbpa_general_document_files", joinColumns = @JoinColumn(name = "documentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
-	private Set<FileStoreMapper> supportDocs = Collections.emptySet();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "egbpa_general_document_files", joinColumns = @JoinColumn(name = "documentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "servicechecklist", nullable = false)
-	private ChecklistServiceTypeMapping serviceChecklist;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "servicechecklist", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date submissionDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date submissionDate;
 
-	private Boolean isSubmitted;
+    private Boolean isSubmitted;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "createduser")
-	private User createdUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createduser")
+    private User createdUser;
 
-	@SafeHtml
-	@Length(min = 1, max = 256)
-	private String remarks;
+    @SafeHtml
+    @Length(min = 1, max = 256)
+    private String remarks;
 
-	private transient MultipartFile[] files;
+    private transient MultipartFile[] files;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public MultipartFile[] getFiles() {
-		return files;
-	}
+    public MultipartFile[] getFiles() {
+        return files;
+    }
 
-	public void setFiles(final MultipartFile[] files) {
-		this.files = files;
-	}
+    public void setFiles(final MultipartFile[] files) {
+        this.files = files;
+    }
 
-	public Date getSubmissionDate() {
-		return submissionDate;
-	}
+    public Date getSubmissionDate() {
+        return submissionDate;
+    }
 
-	public void setSubmissionDate(final Date submissionDate) {
-		this.submissionDate = submissionDate;
-	}
+    public void setSubmissionDate(final Date submissionDate) {
+        this.submissionDate = submissionDate;
+    }
 
-	public Boolean getSubmitted() {
-		return isSubmitted;
-	}
+    public Boolean getSubmitted() {
+        return isSubmitted;
+    }
 
-	public void setSubmitted(Boolean submitted) {
-		isSubmitted = submitted;
-	}
+    public void setSubmitted(Boolean submitted) {
+        isSubmitted = submitted;
+    }
 
-	public User getCreatedUser() {
-		return createdUser;
-	}
+    public User getCreatedUser() {
+        return createdUser;
+    }
 
-	public void setCreatedUser(User createdUser) {
-		this.createdUser = createdUser;
-	}
+    public void setCreatedUser(User createdUser) {
+        this.createdUser = createdUser;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(final String remarks) {
+        this.remarks = remarks;
+    }
 
-	public ChecklistServiceTypeMapping getServiceChecklist() {
-		return serviceChecklist;
-	}
+    public ChecklistServiceTypeMapping getServiceChecklist() {
+        return serviceChecklist;
+    }
 
-	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-		this.serviceChecklist = serviceChecklist;
-	}
+    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
+    }
 
-	public Set<FileStoreMapper> getSupportDocs() {
-		return supportDocs;
-	}
+    public Set<FileStoreMapper> getSupportDocs() {
+        return supportDocs;
+    }
 
-	public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
-		this.supportDocs = supportDocs;
-	}
+    public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
+        this.supportDocs = supportDocs;
+    }
 
-	public Set<FileStoreMapper> getOrderedSupportDocs() {
-		return this.supportDocs.stream().sorted(Comparator.comparing(FileStoreMapper::getId))
-				.collect(Collectors.toSet());
-	}
+    public Set<FileStoreMapper> getOrderedSupportDocs() {
+        return this.supportDocs.stream().sorted(Comparator.comparing(FileStoreMapper::getId))
+                .collect(Collectors.toSet());
+    }
 
 }

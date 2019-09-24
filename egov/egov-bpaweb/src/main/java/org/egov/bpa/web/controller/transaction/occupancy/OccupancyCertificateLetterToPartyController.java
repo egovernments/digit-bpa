@@ -175,9 +175,9 @@ public class OccupancyCertificateLetterToPartyController {
     }
 
     @PostMapping("/create/{applicationNumber}")
-    public String createLetterToParty(@ModelAttribute final OCLetterToParty ocLetterToParty,
-            final Model model, @PathVariable final String applicationNumber,
-            final BindingResult errors, final RedirectAttributes redirectAttributes) {
+    public String createLetterToParty(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute("ocLetterToParty") final OCLetterToParty ocLetterToParty,
+            final BindingResult errors, final Model model, final RedirectAttributes redirectAttributes) {
         validateCreateLetterToParty(ocLetterToParty, errors);
         if (errors.hasErrors()) {
             prepareData(ocLetterToParty, ocLetterToParty.getOc().getApplicationNumber(), model);
@@ -248,9 +248,14 @@ public class OccupancyCertificateLetterToPartyController {
     }
 
     @PostMapping("/update/{applicationNumber}/{lpNumber}")
-    public String updateLetterToParty(@Valid @ModelAttribute("ocLetterToParty") final OCLetterToParty ocLetterToParty,
-            @PathVariable final String applicationNumber,
-            @PathVariable final String lpNumber, final RedirectAttributes redirectAttributes) {
+    public String updateLetterToParty(@PathVariable final String applicationNumber,
+            @PathVariable final String lpNumber, @Valid @ModelAttribute("ocLetterToParty") final OCLetterToParty ocLetterToParty,
+            final BindingResult result, final Model model,
+            final RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            prepareLetterToParty(model, ocLetterToParty);
+            return LETTER_TO_PARTY_UPDATE;
+        }
         processAndStoreLetterToPartyDocuments(ocLetterToParty);
         OCLetterToParty ocLtpRes = ocLetterToPartyService.save(ocLetterToParty,
                 ocLetterToParty.getOc().getState().getOwnerPosition().getId());
@@ -338,9 +343,12 @@ public class OccupancyCertificateLetterToPartyController {
     }
 
     @PostMapping("/reply/{applicationNumber}/{lpNumber}")
-    public String createLetterToPartyReply(@PathVariable final String applicationNumber, @PathVariable final String lpNumber,
-            @ModelAttribute("ocLetterToParty") final OCLetterToParty ocLetterToParty, final BindingResult errors,
-            final RedirectAttributes redirectAttributes, final Model model) {
+    public String createLetterToPartyReply(@PathVariable final String applicationNumber,
+            @PathVariable final String lpNumber,
+            @ModelAttribute("ocLetterToParty") final OCLetterToParty ocLetterToParty,
+            final BindingResult errors,
+            final Model model,
+            final RedirectAttributes redirectAttributes) {
         ocLetterToPartyService.validateDocs(ocLetterToParty, errors);
         if (errors.hasErrors())
             return getLPReplyForm(model, ocLetterToParty);

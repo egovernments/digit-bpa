@@ -78,25 +78,26 @@ public class DocketCommon extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_DOCKET, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "inspection")
     private InspectionCommon inspection;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "checklisttype")
     private ChecklistType checklistType;
 
     @Valid
-    @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL, fetch= FetchType.LAZY)
+    @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DocketConstructionStageCommon> docketConstructionStage = new ArrayList<>(0);
 
     @Valid
-    @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL, fetch= FetchType.LAZY)
+    @OneToMany(mappedBy = "docket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DocketDetailCommon> docketDetail = new ArrayList<>(0);
 
     public DocketCommon() {
         // invariant
     }
+
     @Override
     public Long getId() {
         return id;
@@ -130,10 +131,12 @@ public class DocketCommon extends AbstractAuditable {
     public void setDocketDetail(List<DocketDetailCommon> docketDetail) {
         this.docketDetail = docketDetail;
     }
-	public ChecklistType getChecklistType() {
-		return checklistType;
-	}
-	public void setChecklistType(ChecklistType checklistType) {
-		this.checklistType = checklistType;
-	}
+
+    public ChecklistType getChecklistType() {
+        return checklistType;
+    }
+
+    public void setChecklistType(ChecklistType checklistType) {
+        this.checklistType = checklistType;
+    }
 }

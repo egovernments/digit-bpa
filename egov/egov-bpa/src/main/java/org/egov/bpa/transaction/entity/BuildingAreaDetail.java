@@ -50,41 +50,50 @@ public class BuildingAreaDetail {
     @GeneratedValue(generator = SEQEGBPABUILDINGAREADETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="buildingDetails")
+    @JoinColumn(name = "buildingDetails")
     private BuildingDetail buildingDetails;
     private String floorDescription;
     private BigDecimal plinthArea;
     private BigDecimal carpetArea;
-    
+
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getFloorDescription() {
         return floorDescription;
     }
+
     public void setFloorDescription(String floorDescription) {
         this.floorDescription = floorDescription;
     }
+
     public BigDecimal getPlinthArea() {
         return plinthArea;
     }
+
     public void setPlinthArea(BigDecimal plinthArea) {
         this.plinthArea = plinthArea;
     }
+
     public BigDecimal getCarpetArea() {
         return carpetArea;
     }
+
     public void setCarpetArea(BigDecimal carpetArea) {
         this.carpetArea = carpetArea;
     }
+
     public BuildingDetail getBuildingDetails() {
         return buildingDetails;
     }
+
     public void setBuildingDetails(BuildingDetail buildingDetails) {
         this.buildingDetails = buildingDetails;
     }
-    
+
 }

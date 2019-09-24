@@ -75,68 +75,68 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = BuildingSubUsage.SEQ_SUB_USAGE, sequenceName = BuildingSubUsage.SEQ_SUB_USAGE, allocationSize = 1)
 public class BuildingSubUsage extends AbstractAuditable {
 
-	public static final String SEQ_SUB_USAGE = "seq_egbpa_building_sub_usage";
-	private static final long serialVersionUID = -6878832233496818408L;
+    public static final String SEQ_SUB_USAGE = "seq_egbpa_building_sub_usage";
+    private static final long serialVersionUID = -6878832233496818408L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_SUB_USAGE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_SUB_USAGE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "application")
-	private BpaApplication application;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "application")
+    private BpaApplication application;
 
-	@PositiveOrZero
-	private Integer blockNumber;
+    @PositiveOrZero
+    private Integer blockNumber;
 
-	@SafeHtml
-	@Length(min = 1, max = 50)
-	private String blockName;
+    @SafeHtml
+    @Length(min = 1, max = 50)
+    private String blockName;
 
-	@Valid
-	@OneToMany(mappedBy = "buildingSubUsage", cascade = CascadeType.ALL)
-	@OrderBy("id ASC")
-	private List<BuildingSubUsageDetails> subUsageDetails = new ArrayList<>();
+    @Valid
+    @OneToMany(mappedBy = "buildingSubUsage", cascade = CascadeType.ALL)
+    @OrderBy("id ASC")
+    private List<BuildingSubUsageDetails> subUsageDetails = new ArrayList<>();
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getBlockName() {
-		return blockName;
-	}
+    public String getBlockName() {
+        return blockName;
+    }
 
-	public void setBlockName(String blockName) {
-		this.blockName = blockName;
-	}
+    public void setBlockName(String blockName) {
+        this.blockName = blockName;
+    }
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public void setApplication(BpaApplication application) {
-		this.application = application;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
 
-	public Integer getBlockNumber() {
-		return blockNumber;
-	}
+    public Integer getBlockNumber() {
+        return blockNumber;
+    }
 
-	public void setBlockNumber(Integer blockNumber) {
-		this.blockNumber = blockNumber;
-	}
+    public void setBlockNumber(Integer blockNumber) {
+        this.blockNumber = blockNumber;
+    }
 
-	public List<BuildingSubUsageDetails> getSubUsageDetails() {
-		return subUsageDetails;
-	}
+    public List<BuildingSubUsageDetails> getSubUsageDetails() {
+        return subUsageDetails;
+    }
 
-	public void setSubUsageDetails(List<BuildingSubUsageDetails> subUsageDetails) {
-		this.subUsageDetails = subUsageDetails;
-	}
+    public void setSubUsageDetails(List<BuildingSubUsageDetails> subUsageDetails) {
+        this.subUsageDetails = subUsageDetails;
+    }
 }

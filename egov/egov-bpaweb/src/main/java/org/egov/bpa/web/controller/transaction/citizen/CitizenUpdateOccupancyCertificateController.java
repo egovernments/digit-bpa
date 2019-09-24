@@ -122,311 +122,313 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/application/citizen")
 public class CitizenUpdateOccupancyCertificateController extends BpaGenericApplicationController {
 
-	public static final String OCCUPANCY_CERTIFICATE_UPDATE = "citizen-occupancy-certificate-update";
-	public static final String CITIZEN_OCCUPANCY_CERTIFICATE_VIEW = "citizen-occupancy-certificate-view";
-	private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
-	private static final String WORK_FLOW_ACTION = "workFlowAction";
-	private static final String TRUE = "TRUE";
-	private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
-	private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
-	private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
-	private static final String MESSAGE = "message";
-	private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
-	private static final String ADDITIONALRULE = "additionalRule";
-	private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
-	@Autowired
-	private GenericBillGeneratorService genericBillGeneratorService;
-	@Autowired
-	private PositionMasterService positionMasterService;
-	@Autowired
-	private OccupancyCertificateService occupancyCertificateService;
-	@Autowired
-	private OCAppointmentScheduleService ocAppointmentScheduleService;
-	@Autowired
-	private OCLetterToPartyService ocLetterToPartyService;
-	@Autowired
-	protected SubOccupancyService subOccupancyService;
-	@Autowired
-	private BpaUtils bpaUtils;
-	@Autowired
-	private CustomImplProvider specificNoticeService;
-	@Autowired
-	private OccupancyCertificateNocService ocNocService;
-	@Autowired
-	private NocConfigurationService nocConfigurationService;
-	@Autowired
-	private OccupancyCertificateUtils occupancyCertificateUtils;
+    private static final String BPA_APPLICATION = "bpaApplication";
+    private static final String OCCUPANCY_CERTIFICATE = "occupancyCertificate";
+    public static final String OCCUPANCY_CERTIFICATE_UPDATE = "citizen-occupancy-certificate-update";
+    public static final String CITIZEN_OCCUPANCY_CERTIFICATE_VIEW = "citizen-occupancy-certificate-view";
+    private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
+    private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String TRUE = "TRUE";
+    private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
+    private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
+    private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
+    private static final String MESSAGE = "message";
+    private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
+    private static final String ADDITIONALRULE = "additionalRule";
+    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
+    @Autowired
+    private GenericBillGeneratorService genericBillGeneratorService;
+    @Autowired
+    private PositionMasterService positionMasterService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    private OCAppointmentScheduleService ocAppointmentScheduleService;
+    @Autowired
+    private OCLetterToPartyService ocLetterToPartyService;
+    @Autowired
+    protected SubOccupancyService subOccupancyService;
+    @Autowired
+    private BpaUtils bpaUtils;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
+    @Autowired
+    private OccupancyCertificateNocService ocNocService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
+    @Autowired
+    private OccupancyCertificateUtils occupancyCertificateUtils;
 
-	@GetMapping("/occupancy-certificate/update/{applicationNumber}")
-	public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
-			final HttpServletRequest request) {
-		OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
-		prepareFormData(model);
-		setCityName(model, request);
-		prepareFormData(oc, model);
-		prepareCommonModelAttribute(model, oc.isCitizenAccepted());
-		loadData(oc, model);
-		model.addAttribute("occupancyCertificate", oc);
-		bpaUtils.loadBoundary(oc.getParent());
-		if (APPLICATION_STATUS_CREATED.equals(oc.getStatus().getCode()))
-			return OCCUPANCY_CERTIFICATE_UPDATE;
-		else {
-			model.addAttribute("bpaApplication", oc.getParent());
-			return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
-		}
-	}
+    @GetMapping("/occupancy-certificate/update/{applicationNumber}")
+    public String showOCUpdateForm(@PathVariable final String applicationNumber, final Model model,
+            final HttpServletRequest request) {
+        OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
+        prepareFormData(model);
+        setCityName(model, request);
+        prepareFormData(oc, model);
+        prepareCommonModelAttribute(model, oc.isCitizenAccepted());
+        loadData(oc, model);
+        model.addAttribute(OCCUPANCY_CERTIFICATE, oc);
+        bpaUtils.loadBoundary(oc.getParent());
+        if (APPLICATION_STATUS_CREATED.equals(oc.getStatus().getCode()))
+            return OCCUPANCY_CERTIFICATE_UPDATE;
+        else {
+            model.addAttribute(BPA_APPLICATION, oc.getParent());
+            return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
+        }
+    }
 
-	@GetMapping("/occupancy-certificate/comparison-report/{applicationNumber}")
-	public String viewApplicationByPermitNumber(final Model model, @PathVariable final String applicationNumber) {
-		OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
-		List<OCBuilding> ocBuildings = oc.getBuildings();
-		List<BuildingDetail> bpaBuildingDetails = oc.getParent().getBuildingDetail();
-		// List<OCComparisonReport> list =
-		// OccupancyCertificateUtils.getOcComparisonReport(ocBuildings,bpaBuildingDetails);
-		Map<Integer, HashMap<Integer, OCFloor>> ocMap = new HashMap<>();
-		Map<Integer, HashMap<Integer, ApplicationFloorDetail>> bpaMap = new HashMap<>();
-		for (OCBuilding ocBuilding : ocBuildings) {
-			HashMap<Integer, OCFloor> map = new HashMap<>();
-			for (OCFloor ocFloor : ocBuilding.getFloorDetails())
-				map.put(ocFloor.getFloorNumber(), ocFloor);
-			ocMap.put(ocBuilding.getBuildingNumber(), map);
-		}
-		for (BuildingDetail bpaBuilding : bpaBuildingDetails) {
-			HashMap<Integer, ApplicationFloorDetail> map = new HashMap<>();
-			for (ApplicationFloorDetail bpaFloor : bpaBuilding.getApplicationFloorDetails())
-				map.put(bpaFloor.getFloorNumber(), bpaFloor);
-			bpaMap.put(bpaBuilding.getNumber(), map);
-		}
-		Map<Integer, BigDecimal> ocBuildHeightMap = new HashMap<>();
-		Map<Integer, BigDecimal> bpaBuildHeightMap = new HashMap<>();
-		for (OCBuilding ocBuilding : ocBuildings)
-			ocBuildHeightMap.put(ocBuilding.getBuildingNumber(), ocBuilding.getHeightFromGroundWithOutStairRoom());
+    @GetMapping("/occupancy-certificate/comparison-report/{applicationNumber}")
+    public String viewApplicationByPermitNumber(final Model model, @PathVariable final String applicationNumber) {
+        OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
+        List<OCBuilding> ocBuildings = oc.getBuildings();
+        List<BuildingDetail> bpaBuildingDetails = oc.getParent().getBuildingDetail();
+        // List<OCComparisonReport> list =
+        // OccupancyCertificateUtils.getOcComparisonReport(ocBuildings,bpaBuildingDetails);
+        Map<Integer, HashMap<Integer, OCFloor>> ocMap = new HashMap<>();
+        Map<Integer, HashMap<Integer, ApplicationFloorDetail>> bpaMap = new HashMap<>();
+        for (OCBuilding ocBuilding : ocBuildings) {
+            HashMap<Integer, OCFloor> map = new HashMap<>();
+            for (OCFloor ocFloor : ocBuilding.getFloorDetails())
+                map.put(ocFloor.getFloorNumber(), ocFloor);
+            ocMap.put(ocBuilding.getBuildingNumber(), map);
+        }
+        for (BuildingDetail bpaBuilding : bpaBuildingDetails) {
+            HashMap<Integer, ApplicationFloorDetail> map = new HashMap<>();
+            for (ApplicationFloorDetail bpaFloor : bpaBuilding.getApplicationFloorDetails())
+                map.put(bpaFloor.getFloorNumber(), bpaFloor);
+            bpaMap.put(bpaBuilding.getNumber(), map);
+        }
+        Map<Integer, BigDecimal> ocBuildHeightMap = new HashMap<>();
+        Map<Integer, BigDecimal> bpaBuildHeightMap = new HashMap<>();
+        for (OCBuilding ocBuilding : ocBuildings)
+            ocBuildHeightMap.put(ocBuilding.getBuildingNumber(), ocBuilding.getHeightFromGroundWithOutStairRoom());
 
-		for (BuildingDetail bpaBuilding : bpaBuildingDetails)
-			bpaBuildHeightMap.put(bpaBuilding.getNumber(), bpaBuilding.getHeightFromGroundWithOutStairRoom());
+        for (BuildingDetail bpaBuilding : bpaBuildingDetails)
+            bpaBuildHeightMap.put(bpaBuilding.getNumber(), bpaBuilding.getHeightFromGroundWithOutStairRoom());
 
-		model.addAttribute("ocMap", ocMap);
-		model.addAttribute("bpaMap", bpaMap);
-		model.addAttribute("ocBuildingHeightMap", ocBuildHeightMap);
-		model.addAttribute("bpaBuildingHeightMap", bpaBuildHeightMap);
-		return "view-oc-comparison-report";
-	}
+        model.addAttribute("ocMap", ocMap);
+        model.addAttribute("bpaMap", bpaMap);
+        model.addAttribute("ocBuildingHeightMap", ocBuildHeightMap);
+        model.addAttribute("bpaBuildingHeightMap", bpaBuildHeightMap);
+        return "view-oc-comparison-report";
+    }
 
-	private void loadData(OccupancyCertificate oc, Model model) {
-		List<OCLetterToParty> ocLetterToParties = ocLetterToPartyService.findAllByOC(oc);
-		if (!ocLetterToParties.isEmpty() && ocLetterToParties.get(0).getLetterToParty().getSentDate() != null)
-			model.addAttribute("mode", "showLPDetails");
-		model.addAttribute("letterToPartyList", ocLetterToParties);
-		if (APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
-				|| APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode()) && !oc.getRescheduledByCitizen()) {
-			model.addAttribute("mode", "showRescheduleToCitizen");
-		}
-		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
-				.find(OcInspectionService.class, specificNoticeService.getCityDetails());
-		model.addAttribute("inspectionList", ocInspectionService.findByOcOrderByIdAsc(oc));
-		model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
-		if (APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode())
-				|| APPLICATION_STATUS_APPROVED.equals(oc.getStatus().getCode())
-						&& bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
-			model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
-			String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
-			model.addAttribute(ONLINE_PAYMENT_ENABLE,
-					(enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
-		} else {
-			model.addAttribute(COLLECT_FEE_VALIDATE, "");
-		}
-		model.addAttribute("subOccupancyList", subOccupancyService.findAll());
-		buildAppointmentDetailsOfScrutinyAndInspection(model, oc);
-		buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
-		model.addAttribute(APPLICATION_HISTORY, workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(),
-				oc.getCurrentState(), oc.getStateHistory()));
+    private void loadData(OccupancyCertificate oc, Model model) {
+        List<OCLetterToParty> ocLetterToParties = ocLetterToPartyService.findAllByOC(oc);
+        if (!ocLetterToParties.isEmpty() && ocLetterToParties.get(0).getLetterToParty().getSentDate() != null)
+            model.addAttribute("mode", "showLPDetails");
+        model.addAttribute("letterToPartyList", ocLetterToParties);
+        if (APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
+                || APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode()) && !oc.getRescheduledByCitizen()) {
+            model.addAttribute("mode", "showRescheduleToCitizen");
+        }
+        final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+                .find(OcInspectionService.class, specificNoticeService.getCityDetails());
+        model.addAttribute("inspectionList", ocInspectionService.findByOcOrderByIdAsc(oc));
+        model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
+        if (APPLICATION_STATUS_SUBMITTED.equals(oc.getStatus().getCode())
+                || APPLICATION_STATUS_APPROVED.equals(oc.getStatus().getCode())
+                        && bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand())) {
+            model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
+            String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
+            model.addAttribute(ONLINE_PAYMENT_ENABLE,
+                    (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+        } else {
+            model.addAttribute(COLLECT_FEE_VALIDATE, "");
+        }
+        model.addAttribute("subOccupancyList", subOccupancyService.findAll());
+        buildAppointmentDetailsOfScrutinyAndInspection(model, oc);
+        buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
+        model.addAttribute(APPLICATION_HISTORY, workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(),
+                oc.getCurrentState(), oc.getStateHistory()));
 
-		Map<String, String> nocConfigMap = new HashMap<>();
-		Map<String, String> nocAutoMap = new HashMap<>();
-		Map<String, String> nocTypeApplMap = new HashMap<>();
-		int nocAutoCount = 0;
-		List<User> nocAutoUsers = new ArrayList<>();
-		List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
-		List<OccupancyNocApplication> ocNoc = ocNocService.findByOCApplicationNumber(oc.getApplicationNumber());
-		model.addAttribute("isOcApplFeeReq", "NO");
-		model.addAttribute("ocApplFeeCollected", "NO");
-		if (occupancyCertificateUtils.isApplicationFeeCollectionRequired()) {
-			model.addAttribute("isOcApplFeeReq", "YES");
-		}
-		if (oc.getDemand() != null && oc.getDemand().getAmtCollected().compareTo(oc.getAdmissionfeeAmount()) >= 0) {
-			model.addAttribute("ocApplFeeCollected", "YES");
-		}
-		Map<String, String> edcrNocMandatory = ocNocService.getEdcrNocMandatory(oc.geteDcrNumber());
-		for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
-			String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
-			NocConfiguration nocConfig = nocConfigurationService.findByDepartmentAndType(code, BpaConstants.OC);
+        Map<String, String> nocConfigMap = new HashMap<>();
+        Map<String, String> nocAutoMap = new HashMap<>();
+        Map<String, String> nocTypeApplMap = new HashMap<>();
+        int nocAutoCount = 0;
+        List<User> nocAutoUsers = new ArrayList<>();
+        List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+        List<OccupancyNocApplication> ocNoc = ocNocService.findByOCApplicationNumber(oc.getApplicationNumber());
+        model.addAttribute("isOcApplFeeReq", "NO");
+        model.addAttribute("ocApplFeeCollected", "NO");
+        if (occupancyCertificateUtils.isApplicationFeeCollectionRequired()) {
+            model.addAttribute("isOcApplFeeReq", "YES");
+        }
+        if (oc.getDemand() != null && oc.getDemand().getAmtCollected().compareTo(oc.getAdmissionfeeAmount()) >= 0) {
+            model.addAttribute("ocApplFeeCollected", "YES");
+        }
+        Map<String, String> edcrNocMandatory = ocNocService.getEdcrNocMandatory(oc.geteDcrNumber());
+        for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
+            String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+            NocConfiguration nocConfig = nocConfigurationService.findByDepartmentAndType(code, BpaConstants.OC);
 
-			if (ocNocService.findByApplicationNumberAndType(oc.getApplicationNumber(), code) != null)
-				nocTypeApplMap.put(code, "initiated");
-			if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC)
-					&& nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation()
-							.equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
-					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
-				nocConfigMap.put(nocConfig.getDepartment(), "initiate");
-			}
-			if (nocConfig != null
-					&& nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-					&& nocConfig.getIntegrationInitiation()
-							.equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
-					&& edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
-				nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
-				nocAutoCount++;
-				List<User> userList = nocUsers.stream().filter(usr -> usr.getRoles().stream().anyMatch(
-						usrrl -> usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-						.collect(Collectors.toList());
-				if (!userList.isEmpty())
-					nocAutoUsers.add(userList.get(0));
-			}
-			model.addAttribute("nocTypeApplMap", nocTypeApplMap);
-			model.addAttribute("nocConfigMap", nocConfigMap);
-			model.addAttribute("nocAutoMap", nocConfigMap);
-			for (OccupancyNocApplication ona : ocNoc) {
-				if (nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode()
-						.equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
-					nocDocument.setOcNoc(ona);
-				}
-			}
-			model.addAttribute("nocUserExists", nocAutoUsers.size() == nocAutoCount);
-		}
-		prepareDocumentsAllowedExtAndSize(model);
-	}
+            if (ocNocService.findByApplicationNumberAndType(oc.getApplicationNumber(), code) != null)
+                nocTypeApplMap.put(code, "initiated");
+            if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC)
+                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                    && nocConfig.getIntegrationInitiation()
+                            .equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
+                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+                nocConfigMap.put(nocConfig.getDepartment(), "initiate");
+            }
+            if (nocConfig != null
+                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                    && nocConfig.getIntegrationInitiation()
+                            .equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+                nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
+                nocAutoCount++;
+                List<User> userList = nocUsers.stream().filter(usr -> usr.getRoles().stream().anyMatch(
+                        usrrl -> usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                        .collect(Collectors.toList());
+                if (!userList.isEmpty())
+                    nocAutoUsers.add(userList.get(0));
+            }
+            model.addAttribute("nocTypeApplMap", nocTypeApplMap);
+            model.addAttribute("nocConfigMap", nocConfigMap);
+            model.addAttribute("nocAutoMap", nocConfigMap);
+            for (OccupancyNocApplication ona : ocNoc) {
+                if (nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode()
+                        .equalsIgnoreCase(ona.getBpaNocApplication().getNocType())) {
+                    nocDocument.setOcNoc(ona);
+                }
+            }
+            model.addAttribute("nocUserExists", nocAutoUsers.size() == nocAutoCount);
+        }
+        prepareDocumentsAllowedExtAndSize(model);
+    }
 
-	private void prepareFormData(final OccupancyCertificate oc, final Model model) {
-		model.addAttribute("isEDCRIntegrationRequire", true);
-		model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
-		model.addAttribute("stateType", oc.getClass().getSimpleName());
-		model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
-		getDcrDocumentsUploadMode(model);
-		model.addAttribute("currentState", oc.getCurrentState() == null ? "" : oc.getCurrentState().getValue());
-	}
+    private void prepareFormData(final OccupancyCertificate oc, final Model model) {
+        model.addAttribute("isEDCRIntegrationRequire", true);
+        model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
+        model.addAttribute("stateType", oc.getClass().getSimpleName());
+        model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_OC);
+        getDcrDocumentsUploadMode(model);
+        model.addAttribute("currentState", oc.getCurrentState() == null ? "" : oc.getCurrentState().getValue());
+    }
 
-	private void setCityName(final Model model, final HttpServletRequest request) {
-		if (request.getSession().getAttribute("cityname") != null)
-			model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
-	}
+    private void setCityName(final Model model, final HttpServletRequest request) {
+        if (request.getSession().getAttribute("cityname") != null)
+            model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
+    }
 
-	@PostMapping("/occupancy-certificate/update-submit")
-	public String updateOCDetails(
-			@Valid @ModelAttribute("occupancyCertificate") final OccupancyCertificate occupancyCertificate,
-			final BindingResult errors, final Model model, final HttpServletRequest request) {
+    @PostMapping("/occupancy-certificate/update-submit")
+    public String updateOCDetails(
+            @Valid @ModelAttribute(OCCUPANCY_CERTIFICATE) final OccupancyCertificate occupancyCertificate,
+            final BindingResult errors, final Model model, final HttpServletRequest request) {
 
-		occupancyCertificateService.validateDocs(occupancyCertificate, errors);
-		if (errors.hasErrors()) {
-			prepareFormData(model);
-			setCityName(model, request);
-			prepareFormData(occupancyCertificate, model);
-			prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
-			loadData(occupancyCertificate, model);
-			model.addAttribute("occupancyCertificate", occupancyCertificate);
-			bpaUtils.loadBoundary(occupancyCertificate.getParent());
-			if (APPLICATION_STATUS_CREATED.equals(occupancyCertificate.getStatus().getCode()))
-				return OCCUPANCY_CERTIFICATE_UPDATE;
-			else {
-				model.addAttribute("bpaApplication", occupancyCertificate.getParent());
-				return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
-			}
-		}
-		occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
-		WorkflowBean wfBean = new WorkflowBean();
-		Long userPosition = null;
-		String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-		Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
-				&& request.getParameter(CITIZEN_OR_BUSINESS_USER).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
-				&& request.getParameter(ONLINE_PAYMENT_ENABLE).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(),
-				WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
-		if (wfMatrix != null)
-			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
-		if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-				&& (userPosition == 0 || userPosition == null)) {
-			model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
-			prepareFormData(model);
-			setCityName(model, request);
-			prepareFormData(occupancyCertificate, model);
-			prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
-			loadData(occupancyCertificate, model);
-			model.addAttribute("occupancyCertificate", occupancyCertificate);
-			bpaUtils.loadBoundary(occupancyCertificate.getParent());
-			if (APPLICATION_STATUS_CREATED.equals(occupancyCertificate.getStatus().getCode()))
-				return OCCUPANCY_CERTIFICATE_UPDATE;
-			else {
-				model.addAttribute("bpaApplication", occupancyCertificate.getParent());
-				return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
-			}
-		}
+        occupancyCertificateService.validateDocs(occupancyCertificate, errors);
+        if (errors.hasErrors()) {
+            prepareFormData(model);
+            setCityName(model, request);
+            prepareFormData(occupancyCertificate, model);
+            prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
+            loadData(occupancyCertificate, model);
+            model.addAttribute(OCCUPANCY_CERTIFICATE, occupancyCertificate);
+            bpaUtils.loadBoundary(occupancyCertificate.getParent());
+            if (APPLICATION_STATUS_CREATED.equals(occupancyCertificate.getStatus().getCode()))
+                return OCCUPANCY_CERTIFICATE_UPDATE;
+            else {
+                model.addAttribute(BPA_APPLICATION, occupancyCertificate.getParent());
+                return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
+            }
+        }
+        occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
+        WorkflowBean wfBean = new WorkflowBean();
+        Long userPosition = null;
+        String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
+        Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
+                && request.getParameter(CITIZEN_OR_BUSINESS_USER).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
+                && request.getParameter(ONLINE_PAYMENT_ENABLE).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(),
+                WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
+        if (wfMatrix != null)
+            userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
+        if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && (userPosition == 0 || userPosition == null)) {
+            model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
+            prepareFormData(model);
+            setCityName(model, request);
+            prepareFormData(occupancyCertificate, model);
+            prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
+            loadData(occupancyCertificate, model);
+            model.addAttribute(OCCUPANCY_CERTIFICATE, occupancyCertificate);
+            bpaUtils.loadBoundary(occupancyCertificate.getParent());
+            if (APPLICATION_STATUS_CREATED.equals(occupancyCertificate.getStatus().getCode()))
+                return OCCUPANCY_CERTIFICATE_UPDATE;
+            else {
+                model.addAttribute(BPA_APPLICATION, occupancyCertificate.getParent());
+                return CITIZEN_OCCUPANCY_CERTIFICATE_VIEW;
+            }
+        }
 
-		wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
-		OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
-		bpaUtils.updatePortalUserinbox(ocResponse, null);
-		if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable
-				&& bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
-			return genericBillGeneratorService.generateBillAndRedirectToCollection(occupancyCertificate, model);
-		} else if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-				&& !bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
-			if (occupancyCertificate.getAuthorizedToSubmitPlan())
-				wfBean.setApproverComments(AUTH_TO_SUBMIT_PLAN);
-			wfBean.setCurrentState(WF_NEW_STATE);
-			bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, wfBean);
-			ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
-			ocNocService.initiateNoc(ocResponse);
-			Position pos = positionMasterService
-					.getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
-			User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
-			String message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION,
-					new String[] {
-							wfUser == null ? ""
-									: wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
-							ocResponse.getApplicationNumber() },
-					LocaleContextHolder.getLocale());
+        wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
+        OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
+        bpaUtils.updatePortalUserinbox(ocResponse, null);
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable
+                && bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            return genericBillGeneratorService.generateBillAndRedirectToCollection(occupancyCertificate, model);
+        } else if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && !bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            if (occupancyCertificate.getAuthorizedToSubmitPlan())
+                wfBean.setApproverComments(AUTH_TO_SUBMIT_PLAN);
+            wfBean.setCurrentState(WF_NEW_STATE);
+            bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, wfBean);
+            ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
+            ocNocService.initiateNoc(ocResponse);
+            Position pos = positionMasterService
+                    .getPositionById(ocResponse.getCurrentState().getOwnerPosition().getId());
+            User wfUser = workflowHistoryService.getUserPositionByPassingPosition(pos.getId());
+            String message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION,
+                    new String[] {
+                            wfUser == null ? ""
+                                    : wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
+                            ocResponse.getApplicationNumber() },
+                    LocaleContextHolder.getLocale());
 
-			message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
-			model.addAttribute(MESSAGE, message);
-		} else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
-			model.addAttribute(MESSAGE,
-					"Occupancy Certificate  Application is cancelled by applicant itself successfully with application number "
-							+ ocResponse.getApplicationNumber());
-		} else {
-			model.addAttribute(MESSAGE,
-					"Occupancy Certificate Application is successfully saved with ApplicationNumber "
-							+ ocResponse.getApplicationNumber());
-		}
-		return BPAAPPLICATION_CITIZEN;
-	}
+            message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
+            model.addAttribute(MESSAGE, message);
+        } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
+            model.addAttribute(MESSAGE,
+                    "Occupancy Certificate  Application is cancelled by applicant itself successfully with application number "
+                            + ocResponse.getApplicationNumber());
+        } else {
+            model.addAttribute(MESSAGE,
+                    "Occupancy Certificate Application is successfully saved with ApplicationNumber "
+                            + ocResponse.getApplicationNumber());
+        }
+        return BPAAPPLICATION_CITIZEN;
+    }
 
-	private void buildAppointmentDetailsOfScrutinyAndInspection(Model model, OccupancyCertificate oc) {
-		if (APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
-				|| APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())) {
-			Optional<OCSlot> activeSlotApplication = oc.getOcSlots().stream()
-					.reduce((slotAppln1, slotAppln2) -> slotAppln2);
-			if (activeSlotApplication.isPresent()) {
-				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(
-						activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
-				model.addAttribute("appointmentTimeRes",
-						activeSlotApplication.get().getSlotDetail().getAppointmentTime());
-				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Document Scrutiny");
-			}
-		} else if (APPLICATION_STATUS_DOC_VERIFIED.equals(oc.getStatus().getCode()) && oc.getInspections().isEmpty()) {
-			List<OCAppointmentSchedule> appointmentScheduledList = ocAppointmentScheduleService.findByApplication(oc,
-					AppointmentSchedulePurpose.INSPECTION);
-			if (!appointmentScheduledList.isEmpty()) {
-				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(
-						appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentDate()));
-				model.addAttribute("appointmentTimeRes",
-						appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentTime());
-				model.addAttribute("appmntInspnRemarks",
-						appointmentScheduledList.get(0).getAppointmentScheduleCommon().isPostponed()
-								? appointmentScheduledList.get(0).getAppointmentScheduleCommon().getPostponementReason()
-								: appointmentScheduledList.get(0).getAppointmentScheduleCommon().getRemarks());
-				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Field Inspection");
-			}
-		}
-	}
+    private void buildAppointmentDetailsOfScrutinyAndInspection(Model model, OccupancyCertificate oc) {
+        if (APPLICATION_STATUS_SCHEDULED.equals(oc.getStatus().getCode())
+                || APPLICATION_STATUS_RESCHEDULED.equals(oc.getStatus().getCode())) {
+            Optional<OCSlot> activeSlotApplication = oc.getOcSlots().stream()
+                    .reduce((slotAppln1, slotAppln2) -> slotAppln2);
+            if (activeSlotApplication.isPresent()) {
+                model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(
+                        activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
+                model.addAttribute("appointmentTimeRes",
+                        activeSlotApplication.get().getSlotDetail().getAppointmentTime());
+                model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Document Scrutiny");
+            }
+        } else if (APPLICATION_STATUS_DOC_VERIFIED.equals(oc.getStatus().getCode()) && oc.getInspections().isEmpty()) {
+            List<OCAppointmentSchedule> appointmentScheduledList = ocAppointmentScheduleService.findByApplication(oc,
+                    AppointmentSchedulePurpose.INSPECTION);
+            if (!appointmentScheduledList.isEmpty()) {
+                model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(
+                        appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentDate()));
+                model.addAttribute("appointmentTimeRes",
+                        appointmentScheduledList.get(0).getAppointmentScheduleCommon().getAppointmentTime());
+                model.addAttribute("appmntInspnRemarks",
+                        appointmentScheduledList.get(0).getAppointmentScheduleCommon().isPostponed()
+                                ? appointmentScheduledList.get(0).getAppointmentScheduleCommon().getPostponementReason()
+                                : appointmentScheduledList.get(0).getAppointmentScheduleCommon().getRemarks());
+                model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Field Inspection");
+            }
+        }
+    }
 }

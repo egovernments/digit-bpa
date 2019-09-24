@@ -67,56 +67,56 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OCNocDocuments.SEQ, sequenceName = OCNocDocuments.SEQ, allocationSize = 1)
 public class OCNocDocuments extends AbstractAuditable {
 
-	protected static final String SEQ = "seq_egbpa_oc_noc_document";
-	private static final long serialVersionUID = 1685784359699789090L;
+    protected static final String SEQ = "seq_egbpa_oc_noc_document";
+    private static final long serialVersionUID = 1685784359699789090L;
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "nocDocument", nullable = false)
-	private NocDocument nocDocument;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nocDocument", nullable = false)
+    private NocDocument nocDocument;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "occupancyCertificate", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "occupancyCertificate", nullable = false)
+    private OccupancyCertificate oc;
 
-	@Valid
-	private transient OccupancyNocApplication ocNoc = new OccupancyNocApplication();
+    @Valid
+    private transient OccupancyNocApplication ocNoc = new OccupancyNocApplication();
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public NocDocument getNocDocument() {
-		return nocDocument;
-	}
+    public NocDocument getNocDocument() {
+        return nocDocument;
+    }
 
-	public void setNocDocument(NocDocument nocDocument) {
-		this.nocDocument = nocDocument;
-	}
+    public void setNocDocument(NocDocument nocDocument) {
+        this.nocDocument = nocDocument;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
-	public OccupancyNocApplication getOcNoc() {
-		return ocNoc;
-	}
+    public OccupancyNocApplication getOcNoc() {
+        return ocNoc;
+    }
 
-	public void setOcNoc(OccupancyNocApplication ocNoc) {
-		this.ocNoc = ocNoc;
-	}
+    public void setOcNoc(OccupancyNocApplication ocNoc) {
+        this.ocNoc = ocNoc;
+    }
 }

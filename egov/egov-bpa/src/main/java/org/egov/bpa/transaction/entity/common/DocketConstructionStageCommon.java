@@ -67,68 +67,68 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = DocketConstructionStageCommon.SEQ_DOCKETCONSTRSTAGE, sequenceName = DocketConstructionStageCommon.SEQ_DOCKETCONSTRSTAGE, allocationSize = 1)
 public class DocketConstructionStageCommon extends AbstractAuditable {
 
-	public static final String SEQ_DOCKETCONSTRSTAGE = "SEQ_EGBPA_DOCKET_CONSTRNSTAGE_COMMON";
-	private static final long serialVersionUID = 6802467030155457623L;
+    public static final String SEQ_DOCKETCONSTRSTAGE = "SEQ_EGBPA_DOCKET_CONSTRNSTAGE_COMMON";
+    private static final long serialVersionUID = 6802467030155457623L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_DOCKETCONSTRSTAGE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_DOCKETCONSTRSTAGE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@Length(min = 1, max = 32)
-	private String value;
+    @SafeHtml
+    @Length(min = 1, max = 32)
+    private String value;
 
-	@SafeHtml
-	@Length(min = 1, max = 256)
-	private String remarks;
+    @SafeHtml
+    @Length(min = 1, max = 256)
+    private String remarks;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "docket", nullable = false)
-	private DocketCommon docket;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "docket", nullable = false)
+    private DocketCommon docket;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "checklistDetail", nullable = false)
-	private ChecklistServiceTypeMapping serviceChecklist;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "checklistDetail", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-	public DocketCommon getDocket() {
-		return docket;
-	}
+    public DocketCommon getDocket() {
+        return docket;
+    }
 
-	public void setDocket(DocketCommon docket) {
-		this.docket = docket;
-	}
+    public void setDocket(DocketCommon docket) {
+        this.docket = docket;
+    }
 
-	public ChecklistServiceTypeMapping getServiceChecklist() {
-		return serviceChecklist;
-	}
+    public ChecklistServiceTypeMapping getServiceChecklist() {
+        return serviceChecklist;
+    }
 
-	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-		this.serviceChecklist = serviceChecklist;
-	}
+    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
+    }
 }

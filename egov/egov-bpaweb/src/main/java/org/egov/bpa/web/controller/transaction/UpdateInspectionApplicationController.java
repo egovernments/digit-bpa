@@ -63,7 +63,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_APPROVAL_PENDING;
 import static org.egov.bpa.utils.BpaConstants.WF_TS_INSPECTION_INITIATED;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,6 +71,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.entity.PermitRevocation;
@@ -130,37 +130,36 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
     private InspectionLetterToPartyService letterToPartyService;
     @Autowired
     private PermitRevocationService permitRevocationService;
-    
+
     @ModelAttribute("inspectionApplication")
     public InspectionApplication getInspectionApplication(@PathVariable final String applicationNumber) {
-    	return inspectionAppService.findByInspectionApplicationNumber(applicationNumber).getInspectionApplication();
+        return inspectionAppService.findByInspectionApplicationNumber(applicationNumber).getInspectionApplication();
     }
-	
 
     @GetMapping("/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
-       // model.addAttribute("inspectionApplication",permitInspection.getInspectionApplication());
-        model.addAttribute("eDcrNumber",permitInspection.getApplication().geteDcrNumber());
-        model.addAttribute("planPermissionNumber",permitInspection.getApplication().getPlanPermissionNumber());
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
+        // model.addAttribute("inspectionApplication",permitInspection.getInspectionApplication());
+        model.addAttribute("eDcrNumber", permitInspection.getApplication().geteDcrNumber());
+        model.addAttribute("planPermissionNumber", permitInspection.getApplication().getPlanPermissionNumber());
         prepareActions(model, permitInspection.getInspectionApplication());
         loadFormData(model, permitInspection);
         loadCommonApplicationDetails(model, permitInspection.getInspectionApplication());
-        model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());       
+        model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         return "inspection-update-form";
     }
 
-    
     @PostMapping("/update/{applicationNumber}")
-    public String updateApplication(@ModelAttribute InspectionApplication inspectionApplication,
-            @PathVariable final String applicationNumber,
+    public String updateApplication(@PathVariable final String applicationNumber,
+            @RequestParam final BigDecimal amountRule,
+            @Valid @ModelAttribute InspectionApplication inspectionApplication,
             final BindingResult resultBinder,
-            final HttpServletRequest request,
             final Model model,
-            final RedirectAttributes redirectAttributes,
-            @RequestParam final BigDecimal amountRule) throws IOException {
-    	
-    	if (resultBinder.hasErrors())
+            final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) {
+
+        if (resultBinder.hasErrors())
             return "inspection-update-form";
 
         Position ownerPosition = inspectionApplication.getCurrentState().getOwnerPosition();
@@ -176,62 +175,65 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
         if (StringUtils.isNotBlank(request.getParameter(APPRIVALPOSITION))
                 && !WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
             approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
-        }else if (FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(inspectionApplication.getState().getNextAction())) {
-            List<InspectionLetterToParty> lettertoParties = letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication);
+        } else if (FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(inspectionApplication.getState().getNextAction())) {
+            List<InspectionLetterToParty> lettertoParties = letterToPartyService
+                    .findByInspectionApplicationOrderByIdDesc(inspectionApplication);
             StateHistory<Position> stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(
-            		inspectionApplication.getStateHistory(),
+                    inspectionApplication.getStateHistory(),
                     lettertoParties.get(0).getLetterToParty().getStateForOwnerPosition());
             approvalPosition = stateHistory.getOwnerPosition().getId();
         }
 
         if (WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
             pos = positionMasterService.getPositionById(bpaWorkFlowService.getTownSurveyorInspnInitiator(
-            		inspectionApplication.getStateHistory(), inspectionApplication.getCurrentState()));
+                    inspectionApplication.getStateHistory(), inspectionApplication.getCurrentState()));
             approvalPosition = positionMasterService
                     .getPositionById(bpaWorkFlowService.getTownSurveyorInspnInitiator(inspectionApplication.getStateHistory(),
-                    		inspectionApplication.getCurrentState()))
+                            inspectionApplication.getCurrentState()))
                     .getId();
-        } 
+        }
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
         wfBean.setApproverPositionId(approvalPosition);
         wfBean.setApproverComments(inspectionApplication.getApprovalComent());
         if (inspectionApplication.getState().getValue() != null)
             wfBean.setCurrentState(inspectionApplication.getState().getValue());
-        
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
         permitInspection.setInspectionApplication(inspectionApplication);
         PermitInspectionApplication inspectionResponse = inspectionAppService.update(permitInspection, wfBean);
-        
+
         bpaUtils.updatePortalUserinbox(inspectionResponse, null);
         if (null != approvalPosition) {
             pos = positionMasterService.getPositionById(approvalPosition);
         }
         if (null == approvalPosition) {
-            pos = positionMasterService.getPositionById(inspectionResponse.getInspectionApplication().getCurrentState().getOwnerPosition().getId());
+            pos = positionMasterService
+                    .getPositionById(inspectionResponse.getInspectionApplication().getCurrentState().getOwnerPosition().getId());
         }
         User user = workflowHistoryService
                 .getUserPositionByPassingPosition(approvalPosition == null ? pos.getId() : approvalPosition);
         String message;
-       if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
+        if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             message = messageSource.getMessage("msg.approve.inspection", new String[] {
-                                    inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
-      
-       else if(BpaConstants.WF_REVOKE_STATE.equalsIgnoreCase(wfBean.getWorkFlowAction())){
-    	   PermitRevocation permitRevocation = new PermitRevocation();
-    	   permitRevocation.setApplication(permitInspection.getApplication());
-    	   permitRevocation.setInitiateRemarks(inspectionApplication.getApprovalComent());
-    	   PermitRevocation permitRevocationRes = permitRevocationService.save(permitRevocation);
-    	   bpaUtils.updatePortalUserinbox(permitRevocationRes.getApplication(), null);
-    	   message = messageSource.getMessage("msg.permit.revoke.initiate",
-                   new String[] { permitRevocationRes.getApplicationNumber() }, LocaleContextHolder.getLocale());
-    
-       } else {
+                    inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
+
+        else if (BpaConstants.WF_REVOKE_STATE.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            PermitRevocation permitRevocation = new PermitRevocation();
+            permitRevocation.setApplication(permitInspection.getApplication());
+            permitRevocation.setInitiateRemarks(inspectionApplication.getApprovalComent());
+            PermitRevocation permitRevocationRes = permitRevocationService.save(permitRevocation);
+            bpaUtils.updatePortalUserinbox(permitRevocationRes.getApplication(), null);
+            message = messageSource.getMessage("msg.permit.revoke.initiate",
+                    new String[] { permitRevocationRes.getApplicationNumber() }, LocaleContextHolder.getLocale());
+
+        } else {
             message = messageSource.getMessage("msg.update.forward.inspection", new String[] {
                     user == null ? ""
                             : user.getUsername().concat("~")
                                     .concat(getDesinationNameByPosition(pos)),
-                                    inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
+                    inspectionResponse.getInspectionApplication().getApplicationNumber() }, LocaleContextHolder.getLocale());
         }
 
         redirectAttributes.addFlashAttribute(MESSAGE, message);
@@ -242,9 +244,10 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
 
     @GetMapping("/success/{applicationNumber}")
     public String success(@PathVariable final String applicationNumber, final Model model) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
-        model.addAttribute("eDcrNumber",permitInspection.getApplication().geteDcrNumber());
-        model.addAttribute("planPermissionNumber",permitInspection.getApplication().getPlanPermissionNumber());
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
+        model.addAttribute("eDcrNumber", permitInspection.getApplication().geteDcrNumber());
+        model.addAttribute("planPermissionNumber", permitInspection.getApplication().getPlanPermissionNumber());
         loadCommonApplicationDetails(model, permitInspection.getInspectionApplication());
         return "inspection-view";
     }
@@ -279,17 +282,16 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
         boolean isAfterTSInspection = DESIGNATION_OVERSEER.equals(appvrAssignment.getDesignation().getName())
                 && APPLICATION_STATUS_TS_INS.equalsIgnoreCase(currentStatus);
 
-
         if (hasInspectionStatus && hasInspectionPendingAction && purposeInsList.isEmpty())
             mode = "newappointment";
         else if (hasInspectionPendingAction && hasInspectionStatus && inspectionApplication.getInspections().isEmpty()) {
             mode = "captureInspection";
-            model.addAttribute("isInspnRescheduleEnabled",true);
+            model.addAttribute("isInspnRescheduleEnabled", true);
             scheduleType = AppointmentSchedulePurpose.INSPECTION;
         } else if ((hasInspectionPendingAction && hasInspectionStatus)
                 || isAfterTSInspection && !inspectionApplication.getInspections().isEmpty())
             mode = "modifyInspection";
-        else if(BpaConstants.FORWARDED_TO_CLERK.equals(inspectionApplication.getState().getNextAction()))
+        else if (BpaConstants.FORWARDED_TO_CLERK.equals(inspectionApplication.getState().getNextAction()))
             model.addAttribute("createlettertoparty", true);
         else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(pendingAction)
                 && !inspectionApplication.getInspections().isEmpty())
@@ -313,78 +315,84 @@ public class UpdateInspectionApplicationController extends BpaGenericApplication
         return APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(status)
                 || BpaConstants.INITIATEINSPECTION.equalsIgnoreCase(status);
     }
-    
-    
-    
+
     private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
-    	model.addAttribute("inconstinspectionList", inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
-        model.addAttribute("lettertopartylist", letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication));
+        model.addAttribute("inconstinspectionList",
+                inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
+        model.addAttribute("lettertopartylist",
+                letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication));
         model.addAttribute(APPLICATION_HISTORY,
-                workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(), inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
-   }
-    
+                workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(),
+                        inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
+    }
+
     private void loadFormData(final Model model, final PermitInspectionApplication permitInspectionApplication) {
         InspectionApplication inspectionApplication = permitInspectionApplication.getInspectionApplication();
         model.addAttribute("stateType", inspectionApplication.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();
-       
-            model.addAttribute(ADDITIONALRULE, BpaConstants.INSPECTIONAPPLICATION);
-            workflowContainer.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
 
-            if (inspectionApplication.getState() != null
-                    && inspectionApplication.getState().getValue().equalsIgnoreCase(BpaConstants.INITIATEINSPECTION)) {
-                workflowContainer.setPendingActions(inspectionApplication.getState().getNextAction());
-            }
+        model.addAttribute(ADDITIONALRULE, BpaConstants.INSPECTIONAPPLICATION);
+        workflowContainer.setAdditionalRule(BpaConstants.INSPECTIONAPPLICATION);
 
-            // Town surveyor workflow
-            if (WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
-                workflowContainer.setPendingActions(WF_TS_APPROVAL_PENDING);
-                model.addAttribute("captureTSRemarks", true);
-            } else if (APPLICATION_STATUS_TS_INS.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
-                Assignment approverAssignment = bpaWorkFlowService
-                        .getApproverAssignment(inspectionApplication.getCurrentState().getOwnerPosition());
-                if (inspectionApplication.getCurrentState().getOwnerUser() != null) {
-                    List<Assignment> assignments = bpaWorkFlowService.getAssignmentByPositionAndUserAsOnDate(
-                    		inspectionApplication.getCurrentState().getOwnerPosition().getId(),
-                    		inspectionApplication.getCurrentState().getOwnerUser().getId(),
-                    		inspectionApplication.getCurrentState().getLastModifiedDate());
-                    if (!assignments.isEmpty())
-                        approverAssignment = assignments.get(0);
-                }
-                if (approverAssignment == null)
-                    approverAssignment = bpaWorkFlowService
-                            .getAssignmentsByPositionAndDate(inspectionApplication.getCurrentState().getOwnerPosition().getId(), new Date())
-                            .get(0);
-                if (DESIGNATION_AE.equals(approverAssignment.getDesignation().getName())) {
-                    workflowContainer.setPendingActions(FWD_TO_AE_AFTER_TS_INSP);
-                } else if (DESIGNATION_OVERSEER.equals(approverAssignment.getDesignation().getName())) {
-                    workflowContainer.setPendingActions(FWD_TO_OVERSEER_AFTER_TS_INSPN);
-                }
-                model.addAttribute("captureTSRemarks", false);
+        if (inspectionApplication.getState() != null
+                && inspectionApplication.getState().getValue().equalsIgnoreCase(BpaConstants.INITIATEINSPECTION)) {
+            workflowContainer.setPendingActions(inspectionApplication.getState().getNextAction());
+        }
+
+        // Town surveyor workflow
+        if (WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
+            workflowContainer.setPendingActions(WF_TS_APPROVAL_PENDING);
+            model.addAttribute("captureTSRemarks", true);
+        } else if (APPLICATION_STATUS_TS_INS.equalsIgnoreCase(inspectionApplication.getStatus().getCode())) {
+            Assignment approverAssignment = bpaWorkFlowService
+                    .getApproverAssignment(inspectionApplication.getCurrentState().getOwnerPosition());
+            if (inspectionApplication.getCurrentState().getOwnerUser() != null) {
+                List<Assignment> assignments = bpaWorkFlowService.getAssignmentByPositionAndUserAsOnDate(
+                        inspectionApplication.getCurrentState().getOwnerPosition().getId(),
+                        inspectionApplication.getCurrentState().getOwnerUser().getId(),
+                        inspectionApplication.getCurrentState().getLastModifiedDate());
+                if (!assignments.isEmpty())
+                    approverAssignment = assignments.get(0);
             }
-        
+            if (approverAssignment == null)
+                approverAssignment = bpaWorkFlowService
+                        .getAssignmentsByPositionAndDate(inspectionApplication.getCurrentState().getOwnerPosition().getId(),
+                                new Date())
+                        .get(0);
+            if (DESIGNATION_AE.equals(approverAssignment.getDesignation().getName())) {
+                workflowContainer.setPendingActions(FWD_TO_AE_AFTER_TS_INSP);
+            } else if (DESIGNATION_OVERSEER.equals(approverAssignment.getDesignation().getName())) {
+                workflowContainer.setPendingActions(FWD_TO_OVERSEER_AFTER_TS_INSPN);
+            }
+            model.addAttribute("captureTSRemarks", false);
+        }
+
         prepareWorkflow(model, inspectionApplication, workflowContainer);
         model.addAttribute("pendingActions", workflowContainer.getPendingActions());
         model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
         model.addAttribute("currentState", inspectionApplication.getCurrentState().getValue());
         model.addAttribute("inspectionApplication", inspectionApplication);
-        model.addAttribute("workFlowBoundary", bpaUtils.getBoundaryForWorkflow(permitInspectionApplication.getApplication().getSiteDetail().get(0)).getId());
-        model.addAttribute("electionBoundary", permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary() != null
-                ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary().getId()
-                : null);
-        model.addAttribute("electionBoundaryName", permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary() != null
-                ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary().getName()
-                : "");
-        model.addAttribute("revenueBoundaryName", permitInspectionApplication.getApplication().getSiteDetail().get(0).getAdminBoundary() != null
-                ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getAdminBoundary().getName()
-                : "");
+        model.addAttribute("workFlowBoundary",
+                bpaUtils.getBoundaryForWorkflow(permitInspectionApplication.getApplication().getSiteDetail().get(0)).getId());
+        model.addAttribute("electionBoundary",
+                permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary() != null
+                        ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary().getId()
+                        : null);
+        model.addAttribute("electionBoundaryName",
+                permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary() != null
+                        ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getElectionBoundary().getName()
+                        : "");
+        model.addAttribute("revenueBoundaryName",
+                permitInspectionApplication.getApplication().getSiteDetail().get(0).getAdminBoundary() != null
+                        ? permitInspectionApplication.getApplication().getSiteDetail().get(0).getAdminBoundary().getName()
+                        : "");
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
         Map<String, Object> attributes = model.asMap();
         List<String> actions = Collections.emptyList();
         if (!attributes.isEmpty())
             actions = attributes.get("validActionList") == null ? Collections.emptyList()
-                    : (List<String>) attributes.get("validActionList");       
-        	
+                    : (List<String>) attributes.get("validActionList");
+
         prepareActions(model, inspectionApplication);
     }
 }

@@ -65,13 +65,13 @@ public class ViewInspectionForOccupancyCertificateController {
     @GetMapping("/success/view-inspection-details/{applicationNumber}/{inspectionNumber}")
     public String viewInspection(@PathVariable final String applicationNumber,
             @PathVariable final String inspectionNumber, final Model model) {
-		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+        final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
         OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber,
                 inspectionNumber);
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
         model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
-        //ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
+        // ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
         ocInspectionService.prepareImagesForView(ocInspection);
         ocInspectionService.buildPlanScrutinyChecklistDetails(ocInspection);
         model.addAttribute("ocInspection", ocInspection);
@@ -81,18 +81,18 @@ public class ViewInspectionForOccupancyCertificateController {
     @GetMapping("/show-inspection-details/{applicationNumber}/{inspectionNumber}")
     public String showInspectionDetails(@PathVariable final String applicationNumber,
             @PathVariable final String inspectionNumber, final Model model) {
-		final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
+        final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());
         OCInspection ocInspection = ocInspectionService.findByOcApplicationNoAndInspectionNo(applicationNumber,
                 inspectionNumber);
         model.addAttribute("docketDetail", ocInspection.getInspection().getDocket().get(0).getDocketDetail());
         model.addAttribute("inspection", ocInspection);
-       // ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
+        // ocInspectionService.buildDocketDetailForModifyAndViewList(ocInspection.getInspection(), model);
         ocInspectionService.prepareImagesForView(ocInspection);
         model.addAttribute("ocInspection", ocInspection);
         ocInspectionService.buildPlanScrutinyChecklistDetails(ocInspection);
         model.addAttribute("planScrutinyValues", ChecklistValues.values());
         return SHOW_INSPECTION_DETAILS;
     }
-    
+
 }

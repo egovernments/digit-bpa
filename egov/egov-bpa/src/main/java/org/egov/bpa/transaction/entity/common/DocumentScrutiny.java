@@ -79,174 +79,174 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = DocumentScrutiny.SEQ, sequenceName = DocumentScrutiny.SEQ, allocationSize = 1)
 public class DocumentScrutiny extends AbstractAuditable {
 
-	public static final String SEQ = "SEQ_EGBPA_DOCUMENT_SCRUTINY";
-	private static final long serialVersionUID = 28041127141075175L;
+    public static final String SEQ = "SEQ_EGBPA_DOCUMENT_SCRUTINY";
+    private static final long serialVersionUID = 28041127141075175L;
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@Length(min = 1, max = 24)
-	private String plotSurveyNumber;
+    @SafeHtml
+    @Length(min = 1, max = 24)
+    private String plotSurveyNumber;
 
-	@SafeHtml
-	@Length(min = 1, max = 24)
-	private String reSurveyNumber;
+    @SafeHtml
+    @Length(min = 1, max = 24)
+    private String reSurveyNumber;
 
-	@SafeHtml
-	@Length(min = 1, max = 12)
-	private String subdivisionNumber;
+    @SafeHtml
+    @Length(min = 1, max = 12)
+    private String subdivisionNumber;
 
-	@PositiveOrZero
-	private BigDecimal extentInSqmts;
+    @PositiveOrZero
+    private BigDecimal extentInSqmts;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String natureOfOwnership;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String natureOfOwnership;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String registrarOffice;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String registrarOffice;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "village")
-	private VillageName village;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "village")
+    private VillageName village;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String taluk;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String taluk;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String district;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String district;
 
-	@SafeHtml
-	@Length(min = 1, max = 64)
-	private String deedNumber;
+    @SafeHtml
+    @Length(min = 1, max = 64)
+    private String deedNumber;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date deedDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date deedDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "verifiedBy")
-	private User verifiedBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "verifiedBy")
+    private User verifiedBy;
 
-	@Valid
-	@OneToMany(mappedBy = "documentScrutiny", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<DocumentScrutinyChecklist> documentScrutinyChecklists = new ArrayList<>();
+    @Valid
+    @OneToMany(mappedBy = "documentScrutiny", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DocumentScrutinyChecklist> documentScrutinyChecklists = new ArrayList<>();
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getPlotSurveyNumber() {
-		return plotSurveyNumber;
-	}
+    public String getPlotSurveyNumber() {
+        return plotSurveyNumber;
+    }
 
-	public void setPlotSurveyNumber(String plotSurveyNumber) {
-		this.plotSurveyNumber = plotSurveyNumber;
-	}
+    public void setPlotSurveyNumber(String plotSurveyNumber) {
+        this.plotSurveyNumber = plotSurveyNumber;
+    }
 
-	public String getReSurveyNumber() {
-		return reSurveyNumber;
-	}
+    public String getReSurveyNumber() {
+        return reSurveyNumber;
+    }
 
-	public void setReSurveyNumber(String reSurveyNumber) {
-		this.reSurveyNumber = reSurveyNumber;
-	}
+    public void setReSurveyNumber(String reSurveyNumber) {
+        this.reSurveyNumber = reSurveyNumber;
+    }
 
-	public String getSubdivisionNumber() {
-		return subdivisionNumber;
-	}
+    public String getSubdivisionNumber() {
+        return subdivisionNumber;
+    }
 
-	public void setSubdivisionNumber(String subdivisionNumber) {
-		this.subdivisionNumber = subdivisionNumber;
-	}
+    public void setSubdivisionNumber(String subdivisionNumber) {
+        this.subdivisionNumber = subdivisionNumber;
+    }
 
-	public BigDecimal getExtentInSqmts() {
-		return extentInSqmts;
-	}
+    public BigDecimal getExtentInSqmts() {
+        return extentInSqmts;
+    }
 
-	public void setExtentInSqmts(BigDecimal extentInSqmts) {
-		this.extentInSqmts = extentInSqmts;
-	}
+    public void setExtentInSqmts(BigDecimal extentInSqmts) {
+        this.extentInSqmts = extentInSqmts;
+    }
 
-	public String getNatureOfOwnership() {
-		return natureOfOwnership;
-	}
+    public String getNatureOfOwnership() {
+        return natureOfOwnership;
+    }
 
-	public void setNatureOfOwnership(String natureOfOwnership) {
-		this.natureOfOwnership = natureOfOwnership;
-	}
+    public void setNatureOfOwnership(String natureOfOwnership) {
+        this.natureOfOwnership = natureOfOwnership;
+    }
 
-	public String getRegistrarOffice() {
-		return registrarOffice;
-	}
+    public String getRegistrarOffice() {
+        return registrarOffice;
+    }
 
-	public void setRegistrarOffice(String registrarOffice) {
-		this.registrarOffice = registrarOffice;
-	}
+    public void setRegistrarOffice(String registrarOffice) {
+        this.registrarOffice = registrarOffice;
+    }
 
-	public VillageName getVillage() {
-		return village;
-	}
+    public VillageName getVillage() {
+        return village;
+    }
 
-	public void setVillage(VillageName village) {
-		this.village = village;
-	}
+    public void setVillage(VillageName village) {
+        this.village = village;
+    }
 
-	public String getTaluk() {
-		return taluk;
-	}
+    public String getTaluk() {
+        return taluk;
+    }
 
-	public void setTaluk(String taluk) {
-		this.taluk = taluk;
-	}
+    public void setTaluk(String taluk) {
+        this.taluk = taluk;
+    }
 
-	public String getDistrict() {
-		return district;
-	}
+    public String getDistrict() {
+        return district;
+    }
 
-	public void setDistrict(String district) {
-		this.district = district;
-	}
+    public void setDistrict(String district) {
+        this.district = district;
+    }
 
-	public String getDeedNumber() {
-		return deedNumber;
-	}
+    public String getDeedNumber() {
+        return deedNumber;
+    }
 
-	public void setDeedNumber(String deedNumber) {
-		this.deedNumber = deedNumber;
-	}
+    public void setDeedNumber(String deedNumber) {
+        this.deedNumber = deedNumber;
+    }
 
-	public Date getDeedDate() {
-		return deedDate;
-	}
+    public Date getDeedDate() {
+        return deedDate;
+    }
 
-	public void setDeedDate(Date deedDate) {
-		this.deedDate = deedDate;
-	}
+    public void setDeedDate(Date deedDate) {
+        this.deedDate = deedDate;
+    }
 
-	public User getVerifiedBy() {
-		return verifiedBy;
-	}
+    public User getVerifiedBy() {
+        return verifiedBy;
+    }
 
-	public void setVerifiedBy(User verifiedBy) {
-		this.verifiedBy = verifiedBy;
-	}
+    public void setVerifiedBy(User verifiedBy) {
+        this.verifiedBy = verifiedBy;
+    }
 
-	public List<DocumentScrutinyChecklist> getDocumentScrutinyChecklists() {
-		return documentScrutinyChecklists;
-	}
+    public List<DocumentScrutinyChecklist> getDocumentScrutinyChecklists() {
+        return documentScrutinyChecklists;
+    }
 
-	public void setDocumentScrutinyChecklists(List<DocumentScrutinyChecklist> documentScrutinyChecklists) {
-		this.documentScrutinyChecklists = documentScrutinyChecklists;
-	}
+    public void setDocumentScrutinyChecklists(List<DocumentScrutinyChecklist> documentScrutinyChecklists) {
+        this.documentScrutinyChecklists = documentScrutinyChecklists;
+    }
 }

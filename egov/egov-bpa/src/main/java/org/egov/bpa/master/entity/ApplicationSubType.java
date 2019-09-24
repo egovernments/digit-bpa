@@ -47,64 +47,64 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = ApplicationSubType.SEQ_APPLICATIONSUBTYPE, sequenceName = ApplicationSubType.SEQ_APPLICATIONSUBTYPE, allocationSize = 1)
 public class ApplicationSubType extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3523866218161324731L;
-	public static final String SEQ_APPLICATIONSUBTYPE = "SEQ_EGBPA_MSTR_APPLICATIONSUBTYPE";
-	@Id
-	@GeneratedValue(generator = SEQ_APPLICATIONSUBTYPE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = 3523866218161324731L;
+    public static final String SEQ_APPLICATIONSUBTYPE = "SEQ_EGBPA_MSTR_APPLICATIONSUBTYPE";
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICATIONSUBTYPE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "name", unique = true)
-	private String name;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "name", unique = true)
+    private String name;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String description;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String description;
 
-	private Boolean enabled;
+    private Boolean enabled;
 
-	private Boolean slotRequired;
+    private Boolean slotRequired;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public Boolean getEnabled() {
-		return enabled;
-	}
+    public Boolean getEnabled() {
+        return enabled;
+    }
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	public Boolean getSlotRequired() {
-		return slotRequired;
-	}
+    public Boolean getSlotRequired() {
+        return slotRequired;
+    }
 
-	public void setSlotRequired(Boolean slotRequired) {
-		this.slotRequired = slotRequired;
-	}
+    public void setSlotRequired(Boolean slotRequired) {
+        this.slotRequired = slotRequired;
+    }
 }

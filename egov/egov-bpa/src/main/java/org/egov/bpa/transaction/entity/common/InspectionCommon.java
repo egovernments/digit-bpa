@@ -80,7 +80,7 @@ public class InspectionCommon extends AbstractAuditable {
     public static final String SEQ_INSPECTION = "SEQ_EGBPA_INSPECTION_COMMON";
     private static final long serialVersionUID = -6537197288191260269L;
     public static final String ORDER_BY_ID_ASC = "id ASC";
-    
+
     @Id
     @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
     private Long id;

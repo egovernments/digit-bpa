@@ -67,69 +67,80 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/inspection")
 public class InConstructionInspectionController extends BpaGenericApplicationController {
-	private static final String CREATE_INSPECTION = "inconst-create-inspection";
+    private static final String CREATE_INSPECTION = "inconst-create-inspection";
 
-	@Autowired
+    @Autowired
     private CustomImplProvider specificNoticeService;
-	@Autowired
-	private InspectionApplicationService inspectionAppService;
+    @Autowired
+    private InspectionApplicationService inspectionAppService;
 
-	@GetMapping("/createinspection/{applicationNumber}")
-	public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
-		loadApplication(model, applicationNumber);
-		return CREATE_INSPECTION;
-	}
+    @GetMapping("/createinspection/{applicationNumber}")
+    public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
+        loadApplication(model, applicationNumber);
+        return CREATE_INSPECTION;
+    }
 
-	@PostMapping("/createinspection/{applicationNumber}")
-	public String createInspection(@Valid @ModelAttribute final InConstructionInspection inConstructionInspection,
-								   @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
+    @PostMapping("/createinspection/{applicationNumber}")
+    public String createInspection(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute final InConstructionInspection inConstructionInspection, final BindingResult resultBinder,
+            final Model model) {
+        if (resultBinder.hasErrors()) {
+            loadApplication(model, applicationNumber);
+            return CREATE_INSPECTION;
+        }
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
         inConstructionInspection.setInspectionApplication(permitInspection.getInspectionApplication());
-		final InConstructionInspectionService inConstructionInspectionService = (InConstructionInspectionService) specificNoticeService
+        final InConstructionInspectionService inConstructionInspectionService = (InConstructionInspectionService) specificNoticeService
                 .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
-		//inConstructionInspection.getInspection().setDocket(inConstructionInspectionService.buildDocDetFromUI(inConstructionInspection));
-		if (resultBinder.hasErrors()) {
-			loadApplication(model, applicationNumber);
-			return CREATE_INSPECTION;
-		}
-		final InConstructionInspection savedInspection = inConstructionInspectionService.save(inConstructionInspection);
-		model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
-		return "redirect:/inspection/success/view-inspection-details/" + applicationNumber + "/" + savedInspection.getInspection().getInspectionNumber();
-	}
+        final InConstructionInspection savedInspection = inConstructionInspectionService.save(inConstructionInspection);
+        model.addAttribute("message", messageSource.getMessage("msg.inspection.saved.success", null, null));
+        return "redirect:/inspection/success/view-inspection-details/" + applicationNumber + "/"
+                + savedInspection.getInspection().getInspectionNumber();
+    }
 
-	private void loadApplication(final Model model, final String applicationNumber) {
-        final PermitInspectionApplication permitInspection = inspectionAppService.findByInspectionApplicationNumber(applicationNumber);
-		if (permitInspection.getInspectionApplication() != null && permitInspection.getInspectionApplication().getState() != null
-			&& permitInspection.getInspectionApplication().getState().getValue().equalsIgnoreCase(BpaConstants.INITIATEINSPECTION)) {
-			prepareWorkflowDataForInspection(model, permitInspection.getInspectionApplication());
-			model.addAttribute("loginUser", securityUtils.getCurrentUser());
-			model.addAttribute(BpaConstants.APPLICATION_HISTORY,
-					workflowHistoryService.getHistoryForInspection(permitInspection.getInspectionApplication().getAppointmentSchedules(), permitInspection.getInspectionApplication().getCurrentState(), permitInspection.getInspectionApplication().getStateHistory()));
-		}
-		final InConstructionInspection inConstructionInspection = new InConstructionInspection();
-		InspectionCommon inspectionCommon = new InspectionCommon();
-		inspectionCommon.setInspectionDate(new Date());
-		final InConstructionInspectionService inConstInspectionService = (InConstructionInspectionService) specificNoticeService
+    private void loadApplication(final Model model, final String applicationNumber) {
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
+        if (permitInspection.getInspectionApplication() != null && permitInspection.getInspectionApplication().getState() != null
+                && permitInspection.getInspectionApplication().getState().getValue()
+                        .equalsIgnoreCase(BpaConstants.INITIATEINSPECTION)) {
+            prepareWorkflowDataForInspection(model, permitInspection.getInspectionApplication());
+            model.addAttribute("loginUser", securityUtils.getCurrentUser());
+            model.addAttribute(BpaConstants.APPLICATION_HISTORY,
+                    workflowHistoryService.getHistoryForInspection(
+                            permitInspection.getInspectionApplication().getAppointmentSchedules(),
+                            permitInspection.getInspectionApplication().getCurrentState(),
+                            permitInspection.getInspectionApplication().getStateHistory()));
+        }
+        final InConstructionInspection inConstructionInspection = new InConstructionInspection();
+        InspectionCommon inspectionCommon = new InspectionCommon();
+        inspectionCommon.setInspectionDate(new Date());
+        final InConstructionInspectionService inConstInspectionService = (InConstructionInspectionService) specificNoticeService
                 .find(InConstructionInspectionService.class, specificNoticeService.getCityDetails());
-		inConstInspectionService.buildDocketDetailList(inspectionCommon, permitInspection.getApplication().getServiceType().getId());
-		inConstructionInspection.setInspection(inspectionCommon);
-		inConstructionInspection.setInspectionApplication(permitInspection.getInspectionApplication());
-		model.addAttribute("inConstructionInspection", inConstructionInspection);
-		model.addAttribute("docketDetailLocList", inspectionCommon.getDocketDetailLocList());
-		model.addAttribute("docketDetailMeasurementList", inspectionCommon.getDocketDetailMeasurementList());
-		model.addAttribute("planScrutinyCheckList",inConstInspectionService.buildPlanScrutiny(permitInspection.getApplication().getServiceType().getId()));
-		model.addAttribute("planScrutinyValues", ChecklistValues.values());
-		model.addAttribute("planScrutinyChecklistForDrawing",inConstInspectionService.buildPlanScrutinyDrawing(permitInspection.getApplication().getServiceType().getId()));
-		List<ChecklistServiceTypeMapping> imagesChecklist = checklistServiceTypeService
-                        .findByActiveByServiceTypeAndChecklist(permitInspection.getApplication().getServiceType().getId(), "INCNSTRNINSPNIMAGES");
-                for (ChecklistServiceTypeMapping serviceChklst : imagesChecklist) {
-                    InspectionFilesCommon inspectionFile = new InspectionFilesCommon();
-                    inspectionFile.setServiceChecklist(serviceChklst);
-                    inspectionFile.setInspection(inConstructionInspection.getInspection());
-                    inConstructionInspection.getInspection().getInspectionSupportDocs().add(inspectionFile);
-                }
-		model.addAttribute(BpaConstants.BPA_APPLICATION, permitInspection.getApplication());
-		model.addAttribute("inspectionApplication", permitInspection.getInspectionApplication());
-	}
+        inConstInspectionService.buildDocketDetailList(inspectionCommon,
+                permitInspection.getApplication().getServiceType().getId());
+        inConstructionInspection.setInspection(inspectionCommon);
+        inConstructionInspection.setInspectionApplication(permitInspection.getInspectionApplication());
+        model.addAttribute("inConstructionInspection", inConstructionInspection);
+        model.addAttribute("docketDetailLocList", inspectionCommon.getDocketDetailLocList());
+        model.addAttribute("docketDetailMeasurementList", inspectionCommon.getDocketDetailMeasurementList());
+        model.addAttribute("planScrutinyCheckList",
+                inConstInspectionService.buildPlanScrutiny(permitInspection.getApplication().getServiceType().getId()));
+        model.addAttribute("planScrutinyValues", ChecklistValues.values());
+        model.addAttribute("planScrutinyChecklistForDrawing",
+                inConstInspectionService.buildPlanScrutinyDrawing(permitInspection.getApplication().getServiceType().getId()));
+        List<ChecklistServiceTypeMapping> imagesChecklist = checklistServiceTypeService
+                .findByActiveByServiceTypeAndChecklist(permitInspection.getApplication().getServiceType().getId(),
+                        "INCNSTRNINSPNIMAGES");
+        for (ChecklistServiceTypeMapping serviceChklst : imagesChecklist) {
+            InspectionFilesCommon inspectionFile = new InspectionFilesCommon();
+            inspectionFile.setServiceChecklist(serviceChklst);
+            inspectionFile.setInspection(inConstructionInspection.getInspection());
+            inConstructionInspection.getInspection().getInspectionSupportDocs().add(inspectionFile);
+        }
+        model.addAttribute(BpaConstants.BPA_APPLICATION, permitInspection.getApplication());
+        model.addAttribute("inspectionApplication", permitInspection.getInspectionApplication());
+    }
 
 }

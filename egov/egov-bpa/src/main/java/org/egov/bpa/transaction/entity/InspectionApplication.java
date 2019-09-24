@@ -84,235 +84,235 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = InspectionApplication.SEQ_INSPECTIONAPPLICATION, sequenceName = InspectionApplication.SEQ_INSPECTIONAPPLICATION, allocationSize = 1)
 public class InspectionApplication extends StateAware<Position> {
 
-	public static final String SEQ_INSPECTIONAPPLICATION = "SEQ_EGBPA_INSPECTION_APPLICATION";
-	private static final long serialVersionUID = -6537197288191260269L;
-	public static final String ORDER_BY_ID_ASC = "id ASC";
+    public static final String SEQ_INSPECTIONAPPLICATION = "SEQ_EGBPA_INSPECTION_APPLICATION";
+    private static final long serialVersionUID = -6537197288191260269L;
+    public static final String ORDER_BY_ID_ASC = "id ASC";
 
-	@Id
-	@GeneratedValue(generator = SEQ_INSPECTIONAPPLICATION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_INSPECTIONAPPLICATION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@Length(min = 1, max = 64)
-	private String applicationNumber;
+    @SafeHtml
+    @Length(min = 1, max = 64)
+    private String applicationNumber;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date applicationDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date applicationDate;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date approvalDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date approvalDate;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "status")
-	private BpaStatus status;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "status")
+    private BpaStatus status;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "buildingConstructionStage")
-	private BuildingConstructionStage buildingConstructionStage;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "buildingConstructionStage")
+    private BuildingConstructionStage buildingConstructionStage;
 
-	@SafeHtml
-	@Length(min = 1, max = 1000)
-	private String remarks;
+    @SafeHtml
+    @Length(min = 1, max = 1000)
+    private String remarks;
 
-	private Boolean isSentToPreviousOwner = false;
+    private Boolean isSentToPreviousOwner = false;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "egbpa_ts_inspnappln_documents", joinColumns = @JoinColumn(name = "inspectionapplication"), inverseJoinColumns = @JoinColumn(name = "fileStoreId"))
-	private Set<FileStoreMapper> tsInspnSupportDocs = Collections.emptySet();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "egbpa_ts_inspnappln_documents", joinColumns = @JoinColumn(name = "inspectionapplication"), inverseJoinColumns = @JoinColumn(name = "fileStoreId"))
+    private Set<FileStoreMapper> tsInspnSupportDocs = Collections.emptySet();
 
-	@OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy(ORDER_BY_ID_ASC)
-	private List<InspectionAppointmentSchedule> appointmentSchedules = new ArrayList<>();
+    @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
+    private List<InspectionAppointmentSchedule> appointmentSchedules = new ArrayList<>();
 
-	@Valid
-	@OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy("id DESC ")
-	private List<InConstructionInspection> inspections = new ArrayList<>();
+    @Valid
+    @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("id DESC ")
+    private List<InConstructionInspection> inspections = new ArrayList<>();
 
-	@OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<InspectionLetterToParty> inspectionLetterToParties = new ArrayList<>();
+    @OneToMany(mappedBy = "inspectionApplication", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<InspectionLetterToParty> inspectionLetterToParties = new ArrayList<>();
 
-	@SafeHtml
-	@Length(min = 1, max = 5000)
-	private String townSurveyorRemarks;
+    @SafeHtml
+    @Length(min = 1, max = 5000)
+    private String townSurveyorRemarks;
 
-	private Boolean isTownSurveyorInspectionRequire = false;
+    private Boolean isTownSurveyorInspectionRequire = false;
 
-	private Boolean isLPRequestInitiated;
+    private Boolean isLPRequestInitiated;
 
-	private transient Long approvalDepartment;
+    private transient Long approvalDepartment;
 
-	private transient Long approvalDesignation;
+    private transient Long approvalDesignation;
 
-	@SafeHtml
-	@Length(max = 1024)
-	private transient String approvalComent;
+    @SafeHtml
+    @Length(max = 1024)
+    private transient String approvalComent;
 
-	private transient MultipartFile[] files;
+    private transient MultipartFile[] files;
 
-	@Override
-	public String getStateDetails() {
-		return String.format(" Acknowledgement Number %s Dated %s ", applicationNumber,
-				applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
-						: DateUtils.toDefaultDateFormat(applicationDate));
-	}
+    @Override
+    public String getStateDetails() {
+        return String.format(" Acknowledgement Number %s Dated %s ", applicationNumber,
+                applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
+                        : DateUtils.toDefaultDateFormat(applicationDate));
+    }
 
-	@Override
-	public String myLinkId() {
-		return applicationNumber;
-	}
+    @Override
+    public String myLinkId() {
+        return applicationNumber;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getApplicationNumber() {
-		return applicationNumber;
-	}
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
 
-	public void setApplicationNumber(String applicationNumber) {
-		this.applicationNumber = applicationNumber;
-	}
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
-	public Date getApplicationDate() {
-		return applicationDate;
-	}
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
 
-	public void setApplicationDate(Date applicationDate) {
-		this.applicationDate = applicationDate;
-	}
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-	public BpaStatus getStatus() {
-		return status;
-	}
+    public BpaStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(BpaStatus status) {
-		this.status = status;
-	}
+    public void setStatus(BpaStatus status) {
+        this.status = status;
+    }
 
-	public Long getApprovalDepartment() {
-		return approvalDepartment;
-	}
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
 
-	public void setApprovalDepartment(Long approvalDepartment) {
-		this.approvalDepartment = approvalDepartment;
-	}
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
 
-	public String getApprovalComent() {
-		return approvalComent;
-	}
+    public String getApprovalComent() {
+        return approvalComent;
+    }
 
-	public void setApprovalComent(String approvalComent) {
-		this.approvalComent = approvalComent;
-	}
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
 
-	public List<InspectionLetterToParty> getInspectionLetterToParties() {
-		return inspectionLetterToParties;
-	}
+    public List<InspectionLetterToParty> getInspectionLetterToParties() {
+        return inspectionLetterToParties;
+    }
 
-	public void setInspectionLetterToParties(List<InspectionLetterToParty> inspectionLetterToParties) {
-		this.inspectionLetterToParties = inspectionLetterToParties;
-	}
+    public void setInspectionLetterToParties(List<InspectionLetterToParty> inspectionLetterToParties) {
+        this.inspectionLetterToParties = inspectionLetterToParties;
+    }
 
-	public List<InspectionAppointmentSchedule> getAppointmentSchedules() {
-		return appointmentSchedules;
-	}
+    public List<InspectionAppointmentSchedule> getAppointmentSchedules() {
+        return appointmentSchedules;
+    }
 
-	public void setAppointmentSchedules(List<InspectionAppointmentSchedule> appointmentSchedules) {
-		this.appointmentSchedules = appointmentSchedules;
-	}
+    public void setAppointmentSchedules(List<InspectionAppointmentSchedule> appointmentSchedules) {
+        this.appointmentSchedules = appointmentSchedules;
+    }
 
-	public List<InConstructionInspection> getInspections() {
-		return inspections;
-	}
+    public List<InConstructionInspection> getInspections() {
+        return inspections;
+    }
 
-	public void setInspections(List<InConstructionInspection> inspections) {
-		this.inspections = inspections;
-	}
+    public void setInspections(List<InConstructionInspection> inspections) {
+        this.inspections = inspections;
+    }
 
-	public Set<FileStoreMapper> getTsInspnSupportDocs() {
-		return tsInspnSupportDocs;
-	}
+    public Set<FileStoreMapper> getTsInspnSupportDocs() {
+        return tsInspnSupportDocs;
+    }
 
-	public void setTsInspnSupportDocs(Set<FileStoreMapper> tsInspnSupportDocs) {
-		this.tsInspnSupportDocs = tsInspnSupportDocs;
-	}
+    public void setTsInspnSupportDocs(Set<FileStoreMapper> tsInspnSupportDocs) {
+        this.tsInspnSupportDocs = tsInspnSupportDocs;
+    }
 
-	public Boolean getLPRequestInitiated() {
-		return isLPRequestInitiated;
-	}
+    public Boolean getLPRequestInitiated() {
+        return isLPRequestInitiated;
+    }
 
-	public void setLPRequestInitiated(Boolean LPRequestInitiated) {
-		isLPRequestInitiated = LPRequestInitiated;
-	}
+    public void setLPRequestInitiated(Boolean LPRequestInitiated) {
+        isLPRequestInitiated = LPRequestInitiated;
+    }
 
-	public MultipartFile[] getFiles() {
-		return files;
-	}
+    public MultipartFile[] getFiles() {
+        return files;
+    }
 
-	public void setFiles(MultipartFile[] files) {
-		this.files = files;
-	}
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
 
-	public Date getApprovalDate() {
-		return approvalDate;
-	}
+    public Date getApprovalDate() {
+        return approvalDate;
+    }
 
-	public void setApprovalDate(Date approvalDate) {
-		this.approvalDate = approvalDate;
-	}
+    public void setApprovalDate(Date approvalDate) {
+        this.approvalDate = approvalDate;
+    }
 
-	public Boolean getSentToPreviousOwner() {
-		return isSentToPreviousOwner;
-	}
+    public Boolean getSentToPreviousOwner() {
+        return isSentToPreviousOwner;
+    }
 
-	public void setSentToPreviousOwner(Boolean sentToPreviousOwner) {
-		isSentToPreviousOwner = sentToPreviousOwner;
-	}
+    public void setSentToPreviousOwner(Boolean sentToPreviousOwner) {
+        isSentToPreviousOwner = sentToPreviousOwner;
+    }
 
-	public Boolean getTownSurveyorInspectionRequire() {
-		return isTownSurveyorInspectionRequire;
-	}
+    public Boolean getTownSurveyorInspectionRequire() {
+        return isTownSurveyorInspectionRequire;
+    }
 
-	public void setTownSurveyorInspectionRequire(Boolean townSurveyorInspectionRequire) {
-		isTownSurveyorInspectionRequire = townSurveyorInspectionRequire;
-	}
+    public void setTownSurveyorInspectionRequire(Boolean townSurveyorInspectionRequire) {
+        isTownSurveyorInspectionRequire = townSurveyorInspectionRequire;
+    }
 
-	public String getTownSurveyorRemarks() {
-		return townSurveyorRemarks;
-	}
+    public String getTownSurveyorRemarks() {
+        return townSurveyorRemarks;
+    }
 
-	public void setTownSurveyorRemarks(String townSurveyorRemarks) {
-		this.townSurveyorRemarks = townSurveyorRemarks;
-	}
+    public void setTownSurveyorRemarks(String townSurveyorRemarks) {
+        this.townSurveyorRemarks = townSurveyorRemarks;
+    }
 
-	public Long getApprovalDesignation() {
-		return approvalDesignation;
-	}
+    public Long getApprovalDesignation() {
+        return approvalDesignation;
+    }
 
-	public void setApprovalDesignation(Long approvalDesignation) {
-		this.approvalDesignation = approvalDesignation;
-	}
+    public void setApprovalDesignation(Long approvalDesignation) {
+        this.approvalDesignation = approvalDesignation;
+    }
 
-	public BuildingConstructionStage getBuildingConstructionStage() {
-		return buildingConstructionStage;
-	}
+    public BuildingConstructionStage getBuildingConstructionStage() {
+        return buildingConstructionStage;
+    }
 
-	public void setBuildingConstructionStage(BuildingConstructionStage buildingConstructionStage) {
-		this.buildingConstructionStage = buildingConstructionStage;
-	}
+    public void setBuildingConstructionStage(BuildingConstructionStage buildingConstructionStage) {
+        this.buildingConstructionStage = buildingConstructionStage;
+    }
 }

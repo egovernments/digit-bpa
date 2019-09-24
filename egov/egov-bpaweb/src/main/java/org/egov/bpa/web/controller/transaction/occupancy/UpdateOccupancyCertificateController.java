@@ -158,6 +158,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/application/occupancy-certificate")
 public class UpdateOccupancyCertificateController extends BpaGenericApplicationController {
 
+    private static final String LOGIN_USER = "loginUser";
     public static final String OCCUPANCY_CERTIFICATE_VIEW = "occupancy-certificate-view";
     public static final String OC_CREATE_DOCUMENT_SCRUTINY_FORM = "oc-create-document-scrutiny-form";
     public static final String OCCUPANCY_CERTIFICATE_RESULT = "occupancy-certificate-result";
@@ -235,7 +236,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("showDcrDocuments",
                 bpaDcrService.isEdcrIntegrationRequireByService(oc.getParent().getServiceType().getCode()));
         model.addAttribute("documentScrutinyValues", ChecklistValues.values());
-        model.addAttribute("loginUser", securityUtils.getCurrentUser());
+        model.addAttribute(LOGIN_USER, securityUtils.getCurrentUser());
         getDcrDocumentsUploadMode(model);
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
@@ -409,7 +410,7 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
                 : "");
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
         model.addAttribute("isFeeCollected", bpaUtils.checkAnyTaxIsPendingToCollect(oc.getDemand()));
-        model.addAttribute("loginUser", securityUtils.getCurrentUser());
+        model.addAttribute(LOGIN_USER, securityUtils.getCurrentUser());
         buildReceiptDetails(oc.getDemand().getEgDemandDetails(), oc.getReceipts());
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(), oc.getStateHistory()));
@@ -420,9 +421,9 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
         model.addAttribute("nocApplication", ocNoc);
 
         Map<String, String> edcrNocMandatory = ocNocService.getEdcrNocMandatory(oc.geteDcrNumber());
-        Map nocAutoMap = new HashMap<String, String>();
-        Map<String, String> nocConfigMap = new HashMap<String, String>();
-        Map<String, String> nocTypeApplMap = new HashMap<String, String>();
+        Map<String, String> nocAutoMap = new HashMap<>();
+        Map<String, String> nocConfigMap = new HashMap<>();
+        Map<String, String> nocTypeApplMap = new HashMap<>();
         for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
             String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
             NocConfiguration nocConfig = nocConfigurationService
@@ -479,14 +480,30 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     }
 
     @PostMapping("/document-scrutiny/{applicationNumber}")
-    public String createDocumentScrutinyForOC(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
-            @PathVariable final String applicationNumber, final HttpServletRequest request,
-            final Model model, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+    public String createDocumentScrutinyForOC(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
+            final HttpServletRequest request,
+            final BindingResult errors,
+            final Model model,
+            final RedirectAttributes redirectAttributes) {
 
         occupancyCertificateService.validateDocs(occupancyCertificate, errors);
 
         if (errors.hasErrors()) {
+            prepareFormData(occupancyCertificate, model);
+            prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
             prepareDocumentsAllowedExtAndSize(model);
+            loadData(occupancyCertificate, model);
+            getActionsForOCApplication(model, occupancyCertificate);
+            buildRejectionReasons(model, occupancyCertificate);
+            model.addAttribute("showDcrDocuments",
+                    bpaDcrService.isEdcrIntegrationRequireByService(occupancyCertificate.getParent().getServiceType().getCode()));
+            model.addAttribute("documentScrutinyValues", ChecklistValues.values());
+            model.addAttribute(LOGIN_USER, securityUtils.getCurrentUser());
+            getDcrDocumentsUploadMode(model);
+            model.addAttribute(APPLICATION_HISTORY,
+                    workflowHistoryService.getHistoryForOC(occupancyCertificate.getAppointmentSchedules(),
+                            occupancyCertificate.getCurrentState(), occupancyCertificate.getStateHistory()));
             return OC_CREATE_DOCUMENT_SCRUTINY_FORM;
         }
 
@@ -542,13 +559,26 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     }
 
     @PostMapping("/update-submit")
-    public String updateOccupancyCertificateApplication(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
+    public String updateOccupancyCertificateApplication(
+            @RequestParam final BigDecimal amountRule,
+            @Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
             final HttpServletRequest request, final Model model,
-            final BindingResult errors, final RedirectAttributes redirectAttributes,
-            @RequestParam final BigDecimal amountRule) {
+            final BindingResult errors, final RedirectAttributes redirectAttributes) {
         occupancyCertificateService.validateDocs(occupancyCertificate, errors);
         if (errors.hasErrors()) {
-            prepareDocumentsAllowedExtAndSize(model);  
+            prepareFormData(occupancyCertificate, model);
+            prepareDocumentsAllowedExtAndSize(model);
+            loadData(occupancyCertificate, model);
+            bpaUtils.loadBoundary(occupancyCertificate.getParent());
+            getActionsForOCApplication(model, occupancyCertificate);
+            if (occupancyCertificate.getState().getNextAction().equalsIgnoreCase(FORWARDED_TO_CLERK))
+                return OCCUPANCY_CERTIFICATE_VIEW;
+            else if (occupancyCertificate.getState() != null
+                    && occupancyCertificate.getState().getNextAction().equalsIgnoreCase(WF_DOC_SCRUTINY_SCHEDLE_PEND)
+                    || occupancyCertificate.getState().getNextAction().equalsIgnoreCase(WF_DOC_VERIFY_PEND)
+                    || occupancyCertificate.getState().getNextAction().equalsIgnoreCase(WF_INIT_AUTO_RESCHDLE))
+                return "oc-document-scrutiny-form";
+
             return OCCUPANCY_CERTIFICATE_VIEW;
         }
 

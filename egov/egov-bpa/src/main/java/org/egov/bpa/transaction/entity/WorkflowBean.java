@@ -48,20 +48,20 @@
 
 package org.egov.bpa.transaction.entity;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.pims.commons.Designation;
 import org.hibernate.validator.constraints.SafeHtml;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 public class WorkflowBean {
-	@SafeHtml
+    @SafeHtml
     private String actionName;
-	@SafeHtml
+    @SafeHtml
     private String additionalRule;
-	@SafeHtml
+    @SafeHtml
     private String actionState;
     private List<User> appoverUserList;
     private Long approverUserId;

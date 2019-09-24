@@ -61,222 +61,222 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = BpaFee.SEQ_BPAFEE, sequenceName = BpaFee.SEQ_BPAFEE, allocationSize = 1)
 public class BpaFee extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_BPAFEE = "SEQ_EGBPA_MSTR_BPAFEE";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_BPAFEE = "SEQ_EGBPA_MSTR_BPAFEE";
 
-	@Id
-	@GeneratedValue(generator = SEQ_BPAFEE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_BPAFEE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@JoinColumn(name = "glcode")
-	@ManyToOne(fetch = FetchType.LAZY)
-	private CChartOfAccounts glcode;
+    @JoinColumn(name = "glcode")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CChartOfAccounts glcode;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "function")
-	private CFunction function;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "function")
+    private CFunction function;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@NotNull
-	@JoinColumn(name = "servicetype")
-	private ServiceType serviceType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "servicetype")
+    private ServiceType serviceType;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "fund")
-	private Fund fund;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fund")
+    private Fund fund;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 128)
-	private String feeType;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 128)
+    private String feeType;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	private String code;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String description;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String description;
 
-	@NotNull
-	private Boolean isFixedAmount;
+    @NotNull
+    private Boolean isFixedAmount;
 
-	@NotNull
-	private Boolean isActive;
+    @NotNull
+    private Boolean isActive;
 
-	@NotNull
-	private Boolean isMandatory;
-	@Transient
-	private BigDecimal feeAmount;
+    @NotNull
+    private Boolean isMandatory;
+    @Transient
+    private BigDecimal feeAmount;
 
-	@Transient
-	private Long demandDetailId;
+    @Transient
+    private Long demandDetailId;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String feeDescriptionLocal;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String feeDescriptionLocal;
 
-	@PositiveOrZero
-	private Long orderNumber;
+    @PositiveOrZero
+    private Long orderNumber;
 
-	@NotNull
-	private Boolean isPlanningPermitFee;
+    @NotNull
+    private Boolean isPlanningPermitFee;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String feeGroup;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String feeGroup;
 
-	@OneToMany(mappedBy = "bpafee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<BpaFeeDetail> feeDetail = new ArrayList<>(0);
+    @OneToMany(mappedBy = "bpafee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BpaFeeDetail> feeDetail = new ArrayList<>(0);
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public CChartOfAccounts getGlcode() {
-		return glcode;
-	}
+    public CChartOfAccounts getGlcode() {
+        return glcode;
+    }
 
-	public void setGlcode(final CChartOfAccounts glcode) {
-		this.glcode = glcode;
-	}
+    public void setGlcode(final CChartOfAccounts glcode) {
+        this.glcode = glcode;
+    }
 
-	public CFunction getFunction() {
-		return function;
-	}
+    public CFunction getFunction() {
+        return function;
+    }
 
-	public void setFunction(final CFunction function) {
-		this.function = function;
-	}
+    public void setFunction(final CFunction function) {
+        this.function = function;
+    }
 
-	public ServiceType getServiceType() {
-		return serviceType;
-	}
+    public ServiceType getServiceType() {
+        return serviceType;
+    }
 
-	public void setServiceType(final ServiceType serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setServiceType(final ServiceType serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public Fund getFund() {
-		return fund;
-	}
+    public Fund getFund() {
+        return fund;
+    }
 
-	public void setFund(final Fund fund) {
-		this.fund = fund;
-	}
+    public void setFund(final Fund fund) {
+        this.fund = fund;
+    }
 
-	public String getFeeType() {
-		return feeType;
-	}
+    public String getFeeType() {
+        return feeType;
+    }
 
-	public void setFeeType(final String feeType) {
-		this.feeType = feeType;
-	}
+    public void setFeeType(final String feeType) {
+        this.feeType = feeType;
+    }
 
-	public Boolean getIsFixedAmount() {
-		return isFixedAmount;
-	}
+    public Boolean getIsFixedAmount() {
+        return isFixedAmount;
+    }
 
-	public void setIsFixedAmount(final Boolean isFixedAmount) {
-		this.isFixedAmount = isFixedAmount;
-	}
+    public void setIsFixedAmount(final Boolean isFixedAmount) {
+        this.isFixedAmount = isFixedAmount;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(final Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public Boolean getIsMandatory() {
-		return isMandatory;
-	}
+    public Boolean getIsMandatory() {
+        return isMandatory;
+    }
 
-	public void setIsMandatory(final Boolean isMandatory) {
-		this.isMandatory = isMandatory;
-	}
+    public void setIsMandatory(final Boolean isMandatory) {
+        this.isMandatory = isMandatory;
+    }
 
-	public BigDecimal getFeeAmount() {
-		return feeAmount;
-	}
+    public BigDecimal getFeeAmount() {
+        return feeAmount;
+    }
 
-	public void setFeeAmount(final BigDecimal feeAmount) {
-		this.feeAmount = feeAmount;
-	}
+    public void setFeeAmount(final BigDecimal feeAmount) {
+        this.feeAmount = feeAmount;
+    }
 
-	public Long getDemandDetailId() {
-		return demandDetailId;
-	}
+    public Long getDemandDetailId() {
+        return demandDetailId;
+    }
 
-	public void setDemandDetailId(final Long demandDetailId) {
-		this.demandDetailId = demandDetailId;
-	}
+    public void setDemandDetailId(final Long demandDetailId) {
+        this.demandDetailId = demandDetailId;
+    }
 
-	public String getFeeDescriptionLocal() {
-		return feeDescriptionLocal;
-	}
+    public String getFeeDescriptionLocal() {
+        return feeDescriptionLocal;
+    }
 
-	public void setFeeDescriptionLocal(final String feeDescriptionLocal) {
-		this.feeDescriptionLocal = feeDescriptionLocal;
-	}
+    public void setFeeDescriptionLocal(final String feeDescriptionLocal) {
+        this.feeDescriptionLocal = feeDescriptionLocal;
+    }
 
-	public Long getOrderNumber() {
-		return orderNumber;
-	}
+    public Long getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setOrderNumber(final Long orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setOrderNumber(final Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-	public Boolean getIsPlanningPermitFee() {
-		return isPlanningPermitFee;
-	}
+    public Boolean getIsPlanningPermitFee() {
+        return isPlanningPermitFee;
+    }
 
-	public void setIsPlanningPermitFee(final Boolean isPlanningPermitFee) {
-		this.isPlanningPermitFee = isPlanningPermitFee;
-	}
+    public void setIsPlanningPermitFee(final Boolean isPlanningPermitFee) {
+        this.isPlanningPermitFee = isPlanningPermitFee;
+    }
 
-	public String getFeeGroup() {
-		return feeGroup;
-	}
+    public String getFeeGroup() {
+        return feeGroup;
+    }
 
-	public void setFeeGroup(final String feeGroup) {
-		this.feeGroup = feeGroup;
-	}
+    public void setFeeGroup(final String feeGroup) {
+        this.feeGroup = feeGroup;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public List<BpaFeeDetail> getFeeDetail() {
-		return feeDetail;
-	}
+    public List<BpaFeeDetail> getFeeDetail() {
+        return feeDetail;
+    }
 
-	public void setFeeDetail(List<BpaFeeDetail> feeDetail) {
-		this.feeDetail = feeDetail;
-	}
+    public void setFeeDetail(List<BpaFeeDetail> feeDetail) {
+        this.feeDetail = feeDetail;
+    }
 
 }

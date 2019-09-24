@@ -76,8 +76,8 @@ public class PermitInspectionApplication extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "inspectionapplication", nullable = false)
     private InspectionApplication inspectionApplication;
-    
-    @ManyToOne(cascade = CascadeType.ALL, fetch =FetchType.LAZY)
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
 
@@ -90,16 +90,16 @@ public class PermitInspectionApplication extends AbstractAuditable {
     public void setId(final Long id) {
         this.id = id;
     }
-   
+
     public InspectionApplication getInspectionApplication() {
-		return inspectionApplication;
-	}
+        return inspectionApplication;
+    }
 
-	public void setInspectionApplication(InspectionApplication inspectionApplication) {
-		this.inspectionApplication = inspectionApplication;
-	}
+    public void setInspectionApplication(InspectionApplication inspectionApplication) {
+        this.inspectionApplication = inspectionApplication;
+    }
 
-	public BpaApplication getApplication() {
+    public BpaApplication getApplication() {
         return application;
     }
 

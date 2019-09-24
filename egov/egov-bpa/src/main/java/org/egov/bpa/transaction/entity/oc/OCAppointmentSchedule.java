@@ -47,9 +47,6 @@
 
 package org.egov.bpa.transaction.entity.oc;
 
-import org.egov.bpa.transaction.entity.common.AppointmentScheduleCommon;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -61,6 +58,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
+
+import org.egov.bpa.transaction.entity.common.AppointmentScheduleCommon;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "EGBPA_OC_APPOINTMENT_SCHEDULE")

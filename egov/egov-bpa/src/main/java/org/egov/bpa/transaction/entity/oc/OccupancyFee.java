@@ -65,43 +65,43 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OccupancyFee.SEQ_EGBPA_OCCUPANCY_FEE, sequenceName = OccupancyFee.SEQ_EGBPA_OCCUPANCY_FEE, allocationSize = 1)
 public class OccupancyFee extends AbstractAuditable {
 
-	private static final long serialVersionUID = 4983560022721977900L;
+    private static final long serialVersionUID = 4983560022721977900L;
 
-	public static final String SEQ_EGBPA_OCCUPANCY_FEE = "seq_egbpa_occupancy_fee";
+    public static final String SEQ_EGBPA_OCCUPANCY_FEE = "seq_egbpa_occupancy_fee";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_OCCUPANCY_FEE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_OCCUPANCY_FEE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "oc", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "oc", nullable = false)
+    private OccupancyCertificate oc;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "applicationFee", nullable = false)
-	private ApplicationFee applicationFee;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "applicationFee", nullable = false)
+    private ApplicationFee applicationFee;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
-	public ApplicationFee getApplicationFee() {
-		return applicationFee;
-	}
+    public ApplicationFee getApplicationFee() {
+        return applicationFee;
+    }
 
-	public void setApplicationFee(ApplicationFee applicationFee) {
-		this.applicationFee = applicationFee;
-	}
+    public void setApplicationFee(ApplicationFee applicationFee) {
+        this.applicationFee = applicationFee;
+    }
 }

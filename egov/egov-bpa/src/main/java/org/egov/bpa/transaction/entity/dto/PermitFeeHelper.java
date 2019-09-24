@@ -47,25 +47,25 @@
 
 package org.egov.bpa.transaction.entity.dto;
 
-import java.math.*;
+import java.math.BigDecimal;
 
 public class PermitFeeHelper {
-	private String feeDescription;
-	private BigDecimal Amount = BigDecimal.ZERO;
+    private String feeDescription;
+    private BigDecimal Amount = BigDecimal.ZERO;
 
-	public String getFeeDescription() {
-		return feeDescription;
-	}
+    public String getFeeDescription() {
+        return feeDescription;
+    }
 
-	public void setFeeDescription(String feeDescription) {
-		this.feeDescription = feeDescription;
-	}
+    public void setFeeDescription(String feeDescription) {
+        this.feeDescription = feeDescription;
+    }
 
-	public BigDecimal getAmount() {
-		return Amount;
-	}
+    public BigDecimal getAmount() {
+        return Amount;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		Amount = amount;
-	}
+    public void setAmount(BigDecimal amount) {
+        Amount = amount;
+    }
 }

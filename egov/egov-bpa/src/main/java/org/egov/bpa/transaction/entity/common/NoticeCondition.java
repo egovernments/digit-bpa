@@ -75,100 +75,100 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = NoticeCondition.SEQ_BPA_NOTICE_CONDITION, sequenceName = NoticeCondition.SEQ_BPA_NOTICE_CONDITION, allocationSize = 1)
 public class NoticeCondition extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ_BPA_NOTICE_CONDITION = "SEQ_EGBPA_NOTICE_CONDITION";
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_BPA_NOTICE_CONDITION = "SEQ_EGBPA_NOTICE_CONDITION";
 
-	@Id
-	@GeneratedValue(generator = SEQ_BPA_NOTICE_CONDITION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_BPA_NOTICE_CONDITION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "checklistservicetype", nullable = false)
-	private ChecklistServiceTypeMapping checklistServicetype;
-	
-	private Date conditiondDate;
-	
-	@SafeHtml
-	@Length(min = 1, max = 30)
-	private String conditionNumber;
-	
-	@PositiveOrZero
-	private Integer orderNumber;
-	
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	@Column(name = "type")
-	private ConditionType type;
-	
-	private boolean isRequired;
-	
-	@SafeHtml
-	@Length(min = 1, max = 600)
-	private String additionalCondition;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "checklistservicetype", nullable = false)
+    private ChecklistServiceTypeMapping checklistServicetype;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    private Date conditiondDate;
 
-	@Override
-	protected void setId(Long id) {
-		this.id = id;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 30)
+    private String conditionNumber;
 
-	public ChecklistServiceTypeMapping getChecklistServicetype() {
-		return checklistServicetype;
-	}
+    @PositiveOrZero
+    private Integer orderNumber;
 
-	public void setChecklistServicetype(ChecklistServiceTypeMapping checklistServicetype) {
-		this.checklistServicetype = checklistServicetype;
-	}
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private ConditionType type;
 
-	public Date getConditiondDate() {
-		return conditiondDate;
-	}
+    private boolean isRequired;
 
-	public void setConditiondDate(Date conditiondDate) {
-		this.conditiondDate = conditiondDate;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 600)
+    private String additionalCondition;
 
-	public String getConditionNumber() {
-		return conditionNumber;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setConditionNumber(String conditionNumber) {
-		this.conditionNumber = conditionNumber;
-	}
+    @Override
+    protected void setId(Long id) {
+        this.id = id;
+    }
 
-	public Integer getOrderNumber() {
-		return orderNumber;
-	}
+    public ChecklistServiceTypeMapping getChecklistServicetype() {
+        return checklistServicetype;
+    }
 
-	public void setOrderNumber(Integer orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setChecklistServicetype(ChecklistServiceTypeMapping checklistServicetype) {
+        this.checklistServicetype = checklistServicetype;
+    }
 
-	public ConditionType getType() {
-		return type;
-	}
+    public Date getConditiondDate() {
+        return conditiondDate;
+    }
 
-	public void setType(ConditionType type) {
-		this.type = type;
-	}
+    public void setConditiondDate(Date conditiondDate) {
+        this.conditiondDate = conditiondDate;
+    }
 
-	public boolean isRequired() {
-		return isRequired;
-	}
+    public String getConditionNumber() {
+        return conditionNumber;
+    }
 
-	public void setRequired(boolean isRequired) {
-		this.isRequired = isRequired;
-	}
+    public void setConditionNumber(String conditionNumber) {
+        this.conditionNumber = conditionNumber;
+    }
 
-	public String getAdditionalCondition() {
-		return additionalCondition;
-	}
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setAdditionalCondition(String additionalCondition) {
-		this.additionalCondition = additionalCondition;
-	}
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public ConditionType getType() {
+        return type;
+    }
+
+    public void setType(ConditionType type) {
+        this.type = type;
+    }
+
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+
+    public String getAdditionalCondition() {
+        return additionalCondition;
+    }
+
+    public void setAdditionalCondition(String additionalCondition) {
+        this.additionalCondition = additionalCondition;
+    }
 }

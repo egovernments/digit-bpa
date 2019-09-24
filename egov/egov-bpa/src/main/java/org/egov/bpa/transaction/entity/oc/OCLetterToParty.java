@@ -66,45 +66,45 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OCLetterToParty.SEQ_LP, sequenceName = OCLetterToParty.SEQ_LP, allocationSize = 1)
 public class OCLetterToParty extends AbstractAuditable {
 
-	protected static final String SEQ_LP = "SEQ_EGBPA_OC_LETTER_TO_PARTY";
-	private static final long serialVersionUID = -1181416418299122679L;
+    protected static final String SEQ_LP = "SEQ_EGBPA_OC_LETTER_TO_PARTY";
+    private static final long serialVersionUID = -1181416418299122679L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_LP, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_LP, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "letterToParty", nullable = false)
-	private LetterToPartyCommon letterToParty;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "letterToParty", nullable = false)
+    private LetterToPartyCommon letterToParty;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "occupancyCertificate", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "occupancyCertificate", nullable = false)
+    private OccupancyCertificate oc;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public LetterToPartyCommon getLetterToParty() {
-		return letterToParty;
-	}
+    public LetterToPartyCommon getLetterToParty() {
+        return letterToParty;
+    }
 
-	public void setLetterToParty(LetterToPartyCommon letterToParty) {
-		this.letterToParty = letterToParty;
-	}
+    public void setLetterToParty(LetterToPartyCommon letterToParty) {
+        this.letterToParty = letterToParty;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 }

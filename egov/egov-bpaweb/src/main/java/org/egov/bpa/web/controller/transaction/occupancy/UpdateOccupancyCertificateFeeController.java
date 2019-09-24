@@ -39,7 +39,6 @@
  */
 package org.egov.bpa.web.controller.transaction.occupancy;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +56,6 @@ import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.entity.oc.OccupancyFee;
 import org.egov.bpa.transaction.repository.PermitFeeRepository;
 import org.egov.bpa.transaction.repository.oc.OccupancyFeeRepository;
-import org.egov.bpa.transaction.service.PermitFeeCalculationService;
 import org.egov.bpa.transaction.service.ApplicationFeeService;
 import org.egov.bpa.transaction.service.BpaStatusService;
 import org.egov.bpa.transaction.service.PermitFeeService;
@@ -69,18 +67,17 @@ import org.egov.bpa.utils.BpaUtils;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -88,7 +85,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/occupancy-certificate/fee")
 public class UpdateOccupancyCertificateFeeController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateOccupancyCertificateFeeController.class);
     private static final String OC_FEE = "occupancyFee";
     private static final String OC = "oc";
     private static final String CREATEOCFEE_FORM = "createocfee-form";
@@ -142,10 +138,14 @@ public class UpdateOccupancyCertificateFeeController {
         return ocFee;
     }
 
-    @RequestMapping(value = "/calculateFee/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/calculateFee/{applicationNumber}")
     public String calculateFeeform(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         OccupancyFee ocFee = getOCApplication(applicationNumber);
+        return feeEditForm(model, ocFee);
+    }
+
+    private String feeEditForm(final Model model, OccupancyFee ocFee) {
         if (ocFee != null && ocFee.getOc() != null) {
             loadViewdata(model, ocFee);
 
@@ -162,7 +162,7 @@ public class UpdateOccupancyCertificateFeeController {
                     feeCalculationMode.equalsIgnoreCase(BpaConstants.AUTOFEECALEDIT)) {
                 // calculate fee by passing sanction list, inspection latest object.
                 // based on fee code, define calculation logic for each servicewise.
-            	
+
                 ocFee = ocService.calculateOCSanctionFees(ocFee.getOc());
                 model.addAttribute(OC_FEE, ocFee);
 
@@ -212,11 +212,15 @@ public class UpdateOccupancyCertificateFeeController {
 
     }
 
-    @RequestMapping(value = "/calculateFee/{applicationNumber}", method = RequestMethod.POST)
-    public String calculateFeeform(@Valid @ModelAttribute(OC_FEE) OccupancyFee ocFee,
-            @PathVariable final String applicationNumber,
+    @PostMapping("/calculateFee/{applicationNumber}")
+    public String calculateFeeform(@PathVariable final String applicationNumber,
+            @RequestParam("files") final MultipartFile[] files,
+            @Valid @ModelAttribute(OC_FEE) OccupancyFee ocFee,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
+            final HttpServletRequest request, final Model model) {
+
+        if (resultBinder.hasErrors())
+            return feeEditForm(model, ocFee);
 
         // save sanction fee in application fee
         // generate demand based on sanction list, application

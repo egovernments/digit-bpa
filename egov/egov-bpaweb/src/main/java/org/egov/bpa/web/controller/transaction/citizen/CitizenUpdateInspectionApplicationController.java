@@ -56,33 +56,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/inspection")
 public class CitizenUpdateInspectionApplicationController {
 
-	@Autowired
-	protected WorkflowHistoryService workflowHistoryService;
-	@Autowired
-	private InspectionApplicationService inspectionAppService;
-	@Autowired
-	private InConstructionInspectionService inspectionService;
-	@Autowired
-	private InspectionLetterToPartyService letterToPartyService;
+    @Autowired
+    protected WorkflowHistoryService workflowHistoryService;
+    @Autowired
+    private InspectionApplicationService inspectionAppService;
+    @Autowired
+    private InConstructionInspectionService inspectionService;
+    @Autowired
+    private InspectionLetterToPartyService letterToPartyService;
 
-	@GetMapping("/citizen/update/{applicationNumber}")
-	public String createInspection(@PathVariable final String applicationNumber, final Model model) {
-		final PermitInspectionApplication permitInspection = inspectionAppService
-				.findByInspectionApplicationNumber(applicationNumber);
-		model.addAttribute("eDcrNumber", permitInspection.getApplication().geteDcrNumber());
-		model.addAttribute("planPermissionNumber", permitInspection.getApplication().getPlanPermissionNumber());
-		model.addAttribute("inspectionApplication", permitInspection.getInspectionApplication());
-		loadCommonApplicationDetails(model, permitInspection.getInspectionApplication());
-		return "inspection-view";
-	}
+    @GetMapping("/citizen/update/{applicationNumber}")
+    public String createInspection(@PathVariable final String applicationNumber, final Model model) {
+        final PermitInspectionApplication permitInspection = inspectionAppService
+                .findByInspectionApplicationNumber(applicationNumber);
+        model.addAttribute("eDcrNumber", permitInspection.getApplication().geteDcrNumber());
+        model.addAttribute("planPermissionNumber", permitInspection.getApplication().getPlanPermissionNumber());
+        model.addAttribute("inspectionApplication", permitInspection.getInspectionApplication());
+        loadCommonApplicationDetails(model, permitInspection.getInspectionApplication());
+        return "inspection-view";
+    }
 
-	private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
-		model.addAttribute("inconstinspectionList",
-				inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
-		model.addAttribute("lettertopartylist",
-				letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication));
-		model.addAttribute("applicationHistory",
-				workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(),
-						inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
-	}
+    private void loadCommonApplicationDetails(Model model, InspectionApplication inspectionApplication) {
+        model.addAttribute("inconstinspectionList",
+                inspectionService.findByInspectionApplicationOrderByIdAsc(inspectionApplication));
+        model.addAttribute("lettertopartylist",
+                letterToPartyService.findByInspectionApplicationOrderByIdDesc(inspectionApplication));
+        model.addAttribute("applicationHistory",
+                workflowHistoryService.getHistoryForInspection(inspectionApplication.getAppointmentSchedules(),
+                        inspectionApplication.getCurrentState(), inspectionApplication.getStateHistory()));
+    }
 }

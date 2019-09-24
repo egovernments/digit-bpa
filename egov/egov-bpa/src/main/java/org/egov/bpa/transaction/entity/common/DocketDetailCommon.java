@@ -71,100 +71,100 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = DocketDetailCommon.SEQ_DOCKETDETAIL, sequenceName = DocketDetailCommon.SEQ_DOCKETDETAIL, allocationSize = 1)
 public class DocketDetailCommon extends AbstractAuditable {
 
-	public static final String SEQ_DOCKETDETAIL = "SEQ_EGBPA_DOCKET_DETAIL_COMMON";
-	private static final long serialVersionUID = -8267446302678871097L;
+    public static final String SEQ_DOCKETDETAIL = "SEQ_EGBPA_DOCKET_DETAIL_COMMON";
+    private static final long serialVersionUID = -8267446302678871097L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_DOCKETDETAIL, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_DOCKETDETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private ChecklistValues value;
+    @Enumerated(EnumType.STRING)
+    private ChecklistValues value;
 
-	@SafeHtml
-	@Length(min = 1, max = 256)
-	private String remarks;
+    @SafeHtml
+    @Length(min = 1, max = 256)
+    private String remarks;
 
-	@SafeHtml
-	@Length(min = 1, max = 32)
-	private String required;
+    @SafeHtml
+    @Length(min = 1, max = 32)
+    private String required;
 
-	@SafeHtml
-	@Length(min = 1, max = 32)
-	private String provided;
+    @SafeHtml
+    @Length(min = 1, max = 32)
+    private String provided;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "docket", nullable = false)
-	private DocketCommon docket;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "docket", nullable = false)
+    private DocketCommon docket;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "serviceChecklist", nullable = false)
-	private ChecklistServiceTypeMapping serviceChecklist;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "serviceChecklist", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
 
-	public DocketDetailCommon(ChecklistServiceTypeMapping serviceChecklist) {
-		this.serviceChecklist = serviceChecklist;
-	}
+    public DocketDetailCommon(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
+    }
 
-	public DocketDetailCommon() {
-		// default initialization
-	}
+    public DocketDetailCommon() {
+        // default initialization
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public ChecklistValues getValue() {
-		return value;
-	}
+    public ChecklistValues getValue() {
+        return value;
+    }
 
-	public void setValue(ChecklistValues value) {
-		this.value = value;
-	}
+    public void setValue(ChecklistValues value) {
+        this.value = value;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-	public String getRequired() {
-		return required;
-	}
+    public String getRequired() {
+        return required;
+    }
 
-	public void setRequired(String required) {
-		this.required = required;
-	}
+    public void setRequired(String required) {
+        this.required = required;
+    }
 
-	public String getProvided() {
-		return provided;
-	}
+    public String getProvided() {
+        return provided;
+    }
 
-	public void setProvided(String provided) {
-		this.provided = provided;
-	}
+    public void setProvided(String provided) {
+        this.provided = provided;
+    }
 
-	public DocketCommon getDocket() {
-		return docket;
-	}
+    public DocketCommon getDocket() {
+        return docket;
+    }
 
-	public void setDocket(DocketCommon docket) {
-		this.docket = docket;
-	}
+    public void setDocket(DocketCommon docket) {
+        this.docket = docket;
+    }
 
-	public ChecklistServiceTypeMapping getServiceChecklist() {
-		return serviceChecklist;
-	}
+    public ChecklistServiceTypeMapping getServiceChecklist() {
+        return serviceChecklist;
+    }
 
-	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-		this.serviceChecklist = serviceChecklist;
-	}
+    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
+    }
 
 }

@@ -52,101 +52,101 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = CheckListDetail.SEQ_CHECKLISTDETAIL, sequenceName = CheckListDetail.SEQ_CHECKLISTDETAIL, allocationSize = 1)
 public class CheckListDetail extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_CHECKLISTDETAIL = "SEQ_EGBPA_MSTR_CHKLISTDETAIL";
-	@Id
-	@GeneratedValue(generator = SEQ_CHECKLISTDETAIL, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_CHECKLISTDETAIL = "SEQ_EGBPA_MSTR_CHKLISTDETAIL";
+    @Id
+    @GeneratedValue(generator = SEQ_CHECKLISTDETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	private String code;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String description;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String description;
 
-	@NotNull
-	private Boolean isActive;
+    @NotNull
+    private Boolean isActive;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@NotNull
-	@JoinColumn(name = "checkList")
-	private Checklist checkList;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "checkList")
+    private Checklist checkList;
 
-	@NotNull
-	private Boolean isMandatory;
+    @NotNull
+    private Boolean isMandatory;
 
-	private transient Long srlNo;
+    private transient Long srlNo;
 
-	private transient MultipartFile file;
+    private transient MultipartFile file;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(final Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
 
-	public Checklist getCheckList() {
-		return checkList;
-	}
+    public Checklist getCheckList() {
+        return checkList;
+    }
 
-	public void setCheckList(final Checklist checkList) {
-		this.checkList = checkList;
-	}
+    public void setCheckList(final Checklist checkList) {
+        this.checkList = checkList;
+    }
 
-	public Boolean getIsMandatory() {
-		return isMandatory;
-	}
+    public Boolean getIsMandatory() {
+        return isMandatory;
+    }
 
-	public void setIsMandatory(final Boolean isMandatory) {
-		this.isMandatory = isMandatory;
-	}
+    public void setIsMandatory(final Boolean isMandatory) {
+        this.isMandatory = isMandatory;
+    }
 
-	public Long getSrlNo() {
-		return srlNo;
-	}
+    public Long getSrlNo() {
+        return srlNo;
+    }
 
-	public void setSrlNo(final Long srlNo) {
-		this.srlNo = srlNo;
-	}
+    public void setSrlNo(final Long srlNo) {
+        this.srlNo = srlNo;
+    }
 
-	public MultipartFile getFile() {
-		return file;
-	}
+    public MultipartFile getFile() {
+        return file;
+    }
 
-	public void setFile(final MultipartFile file) {
-		this.file = file;
-	}
+    public void setFile(final MultipartFile file) {
+        this.file = file;
+    }
 }

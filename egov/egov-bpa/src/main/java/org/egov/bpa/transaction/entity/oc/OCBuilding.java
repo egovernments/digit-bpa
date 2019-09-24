@@ -61,44 +61,44 @@ public class OCBuilding extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQEGBPABUILDINGDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "oc", nullable = false)
     private OccupancyCertificate oc;
-    
+
     @SafeHtml
-    @Size(min = 1, max =50)
+    @Size(min = 1, max = 50)
     private String name;
-    
+
     @PositiveOrZero
     private Integer buildingNumber;
-    
+
     @PositiveOrZero
     private Integer floorCount;
-    
+
     @PositiveOrZero
     private BigDecimal totalPlinthArea;
-    
+
     @PositiveOrZero
     private BigDecimal heightFromGroundWithStairRoom;
-    
+
     @PositiveOrZero
     private BigDecimal heightFromGroundWithOutStairRoom;
-    
+
     @PositiveOrZero
     private BigDecimal fromStreetLevelWithStairRoom;
-    
+
     @PositiveOrZero
     private BigDecimal fromStreetLevelWithOutStairRoom;
-    
+
     @Valid
     @OneToMany(mappedBy = "buildingDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("orderOfFloor")
     private List<OCFloor> floorDetails = new ArrayList<>(0);
-    
+
     @Valid
     private transient List<OCFloor> floorDetailsForUpdate = new ArrayList<>(0);
-    
+
     @Valid
     private transient List<OCFloor> floorDetailsByEdcr = new ArrayList<>(0);
 

@@ -42,32 +42,32 @@ package org.egov.bpa.transaction.entity;
 import java.math.BigDecimal;
 
 public class Response {
-	private Long id;
-	private String demandDescription;
-	private BigDecimal demandAmount;
+    private Long id;
+    private String demandDescription;
+    private BigDecimal demandAmount;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getDemandDescription() {
-		return demandDescription;
-	}
+    public String getDemandDescription() {
+        return demandDescription;
+    }
 
-	public void setDemandDescription(String demandDescription) {
-		this.demandDescription = demandDescription;
-	}
+    public void setDemandDescription(String demandDescription) {
+        this.demandDescription = demandDescription;
+    }
 
-	public BigDecimal getDemandAmount() {
-		return demandAmount;
-	}
+    public BigDecimal getDemandAmount() {
+        return demandAmount;
+    }
 
-	public void setDemandAmount(BigDecimal demandAmount) {
-		this.demandAmount = demandAmount;
-	}
+    public void setDemandAmount(BigDecimal demandAmount) {
+        this.demandAmount = demandAmount;
+    }
 
 }

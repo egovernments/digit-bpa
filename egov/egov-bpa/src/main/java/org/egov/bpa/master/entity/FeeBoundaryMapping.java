@@ -53,50 +53,49 @@ public class FeeBoundaryMapping extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_BPAFEEBOUNDARYMAPPING, strategy = GenerationType.SEQUENCE)
     private Long id;
-   
+
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "boundary")
-    private Boundary boundary; 
-    
+    private Boundary boundary;
 
     @ManyToOne
     @JoinColumn(name = "bpafeemapping")
     private BpaFeeMapping bpaFeeMapping;
-    
+
     @JoinColumn(name = "amount")
     private Double amount;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Boundary getBoundary() {
-		return boundary;
-	}
+    public Boundary getBoundary() {
+        return boundary;
+    }
 
-	public void setBoundary(Boundary boundary) {
-		this.boundary = boundary;
-	}
+    public void setBoundary(Boundary boundary) {
+        this.boundary = boundary;
+    }
 
-	public BpaFeeMapping getBpaFeeMapping() {
-		return bpaFeeMapping;
-	}
+    public BpaFeeMapping getBpaFeeMapping() {
+        return bpaFeeMapping;
+    }
 
-	public void setBpaFeeMapping(BpaFeeMapping bpaFeeMapping) {
-		this.bpaFeeMapping = bpaFeeMapping;
-	}
+    public void setBpaFeeMapping(BpaFeeMapping bpaFeeMapping) {
+        this.bpaFeeMapping = bpaFeeMapping;
+    }
 
-	public Double getAmount() {
-		return amount;
-	}
+    public Double getAmount() {
+        return amount;
+    }
 
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}      
-	
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
 }

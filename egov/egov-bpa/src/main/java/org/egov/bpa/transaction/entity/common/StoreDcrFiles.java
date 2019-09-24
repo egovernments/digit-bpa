@@ -61,10 +61,10 @@ public class StoreDcrFiles {
     @Id
     @GeneratedValue(generator = SEQ_CMN_DCR_FILES, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "dcrdocument", nullable = false)
     private DcrDocument dcrDocument;
-    @ManyToOne(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestore", nullable = false)
     private FileStoreMapper fileStoreMapper;
     private boolean isAutoPopulated = false;

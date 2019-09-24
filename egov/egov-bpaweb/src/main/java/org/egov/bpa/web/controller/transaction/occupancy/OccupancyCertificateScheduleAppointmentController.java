@@ -39,6 +39,21 @@
  */
 package org.egov.bpa.web.controller.transaction.occupancy;
 
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.bpa.master.service.AppointmentLocationsService;
 import org.egov.bpa.transaction.entity.SlotDetail;
@@ -63,28 +78,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 
 @Controller
 @RequestMapping(value = "/application/occupancy-certificate")
@@ -137,13 +138,19 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
         OCAppointmentSchedule ocAppointmentSchedule = new OCAppointmentSchedule();
         AppointmentScheduleCommon appointmentSchedule = new AppointmentScheduleCommon();
         // It require if want to schedule appointment for document scrutiny manually from UI instead through scheduler
-        /*if (BpaConstants.APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(oc.getStatus().getCode())
-            && !BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(oc.getCurrentState().getNextAction())) {
-            appointmentSchedule.setPurpose(AppointmentSchedulePurpose.DOCUMENTSCRUTINY);
-        } else*/
+        /*
+         * if (BpaConstants.APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(oc.getStatus().getCode()) &&
+         * !BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(oc.getCurrentState().getNextAction())) {
+         * appointmentSchedule.setPurpose(AppointmentSchedulePurpose.DOCUMENTSCRUTINY); } else
+         */
+        return scheduleForm(applicationNumber, model, oc, ocAppointmentSchedule, appointmentSchedule);
+    }
+
+    private String scheduleForm(final String applicationNumber, final Model model, OccupancyCertificate oc,
+            OCAppointmentSchedule ocAppointmentSchedule, AppointmentScheduleCommon appointmentSchedule) {
         if ((APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(oc.getStatus().getCode())
-                    || BpaConstants.APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(oc.getStatus().getCode()))
-                   && BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(oc.getCurrentState().getNextAction())) {
+                || BpaConstants.APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(oc.getStatus().getCode()))
+                && BpaConstants.FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(oc.getCurrentState().getNextAction())) {
             appointmentSchedule.setPurpose(AppointmentSchedulePurpose.INSPECTION);
         }
         ocAppointmentSchedule.setAppointmentScheduleCommon(appointmentSchedule);
@@ -155,22 +162,32 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
     }
 
     @PostMapping("/schedule-appointment/{applicationNumber}")
-    public String scheduleAppointmentForOC(@Valid @ModelAttribute final OCAppointmentSchedule ocAppointmentSchedule,
-            @PathVariable final String applicationNumber, final Model model, final RedirectAttributes redirectAttributes) {
+    public String scheduleAppointmentForOC(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute final OCAppointmentSchedule ocAppointmentSchedule,
+            final BindingResult result,
+            final Model model,
+            final RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return scheduleForm(applicationNumber, model, ocAppointmentSchedule.getOc(), ocAppointmentSchedule,
+                    ocAppointmentSchedule.getAppointmentScheduleCommon());
+        }
         OCAppointmentSchedule schedule = buildAndSaveNewAppointment(ocAppointmentSchedule, applicationNumber);
-        if (AppointmentSchedulePurpose.DOCUMENTSCRUTINY.equals(ocAppointmentSchedule.getAppointmentScheduleCommon().getPurpose())) {
+        if (AppointmentSchedulePurpose.DOCUMENTSCRUTINY
+                .equals(ocAppointmentSchedule.getAppointmentScheduleCommon().getPurpose())) {
             redirectAttributes.addFlashAttribute(MESSAGE,
                     messageSource.getMessage("msg.new.appoimt", null, null));
-        } else if (AppointmentSchedulePurpose.INSPECTION.equals(ocAppointmentSchedule.getAppointmentScheduleCommon().getPurpose())) {
+        } else if (AppointmentSchedulePurpose.INSPECTION
+                .equals(ocAppointmentSchedule.getAppointmentScheduleCommon().getPurpose())) {
             redirectAttributes.addFlashAttribute(MESSAGE,
                     messageSource.getMessage("msg.new.appoimt.fieldins", null, null));
         }
         return REDIRECT_APPLICATION_VIEW_APPOINTMENT + schedule.getId();
     }
 
-    private OCAppointmentSchedule buildAndSaveNewAppointment(final OCAppointmentSchedule ocAppointmentSchedule, final String applicationNumber) {
+    private OCAppointmentSchedule buildAndSaveNewAppointment(final OCAppointmentSchedule ocAppointmentSchedule,
+            final String applicationNumber) {
         OCAppointmentSchedule schedule = ocAppointmentScheduleService.save(ocAppointmentSchedule);
-        //bpaSmsAndEmailService.sendSMSAndEmailToscheduleAppointment(schedule, bpaApplication);
+        // bpaSmsAndEmailService.sendSMSAndEmailToscheduleAppointment(schedule, bpaApplication);
         return schedule;
     }
 
@@ -178,9 +195,15 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
     public String showReScheduleAppointmentForOc(@PathVariable final AppointmentSchedulePurpose scheduleType,
             @PathVariable final String applicationNumber, final Model model) {
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
-        List<OCAppointmentSchedule> appointmentScheduledList = ocAppointmentScheduleService.findByApplication(oc, scheduleType);
         OCAppointmentSchedule appointmentSchedule = new OCAppointmentSchedule();
         AppointmentScheduleCommon appointmentScheduleCommon = new AppointmentScheduleCommon();
+        return rescheduleForm(scheduleType, applicationNumber, model, oc, appointmentSchedule, appointmentScheduleCommon);
+    }
+
+    private String rescheduleForm(final AppointmentSchedulePurpose scheduleType, final String applicationNumber,
+            final Model model, OccupancyCertificate oc, OCAppointmentSchedule appointmentSchedule,
+            AppointmentScheduleCommon appointmentScheduleCommon) {
+        List<OCAppointmentSchedule> appointmentScheduledList = ocAppointmentScheduleService.findByApplication(oc, scheduleType);
         appointmentScheduleCommon.setPurpose(appointmentScheduledList.get(0).getAppointmentScheduleCommon().getPurpose());
         appointmentSchedule.setAppointmentScheduleCommon(appointmentScheduleCommon);
         model.addAttribute(APPOINTMENT_LOCATIONS_LIST, appointmentLocationsService.findAllOrderByOrderNumber());
@@ -192,16 +215,26 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
     }
 
     @PostMapping("/reschedule-appointment/{scheduleType}/{applicationNumber}")
-    public String reScheduleAppointmentForOC(@Valid @ModelAttribute final OCAppointmentSchedule ocAppointmentSchedule,
-            @PathVariable final AppointmentSchedulePurpose scheduleType, @PathVariable final String applicationNumber,
-            @RequestParam Long parentAppointmentScheduleId, final RedirectAttributes redirectAttributes) {
+    public String reScheduleAppointmentForOC(
+            @PathVariable final AppointmentSchedulePurpose scheduleType,
+            @PathVariable final String applicationNumber,
+            @RequestParam Long parentAppointmentScheduleId,
+            @Valid @ModelAttribute final OCAppointmentSchedule ocAppointmentSchedule,
+            final BindingResult result,
+            final Model model,
+            final RedirectAttributes redirectAttributes) {
+
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
+        if (result.hasErrors()) {
+            return rescheduleForm(scheduleType, applicationNumber, model, oc, ocAppointmentSchedule,
+                    ocAppointmentSchedule.getAppointmentScheduleCommon());
+        }
         AppointmentScheduleCommon parent = appointmentScheduleCommonService.findById(parentAppointmentScheduleId);
         ocAppointmentSchedule.getAppointmentScheduleCommon().setPostponed(true);
         ocAppointmentSchedule.getAppointmentScheduleCommon().setParent(parent);
         ocAppointmentSchedule.setOc(oc);
         OCAppointmentSchedule schedule = ocAppointmentScheduleService.save(ocAppointmentSchedule);
-        //bpaSmsAndEmailService.sendSMSAndEmailToscheduleAppointment(schedule, bpaApplication);
+        // bpaSmsAndEmailService.sendSMSAndEmailToscheduleAppointment(schedule, bpaApplication);
         if (AppointmentSchedulePurpose.DOCUMENTSCRUTINY.equals(schedule.getAppointmentScheduleCommon().getPurpose())) {
             redirectAttributes.addFlashAttribute(MESSAGE,
                     messageSource.getMessage("msg.rescheduled.appoimt", null, null));
@@ -226,7 +259,7 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
 
     @PostMapping("/scrutiny/schedule/{applicationNumber}")
     public String scheduleAppointmentForDocScrutinyOfOC(@Valid @ModelAttribute final OCAppointmentSchedule ocAppointmentSchedule,
-                                                    @PathVariable final String applicationNumber, final Model model, final RedirectAttributes redirectAttributes) {
+            @PathVariable final String applicationNumber, final Model model, final RedirectAttributes redirectAttributes) {
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         ocAppointmentSchedule.setOc(oc);
         WorkflowBean wfBean = new WorkflowBean();
@@ -235,22 +268,22 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
         wfBean.setWorkFlowAction("Forward");
         bpaUtils.redirectToBpaWorkFlowForOC(oc, wfBean);
         OCAppointmentSchedule schedule = ocAppointmentScheduleService.save(ocAppointmentSchedule);
-        //bpaSmsAndEmailService.sendSMSAndEmailToscheduleAppointment(schedule, bpaApplication);
+        // bpaSmsAndEmailService.sendSMSAndEmailToscheduleAppointment(schedule, bpaApplication);
         redirectAttributes.addFlashAttribute(MESSAGE,
                 messageSource.getMessage("msg.new.appoimt", null, null));
 
         return REDIRECT_APPLICATION_VIEW_APPOINTMENT + schedule.getId();
     }
-   
+
     @GetMapping("/scrutiny/reschedule/{applicationNumber}")
     public String showReScheduleDcoumentScrutinyOfOC(@PathVariable final String applicationNumber, final Model model) {
         OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         if (oc.getRescheduledByEmployee() && UserType.EMPLOYEE.equals(securityUtils.getCurrentUser().getType())) {
             model.addAttribute(MESSAGE,
-            		messageSource.getMessage("msg.emp.reschedule.appintment.onlyonce", null, null));
+                    messageSource.getMessage("msg.emp.reschedule.appintment.onlyonce", null, null));
             return COMMON_ERROR;
         }
-        if (validateOnDocumentScrutiny(model, oc.getStatus())){
+        if (validateOnDocumentScrutiny(model, oc.getStatus())) {
             return COMMON_ERROR;
         }
         List<SlotDetail> slotDetails = rescheduleAppointmentForOcService
@@ -282,7 +315,9 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
     }
 
     @PostMapping("/scrutiny/reschedule/{applicationNumber}")
-    public String reScheduleDocumentScrutinyOfOC(@Valid @ModelAttribute final ScheduleScrutiny scheduleScrutiny, @PathVariable final String applicationNumber, final Model model, final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
+    public String reScheduleDocumentScrutinyOfOC(@Valid @ModelAttribute final ScheduleScrutiny scheduleScrutiny,
+            @PathVariable final String applicationNumber, final Model model, final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) {
         String reScheduleAction = request.getParameter("reScheduleAction");
         OccupancyCertificate occupancyCertificate = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         if ("Re-Schedule".equals(reScheduleAction)) {
@@ -293,11 +328,14 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
                 workflowBean.setApproverComments("document scrutiny re-scheduled");
                 workflowBean.setWorkFlowAction(BpaConstants.WF_RESCHDLE_APPMNT_BUTTON);
                 workflowBean.setAmountRule(null);
-                bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate,workflowBean);
-            } if (Source.SYSTEM.name().equals(scheduleScrutiny.getReScheduledBy())) {
-                rescheduleAppointmentForOcService.rescheduleAppointmentsForOcByEmployee(scheduleScrutiny.getApplicationId(), scheduleScrutiny.getAppointmentDate(), scheduleScrutiny.getAppointmentTime());
+                bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, workflowBean);
+            }
+            if (Source.SYSTEM.name().equals(scheduleScrutiny.getReScheduledBy())) {
+                rescheduleAppointmentForOcService.rescheduleAppointmentsForOcByEmployee(scheduleScrutiny.getApplicationId(),
+                        scheduleScrutiny.getAppointmentDate(), scheduleScrutiny.getAppointmentTime());
             } else if (Source.CITIZENPORTAL.name().equals(scheduleScrutiny.getReScheduledBy())) {
-                rescheduleAppointmentForOcService.rescheduleAppointmentsForOcByCitizen(scheduleScrutiny.getApplicationId(), scheduleScrutiny.getAppointmentDate(), scheduleScrutiny.getAppointmentTime());
+                rescheduleAppointmentForOcService.rescheduleAppointmentsForOcByCitizen(scheduleScrutiny.getApplicationId(),
+                        scheduleScrutiny.getAppointmentDate(), scheduleScrutiny.getAppointmentTime());
             }
             model.addAttribute(OCCUPANCY_CERTIFICATE, occupancyCertificate);
         } else if ("Auto Re-Schedule".equals(reScheduleAction)) {
@@ -307,15 +345,17 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
             workflowBean.setApproverComments(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING);
             workflowBean.setWorkFlowAction(BpaConstants.WF_AUTO_RESCHDLE_APPMNT_BUTTON);
             workflowBean.setAmountRule(null);
-            bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate,workflowBean);
+            bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, workflowBean);
             String scheduleBy = StringUtils.EMPTY;
             if (Source.SYSTEM.name().equals(scheduleScrutiny.getReScheduledBy())) {
                 scheduleBy = "EMPLOYEE";
             } else if (Source.CITIZENPORTAL.name().equals(scheduleScrutiny.getReScheduledBy())) {
                 scheduleBy = "CITIZENPORTAL";
             }
-            rescheduleAppointmentForOcService.rescheduleAppointmentWhenSlotsNotAvailableForOc(occupancyCertificate.getId(), scheduleBy);
-            model.addAttribute(MSG, messageSource.getMessage("msg.auto.schedule", new String[]{occupancyCertificate.getApplicationNumber()}, null));
+            rescheduleAppointmentForOcService.rescheduleAppointmentWhenSlotsNotAvailableForOc(occupancyCertificate.getId(),
+                    scheduleBy);
+            model.addAttribute(MSG, messageSource.getMessage("msg.auto.schedule",
+                    new String[] { occupancyCertificate.getApplicationNumber() }, null));
             return CITIZEN_SUCEESS;
         } else if ("Cancel Application".equals(reScheduleAction)) {
             WorkflowBean workflowBean = new WorkflowBean();
@@ -324,8 +364,9 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
             workflowBean.setApproverComments("Application cancelled by citizen");
             workflowBean.setWorkFlowAction(BpaConstants.WF_CANCELAPPLICATION_BUTTON);
             workflowBean.setAmountRule(null);
-            bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate,workflowBean);
-            model.addAttribute(MSG, messageSource.getMessage("msg.cancel.appln", new String[]{occupancyCertificate.getApplicationNumber()}, null));
+            bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, workflowBean);
+            model.addAttribute(MSG, messageSource.getMessage("msg.cancel.appln",
+                    new String[] { occupancyCertificate.getApplicationNumber() }, null));
             return CITIZEN_SUCEESS;
         }
         return SCHEDULED_SCRUTINY_DETAILS_RESULT;
@@ -346,9 +387,11 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
         return SCHEDULE_APPIONTMENT_RESULT;
     }
 
-    @RequestMapping(value = {"/scrutiny/slot-details"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void registrarOfficeVillageMapping(@RequestParam Date appointmentDate, @RequestParam Long zoneId, HttpServletResponse response) throws IOException {
-        List<SlotDetail> slotDetails = rescheduleAppointmentForOcService.getSlotDetailsByAppointmentDateAndZoneIdForOc(appointmentDate, zoneId);
+    @GetMapping(value = "/scrutiny/slot-details", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void registrarOfficeVillageMapping(@RequestParam Date appointmentDate, @RequestParam Long zoneId,
+            HttpServletResponse response) throws IOException {
+        List<SlotDetail> slotDetails = rescheduleAppointmentForOcService
+                .getSlotDetailsByAppointmentDateAndZoneIdForOc(appointmentDate, zoneId);
         final List<JSONObject> jsonObjects = new ArrayList<>();
         if (!slotDetails.isEmpty()) {
             for (final SlotDetail slotDetail : slotDetails) {
@@ -358,8 +401,6 @@ public class OccupancyCertificateScheduleAppointmentController extends BpaGeneri
             }
         }
         IOUtils.write(jsonObjects.toString(), response.getWriter());
-}
-
-
     }
 
+}

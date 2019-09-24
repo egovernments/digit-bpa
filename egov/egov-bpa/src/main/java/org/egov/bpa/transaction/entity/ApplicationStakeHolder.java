@@ -47,55 +47,55 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = ApplicationStakeHolder.SEQ_APPLICATION_STAKEHOLDER, sequenceName = ApplicationStakeHolder.SEQ_APPLICATION_STAKEHOLDER, allocationSize = 1)
 public class ApplicationStakeHolder extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_APPLICATION_STAKEHOLDER = "SEQ_EGBPA_ApplicationStakeHolder";
-	@Id
-	@GeneratedValue(generator = SEQ_APPLICATION_STAKEHOLDER, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_APPLICATION_STAKEHOLDER = "SEQ_EGBPA_ApplicationStakeHolder";
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICATION_STAKEHOLDER, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application", nullable = false)
-	private BpaApplication application;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "stakeHolder", nullable = false)
-	private StakeHolder stakeHolder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stakeHolder", nullable = false)
+    private StakeHolder stakeHolder;
 
-	private Boolean isActive;
+    private Boolean isActive;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	protected void setId(final Long id) {
-		this.id = id;
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
 
-	}
+    }
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public void setApplication(final BpaApplication application) {
-		this.application = application;
-	}
+    public void setApplication(final BpaApplication application) {
+        this.application = application;
+    }
 
-	public StakeHolder getStakeHolder() {
-		return stakeHolder;
-	}
+    public StakeHolder getStakeHolder() {
+        return stakeHolder;
+    }
 
-	public void setStakeHolder(final StakeHolder stakeHolder) {
-		this.stakeHolder = stakeHolder;
-	}
+    public void setStakeHolder(final StakeHolder stakeHolder) {
+        this.stakeHolder = stakeHolder;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(final Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
 
 }

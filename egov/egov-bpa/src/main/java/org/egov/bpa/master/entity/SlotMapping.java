@@ -62,118 +62,118 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = SlotMapping.SEQ, sequenceName = SlotMapping.SEQ, allocationSize = 1)
 public class SlotMapping extends AbstractAuditable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	public static final String SEQ = "seq_egbpa_mstr_slotmapping";
+    public static final String SEQ = "seq_egbpa_mstr_slotmapping";
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ)
+    private Long id;
 
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "zone")
-	private Boundary zone;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "zone")
+    private Boundary zone;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "revenueward")
-	private Boundary revenueWard;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "revenueward")
+    private Boundary revenueWard;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "electionward")
-	private Boundary electionWard;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "electionward")
+    private Boundary electionWard;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "slotApplicationType")
-	private ApplicationSubType applicationType;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "slotApplicationType")
+    private ApplicationSubType applicationType;
 
-	@SafeHtml
-	private String day;
+    @SafeHtml
+    private String day;
 
-	@NotNull
-	@PositiveOrZero
-	private Integer maxSlotsAllowed;
+    @NotNull
+    @PositiveOrZero
+    private Integer maxSlotsAllowed;
 
-	@PositiveOrZero
-	private Integer maxRescheduledSlotsAllowed;
+    @PositiveOrZero
+    private Integer maxRescheduledSlotsAllowed;
 
-	private transient WorkingDays days;
+    private transient WorkingDays days;
 
-	public Boundary getRevenueWard() {
-		return revenueWard;
-	}
+    public Boundary getRevenueWard() {
+        return revenueWard;
+    }
 
-	public void setRevenueWard(Boundary revenueWard) {
-		this.revenueWard = revenueWard;
-	}
+    public void setRevenueWard(Boundary revenueWard) {
+        this.revenueWard = revenueWard;
+    }
 
-	public Boundary getElectionWard() {
-		return electionWard;
-	}
+    public Boundary getElectionWard() {
+        return electionWard;
+    }
 
-	public void setElectionWard(Boundary electionWard) {
-		this.electionWard = electionWard;
-	}
+    public void setElectionWard(Boundary electionWard) {
+        this.electionWard = electionWard;
+    }
 
-	public String getDay() {
-		return day;
-	}
+    public String getDay() {
+        return day;
+    }
 
-	public WorkingDays getDays() {
-		return days;
-	}
+    public WorkingDays getDays() {
+        return days;
+    }
 
-	public void setDays(WorkingDays days) {
-		this.days = days;
-	}
+    public void setDays(WorkingDays days) {
+        this.days = days;
+    }
 
-	public void setDay(String day) {
-		this.day = day;
-	}
+    public void setDay(String day) {
+        this.day = day;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Boundary getZone() {
-		return zone;
-	}
+    public Boundary getZone() {
+        return zone;
+    }
 
-	public void setZone(Boundary zone) {
-		this.zone = zone;
-	}
+    public void setZone(Boundary zone) {
+        this.zone = zone;
+    }
 
-	public Integer getMaxSlotsAllowed() {
-		return maxSlotsAllowed;
-	}
+    public Integer getMaxSlotsAllowed() {
+        return maxSlotsAllowed;
+    }
 
-	public void setMaxSlotsAllowed(Integer maxSlotsAllowed) {
-		this.maxSlotsAllowed = maxSlotsAllowed;
-	}
+    public void setMaxSlotsAllowed(Integer maxSlotsAllowed) {
+        this.maxSlotsAllowed = maxSlotsAllowed;
+    }
 
-	public Integer getMaxRescheduledSlotsAllowed() {
-		return maxRescheduledSlotsAllowed;
-	}
+    public Integer getMaxRescheduledSlotsAllowed() {
+        return maxRescheduledSlotsAllowed;
+    }
 
-	public void setMaxRescheduledSlotsAllowed(Integer maxRescheduledSlotsAllowed) {
-		this.maxRescheduledSlotsAllowed = maxRescheduledSlotsAllowed;
-	}
+    public void setMaxRescheduledSlotsAllowed(Integer maxRescheduledSlotsAllowed) {
+        this.maxRescheduledSlotsAllowed = maxRescheduledSlotsAllowed;
+    }
 
-	public ApplicationSubType getApplicationType() {
-		return applicationType;
-	}
+    public ApplicationSubType getApplicationType() {
+        return applicationType;
+    }
 
-	public void setApplicationType(ApplicationSubType applicationType) {
-		this.applicationType = applicationType;
-	}
+    public void setApplicationType(ApplicationSubType applicationType) {
+        this.applicationType = applicationType;
+    }
 
 }

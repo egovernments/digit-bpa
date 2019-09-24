@@ -73,71 +73,73 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = BuildingSubUsageDetails.SEQ_SUB_USAGE, sequenceName = BuildingSubUsageDetails.SEQ_SUB_USAGE, allocationSize = 1)
 public class BuildingSubUsageDetails extends AbstractAuditable {
 
-	public static final String SEQ_SUB_USAGE = "seq_egbpa_building_sub_usage_details";
-	private static final long serialVersionUID = -5785039918517422291L;
+    public static final String SEQ_SUB_USAGE = "seq_egbpa_building_sub_usage_details";
+    private static final long serialVersionUID = -5785039918517422291L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_SUB_USAGE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_SUB_USAGE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "mainUsage")
-	private Occupancy mainUsage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mainUsage")
+    private Occupancy mainUsage;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "buildingSubUsage")
-	private BuildingSubUsage buildingSubUsage;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "buildingSubUsage")
+    private BuildingSubUsage buildingSubUsage;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "egbpa_builing_usage", joinColumns = @JoinColumn(name = "subUsageDetails"), inverseJoinColumns = @JoinColumn(name = "usage"))
-	private List<Usage> subUsages = new ArrayList<>();
-	
-/*	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "egbpa_sub_usage", joinColumns = @JoinColumn(name = "subUsageDetails"), inverseJoinColumns = @JoinColumn(name = "suboccupancy"))
-	private List<SubOccupancy> subUsages;*/
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "egbpa_builing_usage", joinColumns = @JoinColumn(name = "subUsageDetails"), inverseJoinColumns = @JoinColumn(name = "usage"))
+    private List<Usage> subUsages = new ArrayList<>();
 
-	private transient List<Usage> subUsagesTemp = new ArrayList<>();
+    /*
+     * @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+     * @JoinTable(name = "egbpa_sub_usage", joinColumns = @JoinColumn(name = "subUsageDetails"), inverseJoinColumns
+     * = @JoinColumn(name = "suboccupancy")) private List<SubOccupancy> subUsages;
+     */
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    private transient List<Usage> subUsagesTemp = new ArrayList<>();
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public Occupancy getMainUsage() {
-		return mainUsage;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setMainUsage(Occupancy mainUsage) {
-		this.mainUsage = mainUsage;
-	}
+    public Occupancy getMainUsage() {
+        return mainUsage;
+    }
 
-	public BuildingSubUsage getBuildingSubUsage() {
-		return buildingSubUsage;
-	}
+    public void setMainUsage(Occupancy mainUsage) {
+        this.mainUsage = mainUsage;
+    }
 
-	public void setBuildingSubUsage(BuildingSubUsage buildingSubUsage) {
-		this.buildingSubUsage = buildingSubUsage;
-	}
+    public BuildingSubUsage getBuildingSubUsage() {
+        return buildingSubUsage;
+    }
 
-	public List<Usage> getSubUsagesTemp() {
-		return subUsagesTemp;
-	}
+    public void setBuildingSubUsage(BuildingSubUsage buildingSubUsage) {
+        this.buildingSubUsage = buildingSubUsage;
+    }
 
-	public List<Usage> getSubUsages() {
-		return subUsages;
-	}
+    public List<Usage> getSubUsagesTemp() {
+        return subUsagesTemp;
+    }
 
-	public void setSubUsages(List<Usage> subUsages) {
-		this.subUsages = subUsages;
-	}
+    public List<Usage> getSubUsages() {
+        return subUsages;
+    }
 
-	public void setSubUsagesTemp(List<Usage> subUsagesTemp) {
-		this.subUsagesTemp = subUsagesTemp;
-	}
+    public void setSubUsages(List<Usage> subUsages) {
+        this.subUsages = subUsages;
+    }
+
+    public void setSubUsagesTemp(List<Usage> subUsagesTemp) {
+        this.subUsagesTemp = subUsagesTemp;
+    }
 
 }

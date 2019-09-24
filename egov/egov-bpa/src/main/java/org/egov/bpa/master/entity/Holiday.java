@@ -58,77 +58,77 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = Holiday.SEQ_HOLIDAY, sequenceName = Holiday.SEQ_HOLIDAY, allocationSize = 1)
 public class Holiday extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_HOLIDAY = "SEQ_EGBPA_MSTR_HOLIDAY";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_HOLIDAY = "SEQ_EGBPA_MSTR_HOLIDAY";
 
-	@Id
-	@GeneratedValue(generator = SEQ_HOLIDAY, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_HOLIDAY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Enumerated(EnumType.STRING)
-	@NotNull
-	private HolidayType holidayType;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private HolidayType holidayType;
 
-	@NotNull
-	@Temporal(value = TemporalType.DATE)
-	private Date holidayDate;
+    @NotNull
+    @Temporal(value = TemporalType.DATE)
+    private Date holidayDate;
 
-	@SafeHtml
-	@Length(min = 1, max = 256)
-	private String description;
+    @SafeHtml
+    @Length(min = 1, max = 256)
+    private String description;
 
-	@SafeHtml
-	@Length(min = 1, max = 30)
-	private String year;
+    @SafeHtml
+    @Length(min = 1, max = 30)
+    private String year;
 
-	@Valid
-	private transient List<Holiday> holidaysTemp = new ArrayList<>();
+    @Valid
+    private transient List<Holiday> holidaysTemp = new ArrayList<>();
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public HolidayType getHolidayType() {
-		return holidayType;
-	}
+    public HolidayType getHolidayType() {
+        return holidayType;
+    }
 
-	public void setHolidayType(HolidayType holidayType) {
-		this.holidayType = holidayType;
-	}
+    public void setHolidayType(HolidayType holidayType) {
+        this.holidayType = holidayType;
+    }
 
-	public Date getHolidayDate() {
-		return holidayDate;
-	}
+    public Date getHolidayDate() {
+        return holidayDate;
+    }
 
-	public void setHolidayDate(Date holidayDate) {
-		this.holidayDate = holidayDate;
-	}
+    public void setHolidayDate(Date holidayDate) {
+        this.holidayDate = holidayDate;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getYear() {
-		return year;
-	}
+    public String getYear() {
+        return year;
+    }
 
-	public void setYear(String year) {
-		this.year = year;
-	}
+    public void setYear(String year) {
+        this.year = year;
+    }
 
-	public List<Holiday> getHolidaysTemp() {
-		return holidaysTemp;
-	}
+    public List<Holiday> getHolidaysTemp() {
+        return holidaysTemp;
+    }
 
-	public void setHolidaysTemp(List<Holiday> holidaysTemp) {
-		this.holidaysTemp = holidaysTemp;
-	}
+    public void setHolidaysTemp(List<Holiday> holidaysTemp) {
+        this.holidaysTemp = holidaysTemp;
+    }
 }

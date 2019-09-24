@@ -97,182 +97,182 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/application/citizen")
 public class CitizenNewOccupancyCertificateController extends BpaGenericApplicationController {
 
-	private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
+    private static final String ONLINE_PAYMENT_ENABLE = "onlinePaymentEnable";
 
-	private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String WORK_FLOW_ACTION = "workFlowAction";
 
-	private static final String TRUE = "TRUE";
+    private static final String TRUE = "TRUE";
 
-	private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
+    private static final String CITIZEN_OR_BUSINESS_USER = "citizenOrBusinessUser";
 
-	private static final String IS_CITIZEN = "isCitizen";
+    private static final String IS_CITIZEN = "isCitizen";
 
-	private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
+    private static final String OFFICIAL_NOT_EXISTS = "No officials assigned to process this application.";
 
-	private static final String MESSAGE = "message";
+    private static final String MESSAGE = "message";
 
-	public static final String CITIZEN_OCCUPANCY_CERTIFICATE_NEW = "citizen-occupancy-certificate-new";
+    public static final String CITIZEN_OCCUPANCY_CERTIFICATE_NEW = "citizen-occupancy-certificate-new";
 
-	private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
+    private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
 
-	@Autowired
-	private GenericBillGeneratorService genericBillGeneratorService;
-	@Autowired
-	private OccupancyCertificateService occupancyCertificateService;
-	@Autowired
-	protected SubOccupancyService subOccupancyService;
-	@Autowired
-	private CustomImplProvider specificNoticeService;
-	@Autowired
-	private NocConfigurationService nocConfigurationService;
-	@Autowired
-	private OccupancyCertificateNocService ocNocService;
+    @Autowired
+    private GenericBillGeneratorService genericBillGeneratorService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
+    @Autowired
+    protected SubOccupancyService subOccupancyService;
+    @Autowired
+    private CustomImplProvider specificNoticeService;
+    @Autowired
+    private NocConfigurationService nocConfigurationService;
+    @Autowired
+    private OccupancyCertificateNocService ocNocService;
 
-	@GetMapping("/occupancy-certificate/apply")
-	public String newOCForm(final Model model, final HttpServletRequest request) {
+    @GetMapping("/occupancy-certificate/apply")
+    public String newOCForm(final Model model, final HttpServletRequest request) {
 
-		OccupancyCertificate occupancyCertificate = new OccupancyCertificate();
-		occupancyCertificate.setApplicationDate(new Date());
-		loadFormData(model, request, occupancyCertificate);
-		return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-	}
+        OccupancyCertificate occupancyCertificate = new OccupancyCertificate();
+        occupancyCertificate.setApplicationDate(new Date());
+        loadFormData(model, request, occupancyCertificate);
+        return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+    }
 
-	private void loadFormData(final Model model, final HttpServletRequest request,
-			OccupancyCertificate occupancyCertificate) {
-		occupancyCertificate.setSource(Source.CITIZENPORTAL);
-		occupancyCertificate.setApplicationType("Occupancy Certificate");
-		model.addAttribute("mode", "new");
-		model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
-		model.addAttribute("subOccupancyList", subOccupancyService.findAllOrderByOrderNumber());
-		setCityName(model, request);
-		getDcrDocumentsUploadMode(model);
-		prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
-		prepareDocumentsAllowedExtAndSize(model);
-		model.addAttribute("occupancyCertificate", occupancyCertificate);
+    private void loadFormData(final Model model, final HttpServletRequest request,
+            OccupancyCertificate occupancyCertificate) {
+        occupancyCertificate.setSource(Source.CITIZENPORTAL);
+        occupancyCertificate.setApplicationType("Occupancy Certificate");
+        model.addAttribute("mode", "new");
+        model.addAttribute("loadingFloorDetailsFromEdcrRequire", true);
+        model.addAttribute("subOccupancyList", subOccupancyService.findAllOrderByOrderNumber());
+        setCityName(model, request);
+        getDcrDocumentsUploadMode(model);
+        prepareCommonModelAttribute(model, occupancyCertificate.isCitizenAccepted());
+        prepareDocumentsAllowedExtAndSize(model);
+        model.addAttribute("occupancyCertificate", occupancyCertificate);
 
-	}
+    }
 
-	private void setCityName(final Model model, final HttpServletRequest request) {
-		if (request.getSession().getAttribute("cityname") != null)
-			model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
-	}
+    private void setCityName(final Model model, final HttpServletRequest request) {
+        if (request.getSession().getAttribute("cityname") != null)
+            model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
+    }
 
-	@PostMapping("/occupancy-certificate/submit")
-	public String submitOCDetails(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
-			final BindingResult errors, final Model model, final HttpServletRequest request,
-			final RedirectAttributes redirectAttributes) {
+    @PostMapping("/occupancy-certificate/submit")
+    public String submitOCDetails(@Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
+            final BindingResult errors, final Model model, final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) {
 
-		occupancyCertificateService.validateDocs(occupancyCertificate, errors);
-		if (errors.hasErrors()) {
-			loadFormData(model, request, occupancyCertificate);
-			return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-		}
+        occupancyCertificateService.validateDocs(occupancyCertificate, errors);
+        if (errors.hasErrors()) {
+            loadFormData(model, request, occupancyCertificate);
+            return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+        }
 
-		occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
-		OccupancyCertificateValidationService ocService = (OccupancyCertificateValidationService) specificNoticeService
-				.find(OccupancyCertificateValidationService.class, specificNoticeService.getCityDetails());
-		Boolean result = ocService.validateOcApplnWithPermittedBpaAppln(model, occupancyCertificate);
-		if (occupancyCertificate.getParent() != null && occupancyCertificate.getParent().geteDcrNumber() != null
-				&& !result) {
-			occupancyCertificate.getBuildingDetailFromEdcr().clear();
-			occupancyCertificate.getBuildings().clear();
-			loadFormData(model, request, occupancyCertificate);
-			return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-		}
-		WorkflowBean wfBean = new WorkflowBean();
-		Long userPosition = null;
-		String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-		Boolean isCitizen = request.getParameter(IS_CITIZEN) != null
-				&& request.getParameter(IS_CITIZEN).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
-				&& request.getParameter(CITIZEN_OR_BUSINESS_USER).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
-				&& request.getParameter(ONLINE_PAYMENT_ENABLE).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
-		final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(),
-				WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
-		if (wfMatrix != null)
-			userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
-		if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-				&& (userPosition == 0 || userPosition == null)) {
-			model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
-			loadFormData(model, request, occupancyCertificate);
-			return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
-		}
+        occupancyCertificateService.validateProposedAndExistingBuildings(occupancyCertificate);
+        OccupancyCertificateValidationService ocService = (OccupancyCertificateValidationService) specificNoticeService
+                .find(OccupancyCertificateValidationService.class, specificNoticeService.getCityDetails());
+        Boolean result = ocService.validateOcApplnWithPermittedBpaAppln(model, occupancyCertificate);
+        if (occupancyCertificate.getParent() != null && occupancyCertificate.getParent().geteDcrNumber() != null
+                && !result) {
+            occupancyCertificate.getBuildingDetailFromEdcr().clear();
+            occupancyCertificate.getBuildings().clear();
+            loadFormData(model, request, occupancyCertificate);
+            return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+        }
+        WorkflowBean wfBean = new WorkflowBean();
+        Long userPosition = null;
+        String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
+        Boolean isCitizen = request.getParameter(IS_CITIZEN) != null
+                && request.getParameter(IS_CITIZEN).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        Boolean citizenOrBusinessUser = request.getParameter(CITIZEN_OR_BUSINESS_USER) != null
+                && request.getParameter(CITIZEN_OR_BUSINESS_USER).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
+                && request.getParameter(ONLINE_PAYMENT_ENABLE).equalsIgnoreCase(TRUE) ? Boolean.TRUE : Boolean.FALSE;
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(occupancyCertificate.getStateType(),
+                WF_NEW_STATE, CREATE_ADDITIONAL_RULE_CREATE_OC);
+        if (wfMatrix != null)
+            userPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    bpaUtils.getBoundaryForWorkflow(occupancyCertificate.getParent().getSiteDetail().get(0)).getId());
+        if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && (userPosition == 0 || userPosition == null)) {
+            model.addAttribute("noJAORSAMessage", OFFICIAL_NOT_EXISTS);
+            loadFormData(model, request, occupancyCertificate);
+            return CITIZEN_OCCUPANCY_CERTIFICATE_NEW;
+        }
 
-		wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
-		OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
-		if (citizenOrBusinessUser) {
-			if (isCitizen)
-				bpaUtils.createPortalUserinbox(ocResponse, Arrays.asList(ocResponse.getParent().getOwner().getUser(),
-						ocResponse.getParent().getStakeHolder().get(0).getStakeHolder()), workFlowAction);
-			else
-				bpaUtils.createPortalUserinbox(ocResponse,
-						Arrays.asList(ocResponse.getParent().getOwner().getUser(), securityUtils.getCurrentUser()),
-						workFlowAction);
-		}
-		String message;
-		if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable
-				&& bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
-			return genericBillGeneratorService.generateBillAndRedirectToCollection(occupancyCertificate, model);
-		}
-		// When fee collection not require then directly will forward to official
-		else if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-				&& !bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
-			if (occupancyCertificate.getAuthorizedToSubmitPlan())
-				wfBean.setApproverComments(AUTH_TO_SUBMIT_PLAN);
-			wfBean.setCurrentState(WF_NEW_STATE);
-			bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, wfBean);
-			ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
+        wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
+        OccupancyCertificate ocResponse = occupancyCertificateService.saveOrUpdate(occupancyCertificate, wfBean);
+        if (citizenOrBusinessUser) {
+            if (isCitizen)
+                bpaUtils.createPortalUserinbox(ocResponse, Arrays.asList(ocResponse.getParent().getOwner().getUser(),
+                        ocResponse.getParent().getStakeHolder().get(0).getStakeHolder()), workFlowAction);
+            else
+                bpaUtils.createPortalUserinbox(ocResponse,
+                        Arrays.asList(ocResponse.getParent().getOwner().getUser(), securityUtils.getCurrentUser()),
+                        workFlowAction);
+        }
+        String message;
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable
+                && bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            return genericBillGeneratorService.generateBillAndRedirectToCollection(occupancyCertificate, model);
+        }
+        // When fee collection not require then directly will forward to official
+        else if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && !bpaUtils.checkAnyTaxIsPendingToCollect(occupancyCertificate.getDemand())) {
+            if (occupancyCertificate.getAuthorizedToSubmitPlan())
+                wfBean.setApproverComments(AUTH_TO_SUBMIT_PLAN);
+            wfBean.setCurrentState(WF_NEW_STATE);
+            bpaUtils.redirectToBpaWorkFlowForOC(occupancyCertificate, wfBean);
+            ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
 
-			ocNocService.initiateNoc(ocResponse);
+            ocNocService.initiateNoc(ocResponse);
 
-			int nocAutoCount = 0;
-			List<User> nocAutoUsers = new ArrayList<>();
-			List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
+            int nocAutoCount = 0;
+            List<User> nocAutoUsers = new ArrayList<>();
+            List<User> nocUsers = userService.getUsersByTypeAndTenants(UserType.BUSINESS);
 
-			for (OCNocDocuments nocDocument : occupancyCertificate.getNocDocuments()) {
-				String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
-				NocConfiguration nocConfig = nocConfigurationService.findByDepartmentAndType(code, BpaConstants.OC);
-				if (nocConfig != null
-						&& nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-						&& nocConfig.getIntegrationInitiation()
-								.equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
-					nocAutoCount++;
-					List<User> userList = nocUsers.stream().filter(usr -> usr.getRoles().stream().anyMatch(
-							usrrl -> usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-							.collect(Collectors.toList());
-					if (!userList.isEmpty())
-						nocAutoUsers.add(userList.get(0));
-				}
-				if (nocAutoUsers.size() == nocAutoCount)
-					model.addAttribute("nocUserExists", true);
-				else
-					model.addAttribute("nocUserExists", false);
-			}
+            for (OCNocDocuments nocDocument : occupancyCertificate.getNocDocuments()) {
+                String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
+                NocConfiguration nocConfig = nocConfigurationService.findByDepartmentAndType(code, BpaConstants.OC);
+                if (nocConfig != null
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationInitiation()
+                                .equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
+                    nocAutoCount++;
+                    List<User> userList = nocUsers.stream().filter(usr -> usr.getRoles().stream().anyMatch(
+                            usrrl -> usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                            .collect(Collectors.toList());
+                    if (!userList.isEmpty())
+                        nocAutoUsers.add(userList.get(0));
+                }
+                if (nocAutoUsers.size() == nocAutoCount)
+                    model.addAttribute("nocUserExists", true);
+                else
+                    model.addAttribute("nocUserExists", false);
+            }
 
-			List<Assignment> assignments;
-			if (null == userPosition)
-				assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(
-						occupancyCertificate.getCurrentState().getOwnerPosition().getId(), new Date());
-			else
-				assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(userPosition, new Date());
-			Position pos = assignments.get(0).getPosition();
-			User wfUser = assignments.get(0).getEmployee();
-			message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION,
-					new String[] {
-							wfUser == null ? ""
-									: wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
-							occupancyCertificate.getApplicationNumber() },
-					LocaleContextHolder.getLocale());
+            List<Assignment> assignments;
+            if (null == userPosition)
+                assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(
+                        occupancyCertificate.getCurrentState().getOwnerPosition().getId(), new Date());
+            else
+                assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(userPosition, new Date());
+            Position pos = assignments.get(0).getPosition();
+            User wfUser = assignments.get(0).getEmployee();
+            message = messageSource.getMessage(MSG_PORTAL_FORWARD_REGISTRATION,
+                    new String[] {
+                            wfUser == null ? ""
+                                    : wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
+                            occupancyCertificate.getApplicationNumber() },
+                    LocaleContextHolder.getLocale());
 
-			redirectAttributes.addFlashAttribute(MESSAGE, message);
-		} else {
-			message = "Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".";
-			if (bpaUtils.isCitizenAcceptanceRequired())// && !occupancyCertificate.isCitizenAccepted())
-				ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
-		}
-		redirectAttributes.addFlashAttribute(MESSAGE, message);
-		return "redirect:/application/citizen/success/" + occupancyCertificate.getApplicationNumber();
-	}
+            redirectAttributes.addFlashAttribute(MESSAGE, message);
+        } else {
+            message = "Successfully saved with ApplicationNumber " + ocResponse.getApplicationNumber() + ".";
+            if (bpaUtils.isCitizenAcceptanceRequired())// && !occupancyCertificate.isCitizenAccepted())
+                ocSmsAndEmailService.sendSMSAndEmail(occupancyCertificate, null, null);
+        }
+        redirectAttributes.addFlashAttribute(MESSAGE, message);
+        return "redirect:/application/citizen/success/" + occupancyCertificate.getApplicationNumber();
+    }
 }

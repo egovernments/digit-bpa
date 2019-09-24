@@ -61,117 +61,117 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @Table(name = "egbpa_slotdetail")
 @SequenceGenerator(name = SlotDetail.SEQ, sequenceName = SlotDetail.SEQ, allocationSize = 1)
 public class SlotDetail extends AbstractAuditable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	public static final String SEQ = "seq_egbpa_slotdetail";
+    public static final String SEQ = "seq_egbpa_slotdetail";
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@NotNull
-	private String appointmentTime;
+    @NotNull
+    private String appointmentTime;
 
-	@NotNull
-	private Integer maxScheduledSlots;
+    @NotNull
+    private Integer maxScheduledSlots;
 
-	@NotNull
-	private Integer maxRescheduledSlots;
+    @NotNull
+    private Integer maxRescheduledSlots;
 
-	@NotNull
-	private Integer utilizedScheduledSlots;
+    @NotNull
+    private Integer utilizedScheduledSlots;
 
-	@NotNull
-	private Integer utilizedRescheduledSlots;
+    @NotNull
+    private Integer utilizedRescheduledSlots;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "slotid", nullable = false)
-	private Slot slot;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "slotid", nullable = false)
+    private Slot slot;
 
-	@OneToMany(mappedBy = "slotDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<SlotApplication> slotApplication = new ArrayList<>();
+    @OneToMany(mappedBy = "slotDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SlotApplication> slotApplication = new ArrayList<>();
 
-	public Slot getSlot() {
-		return slot;
-	}
+    public Slot getSlot() {
+        return slot;
+    }
 
-	public void setSlot(Slot slot) {
-		this.slot = slot;
-	}
+    public void setSlot(Slot slot) {
+        this.slot = slot;
+    }
 
-	public List<SlotApplication> getSlotApplication() {
-		return slotApplication;
-	}
+    public List<SlotApplication> getSlotApplication() {
+        return slotApplication;
+    }
 
-	public void setSlotApplication(List<SlotApplication> slotApplication) {
-		this.slotApplication = slotApplication;
-	}
+    public void setSlotApplication(List<SlotApplication> slotApplication) {
+        this.slotApplication = slotApplication;
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getAppointmentTime() {
-		return appointmentTime;
-	}
+    public String getAppointmentTime() {
+        return appointmentTime;
+    }
 
-	public void setAppointmentTime(String appointmentTime) {
-		this.appointmentTime = appointmentTime;
-	}
+    public void setAppointmentTime(String appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
 
-	public Integer getMaxScheduledSlots() {
-		return maxScheduledSlots;
-	}
+    public Integer getMaxScheduledSlots() {
+        return maxScheduledSlots;
+    }
 
-	public void setMaxScheduledSlots(Integer maxScheduledSlots) {
-		this.maxScheduledSlots = maxScheduledSlots;
-	}
+    public void setMaxScheduledSlots(Integer maxScheduledSlots) {
+        this.maxScheduledSlots = maxScheduledSlots;
+    }
 
-	public Integer getMaxRescheduledSlots() {
-		return maxRescheduledSlots;
-	}
+    public Integer getMaxRescheduledSlots() {
+        return maxRescheduledSlots;
+    }
 
-	public void setMaxRescheduledSlots(Integer maxRescheduledSlots) {
-		this.maxRescheduledSlots = maxRescheduledSlots;
-	}
+    public void setMaxRescheduledSlots(Integer maxRescheduledSlots) {
+        this.maxRescheduledSlots = maxRescheduledSlots;
+    }
 
-	public Integer getUtilizedScheduledSlots() {
-		return utilizedScheduledSlots;
-	}
+    public Integer getUtilizedScheduledSlots() {
+        return utilizedScheduledSlots;
+    }
 
-	public void setUtilizedScheduledSlots(Integer utilizedScheduledSlots) {
-		this.utilizedScheduledSlots = utilizedScheduledSlots;
-	}
+    public void setUtilizedScheduledSlots(Integer utilizedScheduledSlots) {
+        this.utilizedScheduledSlots = utilizedScheduledSlots;
+    }
 
-	public Integer getUtilizedRescheduledSlots() {
-		return utilizedRescheduledSlots;
-	}
+    public Integer getUtilizedRescheduledSlots() {
+        return utilizedRescheduledSlots;
+    }
 
-	public void setUtilizedRescheduledSlots(Integer utilizedRescheduledSlots) {
-		this.utilizedRescheduledSlots = utilizedRescheduledSlots;
-	}
+    public void setUtilizedRescheduledSlots(Integer utilizedRescheduledSlots) {
+        this.utilizedRescheduledSlots = utilizedRescheduledSlots;
+    }
 
-	public SlotDetail() {
+    public SlotDetail() {
 
-	}
+    }
 
-	public SlotDetail(String appointmentTime, Integer maxScheduledSlots, Integer maxRescheduledSlots,
-			Integer utilizedScheduledSlots, Integer utilizedRescheduledSlots, Slot slot) {
-		this.appointmentTime = appointmentTime;
-		this.maxScheduledSlots = maxScheduledSlots;
-		this.maxRescheduledSlots = maxRescheduledSlots;
-		this.utilizedScheduledSlots = utilizedScheduledSlots;
-		this.utilizedRescheduledSlots = utilizedRescheduledSlots;
-		this.slot = slot;
-	}
+    public SlotDetail(String appointmentTime, Integer maxScheduledSlots, Integer maxRescheduledSlots,
+            Integer utilizedScheduledSlots, Integer utilizedRescheduledSlots, Slot slot) {
+        this.appointmentTime = appointmentTime;
+        this.maxScheduledSlots = maxScheduledSlots;
+        this.maxRescheduledSlots = maxRescheduledSlots;
+        this.utilizedScheduledSlots = utilizedScheduledSlots;
+        this.utilizedRescheduledSlots = utilizedRescheduledSlots;
+        this.slot = slot;
+    }
 
 }

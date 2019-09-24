@@ -189,7 +189,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String APPLICATION_VIEW = "application-view";
     private static final String CREATEDOCUMENTSCRUTINY_FORM = "createdocumentscrutiny-form";
     private static final String DOCUMENTSCRUTINY_FORM = "documentscrutiny-form";
-    private static final String BPAAPPLICATION_FORM = "bpaapplication-Form";
     private static final String BPA_APPLICATION_RESULT = "bpa-application-result";
     private static final String PDFEXTN = ".pdf";
     private static final String BPA_PROCEED_FEE_MSG = "Set the minimal fee using modify fee button and proceed further";
@@ -233,6 +232,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     @GetMapping("/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber) {
         final BpaApplication application = getBpaApplication(applicationNumber);
+        return loadUpdateOrViewFormData(model, applicationNumber, application);
+    }
+
+    private String loadUpdateOrViewFormData(final Model model, final String applicationNumber, final BpaApplication application) {
         List<PermitNocApplication> nocApplication = permitNocService.findByPermitApplicationNumber(applicationNumber);
         prepareActions(model, application);
         loadCommonApplicationDetails(model, application);
@@ -262,6 +265,11 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         if (validateOnDocumentScrutiny(model, application.getStatus()) || checkIsRescheduledOnScrutiny(model, application)) {
             return COMMON_ERROR;
         }
+        loadDocumentScrutinyFormData(model, application);
+        return CREATEDOCUMENTSCRUTINY_FORM;
+    }
+
+    private void loadDocumentScrutinyFormData(final Model model, final BpaApplication application) {
         buildRejectionReasons(model, application);
         loadFormData(model, application);
         bpaUtils.loadBoundary(application);
@@ -275,18 +283,18 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("planScrutinyValues", ChecklistValues.values());
         model.addAttribute("loginUser", securityUtils.getCurrentUser());
         getDcrDocumentsUploadMode(model);
-        return CREATEDOCUMENTSCRUTINY_FORM;
     }
 
     @PostMapping("/documentscrutiny/{applicationNumber}")
-    public String documentScrutinyForm(@Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
-            @PathVariable final String applicationNumber, final BindingResult resultBinder,
-            final HttpServletRequest request, @RequestParam final BigDecimal amountRule,
-            final Model model, final RedirectAttributes redirectAttributes) throws IOException {
+    public String documentScrutinyForm(@PathVariable final String applicationNumber, @RequestParam final BigDecimal amountRule,
+            @Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
+            final BindingResult resultBinder,
+            final Model model,
+            final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) throws IOException {
         applicationBpaService.validateDocs(bpaApplication, resultBinder);
         if (resultBinder.hasErrors()) {
-            loadFormData(model, bpaApplication);
-            loadCommonApplicationDetails(model, bpaApplication);
+            loadDocumentScrutinyFormData(model, bpaApplication);
             return CREATEDOCUMENTSCRUTINY_FORM;
         }
 
@@ -354,11 +362,11 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     }
 
     @PostMapping("/update-submit/{applicationNumber}")
-    public String updateApplication(@Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
-            @PathVariable final String applicationNumber,
+    public String updateApplication(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
             final BindingResult resultBinder,
-            final HttpServletRequest request,
             final Model model,
+            final HttpServletRequest request,
             final RedirectAttributes redirectAttributes,
             @RequestParam final BigDecimal amountRule) throws IOException {
 
@@ -367,8 +375,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         applicationBpaService.validateDocs(bpaApplication, resultBinder);
         applicationBpaService.validateTownSurveyorDocs(bpaApplication, resultBinder);
         if (resultBinder.hasErrors()) {
-            loadFormData(model, bpaApplication);
-            return BPAAPPLICATION_FORM;
+            return loadUpdateOrViewFormData(model, applicationNumber, bpaApplication);
         }
 
         Position ownerPosition = bpaApplication.getCurrentState().getOwnerPosition();
@@ -376,9 +383,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             return COMMON_ERROR;
 
         if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
-            loadFormData(model, bpaApplication);
-            loadCommonApplicationDetails(model, bpaApplication);
-            return BPAAPPLICATION_FORM;
+            return loadUpdateOrViewFormData(model, applicationNumber, bpaApplication);
         }
 
         String feeCalculationMode = bpaUtils.getBPAFeeCalculationMode();
@@ -799,7 +804,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
     private void loadCommonApplicationDetails(Model model, BpaApplication application) {
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
-        List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
+        List<InConstructionInspection> inConstInspections = new ArrayList<>();
         final List<PermitInspectionApplication> permitInspections = inspectionAppService
                 .findByApplicationNumber(application.getApplicationNumber());
 

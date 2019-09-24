@@ -64,113 +64,113 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = ApplicationFloorDetail.SEQ_EGBPA_REGN_FLOORDETAIL, sequenceName = ApplicationFloorDetail.SEQ_EGBPA_REGN_FLOORDETAIL, allocationSize = 1)
 public class ApplicationFloorDetail extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ_EGBPA_REGN_FLOORDETAIL = "SEQ_EGBPA_APPLICATION_FLOORDETAIL";
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_REGN_FLOORDETAIL, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "buildingDetail", nullable = false)
-	private BuildingDetail buildingDetail;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "suboccupancy")
-	private SubOccupancy subOccupancy;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "usage")
-	private Usage usage;
-	@Range(min = -50, max = 500)
-	private Integer floorNumber;
-	@SafeHtml
-	private String floorDescription;
-	@PositiveOrZero
-	private BigDecimal carpetArea;
-	@PositiveOrZero
-	private BigDecimal plinthArea;
-	@PositiveOrZero
-	private BigDecimal floorArea;
-	@PositiveOrZero
-	private Integer orderOfFloor;
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_EGBPA_REGN_FLOORDETAIL = "SEQ_EGBPA_APPLICATION_FLOORDETAIL";
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_REGN_FLOORDETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buildingDetail", nullable = false)
+    private BuildingDetail buildingDetail;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "suboccupancy")
+    private SubOccupancy subOccupancy;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "usage")
+    private Usage usage;
+    @Range(min = -50, max = 500)
+    private Integer floorNumber;
+    @SafeHtml
+    private String floorDescription;
+    @PositiveOrZero
+    private BigDecimal carpetArea;
+    @PositiveOrZero
+    private BigDecimal plinthArea;
+    @PositiveOrZero
+    private BigDecimal floorArea;
+    @PositiveOrZero
+    private Integer orderOfFloor;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public BuildingDetail getBuildingDetail() {
-		return buildingDetail;
-	}
+    public BuildingDetail getBuildingDetail() {
+        return buildingDetail;
+    }
 
-	public void setBuildingDetail(BuildingDetail buildingDetail) {
-		this.buildingDetail = buildingDetail;
-	}
+    public void setBuildingDetail(BuildingDetail buildingDetail) {
+        this.buildingDetail = buildingDetail;
+    }
 
-	public SubOccupancy getSubOccupancy() {
-		return subOccupancy;
-	}
+    public SubOccupancy getSubOccupancy() {
+        return subOccupancy;
+    }
 
-	public void setSubOccupancy(SubOccupancy subOccupancy) {
-		this.subOccupancy = subOccupancy;
-	}
+    public void setSubOccupancy(SubOccupancy subOccupancy) {
+        this.subOccupancy = subOccupancy;
+    }
 
-	public Usage getUsage() {
-		return usage;
-	}
+    public Usage getUsage() {
+        return usage;
+    }
 
-	public void setUsage(Usage usage) {
-		this.usage = usage;
-	}
+    public void setUsage(Usage usage) {
+        this.usage = usage;
+    }
 
-	public Integer getFloorNumber() {
-		return floorNumber;
-	}
+    public Integer getFloorNumber() {
+        return floorNumber;
+    }
 
-	public void setFloorNumber(Integer floorNumber) {
-		this.floorNumber = floorNumber;
-	}
+    public void setFloorNumber(Integer floorNumber) {
+        this.floorNumber = floorNumber;
+    }
 
-	public String getFloorDescription() {
-		return floorDescription;
-	}
+    public String getFloorDescription() {
+        return floorDescription;
+    }
 
-	public void setFloorDescription(String floorDescription) {
-		this.floorDescription = floorDescription;
-	}
+    public void setFloorDescription(String floorDescription) {
+        this.floorDescription = floorDescription;
+    }
 
-	public BigDecimal getCarpetArea() {
-		return carpetArea;
-	}
+    public BigDecimal getCarpetArea() {
+        return carpetArea;
+    }
 
-	public void setCarpetArea(BigDecimal carpetArea) {
-		this.carpetArea = carpetArea;
-	}
+    public void setCarpetArea(BigDecimal carpetArea) {
+        this.carpetArea = carpetArea;
+    }
 
-	public BigDecimal getPlinthArea() {
-		return plinthArea;
-	}
+    public BigDecimal getPlinthArea() {
+        return plinthArea;
+    }
 
-	public void setPlinthArea(BigDecimal plinthArea) {
-		this.plinthArea = plinthArea;
-	}
+    public void setPlinthArea(BigDecimal plinthArea) {
+        this.plinthArea = plinthArea;
+    }
 
-	public BigDecimal getFloorArea() {
-		return floorArea;
-	}
+    public BigDecimal getFloorArea() {
+        return floorArea;
+    }
 
-	public void setFloorArea(BigDecimal floorArea) {
-		this.floorArea = floorArea;
-	}
+    public void setFloorArea(BigDecimal floorArea) {
+        this.floorArea = floorArea;
+    }
 
-	public Integer getOrderOfFloor() {
-		return orderOfFloor;
-	}
+    public Integer getOrderOfFloor() {
+        return orderOfFloor;
+    }
 
-	public void setOrderOfFloor(Integer orderOfFloor) {
-		this.orderOfFloor = orderOfFloor;
-	}
+    public void setOrderOfFloor(Integer orderOfFloor) {
+        this.orderOfFloor = orderOfFloor;
+    }
 
 }

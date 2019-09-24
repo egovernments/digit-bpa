@@ -67,7 +67,7 @@ public class BpaStatus extends AbstractAuditable {
 
     @NotNull
     private Boolean isActive;
-    
+
     @SafeHtml
     @Length(min = 1, max = 64)
     @NotNull

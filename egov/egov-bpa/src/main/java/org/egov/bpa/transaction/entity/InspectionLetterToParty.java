@@ -48,45 +48,45 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = InspectionLetterToParty.SEQ_LETTERTOPARTY, sequenceName = InspectionLetterToParty.SEQ_LETTERTOPARTY, allocationSize = 1)
 public class InspectionLetterToParty extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_LETTERTOPARTY = "seq_egbpa_inspection_letter_to_party";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_LETTERTOPARTY = "seq_egbpa_inspection_letter_to_party";
 
-	@Id
-	@GeneratedValue(generator = SEQ_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "inspectionApplication", nullable = false)
-	private InspectionApplication inspectionApplication;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "inspectionApplication", nullable = false)
+    private InspectionApplication inspectionApplication;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "letterToParty", nullable = false)
-	private LetterToPartyCommon letterToParty;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "letterToParty", nullable = false)
+    private LetterToPartyCommon letterToParty;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public InspectionApplication getInspectionApplication() {
-		return inspectionApplication;
-	}
+    public InspectionApplication getInspectionApplication() {
+        return inspectionApplication;
+    }
 
-	public void setInspectionApplication(InspectionApplication inspectionApplication) {
-		this.inspectionApplication = inspectionApplication;
-	}
+    public void setInspectionApplication(InspectionApplication inspectionApplication) {
+        this.inspectionApplication = inspectionApplication;
+    }
 
-	public LetterToPartyCommon getLetterToParty() {
-		return letterToParty;
-	}
+    public LetterToPartyCommon getLetterToParty() {
+        return letterToParty;
+    }
 
-	public void setLetterToParty(LetterToPartyCommon letterToParty) {
-		this.letterToParty = letterToParty;
-	}
+    public void setLetterToParty(LetterToPartyCommon letterToParty) {
+        this.letterToParty = letterToParty;
+    }
 }

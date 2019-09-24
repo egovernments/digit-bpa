@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "egbpa_checklist_servicetype_mapping")
 @SequenceGenerator(name = ChecklistServiceTypeMapping.SEQ, sequenceName = ChecklistServiceTypeMapping.SEQ, allocationSize = 1)
-@JsonIgnoreProperties({"createdBy", "lastModifiedBy"})
+@JsonIgnoreProperties({ "createdBy", "lastModifiedBy" })
 public class ChecklistServiceTypeMapping extends AbstractAuditable {
 
     private static final long serialVersionUID = 1L;

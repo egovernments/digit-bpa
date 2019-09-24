@@ -58,12 +58,12 @@ public class PermitRenewalLetterToParty extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "permitrenewal")
     private PermitRenewal permitRenewal;
-    
+
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "letterToParty")
     private LetterToPartyCommon letterToParty;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -74,21 +74,20 @@ public class PermitRenewalLetterToParty extends AbstractAuditable {
         this.id = id;
     }
 
-	public PermitRenewal getPermitRenewal() {
-		return permitRenewal;
-	}
+    public PermitRenewal getPermitRenewal() {
+        return permitRenewal;
+    }
 
-	public void setPermitRenewal(PermitRenewal permitRenewal) {
-		this.permitRenewal = permitRenewal;
-	}
+    public void setPermitRenewal(PermitRenewal permitRenewal) {
+        this.permitRenewal = permitRenewal;
+    }
 
-	public LetterToPartyCommon getLetterToParty() {
-		return letterToParty;
-	}
+    public LetterToPartyCommon getLetterToParty() {
+        return letterToParty;
+    }
 
-	public void setLetterToParty(LetterToPartyCommon letterToParty) {
-		this.letterToParty = letterToParty;
-	} 
-    
-     
+    public void setLetterToParty(LetterToPartyCommon letterToParty) {
+        this.letterToParty = letterToParty;
+    }
+
 }

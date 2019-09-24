@@ -70,208 +70,208 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = Applicant.SEQ_APPLICANT, sequenceName = Applicant.SEQ_APPLICANT, allocationSize = 1)
 public class Applicant extends AbstractAuditable {
 
-	public static final String SEQ_APPLICANT = "SEQ_EGBPA_Applicant";
-	private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_APPLICANT = "SEQ_EGBPA_Applicant";
+    private static final long serialVersionUID = 3078684328383202788L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private GenderTitle title;
+    @Enumerated(EnumType.STRING)
+    private GenderTitle title;
 
-	@Length(min = 1, max = 128)
-	private String fatherorHusbandName;
+    @Length(min = 1, max = 128)
+    private String fatherorHusbandName;
 
-	private Date dateofBirth;
+    private Date dateofBirth;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String district;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String district;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String taluk;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String taluk;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String area;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String area;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String city;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String city;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String state;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String state;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String pinCode;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String pinCode;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id", nullable = false)
-	private Citizen user;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Citizen user;
 
-	@NotNull
-	@SafeHtml
-	@Length(min = 2, max = 100)
-	private String name;
+    @NotNull
+    @SafeHtml
+    @Length(min = 2, max = 100)
+    private String name;
 
-	@SafeHtml
-	@Length(min = 1, max = 1024)
-	private String address;
+    @SafeHtml
+    @Length(min = 1, max = 1024)
+    private String address;
 
-	@Enumerated(EnumType.STRING)
-	private Gender gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-	@Pattern(regexp = Constants.EMAIL)
-	@SafeHtml
-	@Length(max = 128)
-	private String emailId;
+    @Pattern(regexp = Constants.EMAIL)
+    @SafeHtml
+    @Length(max = 128)
+    private String emailId;
 
-	@SafeHtml
-	@Length(max = 20)
-	private String aadhaarNumber;
+    @SafeHtml
+    @Length(max = 20)
+    private String aadhaarNumber;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public GenderTitle getTitle() {
-		return title;
-	}
+    public GenderTitle getTitle() {
+        return title;
+    }
 
-	public void setTitle(final GenderTitle title) {
-		this.title = title;
-	}
+    public void setTitle(final GenderTitle title) {
+        this.title = title;
+    }
 
-	public Date getDateofBirth() {
-		return dateofBirth;
-	}
+    public Date getDateofBirth() {
+        return dateofBirth;
+    }
 
-	public void setDateofBirth(final Date dateofBirth) {
-		this.dateofBirth = dateofBirth;
-	}
+    public void setDateofBirth(final Date dateofBirth) {
+        this.dateofBirth = dateofBirth;
+    }
 
-	public String getDistrict() {
-		return district;
-	}
+    public String getDistrict() {
+        return district;
+    }
 
-	public void setDistrict(final String district) {
-		this.district = district;
-	}
+    public void setDistrict(final String district) {
+        this.district = district;
+    }
 
-	public String getTaluk() {
-		return taluk;
-	}
+    public String getTaluk() {
+        return taluk;
+    }
 
-	public void setTaluk(final String taluk) {
-		this.taluk = taluk;
-	}
+    public void setTaluk(final String taluk) {
+        this.taluk = taluk;
+    }
 
-	public String getArea() {
-		return area;
-	}
+    public String getArea() {
+        return area;
+    }
 
-	public void setArea(final String area) {
-		this.area = area;
-	}
+    public void setArea(final String area) {
+        this.area = area;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public void setCity(final String city) {
-		this.city = city;
-	}
+    public void setCity(final String city) {
+        this.city = city;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public String getState() {
+        return state;
+    }
 
-	public void setState(final String state) {
-		this.state = state;
-	}
+    public void setState(final String state) {
+        this.state = state;
+    }
 
-	public String getFatherorHusbandName() {
-		return fatherorHusbandName;
-	}
+    public String getFatherorHusbandName() {
+        return fatherorHusbandName;
+    }
 
-	public void setFatherorHusbandName(final String fatherorHusbandName) {
-		this.fatherorHusbandName = fatherorHusbandName;
-	}
+    public void setFatherorHusbandName(final String fatherorHusbandName) {
+        this.fatherorHusbandName = fatherorHusbandName;
+    }
 
-	public String getPinCode() {
-		return pinCode;
-	}
+    public String getPinCode() {
+        return pinCode;
+    }
 
-	public void setPinCode(final String pinCode) {
-		this.pinCode = pinCode;
-	}
+    public void setPinCode(final String pinCode) {
+        this.pinCode = pinCode;
+    }
 
-	public Citizen getUser() {
-		return user;
-	}
+    public Citizen getUser() {
+        return user;
+    }
 
-	public void setUser(Citizen user) {
-		this.user = user;
-	}
+    public void setUser(Citizen user) {
+        this.user = user;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public Gender getGender() {
-		return gender;
-	}
+    public Gender getGender() {
+        return gender;
+    }
 
-	public void setGender(Gender gender) {
-		this.gender = gender;
-	}
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
 
-	public String getEmailId() {
-		return emailId;
-	}
+    public String getEmailId() {
+        return emailId;
+    }
 
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
-	}
+    public void setEmailId(String emailId) {
+        this.emailId = emailId;
+    }
 
-	public String getAadhaarNumber() {
-		return aadhaarNumber;
-	}
+    public String getAadhaarNumber() {
+        return aadhaarNumber;
+    }
 
-	public void setAadhaarNumber(String aadhaarNumber) {
-		this.aadhaarNumber = aadhaarNumber;
-	}
+    public void setAadhaarNumber(String aadhaarNumber) {
+        this.aadhaarNumber = aadhaarNumber;
+    }
 
-	public String showAadhaarNumber() {
-		return StringUtils.isBlank(aadhaarNumber) ? aadhaarNumber
-				: aadhaarNumber.replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
-	}
+    public String showAadhaarNumber() {
+        return StringUtils.isBlank(aadhaarNumber) ? aadhaarNumber
+                : aadhaarNumber.replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+    }
 
-	public String showMobileNumber() {
-		return user == null || StringUtils.isBlank(user.getMobileNumber()) ? ""
-				: user.getMobileNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
-	}
+    public String showMobileNumber() {
+        return user == null || StringUtils.isBlank(user.getMobileNumber()) ? ""
+                : user.getMobileNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+    }
 
 }

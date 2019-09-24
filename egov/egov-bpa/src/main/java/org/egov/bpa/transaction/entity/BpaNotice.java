@@ -68,63 +68,63 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 @SequenceGenerator(name = BpaNotice.SEQ_BPA_NOTICE, sequenceName = BpaNotice.SEQ_BPA_NOTICE, allocationSize = 1)
 public class BpaNotice implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ_BPA_NOTICE = "SEQ_EGBPA_NOTICE";
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_BPA_NOTICE = "SEQ_EGBPA_NOTICE";
 
-	@Id
-	@GeneratedValue(generator = SEQ_BPA_NOTICE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_BPA_NOTICE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "application")
-	private BpaApplication application;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application")
+    private BpaApplication application;
 
-	private Date noticeGeneratedDate;
+    private Date noticeGeneratedDate;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "noticeFileStore")
-	private FileStoreMapper noticeFileStore;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "noticeFileStore")
+    private FileStoreMapper noticeFileStore;
 
-	private String noticeType;
+    private String noticeType;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public void setApplication(BpaApplication application) {
-		this.application = application;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
 
-	public FileStoreMapper getNoticeFileStore() {
-		return noticeFileStore;
-	}
+    public FileStoreMapper getNoticeFileStore() {
+        return noticeFileStore;
+    }
 
-	public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
-		this.noticeFileStore = noticeFileStore;
-	}
+    public void setNoticeFileStore(FileStoreMapper noticeFileStore) {
+        this.noticeFileStore = noticeFileStore;
+    }
 
-	public Date getNoticeGeneratedDate() {
-		return noticeGeneratedDate;
-	}
+    public Date getNoticeGeneratedDate() {
+        return noticeGeneratedDate;
+    }
 
-	public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
-		this.noticeGeneratedDate = noticeGeneratedDate;
-	}
+    public void setNoticeGeneratedDate(Date noticeGeneratedDate) {
+        this.noticeGeneratedDate = noticeGeneratedDate;
+    }
 
-	public String getNoticeType() {
-		return noticeType;
-	}
+    public String getNoticeType() {
+        return noticeType;
+    }
 
-	public void setNoticeType(String noticeType) {
-		this.noticeType = noticeType;
-	}
+    public void setNoticeType(String noticeType) {
+        this.noticeType = noticeType;
+    }
 
 }

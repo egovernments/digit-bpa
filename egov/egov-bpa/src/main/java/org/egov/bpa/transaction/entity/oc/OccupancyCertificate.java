@@ -93,617 +93,617 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = OccupancyCertificate.SEQ_EGBPA_OCCUPANCY_CERTIFICATE, sequenceName = OccupancyCertificate.SEQ_EGBPA_OCCUPANCY_CERTIFICATE, allocationSize = 1)
 public class OccupancyCertificate extends StateAware<Position> {
 
-	public static final String SEQ_EGBPA_OCCUPANCY_CERTIFICATE = "SEQ_EGBPA_OCCUPANCY_CERTIFICATE";
-	public static final String ORDER_BY_ID_ASC = "id ASC";
-	private static final long serialVersionUID = 2655013364406241434L;
+    public static final String SEQ_EGBPA_OCCUPANCY_CERTIFICATE = "SEQ_EGBPA_OCCUPANCY_CERTIFICATE";
+    public static final String ORDER_BY_ID_ASC = "id ASC";
+    private static final long serialVersionUID = 2655013364406241434L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_OCCUPANCY_CERTIFICATE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_OCCUPANCY_CERTIFICATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "parent")
-	private BpaApplication parent;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent")
+    private BpaApplication parent;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	@Column(unique = true, nullable = false)
-	private String applicationNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    @Column(unique = true, nullable = false)
+    private String applicationNumber;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	@Column(unique = true)
-	private String occupancyCertificateNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    @Column(unique = true)
+    private String occupancyCertificateNumber;
 
-	@SafeHtml
-	@Length(min = 1, max = 20)
-	private String eDcrNumber;
+    @SafeHtml
+    @Length(min = 1, max = 20)
+    private String eDcrNumber;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date applicationDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date applicationDate;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date approvalDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date approvalDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "approverPosition")
-	private Position approverPosition;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approverPosition")
+    private Position approverPosition;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "approverUser")
-	private User approverUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approverUser")
+    private User approverUser;
 
-	@Enumerated(EnumType.STRING)
-	private Source source;
+    @Enumerated(EnumType.STRING)
+    private Source source;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String applicationType;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String applicationType;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "status", nullable = false)
-	private BpaStatus status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", nullable = false)
+    private BpaStatus status;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "demand")
-	private EgDemand demand;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "demand")
+    private EgDemand demand;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date commencedDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date commencedDate;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date completionDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date completionDate;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date workCompletionDueDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date workCompletionDueDate;
 
-	private Boolean citizenAccepted = false;
+    private Boolean citizenAccepted = false;
 
-	private Boolean architectAccepted = false;
+    private Boolean architectAccepted = false;
 
-	private Boolean isSentToPreviousOwner = false;
+    private Boolean isSentToPreviousOwner = false;
 
-	private Boolean isRescheduledByCitizen = false;
+    private Boolean isRescheduledByCitizen = false;
 
-	private Boolean isRescheduledByEmployee = false;
+    private Boolean isRescheduledByEmployee = false;
 
-	private Boolean authorizedToSubmitPlan = false;
+    private Boolean authorizedToSubmitPlan = false;
 
-	private Boolean failureInScheduler = false;
+    private Boolean failureInScheduler = false;
 
-	@SafeHtml
-	private String schedulerFailedRemarks;
+    @SafeHtml
+    private String schedulerFailedRemarks;
 
-	@PositiveOrZero
-	private BigDecimal admissionfeeAmount;
+    @PositiveOrZero
+    private BigDecimal admissionfeeAmount;
 
-	@SafeHtml
-	@Length(min = 1, max = 5000)
-	private String townSurveyorRemarks;
+    @SafeHtml
+    @Length(min = 1, max = 5000)
+    private String townSurveyorRemarks;
 
-	private Boolean isTownSurveyorInspectionRequire = false;
+    private Boolean isTownSurveyorInspectionRequire = false;
 
-	private Boolean isLPRequestInitiated;
+    private Boolean isLPRequestInitiated;
 
-	@NotNull
-	@PositiveOrZero
-	private BigDecimal extentInSqmts = BigDecimal.ZERO;
+    @NotNull
+    @PositiveOrZero
+    private BigDecimal extentInSqmts = BigDecimal.ZERO;
 
-	@Valid
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy("buildingNumber ASC")
-	private List<OCBuilding> buildings = new ArrayList<>();
+    @Valid
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("buildingNumber ASC")
+    private List<OCBuilding> buildings = new ArrayList<>();
 
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<OccupancyFee> occupancyFee = new ArrayList<>();
-
-	@Valid
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy("buildingNumber ASC")
-	private List<OCExistingBuilding> existingBuildings = new ArrayList<>();
-
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<OCNotice> ocNotices = new ArrayList<>(0);
-
-	@Valid
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy(ORDER_BY_ID_ASC)
-	private List<OCDocuments> documents = new ArrayList<>();
-
-	@Valid
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy(ORDER_BY_ID_ASC)
-	private List<OCDcrDocuments> dcrDocuments = new ArrayList<>();
-
-	@Valid
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy(ORDER_BY_ID_ASC)
-	private List<OCNocDocuments> nocDocuments = new ArrayList<>();
-
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy("id DESC ")
-	private List<OCInspection> inspections = new ArrayList<>();
-
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy(ORDER_BY_ID_ASC)
-	private List<OCDocumentScrutiny> documentScrutinies = new ArrayList<>();
-
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy(ORDER_BY_ID_ASC)
-	private List<OCSlot> ocSlots = new ArrayList<>();
-
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy(ORDER_BY_ID_ASC)
-	private List<OCAppointmentSchedule> appointmentSchedules = new ArrayList<>();
-
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<OCNoticeConditions> rejectionReasons = new ArrayList<>(0);
-
-	@OrderBy(ORDER_BY_ID_ASC)
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<OCNoticeConditions> additionalNoticeConditions = new ArrayList<>(0);
-
-	@Valid
-	private transient WorkflowBean workflowBean;
-	private transient Set<Receipt> receipts = new HashSet<>();
-	private transient MultipartFile[] files;
-	private transient Long approvalDepartment;
-	private transient Long zoneId;
-	private transient Long wardId;
-	@SafeHtml
-	private transient String approvalComent;
-	@Valid
-	private transient List<OCBuilding> buildingDetailFromEdcr = new ArrayList<>();
-	@Valid
-	private transient List<OCExistingBuilding> existingBldgDetailFromEdcr = new ArrayList<>();
-	@Valid
-	private transient List<OCNoticeConditions> rejectionReasonsTemp = new ArrayList<>(0);
-	@Valid
-	private transient List<OCNoticeConditions> additionalRejectReasonsTemp = new ArrayList<>(0);
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	@Override
-	public String myLinkId() {
-		return applicationNumber == null ? occupancyCertificateNumber : applicationNumber;
-	}
-
-	public BpaApplication getParent() {
-		return parent;
-	}
-
-	public void setParent(BpaApplication parent) {
-		this.parent = parent;
-	}
-
-	public String getApplicationNumber() {
-		return applicationNumber;
-	}
-
-	public void setApplicationNumber(String applicationNumber) {
-		this.applicationNumber = applicationNumber;
-	}
-
-	public String getOccupancyCertificateNumber() {
-		return occupancyCertificateNumber;
-	}
-
-	public void setOccupancyCertificateNumber(String occupancyCertificateNumber) {
-		this.occupancyCertificateNumber = occupancyCertificateNumber;
-	}
-
-	public String geteDcrNumber() {
-		return eDcrNumber;
-	}
-
-	public void seteDcrNumber(String eDcrNumber) {
-		this.eDcrNumber = eDcrNumber;
-	}
-
-	public Date getApplicationDate() {
-		return applicationDate;
-	}
-
-	public void setApplicationDate(Date applicationDate) {
-		this.applicationDate = applicationDate;
-	}
-
-	public Source getSource() {
-		return source;
-	}
-
-	public void setSource(Source source) {
-		this.source = source;
-	}
-
-	public String getApplicationType() {
-		return applicationType;
-	}
-
-	public void setApplicationType(String applicationType) {
-		this.applicationType = applicationType;
-	}
-
-	public BpaStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(BpaStatus status) {
-		this.status = status;
-	}
-
-	public EgDemand getDemand() {
-		return demand;
-	}
-
-	public void setDemand(EgDemand demand) {
-		this.demand = demand;
-	}
-
-	public List<OccupancyFee> getOccupancyFee() {
-		return occupancyFee;
-	}
-
-	public void setOccupancyFee(List<OccupancyFee> occupancyFee) {
-		this.occupancyFee = occupancyFee;
-	}
-
-	public Date getCommencedDate() {
-		return commencedDate;
-	}
-
-	public void setCommencedDate(Date commencedDate) {
-		this.commencedDate = commencedDate;
-	}
-
-	public Date getCompletionDate() {
-		return completionDate;
-	}
-
-	public void setCompletionDate(Date completionDate) {
-		this.completionDate = completionDate;
-	}
-
-	public Date getWorkCompletionDueDate() {
-		return workCompletionDueDate;
-	}
-
-	public void setWorkCompletionDueDate(Date workCompletionDueDate) {
-		this.workCompletionDueDate = workCompletionDueDate;
-	}
-
-	public Boolean isCitizenAccepted() {
-		return citizenAccepted;
-	}
-
-	public void setCitizenAccepted(Boolean citizenAccepted) {
-		this.citizenAccepted = citizenAccepted;
-	}
-
-	public Boolean isArchitectAccepted() {
-		return architectAccepted;
-	}
-
-	public void setArchitectAccepted(Boolean architectAccepted) {
-		this.architectAccepted = architectAccepted;
-	}
-
-	public Boolean getSentToPreviousOwner() {
-		return isSentToPreviousOwner;
-	}
-
-	public void setSentToPreviousOwner(Boolean sentToPreviousOwner) {
-		isSentToPreviousOwner = sentToPreviousOwner;
-	}
-
-	public Boolean getRescheduledByCitizen() {
-		return isRescheduledByCitizen;
-	}
-
-	public void setRescheduledByCitizen(Boolean rescheduledByCitizen) {
-		isRescheduledByCitizen = rescheduledByCitizen;
-	}
-
-	public Boolean getRescheduledByEmployee() {
-		return isRescheduledByEmployee;
-	}
-
-	public void setRescheduledByEmployee(Boolean rescheduledByEmployee) {
-		isRescheduledByEmployee = rescheduledByEmployee;
-	}
-
-	public Boolean getAuthorizedToSubmitPlan() {
-		return authorizedToSubmitPlan;
-	}
-
-	public void setAuthorizedToSubmitPlan(Boolean authorizedToSubmitPlan) {
-		this.authorizedToSubmitPlan = authorizedToSubmitPlan;
-	}
-
-	public Boolean getFailureInScheduler() {
-		return failureInScheduler;
-	}
-
-	public void setFailureInScheduler(Boolean failureInScheduler) {
-		this.failureInScheduler = failureInScheduler;
-	}
-
-	public String getSchedulerFailedRemarks() {
-		return schedulerFailedRemarks;
-	}
-
-	public void setSchedulerFailedRemarks(String schedulerFailedRemarks) {
-		this.schedulerFailedRemarks = schedulerFailedRemarks;
-	}
-
-	public BigDecimal getAdmissionfeeAmount() {
-		return admissionfeeAmount;
-	}
-
-	public void setAdmissionfeeAmount(final BigDecimal admissionfeeAmount) {
-		this.admissionfeeAmount = admissionfeeAmount;
-	}
-
-	public String getTownSurveyorRemarks() {
-		return townSurveyorRemarks;
-	}
-
-	public void setTownSurveyorRemarks(String townSurveyorRemarks) {
-		this.townSurveyorRemarks = townSurveyorRemarks;
-	}
-
-	public Boolean getTownSurveyorInspectionRequire() {
-		return isTownSurveyorInspectionRequire;
-	}
-
-	public void setTownSurveyorInspectionRequire(Boolean townSurveyorInspectionRequire) {
-		isTownSurveyorInspectionRequire = townSurveyorInspectionRequire;
-	}
-
-	public Boolean getLPRequestInitiated() {
-		return isLPRequestInitiated;
-	}
-
-	public void setLPRequestInitiated(Boolean LPRequestInitiated) {
-		isLPRequestInitiated = LPRequestInitiated;
-	}
-
-	public BigDecimal getExtentInSqmts() {
-		return extentInSqmts;
-	}
-
-	public void setExtentInSqmts(BigDecimal extentInSqmts) {
-		this.extentInSqmts = extentInSqmts;
-	}
-
-	public List<OCBuilding> getBuildings() {
-		return buildings;
-	}
-
-	public void setBuildings(List<OCBuilding> buildings) {
-		this.buildings = buildings;
-	}
-
-	public List<OCExistingBuilding> getExistingBuildings() {
-		return existingBuildings;
-	}
-
-	public void setExistingBuildings(List<OCExistingBuilding> existingBuildings) {
-		this.existingBuildings = existingBuildings;
-	}
-
-	public List<OCDocuments> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(List<OCDocuments> documents) {
-		this.documents = documents;
-	}
-
-	public List<OCDcrDocuments> getDcrDocuments() {
-		return dcrDocuments;
-	}
-
-	public void setDcrDocuments(List<OCDcrDocuments> dcrDocuments) {
-		this.dcrDocuments = dcrDocuments;
-	}
-
-	public List<OCNocDocuments> getNocDocuments() {
-		return nocDocuments;
-	}
-
-	public void setNocDocuments(List<OCNocDocuments> nocDocuments) {
-		this.nocDocuments = nocDocuments;
-	}
-
-	public List<OCInspection> getInspections() {
-		return inspections;
-	}
-
-	public void setInspections(List<OCInspection> inspections) {
-		this.inspections = inspections;
-	}
-
-	public List<OCDocumentScrutiny> getDocumentScrutinies() {
-		return documentScrutinies;
-	}
-
-	public void setDocumentScrutinies(List<OCDocumentScrutiny> documentScrutinies) {
-		this.documentScrutinies = documentScrutinies;
-	}
-
-	public List<OCSlot> getOcSlots() {
-		return ocSlots;
-	}
-
-	public void setOcSlots(List<OCSlot> ocSlots) {
-		this.ocSlots = ocSlots;
-	}
-
-	public List<OCAppointmentSchedule> getAppointmentSchedules() {
-		return appointmentSchedules;
-	}
-
-	public void setAppointmentSchedules(List<OCAppointmentSchedule> appointmentSchedules) {
-		this.appointmentSchedules = appointmentSchedules;
-	}
-
-	@Override
-	public String getStateDetails() {
-		return String.format("Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
-				parent.getOwner() == null ? "Not Specified" : parent.getOwner().getName(),
-				applicationNumber == null ? occupancyCertificateNumber : applicationNumber,
-				applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
-						: DateUtils.toDefaultDateFormat(applicationDate),
-				parent.getServiceType().getDescription() == null ? "" : parent.getServiceType().getDescription());
-	}
-
-	public WorkflowBean getWorkflowBean() {
-		return workflowBean;
-	}
-
-	public void setWorkflowBean(WorkflowBean workflowBean) {
-		this.workflowBean = workflowBean;
-	}
-
-	public Set<Receipt> getReceipts() {
-		return receipts;
-	}
-
-	public void setReceipts(Set<Receipt> receipts) {
-		this.receipts = receipts;
-	}
-
-	public MultipartFile[] getFiles() {
-		return files;
-	}
-
-	public void setFiles(MultipartFile[] files) {
-		this.files = files;
-	}
-
-	public Long getApprovalDepartment() {
-		return approvalDepartment;
-	}
-
-	public void setApprovalDepartment(Long approvalDepartment) {
-		this.approvalDepartment = approvalDepartment;
-	}
-
-	public Long getZoneId() {
-		return zoneId;
-	}
-
-	public void setZoneId(Long zoneId) {
-		this.zoneId = zoneId;
-	}
-
-	public Long getWardId() {
-		return wardId;
-	}
-
-	public void setWardId(Long wardId) {
-		this.wardId = wardId;
-	}
-
-	public String getApprovalComent() {
-		return approvalComent;
-	}
-
-	public void setApprovalComent(String approvalComent) {
-		this.approvalComent = approvalComent;
-	}
-
-	public Date getApprovalDate() {
-		return approvalDate;
-	}
-
-	public void setApprovalDate(Date approvalDate) {
-		this.approvalDate = approvalDate;
-	}
-
-	public Position getApproverPosition() {
-		return approverPosition;
-	}
-
-	public void setApproverPosition(Position approverPosition) {
-		this.approverPosition = approverPosition;
-	}
-
-	public User getApproverUser() {
-		return approverUser;
-	}
-
-	public void setApproverUser(User approverUser) {
-		this.approverUser = approverUser;
-	}
-
-	public void addNotice(OCNotice ocNotice) {
-		this.ocNotices.add(ocNotice);
-	}
-
-	public List<OCNotice> getOcNotices() {
-		return ocNotices;
-	}
-
-	public void setOcNotices(List<OCNotice> ocNotices) {
-		this.ocNotices = ocNotices;
-	}
-
-	public List<OCBuilding> getBuildingDetailFromEdcr() {
-		return buildingDetailFromEdcr;
-	}
-
-	public void setBuildingDetailFromEdcr(List<OCBuilding> buildingDetailFromEdcr) {
-		this.buildingDetailFromEdcr = buildingDetailFromEdcr;
-	}
-
-	public List<OCExistingBuilding> getExistingBldgDetailFromEdcr() {
-		return existingBldgDetailFromEdcr;
-	}
-
-	public void setExistingBldgDetailFromEdcr(List<OCExistingBuilding> existingBldgDetailFromEdcr) {
-		this.existingBldgDetailFromEdcr = existingBldgDetailFromEdcr;
-	}
-
-	public List<OCNoticeConditions> getRejectionReasons() {
-		return rejectionReasons;
-	}
-
-	public void setRejectionReasons(List<OCNoticeConditions> rejectionReasons) {
-		this.rejectionReasons = rejectionReasons;
-	}
-
-	public List<OCNoticeConditions> getAdditionalNoticeConditions() {
-		return additionalNoticeConditions;
-	}
-
-	public void setAdditionalNoticeConditions(List<OCNoticeConditions> additionalNoticeConditions) {
-		this.additionalNoticeConditions = additionalNoticeConditions;
-	}
-
-	public List<OCNoticeConditions> getRejectionReasonsTemp() {
-		return rejectionReasonsTemp;
-	}
-
-	public void setRejectionReasonsTemp(List<OCNoticeConditions> rejectionReasonsTemp) {
-		this.rejectionReasonsTemp = rejectionReasonsTemp;
-	}
-
-	public List<OCNoticeConditions> getAdditionalRejectReasonsTemp() {
-		return additionalRejectReasonsTemp;
-	}
-
-	public void setAdditionalRejectReasonsTemp(List<OCNoticeConditions> additionalRejectReasonsTemp) {
-		this.additionalRejectReasonsTemp = additionalRejectReasonsTemp;
-	}
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OccupancyFee> occupancyFee = new ArrayList<>();
+
+    @Valid
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("buildingNumber ASC")
+    private List<OCExistingBuilding> existingBuildings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OCNotice> ocNotices = new ArrayList<>(0);
+
+    @Valid
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
+    private List<OCDocuments> documents = new ArrayList<>();
+
+    @Valid
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
+    private List<OCDcrDocuments> dcrDocuments = new ArrayList<>();
+
+    @Valid
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
+    private List<OCNocDocuments> nocDocuments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("id DESC ")
+    private List<OCInspection> inspections = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
+    private List<OCDocumentScrutiny> documentScrutinies = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
+    private List<OCSlot> ocSlots = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy(ORDER_BY_ID_ASC)
+    private List<OCAppointmentSchedule> appointmentSchedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OCNoticeConditions> rejectionReasons = new ArrayList<>(0);
+
+    @OrderBy(ORDER_BY_ID_ASC)
+    @OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OCNoticeConditions> additionalNoticeConditions = new ArrayList<>(0);
+
+    @Valid
+    private transient WorkflowBean workflowBean;
+    private transient Set<Receipt> receipts = new HashSet<>();
+    private transient MultipartFile[] files;
+    private transient Long approvalDepartment;
+    private transient Long zoneId;
+    private transient Long wardId;
+    @SafeHtml
+    private transient String approvalComent;
+    @Valid
+    private transient List<OCBuilding> buildingDetailFromEdcr = new ArrayList<>();
+    @Valid
+    private transient List<OCExistingBuilding> existingBldgDetailFromEdcr = new ArrayList<>();
+    @Valid
+    private transient List<OCNoticeConditions> rejectionReasonsTemp = new ArrayList<>(0);
+    @Valid
+    private transient List<OCNoticeConditions> additionalRejectReasonsTemp = new ArrayList<>(0);
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public String myLinkId() {
+        return applicationNumber == null ? occupancyCertificateNumber : applicationNumber;
+    }
+
+    public BpaApplication getParent() {
+        return parent;
+    }
+
+    public void setParent(BpaApplication parent) {
+        this.parent = parent;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getOccupancyCertificateNumber() {
+        return occupancyCertificateNumber;
+    }
+
+    public void setOccupancyCertificateNumber(String occupancyCertificateNumber) {
+        this.occupancyCertificateNumber = occupancyCertificateNumber;
+    }
+
+    public String geteDcrNumber() {
+        return eDcrNumber;
+    }
+
+    public void seteDcrNumber(String eDcrNumber) {
+        this.eDcrNumber = eDcrNumber;
+    }
+
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public BpaStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BpaStatus status) {
+        this.status = status;
+    }
+
+    public EgDemand getDemand() {
+        return demand;
+    }
+
+    public void setDemand(EgDemand demand) {
+        this.demand = demand;
+    }
+
+    public List<OccupancyFee> getOccupancyFee() {
+        return occupancyFee;
+    }
+
+    public void setOccupancyFee(List<OccupancyFee> occupancyFee) {
+        this.occupancyFee = occupancyFee;
+    }
+
+    public Date getCommencedDate() {
+        return commencedDate;
+    }
+
+    public void setCommencedDate(Date commencedDate) {
+        this.commencedDate = commencedDate;
+    }
+
+    public Date getCompletionDate() {
+        return completionDate;
+    }
+
+    public void setCompletionDate(Date completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    public Date getWorkCompletionDueDate() {
+        return workCompletionDueDate;
+    }
+
+    public void setWorkCompletionDueDate(Date workCompletionDueDate) {
+        this.workCompletionDueDate = workCompletionDueDate;
+    }
+
+    public Boolean isCitizenAccepted() {
+        return citizenAccepted;
+    }
+
+    public void setCitizenAccepted(Boolean citizenAccepted) {
+        this.citizenAccepted = citizenAccepted;
+    }
+
+    public Boolean isArchitectAccepted() {
+        return architectAccepted;
+    }
+
+    public void setArchitectAccepted(Boolean architectAccepted) {
+        this.architectAccepted = architectAccepted;
+    }
+
+    public Boolean getSentToPreviousOwner() {
+        return isSentToPreviousOwner;
+    }
+
+    public void setSentToPreviousOwner(Boolean sentToPreviousOwner) {
+        isSentToPreviousOwner = sentToPreviousOwner;
+    }
+
+    public Boolean getRescheduledByCitizen() {
+        return isRescheduledByCitizen;
+    }
+
+    public void setRescheduledByCitizen(Boolean rescheduledByCitizen) {
+        isRescheduledByCitizen = rescheduledByCitizen;
+    }
+
+    public Boolean getRescheduledByEmployee() {
+        return isRescheduledByEmployee;
+    }
+
+    public void setRescheduledByEmployee(Boolean rescheduledByEmployee) {
+        isRescheduledByEmployee = rescheduledByEmployee;
+    }
+
+    public Boolean getAuthorizedToSubmitPlan() {
+        return authorizedToSubmitPlan;
+    }
+
+    public void setAuthorizedToSubmitPlan(Boolean authorizedToSubmitPlan) {
+        this.authorizedToSubmitPlan = authorizedToSubmitPlan;
+    }
+
+    public Boolean getFailureInScheduler() {
+        return failureInScheduler;
+    }
+
+    public void setFailureInScheduler(Boolean failureInScheduler) {
+        this.failureInScheduler = failureInScheduler;
+    }
+
+    public String getSchedulerFailedRemarks() {
+        return schedulerFailedRemarks;
+    }
+
+    public void setSchedulerFailedRemarks(String schedulerFailedRemarks) {
+        this.schedulerFailedRemarks = schedulerFailedRemarks;
+    }
+
+    public BigDecimal getAdmissionfeeAmount() {
+        return admissionfeeAmount;
+    }
+
+    public void setAdmissionfeeAmount(final BigDecimal admissionfeeAmount) {
+        this.admissionfeeAmount = admissionfeeAmount;
+    }
+
+    public String getTownSurveyorRemarks() {
+        return townSurveyorRemarks;
+    }
+
+    public void setTownSurveyorRemarks(String townSurveyorRemarks) {
+        this.townSurveyorRemarks = townSurveyorRemarks;
+    }
+
+    public Boolean getTownSurveyorInspectionRequire() {
+        return isTownSurveyorInspectionRequire;
+    }
+
+    public void setTownSurveyorInspectionRequire(Boolean townSurveyorInspectionRequire) {
+        isTownSurveyorInspectionRequire = townSurveyorInspectionRequire;
+    }
+
+    public Boolean getLPRequestInitiated() {
+        return isLPRequestInitiated;
+    }
+
+    public void setLPRequestInitiated(Boolean LPRequestInitiated) {
+        isLPRequestInitiated = LPRequestInitiated;
+    }
+
+    public BigDecimal getExtentInSqmts() {
+        return extentInSqmts;
+    }
+
+    public void setExtentInSqmts(BigDecimal extentInSqmts) {
+        this.extentInSqmts = extentInSqmts;
+    }
+
+    public List<OCBuilding> getBuildings() {
+        return buildings;
+    }
+
+    public void setBuildings(List<OCBuilding> buildings) {
+        this.buildings = buildings;
+    }
+
+    public List<OCExistingBuilding> getExistingBuildings() {
+        return existingBuildings;
+    }
+
+    public void setExistingBuildings(List<OCExistingBuilding> existingBuildings) {
+        this.existingBuildings = existingBuildings;
+    }
+
+    public List<OCDocuments> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<OCDocuments> documents) {
+        this.documents = documents;
+    }
+
+    public List<OCDcrDocuments> getDcrDocuments() {
+        return dcrDocuments;
+    }
+
+    public void setDcrDocuments(List<OCDcrDocuments> dcrDocuments) {
+        this.dcrDocuments = dcrDocuments;
+    }
+
+    public List<OCNocDocuments> getNocDocuments() {
+        return nocDocuments;
+    }
+
+    public void setNocDocuments(List<OCNocDocuments> nocDocuments) {
+        this.nocDocuments = nocDocuments;
+    }
+
+    public List<OCInspection> getInspections() {
+        return inspections;
+    }
+
+    public void setInspections(List<OCInspection> inspections) {
+        this.inspections = inspections;
+    }
+
+    public List<OCDocumentScrutiny> getDocumentScrutinies() {
+        return documentScrutinies;
+    }
+
+    public void setDocumentScrutinies(List<OCDocumentScrutiny> documentScrutinies) {
+        this.documentScrutinies = documentScrutinies;
+    }
+
+    public List<OCSlot> getOcSlots() {
+        return ocSlots;
+    }
+
+    public void setOcSlots(List<OCSlot> ocSlots) {
+        this.ocSlots = ocSlots;
+    }
+
+    public List<OCAppointmentSchedule> getAppointmentSchedules() {
+        return appointmentSchedules;
+    }
+
+    public void setAppointmentSchedules(List<OCAppointmentSchedule> appointmentSchedules) {
+        this.appointmentSchedules = appointmentSchedules;
+    }
+
+    @Override
+    public String getStateDetails() {
+        return String.format("Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
+                parent.getOwner() == null ? "Not Specified" : parent.getOwner().getName(),
+                applicationNumber == null ? occupancyCertificateNumber : applicationNumber,
+                applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
+                        : DateUtils.toDefaultDateFormat(applicationDate),
+                parent.getServiceType().getDescription() == null ? "" : parent.getServiceType().getDescription());
+    }
+
+    public WorkflowBean getWorkflowBean() {
+        return workflowBean;
+    }
+
+    public void setWorkflowBean(WorkflowBean workflowBean) {
+        this.workflowBean = workflowBean;
+    }
+
+    public Set<Receipt> getReceipts() {
+        return receipts;
+    }
+
+    public void setReceipts(Set<Receipt> receipts) {
+        this.receipts = receipts;
+    }
+
+    public MultipartFile[] getFiles() {
+        return files;
+    }
+
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
+
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
+
+    public void setApprovalDepartment(Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
+
+    public Long getZoneId() {
+        return zoneId;
+    }
+
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
+
+    public Long getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(Long wardId) {
+        this.wardId = wardId;
+    }
+
+    public String getApprovalComent() {
+        return approvalComent;
+    }
+
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
+
+    public Date getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(Date approvalDate) {
+        this.approvalDate = approvalDate;
+    }
+
+    public Position getApproverPosition() {
+        return approverPosition;
+    }
+
+    public void setApproverPosition(Position approverPosition) {
+        this.approverPosition = approverPosition;
+    }
+
+    public User getApproverUser() {
+        return approverUser;
+    }
+
+    public void setApproverUser(User approverUser) {
+        this.approverUser = approverUser;
+    }
+
+    public void addNotice(OCNotice ocNotice) {
+        this.ocNotices.add(ocNotice);
+    }
+
+    public List<OCNotice> getOcNotices() {
+        return ocNotices;
+    }
+
+    public void setOcNotices(List<OCNotice> ocNotices) {
+        this.ocNotices = ocNotices;
+    }
+
+    public List<OCBuilding> getBuildingDetailFromEdcr() {
+        return buildingDetailFromEdcr;
+    }
+
+    public void setBuildingDetailFromEdcr(List<OCBuilding> buildingDetailFromEdcr) {
+        this.buildingDetailFromEdcr = buildingDetailFromEdcr;
+    }
+
+    public List<OCExistingBuilding> getExistingBldgDetailFromEdcr() {
+        return existingBldgDetailFromEdcr;
+    }
+
+    public void setExistingBldgDetailFromEdcr(List<OCExistingBuilding> existingBldgDetailFromEdcr) {
+        this.existingBldgDetailFromEdcr = existingBldgDetailFromEdcr;
+    }
+
+    public List<OCNoticeConditions> getRejectionReasons() {
+        return rejectionReasons;
+    }
+
+    public void setRejectionReasons(List<OCNoticeConditions> rejectionReasons) {
+        this.rejectionReasons = rejectionReasons;
+    }
+
+    public List<OCNoticeConditions> getAdditionalNoticeConditions() {
+        return additionalNoticeConditions;
+    }
+
+    public void setAdditionalNoticeConditions(List<OCNoticeConditions> additionalNoticeConditions) {
+        this.additionalNoticeConditions = additionalNoticeConditions;
+    }
+
+    public List<OCNoticeConditions> getRejectionReasonsTemp() {
+        return rejectionReasonsTemp;
+    }
+
+    public void setRejectionReasonsTemp(List<OCNoticeConditions> rejectionReasonsTemp) {
+        this.rejectionReasonsTemp = rejectionReasonsTemp;
+    }
+
+    public List<OCNoticeConditions> getAdditionalRejectReasonsTemp() {
+        return additionalRejectReasonsTemp;
+    }
+
+    public void setAdditionalRejectReasonsTemp(List<OCNoticeConditions> additionalRejectReasonsTemp) {
+        this.additionalRejectReasonsTemp = additionalRejectReasonsTemp;
+    }
 
 }

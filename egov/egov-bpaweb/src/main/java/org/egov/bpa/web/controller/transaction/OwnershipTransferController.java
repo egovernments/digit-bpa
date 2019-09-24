@@ -64,6 +64,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.transaction.entity.OwnershipTransfer;
@@ -109,7 +110,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/application/ownership/transfer")
 public class OwnershipTransferController extends BpaGenericApplicationController {
-	
+
     private static final String APPLICATION_SUCCESS = "application-success";
     private static final String OWNERSHIP_TRANSFER = "ownershipTransfer";
     private static final String MESSAGE = "message";
@@ -136,34 +137,36 @@ public class OwnershipTransferController extends BpaGenericApplicationController
     @Autowired
     private BpaAppConfigUtil bpaAppConfigUtil;
     @Autowired
-    private  OwnershipTransferSmsAndEmailService ownershipTransferSmsAndEmailService;
-    
-    
-   @GetMapping("/update/{applicationNumber}")
+    private OwnershipTransferSmsAndEmailService ownershipTransferSmsAndEmailService;
+
+    @GetMapping("/update/{applicationNumber}")
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber) {
         final OwnershipTransfer ownershipTransfer = ownershipTransferService.findByApplicationNumber(applicationNumber);
+        return updateForm(model, ownershipTransfer);
+    }
+
+    private String updateForm(final Model model, final OwnershipTransfer ownershipTransfer) {
         List<OwnershipTransfer> ownershipTransfers = ownershipTransferService.findByBpaApplication(ownershipTransfer.getParent());
-        if(ownershipTransfers.size()>1) {
-        	model.addAttribute("applicants",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getName());
-        	model.addAttribute("applicantAddress",ownershipTransfers.get(ownershipTransfers.size()-1).getOwner().getAddress());
+        if (ownershipTransfers.size() > 1) {
+            model.addAttribute("applicants", ownershipTransfers.get(ownershipTransfers.size() - 1).getOwner().getName());
+            model.addAttribute("applicantAddress", ownershipTransfers.get(ownershipTransfers.size() - 1).getOwner().getAddress());
         }
         loadFormData(ownershipTransfer, model);
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
-
-        if (ownershipTransfer != null) {
-            loadFormData(ownershipTransfer, model);
-        }
         return "ownership-transfer-update";
     }
 
     @PostMapping("/update-submit/{applicationNumber}")
-    public String submitTransferOwnership(@ModelAttribute OwnershipTransfer ownershipTransfer,
-            @PathVariable final String applicationNumber, @RequestParam final BigDecimal amountRule,
+    public String submitTransferOwnership(@PathVariable final String applicationNumber, @RequestParam final BigDecimal amountRule,
+            @Valid @ModelAttribute OwnershipTransfer ownershipTransfer, final BindingResult result,
+            final Model model,
             final HttpServletRequest request,
-            final Model model, final BindingResult errors,
             final RedirectAttributes redirectAttributes) throws IOException {
 
+        if (result.hasErrors()) {
+            return updateForm(model, ownershipTransfer);
+        }
         Position ownerPosition = ownershipTransfer.getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
@@ -190,34 +193,36 @@ public class OwnershipTransferController extends BpaGenericApplicationController
                     user == null ? ""
                             : user.getUsername().concat("~")
                                     .concat(getDesinationNameByPosition(pos)),
-                                    ownershipTransfer.getApplicationNumber() }, LocaleContextHolder.getLocale());
-        else if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {        
-        	OwnershipTransferNoticeService ownershipTransferNotice = (OwnershipTransferNoticeService) specificNoticeService
+                    ownershipTransfer.getApplicationNumber() }, LocaleContextHolder.getLocale());
+        else if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            OwnershipTransferNoticeService ownershipTransferNotice = (OwnershipTransferNoticeService) specificNoticeService
                     .find(OwnershipTransferNoticeService.class, specificNoticeService.getCityDetails());
-        	ReportOutput reportOutput = ownershipTransferNotice.generateNotice(ownershipres);
-        	ownershipTransferSmsAndEmailService.sendSMSAndEmail(ownershipTransfer, null,null);
+            ReportOutput reportOutput = ownershipTransferNotice.generateNotice(ownershipres);
+            ownershipTransferSmsAndEmailService.sendSMSAndEmail(ownershipTransfer, null, null);
             return "redirect:/application/ownership/transfer/rejectionnotice/" + ownershipTransfer.getApplicationNumber();
         } else {
             message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
                     user == null ? ""
                             : user.getUsername().concat("~")
                                     .concat(getDesinationNameByPosition(pos)),
-                                    ownershipTransfer.getApplicationNumber() }, LocaleContextHolder.getLocale());
+                    ownershipTransfer.getApplicationNumber() }, LocaleContextHolder.getLocale());
         }
-        if (isNotBlank(wfBean.getWorkFlowAction()) && BpaConstants.WF_GENERATE_OWNERSHIP_ORDER.equalsIgnoreCase(wfBean.getWorkFlowAction())) {        	
-        	OwnershipTransferNoticeService ownershipTransferNotice = (OwnershipTransferNoticeService) specificNoticeService
+        if (isNotBlank(wfBean.getWorkFlowAction())
+                && BpaConstants.WF_GENERATE_OWNERSHIP_ORDER.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            OwnershipTransferNoticeService ownershipTransferNotice = (OwnershipTransferNoticeService) specificNoticeService
                     .find(OwnershipTransferNoticeService.class, specificNoticeService.getCityDetails());
-        	ReportOutput reportOutput = ownershipTransferNotice
+            ReportOutput reportOutput = ownershipTransferNotice
                     .generateOwnershipOrder(ownershipTransferService.findByApplicationNumber(applicationNumber));
-                ownershipTransferSmsAndEmailService.sendSMSAndEmail(ownershipTransfer, reportOutput,OWNERSHIP_ORDER_NOTICE_TYPE +PDFEXTN);
+            ownershipTransferSmsAndEmailService.sendSMSAndEmail(ownershipTransfer, reportOutput,
+                    OWNERSHIP_ORDER_NOTICE_TYPE + PDFEXTN);
             return "redirect:/application/ownership/transfer/generateorder/" + ownershipres.getApplicationNumber();
         }
         if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())) {
             if (isNotBlank(wfBean.getWorkFlowAction()) && GENERATEREJECTNOTICE.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
-            	
+
             }
-        }  
-       
+        }
+
         redirectAttributes.addFlashAttribute(MESSAGE, message);
         return "redirect:/application/ownership/transfer/success/" + ownershipTransfer.getApplicationNumber();
     }
@@ -228,28 +233,29 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
-                		ownershipTransfer.getStateHistory()));
+                        ownershipTransfer.getStateHistory()));
         return APPLICATION_SUCCESS;
     }
-    
+
     @GetMapping("/view/{applicationNumber}")
     public String view(@PathVariable final String applicationNumber, final Model model) {
         OwnershipTransfer ownershipTransfer = ownershipTransferService.findByApplicationNumber(applicationNumber);
-        List<OwnershipTransfer> ownerTransfers = ownershipTransferService.findByBpaApplicationAndDate(ownershipTransfer.getParent(), ownershipTransfer.getCreatedDate());
-        if(!ownerTransfers.isEmpty()) {
-            model.addAttribute("ownershipNumber", ownerTransfers.get(0).getApplicationNumber());        
-            model.addAttribute("applicants",ownerTransfers.get(0).getOwner().getName());
-            model.addAttribute("applicantAddress",ownerTransfers.get(0).getOwner().getAddress());
+        List<OwnershipTransfer> ownerTransfers = ownershipTransferService
+                .findByBpaApplicationAndDate(ownershipTransfer.getParent(), ownershipTransfer.getCreatedDate());
+        if (!ownerTransfers.isEmpty()) {
+            model.addAttribute("ownershipNumber", ownerTransfers.get(0).getApplicationNumber());
+            model.addAttribute("applicants", ownerTransfers.get(0).getOwner().getName());
+            model.addAttribute("applicantAddress", ownerTransfers.get(0).getOwner().getAddress());
         }
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
         loadFormData(ownershipTransfer, model);
         model.addAttribute(APPLICATION_HISTORY,
                 workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
-                		ownershipTransfer.getStateHistory()));
+                        ownershipTransfer.getStateHistory()));
         return "ownership-transfer-view";
     }
-    
-	@GetMapping("/search")
+
+    @GetMapping("/search")
     public String showSearchApprovedforFee(final Model model) {
         prepareFormData(model);
         model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType(OWNERSHIPSTATUS_MODULETYPE));
@@ -262,20 +268,20 @@ public class OwnershipTransferController extends BpaGenericApplicationController
     public String searchRegisterStatusMarriageRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         return new DataTable<>(ownershipTransferService.pagedSearch(searchBpaApplicationForm),
                 searchBpaApplicationForm.draw())
-                .toJson(SearchBpaApplicationAdaptor.class);
+                        .toJson(SearchBpaApplicationAdaptor.class);
     }
 
     private void buildRejectionReasons(Model model, OwnershipTransfer ownershipTransfer) {
-    	if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())
-              || WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue())) {           
-    		model.addAttribute("showRejectionReasons", true);
+        if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())
+                || WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue())) {
+            model.addAttribute("showRejectionReasons", true);
             List<ChecklistServiceTypeMapping> additionalRejectionReasonList = checklistServiceTypeService
                     .findByActiveChecklistAndServiceType(ownershipTransfer.getParent().getServiceType().getDescription(),
                             "ADDITIONALREJECTIONREASONS");
 
             List<ChecklistServiceTypeMapping> rejectionReasonList = checklistServiceTypeService
                     .findByActiveChecklistAndServiceType(
-                    		ownershipTransfer.getParent().getServiceType().getDescription(), "OWNERSHIPREJECTIONREASONS");
+                            ownershipTransfer.getParent().getServiceType().getDescription(), "OWNERSHIPREJECTIONREASONS");
 
             List<OwnershipTransferConditions> rejectionApplnConditions = new ArrayList<>();
             List<OwnershipTransferConditions> rejectionReasons = ownershipConditionsService
@@ -303,7 +309,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
                     .findAllConditionsByOwnershipAndType(ownershipTransfer, ConditionType.ADDITIONALREJECTIONREASONS);
             if (additionalRejectionReasons == null || additionalRejectionReasons.isEmpty()) {
                 for (ChecklistServiceTypeMapping checklistServicetype : additionalRejectionReasonList) {
-                	OwnershipTransferConditions condition = new OwnershipTransferConditions();
+                    OwnershipTransferConditions condition = new OwnershipTransferConditions();
                     NoticeCondition noticeCondtion = new NoticeCondition();
                     noticeCondtion.setChecklistServicetype(checklistServicetype);
                     condition.setNoticeCondition(noticeCondtion);
@@ -320,7 +326,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
             }
         }
     }
-    
+
     private void loadFormData(final OwnershipTransfer ownershipTransfer, final Model model) {
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         model.addAttribute("isOwnershipApplFeeReq", "NO");
@@ -341,18 +347,19 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         model.addAttribute("electionBoundary", ownershipTransfer.getParent().getSiteDetail().get(0).getElectionBoundary() != null
                 ? ownershipTransfer.getParent().getSiteDetail().get(0).getElectionBoundary().getId()
                 : null);
-        model.addAttribute("electionBoundaryName", ownershipTransfer.getParent().getSiteDetail().get(0).getElectionBoundary() != null
-                ? ownershipTransfer.getParent().getSiteDetail().get(0).getElectionBoundary().getName()
-                : "");
+        model.addAttribute("electionBoundaryName",
+                ownershipTransfer.getParent().getSiteDetail().get(0).getElectionBoundary() != null
+                        ? ownershipTransfer.getParent().getSiteDetail().get(0).getElectionBoundary().getName()
+                        : "");
         model.addAttribute("revenueBoundaryName", ownershipTransfer.getParent().getSiteDetail().get(0).getAdminBoundary() != null
                 ? ownershipTransfer.getParent().getSiteDetail().get(0).getAdminBoundary().getName()
                 : "");
-        if(ownershipTransfer.getState()!=null) {
-        	workflowContainer.setAdditionalRule(ownershipTransfer.getParent().getApplicationType().getName());        
+        if (ownershipTransfer.getState() != null) {
+            workflowContainer.setAdditionalRule(ownershipTransfer.getParent().getApplicationType().getName());
             workflowContainer.setPendingActions(ownershipTransfer.getState().getNextAction());
             model.addAttribute(APPLICATION_HISTORY,
                     workflowHistoryService.getHistory(Collections.emptyList(), ownershipTransfer.getCurrentState(),
-                    		ownershipTransfer.getStateHistory()));
+                            ownershipTransfer.getStateHistory()));
             model.addAttribute("stateType", ownershipTransfer.getClass().getSimpleName());
             model.addAttribute("pendingActions", workflowContainer.getPendingActions());
             model.addAttribute("currentState", ownershipTransfer.getCurrentState().getValue());

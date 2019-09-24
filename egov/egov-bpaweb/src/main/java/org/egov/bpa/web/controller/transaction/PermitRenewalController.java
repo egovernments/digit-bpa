@@ -64,6 +64,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.transaction.entity.PermitRenewal;
@@ -135,6 +136,10 @@ public class PermitRenewalController extends BpaGenericApplicationController {
     @GetMapping("/update/{applicationNumber}")
     public String updateOrViewPermitRenewalDetails(@PathVariable String applicationNumber, final Model model) {
         PermitRenewal permitRenewal = permitRenewalService.findByApplicationNumber(applicationNumber);
+        return updateForm(model, permitRenewal);
+    }
+
+    private String updateForm(final Model model, PermitRenewal permitRenewal) {
         model.addAttribute("permitExpiryDate", bpaNoticeUtil.calculateCertExpryDate(
                 new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
                 permitRenewal.getParent().getServiceType().getValidity()));
@@ -175,12 +180,16 @@ public class PermitRenewalController extends BpaGenericApplicationController {
     }
 
     @PostMapping("/update-submit/{applicationNumber}")
-    public String submitPermitRevocationInitiation(@ModelAttribute PermitRenewal permitRenewal,
-            @PathVariable final String applicationNumber, @RequestParam final BigDecimal amountRule,
+    public String submitPermitRevocationInitiation(@PathVariable final String applicationNumber,
+            @RequestParam final BigDecimal amountRule, @Valid @ModelAttribute PermitRenewal permitRenewal,
+            final BindingResult result,
             final HttpServletRequest request,
-            final Model model, final BindingResult errors,
+            final Model model,
             final RedirectAttributes redirectAttributes) throws IOException {
 
+        if (result.hasErrors()) {
+            return updateForm(model, permitRenewal);
+        }
         Position ownerPosition = permitRenewal.getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;

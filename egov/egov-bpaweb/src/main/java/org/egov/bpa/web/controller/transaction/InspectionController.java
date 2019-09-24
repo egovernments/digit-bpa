@@ -95,8 +95,9 @@ public class InspectionController extends BpaGenericApplicationController {
     }
 
     @PostMapping("/createinspectiondetails/{applicationNumber}")
-    public String createInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection inspection,
-            @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+    public String createInspection(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute("permitInspection") final PermitInspection inspection, final BindingResult resultBinder,
+            final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         inspectionService.validatePermitInspectionDocs(inspection, resultBinder);
         if (resultBinder.hasErrors()) {
@@ -113,8 +114,9 @@ public class InspectionController extends BpaGenericApplicationController {
     }
 
     @PostMapping("/createpreinspectiondetails/{applicationNumber}")
-    public String createPreInspection(@Valid @ModelAttribute("permitInspection") final PermitInspection inspection,
-            @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+    public String createPreInspection(@PathVariable final String applicationNumber,
+            @Valid @ModelAttribute("permitInspection") final PermitInspection inspection, final BindingResult resultBinder,
+            final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         if (resultBinder.hasErrors()) {
             loadApplication(model, application);

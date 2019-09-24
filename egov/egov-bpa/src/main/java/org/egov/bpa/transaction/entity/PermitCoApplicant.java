@@ -56,11 +56,11 @@ public class PermitCoApplicant extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "coApplicant", nullable = false)
     private CoApplicant coApplicant;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -71,19 +71,19 @@ public class PermitCoApplicant extends AbstractAuditable {
         this.id = id;
     }
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public void setApplication(BpaApplication application) {
-		this.application = application;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
 
-	public CoApplicant getCoApplicant() {
-		return coApplicant;
-	}
+    public CoApplicant getCoApplicant() {
+        return coApplicant;
+    }
 
-	public void setCoApplicant(CoApplicant coApplicant) {
-		this.coApplicant = coApplicant;
-	}  
+    public void setCoApplicant(CoApplicant coApplicant) {
+        this.coApplicant = coApplicant;
+    }
 }

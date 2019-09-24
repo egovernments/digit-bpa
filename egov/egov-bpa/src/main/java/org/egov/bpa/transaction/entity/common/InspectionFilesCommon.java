@@ -75,76 +75,76 @@ import org.springframework.web.multipart.MultipartFile;
 @SequenceGenerator(name = InspectionFilesCommon.SEQ_COMMON_DOCUMENT, sequenceName = InspectionFilesCommon.SEQ_COMMON_DOCUMENT, allocationSize = 1)
 public class InspectionFilesCommon extends AbstractAuditable {
 
-	public static final String SEQ_COMMON_DOCUMENT = "seq_egbpa_inspection_common_files";
-	private static final long serialVersionUID = -7913915173561192911L;
+    public static final String SEQ_COMMON_DOCUMENT = "seq_egbpa_inspection_common_files";
+    private static final long serialVersionUID = -7913915173561192911L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_COMMON_DOCUMENT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_COMMON_DOCUMENT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "inspectionid", nullable = false)
-	private InspectionCommon inspection;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "inspectionid", nullable = false)
+    private InspectionCommon inspection;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "servicechecklist", nullable = false)
-	private ChecklistServiceTypeMapping serviceChecklist;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "servicechecklist", nullable = false)
+    private ChecklistServiceTypeMapping serviceChecklist;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "egbpa_site_inspection_images", joinColumns = @JoinColumn(name = "inspectiondocument"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
-	private Set<FileStoreMapper> images = Collections.emptySet();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "egbpa_site_inspection_images", joinColumns = @JoinColumn(name = "inspectiondocument"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    private Set<FileStoreMapper> images = Collections.emptySet();
 
-	private transient MultipartFile[] files;
-	private transient Map<Long, String> encodedImages = new HashMap<>();
+    private transient MultipartFile[] files;
+    private transient Map<Long, String> encodedImages = new HashMap<>();
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public InspectionCommon getInspection() {
-		return inspection;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
 
-	public void setInspection(InspectionCommon inspection) {
-		this.inspection = inspection;
-	}
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
 
-	public ChecklistServiceTypeMapping getServiceChecklist() {
-		return serviceChecklist;
-	}
+    public ChecklistServiceTypeMapping getServiceChecklist() {
+        return serviceChecklist;
+    }
 
-	public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
-		this.serviceChecklist = serviceChecklist;
-	}
+    public void setServiceChecklist(ChecklistServiceTypeMapping serviceChecklist) {
+        this.serviceChecklist = serviceChecklist;
+    }
 
-	public Set<FileStoreMapper> getImages() {
-		return images;
-	}
+    public Set<FileStoreMapper> getImages() {
+        return images;
+    }
 
-	public void setImages(Set<FileStoreMapper> images) {
-		this.images = images;
-	}
+    public void setImages(Set<FileStoreMapper> images) {
+        this.images = images;
+    }
 
-	public MultipartFile[] getFiles() {
-		return files;
-	}
+    public MultipartFile[] getFiles() {
+        return files;
+    }
 
-	public void setFiles(MultipartFile[] files) {
-		this.files = files;
-	}
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
 
-	public Map<Long, String> getEncodedImages() {
-		return encodedImages;
-	}
+    public Map<Long, String> getEncodedImages() {
+        return encodedImages;
+    }
 
-	public void setEncodedImages(Map<Long, String> encodedImages) {
-		this.encodedImages = encodedImages;
-	}
+    public void setEncodedImages(Map<Long, String> encodedImages) {
+        this.encodedImages = encodedImages;
+    }
 
 }

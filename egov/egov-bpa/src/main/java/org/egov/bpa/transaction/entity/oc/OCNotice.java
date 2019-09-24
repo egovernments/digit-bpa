@@ -65,47 +65,47 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @Table(name = "egbpa_oc_notice")
 @SequenceGenerator(name = OCNotice.SEQ_EGBPA_OC_NOTICE, sequenceName = OCNotice.SEQ_EGBPA_OC_NOTICE, allocationSize = 1)
 public class OCNotice extends AbstractAuditable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1777452371034648665L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1777452371034648665L;
 
-	public static final String SEQ_EGBPA_OC_NOTICE = "seq_egbpa_oc_notice";
+    public static final String SEQ_EGBPA_OC_NOTICE = "seq_egbpa_oc_notice";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_OC_NOTICE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_OC_NOTICE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@NotNull
-	@JoinColumn(name = "occupancyCertificate", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @NotNull
+    @JoinColumn(name = "occupancyCertificate", nullable = false)
+    private OccupancyCertificate oc;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "notice", nullable = false)
-	private NoticeCommon noticeCommon;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "notice", nullable = false)
+    private NoticeCommon noticeCommon;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
-	public NoticeCommon getNoticeCommon() {
-		return noticeCommon;
-	}
+    public NoticeCommon getNoticeCommon() {
+        return noticeCommon;
+    }
 
-	public void setNoticeCommon(NoticeCommon noticeCommon) {
-		this.noticeCommon = noticeCommon;
-	}
+    public void setNoticeCommon(NoticeCommon noticeCommon) {
+        this.noticeCommon = noticeCommon;
+    }
 }

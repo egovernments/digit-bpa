@@ -47,57 +47,57 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = InspectionSource.SEQ_INSPECTIONSOURCE, sequenceName = InspectionSource.SEQ_INSPECTIONSOURCE, allocationSize = 1)
 public class InspectionSource extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_INSPECTIONSOURCE = "SEQ_EGBPA_MSTR_INSPSOURCE";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_INSPECTIONSOURCE = "SEQ_EGBPA_MSTR_INSPSOURCE";
 
-	@Id
-	@GeneratedValue(generator = SEQ_INSPECTIONSOURCE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_INSPECTIONSOURCE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	private String code;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String description;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String description;
 
-	private Boolean isActive;
+    private Boolean isActive;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(final Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(final Boolean isActive) {
+        this.isActive = isActive;
+    }
 }

@@ -80,115 +80,115 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/inspection")
 public class CitizenInspectionApplicationController {
 
-	private static final String CITIZEN_INSPECTION_FORM = "citizen-inspection-form";
+    private static final String CITIZEN_INSPECTION_FORM = "citizen-inspection-form";
 
-	private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String WORK_FLOW_ACTION = "workFlowAction";
 
-	@Autowired
-	private ApplicationBpaService applicationService;
-	@Autowired
-	private InspectionApplicationService inspectionService;
-	@Autowired
-	protected ResourceBundleMessageSource messageSource;
-	@Autowired
-	protected SecurityUtils securityUtils;
-	@Autowired
-	private BpaUtils bpaUtils;
-	@Autowired
-	protected BpaWorkFlowService bpaWorkFlowService;
-	@Autowired
-	protected BuildingConstructionStageService constructionService;
+    @Autowired
+    private ApplicationBpaService applicationService;
+    @Autowired
+    private InspectionApplicationService inspectionService;
+    @Autowired
+    protected ResourceBundleMessageSource messageSource;
+    @Autowired
+    protected SecurityUtils securityUtils;
+    @Autowired
+    private BpaUtils bpaUtils;
+    @Autowired
+    protected BpaWorkFlowService bpaWorkFlowService;
+    @Autowired
+    protected BuildingConstructionStageService constructionService;
 
-	@GetMapping("/citizen/create")
-	public String inspectionForm(final Model model) {
-		model.addAttribute("permitInspectionApplication", new PermitInspectionApplication());
-		model.addAttribute("constructions", constructionService.getAllActiveConstructionTypes());
-		return CITIZEN_INSPECTION_FORM;
-	}
+    @GetMapping("/citizen/create")
+    public String inspectionForm(final Model model) {
+        model.addAttribute("permitInspectionApplication", new PermitInspectionApplication());
+        model.addAttribute("constructions", constructionService.getAllActiveConstructionTypes());
+        return CITIZEN_INSPECTION_FORM;
+    }
 
-	@PostMapping("/citizen/create/{bpaApplicationNumber}")
-	public String createInspection(@PathVariable final String bpaApplicationNumber,
-			@Valid @ModelAttribute final PermitInspectionApplication permitInspectionApplication,
-			final BindingResult errors, final Model model, final HttpServletRequest request,
-			final RedirectAttributes redirectAttributes) {
+    @PostMapping("/citizen/create/{bpaApplicationNumber}")
+    public String createInspection(@PathVariable final String bpaApplicationNumber,
+            @Valid @ModelAttribute final PermitInspectionApplication permitInspectionApplication,
+            final BindingResult errors, final Model model, final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) {
 
-		if (errors.hasErrors()) {
-			model.addAttribute("permitInspectionApplication", permitInspectionApplication);
-			model.addAttribute("constructions", constructionService.getAllActiveConstructionTypes());
-			return CITIZEN_INSPECTION_FORM;
-		}
-		String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-		Boolean citizenOrBusinessUser = bpaUtils.logedInuseCitizenOrBusinessUser();
-		WorkflowBean wfBean = new WorkflowBean();
+        if (errors.hasErrors()) {
+            model.addAttribute("permitInspectionApplication", permitInspectionApplication);
+            model.addAttribute("constructions", constructionService.getAllActiveConstructionTypes());
+            return CITIZEN_INSPECTION_FORM;
+        }
+        String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
+        Boolean citizenOrBusinessUser = bpaUtils.logedInuseCitizenOrBusinessUser();
+        WorkflowBean wfBean = new WorkflowBean();
 
-		BpaApplication application = applicationService.findByApplicationNumber(bpaApplicationNumber);
-		permitInspectionApplication.setApplication(application);
+        BpaApplication application = applicationService.findByApplicationNumber(bpaApplicationNumber);
+        permitInspectionApplication.setApplication(application);
 
-		wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
+        wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
 
-		Long approvalPosition = null;
+        Long approvalPosition = null;
 
-		final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(
-				permitInspectionApplication.getInspectionApplication().getStateType(), WF_NEW_STATE, null);
-		if (wfMatrix != null)
-			approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-					bpaUtils.getBoundaryForWorkflow(permitInspectionApplication.getApplication().getSiteDetail().get(0))
-							.getId());
+        final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(
+                permitInspectionApplication.getInspectionApplication().getStateType(), WF_NEW_STATE, null);
+        if (wfMatrix != null)
+            approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
+                    bpaUtils.getBoundaryForWorkflow(permitInspectionApplication.getApplication().getSiteDetail().get(0))
+                            .getId());
 
-		if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-				&& (approvalPosition == 0 || approvalPosition == null)) {
-			model.addAttribute("noJAORSAMessage", messageSource.getMessage("msg.official.not.exist",
-					new String[] { ApplicationThreadLocals.getMunicipalityName() }, LocaleContextHolder.getLocale()));
-			return CITIZEN_INSPECTION_FORM;
-		}
-		PermitInspectionApplication permitInspectionResponse = inspectionService
-				.saveOrUpdate(permitInspectionApplication, wfBean);
+        if (citizenOrBusinessUser && workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && (approvalPosition == 0 || approvalPosition == null)) {
+            model.addAttribute("noJAORSAMessage", messageSource.getMessage("msg.official.not.exist",
+                    new String[] { ApplicationThreadLocals.getMunicipalityName() }, LocaleContextHolder.getLocale()));
+            return CITIZEN_INSPECTION_FORM;
+        }
+        PermitInspectionApplication permitInspectionResponse = inspectionService
+                .saveOrUpdate(permitInspectionApplication, wfBean);
 
-		if (citizenOrBusinessUser) {
+        if (citizenOrBusinessUser) {
 
-			if (workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
-				bpaUtils.createPortalUserinbox(permitInspectionResponse,
-						Arrays.asList(permitInspectionResponse.getApplication().getOwner().getUser(),
-								securityUtils.getCurrentUser()),
-						workFlowAction);
+            if (workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
+                bpaUtils.createPortalUserinbox(permitInspectionResponse,
+                        Arrays.asList(permitInspectionResponse.getApplication().getOwner().getUser(),
+                                securityUtils.getCurrentUser()),
+                        workFlowAction);
 
-		}
-		if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
-			wfBean.setCurrentState(WF_NEW_STATE);
+        }
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
+            wfBean.setCurrentState(WF_NEW_STATE);
 
-			bpaUtils.redirectInspectionWorkFlow(permitInspectionResponse, wfBean);
+            bpaUtils.redirectInspectionWorkFlow(permitInspectionResponse, wfBean);
 
-			List<Assignment> assignments;
-			if (null == approvalPosition)
-				assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(permitInspectionResponse
-						.getInspectionApplication().getCurrentState().getOwnerPosition().getId(), new Date());
-			else
-				assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(approvalPosition, new Date());
-			Position pos = assignments.get(0).getPosition();
-			User wfUser = assignments.get(0).getEmployee();
-			String message = messageSource.getMessage("msg.portal.forward.inspection",
-					new String[] {
-							wfUser == null ? ""
-									: wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
-							permitInspectionResponse.getInspectionApplication().getApplicationNumber() },
-					LocaleContextHolder.getLocale());
+            List<Assignment> assignments;
+            if (null == approvalPosition)
+                assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(permitInspectionResponse
+                        .getInspectionApplication().getCurrentState().getOwnerPosition().getId(), new Date());
+            else
+                assignments = bpaWorkFlowService.getAssignmentsByPositionAndDate(approvalPosition, new Date());
+            Position pos = assignments.get(0).getPosition();
+            User wfUser = assignments.get(0).getEmployee();
+            String message = messageSource.getMessage("msg.portal.forward.inspection",
+                    new String[] {
+                            wfUser == null ? ""
+                                    : wfUser.getUsername().concat("~").concat(getDesinationNameByPosition(pos)),
+                            permitInspectionResponse.getInspectionApplication().getApplicationNumber() },
+                    LocaleContextHolder.getLocale());
 
-			redirectAttributes.addFlashAttribute("message", message);
-		}
-		bpaUtils.sendSmsEmailForInspection(permitInspectionResponse.getInspectionApplication(),
-				permitInspectionResponse.getApplication());
+            redirectAttributes.addFlashAttribute("message", message);
+        }
+        bpaUtils.sendSmsEmailForInspection(permitInspectionResponse.getInspectionApplication(),
+                permitInspectionResponse.getApplication());
 
-		return "redirect:/inspection/citizen/success/"
-				+ permitInspectionResponse.getInspectionApplication().getApplicationNumber();
-	}
+        return "redirect:/inspection/citizen/success/"
+                + permitInspectionResponse.getInspectionApplication().getApplicationNumber();
+    }
 
-	@GetMapping("/citizen/success/{applicationNumber}")
-	public String success(@PathVariable final String applicationNumber, final Model model) {
-		return "citizen-inspection-success";
-	}
+    @GetMapping("/citizen/success/{applicationNumber}")
+    public String success(@PathVariable final String applicationNumber, final Model model) {
+        return "citizen-inspection-success";
+    }
 
-	protected String getDesinationNameByPosition(Position pos) {
-		return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() == null ? ""
-				: pos.getDeptDesig().getDesignation().getName();
-	}
+    protected String getDesinationNameByPosition(Position pos) {
+        return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() == null ? ""
+                : pos.getDeptDesig().getDesignation().getName();
+    }
 }

@@ -67,44 +67,44 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OccupancyNocApplication.SEQ_OCNOCAPPLICATION, sequenceName = OccupancyNocApplication.SEQ_OCNOCAPPLICATION, allocationSize = 1)
 public class OccupancyNocApplication extends AbstractAuditable {
 
-	protected static final String SEQ_OCNOCAPPLICATION = "SEQ_EGBPA_OC_NOCAPPLICATION";
-	private static final long serialVersionUID = -3889308488871083896L;
+    protected static final String SEQ_OCNOCAPPLICATION = "SEQ_EGBPA_OC_NOCAPPLICATION";
+    private static final long serialVersionUID = -3889308488871083896L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_OCNOCAPPLICATION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_OCNOCAPPLICATION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "nocapplication", nullable = false)
-	private BpaNocApplication bpaNocApplication;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nocapplication", nullable = false)
+    private BpaNocApplication bpaNocApplication;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "oc", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "oc", nullable = false)
+    private OccupancyCertificate oc;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public BpaNocApplication getBpaNocApplication() {
-		return bpaNocApplication;
-	}
+    public BpaNocApplication getBpaNocApplication() {
+        return bpaNocApplication;
+    }
 
-	public void setBpaNocApplication(BpaNocApplication bpaNocApplication) {
-		this.bpaNocApplication = bpaNocApplication;
-	}
+    public void setBpaNocApplication(BpaNocApplication bpaNocApplication) {
+        this.bpaNocApplication = bpaNocApplication;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
 }

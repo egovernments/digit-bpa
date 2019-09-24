@@ -50,11 +50,9 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.bpa.transaction.entity.PermitInspection;
 import org.egov.bpa.transaction.entity.common.DocketDetailCommon;
-import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.bpa.transaction.notice.InspectionReportFormat;
 import org.egov.bpa.transaction.notice.impl.InspectionReportFormatImpl;
 import org.egov.bpa.transaction.service.InspectionService;
-import org.egov.bpa.transaction.service.oc.PlanScrutinyChecklistCommonService;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +82,6 @@ public class ViewInspectionController {
     @Autowired
     private InspectionService inspectionService;
     @Autowired
-    private PlanScrutinyChecklistCommonService planScrutinyChecklistService;
-    @Autowired
     private CustomImplProvider specificNoticeService;
 
     @GetMapping("/view-inspection/{id}")
@@ -100,7 +96,7 @@ public class ViewInspectionController {
         model.addAttribute("message", "Inspection Saved Successfully");
         final InspectionService inspectionService = (InspectionService) specificNoticeService
                 .find(InspectionService.class, specificNoticeService.getCityDetails());
-       // inspectionService.buildDocketDetailForModifyAndViewList(inspectionObj, model);
+        // inspectionService.buildDocketDetailForModifyAndViewList(inspectionObj, model);
         inspectionService.prepareImagesForView(inspectionObj);
         model.addAttribute(PERMIT_INSPECTION, inspectionObj);
         inspectionService.buildPlanScrutinyChecklistDetails(inspectionObj);

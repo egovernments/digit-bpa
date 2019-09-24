@@ -21,45 +21,45 @@ import org.egov.pims.commons.Position;
 @SequenceGenerator(name = StakeHolderState.SEQ_STAKEHOLDER_STATE, sequenceName = StakeHolderState.SEQ_STAKEHOLDER_STATE, allocationSize = 1)
 public class StakeHolderState extends StateAware<Position> {
 
-	public static final String SEQ_STAKEHOLDER_STATE = "SEQ_STAKEHOLDER_STATE";
-	@Id
-	@GeneratedValue(generator = SEQ_STAKEHOLDER_STATE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    public static final String SEQ_STAKEHOLDER_STATE = "SEQ_STAKEHOLDER_STATE";
+    @Id
+    @GeneratedValue(generator = SEQ_STAKEHOLDER_STATE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@OneToOne
-	@JoinColumn(name = "stakeholder", nullable = false)
-	private StakeHolder stakeHolder;
+    @OneToOne
+    @JoinColumn(name = "stakeholder", nullable = false)
+    private StakeHolder stakeHolder;
 
-	@Override
-	public String getStateDetails() {
-		return String.format("Applicant Name: %s Acknowledgement Number %s Dated %s ",
-				stakeHolder.getName() == null ? "Not Specified" : stakeHolder.getName(),
-				stakeHolder.getCode() == null ? null : stakeHolder.getCode(),
-				stakeHolder.getCreateDate() == null ? DateUtils.toDefaultDateFormat(new Date())
-						: DateUtils.toDefaultDateFormat(stakeHolder.getCreateDate()));
-	}
+    @Override
+    public String getStateDetails() {
+        return String.format("Applicant Name: %s Acknowledgement Number %s Dated %s ",
+                stakeHolder.getName() == null ? "Not Specified" : stakeHolder.getName(),
+                stakeHolder.getCode() == null ? null : stakeHolder.getCode(),
+                stakeHolder.getCreateDate() == null ? DateUtils.toDefaultDateFormat(new Date())
+                        : DateUtils.toDefaultDateFormat(stakeHolder.getCreateDate()));
+    }
 
-	@Override
-	public String myLinkId() {
-		return stakeHolder.getId().toString();
-	}
+    @Override
+    public String myLinkId() {
+        return stakeHolder.getId().toString();
+    }
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	protected void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
+    }
 
-	public StakeHolder getStakeHolder() {
-		return stakeHolder;
-	}
+    public StakeHolder getStakeHolder() {
+        return stakeHolder;
+    }
 
-	public void setStakeHolder(StakeHolder stakeHolder) {
-		this.stakeHolder = stakeHolder;
-	}
+    public void setStakeHolder(StakeHolder stakeHolder) {
+        this.stakeHolder = stakeHolder;
+    }
 
 }

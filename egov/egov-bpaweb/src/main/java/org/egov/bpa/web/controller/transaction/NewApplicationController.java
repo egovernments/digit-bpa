@@ -39,6 +39,15 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -55,21 +64,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -81,7 +80,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
     @Autowired
     private GenericBillGeneratorService genericBillGeneratorService;
 
-    @RequestMapping(value = "/newApplication-newform", method = GET)
+    @GetMapping("/newApplication-newform")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
         if (request.getSession().getAttribute("cityname") != null)
@@ -100,11 +99,13 @@ public class NewApplicationController extends BpaGenericApplicationController {
         return NEWAPPLICATION_FORM;
     }
 
-    @RequestMapping(value = "/newApplication-create", method = POST)
-    public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model,
-            final BindingResult errors) {
+    @PostMapping("/newApplication-create")
+    public String createNewApplication(@Valid @ModelAttribute final BpaApplication bpaApplication,
+            final BindingResult result, final Model model, final RedirectAttributes redirectAttributes,
+            final HttpServletRequest request) {
+        if (result.hasErrors()) {
+            return loadFormData(bpaApplication, model);
+        }
         String message;
         Long userPosition = null;
         String workFlowAction = request.getParameter("workFlowAction");
@@ -113,15 +114,16 @@ public class NewApplicationController extends BpaGenericApplicationController {
             return loadFormData(bpaApplication, model);
         }
 
-        final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(), bpaApplication.getStateType(), BpaConstants.WF_NEW_STATE,bpaApplication.getApplicationType().getName());
+        final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication.getIsOneDayPermitApplication(),
+                bpaApplication.getStateType(), BpaConstants.WF_NEW_STATE, bpaApplication.getApplicationType().getName());
         if (wfmatrix != null)
-			userPosition = bpaUtils.getUserPositionIdByZone(wfmatrix.getNextDesignation(),
-					bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
+            userPosition = bpaUtils.getUserPositionIdByZone(wfmatrix.getNextDesignation(),
+                    bpaUtils.getBoundaryForWorkflow(bpaApplication.getSiteDetail().get(0)).getId());
         if (userPosition == 0 || userPosition == null) {
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             return redirectOnValidationFailure(model);
         }
-        
+
         Map<Boolean, String> shValidation = bpaApplicationValidationService
                 .checkStakeholderIsValid(bpaApplication);
         if (!shValidation.isEmpty())
@@ -134,13 +136,12 @@ public class NewApplicationController extends BpaGenericApplicationController {
                 }
             }
 
-
-    /*    if (!bpaApplicationValidationService.checkStakeholderIsValid(bpaApplication).isEmpty()) {
-            applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
-            message = bpaApplicationValidationService.getValidationMessageForBusinessResgistration(bpaApplication);
-            model.addAttribute("invalidStakeholder", message);
-            return loadFormData(bpaApplication, model);
-        }      */
+        /*
+         * if (!bpaApplicationValidationService.checkStakeholderIsValid(bpaApplication).isEmpty()) {
+         * applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication); message =
+         * bpaApplicationValidationService.getValidationMessageForBusinessResgistration(bpaApplication);
+         * model.addAttribute("invalidStakeholder", message); return loadFormData(bpaApplication, model); }
+         */
 
         List<ApplicationStakeHolder> applicationStakeHolders = new ArrayList<>();
         ApplicationStakeHolder applicationStakeHolder = new ApplicationStakeHolder();
@@ -170,19 +171,20 @@ public class NewApplicationController extends BpaGenericApplicationController {
             bpaUtils.loadBoundary(bpaApplicationRes);
             message = messageSource.getMessage("msg.update.forward.registration", new String[] {
                     pos != null && pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() != null
-                            ? pos.getDeptDesig().getDesignation().getName() : "",
+                            ? pos.getDeptDesig().getDesignation().getName()
+                            : "",
                     bpaApplicationRes.getApplicationNumber() }, LocaleContextHolder.getLocale());
             model.addAttribute(MESSAGE, message);
-            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes,null,null);
+            bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
             return BPA_APPLICATION_RESULT;
         }
-        bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes,null,null);
+        bpaSmsAndEmailService.sendSMSAndEmail(bpaApplicationRes, null, null);
         return genericBillGeneratorService.generateBillAndRedirectToCollection(bpaApplicationRes, model);
     }
 
     private String redirectOnValidationFailure(final Model model) {
-        model.addAttribute("noJAORSAMessage", messageSource.getMessage("msg.official.not.exist", new String[]{
-                ApplicationThreadLocals.getMunicipalityName()}, LocaleContextHolder.getLocale()));
+        model.addAttribute("noJAORSAMessage", messageSource.getMessage("msg.official.not.exist", new String[] {
+                ApplicationThreadLocals.getMunicipalityName() }, LocaleContextHolder.getLocale()));
         model.addAttribute("mode", "new");
         return NEWAPPLICATION_FORM;
     }

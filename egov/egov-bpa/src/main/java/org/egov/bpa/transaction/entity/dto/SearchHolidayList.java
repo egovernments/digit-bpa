@@ -45,52 +45,52 @@ import org.egov.bpa.transaction.entity.enums.HolidayType;
 import org.hibernate.validator.constraints.SafeHtml;
 
 public class SearchHolidayList {
-	private Long id;
-	private Date holidayDate;
-	private HolidayType holidayType;
-	@SafeHtml
-	private String description;
-	@SafeHtml
-	private String year;
+    private Long id;
+    private Date holidayDate;
+    private HolidayType holidayType;
+    @SafeHtml
+    private String description;
+    @SafeHtml
+    private String year;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Date getHolidayDate() {
-		return holidayDate;
-	}
+    public Date getHolidayDate() {
+        return holidayDate;
+    }
 
-	public void setHolidayDate(Date holidayDate) {
-		this.holidayDate = holidayDate;
-	}
+    public void setHolidayDate(Date holidayDate) {
+        this.holidayDate = holidayDate;
+    }
 
-	public HolidayType getHolidayType() {
-		return holidayType;
-	}
+    public HolidayType getHolidayType() {
+        return holidayType;
+    }
 
-	public void setHolidayType(HolidayType holidayType) {
-		this.holidayType = holidayType;
-	}
+    public void setHolidayType(HolidayType holidayType) {
+        this.holidayType = holidayType;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getYear() {
-		return year;
-	}
+    public String getYear() {
+        return year;
+    }
 
-	public void setYear(String year) {
-		this.year = year;
-	}
+    public void setYear(String year) {
+        this.year = year;
+    }
 
 }

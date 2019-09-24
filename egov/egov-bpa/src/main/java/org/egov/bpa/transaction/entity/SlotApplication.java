@@ -39,76 +39,86 @@
  */
 package org.egov.bpa.transaction.entity;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "egbpa_slotapplication")
 @SequenceGenerator(name = SlotApplication.SEQ, sequenceName = SlotApplication.SEQ, allocationSize = 1)
 public class SlotApplication extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ = "seq_egbpa_slotapplication";
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ = "seq_egbpa_slotapplication";
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "application", nullable = false)
-	private BpaApplication application;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
 
-	@Enumerated(EnumType.STRING)
-	@NotNull
-	private ScheduleAppointmentType scheduleAppointmentType;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private ScheduleAppointmentType scheduleAppointmentType;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "slotdetailid", nullable = false)
-	private SlotDetail slotDetail;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "slotdetailid", nullable = false)
+    private SlotDetail slotDetail;
 
-	private Boolean isActive;
+    private Boolean isActive;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public void setApplication(BpaApplication application) {
-		this.application = application;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
 
-	public ScheduleAppointmentType getScheduleAppointmentType() {
-		return scheduleAppointmentType;
-	}
+    public ScheduleAppointmentType getScheduleAppointmentType() {
+        return scheduleAppointmentType;
+    }
 
-	public void setScheduleAppointmentType(ScheduleAppointmentType scheduleAppointmentType) {
-		this.scheduleAppointmentType = scheduleAppointmentType;
-	}
+    public void setScheduleAppointmentType(ScheduleAppointmentType scheduleAppointmentType) {
+        this.scheduleAppointmentType = scheduleAppointmentType;
+    }
 
-	public SlotDetail getSlotDetail() {
-		return slotDetail;
-	}
+    public SlotDetail getSlotDetail() {
+        return slotDetail;
+    }
 
-	public void setSlotDetail(SlotDetail slotDetail) {
-		this.slotDetail = slotDetail;
-	}
+    public void setSlotDetail(SlotDetail slotDetail) {
+        this.slotDetail = slotDetail;
+    }
 
-	public Boolean getActive() {
-		return isActive;
-	}
+    public Boolean getActive() {
+        return isActive;
+    }
 
-	public void setActive(Boolean active) {
-		isActive = active;
-	}
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 }

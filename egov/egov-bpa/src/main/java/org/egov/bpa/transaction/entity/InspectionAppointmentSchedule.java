@@ -67,43 +67,43 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = InspectionAppointmentSchedule.SEQ_EGBPA_APPOINTMENT_SCHEDULE, sequenceName = InspectionAppointmentSchedule.SEQ_EGBPA_APPOINTMENT_SCHEDULE, allocationSize = 1)
 public class InspectionAppointmentSchedule extends AbstractAuditable {
 
-	public static final String SEQ_EGBPA_APPOINTMENT_SCHEDULE = "SEQ_EGBPA_INSPECTION_APPOINTMENT_SCHEDULE";
-	private static final long serialVersionUID = -1344489436357479689L;
+    public static final String SEQ_EGBPA_APPOINTMENT_SCHEDULE = "SEQ_EGBPA_INSPECTION_APPOINTMENT_SCHEDULE";
+    private static final long serialVersionUID = -1344489436357479689L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_APPOINTMENT_SCHEDULE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_APPOINTMENT_SCHEDULE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "appointmentScheduleCommon", nullable = false)
-	private AppointmentScheduleCommon appointmentScheduleCommon;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "appointmentScheduleCommon", nullable = false)
+    private AppointmentScheduleCommon appointmentScheduleCommon;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "inspectionApplication", nullable = false)
-	private InspectionApplication inspectionApplication;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inspectionApplication", nullable = false)
+    private InspectionApplication inspectionApplication;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public AppointmentScheduleCommon getAppointmentScheduleCommon() {
-		return appointmentScheduleCommon;
-	}
+    public AppointmentScheduleCommon getAppointmentScheduleCommon() {
+        return appointmentScheduleCommon;
+    }
 
-	public void setAppointmentScheduleCommon(AppointmentScheduleCommon appointmentScheduleCommon) {
-		this.appointmentScheduleCommon = appointmentScheduleCommon;
-	}
+    public void setAppointmentScheduleCommon(AppointmentScheduleCommon appointmentScheduleCommon) {
+        this.appointmentScheduleCommon = appointmentScheduleCommon;
+    }
 
-	public InspectionApplication getInspectionApplication() {
-		return inspectionApplication;
-	}
+    public InspectionApplication getInspectionApplication() {
+        return inspectionApplication;
+    }
 
-	public void setInspectionApplication(InspectionApplication inspectionApplication) {
-		this.inspectionApplication = inspectionApplication;
-	}
+    public void setInspectionApplication(InspectionApplication inspectionApplication) {
+        this.inspectionApplication = inspectionApplication;
+    }
 }

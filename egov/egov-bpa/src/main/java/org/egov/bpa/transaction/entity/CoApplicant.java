@@ -68,190 +68,190 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = CoApplicant.SEQ_APPLICANT, sequenceName = CoApplicant.SEQ_APPLICANT, allocationSize = 1)
 public class CoApplicant extends AbstractAuditable {
 
-	private static final long serialVersionUID = -1097154739634712968L;
-	public static final String SEQ_APPLICANT = "SEQ_EGBPA_COAPPLICANT";
-	@Id
-	@GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = -1097154739634712968L;
+    public static final String SEQ_APPLICANT = "SEQ_EGBPA_COAPPLICANT";
+    @Id
+    @GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Enumerated(EnumType.STRING)
-	private GenderTitle title;
+    @Enumerated(EnumType.STRING)
+    private GenderTitle title;
 
-	@SafeHtml
-	@Length(min = 2, max = 100)
-	private String name;
+    @SafeHtml
+    @Length(min = 2, max = 100)
+    private String name;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String fatherorHusbandName;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String fatherorHusbandName;
 
-	private Date dateofBirth;
+    private Date dateofBirth;
 
-	@Enumerated(EnumType.STRING)
-	private Gender gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-	@Pattern(regexp = Constants.EMAIL)
-	@SafeHtml
-	@Length(max = 128)
-	private String emailId;
-	
-	@Pattern(regexp = Constants.MOBILE_NUM)
-	@SafeHtml
-	@Length(max = 15)
-	private String mobileNumber;
-	
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String pinCode;
-	
-	@SafeHtml
-	@Length(min = 1, max = 1024)
-	private String address;
-	
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String district;
-	
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String taluk;
-	
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String area;
-	
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String city;
-	
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String state;
+    @Pattern(regexp = Constants.EMAIL)
+    @SafeHtml
+    @Length(max = 128)
+    private String emailId;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Pattern(regexp = Constants.MOBILE_NUM)
+    @SafeHtml
+    @Length(max = 15)
+    private String mobileNumber;
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String pinCode;
 
-	public GenderTitle getTitle() {
-		return title;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 1024)
+    private String address;
 
-	public void setTitle(GenderTitle title) {
-		this.title = title;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String district;
 
-	public String getName() {
-		return name;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String taluk;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String area;
 
-	public String getFatherorHusbandName() {
-		return fatherorHusbandName;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String city;
 
-	public void setFatherorHusbandName(String fatherorHusbandName) {
-		this.fatherorHusbandName = fatherorHusbandName;
-	}
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String state;
 
-	public Date getDateofBirth() {
-		return dateofBirth;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setDateofBirth(Date dateofBirth) {
-		this.dateofBirth = dateofBirth;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public Gender getGender() {
-		return gender;
-	}
+    public GenderTitle getTitle() {
+        return title;
+    }
 
-	public void setGender(Gender gender) {
-		this.gender = gender;
-	}
+    public void setTitle(GenderTitle title) {
+        this.title = title;
+    }
 
-	public String getEmailId() {
-		return emailId;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getMobileNumber() {
-		return mobileNumber;
-	}
+    public String getFatherorHusbandName() {
+        return fatherorHusbandName;
+    }
 
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
-	}
+    public void setFatherorHusbandName(String fatherorHusbandName) {
+        this.fatherorHusbandName = fatherorHusbandName;
+    }
 
-	public String getPinCode() {
-		return pinCode;
-	}
+    public Date getDateofBirth() {
+        return dateofBirth;
+    }
 
-	public void setPinCode(String pinCode) {
-		this.pinCode = pinCode;
-	}
+    public void setDateofBirth(Date dateofBirth) {
+        this.dateofBirth = dateofBirth;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public Gender getGender() {
+        return gender;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
 
-	public String getDistrict() {
-		return district;
-	}
+    public String getEmailId() {
+        return emailId;
+    }
 
-	public void setDistrict(String district) {
-		this.district = district;
-	}
+    public void setEmailId(String emailId) {
+        this.emailId = emailId;
+    }
 
-	public String getTaluk() {
-		return taluk;
-	}
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
 
-	public void setTaluk(String taluk) {
-		this.taluk = taluk;
-	}
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
 
-	public String getArea() {
-		return area;
-	}
+    public String getPinCode() {
+        return pinCode;
+    }
 
-	public void setArea(String area) {
-		this.area = area;
-	}
+    public void setPinCode(String pinCode) {
+        this.pinCode = pinCode;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public String getDistrict() {
+        return district;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setDistrict(String district) {
+        this.district = district;
+    }
 
-	public String showMobileNumber() {
-		return StringUtils.isBlank(mobileNumber) ? "" : mobileNumber.replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
-	}
+    public String getTaluk() {
+        return taluk;
+    }
+
+    public void setTaluk(String taluk) {
+        this.taluk = taluk;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String showMobileNumber() {
+        return StringUtils.isBlank(mobileNumber) ? "" : mobileNumber.replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+    }
 
 }

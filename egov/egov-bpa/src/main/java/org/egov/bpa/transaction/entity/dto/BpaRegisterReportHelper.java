@@ -7,304 +7,306 @@ import java.util.Objects;
 import org.hibernate.validator.constraints.SafeHtml;
 
 public class BpaRegisterReportHelper {
-	private Long id;
-	@SafeHtml
-	private String applicationNumber;
-	@SafeHtml
-	private String applicationType;
-	@SafeHtml
-	private String permitType;
-	private Date dateOfAdmission;
-	@SafeHtml
-	private String applicantName;
-	@SafeHtml
-	private String address;
-	@SafeHtml
-	private String surveyNumber;
-	@SafeHtml
-	private String village;
-	@SafeHtml
-	private String revenueWard;
-	@SafeHtml
-	private String electionWard;
-	@SafeHtml
-	private String natureOfOccupancy;
-	@SafeHtml
-	private BigDecimal totalFloorArea = BigDecimal.ZERO;
-	private Integer numberOfFloors;
-	private BigDecimal far;
-	private BigDecimal applicationFee;
-	private Date docVerificationDate;
-	private Date fieldVerificationDate;
-	@SafeHtml
-	private String nocDetails;
-	@SafeHtml
-	private String buildingPermitNo;
-	private BigDecimal permitFee;
-	private BigDecimal additionalFee;
-	private BigDecimal otherFee;
-	@SafeHtml
-	private String rejectionReason;
-	private Date finalApprovalDate;
-	@SafeHtml
-	private String apprvd_rejected_by;
-	@SafeHtml
-	private String serviceType;
-	private BigDecimal shelterFund;
-	private BigDecimal labourcess;
-	private BigDecimal developmentPermitFees; 
-	
-	public Long getId() {
-		return id;
-	}
+    private Long id;
+    @SafeHtml
+    private String applicationNumber;
+    @SafeHtml
+    private String applicationType;
+    @SafeHtml
+    private String permitType;
+    private Date dateOfAdmission;
+    @SafeHtml
+    private String applicantName;
+    @SafeHtml
+    private String address;
+    @SafeHtml
+    private String surveyNumber;
+    @SafeHtml
+    private String village;
+    @SafeHtml
+    private String revenueWard;
+    @SafeHtml
+    private String electionWard;
+    @SafeHtml
+    private String natureOfOccupancy;
+    @SafeHtml
+    private BigDecimal totalFloorArea = BigDecimal.ZERO;
+    private Integer numberOfFloors;
+    private BigDecimal far;
+    private BigDecimal applicationFee;
+    private Date docVerificationDate;
+    private Date fieldVerificationDate;
+    @SafeHtml
+    private String nocDetails;
+    @SafeHtml
+    private String buildingPermitNo;
+    private BigDecimal permitFee;
+    private BigDecimal additionalFee;
+    private BigDecimal otherFee;
+    @SafeHtml
+    private String rejectionReason;
+    private Date finalApprovalDate;
+    @SafeHtml
+    private String apprvd_rejected_by;
+    @SafeHtml
+    private String serviceType;
+    private BigDecimal shelterFund;
+    private BigDecimal labourcess;
+    private BigDecimal developmentPermitFees;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getApplicationNumber() {
-		return applicationNumber;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setApplicationNumber(String applicationNumber) {
-		this.applicationNumber = applicationNumber;
-	}
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
 
-	public String getApplicationType() {
-		return applicationType;
-	}
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
-	public void setApplicationType(String applicationType) {
-		this.applicationType = applicationType;
-	}
+    public String getApplicationType() {
+        return applicationType;
+    }
 
-	public String getPermitType() {
-		return permitType;
-	}
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
 
-	public void setPermitType(String permitType) {
-		this.permitType = permitType;
-	}
+    public String getPermitType() {
+        return permitType;
+    }
 
-	public Date getDateOfAdmission() {
-		return dateOfAdmission;
-	}
+    public void setPermitType(String permitType) {
+        this.permitType = permitType;
+    }
 
-	public void setDateOfAdmission(Date dateOfAdmission) {
-		this.dateOfAdmission = dateOfAdmission;
-	}
+    public Date getDateOfAdmission() {
+        return dateOfAdmission;
+    }
 
-	public String getApplicantName() {
-		return applicantName;
-	}
+    public void setDateOfAdmission(Date dateOfAdmission) {
+        this.dateOfAdmission = dateOfAdmission;
+    }
 
-	public void setApplicantName(String applicantName) {
-		this.applicantName = applicantName;
-	}
+    public String getApplicantName() {
+        return applicantName;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public String getSurveyNumber() {
-		return surveyNumber;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setSurveyNumber(String surveyNumber) {
-		this.surveyNumber = surveyNumber;
-	}
+    public String getSurveyNumber() {
+        return surveyNumber;
+    }
 
-	public String getVillage() {
-		return village;
-	}
+    public void setSurveyNumber(String surveyNumber) {
+        this.surveyNumber = surveyNumber;
+    }
 
-	public void setVillage(String village) {
-		this.village = village;
-	}
+    public String getVillage() {
+        return village;
+    }
 
-	public String getRevenueWard() {
-		return revenueWard;
-	}
+    public void setVillage(String village) {
+        this.village = village;
+    }
 
-	public void setRevenueWard(String revenueWard) {
-		this.revenueWard = revenueWard;
-	}
+    public String getRevenueWard() {
+        return revenueWard;
+    }
 
-	public String getElectionWard() {
-		return electionWard;
-	}
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
 
-	public void setElectionWard(String electionWard) {
-		this.electionWard = electionWard;
-	}
+    public String getElectionWard() {
+        return electionWard;
+    }
 
-	public String getNatureOfOccupancy() {
-		return natureOfOccupancy;
-	}
+    public void setElectionWard(String electionWard) {
+        this.electionWard = electionWard;
+    }
 
-	public void setNatureOfOccupancy(String natureOfOccupancy) {
-		this.natureOfOccupancy = natureOfOccupancy;
-	}
+    public String getNatureOfOccupancy() {
+        return natureOfOccupancy;
+    }
 
-	public BigDecimal getTotalFloorArea() {
-		return totalFloorArea;
-	}
+    public void setNatureOfOccupancy(String natureOfOccupancy) {
+        this.natureOfOccupancy = natureOfOccupancy;
+    }
 
-	public void setTotalFloorArea(BigDecimal totalFloorArea) {
-		this.totalFloorArea = totalFloorArea;
-	}
+    public BigDecimal getTotalFloorArea() {
+        return totalFloorArea;
+    }
 
-	public Integer getNumberOfFloors() {
-		return numberOfFloors;
-	}
+    public void setTotalFloorArea(BigDecimal totalFloorArea) {
+        this.totalFloorArea = totalFloorArea;
+    }
 
-	public void setNumberOfFloors(Integer numberOfFloors) {
-		this.numberOfFloors = numberOfFloors;
-	}
+    public Integer getNumberOfFloors() {
+        return numberOfFloors;
+    }
 
-	public BigDecimal getFar() {
-		return far;
-	}
+    public void setNumberOfFloors(Integer numberOfFloors) {
+        this.numberOfFloors = numberOfFloors;
+    }
 
-	public void setFar(BigDecimal far) {
-		this.far = far;
-	}
+    public BigDecimal getFar() {
+        return far;
+    }
 
-	public BigDecimal getApplicationFee() {
-		return applicationFee;
-	}
+    public void setFar(BigDecimal far) {
+        this.far = far;
+    }
 
-	public void setApplicationFee(BigDecimal applicationFee) {
-		this.applicationFee = applicationFee;
-	}
+    public BigDecimal getApplicationFee() {
+        return applicationFee;
+    }
 
-	public Date getDocVerificationDate() {
-		return docVerificationDate;
-	}
+    public void setApplicationFee(BigDecimal applicationFee) {
+        this.applicationFee = applicationFee;
+    }
 
-	public void setDocVerificationDate(Date docVerificationDate) {
-		this.docVerificationDate = docVerificationDate;
-	}
+    public Date getDocVerificationDate() {
+        return docVerificationDate;
+    }
 
-	public Date getFieldVerificationDate() {
-		return fieldVerificationDate;
-	}
+    public void setDocVerificationDate(Date docVerificationDate) {
+        this.docVerificationDate = docVerificationDate;
+    }
 
-	public void setFieldVerificationDate(Date fieldVerificationDate) {
-		this.fieldVerificationDate = fieldVerificationDate;
-	}
+    public Date getFieldVerificationDate() {
+        return fieldVerificationDate;
+    }
 
-	public String getNocDetails() {
-		return nocDetails;
-	}
+    public void setFieldVerificationDate(Date fieldVerificationDate) {
+        this.fieldVerificationDate = fieldVerificationDate;
+    }
 
-	public void setNocDetails(String nocDetails) {
-		this.nocDetails = nocDetails;
-	}
+    public String getNocDetails() {
+        return nocDetails;
+    }
 
-	public String getBuildingPermitNo() {
-		return buildingPermitNo;
-	}
+    public void setNocDetails(String nocDetails) {
+        this.nocDetails = nocDetails;
+    }
 
-	public void setBuildingPermitNo(String buildingPermitNo) {
-		this.buildingPermitNo = buildingPermitNo;
-	}
+    public String getBuildingPermitNo() {
+        return buildingPermitNo;
+    }
 
-	public BigDecimal getPermitFee() {
-		return permitFee;
-	}
+    public void setBuildingPermitNo(String buildingPermitNo) {
+        this.buildingPermitNo = buildingPermitNo;
+    }
 
-	public void setPermitFee(BigDecimal permitFee) {
-		this.permitFee = permitFee;
-	}
+    public BigDecimal getPermitFee() {
+        return permitFee;
+    }
 
-	public BigDecimal getAdditionalFee() {
-		return additionalFee;
-	}
+    public void setPermitFee(BigDecimal permitFee) {
+        this.permitFee = permitFee;
+    }
 
-	public void setAdditionalFee(BigDecimal additionalFee) {
-		this.additionalFee = additionalFee;
-	}
+    public BigDecimal getAdditionalFee() {
+        return additionalFee;
+    }
 
-	public BigDecimal getOtherFee() {
-		return otherFee;
-	}
+    public void setAdditionalFee(BigDecimal additionalFee) {
+        this.additionalFee = additionalFee;
+    }
 
-	public void setOtherFee(BigDecimal otherFee) {
-		this.otherFee = otherFee;
-	}
+    public BigDecimal getOtherFee() {
+        return otherFee;
+    }
 
-	public String getRejectionReason() {
-		return rejectionReason;
-	}
+    public void setOtherFee(BigDecimal otherFee) {
+        this.otherFee = otherFee;
+    }
 
-	public void setRejectionReason(String rejectionReason) {
-		this.rejectionReason = rejectionReason;
-	}
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
 
-	public Date getFinalApprovalDate() {
-		return finalApprovalDate;
-	}
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
 
-	public void setFinalApprovalDate(Date finalApprovalDate) {
-		this.finalApprovalDate = finalApprovalDate;
-	}
+    public Date getFinalApprovalDate() {
+        return finalApprovalDate;
+    }
 
-	public String getApprvd_rejected_by() {
-		return apprvd_rejected_by;
-	}
+    public void setFinalApprovalDate(Date finalApprovalDate) {
+        this.finalApprovalDate = finalApprovalDate;
+    }
 
-	public void setApprvd_rejected_by(String apprvd_rejected_by) {
-		this.apprvd_rejected_by = apprvd_rejected_by;
-	}
+    public String getApprvd_rejected_by() {
+        return apprvd_rejected_by;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public void setApprvd_rejected_by(String apprvd_rejected_by) {
+        this.apprvd_rejected_by = apprvd_rejected_by;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public BigDecimal getShelterFund() {
-		return shelterFund;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public void setShelterFund(BigDecimal shelterFund) {
-		this.shelterFund = shelterFund;
-	}
+    public BigDecimal getShelterFund() {
+        return shelterFund;
+    }
 
-	public BigDecimal getLabourcess() {
-		return labourcess;
-	}
+    public void setShelterFund(BigDecimal shelterFund) {
+        this.shelterFund = shelterFund;
+    }
 
-	public void setLabourcess(BigDecimal labourcess) {
-		this.labourcess = labourcess;
-	}
+    public BigDecimal getLabourcess() {
+        return labourcess;
+    }
 
-	public BigDecimal getDevelopmentPermitFees() {
-		return developmentPermitFees;
-	}
+    public void setLabourcess(BigDecimal labourcess) {
+        this.labourcess = labourcess;
+    }
 
-	public void setDevelopmentPermitFees(BigDecimal developmentPermitFees) {
-		this.developmentPermitFees = developmentPermitFees;
-	}
+    public BigDecimal getDevelopmentPermitFees() {
+        return developmentPermitFees;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof BpaRegisterReportHelper)) return false;
-		BpaRegisterReportHelper that = (BpaRegisterReportHelper) o;
-		return Objects.equals(getId(), that.getId()) &&
-			   Objects.equals(getApplicationNumber(), that.getApplicationNumber());
-	}
+    public void setDevelopmentPermitFees(BigDecimal developmentPermitFees) {
+        this.developmentPermitFees = developmentPermitFees;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(getId(), getApplicationNumber());
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof BpaRegisterReportHelper))
+            return false;
+        BpaRegisterReportHelper that = (BpaRegisterReportHelper) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getApplicationNumber(), that.getApplicationNumber());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getApplicationNumber());
+    }
 }

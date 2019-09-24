@@ -67,117 +67,117 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Table(name = "EGBPA_OC_EXISTING_BUILDING")
 @SequenceGenerator(name = OCExistingBuilding.SEQ_EXISTING_BUILDING, sequenceName = OCExistingBuilding.SEQ_EXISTING_BUILDING, allocationSize = 1)
 public class OCExistingBuilding extends AbstractAuditable {
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_EXISTING_BUILDING = "SEQ_EGBPA_OC_EXISTING_BUILDING";
-	@Id
-	@GeneratedValue(generator = SEQ_EXISTING_BUILDING, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_EXISTING_BUILDING = "SEQ_EGBPA_OC_EXISTING_BUILDING";
+    @Id
+    @GeneratedValue(generator = SEQ_EXISTING_BUILDING, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@Size(min = 1, max = 50)
-	private String name;
+    @SafeHtml
+    @Size(min = 1, max = 50)
+    private String name;
 
-	@PositiveOrZero
-	private Integer buildingNumber;
+    @PositiveOrZero
+    private Integer buildingNumber;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "oc", nullable = false)
-	private OccupancyCertificate oc;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "oc", nullable = false)
+    private OccupancyCertificate oc;
 
-	@PositiveOrZero
-	private BigDecimal totalPlinthArea;
+    @PositiveOrZero
+    private BigDecimal totalPlinthArea;
 
-	@Valid
-	@OneToMany(mappedBy = "existingBuildingDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy("orderOfFloor")
-	private List<OCExistingBuildingFloor> existingBuildingFloorDetails = new ArrayList<>(0);
+    @Valid
+    @OneToMany(mappedBy = "existingBuildingDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("orderOfFloor")
+    private List<OCExistingBuildingFloor> existingBuildingFloorDetails = new ArrayList<>(0);
 
-	@Valid
-	private transient List<OCExistingBuildingFloor> existingBuildingFloorDetailsUpdate = new ArrayList<>(0);
+    @Valid
+    private transient List<OCExistingBuildingFloor> existingBuildingFloorDetailsUpdate = new ArrayList<>(0);
 
-	@Valid
-	private transient List<OCExistingBuildingFloor> existingBldgFloorDetailsFromEdcr = new ArrayList<>(0);
+    @Valid
+    private transient List<OCExistingBuildingFloor> existingBldgFloorDetailsFromEdcr = new ArrayList<>(0);
 
-	private transient Long[] deletedFloorIds;
+    private transient Long[] deletedFloorIds;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Integer getBuildingNumber() {
-		return buildingNumber;
-	}
+    public Integer getBuildingNumber() {
+        return buildingNumber;
+    }
 
-	public void setBuildingNumber(Integer buildingNumber) {
-		this.buildingNumber = buildingNumber;
-	}
+    public void setBuildingNumber(Integer buildingNumber) {
+        this.buildingNumber = buildingNumber;
+    }
 
-	public OccupancyCertificate getOc() {
-		return oc;
-	}
+    public OccupancyCertificate getOc() {
+        return oc;
+    }
 
-	public void setOc(OccupancyCertificate oc) {
-		this.oc = oc;
-	}
+    public void setOc(OccupancyCertificate oc) {
+        this.oc = oc;
+    }
 
-	public BigDecimal getTotalPlinthArea() {
-		return totalPlinthArea;
-	}
+    public BigDecimal getTotalPlinthArea() {
+        return totalPlinthArea;
+    }
 
-	public void setTotalPlinthArea(BigDecimal totalPlinthArea) {
-		this.totalPlinthArea = totalPlinthArea;
-	}
+    public void setTotalPlinthArea(BigDecimal totalPlinthArea) {
+        this.totalPlinthArea = totalPlinthArea;
+    }
 
-	public List<OCExistingBuildingFloor> getExistingBuildingFloorDetails() {
-		return existingBuildingFloorDetails;
-	}
+    public List<OCExistingBuildingFloor> getExistingBuildingFloorDetails() {
+        return existingBuildingFloorDetails;
+    }
 
-	public void setExistingBuildingFloorDetails(List<OCExistingBuildingFloor> existingBuildingFloorDetails) {
-		this.existingBuildingFloorDetails = existingBuildingFloorDetails;
-	}
+    public void setExistingBuildingFloorDetails(List<OCExistingBuildingFloor> existingBuildingFloorDetails) {
+        this.existingBuildingFloorDetails = existingBuildingFloorDetails;
+    }
 
-	public List<OCExistingBuildingFloor> getExistingBuildingFloorDetailsUpdate() {
-		return existingBuildingFloorDetailsUpdate;
-	}
+    public List<OCExistingBuildingFloor> getExistingBuildingFloorDetailsUpdate() {
+        return existingBuildingFloorDetailsUpdate;
+    }
 
-	public void setExistingBuildingFloorDetailsUpdate(
-			List<OCExistingBuildingFloor> existingBuildingFloorDetailsUpdate) {
-		this.existingBuildingFloorDetailsUpdate = existingBuildingFloorDetailsUpdate;
-	}
+    public void setExistingBuildingFloorDetailsUpdate(
+            List<OCExistingBuildingFloor> existingBuildingFloorDetailsUpdate) {
+        this.existingBuildingFloorDetailsUpdate = existingBuildingFloorDetailsUpdate;
+    }
 
-	public List<OCExistingBuildingFloor> getExistingBldgFloorDetailsFromEdcr() {
-		return existingBldgFloorDetailsFromEdcr;
-	}
+    public List<OCExistingBuildingFloor> getExistingBldgFloorDetailsFromEdcr() {
+        return existingBldgFloorDetailsFromEdcr;
+    }
 
-	public void setExistingBldgFloorDetailsFromEdcr(List<OCExistingBuildingFloor> existingBldgFloorDetailsFromEdcr) {
-		this.existingBldgFloorDetailsFromEdcr = existingBldgFloorDetailsFromEdcr;
-	}
+    public void setExistingBldgFloorDetailsFromEdcr(List<OCExistingBuildingFloor> existingBldgFloorDetailsFromEdcr) {
+        this.existingBldgFloorDetailsFromEdcr = existingBldgFloorDetailsFromEdcr;
+    }
 
-	public Long[] getDeletedFloorIds() {
-		return deletedFloorIds;
-	}
+    public Long[] getDeletedFloorIds() {
+        return deletedFloorIds;
+    }
 
-	public void setDeletedFloorIds(Long[] deletedFloorIds) {
-		this.deletedFloorIds = deletedFloorIds;
-	}
+    public void setDeletedFloorIds(Long[] deletedFloorIds) {
+        this.deletedFloorIds = deletedFloorIds;
+    }
 
-	public void delete(final List<OCExistingBuildingFloor> existingBuildingFloorDetails) {
-		if (existingBuildingFloorDetails != null)
-			this.existingBuildingFloorDetails.removeAll(existingBuildingFloorDetails);
-	}
+    public void delete(final List<OCExistingBuildingFloor> existingBuildingFloorDetails) {
+        if (existingBuildingFloorDetails != null)
+            this.existingBuildingFloorDetails.removeAll(existingBuildingFloorDetails);
+    }
 
 }

@@ -80,457 +80,457 @@ import org.hibernate.validator.constraints.SafeHtml;
 @Unique(fields = { "code", "coaEnrolmentNumber", "tinNumber" }, enableDfltMsg = true)
 public class StakeHolder extends User {
 
-	private static final long serialVersionUID = 3078684328383202788L;
+    private static final long serialVersionUID = 3078684328383202788L;
 
-	@Valid
-	@OneToMany(mappedBy = "stakeHolder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>(0);
+    @Valid
+    @OneToMany(mappedBy = "stakeHolder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>(0);
 
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "stakeholdertype")
-	private StakeHolderType stakeHolderType;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stakeholdertype")
+    private StakeHolderType stakeHolderType;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	@Audited
-	private String code;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    @Audited
+    private String code;
 
-	@SafeHtml
-	@Length(min = 1, max = 64)
-	@Audited
-	private String licenceNumber;
+    @SafeHtml
+    @Length(min = 1, max = 64)
+    @Audited
+    private String licenceNumber;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date buildingLicenceIssueDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date buildingLicenceIssueDate;
 
-	@Enumerated(EnumType.ORDINAL)
-	private Source source;
+    @Enumerated(EnumType.ORDINAL)
+    private Source source;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date buildingLicenceExpiryDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date buildingLicenceExpiryDate;
 
-	@SafeHtml
-	@Length(min = 1, max = 64)
-	private String coaEnrolmentNumber;
+    @SafeHtml
+    @Length(min = 1, max = 64)
+    private String coaEnrolmentNumber;
 
-	@Temporal(value = TemporalType.DATE)
-	private Date coaEnrolmentDueDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date coaEnrolmentDueDate;
 
-	private Boolean isEnrolWithLocalBody;
+    private Boolean isEnrolWithLocalBody;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String organizationName;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String organizationName;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String organizationAddress;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String organizationAddress;
 
-	@SafeHtml
-	@Length(min = 1, max = 64)
-	private String organizationUrl;
+    @SafeHtml
+    @Length(min = 1, max = 64)
+    private String organizationUrl;
 
-	@SafeHtml
-	@Length(min = 1, max = 15)
-	private String organizationMobNo;
+    @SafeHtml
+    @Length(min = 1, max = 15)
+    private String organizationMobNo;
 
-	private Boolean isOnbehalfOfOrganization;
+    private Boolean isOnbehalfOfOrganization;
 
-	@SafeHtml
-	@Length(max = 11)
-	private String tinNumber;
+    @SafeHtml
+    @Length(max = 11)
+    private String tinNumber;
 
-	@SafeHtml
-	@Length(max = 256)
-	private String contactPerson;
+    @SafeHtml
+    @Length(max = 256)
+    private String contactPerson;
 
-	@SafeHtml
-	@Length(max = 50)
-	private String designation;
+    @SafeHtml
+    @Length(max = 50)
+    private String designation;
 
-	@SafeHtml
-	@Length(max = 64)
-	private String cinNumber;
+    @SafeHtml
+    @Length(max = 64)
+    private String cinNumber;
 
-	@SafeHtml
-	@Audited
-	private String comments;
+    @SafeHtml
+    @Audited
+    private String comments;
 
-	@Enumerated(EnumType.STRING)
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-	private StakeHolderStatus status;
+    @Enumerated(EnumType.STRING)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    private StakeHolderStatus status;
 
-	private Boolean isAddressSame;
+    private Boolean isAddressSame;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "createdUser")
-	private User createdUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "createdUser")
+    private User createdUser;
 
-	private Date createDate;
+    private Date createDate;
 
-	@Audited
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "lastUpdatedUser")
-	private User lastUpdatedUser;
+    @Audited
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lastUpdatedUser")
+    private User lastUpdatedUser;
 
-	@Audited
-	private Date lastUpdatedDate;
+    @Audited
+    private Date lastUpdatedDate;
 
-	@PositiveOrZero
-	private Integer noOfTimesRejected;
+    @PositiveOrZero
+    private Integer noOfTimesRejected;
 
-	@PositiveOrZero
-	private Integer noOfTimesBlocked;
+    @PositiveOrZero
+    private Integer noOfTimesBlocked;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "demand")
-	private EgDemand demand;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "demand")
+    private EgDemand demand;
 
-	@Valid
-	private transient CorrespondenceAddress correspondenceAddress = new CorrespondenceAddress();
+    @Valid
+    private transient CorrespondenceAddress correspondenceAddress = new CorrespondenceAddress();
 
-	@Valid
-	private transient PermanentAddress permanentAddress = new PermanentAddress();
+    @Valid
+    private transient PermanentAddress permanentAddress = new PermanentAddress();
 
-	private transient List<CheckListDetail> checkListDocuments = new ArrayList<>(0);
+    private transient List<CheckListDetail> checkListDocuments = new ArrayList<>(0);
 
-	private transient String activationCode;
+    private transient String activationCode;
 
-	private transient Long approvalDepartment;
+    private transient Long approvalDepartment;
 
-	private transient Long approvalDesignation;
+    private transient Long approvalDesignation;
 
-	@SafeHtml
-	private transient String workFlowAction;
+    @SafeHtml
+    private transient String workFlowAction;
 
-	private transient Long nextPosition;
+    private transient Long nextPosition;
 
-	@SafeHtml
-	private transient String approvalComent;
+    @SafeHtml
+    private transient String approvalComent;
 
-	public String getApprovalComent() {
-		return approvalComent;
-	}
+    public String getApprovalComent() {
+        return approvalComent;
+    }
 
-	public void setApprovalComent(String approvalComent) {
-		this.approvalComent = approvalComent;
-	}
+    public void setApprovalComent(String approvalComent) {
+        this.approvalComent = approvalComent;
+    }
 
-	public String getWorkFlowAction() {
-		return workFlowAction;
-	}
+    public String getWorkFlowAction() {
+        return workFlowAction;
+    }
 
-	public void setWorkFlowAction(String wfAction) {
-		this.workFlowAction = wfAction;
-	}
+    public void setWorkFlowAction(String wfAction) {
+        this.workFlowAction = wfAction;
+    }
 
-	public Long getNextPosition() {
-		return nextPosition;
-	}
+    public Long getNextPosition() {
+        return nextPosition;
+    }
 
-	public void setNextPosition(Long nextPosition) {
-		this.nextPosition = nextPosition;
-	}
+    public void setNextPosition(Long nextPosition) {
+        this.nextPosition = nextPosition;
+    }
 
-	public Boolean getIsAddressSame() {
-		return isAddressSame;
-	}
+    public Boolean getIsAddressSame() {
+        return isAddressSame;
+    }
 
-	public void setIsAddressSame(Boolean isAddressSame) {
-		this.isAddressSame = isAddressSame;
-	}
+    public void setIsAddressSame(Boolean isAddressSame) {
+        this.isAddressSame = isAddressSame;
+    }
 
-	public StakeHolder() {
-		setType(UserType.BUSINESS);
-	}
+    public StakeHolder() {
+        setType(UserType.BUSINESS);
+    }
 
-	public String getComments() {
-		return comments;
-	}
+    public String getComments() {
+        return comments;
+    }
 
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public StakeHolderType getStakeHolderType() {
-		return stakeHolderType;
-	}
+    public StakeHolderType getStakeHolderType() {
+        return stakeHolderType;
+    }
 
-	public void setStakeHolderType(final StakeHolderType stakeHolderType) {
-		this.stakeHolderType = stakeHolderType;
-	}
+    public void setStakeHolderType(final StakeHolderType stakeHolderType) {
+        this.stakeHolderType = stakeHolderType;
+    }
 
-	public String getLicenceNumber() {
-		return licenceNumber;
-	}
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
 
-	public void setLicenceNumber(String licenceNumber) {
-		this.licenceNumber = licenceNumber;
-	}
+    public void setLicenceNumber(String licenceNumber) {
+        this.licenceNumber = licenceNumber;
+    }
 
-	public Date getBuildingLicenceIssueDate() {
-		return buildingLicenceIssueDate;
-	}
+    public Date getBuildingLicenceIssueDate() {
+        return buildingLicenceIssueDate;
+    }
 
-	public void setBuildingLicenceIssueDate(Date buildingLicenceIssueDate) {
-		this.buildingLicenceIssueDate = buildingLicenceIssueDate;
-	}
+    public void setBuildingLicenceIssueDate(Date buildingLicenceIssueDate) {
+        this.buildingLicenceIssueDate = buildingLicenceIssueDate;
+    }
 
-	public Date getBuildingLicenceExpiryDate() {
-		return buildingLicenceExpiryDate;
-	}
+    public Date getBuildingLicenceExpiryDate() {
+        return buildingLicenceExpiryDate;
+    }
 
-	public void setBuildingLicenceExpiryDate(Date buildingLicenceExpiryDate) {
-		this.buildingLicenceExpiryDate = buildingLicenceExpiryDate;
-	}
+    public void setBuildingLicenceExpiryDate(Date buildingLicenceExpiryDate) {
+        this.buildingLicenceExpiryDate = buildingLicenceExpiryDate;
+    }
 
-	public String getContactPerson() {
-		return contactPerson;
-	}
+    public String getContactPerson() {
+        return contactPerson;
+    }
 
-	public void setContactPerson(String contactPerson) {
-		this.contactPerson = contactPerson;
-	}
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
 
-	public String getDesignation() {
-		return designation;
-	}
+    public String getDesignation() {
+        return designation;
+    }
 
-	public void setDesignation(String designation) {
-		this.designation = designation;
-	}
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
 
-	public String getCoaEnrolmentNumber() {
-		return coaEnrolmentNumber;
-	}
+    public String getCoaEnrolmentNumber() {
+        return coaEnrolmentNumber;
+    }
 
-	public void setCoaEnrolmentNumber(final String coaEnrolmentNumber) {
-		this.coaEnrolmentNumber = coaEnrolmentNumber;
-	}
+    public void setCoaEnrolmentNumber(final String coaEnrolmentNumber) {
+        this.coaEnrolmentNumber = coaEnrolmentNumber;
+    }
 
-	public Boolean getIsEnrolWithLocalBody() {
-		return isEnrolWithLocalBody;
-	}
+    public Boolean getIsEnrolWithLocalBody() {
+        return isEnrolWithLocalBody;
+    }
 
-	public void setIsEnrolWithLocalBody(final Boolean isEnrolWithLocalBody) {
-		this.isEnrolWithLocalBody = isEnrolWithLocalBody;
-	}
+    public void setIsEnrolWithLocalBody(final Boolean isEnrolWithLocalBody) {
+        this.isEnrolWithLocalBody = isEnrolWithLocalBody;
+    }
 
-	public String getOrganizationName() {
-		return organizationName;
-	}
+    public String getOrganizationName() {
+        return organizationName;
+    }
 
-	public void setOrganizationName(final String organizationName) {
-		this.organizationName = organizationName;
-	}
+    public void setOrganizationName(final String organizationName) {
+        this.organizationName = organizationName;
+    }
 
-	public String getOrganizationAddress() {
-		return organizationAddress;
-	}
+    public String getOrganizationAddress() {
+        return organizationAddress;
+    }
 
-	public void setOrganizationAddress(final String organizationAddress) {
-		this.organizationAddress = organizationAddress;
-	}
+    public void setOrganizationAddress(final String organizationAddress) {
+        this.organizationAddress = organizationAddress;
+    }
 
-	public String getOrganizationUrl() {
-		return organizationUrl;
-	}
+    public String getOrganizationUrl() {
+        return organizationUrl;
+    }
 
-	public void setOrganizationUrl(final String organizationUrl) {
-		this.organizationUrl = organizationUrl;
-	}
+    public void setOrganizationUrl(final String organizationUrl) {
+        this.organizationUrl = organizationUrl;
+    }
 
-	public String getOrganizationMobNo() {
-		return organizationMobNo;
-	}
+    public String getOrganizationMobNo() {
+        return organizationMobNo;
+    }
 
-	public void setOrganizationMobNo(final String organizationMobNo) {
-		this.organizationMobNo = organizationMobNo;
-	}
+    public void setOrganizationMobNo(final String organizationMobNo) {
+        this.organizationMobNo = organizationMobNo;
+    }
 
-	public Boolean getIsOnbehalfOfOrganization() {
-		return isOnbehalfOfOrganization;
-	}
+    public Boolean getIsOnbehalfOfOrganization() {
+        return isOnbehalfOfOrganization;
+    }
 
-	public void setIsOnbehalfOfOrganization(final Boolean isOnbehalfOfOrganization) {
-		this.isOnbehalfOfOrganization = isOnbehalfOfOrganization;
-	}
+    public void setIsOnbehalfOfOrganization(final Boolean isOnbehalfOfOrganization) {
+        this.isOnbehalfOfOrganization = isOnbehalfOfOrganization;
+    }
 
-	public String getTinNumber() {
-		return tinNumber;
-	}
+    public String getTinNumber() {
+        return tinNumber;
+    }
 
-	public void setTinNumber(final String tinNumber) {
-		this.tinNumber = tinNumber;
-	}
+    public void setTinNumber(final String tinNumber) {
+        this.tinNumber = tinNumber;
+    }
 
-	public List<StakeHolderDocument> getStakeHolderDocument() {
-		return stakeHolderDocument;
-	}
+    public List<StakeHolderDocument> getStakeHolderDocument() {
+        return stakeHolderDocument;
+    }
 
-	public void setStakeHolderDocument(List<StakeHolderDocument> stakeHolderDocument) {
-		this.stakeHolderDocument = stakeHolderDocument;
-	}
+    public void setStakeHolderDocument(List<StakeHolderDocument> stakeHolderDocument) {
+        this.stakeHolderDocument = stakeHolderDocument;
+    }
 
-	public Date getCoaEnrolmentDueDate() {
-		return coaEnrolmentDueDate;
-	}
+    public Date getCoaEnrolmentDueDate() {
+        return coaEnrolmentDueDate;
+    }
 
-	public void setCoaEnrolmentDueDate(final Date coaEnrolmentDueDate) {
-		this.coaEnrolmentDueDate = coaEnrolmentDueDate;
-	}
+    public void setCoaEnrolmentDueDate(final Date coaEnrolmentDueDate) {
+        this.coaEnrolmentDueDate = coaEnrolmentDueDate;
+    }
 
-	public CorrespondenceAddress getCorrespondenceAddress() {
-		return correspondenceAddress;
-	}
+    public CorrespondenceAddress getCorrespondenceAddress() {
+        return correspondenceAddress;
+    }
 
-	public void setCorrespondenceAddress(final CorrespondenceAddress correspondenceAddress) {
-		this.correspondenceAddress = correspondenceAddress;
-	}
+    public void setCorrespondenceAddress(final CorrespondenceAddress correspondenceAddress) {
+        this.correspondenceAddress = correspondenceAddress;
+    }
 
-	public PermanentAddress getPermanentAddress() {
-		return permanentAddress;
-	}
+    public PermanentAddress getPermanentAddress() {
+        return permanentAddress;
+    }
 
-	public void setPermanentAddress(final PermanentAddress permanentAddress) {
-		this.permanentAddress = permanentAddress;
-	}
+    public void setPermanentAddress(final PermanentAddress permanentAddress) {
+        this.permanentAddress = permanentAddress;
+    }
 
-	public List<CheckListDetail> getCheckListDocuments() {
-		return checkListDocuments;
-	}
+    public List<CheckListDetail> getCheckListDocuments() {
+        return checkListDocuments;
+    }
 
-	public void setCheckListDocuments(final List<CheckListDetail> checkListDocuments) {
-		this.checkListDocuments = checkListDocuments;
-	}
+    public void setCheckListDocuments(final List<CheckListDetail> checkListDocuments) {
+        this.checkListDocuments = checkListDocuments;
+    }
 
-	public String getActivationCode() {
-		return activationCode;
-	}
+    public String getActivationCode() {
+        return activationCode;
+    }
 
-	public void setActivationCode(String activationCode) {
-		this.activationCode = activationCode;
-	}
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
+    }
 
-	public Source getSource() {
-		return source;
-	}
+    public Source getSource() {
+        return source;
+    }
 
-	public void setSource(Source source) {
-		this.source = source;
-	}
+    public void setSource(Source source) {
+        this.source = source;
+    }
 
-	public StakeHolderStatus getStatus() {
-		return status;
-	}
+    public StakeHolderStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(StakeHolderStatus status) {
-		this.status = status;
-	}
+    public void setStatus(StakeHolderStatus status) {
+        this.status = status;
+    }
 
-	public User getCreatedUser() {
-		return createdUser;
-	}
+    public User getCreatedUser() {
+        return createdUser;
+    }
 
-	public void setCreatedUser(User createdUser) {
-		this.createdUser = createdUser;
-	}
+    public void setCreatedUser(User createdUser) {
+        this.createdUser = createdUser;
+    }
 
-	public User getLastUpdatedUser() {
-		return lastUpdatedUser;
-	}
+    public User getLastUpdatedUser() {
+        return lastUpdatedUser;
+    }
 
-	public void setLastUpdatedUser(User lastUpdatedUser) {
-		this.lastUpdatedUser = lastUpdatedUser;
-	}
+    public void setLastUpdatedUser(User lastUpdatedUser) {
+        this.lastUpdatedUser = lastUpdatedUser;
+    }
 
-	public Date getCreateDate() {
-		return createDate;
-	}
+    public Date getCreateDate() {
+        return createDate;
+    }
 
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 
-	public Date getLastUpdatedDate() {
-		return lastUpdatedDate;
-	}
+    public Date getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
 
-	public void setLastUpdatedDate(Date lastUpdatedDate) {
-		this.lastUpdatedDate = lastUpdatedDate;
-	}
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
 
-	public Integer getNoOfTimesRejected() {
-		return noOfTimesRejected;
-	}
+    public Integer getNoOfTimesRejected() {
+        return noOfTimesRejected;
+    }
 
-	public void setNoOfTimesRejected(Integer noOfTimesRejected) {
-		this.noOfTimesRejected = noOfTimesRejected;
-	}
+    public void setNoOfTimesRejected(Integer noOfTimesRejected) {
+        this.noOfTimesRejected = noOfTimesRejected;
+    }
 
-	public Integer getNoOfTimesBlocked() {
-		return noOfTimesBlocked;
-	}
+    public Integer getNoOfTimesBlocked() {
+        return noOfTimesBlocked;
+    }
 
-	public void setNoOfTimesBlocked(Integer noOfTimesBlocked) {
-		this.noOfTimesBlocked = noOfTimesBlocked;
-	}
+    public void setNoOfTimesBlocked(Integer noOfTimesBlocked) {
+        this.noOfTimesBlocked = noOfTimesBlocked;
+    }
 
-	public EgDemand getDemand() {
-		return demand;
-	}
+    public EgDemand getDemand() {
+        return demand;
+    }
 
-	public void setDemand(final EgDemand demand) {
-		this.demand = demand;
-	}
+    public void setDemand(final EgDemand demand) {
+        this.demand = demand;
+    }
 
-	public String showAadhaarNumber() {
-		return StringUtils.isBlank(getAadhaarNumber()) ? getAadhaarNumber()
-				: getAadhaarNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
-	}
+    public String showAadhaarNumber() {
+        return StringUtils.isBlank(getAadhaarNumber()) ? getAadhaarNumber()
+                : getAadhaarNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+    }
 
-	public String showMobileNumber() {
-		return StringUtils.isBlank(getMobileNumber()) ? getMobileNumber()
-				: getMobileNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
-	}
+    public String showMobileNumber() {
+        return StringUtils.isBlank(getMobileNumber()) ? getMobileNumber()
+                : getMobileNumber().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+    }
 
-	public String showPanNumber() {
-		return StringUtils.isBlank(getPan()) ? getPan() : getPan().substring(0, getPan().length() - 6) + "*******";
-	}
+    public String showPanNumber() {
+        return StringUtils.isBlank(getPan()) ? getPan() : getPan().substring(0, getPan().length() - 6) + "*******";
+    }
 
-	public Long getApprovalDepartment() {
-		return approvalDepartment;
-	}
+    public Long getApprovalDepartment() {
+        return approvalDepartment;
+    }
 
-	public void setApprovalDepartment(final Long approvalDepartment) {
-		this.approvalDepartment = approvalDepartment;
-	}
+    public void setApprovalDepartment(final Long approvalDepartment) {
+        this.approvalDepartment = approvalDepartment;
+    }
 
-	public Long getApprovalDesignation() {
-		return approvalDesignation;
-	}
+    public Long getApprovalDesignation() {
+        return approvalDesignation;
+    }
 
-	public void setApprovalDesignation(final Long approvalDesignation) {
-		this.approvalDesignation = approvalDesignation;
-	}
+    public void setApprovalDesignation(final Long approvalDesignation) {
+        this.approvalDesignation = approvalDesignation;
+    }
 
-	public String getCinNumber() {
-		return cinNumber;
-	}
+    public String getCinNumber() {
+        return cinNumber;
+    }
 
-	public void setCinNumber(String cinNumber) {
-		this.cinNumber = cinNumber;
-	}
+    public void setCinNumber(String cinNumber) {
+        this.cinNumber = cinNumber;
+    }
 
 }

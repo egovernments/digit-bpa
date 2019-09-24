@@ -64,97 +64,97 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = NocConfiguration.SEQ_NOCCONFIG, sequenceName = NocConfiguration.SEQ_NOCCONFIG, allocationSize = 1)
 public class NocConfiguration {
 
-	public static final String SEQ_NOCCONFIG = "SEQ_EGBPA_MSTR_NOCCONFIG";
-	@Id
-	@GeneratedValue(generator = SEQ_NOCCONFIG, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    public static final String SEQ_NOCCONFIG = "SEQ_EGBPA_MSTR_NOCCONFIG";
+    @Id
+    @GeneratedValue(generator = SEQ_NOCCONFIG, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 20)
-	@Column(name = "department")
-	private String department;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 20)
+    @Column(name = "department")
+    private String department;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 25)
-	@Column(name = "applicationType")
-	private String applicationType;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 25)
+    @Column(name = "applicationType")
+    private String applicationType;
 
-	@NotNull
-	@Length(min = 1, max = 20)
-	@Column(name = "integrationtype")
-	private String integrationType;
+    @NotNull
+    @Length(min = 1, max = 20)
+    @Column(name = "integrationtype")
+    private String integrationType;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 20)
-	@Column(name = "integrationinitiation")
-	private String integrationInitiation;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 20)
+    @Column(name = "integrationinitiation")
+    private String integrationInitiation;
 
-	@PositiveOrZero
-	@NotNull
-	@Column(name = "sla")
-	private Long sla;
+    @PositiveOrZero
+    @NotNull
+    @Column(name = "sla")
+    private Long sla;
 
-	@NotNull
-	@Column(name = "isdeemedapproval")
-	private Boolean isDeemedApproval;
+    @NotNull
+    @Column(name = "isdeemedapproval")
+    private Boolean isDeemedApproval;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getIntegrationType() {
-		return integrationType;
-	}
+    public String getIntegrationType() {
+        return integrationType;
+    }
 
-	public void setIntegrationType(String integrationType) {
-		this.integrationType = integrationType;
-	}
+    public void setIntegrationType(String integrationType) {
+        this.integrationType = integrationType;
+    }
 
-	public String getIntegrationInitiation() {
-		return integrationInitiation;
-	}
+    public String getIntegrationInitiation() {
+        return integrationInitiation;
+    }
 
-	public void setIntegrationInitiation(String integrationInitiation) {
-		this.integrationInitiation = integrationInitiation;
-	}
+    public void setIntegrationInitiation(String integrationInitiation) {
+        this.integrationInitiation = integrationInitiation;
+    }
 
-	public Long getSla() {
-		return sla;
-	}
+    public Long getSla() {
+        return sla;
+    }
 
-	public void setSla(Long sla) {
-		this.sla = sla;
-	}
+    public void setSla(Long sla) {
+        this.sla = sla;
+    }
 
-	public String getDepartment() {
-		return department;
-	}
+    public String getDepartment() {
+        return department;
+    }
 
-	public void setDepartment(String department) {
-		this.department = department;
-	}
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
-	public String getApplicationType() {
-		return applicationType;
-	}
+    public String getApplicationType() {
+        return applicationType;
+    }
 
-	public void setApplicationType(String applicationType) {
-		this.applicationType = applicationType;
-	}
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
 
-	public Boolean getIsDeemedApproval() {
-		return isDeemedApproval;
-	}
+    public Boolean getIsDeemedApproval() {
+        return isDeemedApproval;
+    }
 
-	public void setIsDeemedApproval(Boolean isDeemedApproval) {
-		this.isDeemedApproval = isDeemedApproval;
-	}
+    public void setIsDeemedApproval(Boolean isDeemedApproval) {
+        this.isDeemedApproval = isDeemedApproval;
+    }
 
 }

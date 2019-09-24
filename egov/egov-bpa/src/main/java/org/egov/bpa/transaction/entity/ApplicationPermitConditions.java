@@ -72,11 +72,11 @@ public class ApplicationPermitConditions implements Serializable {
     @Id
     @GeneratedValue(generator = SEQ_APPLICATION_PERMIT_CONDITIONS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
-    
+
     @Valid
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "noticecondition", nullable = false)
@@ -98,11 +98,11 @@ public class ApplicationPermitConditions implements Serializable {
         this.id = id;
     }
 
-	public NoticeCondition getNoticeCondition() {
-		return noticeCondition;
-	}
+    public NoticeCondition getNoticeCondition() {
+        return noticeCondition;
+    }
 
-	public void setNoticeCondition(NoticeCondition noticeCondition) {
-		this.noticeCondition = noticeCondition;
-	}
+    public void setNoticeCondition(NoticeCondition noticeCondition) {
+        this.noticeCondition = noticeCondition;
+    }
 }

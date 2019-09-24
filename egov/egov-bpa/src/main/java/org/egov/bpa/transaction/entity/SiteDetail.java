@@ -77,653 +77,653 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = SiteDetail.SEQ_EGBPA_SITEDETAIL, sequenceName = SiteDetail.SEQ_EGBPA_SITEDETAIL, allocationSize = 1)
 public class SiteDetail extends AbstractAuditable {
 
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ_EGBPA_SITEDETAIL = "SEQ_EGBPA_SITEDETAIL";
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_SITEDETAIL, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "application", nullable = false)
-	private BpaApplication application;
-	@SafeHtml
-	@Length(min = 1, max = 12)
-	private String plotdoornumber;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String plotlandmark;
-	@SafeHtml
-	@Length(min = 1, max = 24)
-	private String plotnumber;
-	@SafeHtml
-	@Length(min = 1, max = 24)
-	private String plotsurveynumber;
-	@SafeHtml
-	@Length(min = 1, max = 24)
-	private String surveynumberType;
-	@SafeHtml
-	@Length(min = 1, max = 24)
-	private String oldSurveyNumber;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String reSurveyNumber;
-	@SafeHtml
-	@Length(min = 1, max = 24)
-	private String townSurveyNumber;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String khataNumber;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String holdingNumber;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String mspPlotNumber;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String streetaddress1;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String streetaddress2;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String area;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "adminboundary", nullable = false)
-	private Boundary adminBoundary;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "locationBoundary")
-	private Boundary locationBoundary;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "electionBoundary")
-	private Boundary electionBoundary;
-	@Length(min = 1, max = 128)
-	@SafeHtml
-	private String citytown;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "street")
-	private Boundary street;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "village")
-	private VillageName village;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "postalAddress")
-	private PostalAddress postalAddress;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String natureofOwnership;
-	@NotNull
-	@PositiveOrZero
-	private BigDecimal extentOfLand;
-	@NotNull
-	@PositiveOrZero
-	private BigDecimal extentinsqmts;
-	@NotNull
-	@Enumerated(EnumType.ORDINAL)
-	private BpaUom unitOfMeasurement;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "registrarOffice")
-	private RegistrarOfficeVillage registrarOffice;
-	@SafeHtml
-	@Length(min = 1, max = 12)
-	private String nearestbuildingnumber;
-	@SafeHtml
-	@Length(min = 1, max = 12)
-	private String subdivisionNumber;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private Boolean encroachmentIssuesPresent;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String encroachmentRemarks;
-	/// this need to be check as we can refer master --statusofsite -- construction
-	/// in progress,vacant ,completed
-	private Boolean siteinApprovedLayout;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String approvedLayoutDetail;
-	@PositiveOrZero
-	private BigDecimal setBackFront;
-	@PositiveOrZero
-	private BigDecimal setBackRear;
-	@PositiveOrZero
-	private BigDecimal setBackSide1;
-	@PositiveOrZero
-	private BigDecimal setBackSide2;
-	@PositiveOrZero
-	private BigDecimal lengthOfCompoundWall;
-	@PositiveOrZero
-	private BigDecimal dwellingunitnt;
-	@SafeHtml
-	private String locationOfPlot;
-	@PositiveOrZero
-	private BigDecimal roofConversion;
-	@PositiveOrZero
-	private BigDecimal shutter;
-	@PositiveOrZero
-	private BigDecimal erectionoftower;
-	@PositiveOrZero
-	private BigDecimal noOfPoles;
-	@PositiveOrZero
-	private BigDecimal noOfHutOrSheds;
-	@PositiveOrZero
-	private BigDecimal demolitionArea;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "conststages")
-	private ConstructionStages constStages;
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String stateOfConstruction;
-	private Boolean isappForRegularization = false;
-	private Boolean charitableTrustBuilding;
-	private Boolean affordableHousingScheme;
-	@Temporal(value = TemporalType.DATE)
-	private Date workCommencementDate;
-	@Temporal(value = TemporalType.DATE)
-	private Date workCompletionDate;
-	private transient Long postalId;
-	private transient Long landUsageId;
-
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "scheme")
-	private BpaScheme scheme;
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "landUsage")
-	private BpaSchemeLandUsage landUsage;
-	private transient Long registrarVillageId;
-	@SafeHtml
-	@Length(min = 1, max = 4000)
-	private String previousownerdetails;
-	@SafeHtml
-	@Length(min = 1, max = 4000)
-	private String landregistrationdetails;
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	public BpaApplication getApplication() {
-		return application;
-	}
-
-	public void setApplication(final BpaApplication application) {
-		this.application = application;
-	}
-
-	public String getPlotdoornumber() {
-		return plotdoornumber;
-	}
-
-	public void setPlotdoornumber(final String plotdoornumber) {
-		this.plotdoornumber = plotdoornumber;
-	}
-
-	public String getPlotlandmark() {
-		return plotlandmark;
-	}
-
-	public void setPlotlandmark(final String plotlandmark) {
-		this.plotlandmark = plotlandmark;
-	}
-
-	public String getPlotnumber() {
-		return plotnumber;
-	}
-
-	public void setPlotnumber(final String plotnumber) {
-		this.plotnumber = plotnumber;
-	}
-
-	public String getPlotsurveynumber() {
-		return plotsurveynumber;
-	}
-
-	public void setPlotsurveynumber(final String plotsurveynumber) {
-		this.plotsurveynumber = plotsurveynumber;
-	}
-
-	public String getReSurveyNumber() {
-		return reSurveyNumber;
-	}
-
-	public void setReSurveyNumber(String reSurveyNumber) {
-		this.reSurveyNumber = reSurveyNumber;
-	}
-
-	public String getTownSurveyNumber() {
-		return townSurveyNumber;
-	}
-
-	public void setTownSurveyNumber(String townSurveyNumber) {
-		this.townSurveyNumber = townSurveyNumber;
-	}
-
-	public String getKhataNumber() {
-		return khataNumber;
-	}
-
-	public void setKhataNumber(String khataNumber) {
-		this.khataNumber = khataNumber;
-	}
-
-	public String getHoldingNumber() {
-		return holdingNumber;
-	}
-
-	public void setHoldingNumber(String holdingNumber) {
-		this.holdingNumber = holdingNumber;
-	}
-
-	public String getMspPlotNumber() {
-		return mspPlotNumber;
-	}
-
-	public void setMspPlotNumber(String mspPlotNumber) {
-		this.mspPlotNumber = mspPlotNumber;
-	}
-
-	public String getSurveynumberType() {
-		return surveynumberType;
-	}
-
-	public void setSurveynumberType(final String surveynumberType) {
-		this.surveynumberType = surveynumberType;
-	}
-
-	public String getOldSurveyNumber() {
-		return oldSurveyNumber;
-	}
-
-	public void setOldSurveyNumber(final String oldSurveyNumber) {
-		this.oldSurveyNumber = oldSurveyNumber;
-	}
-
-	public String getStreetaddress1() {
-		return streetaddress1;
-	}
-
-	public void setStreetaddress1(final String streetaddress1) {
-		this.streetaddress1 = streetaddress1;
-	}
-
-	public String getStreetaddress2() {
-		return streetaddress2;
-	}
-
-	public void setStreetaddress2(final String streetaddress2) {
-		this.streetaddress2 = streetaddress2;
-	}
-
-	public String getArea() {
-		return area;
-	}
-
-	public void setArea(final String area) {
-		this.area = area;
-	}
-
-	public String getCitytown() {
-		return citytown;
-	}
-
-	public void setCitytown(final String citytown) {
-		this.citytown = citytown;
-	}
-
-	public Boundary getStreet() {
-		return street;
-	}
-
-	public void setStreet(final Boundary street) {
-		this.street = street;
-	}
-
-	public VillageName getVillage() {
-		return village;
-	}
-
-	public void setVillage(final VillageName village) {
-		this.village = village;
-	}
-
-	public PostalAddress getPostalAddress() {
-		return postalAddress;
-	}
-
-	public void setPostalAddress(PostalAddress postalAddress) {
-		this.postalAddress = postalAddress;
-	}
-
-	public String getNatureofOwnership() {
-		return natureofOwnership;
-	}
-
-	public void setNatureofOwnership(final String natureofOwnership) {
-		this.natureofOwnership = natureofOwnership;
-	}
-
-	public BigDecimal getExtentinsqmts() {
-		return extentinsqmts;
-	}
-
-	public void setExtentinsqmts(final BigDecimal extentinsqmts) {
-		this.extentinsqmts = extentinsqmts;
-	}
-
-	public RegistrarOfficeVillage getRegistrarOffice() {
-		return registrarOffice;
-	}
-
-	public void setRegistrarOffice(RegistrarOfficeVillage registrarOffice) {
-		this.registrarOffice = registrarOffice;
-	}
-
-	public String getNearestbuildingnumber() {
-		return nearestbuildingnumber;
-	}
-
-	public void setNearestbuildingnumber(final String nearestbuildingnumber) {
-		this.nearestbuildingnumber = nearestbuildingnumber;
-	}
-
-	public String getSubdivisionNumber() {
-		return subdivisionNumber;
-	}
-
-	public void setSubdivisionNumber(final String subdivisionNumber) {
-		this.subdivisionNumber = subdivisionNumber;
-	}
-
-	public Boolean getEncroachmentIssuesPresent() {
-		return encroachmentIssuesPresent;
-	}
-
-	public void setEncroachmentIssuesPresent(final Boolean encroachmentIssuesPresent) {
-		this.encroachmentIssuesPresent = encroachmentIssuesPresent;
-	}
-
-	public String getEncroachmentRemarks() {
-		return encroachmentRemarks;
-	}
-
-	public void setEncroachmentRemarks(final String encroachmentRemarks) {
-		this.encroachmentRemarks = encroachmentRemarks;
-	}
-
-	public Boolean getSiteinApprovedLayout() {
-		return siteinApprovedLayout;
-	}
-
-	public void setSiteinApprovedLayout(final Boolean siteinApprovedLayout) {
-		this.siteinApprovedLayout = siteinApprovedLayout;
-	}
-
-	public String getApprovedLayoutDetail() {
-		return approvedLayoutDetail;
-	}
-
-	public void setApprovedLayoutDetail(final String approvedLayoutDetail) {
-		this.approvedLayoutDetail = approvedLayoutDetail;
-	}
-
-	public BigDecimal getSetBackFront() {
-		return setBackFront;
-	}
-
-	public void setSetBackFront(final BigDecimal setBackFront) {
-		this.setBackFront = setBackFront;
-	}
-
-	public BigDecimal getSetBackRear() {
-		return setBackRear;
-	}
-
-	public void setSetBackRear(final BigDecimal setBackRear) {
-		this.setBackRear = setBackRear;
-	}
-
-	public BigDecimal getSetBackSide1() {
-		return setBackSide1;
-	}
-
-	public void setSetBackSide1(final BigDecimal setBackSide1) {
-		this.setBackSide1 = setBackSide1;
-	}
-
-	public BigDecimal getSetBackSide2() {
-		return setBackSide2;
-	}
-
-	public void setSetBackSide2(final BigDecimal setBackSide2) {
-		this.setBackSide2 = setBackSide2;
-	}
-
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
-
-	public Boundary getAdminBoundary() {
-		return adminBoundary;
-	}
-
-	public void setAdminBoundary(final Boundary adminBoundary) {
-		this.adminBoundary = adminBoundary;
-	}
-
-	public Boundary getLocationBoundary() {
-		return locationBoundary;
-	}
-
-	public void setLocationBoundary(final Boundary locationBoundary) {
-		this.locationBoundary = locationBoundary;
-	}
-
-	public Boundary getElectionBoundary() {
-		return electionBoundary;
-	}
-
-	public void setElectionBoundary(final Boundary electionBoundary) {
-		this.electionBoundary = electionBoundary;
-	}
-
-	public BigDecimal getLengthOfCompoundWall() {
-		return lengthOfCompoundWall;
-	}
-
-	public void setLengthOfCompoundWall(BigDecimal lengthOfCompoundWall) {
-		this.lengthOfCompoundWall = lengthOfCompoundWall;
-	}
-
-	public BigDecimal getDwellingunitnt() {
-		return dwellingunitnt;
-	}
-
-	public void setDwellingunitnt(BigDecimal dwellingunitnt) {
-		this.dwellingunitnt = dwellingunitnt;
-	}
-
-	public String getLocationOfPlot() {
-		return locationOfPlot;
-	}
-
-	public void setLocationOfPlot(String locationOfPlot) {
-		this.locationOfPlot = locationOfPlot;
-	}
-
-	public BigDecimal getRoofConversion() {
-		return roofConversion;
-	}
-
-	public void setRoofConversion(BigDecimal roofConversion) {
-		this.roofConversion = roofConversion;
-	}
-
-	public BigDecimal getShutter() {
-		return shutter;
-	}
-
-	public void setShutter(BigDecimal shutter) {
-		this.shutter = shutter;
-	}
-
-	public BigDecimal getErectionoftower() {
-		return erectionoftower;
-	}
-
-	public void setErectionoftower(BigDecimal erectionoftower) {
-		this.erectionoftower = erectionoftower;
-	}
-
-	public BigDecimal getNoOfPoles() {
-		return noOfPoles;
-	}
-
-	public void setNoOfPoles(BigDecimal noOfPoles) {
-		this.noOfPoles = noOfPoles;
-	}
-
-	public BigDecimal getNoOfHutOrSheds() {
-		return noOfHutOrSheds;
-	}
-
-	public void setNoOfHutOrSheds(BigDecimal noOfHutOrSheds) {
-		this.noOfHutOrSheds = noOfHutOrSheds;
-	}
-
-	public BigDecimal getDemolitionArea() {
-		return demolitionArea;
-	}
-
-	public void setDemolitionArea(BigDecimal demolitionArea) {
-		this.demolitionArea = demolitionArea;
-	}
-
-	public BpaUom getUnitOfMeasurement() {
-		return unitOfMeasurement;
-	}
-
-	public void setUnitOfMeasurement(BpaUom unitOfMeasurement) {
-		this.unitOfMeasurement = unitOfMeasurement;
-	}
-
-	public ConstructionStages getConstStages() {
-		return constStages;
-	}
-
-	public void setConstStages(ConstructionStages constStages) {
-		this.constStages = constStages;
-	}
-
-	public String getStateOfConstruction() {
-		return stateOfConstruction;
-	}
-
-	public void setStateOfConstruction(String stateOfConstruction) {
-		this.stateOfConstruction = stateOfConstruction;
-	}
-
-	public Boolean getIsappForRegularization() {
-		return isappForRegularization;
-	}
-
-	public void setIsappForRegularization(Boolean isappForRegularization) {
-		this.isappForRegularization = isappForRegularization;
-	}
-
-	public BigDecimal getExtentOfLand() {
-		return extentOfLand;
-	}
-
-	public void setExtentOfLand(BigDecimal extentOfLand) {
-		this.extentOfLand = extentOfLand;
-	}
-
-	public Long getPostalId() {
-		return postalId;
-	}
-
-	public void setPostalId(Long postalId) {
-		this.postalId = postalId;
-	}
-
-	public BpaScheme getScheme() {
-		return scheme;
-	}
-
-	public void setScheme(BpaScheme scheme) {
-		this.scheme = scheme;
-	}
-
-	public BpaSchemeLandUsage getLandUsage() {
-		return landUsage;
-	}
-
-	public void setLandUsage(BpaSchemeLandUsage landUsage) {
-		this.landUsage = landUsage;
-	}
-
-	public Long getLandUsageId() {
-		return landUsageId;
-	}
-
-	public void setLandUsageId(Long landUsageId) {
-		this.landUsageId = landUsageId;
-	}
-
-	public Date getWorkCommencementDate() {
-		return workCommencementDate;
-	}
-
-	public void setWorkCommencementDate(Date workCommencementDate) {
-		this.workCommencementDate = workCommencementDate;
-	}
-
-	public Date getWorkCompletionDate() {
-		return workCompletionDate;
-	}
-
-	public void setWorkCompletionDate(Date workCompletionDate) {
-		this.workCompletionDate = workCompletionDate;
-	}
-
-	public Long getRegistrarVillageId() {
-		return registrarVillageId;
-	}
-
-	public void setRegistrarVillageId(Long registrarVillageId) {
-		this.registrarVillageId = registrarVillageId;
-	}
-
-	public Boolean getCharitableTrustBuilding() {
-		return charitableTrustBuilding;
-	}
-
-	public void setCharitableTrustBuilding(Boolean charitableTrustBuilding) {
-		this.charitableTrustBuilding = charitableTrustBuilding;
-	}
-
-	public Boolean getAffordableHousingScheme() {
-		return affordableHousingScheme;
-	}
-
-	public void setAffordableHousingScheme(Boolean affordableHousingScheme) {
-		this.affordableHousingScheme = affordableHousingScheme;
-	}
-
-	public String getPreviousownerdetails() {
-		return previousownerdetails;
-	}
-
-	public void setPreviousownerdetails(String previousownerdetails) {
-		this.previousownerdetails = previousownerdetails;
-	}
-
-	public String getLandregistrationdetails() {
-		return landregistrationdetails;
-	}
-
-	public void setLandregistrationdetails(String landregistrationdetails) {
-		this.landregistrationdetails = landregistrationdetails;
-	}
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_EGBPA_SITEDETAIL = "SEQ_EGBPA_SITEDETAIL";
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_SITEDETAIL, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
+    @SafeHtml
+    @Length(min = 1, max = 12)
+    private String plotdoornumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String plotlandmark;
+    @SafeHtml
+    @Length(min = 1, max = 24)
+    private String plotnumber;
+    @SafeHtml
+    @Length(min = 1, max = 24)
+    private String plotsurveynumber;
+    @SafeHtml
+    @Length(min = 1, max = 24)
+    private String surveynumberType;
+    @SafeHtml
+    @Length(min = 1, max = 24)
+    private String oldSurveyNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String reSurveyNumber;
+    @SafeHtml
+    @Length(min = 1, max = 24)
+    private String townSurveyNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String khataNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String holdingNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String mspPlotNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String streetaddress1;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String streetaddress2;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String area;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "adminboundary", nullable = false)
+    private Boundary adminBoundary;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "locationBoundary")
+    private Boundary locationBoundary;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "electionBoundary")
+    private Boundary electionBoundary;
+    @Length(min = 1, max = 128)
+    @SafeHtml
+    private String citytown;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "street")
+    private Boundary street;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "village")
+    private VillageName village;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "postalAddress")
+    private PostalAddress postalAddress;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String natureofOwnership;
+    @NotNull
+    @PositiveOrZero
+    private BigDecimal extentOfLand;
+    @NotNull
+    @PositiveOrZero
+    private BigDecimal extentinsqmts;
+    @NotNull
+    @Enumerated(EnumType.ORDINAL)
+    private BpaUom unitOfMeasurement;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "registrarOffice")
+    private RegistrarOfficeVillage registrarOffice;
+    @SafeHtml
+    @Length(min = 1, max = 12)
+    private String nearestbuildingnumber;
+    @SafeHtml
+    @Length(min = 1, max = 12)
+    private String subdivisionNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private Boolean encroachmentIssuesPresent;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String encroachmentRemarks;
+    /// this need to be check as we can refer master --statusofsite -- construction
+    /// in progress,vacant ,completed
+    private Boolean siteinApprovedLayout;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String approvedLayoutDetail;
+    @PositiveOrZero
+    private BigDecimal setBackFront;
+    @PositiveOrZero
+    private BigDecimal setBackRear;
+    @PositiveOrZero
+    private BigDecimal setBackSide1;
+    @PositiveOrZero
+    private BigDecimal setBackSide2;
+    @PositiveOrZero
+    private BigDecimal lengthOfCompoundWall;
+    @PositiveOrZero
+    private BigDecimal dwellingunitnt;
+    @SafeHtml
+    private String locationOfPlot;
+    @PositiveOrZero
+    private BigDecimal roofConversion;
+    @PositiveOrZero
+    private BigDecimal shutter;
+    @PositiveOrZero
+    private BigDecimal erectionoftower;
+    @PositiveOrZero
+    private BigDecimal noOfPoles;
+    @PositiveOrZero
+    private BigDecimal noOfHutOrSheds;
+    @PositiveOrZero
+    private BigDecimal demolitionArea;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "conststages")
+    private ConstructionStages constStages;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String stateOfConstruction;
+    private Boolean isappForRegularization = false;
+    private Boolean charitableTrustBuilding;
+    private Boolean affordableHousingScheme;
+    @Temporal(value = TemporalType.DATE)
+    private Date workCommencementDate;
+    @Temporal(value = TemporalType.DATE)
+    private Date workCompletionDate;
+    private transient Long postalId;
+    private transient Long landUsageId;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "scheme")
+    private BpaScheme scheme;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "landUsage")
+    private BpaSchemeLandUsage landUsage;
+    private transient Long registrarVillageId;
+    @SafeHtml
+    @Length(min = 1, max = 4000)
+    private String previousownerdetails;
+    @SafeHtml
+    @Length(min = 1, max = 4000)
+    private String landregistrationdetails;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    public BpaApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(final BpaApplication application) {
+        this.application = application;
+    }
+
+    public String getPlotdoornumber() {
+        return plotdoornumber;
+    }
+
+    public void setPlotdoornumber(final String plotdoornumber) {
+        this.plotdoornumber = plotdoornumber;
+    }
+
+    public String getPlotlandmark() {
+        return plotlandmark;
+    }
+
+    public void setPlotlandmark(final String plotlandmark) {
+        this.plotlandmark = plotlandmark;
+    }
+
+    public String getPlotnumber() {
+        return plotnumber;
+    }
+
+    public void setPlotnumber(final String plotnumber) {
+        this.plotnumber = plotnumber;
+    }
+
+    public String getPlotsurveynumber() {
+        return plotsurveynumber;
+    }
+
+    public void setPlotsurveynumber(final String plotsurveynumber) {
+        this.plotsurveynumber = plotsurveynumber;
+    }
+
+    public String getReSurveyNumber() {
+        return reSurveyNumber;
+    }
+
+    public void setReSurveyNumber(String reSurveyNumber) {
+        this.reSurveyNumber = reSurveyNumber;
+    }
+
+    public String getTownSurveyNumber() {
+        return townSurveyNumber;
+    }
+
+    public void setTownSurveyNumber(String townSurveyNumber) {
+        this.townSurveyNumber = townSurveyNumber;
+    }
+
+    public String getKhataNumber() {
+        return khataNumber;
+    }
+
+    public void setKhataNumber(String khataNumber) {
+        this.khataNumber = khataNumber;
+    }
+
+    public String getHoldingNumber() {
+        return holdingNumber;
+    }
+
+    public void setHoldingNumber(String holdingNumber) {
+        this.holdingNumber = holdingNumber;
+    }
+
+    public String getMspPlotNumber() {
+        return mspPlotNumber;
+    }
+
+    public void setMspPlotNumber(String mspPlotNumber) {
+        this.mspPlotNumber = mspPlotNumber;
+    }
+
+    public String getSurveynumberType() {
+        return surveynumberType;
+    }
+
+    public void setSurveynumberType(final String surveynumberType) {
+        this.surveynumberType = surveynumberType;
+    }
+
+    public String getOldSurveyNumber() {
+        return oldSurveyNumber;
+    }
+
+    public void setOldSurveyNumber(final String oldSurveyNumber) {
+        this.oldSurveyNumber = oldSurveyNumber;
+    }
+
+    public String getStreetaddress1() {
+        return streetaddress1;
+    }
+
+    public void setStreetaddress1(final String streetaddress1) {
+        this.streetaddress1 = streetaddress1;
+    }
+
+    public String getStreetaddress2() {
+        return streetaddress2;
+    }
+
+    public void setStreetaddress2(final String streetaddress2) {
+        this.streetaddress2 = streetaddress2;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(final String area) {
+        this.area = area;
+    }
+
+    public String getCitytown() {
+        return citytown;
+    }
+
+    public void setCitytown(final String citytown) {
+        this.citytown = citytown;
+    }
+
+    public Boundary getStreet() {
+        return street;
+    }
+
+    public void setStreet(final Boundary street) {
+        this.street = street;
+    }
+
+    public VillageName getVillage() {
+        return village;
+    }
+
+    public void setVillage(final VillageName village) {
+        this.village = village;
+    }
+
+    public PostalAddress getPostalAddress() {
+        return postalAddress;
+    }
+
+    public void setPostalAddress(PostalAddress postalAddress) {
+        this.postalAddress = postalAddress;
+    }
+
+    public String getNatureofOwnership() {
+        return natureofOwnership;
+    }
+
+    public void setNatureofOwnership(final String natureofOwnership) {
+        this.natureofOwnership = natureofOwnership;
+    }
+
+    public BigDecimal getExtentinsqmts() {
+        return extentinsqmts;
+    }
+
+    public void setExtentinsqmts(final BigDecimal extentinsqmts) {
+        this.extentinsqmts = extentinsqmts;
+    }
+
+    public RegistrarOfficeVillage getRegistrarOffice() {
+        return registrarOffice;
+    }
+
+    public void setRegistrarOffice(RegistrarOfficeVillage registrarOffice) {
+        this.registrarOffice = registrarOffice;
+    }
+
+    public String getNearestbuildingnumber() {
+        return nearestbuildingnumber;
+    }
+
+    public void setNearestbuildingnumber(final String nearestbuildingnumber) {
+        this.nearestbuildingnumber = nearestbuildingnumber;
+    }
+
+    public String getSubdivisionNumber() {
+        return subdivisionNumber;
+    }
+
+    public void setSubdivisionNumber(final String subdivisionNumber) {
+        this.subdivisionNumber = subdivisionNumber;
+    }
+
+    public Boolean getEncroachmentIssuesPresent() {
+        return encroachmentIssuesPresent;
+    }
+
+    public void setEncroachmentIssuesPresent(final Boolean encroachmentIssuesPresent) {
+        this.encroachmentIssuesPresent = encroachmentIssuesPresent;
+    }
+
+    public String getEncroachmentRemarks() {
+        return encroachmentRemarks;
+    }
+
+    public void setEncroachmentRemarks(final String encroachmentRemarks) {
+        this.encroachmentRemarks = encroachmentRemarks;
+    }
+
+    public Boolean getSiteinApprovedLayout() {
+        return siteinApprovedLayout;
+    }
+
+    public void setSiteinApprovedLayout(final Boolean siteinApprovedLayout) {
+        this.siteinApprovedLayout = siteinApprovedLayout;
+    }
+
+    public String getApprovedLayoutDetail() {
+        return approvedLayoutDetail;
+    }
+
+    public void setApprovedLayoutDetail(final String approvedLayoutDetail) {
+        this.approvedLayoutDetail = approvedLayoutDetail;
+    }
+
+    public BigDecimal getSetBackFront() {
+        return setBackFront;
+    }
+
+    public void setSetBackFront(final BigDecimal setBackFront) {
+        this.setBackFront = setBackFront;
+    }
+
+    public BigDecimal getSetBackRear() {
+        return setBackRear;
+    }
+
+    public void setSetBackRear(final BigDecimal setBackRear) {
+        this.setBackRear = setBackRear;
+    }
+
+    public BigDecimal getSetBackSide1() {
+        return setBackSide1;
+    }
+
+    public void setSetBackSide1(final BigDecimal setBackSide1) {
+        this.setBackSide1 = setBackSide1;
+    }
+
+    public BigDecimal getSetBackSide2() {
+        return setBackSide2;
+    }
+
+    public void setSetBackSide2(final BigDecimal setBackSide2) {
+        this.setBackSide2 = setBackSide2;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public Boundary getAdminBoundary() {
+        return adminBoundary;
+    }
+
+    public void setAdminBoundary(final Boundary adminBoundary) {
+        this.adminBoundary = adminBoundary;
+    }
+
+    public Boundary getLocationBoundary() {
+        return locationBoundary;
+    }
+
+    public void setLocationBoundary(final Boundary locationBoundary) {
+        this.locationBoundary = locationBoundary;
+    }
+
+    public Boundary getElectionBoundary() {
+        return electionBoundary;
+    }
+
+    public void setElectionBoundary(final Boundary electionBoundary) {
+        this.electionBoundary = electionBoundary;
+    }
+
+    public BigDecimal getLengthOfCompoundWall() {
+        return lengthOfCompoundWall;
+    }
+
+    public void setLengthOfCompoundWall(BigDecimal lengthOfCompoundWall) {
+        this.lengthOfCompoundWall = lengthOfCompoundWall;
+    }
+
+    public BigDecimal getDwellingunitnt() {
+        return dwellingunitnt;
+    }
+
+    public void setDwellingunitnt(BigDecimal dwellingunitnt) {
+        this.dwellingunitnt = dwellingunitnt;
+    }
+
+    public String getLocationOfPlot() {
+        return locationOfPlot;
+    }
+
+    public void setLocationOfPlot(String locationOfPlot) {
+        this.locationOfPlot = locationOfPlot;
+    }
+
+    public BigDecimal getRoofConversion() {
+        return roofConversion;
+    }
+
+    public void setRoofConversion(BigDecimal roofConversion) {
+        this.roofConversion = roofConversion;
+    }
+
+    public BigDecimal getShutter() {
+        return shutter;
+    }
+
+    public void setShutter(BigDecimal shutter) {
+        this.shutter = shutter;
+    }
+
+    public BigDecimal getErectionoftower() {
+        return erectionoftower;
+    }
+
+    public void setErectionoftower(BigDecimal erectionoftower) {
+        this.erectionoftower = erectionoftower;
+    }
+
+    public BigDecimal getNoOfPoles() {
+        return noOfPoles;
+    }
+
+    public void setNoOfPoles(BigDecimal noOfPoles) {
+        this.noOfPoles = noOfPoles;
+    }
+
+    public BigDecimal getNoOfHutOrSheds() {
+        return noOfHutOrSheds;
+    }
+
+    public void setNoOfHutOrSheds(BigDecimal noOfHutOrSheds) {
+        this.noOfHutOrSheds = noOfHutOrSheds;
+    }
+
+    public BigDecimal getDemolitionArea() {
+        return demolitionArea;
+    }
+
+    public void setDemolitionArea(BigDecimal demolitionArea) {
+        this.demolitionArea = demolitionArea;
+    }
+
+    public BpaUom getUnitOfMeasurement() {
+        return unitOfMeasurement;
+    }
+
+    public void setUnitOfMeasurement(BpaUom unitOfMeasurement) {
+        this.unitOfMeasurement = unitOfMeasurement;
+    }
+
+    public ConstructionStages getConstStages() {
+        return constStages;
+    }
+
+    public void setConstStages(ConstructionStages constStages) {
+        this.constStages = constStages;
+    }
+
+    public String getStateOfConstruction() {
+        return stateOfConstruction;
+    }
+
+    public void setStateOfConstruction(String stateOfConstruction) {
+        this.stateOfConstruction = stateOfConstruction;
+    }
+
+    public Boolean getIsappForRegularization() {
+        return isappForRegularization;
+    }
+
+    public void setIsappForRegularization(Boolean isappForRegularization) {
+        this.isappForRegularization = isappForRegularization;
+    }
+
+    public BigDecimal getExtentOfLand() {
+        return extentOfLand;
+    }
+
+    public void setExtentOfLand(BigDecimal extentOfLand) {
+        this.extentOfLand = extentOfLand;
+    }
+
+    public Long getPostalId() {
+        return postalId;
+    }
+
+    public void setPostalId(Long postalId) {
+        this.postalId = postalId;
+    }
+
+    public BpaScheme getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(BpaScheme scheme) {
+        this.scheme = scheme;
+    }
+
+    public BpaSchemeLandUsage getLandUsage() {
+        return landUsage;
+    }
+
+    public void setLandUsage(BpaSchemeLandUsage landUsage) {
+        this.landUsage = landUsage;
+    }
+
+    public Long getLandUsageId() {
+        return landUsageId;
+    }
+
+    public void setLandUsageId(Long landUsageId) {
+        this.landUsageId = landUsageId;
+    }
+
+    public Date getWorkCommencementDate() {
+        return workCommencementDate;
+    }
+
+    public void setWorkCommencementDate(Date workCommencementDate) {
+        this.workCommencementDate = workCommencementDate;
+    }
+
+    public Date getWorkCompletionDate() {
+        return workCompletionDate;
+    }
+
+    public void setWorkCompletionDate(Date workCompletionDate) {
+        this.workCompletionDate = workCompletionDate;
+    }
+
+    public Long getRegistrarVillageId() {
+        return registrarVillageId;
+    }
+
+    public void setRegistrarVillageId(Long registrarVillageId) {
+        this.registrarVillageId = registrarVillageId;
+    }
+
+    public Boolean getCharitableTrustBuilding() {
+        return charitableTrustBuilding;
+    }
+
+    public void setCharitableTrustBuilding(Boolean charitableTrustBuilding) {
+        this.charitableTrustBuilding = charitableTrustBuilding;
+    }
+
+    public Boolean getAffordableHousingScheme() {
+        return affordableHousingScheme;
+    }
+
+    public void setAffordableHousingScheme(Boolean affordableHousingScheme) {
+        this.affordableHousingScheme = affordableHousingScheme;
+    }
+
+    public String getPreviousownerdetails() {
+        return previousownerdetails;
+    }
+
+    public void setPreviousownerdetails(String previousownerdetails) {
+        this.previousownerdetails = previousownerdetails;
+    }
+
+    public String getLandregistrationdetails() {
+        return landregistrationdetails;
+    }
+
+    public void setLandregistrationdetails(String landregistrationdetails) {
+        this.landregistrationdetails = landregistrationdetails;
+    }
 }

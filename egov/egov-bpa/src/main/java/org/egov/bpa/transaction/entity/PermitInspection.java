@@ -67,44 +67,44 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = PermitInspection.SEQ_INSPECTION, sequenceName = PermitInspection.SEQ_INSPECTION, allocationSize = 1)
 public class PermitInspection extends AbstractAuditable {
 
-	public static final String SEQ_INSPECTION = "SEQ_EGBPA_PERMIT_INSPECTION";
-	private static final long serialVersionUID = 3078684328383202788L;
-	@Id
-	@GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    public static final String SEQ_INSPECTION = "SEQ_EGBPA_PERMIT_INSPECTION";
+    private static final long serialVersionUID = 3078684328383202788L;
+    @Id
+    @GeneratedValue(generator = SEQ_INSPECTION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "inspection", nullable = false)
-	private InspectionCommon inspection;
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "inspection", nullable = false)
+    private InspectionCommon inspection;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "application", nullable = false)
-	private BpaApplication application;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public InspectionCommon getInspection() {
-		return inspection;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
 
-	public void setInspection(InspectionCommon inspection) {
-		this.inspection = inspection;
-	}
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public void setApplication(BpaApplication application) {
-		this.application = application;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
 }

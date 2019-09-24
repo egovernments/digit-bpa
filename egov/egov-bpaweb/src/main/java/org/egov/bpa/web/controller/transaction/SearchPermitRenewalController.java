@@ -53,6 +53,7 @@ import static org.egov.bpa.utils.BpaConstants.RENEWALSTATUS_MODULETYPE;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.egov.bpa.transaction.entity.PermitRenewal;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
@@ -68,6 +69,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,17 +101,26 @@ public class SearchPermitRenewalController extends BpaGenericApplicationControll
 
     @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchRegisterStatusMarriageRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+    public String searchRegisterStatusMarriageRecords(
+            @Valid @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm,
+            final BindingResult result,
+            final Model model) {
+        if (result.hasErrors()) {
+            prepareFormData(model);
+            model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType(RENEWALSTATUS_MODULETYPE));
+            model.addAttribute(SEARCH_BPA_APPLICATION_FORM, searchBpaApplicationForm);
+            return "search-permit-renewal";
+        }
         return new DataTable<>(searchRenewalService.pagedSearch(searchBpaApplicationForm),
                 searchBpaApplicationForm.draw())
-                .toJson(SearchBpaApplicationAdaptor.class);
+                        .toJson(SearchBpaApplicationAdaptor.class);
     }
 
     @GetMapping("/view/{applicationNumber}")
     public String viewApplicationForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
-    	PermitRenewal permitRenewal = renewalService.findByApplicationNumber(applicationNumber);
-                model.addAttribute("permitExpiryDate", bpaNoticeUtil.calculateCertExpryDate(
+        PermitRenewal permitRenewal = renewalService.findByApplicationNumber(applicationNumber);
+        model.addAttribute("permitExpiryDate", bpaNoticeUtil.calculateCertExpryDate(
                 new DateTime(permitRenewal.getParent().getPlanPermissionDate()),
                 permitRenewal.getParent().getServiceType().getValidity()));
         model.addAttribute("permitRenewal", permitRenewal);
@@ -125,9 +136,9 @@ public class SearchPermitRenewalController extends BpaGenericApplicationControll
             buildReceiptDetails(permitRenewal.getDemand().getEgDemandDetails(), permitRenewal.getReceipts());
         return "permit-renewal-citizen-view";
     }
-    
+
     @GetMapping("/downloadfile/{fileStoreId}")
     public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, FILESTORE_MODULECODE, true);
-    } 
+    }
 }

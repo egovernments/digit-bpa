@@ -44,117 +44,117 @@ import java.util.Date;
 import org.hibernate.validator.constraints.SafeHtml;
 
 public class SearchStakeHolderForm {
-	private Long id;
+    private Long id;
 
-	private Date fromDate;
+    private Date fromDate;
 
-	private Date toDate;
+    private Date toDate;
 
-	@SafeHtml
-	private String applicantName;
+    @SafeHtml
+    private String applicantName;
 
-	@SafeHtml
-	private String type;
+    @SafeHtml
+    private String type;
 
-	@SafeHtml
-	private String licenceNumber;
+    @SafeHtml
+    private String licenceNumber;
 
-	private Date issueDate;
+    private Date issueDate;
 
-	private String stakeHolderType;
+    private String stakeHolderType;
 
-	private Boolean isActive;
+    private Boolean isActive;
 
-	@SafeHtml
-	private String status;
+    @SafeHtml
+    private String status;
 
-	private Date createdDate;
+    private Date createdDate;
 
-	public String getStakeHolderType() {
-		return stakeHolderType;
-	}
+    public String getStakeHolderType() {
+        return stakeHolderType;
+    }
 
-	public void setStakeHolderType(String stakeHolderType) {
-		this.stakeHolderType = stakeHolderType;
-	}
+    public void setStakeHolderType(String stakeHolderType) {
+        this.stakeHolderType = stakeHolderType;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getApplicantName() {
-		return applicantName;
-	}
+    public String getApplicantName() {
+        return applicantName;
+    }
 
-	public void setApplicantName(String applicantName) {
-		this.applicantName = applicantName;
-	}
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getLicenceNumber() {
-		return licenceNumber;
-	}
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
 
-	public void setLicenceNumber(String licenceNumber) {
-		this.licenceNumber = licenceNumber;
-	}
+    public void setLicenceNumber(String licenceNumber) {
+        this.licenceNumber = licenceNumber;
+    }
 
-	public Date getIssueDate() {
-		return issueDate;
-	}
+    public Date getIssueDate() {
+        return issueDate;
+    }
 
-	public void setIssueDate(Date issueDate) {
-		this.issueDate = issueDate;
-	}
+    public void setIssueDate(Date issueDate) {
+        this.issueDate = issueDate;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public Boolean getActive() {
-		return isActive;
-	}
+    public Boolean getActive() {
+        return isActive;
+    }
 
-	public void setActive(Boolean active) {
-		isActive = active;
-	}
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
 }

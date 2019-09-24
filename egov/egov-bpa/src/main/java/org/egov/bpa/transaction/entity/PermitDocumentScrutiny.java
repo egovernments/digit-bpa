@@ -19,45 +19,45 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @Table(name = "EGBPA_PERMIT_DOCUMENT_SCRUTINY")
 @SequenceGenerator(name = PermitDocumentScrutiny.SEQ_EGBPA_DOCUMENTSCRUTINY, sequenceName = PermitDocumentScrutiny.SEQ_EGBPA_DOCUMENTSCRUTINY, allocationSize = 1)
 public class PermitDocumentScrutiny extends AbstractAuditable {
-	private static final long serialVersionUID = 1L;
-	public static final String SEQ_EGBPA_DOCUMENTSCRUTINY = "SEQ_EGBPA_PERMIT_DOCUMENT_SCRUTINY";
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_DOCUMENTSCRUTINY, strategy = GenerationType.SEQUENCE)
-	private Long id;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "application", nullable = false)
-	private BpaApplication application;
-	
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "documentScrutiny", nullable = false)
-	private DocumentScrutiny docScrutiny;
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_EGBPA_DOCUMENTSCRUTINY = "SEQ_EGBPA_PERMIT_DOCUMENT_SCRUTINY";
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_DOCUMENTSCRUTINY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "documentScrutiny", nullable = false)
+    private DocumentScrutiny docScrutiny;
 
-	public BpaApplication getApplication() {
-		return application;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setApplication(BpaApplication application) {
-		this.application = application;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public DocumentScrutiny getDocScrutiny() {
-		return docScrutiny;
-	}
+    public BpaApplication getApplication() {
+        return application;
+    }
 
-	public void setDocScrutiny(DocumentScrutiny docScrutiny) {
-		this.docScrutiny = docScrutiny;
-	}
+    public void setApplication(BpaApplication application) {
+        this.application = application;
+    }
+
+    public DocumentScrutiny getDocScrutiny() {
+        return docScrutiny;
+    }
+
+    public void setDocScrutiny(DocumentScrutiny docScrutiny) {
+        this.docScrutiny = docScrutiny;
+    }
 
 }

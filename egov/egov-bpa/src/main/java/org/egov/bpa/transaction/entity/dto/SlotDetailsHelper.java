@@ -53,153 +53,153 @@ import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.hibernate.validator.constraints.SafeHtml;
 
 public class SlotDetailsHelper extends DataTableSearchRequest {
-	@SafeHtml
-	private String applicationType;
-	private Long slotId;
-	private Long slotDetailsId;
-	@SafeHtml
-	private String appointmentTime;
-	private Date appointmentDate;
-	private Long zoneId;
-	@SafeHtml
-	private String zone;
-	private Long revenueWardId;
-	@SafeHtml
-	private String revenueWardWard;
-	private Long electionWardId;
-	@SafeHtml
-	private String electionWard;
-	private Integer byNoOfDays;
-	private Integer maxScheduledSlots;
-	private Integer maxRescheduledSlots;
-	private Integer utilizedScheduledSlots;
-	private Integer utilizedRescheduledSlots;
+    @SafeHtml
+    private String applicationType;
+    private Long slotId;
+    private Long slotDetailsId;
+    @SafeHtml
+    private String appointmentTime;
+    private Date appointmentDate;
+    private Long zoneId;
+    @SafeHtml
+    private String zone;
+    private Long revenueWardId;
+    @SafeHtml
+    private String revenueWardWard;
+    private Long electionWardId;
+    @SafeHtml
+    private String electionWard;
+    private Integer byNoOfDays;
+    private Integer maxScheduledSlots;
+    private Integer maxRescheduledSlots;
+    private Integer utilizedScheduledSlots;
+    private Integer utilizedRescheduledSlots;
 
-	public String getApplicationType() {
-		return applicationType;
-	}
+    public String getApplicationType() {
+        return applicationType;
+    }
 
-	public void setApplicationType(String applicationType) {
-		this.applicationType = applicationType;
-	}
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
 
-	public Long getSlotId() {
-		return slotId;
-	}
+    public Long getSlotId() {
+        return slotId;
+    }
 
-	public void setSlotId(Long slotId) {
-		this.slotId = slotId;
-	}
+    public void setSlotId(Long slotId) {
+        this.slotId = slotId;
+    }
 
-	public Long getSlotDetailsId() {
-		return slotDetailsId;
-	}
+    public Long getSlotDetailsId() {
+        return slotDetailsId;
+    }
 
-	public void setSlotDetailsId(Long slotDetailsId) {
-		this.slotDetailsId = slotDetailsId;
-	}
+    public void setSlotDetailsId(Long slotDetailsId) {
+        this.slotDetailsId = slotDetailsId;
+    }
 
-	public String getAppointmentTime() {
-		return appointmentTime;
-	}
+    public String getAppointmentTime() {
+        return appointmentTime;
+    }
 
-	public void setAppointmentTime(String appointmentTime) {
-		this.appointmentTime = appointmentTime;
-	}
+    public void setAppointmentTime(String appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
 
-	public Date getAppointmentDate() {
-		return appointmentDate;
-	}
+    public Date getAppointmentDate() {
+        return appointmentDate;
+    }
 
-	public void setAppointmentDate(Date appointmentDate) {
-		this.appointmentDate = appointmentDate;
-	}
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
 
-	public Long getZoneId() {
-		return zoneId;
-	}
+    public Long getZoneId() {
+        return zoneId;
+    }
 
-	public void setZoneId(Long zoneId) {
-		this.zoneId = zoneId;
-	}
+    public void setZoneId(Long zoneId) {
+        this.zoneId = zoneId;
+    }
 
-	public String getZone() {
-		return zone;
-	}
+    public String getZone() {
+        return zone;
+    }
 
-	public void setZone(String zone) {
-		this.zone = zone;
-	}
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
 
-	public Long getRevenueWardId() {
-		return revenueWardId;
-	}
+    public Long getRevenueWardId() {
+        return revenueWardId;
+    }
 
-	public void setRevenueWardId(Long revenueWardId) {
-		this.revenueWardId = revenueWardId;
-	}
+    public void setRevenueWardId(Long revenueWardId) {
+        this.revenueWardId = revenueWardId;
+    }
 
-	public String getRevenueWardWard() {
-		return revenueWardWard;
-	}
+    public String getRevenueWardWard() {
+        return revenueWardWard;
+    }
 
-	public void setRevenueWardWard(String revenueWardWard) {
-		this.revenueWardWard = revenueWardWard;
-	}
+    public void setRevenueWardWard(String revenueWardWard) {
+        this.revenueWardWard = revenueWardWard;
+    }
 
-	public Long getElectionWardId() {
-		return electionWardId;
-	}
+    public Long getElectionWardId() {
+        return electionWardId;
+    }
 
-	public void setElectionWardId(Long electionWardId) {
-		this.electionWardId = electionWardId;
-	}
+    public void setElectionWardId(Long electionWardId) {
+        this.electionWardId = electionWardId;
+    }
 
-	public String getElectionWard() {
-		return electionWard;
-	}
+    public String getElectionWard() {
+        return electionWard;
+    }
 
-	public void setElectionWard(String electionWard) {
-		this.electionWard = electionWard;
-	}
+    public void setElectionWard(String electionWard) {
+        this.electionWard = electionWard;
+    }
 
-	public Integer getByNoOfDays() {
-		return byNoOfDays;
-	}
+    public Integer getByNoOfDays() {
+        return byNoOfDays;
+    }
 
-	public void setByNoOfDays(Integer byNoOfDays) {
-		this.byNoOfDays = byNoOfDays;
-	}
+    public void setByNoOfDays(Integer byNoOfDays) {
+        this.byNoOfDays = byNoOfDays;
+    }
 
-	public Integer getMaxScheduledSlots() {
-		return maxScheduledSlots;
-	}
+    public Integer getMaxScheduledSlots() {
+        return maxScheduledSlots;
+    }
 
-	public void setMaxScheduledSlots(Integer maxScheduledSlots) {
-		this.maxScheduledSlots = maxScheduledSlots;
-	}
+    public void setMaxScheduledSlots(Integer maxScheduledSlots) {
+        this.maxScheduledSlots = maxScheduledSlots;
+    }
 
-	public Integer getMaxRescheduledSlots() {
-		return maxRescheduledSlots;
-	}
+    public Integer getMaxRescheduledSlots() {
+        return maxRescheduledSlots;
+    }
 
-	public void setMaxRescheduledSlots(Integer maxRescheduledSlots) {
-		this.maxRescheduledSlots = maxRescheduledSlots;
-	}
+    public void setMaxRescheduledSlots(Integer maxRescheduledSlots) {
+        this.maxRescheduledSlots = maxRescheduledSlots;
+    }
 
-	public Integer getUtilizedScheduledSlots() {
-		return utilizedScheduledSlots;
-	}
+    public Integer getUtilizedScheduledSlots() {
+        return utilizedScheduledSlots;
+    }
 
-	public void setUtilizedScheduledSlots(Integer utilizedScheduledSlots) {
-		this.utilizedScheduledSlots = utilizedScheduledSlots;
-	}
+    public void setUtilizedScheduledSlots(Integer utilizedScheduledSlots) {
+        this.utilizedScheduledSlots = utilizedScheduledSlots;
+    }
 
-	public Integer getUtilizedRescheduledSlots() {
-		return utilizedRescheduledSlots;
-	}
+    public Integer getUtilizedRescheduledSlots() {
+        return utilizedRescheduledSlots;
+    }
 
-	public void setUtilizedRescheduledSlots(Integer utilizedRescheduledSlots) {
-		this.utilizedRescheduledSlots = utilizedRescheduledSlots;
-	}
+    public void setUtilizedRescheduledSlots(Integer utilizedRescheduledSlots) {
+        this.utilizedRescheduledSlots = utilizedRescheduledSlots;
+    }
 }

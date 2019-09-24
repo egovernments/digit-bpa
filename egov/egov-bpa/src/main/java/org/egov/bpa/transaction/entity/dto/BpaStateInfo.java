@@ -48,52 +48,51 @@
 
 package org.egov.bpa.transaction.entity.dto;
 
-
 public class BpaStateInfo {
 
-	private Long wfMatrixRef;
-	private Long tsInitiatorPos;
-	private Long scrutinizedBy;
-	private Long scrutinizedUser;
-	private String revertedBy;
+    private Long wfMatrixRef;
+    private Long tsInitiatorPos;
+    private Long scrutinizedBy;
+    private Long scrutinizedUser;
+    private String revertedBy;
 
-	public Long getWfMatrixRef() {
-		return wfMatrixRef;
-	}
+    public Long getWfMatrixRef() {
+        return wfMatrixRef;
+    }
 
-	public void setWfMatrixRef(Long wfMatrixRef) {
-		this.wfMatrixRef = wfMatrixRef;
-	}
+    public void setWfMatrixRef(Long wfMatrixRef) {
+        this.wfMatrixRef = wfMatrixRef;
+    }
 
-	public Long getTsInitiatorPos() {
-		return tsInitiatorPos;
-	}
+    public Long getTsInitiatorPos() {
+        return tsInitiatorPos;
+    }
 
-	public void setTsInitiatorPos(Long tsInitiatorPos) {
-		this.tsInitiatorPos = tsInitiatorPos;
-	}
+    public void setTsInitiatorPos(Long tsInitiatorPos) {
+        this.tsInitiatorPos = tsInitiatorPos;
+    }
 
-	public Long getScrutinizedBy() {
-		return scrutinizedBy;
-	}
+    public Long getScrutinizedBy() {
+        return scrutinizedBy;
+    }
 
-	public void setScrutinizedBy(Long scrutinizedBy) {
-		this.scrutinizedBy = scrutinizedBy;
-	}
+    public void setScrutinizedBy(Long scrutinizedBy) {
+        this.scrutinizedBy = scrutinizedBy;
+    }
 
-	public Long getScrutinizedUser() {
-		return scrutinizedUser;
-	}
+    public Long getScrutinizedUser() {
+        return scrutinizedUser;
+    }
 
-	public void setScrutinizedUser(Long scrutinizedUser) {
-		this.scrutinizedUser = scrutinizedUser;
-	}
+    public void setScrutinizedUser(Long scrutinizedUser) {
+        this.scrutinizedUser = scrutinizedUser;
+    }
 
-	public String getRevertedBy() {
-		return revertedBy;
-	}
+    public String getRevertedBy() {
+        return revertedBy;
+    }
 
-	public void setRevertedBy(String revertedBy) {
-		this.revertedBy = revertedBy;
-	}
+    public void setRevertedBy(String revertedBy) {
+        this.revertedBy = revertedBy;
+    }
 }

@@ -73,11 +73,11 @@ public class OwnershipTransferConditions extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_OWNERSHIP_CONDITIONS, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ownershipTransfer", nullable = false)
     private OwnershipTransfer ownershipTransfer;
-   
+
     @Valid
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "noticecondition", nullable = false)
@@ -91,20 +91,20 @@ public class OwnershipTransferConditions extends AbstractAuditable {
         this.id = id;
     }
 
-	public OwnershipTransfer getOwnershipTransfer() {
-		return ownershipTransfer;
-	}
+    public OwnershipTransfer getOwnershipTransfer() {
+        return ownershipTransfer;
+    }
 
-	public void setOwnershipTransfer(OwnershipTransfer ownershipTransfer) {
-		this.ownershipTransfer = ownershipTransfer;
-	}
+    public void setOwnershipTransfer(OwnershipTransfer ownershipTransfer) {
+        this.ownershipTransfer = ownershipTransfer;
+    }
 
-	public NoticeCondition getNoticeCondition() {
-		return noticeCondition;
-	}
+    public NoticeCondition getNoticeCondition() {
+        return noticeCondition;
+    }
 
-	public void setNoticeCondition(NoticeCondition noticeCondition) {
-		this.noticeCondition = noticeCondition;
-	}
+    public void setNoticeCondition(NoticeCondition noticeCondition) {
+        this.noticeCondition = noticeCondition;
+    }
 
 }

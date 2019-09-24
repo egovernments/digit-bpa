@@ -63,18 +63,18 @@ public class ApplicationFeeDetail extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_APPLICATIONFEE_DETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bpaFeeMapping", nullable = false)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private BpaFeeMapping bpaFeeMapping;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicationFee", nullable = false)
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private ApplicationFee applicationFee;
-    
+
     @Audited
     @PositiveOrZero
     private BigDecimal amount = BigDecimal.ZERO;

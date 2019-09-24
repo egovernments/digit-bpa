@@ -48,56 +48,56 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = AppointmentLocations.SEQ_EGBPA_MSTR_APPOINTMENT_LOCATION, sequenceName = AppointmentLocations.SEQ_EGBPA_MSTR_APPOINTMENT_LOCATION, allocationSize = 1)
 public class AppointmentLocations extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_EGBPA_MSTR_APPOINTMENT_LOCATION = "seq_egbpa_mstr_appointment_location";
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_MSTR_APPOINTMENT_LOCATION, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_EGBPA_MSTR_APPOINTMENT_LOCATION = "seq_egbpa_mstr_appointment_location";
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_MSTR_APPOINTMENT_LOCATION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@SafeHtml
-	@Length(min = 1, max = 32)
-	@Column(name = "code", unique = true)
-	private String code;
+    @SafeHtml
+    @Length(min = 1, max = 32)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 160)
-	private String description;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 160)
+    private String description;
 
-	@PositiveOrZero
-	private Integer orderNumber;
+    @PositiveOrZero
+    private Integer orderNumber;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(final String code) {
-		this.code = code;
-	}
+    public void setCode(final String code) {
+        this.code = code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(final String description) {
-		this.description = description;
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	public Integer getOrderNumber() {
-		return orderNumber;
-	}
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setOrderNumber(Integer orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 }

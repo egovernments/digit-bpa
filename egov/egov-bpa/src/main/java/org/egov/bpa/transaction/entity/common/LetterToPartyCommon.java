@@ -80,278 +80,278 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = LetterToPartyCommon.SEQ_OC_LETTERTOPARTY, sequenceName = LetterToPartyCommon.SEQ_OC_LETTERTOPARTY, allocationSize = 1)
 public class LetterToPartyCommon extends AbstractAuditable {
 
-	public static final String SEQ_OC_LETTERTOPARTY = "SEQ_EGBPA_LETTERTOPARTY_COMMON";
-	private static final long serialVersionUID = -2504766895161087311L;
+    public static final String SEQ_OC_LETTERTOPARTY = "SEQ_EGBPA_LETTERTOPARTY_COMMON";
+    private static final long serialVersionUID = -2504766895161087311L;
 
-	@Id
-	@GeneratedValue(generator = SEQ_OC_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_OC_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "inspection", nullable = false)
-	private InspectionCommon inspection;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "inspection", nullable = false)
+    private InspectionCommon inspection;
 
-	@SafeHtml
-	@Length(min = 1, max = 32)
-	private String acknowledgementNumber;
+    @SafeHtml
+    @Length(min = 1, max = 32)
+    private String acknowledgementNumber;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "egbpa_lp_reason_common", joinColumns = @JoinColumn(name = "lettertoparty"), inverseJoinColumns = @JoinColumn(name = "lpreason"))
-	private List<LpReason> lpReason = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "egbpa_lp_reason_common", joinColumns = @JoinColumn(name = "lettertoparty"), inverseJoinColumns = @JoinColumn(name = "lpreason"))
+    private List<LpReason> lpReason = new ArrayList<>();
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String lpNumber;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String lpNumber;
 
-	@Temporal(TemporalType.DATE)
-	private Date letterDate;
+    @Temporal(TemporalType.DATE)
+    private Date letterDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "scheduledby")
-	private User scheduledBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "scheduledby")
+    private User scheduledBy;
 
-	@SafeHtml
-	@Length(min = 1, max = 128)
-	private String scheduledPlace;
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String scheduledPlace;
 
-	@Temporal(TemporalType.DATE)
-	private Date scheduledTime;
+    @Temporal(TemporalType.DATE)
+    private Date scheduledTime;
 
-	@Temporal(TemporalType.DATE)
-	private Date sentDate;
+    @Temporal(TemporalType.DATE)
+    private Date sentDate;
 
-	@Temporal(TemporalType.DATE)
-	private Date replyDate;
+    @Temporal(TemporalType.DATE)
+    private Date replyDate;
 
-	@SafeHtml
-	@Length(min = 1, max = 1024)
-	private String lpRemarks;
+    @SafeHtml
+    @Length(min = 1, max = 1024)
+    private String lpRemarks;
 
-	@SafeHtml
-	@Length(min = 1, max = 1024)
-	private String lpReplyRemarks;
+    @SafeHtml
+    @Length(min = 1, max = 1024)
+    private String lpReplyRemarks;
 
-	@SafeHtml
-	@Length(min = 1, max = 1024)
-	private String lpDesc;
+    @SafeHtml
+    @Length(min = 1, max = 1024)
+    private String lpDesc;
 
-	@SafeHtml
-	@Length(min = 1, max = 1024)
-	private String lpReplyDesc;
+    @SafeHtml
+    @Length(min = 1, max = 1024)
+    private String lpReplyDesc;
 
-	private Boolean isHistory;
+    private Boolean isHistory;
 
-	@SafeHtml
-	@Length(min = 1, max = 512)
-	private String documentId;
+    @SafeHtml
+    @Length(min = 1, max = 512)
+    private String documentId;
 
-	@Temporal(TemporalType.DATE)
-	private Date lastReplyDate;
+    @Temporal(TemporalType.DATE)
+    private Date lastReplyDate;
 
-	@SafeHtml
-	@Length(min = 1, max = 200)
-	private String currentStateValueOfLP;
+    @SafeHtml
+    @Length(min = 1, max = 200)
+    private String currentStateValueOfLP;
 
-	@SafeHtml
-	@Length(min = 1, max = 200)
-	private String stateForOwnerPosition;
+    @SafeHtml
+    @Length(min = 1, max = 200)
+    private String stateForOwnerPosition;
 
-	@SafeHtml
-	@Length(min = 1, max = 200)
-	private String pendingAction;
+    @SafeHtml
+    @Length(min = 1, max = 200)
+    private String pendingAction;
 
-	@Valid
-	@OrderBy("id ASC")
-	@OneToMany(mappedBy = "letterToParty", cascade = CascadeType.ALL, fetch =FetchType.LAZY)
-	private List<LetterToPartyDocumentCommon> letterToPartyDocuments = new ArrayList<>(0);
+    @Valid
+    @OrderBy("id ASC")
+    @OneToMany(mappedBy = "letterToParty", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<LetterToPartyDocumentCommon> letterToPartyDocuments = new ArrayList<>(0);
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "currentapplnstatus")
-	private BpaStatus currentApplnStatus;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currentapplnstatus")
+    private BpaStatus currentApplnStatus;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public InspectionCommon getInspection() {
-		return inspection;
-	}
-
-	public void setInspection(InspectionCommon inspection) {
-		this.inspection = inspection;
-	}
-
-	public String getAcknowledgementNumber() {
-		return acknowledgementNumber;
-	}
-
-	public void setAcknowledgementNumber(String acknowledgementNumber) {
-		this.acknowledgementNumber = acknowledgementNumber;
-	}
-
-	public List<LpReason> getLpReason() {
-		return lpReason;
-	}
-
-	public void setLpReason(List<LpReason> lpReason) {
-		this.lpReason = lpReason;
-	}
-
-	public String getLpNumber() {
-		return lpNumber;
-	}
-
-	public void setLpNumber(String lpNumber) {
-		this.lpNumber = lpNumber;
-	}
-
-	public Date getLetterDate() {
-		return letterDate;
-	}
-
-	public void setLetterDate(Date letterDate) {
-		this.letterDate = letterDate;
-	}
-
-	public User getScheduledBy() {
-		return scheduledBy;
-	}
-
-	public void setScheduledBy(User scheduledBy) {
-		this.scheduledBy = scheduledBy;
-	}
-
-	public String getScheduledPlace() {
-		return scheduledPlace;
-	}
-
-	public void setScheduledPlace(String scheduledPlace) {
-		this.scheduledPlace = scheduledPlace;
-	}
-
-	public Date getScheduledTime() {
-		return scheduledTime;
-	}
-
-	public void setScheduledTime(Date scheduledTime) {
-		this.scheduledTime = scheduledTime;
-	}
-
-	public Date getSentDate() {
-		return sentDate;
-	}
-
-	public void setSentDate(Date sentDate) {
-		this.sentDate = sentDate;
-	}
-
-	public Date getReplyDate() {
-		return replyDate;
-	}
-
-	public void setReplyDate(Date replyDate) {
-		this.replyDate = replyDate;
-	}
-
-	public String getLpRemarks() {
-		return lpRemarks;
-	}
-
-	public void setLpRemarks(String lpRemarks) {
-		this.lpRemarks = lpRemarks;
-	}
-
-	public String getLpReplyRemarks() {
-		return lpReplyRemarks;
-	}
-
-	public void setLpReplyRemarks(String lpReplyRemarks) {
-		this.lpReplyRemarks = lpReplyRemarks;
-	}
-
-	public String getLpDesc() {
-		return lpDesc;
-	}
-
-	public void setLpDesc(String lpDesc) {
-		this.lpDesc = lpDesc;
-	}
-
-	public String getLpReplyDesc() {
-		return lpReplyDesc;
-	}
-
-	public void setLpReplyDesc(String lpReplyDesc) {
-		this.lpReplyDesc = lpReplyDesc;
-	}
-
-	public Boolean getHistory() {
-		return isHistory;
-	}
-
-	public void setHistory(Boolean history) {
-		isHistory = history;
-	}
-
-	public String getDocumentId() {
-		return documentId;
-	}
-
-	public void setDocumentId(String documentId) {
-		this.documentId = documentId;
-	}
-
-	public Date getLastReplyDate() {
-		return lastReplyDate;
-	}
-
-	public void setLastReplyDate(Date lastReplyDate) {
-		this.lastReplyDate = lastReplyDate;
-	}
-
-	public String getCurrentStateValueOfLP() {
-		return currentStateValueOfLP;
-	}
-
-	public void setCurrentStateValueOfLP(String currentStateValueOfLP) {
-		this.currentStateValueOfLP = currentStateValueOfLP;
-	}
-
-	public String getStateForOwnerPosition() {
-		return stateForOwnerPosition;
-	}
-
-	public void setStateForOwnerPosition(String stateForOwnerPosition) {
-		this.stateForOwnerPosition = stateForOwnerPosition;
-	}
-
-	public String getPendingAction() {
-		return pendingAction;
-	}
-
-	public void setPendingAction(String pendingAction) {
-		this.pendingAction = pendingAction;
-	}
-
-	public List<LetterToPartyDocumentCommon> getLetterToPartyDocuments() {
-		return letterToPartyDocuments;
-	}
-
-	public void setLetterToPartyDocuments(List<LetterToPartyDocumentCommon> letterToPartyDocuments) {
-		this.letterToPartyDocuments = letterToPartyDocuments;
-	}
-
-	public BpaStatus getCurrentApplnStatus() {
-		return currentApplnStatus;
-	}
-
-	public void setCurrentApplnStatus(BpaStatus currentApplnStatus) {
-		this.currentApplnStatus = currentApplnStatus;
-	}
+    public InspectionCommon getInspection() {
+        return inspection;
+    }
+
+    public void setInspection(InspectionCommon inspection) {
+        this.inspection = inspection;
+    }
+
+    public String getAcknowledgementNumber() {
+        return acknowledgementNumber;
+    }
+
+    public void setAcknowledgementNumber(String acknowledgementNumber) {
+        this.acknowledgementNumber = acknowledgementNumber;
+    }
+
+    public List<LpReason> getLpReason() {
+        return lpReason;
+    }
+
+    public void setLpReason(List<LpReason> lpReason) {
+        this.lpReason = lpReason;
+    }
+
+    public String getLpNumber() {
+        return lpNumber;
+    }
+
+    public void setLpNumber(String lpNumber) {
+        this.lpNumber = lpNumber;
+    }
+
+    public Date getLetterDate() {
+        return letterDate;
+    }
+
+    public void setLetterDate(Date letterDate) {
+        this.letterDate = letterDate;
+    }
+
+    public User getScheduledBy() {
+        return scheduledBy;
+    }
+
+    public void setScheduledBy(User scheduledBy) {
+        this.scheduledBy = scheduledBy;
+    }
+
+    public String getScheduledPlace() {
+        return scheduledPlace;
+    }
+
+    public void setScheduledPlace(String scheduledPlace) {
+        this.scheduledPlace = scheduledPlace;
+    }
+
+    public Date getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(Date scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
+
+    public Date getSentDate() {
+        return sentDate;
+    }
+
+    public void setSentDate(Date sentDate) {
+        this.sentDate = sentDate;
+    }
+
+    public Date getReplyDate() {
+        return replyDate;
+    }
+
+    public void setReplyDate(Date replyDate) {
+        this.replyDate = replyDate;
+    }
+
+    public String getLpRemarks() {
+        return lpRemarks;
+    }
+
+    public void setLpRemarks(String lpRemarks) {
+        this.lpRemarks = lpRemarks;
+    }
+
+    public String getLpReplyRemarks() {
+        return lpReplyRemarks;
+    }
+
+    public void setLpReplyRemarks(String lpReplyRemarks) {
+        this.lpReplyRemarks = lpReplyRemarks;
+    }
+
+    public String getLpDesc() {
+        return lpDesc;
+    }
+
+    public void setLpDesc(String lpDesc) {
+        this.lpDesc = lpDesc;
+    }
+
+    public String getLpReplyDesc() {
+        return lpReplyDesc;
+    }
+
+    public void setLpReplyDesc(String lpReplyDesc) {
+        this.lpReplyDesc = lpReplyDesc;
+    }
+
+    public Boolean getHistory() {
+        return isHistory;
+    }
+
+    public void setHistory(Boolean history) {
+        isHistory = history;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
+
+    public Date getLastReplyDate() {
+        return lastReplyDate;
+    }
+
+    public void setLastReplyDate(Date lastReplyDate) {
+        this.lastReplyDate = lastReplyDate;
+    }
+
+    public String getCurrentStateValueOfLP() {
+        return currentStateValueOfLP;
+    }
+
+    public void setCurrentStateValueOfLP(String currentStateValueOfLP) {
+        this.currentStateValueOfLP = currentStateValueOfLP;
+    }
+
+    public String getStateForOwnerPosition() {
+        return stateForOwnerPosition;
+    }
+
+    public void setStateForOwnerPosition(String stateForOwnerPosition) {
+        this.stateForOwnerPosition = stateForOwnerPosition;
+    }
+
+    public String getPendingAction() {
+        return pendingAction;
+    }
+
+    public void setPendingAction(String pendingAction) {
+        this.pendingAction = pendingAction;
+    }
+
+    public List<LetterToPartyDocumentCommon> getLetterToPartyDocuments() {
+        return letterToPartyDocuments;
+    }
+
+    public void setLetterToPartyDocuments(List<LetterToPartyDocumentCommon> letterToPartyDocuments) {
+        this.letterToPartyDocuments = letterToPartyDocuments;
+    }
+
+    public BpaStatus getCurrentApplnStatus() {
+        return currentApplnStatus;
+    }
+
+    public void setCurrentApplnStatus(BpaStatus currentApplnStatus) {
+        this.currentApplnStatus = currentApplnStatus;
+    }
 }

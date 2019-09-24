@@ -64,44 +64,44 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @SequenceGenerator(name = OwnershipFee.SEQ_EGBPA_OWNERSHIP_FEE, sequenceName = OwnershipFee.SEQ_EGBPA_OWNERSHIP_FEE, allocationSize = 1)
 public class OwnershipFee extends AbstractAuditable {
 
-	private static final long serialVersionUID = 5453896334585849094L;
+    private static final long serialVersionUID = 5453896334585849094L;
 
-	public static final String SEQ_EGBPA_OWNERSHIP_FEE = "seq_egbpa_ownership_fee";
+    public static final String SEQ_EGBPA_OWNERSHIP_FEE = "seq_egbpa_ownership_fee";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_OWNERSHIP_FEE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_OWNERSHIP_FEE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ownershipTransfer", nullable = false)
-	private OwnershipTransfer ownershipTransfer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ownershipTransfer", nullable = false)
+    private OwnershipTransfer ownershipTransfer;
 
-	@Valid
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "applicationFee")
-	private ApplicationFee applicationFee;
+    @Valid
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "applicationFee")
+    private ApplicationFee applicationFee;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public OwnershipTransfer getOwnershipTransfer() {
-		return ownershipTransfer;
-	}
+    public OwnershipTransfer getOwnershipTransfer() {
+        return ownershipTransfer;
+    }
 
-	public void setOwnershipTransfer(OwnershipTransfer ownershipTransfer) {
-		this.ownershipTransfer = ownershipTransfer;
-	}
+    public void setOwnershipTransfer(OwnershipTransfer ownershipTransfer) {
+        this.ownershipTransfer = ownershipTransfer;
+    }
 
-	public ApplicationFee getApplicationFee() {
-		return applicationFee;
-	}
+    public ApplicationFee getApplicationFee() {
+        return applicationFee;
+    }
 
-	public void setApplicationFee(ApplicationFee applicationFee) {
-		this.applicationFee = applicationFee;
-	}
+    public void setApplicationFee(ApplicationFee applicationFee) {
+        this.applicationFee = applicationFee;
+    }
 }

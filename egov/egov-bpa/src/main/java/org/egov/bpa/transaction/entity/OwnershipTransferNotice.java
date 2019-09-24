@@ -64,43 +64,43 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @Table(name = "egbpa_ownershiptransfer_notice")
 @SequenceGenerator(name = OwnershipTransferNotice.SEQ_EGBPA_OWNERSHIPTRANSFER_NOTICE, sequenceName = OwnershipTransferNotice.SEQ_EGBPA_OWNERSHIPTRANSFER_NOTICE, allocationSize = 1)
 public class OwnershipTransferNotice extends AbstractAuditable {
-	private static final long serialVersionUID = -4954480849979881789L;
+    private static final long serialVersionUID = -4954480849979881789L;
 
-	public static final String SEQ_EGBPA_OWNERSHIPTRANSFER_NOTICE = "seq_egbpa_ownershiptransfer_notice";
+    public static final String SEQ_EGBPA_OWNERSHIPTRANSFER_NOTICE = "seq_egbpa_ownershiptransfer_notice";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_OWNERSHIPTRANSFER_NOTICE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_OWNERSHIPTRANSFER_NOTICE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ownershipTransfer", nullable = false)
-	private OwnershipTransfer ownershipTransfer;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ownershipTransfer", nullable = false)
+    private OwnershipTransfer ownershipTransfer;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "notice", nullable = false)
-	private NoticeCommon noticeCommon;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "notice", nullable = false)
+    private NoticeCommon noticeCommon;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public OwnershipTransfer getOwnershipTransfer() {
-		return ownershipTransfer;
-	}
+    public OwnershipTransfer getOwnershipTransfer() {
+        return ownershipTransfer;
+    }
 
-	public void setOwnershipTransfer(OwnershipTransfer ownershipTransfer) {
-		this.ownershipTransfer = ownershipTransfer;
-	}
+    public void setOwnershipTransfer(OwnershipTransfer ownershipTransfer) {
+        this.ownershipTransfer = ownershipTransfer;
+    }
 
-	public NoticeCommon getNoticeCommon() {
-		return noticeCommon;
-	}
+    public NoticeCommon getNoticeCommon() {
+        return noticeCommon;
+    }
 
-	public void setNoticeCommon(NoticeCommon noticeCommon) {
-		this.noticeCommon = noticeCommon;
-	}
+    public void setNoticeCommon(NoticeCommon noticeCommon) {
+        this.noticeCommon = noticeCommon;
+    }
 }

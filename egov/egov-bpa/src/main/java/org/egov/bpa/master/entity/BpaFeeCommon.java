@@ -52,84 +52,84 @@ import org.hibernate.validator.constraints.SafeHtml;
 @SequenceGenerator(name = BpaFeeCommon.SEQ_BPAFEECOMMON, sequenceName = BpaFeeCommon.SEQ_BPAFEECOMMON, allocationSize = 1)
 public class BpaFeeCommon extends AbstractAuditable {
 
-	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_BPAFEECOMMON = "SEQ_EGBPA_MSTR_BPAFEE_COMMON";
+    private static final long serialVersionUID = 3078684328383202788L;
+    public static final String SEQ_BPAFEECOMMON = "SEQ_EGBPA_MSTR_BPAFEE_COMMON";
 
-	@Id
-	@GeneratedValue(generator = SEQ_BPAFEECOMMON, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_BPAFEECOMMON, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "glcode")
-	private CChartOfAccounts glcode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "glcode")
+    private CChartOfAccounts glcode;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "code", unique = true)
-	private String code;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "code", unique = true)
+    private String code;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 128)
-	@Column(name = "name", unique = true)
-	private String name;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 128)
+    @Column(name = "name", unique = true)
+    private String name;
 
-	@SafeHtml
-	@NotNull
-	@Length(min = 1, max = 256)
-	private String description;
+    @SafeHtml
+    @NotNull
+    @Length(min = 1, max = 256)
+    private String description;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category")
-	private EgReasonCategory category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category")
+    private EgReasonCategory category;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public CChartOfAccounts getGlcode() {
-		return glcode;
-	}
+    public CChartOfAccounts getGlcode() {
+        return glcode;
+    }
 
-	public void setGlcode(CChartOfAccounts glcode) {
-		this.glcode = glcode;
-	}
+    public void setGlcode(CChartOfAccounts glcode) {
+        this.glcode = glcode;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public EgReasonCategory getCategory() {
-		return category;
-	}
+    public EgReasonCategory getCategory() {
+        return category;
+    }
 
-	public void setCategory(EgReasonCategory category) {
-		this.category = category;
-	}
+    public void setCategory(EgReasonCategory category) {
+        this.category = category;
+    }
 
 }

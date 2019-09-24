@@ -53,92 +53,92 @@ import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.hibernate.validator.constraints.SafeHtml;
 
 public class NocDetailsHelper extends DataTableSearchRequest {
-	private Long nocStatusId;
-	private Date nocApplicationDate;
-	@SafeHtml
-	private String nocApplicationNumber;
-	@SafeHtml
-	private String permitApplicationNo;
-	@SafeHtml
-	private String thirdPartyApplicationNo;
-	@SafeHtml
-	private String nocDepartmentName;
-	@SafeHtml
-	private String nocStatusName;
-	private Date statusUpdatedDate;
-	@SafeHtml
-	private String remarks;
+    private Long nocStatusId;
+    private Date nocApplicationDate;
+    @SafeHtml
+    private String nocApplicationNumber;
+    @SafeHtml
+    private String permitApplicationNo;
+    @SafeHtml
+    private String thirdPartyApplicationNo;
+    @SafeHtml
+    private String nocDepartmentName;
+    @SafeHtml
+    private String nocStatusName;
+    private Date statusUpdatedDate;
+    @SafeHtml
+    private String remarks;
 
-	public Long getNocStatusId() {
-		return nocStatusId;
-	}
+    public Long getNocStatusId() {
+        return nocStatusId;
+    }
 
-	public void setNocStatusId(Long nocStatusId) {
-		this.nocStatusId = nocStatusId;
-	}
+    public void setNocStatusId(Long nocStatusId) {
+        this.nocStatusId = nocStatusId;
+    }
 
-	public Date getNocApplicationDate() {
-		return nocApplicationDate;
-	}
+    public Date getNocApplicationDate() {
+        return nocApplicationDate;
+    }
 
-	public void setNocApplicationDate(Date nocApplicationDate) {
-		this.nocApplicationDate = nocApplicationDate;
-	}
+    public void setNocApplicationDate(Date nocApplicationDate) {
+        this.nocApplicationDate = nocApplicationDate;
+    }
 
-	public String getNocApplicationNumber() {
-		return nocApplicationNumber;
-	}
+    public String getNocApplicationNumber() {
+        return nocApplicationNumber;
+    }
 
-	public void setNocApplicationNumber(String nocApplicationNumber) {
-		this.nocApplicationNumber = nocApplicationNumber;
-	}
+    public void setNocApplicationNumber(String nocApplicationNumber) {
+        this.nocApplicationNumber = nocApplicationNumber;
+    }
 
-	public String getPermitApplicationNo() {
-		return permitApplicationNo;
-	}
+    public String getPermitApplicationNo() {
+        return permitApplicationNo;
+    }
 
-	public void setPermitApplicationNo(String permitApplicationNo) {
-		this.permitApplicationNo = permitApplicationNo;
-	}
+    public void setPermitApplicationNo(String permitApplicationNo) {
+        this.permitApplicationNo = permitApplicationNo;
+    }
 
-	public String getThirdPartyApplicationNo() {
-		return thirdPartyApplicationNo;
-	}
+    public String getThirdPartyApplicationNo() {
+        return thirdPartyApplicationNo;
+    }
 
-	public void setThirdPartyApplicationNo(String thirdPartyApplicationNo) {
-		this.thirdPartyApplicationNo = thirdPartyApplicationNo;
-	}
+    public void setThirdPartyApplicationNo(String thirdPartyApplicationNo) {
+        this.thirdPartyApplicationNo = thirdPartyApplicationNo;
+    }
 
-	public String getNocDepartmentName() {
-		return nocDepartmentName;
-	}
+    public String getNocDepartmentName() {
+        return nocDepartmentName;
+    }
 
-	public void setNocDepartmentName(String nocDepartmentName) {
-		this.nocDepartmentName = nocDepartmentName;
-	}
+    public void setNocDepartmentName(String nocDepartmentName) {
+        this.nocDepartmentName = nocDepartmentName;
+    }
 
-	public String getNocStatusName() {
-		return nocStatusName;
-	}
+    public String getNocStatusName() {
+        return nocStatusName;
+    }
 
-	public void setNocStatusName(String nocStatusName) {
-		this.nocStatusName = nocStatusName;
-	}
+    public void setNocStatusName(String nocStatusName) {
+        this.nocStatusName = nocStatusName;
+    }
 
-	public Date getStatusUpdatedDate() {
-		return statusUpdatedDate;
-	}
+    public Date getStatusUpdatedDate() {
+        return statusUpdatedDate;
+    }
 
-	public void setStatusUpdatedDate(Date statusUpdatedDate) {
-		this.statusUpdatedDate = statusUpdatedDate;
-	}
+    public void setStatusUpdatedDate(Date statusUpdatedDate) {
+        this.statusUpdatedDate = statusUpdatedDate;
+    }
 
-	public String getRemarks() {
-		return remarks;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
 }

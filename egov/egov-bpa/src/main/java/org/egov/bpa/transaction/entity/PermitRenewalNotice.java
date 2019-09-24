@@ -64,43 +64,43 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @Table(name = "egbpa_permitrenewal_notice")
 @SequenceGenerator(name = PermitRenewalNotice.SEQ_EGBPA_PERMITRENEWAL_NOTICE, sequenceName = PermitRenewalNotice.SEQ_EGBPA_PERMITRENEWAL_NOTICE, allocationSize = 1)
 public class PermitRenewalNotice extends AbstractAuditable {
-	private static final long serialVersionUID = -4954480849979881789L;
+    private static final long serialVersionUID = -4954480849979881789L;
 
-	public static final String SEQ_EGBPA_PERMITRENEWAL_NOTICE = "seq_egbpa_permitrenewal_notice";
+    public static final String SEQ_EGBPA_PERMITRENEWAL_NOTICE = "seq_egbpa_permitrenewal_notice";
 
-	@Id
-	@GeneratedValue(generator = SEQ_EGBPA_PERMITRENEWAL_NOTICE, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ_EGBPA_PERMITRENEWAL_NOTICE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "permitrenewal", nullable = false)
-	private PermitRenewal permitRenewal;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "permitrenewal", nullable = false)
+    private PermitRenewal permitRenewal;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "notice", nullable = false)
-	private NoticeCommon noticeCommon;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "notice", nullable = false)
+    private NoticeCommon noticeCommon;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public PermitRenewal getPermitRenewal() {
-		return permitRenewal;
-	}
+    public PermitRenewal getPermitRenewal() {
+        return permitRenewal;
+    }
 
-	public void setPermitRenewal(PermitRenewal permitRenewal) {
-		this.permitRenewal = permitRenewal;
-	}
+    public void setPermitRenewal(PermitRenewal permitRenewal) {
+        this.permitRenewal = permitRenewal;
+    }
 
-	public NoticeCommon getNoticeCommon() {
-		return noticeCommon;
-	}
+    public NoticeCommon getNoticeCommon() {
+        return noticeCommon;
+    }
 
-	public void setNoticeCommon(NoticeCommon noticeCommon) {
-		this.noticeCommon = noticeCommon;
-	}
+    public void setNoticeCommon(NoticeCommon noticeCommon) {
+        this.noticeCommon = noticeCommon;
+    }
 }

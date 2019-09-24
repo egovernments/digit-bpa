@@ -284,11 +284,13 @@ public class PersonalRegisterHelper {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PersonalRegisterHelper)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof PersonalRegisterHelper))
+            return false;
         PersonalRegisterHelper that = (PersonalRegisterHelper) o;
         return Objects.equals(getId(), that.getId()) &&
-               Objects.equals(getApplicationNumber(), that.getApplicationNumber());
+                Objects.equals(getApplicationNumber(), that.getApplicationNumber());
     }
 
     @Override
