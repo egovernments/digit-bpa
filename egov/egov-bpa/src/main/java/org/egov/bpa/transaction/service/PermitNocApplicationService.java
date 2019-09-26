@@ -171,6 +171,15 @@ public class PermitNocApplicationService {
                 permitNoc.setBpaNocApplication(nocApplication);
                 permitNoc = createNocApplication(permitNoc, nocConfig);
                 bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+            }else if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.THIRD_PARTY.toString())
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+                permitNoc.setBpaApplication(application);
+                permitNoc.setBpaNocApplication(nocApplication);
+                permitNoc = createNocApplication(permitNoc, nocConfig);
+                nocUser.add(permitNoc.getBpaApplication().getOwner().getUser());
+                bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
             }
         }
     }
@@ -205,6 +214,15 @@ public class PermitNocApplicationService {
             permitNoc = createNocApplication(permitNoc, nocConfig);
 
             permitNoc.getBpaNocApplication().setOwnerUser(nocUser.get(0));
+
+            bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+        }else if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.THIRD_PARTY.toString())
+                && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
+        	nocUser.add(application.getOwner().getUser());
+            permitNoc.setBpaApplication(application);
+            permitNoc.setBpaNocApplication(nocApplication);
+            permitNoc = createNocApplication(permitNoc, nocConfig);
 
             bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
         }
