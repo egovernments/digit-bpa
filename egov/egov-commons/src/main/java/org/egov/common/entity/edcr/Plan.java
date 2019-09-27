@@ -63,6 +63,7 @@ import javax.persistence.Transient;
 
 import org.egov.common.entity.bpa.SubOccupancy;
 import org.egov.common.entity.bpa.Usage;
+import org.springframework.data.elasticsearch.config.NodeClientBeanDefinitionParser;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -127,6 +128,9 @@ public class Plan implements Serializable {
 	@JsonIgnore
 	private List<EdcrPdfDetail> edcrPdfDetails;
 	private FarDetails farDetails;
+	
+	private List<String> nocDeptCodes=new ArrayList<String>();
+	
 
 	private transient List<BigDecimal> distancesFromMonument = new ArrayList<>();
 	private transient List<BigDecimal> distancesFromGovtBuilding = new ArrayList<>();

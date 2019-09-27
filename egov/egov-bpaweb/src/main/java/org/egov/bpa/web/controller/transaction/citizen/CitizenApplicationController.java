@@ -81,6 +81,7 @@ import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.NocConfigurationService;
+import org.egov.bpa.service.noc.NocIntegrationService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -164,6 +165,10 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private PermitNocApplicationService permitNocService;
+    
+    @Autowired
+    private NocIntegrationService nocIntegrationService;
+
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -409,6 +414,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             model.addAttribute("eDcrApplExistsMessage", eDcrApplDetails.get(BpaConstants.MESSAGE));
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
+        
+        
 
         if (isEdcrIntegrationRequire) {
             bpaApplication.getBuildingDetail().clear();
@@ -516,10 +523,14 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             bpaApplication.setAdmissionfeeAmount(feeCalculation.setAdmissionFeeAmount(bpaApplication, new ArrayList<>()));
         else
             bpaApplication.setAdmissionfeeAmount(BigDecimal.valueOf(0));
+        
+        nocIntegrationService.pushNocRequest(bpaApplication);
 
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
+        
+        
 
         bpaApplication.setSentToCitizen(workFlowAction != null && workFlowAction.equals(WF_SEND_BUTTON));
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
