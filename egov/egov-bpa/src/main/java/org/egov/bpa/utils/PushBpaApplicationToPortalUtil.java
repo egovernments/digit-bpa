@@ -165,7 +165,7 @@ public class PushBpaApplicationToPortalUtil {
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
         String url = "/bpa/citizen/application/ownership/transfer/update/" + ownershipTransfer.getApplicationNumber();
-        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, ownershipTransfer.getApplication().getOwner().getName(),
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, ownershipTransfer.getParent() == null ? ownershipTransfer.getOwner().getName() : ownershipTransfer.getParent().getOwner().getName(),
         		OWNERSHIPTRANSFER.concat(ownershipTransfer.getApplication().getServiceType().getDescription()), ownershipTransfer.getApplicationNumber(),
                 ownershipTransfer.getOwnershipNumber(), ownershipTransfer.getId(), SUCCESS, SUCCESS, url, isResolved,
                 status, new Date(), ownershipTransfer.getState(), portalInboxUser);
