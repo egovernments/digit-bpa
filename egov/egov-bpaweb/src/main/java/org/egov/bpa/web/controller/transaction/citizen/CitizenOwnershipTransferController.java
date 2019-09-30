@@ -132,6 +132,9 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
         ownershipTransfer.setApplicationDate(new Date());
         ownershipTransfer.setSource(Source.CITIZENPORTAL);
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        model.addAttribute("onlinePaymentEnable",
+                (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
         return OWNERSHIP_CITIZEN_NEW;
     }
 
