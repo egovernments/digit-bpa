@@ -309,7 +309,7 @@
 					</form:option>
 					<form:options items="${stakeHolderTypeList}" />
 				</form:select>
-				<form:errors path="stakeHolder[0].stakeHolder"
+				<form:errors path="stakeHolder[0].stakeHolder.stakeHolderType"
 					cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message
@@ -323,7 +323,7 @@
 					value="${bpaApplication.stakeHolder[0].stakeHolder.name}" />
 				<form:hidden path="stakeHolder[0].stakeHolder" id="stakeHolderName"
 					value="${bpaApplication.stakeHolder[0].stakeHolder.id}" />
-				<form:errors path="stakeHolder[0].stakeHolder"
+				<form:errors path="stakeHolder[0].stakeHolder.name"
 					cssClass="add-margin error-msg" />
 			</div>
 		</div>

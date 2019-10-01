@@ -196,6 +196,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         StakeHolderState stakeHolderState = new StakeHolderState();
         stakeHolderState.setStakeHolder(stakeHolder);
         validateStakeholder(stakeHolder, errors);
+        stakeHolderService.validateDocs(stakeHolder, errors);
         if (errors.hasErrors() || checkIsUserExists(stakeHolder, model)) {
             model.addAttribute("mode", "new");
             prepareModel(model, stakeHolder);
@@ -276,7 +277,7 @@ public class StakeHolderController extends GenericWorkFlowController {
         if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM)
                 && !citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber()))
             errors.rejectValue("activationCode", "error.otp.verification.failed");
-
+        stakeHolderService.validateDocs(stakeHolder, errors);
         if (errors.hasErrors()) {
             stakeHolder.setActive(false);
             model.addAttribute("showNotification", true);
@@ -386,7 +387,7 @@ public class StakeHolderController extends GenericWorkFlowController {
     @PostMapping("/update")
     public String updateStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder, final Model model,
             final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-
+        stakeHolderService.validateDocs(stakeHolder, errors);
         if (errors.hasErrors()) {
             preapreUpdateModel(stakeHolder, model);
             return STAKEHOLDER_UPDATE;

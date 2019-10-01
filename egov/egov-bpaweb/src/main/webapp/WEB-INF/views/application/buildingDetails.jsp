@@ -83,7 +83,8 @@
 					value="" />
 				<table
 					class="table table-striped table-bordered buildingAreaDetails${bldgCounter.index}"
-					id="buildingAreaDetails${bldgCounter.index}" data-bldg-idx="${bldgCounter.index}">
+					id="buildingAreaDetails${bldgCounter.index}"
+					data-bldg-idx="${bldgCounter.index}">
 					<thead>
 						<tr>
 							<th class="text-center"><spring:message code="lbl.srl.no" /></th>
@@ -129,14 +130,18 @@
 													<spring:message code="lbl.select" />
 												</form:option>
 												<form:options items="${buildingFloorList}" />
-											</form:select></td>
+											</form:select> <form:errors
+												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].floorDescription"
+												cssClass="add-margin error-msg" /></td>
 										<td><form:input type="text"
 												class="form-control table-input patternvalidation duplicate-clear floor-details-mandatory floorNumber text-center"
 												data-pattern="number"
 												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].floorNumber"
 												id="applicationFloorDetails${counter.index}floorNumber"
 												maxlength="15"
-												value="${proposedBuildFloorDetail.floorNumber}" /></td>
+												value="${proposedBuildFloorDetail.floorNumber}" /> <form:errors
+												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].floorNumber"
+												cssClass="add-margin error-msg" /></td>
 										<td><form:select
 												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].subOccupancy"
 												data-first-option="false"
@@ -148,7 +153,9 @@
 												</form:option>
 												<form:options items="${subOccupancyList}" itemValue="id"
 													itemLabel="name" />
-											</form:select></td>
+											</form:select> <form:errors
+												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].subOccupancy"
+												cssClass="add-margin error-msg" /></td>
 										<td><form:select
 												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].usage"
 												data-first-option="false"
@@ -159,7 +166,9 @@
 												</form:option>
 												<form:options items="${usageList}" itemValue="id"
 													itemLabel="name" />
-											</form:select></td>
+											</form:select> <form:errors
+												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].usage"
+												cssClass="add-margin error-msg" /></td>
 										<td><form:input type="text"
 												class="form-control table-input patternvalidation decimalfixed nonzero plinthArea text-right"
 												data-pattern="decimalvalue"
@@ -167,21 +176,28 @@
 												id="applicationFloorDetails${counter.index}plinthArea"
 												maxlength="15" required="required"
 												value="${proposedBuildFloorDetail.plinthArea}"
-												onblur="validateFloorDetails(this)" /></td>
+												onblur="validateFloorDetails(this)" /> <form:errors
+												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].plinthArea"
+												cssClass="add-margin error-msg" /></td>
 										<td><form:input type="text"
 												class="form-control table-input text-right patternvalidation decimalfixed floorArea"
 												data-pattern="decimalvalue"
 												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].floorArea"
 												id="applicationFloorDetails${counter.index}floorArea"
 												maxlength="15" required="required"
-												value="${proposedBuildFloorDetail.floorArea}" /></td>
+												value="${proposedBuildFloorDetail.floorArea}" /> <form:errors
+												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].floorArea"
+												cssClass="add-margin error-msg" /></td>
 										<td><form:input type="text"
 												class="form-control table-input text-right patternvalidation decimalfixed carpetArea"
 												data-pattern="decimalvalue"
 												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].carpetArea"
 												id="applicationFloorDetails${counter.index}carpetArea"
 												maxlength="15" required="required"
-												value="${proposedBuildFloorDetail.carpetArea}" /></td>
+												value="${proposedBuildFloorDetail.carpetArea}" />
+											<form:errors
+												path="buildingDetail[${bldgCounter.index}].applicationFloorDetails[${counter.index}].carpetArea"
+												cssClass="add-margin error-msg" /></td>
 										<c:if test="${counter.index!=0}">
 											<td class="text-center"><a href="javascript:void(0);"
 												class="btn-sm btn-danger" id="deleteBuildAreaRow"
@@ -211,10 +227,11 @@
 												<spring:message code="lbl.select" />
 											</form:option>
 											<form:options items="${buildingFloorList}" />
-										</form:select></td>
+										</form:select>
+										<form:errors path="buildingDetail[0].applicationFloorDetails[0].floorDescription" cssClass="add-margin error-msg" /></td>
 									<td><form:input type="text"
 											class="form-control table-input patternvalidation floorNumber floor-details-mandatory text-center"
-											data-pattern="number"  
+											data-pattern="number"
 											path="buildingDetail[0].applicationFloorDetails[0].floorNumber"
 											maxlength="3" value="${proposedBuildFloorDetail.floorNumber}" /></td>
 									<td><form:select
@@ -314,8 +331,8 @@
 							code="lbl.change.occupancy.area" /> <span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-						<form:hidden path="buildingDetail[${bldgCounter.index}].name"/>
-						<form:hidden path="buildingDetail[${bldgCounter.index}].number"/>
+						<form:hidden path="buildingDetail[${bldgCounter.index}].name" />
+						<form:hidden path="buildingDetail[${bldgCounter.index}].number" />
 						<form:input
 							class="form-control patternvalidation handle-mandatory nonzero clear-values"
 							maxlength="10" data-pattern="decimalvalue"
@@ -335,12 +352,12 @@
 							data-pattern="number" maxlength="3"
 							id="floorCount${bldgCounter.index}" readonly="true"
 							path="buildingDetail[${bldgCounter.index}].floorCount"
-							required="required"/>
+							required="required" />
 						<form:errors
 							path="buildingDetail[${bldgCounter.index}].floorCount"
 							cssClass="add-margin error-msg" />
 					</div>
-					
+
 					<%-- <label
 		class="col-sm-2 control-label text-right handle-mandatory buildingheightGround"><spring:message
 			code="lbl.build.height" /> <span class="mandatory"></span> </label>
@@ -383,7 +400,7 @@
 							path="buildingDetail[${bldgCounter.index}].heightFromGroundWithOutStairRoom"
 							cssClass="add-margin error-msg" />
 					</div>
-			<%-- 		<label
+					<%-- 		<label
 						class="col-sm-2 control-label text-right handle-mandatory heightFromGroundWithStairRoom"><spring:message
 							code="lbl.grnd.with.stair" /></label>
 					<div class="col-sm-3 add-margin">
@@ -426,7 +443,7 @@
 					</div>
 				</div>    --%>
 
-				<%-- <div class="form-group">
+					<%-- <div class="form-group">
 	<label
 		class="col-sm-3 control-label text-right handle-mandatory machineRoom"><spring:message
 			code="lbl.machine.room" /> <span class="mandatory"></span> </label>
@@ -441,7 +458,7 @@
 </div> --%>
 
 
-				<%--<div class="form-group">
+					<%--<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.permt.plan.obtain" /> </label>
 		<div class="col-sm-3 add-margin">
@@ -493,7 +510,8 @@
 			</div>
 		</div>
 	</div>--%>
-			</div> </div>
+				</div>
+			</div>
 		</c:forEach>
 	</div>
 	<%-- <div class="text-right add-padding">

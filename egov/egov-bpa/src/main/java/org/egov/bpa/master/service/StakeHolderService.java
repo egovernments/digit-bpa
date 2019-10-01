@@ -56,6 +56,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.bpa.autonumber.LicenceNumberGenerator;
 import org.egov.bpa.autonumber.StakeHolderCodeGenerator;
+import org.egov.bpa.config.properties.BpaApplicationSettings;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.StakeHolderState;
 import org.egov.bpa.master.entity.StakeHolderType;
@@ -105,6 +106,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -164,6 +166,8 @@ public class StakeHolderService {
     private BPASmsAndEmailService bpaSmsAndEmailService;
     @Autowired
     private StakeHolderStateService stakeHolderStateService;
+    @Autowired
+    private BpaApplicationSettings bpaApplicationSettings;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -764,4 +768,22 @@ public class StakeHolderService {
     public List<StakeHolder> getStakeHoldersByType(StakeHolderType stkHldrType) {
         return stakeHolderRepository.findActiveByType(stkHldrType);
     }
+
+    public void validateDocs(final StakeHolder stakeHolder, final BindingResult errors) {
+        List<String> stkhrAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.stakeholer.docs.allowed.extenstions").split(",")));
+
+        List<String> stkhrMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.stakeholer.docs.allowed.mime.types").split(",")));
+
+        Integer i = 0;
+        for (StakeHolderDocument document : stakeHolder.getStakeHolderDocument()) {
+            bpaUtils.validateFiles(errors, stkhrAllowedExtenstions, stkhrMimeTypes, document.getFiles(),
+                    "stakeHolderDocument[" + i + "].files",
+                    bpaApplicationSettings.getValue("bpa.stakeholer.docs.max.size"));
+            i++;
+        }
+
+    }
+
 }

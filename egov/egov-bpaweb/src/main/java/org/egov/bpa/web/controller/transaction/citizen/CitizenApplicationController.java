@@ -387,6 +387,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             final RedirectAttributes redirectAttributes) {
         String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
         applicationBpaService.validateDocs(bpaApplication, errors);
+        applicationBpaService.validatePermitApplication(bpaApplication, errors);
         List<ApplicationSubType> riskBasedAppTypes = applicationTypeService.getRiskBasedApplicationTypes();
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);

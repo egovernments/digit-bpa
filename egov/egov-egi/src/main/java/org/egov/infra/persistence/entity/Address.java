@@ -49,6 +49,10 @@
 package org.egov.infra.persistence.entity;
 
 import static org.egov.infra.persistence.entity.Address.SEQ_ADDRESS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ADDRESS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NUMERIC;
+import static org.egov.infra.validation.constants.ValidationRegex.ADDRESS;
+import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -65,6 +69,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
@@ -94,46 +99,57 @@ public abstract class Address extends AbstractPersistable<Long> {
 
     @SafeHtml
     @Length(max = 32)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String houseNoBldgApt;
 
     @SafeHtml
     @Length(max = 256)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String streetRoadLine;
 
     @SafeHtml
     @Length(max = 256)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String landmark;
 
     @SafeHtml
     @Length(max = 256)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String areaLocalitySector;
 
     @SafeHtml
     @Length(max = 256)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String cityTownVillage;
 
     @SafeHtml
     @Length(max = 100)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String district;
 
     @SafeHtml
     @Length(max = 100)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String subdistrict;
 
     @SafeHtml
     @Length(max = 100)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String postOffice;
 
     @SafeHtml
     @Length(max = 100)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String state;
 
     @SafeHtml
     @Length(max = 50)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String country;
 
     @SafeHtml
-    @Length(max = 10)
+    @Length(min = 6, max = 6)
+    @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String pinCode;
 
     @Enumerated(EnumType.STRING)

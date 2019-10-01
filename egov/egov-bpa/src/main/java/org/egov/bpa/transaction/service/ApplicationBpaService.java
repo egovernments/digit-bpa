@@ -69,6 +69,7 @@ import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
+import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.ByteArrayInputStream;
@@ -86,6 +87,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -123,6 +126,7 @@ import org.egov.bpa.transaction.entity.PermitDcrDocument;
 import org.egov.bpa.transaction.entity.PermitDocument;
 import org.egov.bpa.transaction.entity.PermitFee;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
+import org.egov.bpa.transaction.entity.SiteDetail;
 import org.egov.bpa.transaction.entity.common.DcrDocument;
 import org.egov.bpa.transaction.entity.common.GeneralDocument;
 import org.egov.bpa.transaction.entity.common.NocDocument;
@@ -168,6 +172,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -195,6 +201,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public static final String ERROR_OCCURRED_WHILE_GETTING_INPUTSTREAM = "Error occurred while getting inputstream";
     private static final String MODULE_NAME = "BPA";
     private static final String PDF_QR_ENBLD = "DCRPDFQRCODEENABLED";
+    private static final String MSG_INVALID_VALUE = "msg.invalid.value";
+    private static final String MSG_VALUE_EMPTY = "msg.value.empty";
 
     @Autowired
     protected ApplicationFeeService applicationFeeService;
@@ -1240,6 +1248,43 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         bpaUtils.validateFiles(errors, tsDocAllowedExtenstions, tsDocMimeTypes, application.getFiles(),
                 "files", bpaApplicationSettings.getValue("bpa.ts.docs.max.size"));
 
+    }
+
+    public void validatePermitApplication(final BpaApplication application, final BindingResult resultBinder) {
+        Pattern pattern;
+        Matcher matcher;
+        Applicant applicant = application.getOwner();
+        User user = applicant.getUser();
+        if (StringUtils.isNotBlank(user.getMobileNumber()) && !Jsoup.isValid(user.getMobileNumber(), Whitelist.basic())) {
+            resultBinder.rejectValue("owner.user.mobileNumber", MSG_INVALID_VALUE);
+        } else {
+            pattern = Pattern.compile(NUMERIC);
+            matcher = pattern.matcher(user.getMobileNumber());
+            if (!matcher.matches())
+                resultBinder.rejectValue("owner.user.mobileNumber", "invalid.mobile.number");
+        }
+
+        if (application.getPermitOccupanciesTemp().isEmpty())
+            resultBinder.reject("occupancy", MSG_INVALID_VALUE);
+
+        SiteDetail siteDetail = application.getSiteDetail().get(0);
+        if (siteDetail.getIsappForRegularization()) {
+            if (siteDetail.getConstStages() == null) {
+                resultBinder.rejectValue("siteDetail[0].constStages", MSG_INVALID_VALUE);
+            } else if (siteDetail.getConstStages() != null
+                    && "In Progress".equalsIgnoreCase(siteDetail.getConstStages().getCode())) {
+                if (StringUtils.isBlank(siteDetail.getStateOfConstruction()))
+                    resultBinder.rejectValue("siteDetail[0].stateOfConstruction", MSG_VALUE_EMPTY);
+                if (siteDetail.getWorkCommencementDate() == null)
+                    resultBinder.rejectValue("siteDetail[0].workCommencementDate", MSG_VALUE_EMPTY);
+            } else if (siteDetail.getConstStages() != null
+                    && "Completed".equalsIgnoreCase(siteDetail.getConstStages().getCode())) {
+                if (siteDetail.getWorkCompletionDate() == null)
+                    resultBinder.rejectValue("siteDetail[0].workCompletionDate", MSG_VALUE_EMPTY);
+                if (siteDetail.getWorkCommencementDate() == null)
+                    resultBinder.rejectValue("siteDetail[0].workCommencementDate", MSG_VALUE_EMPTY);
+            }
+        }
     }
 
 }

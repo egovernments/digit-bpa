@@ -56,7 +56,7 @@
                 <c:forEach items="${bpaApplication.buildingSubUsages}" var="subUsage" varStatus="counter">
                     <div style="display: block;float:left;width:100%;height:auto;padding-bottom:10px;">
                         <h5 class="view-content">Block - ${subUsage.blockNumber}</h5>
-                        <div class=form-group" id="block${subUsage.blockNumber}">
+                        <div id="block${subUsage.blockNumber}" class="form-group">
                             <c:forEach items="${subUsage.subUsageDetails}" var="subUsageDtl" varStatus="counter1">
                                 <div class="col-sm-3 col-md-3">
                                     <h5 class="view-content">${subUsageDtl.mainUsage.description}<span class="mandatory"></span></h5>
@@ -69,6 +69,7 @@
                                                     test="${fn:contains(subUsageDtl.subUsages, usage)}"> Selected </c:if>>${usage.description}</option>
                                         </c:forEach>
                                     </select>
+                                    <form:errors path="buildingSubUsages[${counter.index}].subUsageDetails[${counter1.index}].subUsagesTemp" cssClass="add-margin error-msg" />
                                 </div>
                             </c:forEach>
                         </div>

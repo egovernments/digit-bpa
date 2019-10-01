@@ -2,7 +2,7 @@
  * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *  Copyright (C) <2019>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -44,66 +44,33 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.common.entity.edcr;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+package org.egov.commons.service;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.List;
 
-@Entity
-@Table(name = "EGDCR_LAYERNAME", schema = "state")
-@SequenceGenerator(name = LayerName.SEQ_LAYERNAME, sequenceName = LayerName.SEQ_LAYERNAME, allocationSize = 1, schema = "state")
-public class LayerName extends AbstractAuditable {
+import org.egov.common.entity.edcr.SubFeatureColorCode;
+import org.egov.commons.repository.bpa.SubFeatureColorCodeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-    private static final long serialVersionUID = 347727394856163197L;
+@Service
+@Transactional(readOnly = true)
+public class SubFeatureColorCodeService {
 
-    public static final String SEQ_LAYERNAME = "SEQ_EGDCR_LAYERNAME";
+    @Autowired
+    private SubFeatureColorCodeRepository extraFeaturesColorCodeRepository;
 
-    @Id
-    @GeneratedValue(generator = SEQ_LAYERNAME, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    @SafeHtml
-    @NotBlank
-    @Length(min = 1, max = 250)
-    private String key;
-    @SafeHtml
-    @NotBlank
-    @Length(min = 1, max = 250)
-    private String value;
-
-    @Override
-    public Long getId() {
-        return id;
+    public List<SubFeatureColorCode> findByFeature(String feature) {
+        return extraFeaturesColorCodeRepository.findByFeature(feature);
     }
 
-    @Override
-    protected void setId(Long id) {
-        this.id = id;
-
+    public SubFeatureColorCode findBySubFeature(String subFeature) {
+        return extraFeaturesColorCodeRepository.findBySubFeature(subFeature);
     }
 
-    public String getKey() {
-        return key;
+    public List<SubFeatureColorCode> findAll() {
+        return extraFeaturesColorCodeRepository.findAll();
     }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
 }

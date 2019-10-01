@@ -144,7 +144,7 @@ public class BpaApplication extends StateAware<Position> {
     @JoinColumn(name = "serviceType")
     private ServiceType serviceType;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "status")
+    @JoinColumn(name = "status", nullable = false)
     private BpaStatus status;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Applicant owner;

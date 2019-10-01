@@ -96,7 +96,6 @@ import org.egov.bpa.transaction.service.oc.OcInspectionService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateNocService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.utils.BpaUtils;
 import org.egov.bpa.utils.OccupancyCertificateUtils;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.commons.service.SubOccupancyService;
@@ -148,8 +147,6 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
     private OCLetterToPartyService ocLetterToPartyService;
     @Autowired
     protected SubOccupancyService subOccupancyService;
-    @Autowired
-    private BpaUtils bpaUtils;
     @Autowired
     private CustomImplProvider specificNoticeService;
     @Autowired
