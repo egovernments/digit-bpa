@@ -96,7 +96,7 @@
 				<tr>
 					<td><c:out value="${status.index+1}"></c:out></td>
 					<c:forTokens var="splittedString"
-							items="${doc.nocDocument.serviceChecklist.checklist.description}"
+							items="${doc.nocDocument.serviceChecklist.checklist.code}"
 							delims="\ ()" varStatus="stat">
 							<c:set var="checklistName"
 								value="${stat.first ? '' : checklistName}_${splittedString}" />
@@ -221,7 +221,7 @@
 							</div>
 						</div>
 					</td>
-					<c:if test="${not empty nocConfigMap}">
+					<c:if test="${not empty nocAutoMap}">
 					<c:set var="noccode"
 									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
 								<c:set var="nocbtn" value="${nocAutoMap[noccode]}" />
@@ -235,7 +235,23 @@
 									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
 								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
 								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
-								<input type="hidden" value="${nocapp}" class="hidden${checklistName}"/>
+								<input type="hidden" value="${nocbtn}" class="hidden${checklistName}"/>
+								<input type="hidden" id="nocchkcode" value="${noccode}"/>
+								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
+								<button type="button" id="btninitiatenoc" value="/bpa/nocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
+										<spring:message code="lbl.initiate.noc" />
+								</button>
+								</c:if>
+							</div>
+						</td>
+					</c:if>					
+					<c:if test="${not empty nocTypeApplMap}">
+						<td class="tdbtn" style="display:none">
+							<div class="text-right">
+								<c:set var="noccode"
+									value="${doc.nocDocument.serviceChecklist.checklist.code}" />
+								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
+								<input type="hidden" value="${nocapp}" class="apphidden${checklistName}"/>
 								<input type="hidden" id="nocchkcode" value="${noccode}"/>
 								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
 								<button type="button" id="btninitiatenoc" value="/bpa/nocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
@@ -245,6 +261,7 @@
 							</div>
 						</td>
 					</c:if>
+					
 					<c:if test="${not empty nocApplication}">					  								
 						<td class="view-content tdstatus" style="font-size: 97%;">												
 							<fmt:formatDate value="${doc.permitNoc.lastModifiedDate}"

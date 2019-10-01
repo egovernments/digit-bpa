@@ -820,6 +820,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         Map<String, String> nocAutoMap = new ConcurrentHashMap<>();
         Map<String, String> nocConfigMap = new ConcurrentHashMap<>();
         Map<String, String> nocTypeApplMap = new ConcurrentHashMap<>();
+
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
             String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
             NocConfiguration nocConfig = nocConfigurationService
@@ -830,13 +831,13 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                     && (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString()) || 
                     		nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.THIRD_PARTY.toString()))
                     && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
-                    edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
+                    edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES") && nocDocument.getNocDocument().getNocSupportDocs().isEmpty())
                 nocConfigMap.put(nocConfig.getDepartment(), "initiate");
             if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
                     && (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString()) || 
             		nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.THIRD_PARTY.toString()))
-                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()) &&
-                    edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES"))
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString()) &&
+                    edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES") && nocDocument.getNocDocument().getNocSupportDocs().isEmpty())
                 nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
 
             for (PermitNocApplication pna : permitNoc) {
