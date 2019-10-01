@@ -154,6 +154,7 @@ public class OwnershipTransferNoticeUtil {
             reportParams.put("ownershipNumber", ownershipTransfer.getOwnershipNumber());
             reportParams.put("newownerName",ownershipTransfer.getApplicantName());
             reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(ownershipTransfer)));
+            reportParams.put("rejectionComment", ownershipTransfer.getState().getComments());
             
             if (!ownershipTransfer.getOwnershipFee().isEmpty())
                 reportParams.put("ownershipFeeDetails", getOwnershipFeeDetails(ownershipTransfer));

@@ -13,6 +13,7 @@
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="logoPath" class="java.io.InputStream"/>
 	<parameter name="refusalFormat" class="java.lang.String"/>
+	<parameter name="rejectionComment" class="java.lang.String"/>
 	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="applicationDate" class="java.util.Date"/>
 	<field name="application" class="org.egov.bpa.transaction.entity.BpaApplication"/>
@@ -97,7 +98,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["    Your application, dated " +DateUtils.toDefaultDateFormat($F{applicationDate}) + " for ownership transfer for " + $F{application}.getServiceType().getDescription() + "  in " + $P{ulbName} + " falling in Revenue Ward " +$F{application}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum() + ",Re-Survey No."   +   (($F{application}.getSiteDetail().get(0).getReSurveyNumber() == null) ?   "N/A" : $F{application}.getSiteDetail().get(0).getReSurveyNumber())  + ",is rejected due the following reason(s),"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["    Your application, dated " +DateUtils.toDefaultDateFormat($F{applicationDate}) + " for ownership transfer for " + $F{application}.getServiceType().getDescription() + "  in " + $P{ulbName} + " falling in Revenue Ward " +$F{application}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum() + ",Re-Survey No."   +   (($F{application}.getSiteDetail().get(0).getReSurveyNumber() == null) ?   "N/A" : $F{application}.getSiteDetail().get(0).getReSurveyNumber())  + ",is rejected for " +  $P{rejectionComment}  + " due to the following reason(s),"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>
