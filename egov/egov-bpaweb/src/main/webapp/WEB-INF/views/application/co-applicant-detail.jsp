@@ -72,13 +72,13 @@
 		<tbody>
 			<c:choose>
 				<c:when test="${not empty coApplicants}">
-					<c:forEach items="${coApplicants}" var="coap"
-						varStatus="counter">
+					<c:forEach items="${coApplicants}" var="coap" varStatus="counter">
 						<tr>
 							<td class="text-center"><span class="applcntSerialNo">${counter.index+1}</span></td>
-							<td>
-							<form:input class="form-control patternvalidation name" data-pattern="alphabetspecialcharacters" maxlength="99"
-									id="name" path="coApplicants[${counter.index}].coApplicant.name"
+							<td><form:input class="form-control patternvalidation name"
+									data-pattern="alphabetspecialcharacters" maxlength="99"
+									id="name"
+									path="coApplicants[${counter.index}].coApplicant.name"
 									disabled="true" /></td>
 							<td><form:input
 									class="form-control patternvalidation mobileNumber"
@@ -88,7 +88,8 @@
 									disabled="true" /></td>
 							<td><form:input class="form-control emailId" maxlength="120"
 									id="coApplicants[${counter.index}].coApplicant.emailId"
-									path="coApplicants[${counter.index}].coApplicant.emailId" disabled="true" /></td>
+									path="coApplicants[${counter.index}].coApplicant.emailId"
+									disabled="true" /></td>
 							<td><form:select
 									path="coApplicants[${counter.index}].coApplicant.gender"
 									id="coApplicants[${counter.index}].coApplicant.gender"
@@ -108,24 +109,29 @@
 						<td class="text-center"><span class="applcntSerialNo">1</span></td>
 						<td><form:input class="form-control patternvalidation name"
 								data-pattern="alphabetspecialcharacters" maxlength="99"
-								id="name" path="coApplicants[0].coApplicant.name" /></td>
+								id="name" path="coApplicants[0].coApplicant.name" /> <form:errors
+								path="coApplicants[0].coApplicant.name" cssClass="error-msg" /></td>
 						<td><form:input
 								class="form-control patternvalidation mobileNumber"
 								data-pattern="number" maxlength="10"
 								id="coApplicants[0].coApplicant.mobileNumber"
-								path="coApplicants[0].coApplicant.mobileNumber" /></td>
+								path="coApplicants[0].coApplicant.mobileNumber" />
+							<form:errors path="coApplicants[0].coApplicant.mobileNumber"
+								cssClass="error-msg" /></td>
 						<td><form:input class="form-control emailId" maxlength="120"
-								id="coApplicants[0].coApplicant.emailId" path="coApplicants[0].coApplicant.emailId" />
-								<span></span>
-		                   	<form:errors path="coApplicants[0].coApplicant.emailId" cssClass="error-msg" /></td>
+								id="coApplicants[0].coApplicant.emailId"
+								path="coApplicants[0].coApplicant.emailId" /> <span></span> <form:errors
+								path="coApplicants[0].coApplicant.emailId" cssClass="error-msg" /></td>
 						<td><form:select path="coApplicants[0].coApplicant.gender"
-								id="coApplicants[0].coApplicant.gender" cssClass="form-control gender"
+								id="coApplicants[0].coApplicant.gender"
+								cssClass="form-control gender"
 								cssErrorClass="form-control error">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
 								<form:options items="${genderList}" />
-							</form:select> <form:errors path="coApplicants[0].coApplicant.gender" cssClass="error-msg" /></td>
+							</form:select> <form:errors path="coApplicants[0].coApplicant.gender"
+								cssClass="error-msg" /></td>
 						<td></td>
 					</tr>
 				</c:otherwise>

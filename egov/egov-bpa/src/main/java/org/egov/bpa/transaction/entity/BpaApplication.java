@@ -75,6 +75,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
@@ -129,7 +130,7 @@ public class BpaApplication extends StateAware<Position> {
     @SafeHtml
     private String assessmentNumber;
     @NotNull
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Source source;
     @Size(min = 1, max = 128)
     @SafeHtml
@@ -146,11 +147,12 @@ public class BpaApplication extends StateAware<Position> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "status", nullable = false)
     private BpaStatus status;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Valid
+    @ManyToOne(cascade = CascadeType.ALL)
     private Applicant owner;
     @Size(min = 1, max = 128)
     @SafeHtml
-    @Column(length = 128, unique = true, nullable = false)
+    @Column(length = 128, unique = true)
     private String planPermissionNumber;
     @Temporal(value = TemporalType.DATE)
     private Date planPermissionDate;
@@ -172,6 +174,7 @@ public class BpaApplication extends StateAware<Position> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "applicationSubType")
     private ApplicationSubType applicationType;
@@ -349,6 +352,7 @@ public class BpaApplication extends StateAware<Position> {
     private transient List<BuildingDetail> buildingDetailFromEdcr = new ArrayList<>(0);
     @Valid
     private transient List<ExistingBuildingDetail> existingBldgDetailFromEdcr = new ArrayList<>(0);
+    @NotEmpty
     private transient List<Occupancy> permitOccupanciesTemp = new ArrayList<>(0);
     @SafeHtml
     private transient String adminBoundary;

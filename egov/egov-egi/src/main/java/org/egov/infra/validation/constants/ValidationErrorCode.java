@@ -67,6 +67,7 @@ public final class ValidationErrorCode {
     public static final String INVALID_FILE_NAME = "{invalid.file.name}";
     public static final String INVALID_ADDRESS = "{invalid.address}";
     public static final String INVALID_NUMERIC = "{invalid.numeric}";
+    public static final String INVALID_EMAIL = "{invalid.email.id}";
 
     private ValidationErrorCode() {
         //only static fields

@@ -66,83 +66,83 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class InspectionApplicationService {
-    
+
     @Autowired
     private InspectionApplicationRepository inspectionReposiory;
-    
+
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
-    
+
     @Autowired
-	private InspectionApplicationService inspectionService; 
-    
+    private InspectionApplicationService inspectionService;
+
     @Autowired
     private BpaStatusRepository statusRepository;
-    
-    
+
     @Autowired
     private BpaUtils bpaUtils;
-    
+
     @PersistenceContext
-	private EntityManager entityManager;
-    
-    
-    @Transactional
-	public PermitInspectionApplication findByInspectionApplicationNumber(final String appNo) {
-		return inspectionReposiory.findByInspectionApplication_ApplicationNumber(appNo);
-	}
-    
-    @Transactional
-   	public List<PermitInspectionApplication> findByApplicationNumber(final String appNo) {
-   		return inspectionReposiory.findByApplication_ApplicationNumber(appNo);
-   	}
-    
+    private EntityManager entityManager;
+
+    public PermitInspectionApplication findByInspectionApplicationNumber(final String appNo) {
+        return inspectionReposiory.findByInspectionApplication_ApplicationNumber(appNo);
+    }
+
+    public List<PermitInspectionApplication> findByApplicationNumber(final String appNo) {
+        return inspectionReposiory.findByApplication_ApplicationNumber(appNo);
+    }
+
     public String generateInspectionNumber() {
         final InspectionApplicationNumberGenerator inspectionNUmber = beanResolver
                 .getAutoNumberServiceFor(InspectionApplicationNumberGenerator.class);
         return inspectionNUmber.generateInspectionNumber("INSP");
     }
-    
+
     @Transactional
-    public PermitInspectionApplication saveOrUpdate(final PermitInspectionApplication permitInspection, final WorkflowBean wfBean) {
+    public PermitInspectionApplication saveOrUpdate(final PermitInspectionApplication permitInspection,
+            final WorkflowBean wfBean) {
         if (permitInspection.getInspectionApplication().getApplicationDate() == null)
-        	permitInspection.getInspectionApplication().setApplicationDate(new Date());
+            permitInspection.getInspectionApplication().setApplicationDate(new Date());
         if (permitInspection.getInspectionApplication().getApplicationNumber() == null)
-        	permitInspection.getInspectionApplication().setApplicationNumber(inspectionService.generateInspectionNumber());
+            permitInspection.getInspectionApplication().setApplicationNumber(inspectionService.generateInspectionNumber());
         if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)) {
-            final BpaStatus bpaStatus = statusRepository.findByCodeAndModuleType(BpaConstants.INITIATEINSPECTION, BpaConstants.INSPECTION_MODULE_TYPE);
+            final BpaStatus bpaStatus = statusRepository.findByCodeAndModuleType(BpaConstants.INITIATEINSPECTION,
+                    BpaConstants.INSPECTION_MODULE_TYPE);
             permitInspection.getInspectionApplication().setStatus(bpaStatus);
-        }        
-        return inspectionReposiory.save(permitInspection);  
-    } 
-    
+        }
+        return inspectionReposiory.save(permitInspection);
+    }
+
     @Transactional
     public PermitInspectionApplication save(final PermitInspectionApplication permitInspection) {
         if (permitInspection.getInspectionApplication().getApplicationDate() == null)
-        	permitInspection.getInspectionApplication().setApplicationDate(new Date());
+            permitInspection.getInspectionApplication().setApplicationDate(new Date());
         if (permitInspection.getInspectionApplication().getApplicationNumber() == null)
-        	permitInspection.getInspectionApplication().setApplicationNumber(inspectionService.generateInspectionNumber());
-        permitInspection.getInspectionApplication().setStatus(statusRepository.findByCodeAndModuleType(BpaConstants.APPROVED, BpaConstants.INSPECTION_MODULE_TYPE));
-        return inspectionReposiory.save(permitInspection);  
-    } 
-   
-    
-    
+            permitInspection.getInspectionApplication().setApplicationNumber(inspectionService.generateInspectionNumber());
+        permitInspection.getInspectionApplication()
+                .setStatus(statusRepository.findByCodeAndModuleType(BpaConstants.APPROVED, BpaConstants.INSPECTION_MODULE_TYPE));
+        return inspectionReposiory.save(permitInspection);
+    }
+
     @Transactional
-    public PermitInspectionApplication update(final PermitInspectionApplication permitInspectionApplication, final WorkflowBean wfBean) {
+    public PermitInspectionApplication update(final PermitInspectionApplication permitInspectionApplication,
+            final WorkflowBean wfBean) {
         if (WF_APPROVE_BUTTON.equals(wfBean.getWorkFlowAction())) {
-        	permitInspectionApplication.getInspectionApplication().setApprovalDate(new Date());          
+            permitInspectionApplication.getInspectionApplication().setApprovalDate(new Date());
         }
         permitInspectionApplication.getInspectionApplication().setSentToPreviousOwner(false);
-        
-        if (APPLICATION_STATUS_TS_INS_INITIATED.equals(permitInspectionApplication.getInspectionApplication().getStatus().getCode())) {
-        	permitInspectionApplication.getInspectionApplication().setTownSurveyorInspectionRequire(false);
+
+        if (APPLICATION_STATUS_TS_INS_INITIATED
+                .equals(permitInspectionApplication.getInspectionApplication().getStatus().getCode())) {
+            permitInspectionApplication.getInspectionApplication().setTownSurveyorInspectionRequire(false);
         }
-        permitInspectionApplication.getInspectionApplication().setLPRequestInitiated(FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(permitInspectionApplication.getInspectionApplication().getState().getNextAction()));
+        permitInspectionApplication.getInspectionApplication().setLPRequestInitiated(FWDINGTOLPINITIATORPENDING
+                .equalsIgnoreCase(permitInspectionApplication.getInspectionApplication().getState().getNextAction()));
 
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             bpaUtils.redirectInspectionWorkFlow(permitInspectionApplication, wfBean);
-        
+
         inspectionReposiory.saveAndFlush(permitInspectionApplication);
         return permitInspectionApplication;
     }

@@ -56,7 +56,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -72,13 +72,12 @@ public class PermitNocApplication extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_PERMITNOCAPPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Valid
     @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
     @JoinColumn(name = "nocapplication", nullable = false)
     private BpaNocApplication bpaNocApplication;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @NotNull
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication bpaApplication;
 

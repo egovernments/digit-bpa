@@ -385,16 +385,16 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     public String createNewConnection(@Valid @ModelAttribute final BpaApplication bpaApplication,
             final BindingResult errors, final Model model, final HttpServletRequest request,
             final RedirectAttributes redirectAttributes) {
-        String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
         applicationBpaService.validateDocs(bpaApplication, errors);
         applicationBpaService.validatePermitApplication(bpaApplication, errors);
-        List<ApplicationSubType> riskBasedAppTypes = applicationTypeService.getRiskBasedApplicationTypes();
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
+        String onedaypermit = BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT.toUpperCase();
+        List<ApplicationSubType> riskBasedAppTypes = applicationTypeService.getRiskBasedApplicationTypes();
         if (bpaApplication.getIsOneDayPermitApplication())
             bpaApplication.setApplicationType(applicationTypeService.findByName(onedaypermit));
 

@@ -39,6 +39,17 @@
  */
 package org.egov.bpa.transaction.entity;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ADDRESS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_EMAIL;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NUMERIC;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.ADDRESS;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
+
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -49,13 +60,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.transaction.entity.enums.GenderTitle;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.validation.regex.Constants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -79,10 +90,12 @@ public class CoApplicant extends AbstractAuditable {
 
     @SafeHtml
     @Length(min = 2, max = 100)
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String name;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String fatherorHusbandName;
 
     private Date dateofBirth;
@@ -90,42 +103,49 @@ public class CoApplicant extends AbstractAuditable {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Pattern(regexp = Constants.EMAIL)
+    @Email(regexp = EMAIL, message = INVALID_EMAIL)
     @SafeHtml
     @Length(max = 128)
     private String emailId;
 
-    @Pattern(regexp = Constants.MOBILE_NUM)
+    @Pattern(regexp = MOBILE_NUMBER, message = INVALID_MOBILE_NUMBER)
     @SafeHtml
     @Length(max = 15)
     private String mobileNumber;
 
     @SafeHtml
-    @Length(min = 1, max = 128)
+    @Length(min = 6, max = 6)
+    @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String pinCode;
 
     @SafeHtml
     @Length(min = 1, max = 1024)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String address;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String district;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String taluk;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String area;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String city;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String state;
 
     @Override

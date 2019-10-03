@@ -332,15 +332,15 @@
 </div>
 
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-tagsinput.css?rnd=${app_release_no}' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-tagsinput.css?rnd=${app_release_no}' context='/egi'/>">
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-tagsinput.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-tagsinput.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/handlebars/handlebars.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/select2/4.0.3/select2.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/select2/4.0.3/select2.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/>"></script>
 <script

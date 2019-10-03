@@ -39,6 +39,15 @@
  */
 package org.egov.bpa.transaction.entity;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ADDRESS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_EMAIL;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_NUMERIC;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.ADDRESS;
+import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
+import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
+
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -53,6 +62,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -60,7 +70,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.transaction.entity.enums.GenderTitle;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.validation.regex.Constants;
 import org.egov.portal.entity.Citizen;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -81,32 +90,39 @@ public class Applicant extends AbstractAuditable {
     private GenderTitle title;
 
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String fatherorHusbandName;
 
     private Date dateofBirth;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String district;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String taluk;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String area;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String city;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String state;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String pinCode;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -116,22 +132,25 @@ public class Applicant extends AbstractAuditable {
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String name;
 
     @SafeHtml
     @Length(min = 1, max = 1024)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String address;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private Gender gender;
 
-    @Pattern(regexp = Constants.EMAIL)
+    @Email(regexp = EMAIL, message = INVALID_EMAIL)
     @SafeHtml
     @Length(max = 128)
     private String emailId;
 
     @SafeHtml
     @Length(max = 20)
+    @Pattern(regexp = NUMERIC, message = INVALID_NUMERIC)
     private String aadhaarNumber;
 
     @Override

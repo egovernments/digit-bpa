@@ -209,7 +209,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
         application.setApplicationAmenityTemp(application.getApplicationAmenity());
         application.setPermitOccupanciesTemp(application.getPermitOccupancies());
-        applicationBpaService.buildExistingAndProposedBuildingDetails(application);
+        //applicationBpaService.buildExistingAndProposedBuildingDetails(application);
         if (!application.getBuildingSubUsages().isEmpty())
             buildBuildingSubUsages(application);
         model.addAttribute("stateType", application.getClass().getSimpleName());
@@ -298,7 +298,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         model.addAttribute("lettertopartylist", lettertoPartyList);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         model.addAttribute("permitApplnFeeRequired", bpaUtils.isApplicationFeeCollectionRequired());
-        List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
+        List<InConstructionInspection> inConstInspections = new ArrayList<>();
         final List<PermitInspectionApplication> permitInspections = inspectionAppService
                 .findByApplicationNumber(application.getApplicationNumber());
 
@@ -583,9 +583,6 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             String successMessage = messageSource.getMessage("msg.appln.accepted.succes",
                     new String[] { bpaApplication.getApplicationNumber() }, null);
             redirectAttributes.addFlashAttribute(MESSAGE, successMessage);
-            /*
-             * redirectAttributes.addFlashAttribute(MESSAGE, successMessage.concat(DISCLIMER_MESSAGE_ONSAVE));
-             */
         } else if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplication.isCitizenAccepted()
                 && workFlowAction.equals(WF_SEND_BUTTON)) {
             bpaSmsAndEmailService.sendSMSAndEmail(bpaApplication, null, null);

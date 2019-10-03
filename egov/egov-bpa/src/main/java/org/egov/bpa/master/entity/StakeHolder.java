@@ -40,6 +40,13 @@
 
 package org.egov.bpa.master.entity;
 
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_ADDRESS;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.ADDRESS;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +65,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 
 import org.apache.commons.lang3.StringUtils;
@@ -123,10 +131,12 @@ public class StakeHolder extends User {
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String organizationName;
 
     @SafeHtml
     @Length(min = 1, max = 128)
+    @Pattern(regexp = ADDRESS, message = INVALID_ADDRESS)
     private String organizationAddress;
 
     @SafeHtml
@@ -135,6 +145,7 @@ public class StakeHolder extends User {
 
     @SafeHtml
     @Length(min = 1, max = 15)
+    @Pattern(regexp = PHONE_NUMBER, message = INVALID_PHONE_NUMBER)
     private String organizationMobNo;
 
     private Boolean isOnbehalfOfOrganization;
@@ -145,6 +156,7 @@ public class StakeHolder extends User {
 
     @SafeHtml
     @Length(max = 256)
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String contactPerson;
 
     @SafeHtml

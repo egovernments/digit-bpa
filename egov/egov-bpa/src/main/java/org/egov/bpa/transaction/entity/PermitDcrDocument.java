@@ -66,7 +66,7 @@ public class PermitDcrDocument extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_APPLN_DCR_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
 

@@ -169,8 +169,6 @@ public class SiteDetail extends AbstractAuditable {
     @SafeHtml
     @Length(min = 1, max = 12)
     private String subdivisionNumber;
-    @SafeHtml
-    @Length(min = 1, max = 128)
     private Boolean encroachmentIssuesPresent;
     @SafeHtml
     @Length(min = 1, max = 128)

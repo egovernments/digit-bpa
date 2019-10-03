@@ -193,6 +193,7 @@ public class StakeHolderService {
         stakeHolder.setCreateDate(new Date());
         stakeHolder.setLastUpdatedDate(new Date());
         stakeHolder.setLastUpdatedUser(securityUtils.getCurrentUser());
+        stakeHolder.generateUID();
         processAndStoreApplicationDocuments(stakeHolder);
         StakeHolderState stakeHolderState = new StakeHolderState();
         stakeHolderState.setStakeHolder(stakeHolder);

@@ -65,9 +65,11 @@ public class PermitNocDocument extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EGBPA_NOC_DOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application", nullable = false)
     private BpaApplication application;
+
     @Valid
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "nocDocument", nullable = false)

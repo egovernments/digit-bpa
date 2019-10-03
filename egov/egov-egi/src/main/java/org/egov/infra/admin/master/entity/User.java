@@ -49,11 +49,14 @@
 package org.egov.infra.admin.master.entity;
 
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PAN_NUMBER;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PHONE_NUMBER;
 import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_USERNAME;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_EMAIL;
 import static org.egov.infra.validation.constants.ValidationRegex.EMAIL;
 import static org.egov.infra.validation.constants.ValidationRegex.MOBILE_NUMBER;
+import static org.egov.infra.validation.constants.ValidationRegex.PAN_NUMBER;
 import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
 import static org.egov.infra.validation.constants.ValidationRegex.PHONE_NUMBER;
 import static org.egov.infra.validation.constants.ValidationRegex.USERNAME;
@@ -144,6 +147,8 @@ public class User extends AbstractAuditable {
     @Audited
     private String password;
 
+    @SafeHtml
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String salutation;
 
     @SafeHtml
@@ -153,6 +158,7 @@ public class User extends AbstractAuditable {
 
     @SafeHtml
     @Length(min = 2, max = 64)
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String guardianRelation;
 
     @NotNull
@@ -171,7 +177,7 @@ public class User extends AbstractAuditable {
     @Audited
     private String mobileNumber;
 
-    @Email(regexp = EMAIL)
+    @Email(regexp = EMAIL, message = INVALID_EMAIL)
     @SafeHtml
     @Length(max = 128)
     @Audited
@@ -184,6 +190,7 @@ public class User extends AbstractAuditable {
 
     @SafeHtml
     @Length(max = 10)
+    @Pattern(regexp = PAN_NUMBER, message = INVALID_PAN_NUMBER)
     private String pan;
 
     @SafeHtml

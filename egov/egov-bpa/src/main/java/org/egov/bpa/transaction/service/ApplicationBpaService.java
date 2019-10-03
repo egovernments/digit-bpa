@@ -1171,6 +1171,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
      */
     public Citizen createApplicantAsCitizen(Applicant owner) {
         Citizen citizen = new Citizen();
+        citizen.generateUID();
         citizen.setMobileNumber(owner.getUser().getMobileNumber());
         citizen.setEmailId(owner.getEmailId());
         citizen.setGender(owner.getGender());
@@ -1264,8 +1265,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 resultBinder.rejectValue("owner.user.mobileNumber", "invalid.mobile.number");
         }
 
-        if (application.getPermitOccupanciesTemp().isEmpty())
-            resultBinder.reject("occupancy", MSG_INVALID_VALUE);
+        if (!application.getPermitOccupanciesTemp().isEmpty() && application.getPermitOccupanciesTemp().get(0) == null
+                || application.getPermitOccupanciesTemp().isEmpty())
+            resultBinder.reject("permitOccupanciesTemp", MSG_INVALID_VALUE);
 
         SiteDetail siteDetail = application.getSiteDetail().get(0);
         if (siteDetail.getIsappForRegularization()) {
