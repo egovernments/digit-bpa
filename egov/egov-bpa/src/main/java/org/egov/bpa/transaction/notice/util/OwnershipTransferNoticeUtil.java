@@ -154,7 +154,6 @@ public class OwnershipTransferNoticeUtil {
             reportParams.put("ownershipNumber", ownershipTransfer.getOwnershipNumber());
             reportParams.put("newownerName",ownershipTransfer.getApplicantName());
             reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(ownershipTransfer)));
-            reportParams.put("rejectionComment", ownershipTransfer.getState().getComments());
             
             if (!ownershipTransfer.getOwnershipFee().isEmpty())
                 reportParams.put("ownershipFeeDetails", getOwnershipFeeDetails(ownershipTransfer));
@@ -219,10 +218,10 @@ public class OwnershipTransferNoticeUtil {
             int order = buildPredefinedRejectReasons(ownershipTransfer, rejectReasons);
             int additionalOrder = buildAdditionalOwnershipConditionsOrRejectionReason(rejectReasons, additionalRenewalConditions,
                     order);
-            StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(ownershipTransfer.getStateHistory());
-            if (stateHistory != null && isNotBlank(stateHistory.getComments()))
+            /*StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(ownershipTransfer.getStateHistory());*/
+            if (isNotBlank(ownershipTransfer.getState().getComments()))
                 rejectReasons.append(additionalOrder + ") "
-                        + stateHistory.getComments() + TWO_NEW_LINE);
+                        + ownershipTransfer.getState().getComments() + TWO_NEW_LINE);
         } else {
             rejectReasons.append(ownershipTransfer.getState().getComments() != null
                     && ownershipTransfer.getState().getComments().equalsIgnoreCase("Application cancelled by citizen")
