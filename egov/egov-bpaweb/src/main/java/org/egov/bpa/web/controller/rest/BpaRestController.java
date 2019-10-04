@@ -75,7 +75,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -143,7 +142,10 @@ public class BpaRestController {
     public Map<String, Object> getBpaApplicationByEdcrNumber(@PathVariable final String edcrNumber) {
         Map<String, Object> appNoPrmsnNoMap = new ConcurrentHashMap<>();
         List<BpaApplication> bpaAppsList = applicationBpaService.findApplicationByEDCRNumber(edcrNumber);
-        if (!bpaAppsList.isEmpty()) {
+        if (bpaAppsList.isEmpty()) {
+            appNoPrmsnNoMap.put(IS_APP_NO_PRESENT, false);
+            appNoPrmsnNoMap.put(IS_PERMIT_NO_PRESENT, false);
+        } else {
             if (bpaAppsList.get(0).getApplicationNumber() != null) {
                 appNoPrmsnNoMap.put("applicationNumber", bpaAppsList.get(0).getApplicationNumber());
                 appNoPrmsnNoMap.put(IS_APP_NO_PRESENT, true);
@@ -156,9 +158,6 @@ public class BpaRestController {
             } else {
                 appNoPrmsnNoMap.put(IS_PERMIT_NO_PRESENT, false);
             }
-        } else {
-            appNoPrmsnNoMap.put(IS_APP_NO_PRESENT, false);
-            appNoPrmsnNoMap.put(IS_PERMIT_NO_PRESENT, false);
         }
         return appNoPrmsnNoMap;
     }
@@ -184,11 +183,11 @@ public class BpaRestController {
         return stkHldrDataList;
     }
 
-    @GetMapping(value = "/stakeholder/check/demand-pending/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/stakeholder/check/demand-pending/{userId}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Boolean> isDemandPending(@PathVariable final Long userId, HttpServletResponse response) {
         User user = userService.getUserById(userId);
-        Map<String, Boolean> isDemandPending = new HashMap<>();
+        Map<String, Boolean> isDemandPending = new ConcurrentHashMap<>();
         isDemandPending.put("pending", false);
         StakeHolder stkHldr = stakeHolderService.findById(userId);
 
@@ -204,7 +203,7 @@ public class BpaRestController {
         return isDemandPending;
     }
 
-    @GetMapping(value = "/validate/stakeholder/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/validate/stakeholder/{userId}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public ErrorDetail validateStakeholder(@PathVariable final Long userId, HttpServletResponse response) {
         StakeHolder stakeHolder = stakeHolderService.findById(userId);
